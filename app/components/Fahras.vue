@@ -1,6 +1,8 @@
 <script lang="ts" setup>
 import { useRouter } from '#imports'
 
+const { $Book } = useNuxtApp()
+
 interface ONET {
   Index: number | string
   name: string
@@ -8,9 +10,9 @@ interface ONET {
   TotalVerses: number
   Verses: string[]
 }
-const { $Book } = useNuxtApp()
-const Quran: ONET[] = $Book as ONET[]
-const names = ref(Quran).value.map(v => ({ names: v.name }))
+
+const Quran: ONET[] = $Book as unkown as ONET[]
+const names = Quran// .map(v => ({ names: v.name }))
 const router = useRouter()
 
 function navToLok(lok: number) {
@@ -20,12 +22,12 @@ function navToLok(lok: number) {
 </script>
 
 <template>
-  <ol class="column q-mt-xl q-pt-lg">
-    <nuxt-link
+  <ol v-if="!!Quran" class="column q-mt-xl q-pt-lg">
+    <!-- <nuxt-link
       v-for="(i, ind) in names" :key="i.names" class="cursor-pointer"
       @click="navToLok(ind)"
     >
       {{ ind + 1 }}-{{ i.names }}
-    </nuxt-link>
+    </nuxt-link> -->
   </ol>
 </template>
