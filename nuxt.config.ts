@@ -1,3 +1,4 @@
+import replace from '@rollup/plugin-replace'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
@@ -105,6 +106,14 @@ export default defineNuxtConfig({
       ],
     },
 
+  },
+  vite: {
+    plugins: [
+      replace({
+        __DATE__: new Date().toISOString(),
+        preventAssignment: true,
+      }),
+    ],
   },
 
   eslint: {

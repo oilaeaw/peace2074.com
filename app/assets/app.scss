@@ -5,7 +5,12 @@
 @supports not (-webkit-touch-callout: none) {
     /* CSS for other than iOS devices */
 }
-
+.text-whit{
+    color: white!important;
+}
+.text-dark{
+    color: black!important;
+}
 body.body--light{
     color: black;
     background-color: white;

@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { ref, useQuasar } from '#imports'
+import { useTimeAgo } from '@vueuse/core'
+import moment from 'moment'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -11,6 +13,11 @@ function toggleDark() {
   toggle()
   return $q.dark.mode
 }
+const isDark = computed(() => $q.dark.mode)
+
+const date = '__DATE__'
+const timeAgo = useTimeAgo(date)
+const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
 
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value
@@ -62,6 +69,10 @@ function toggleDrawer() {
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>
+        <q-toolrbat-title class="q-mx-auto text-center" :class="isDark ? 'text-dark ' : 'text-white' ">
+          Built at: {{ BuildTime }} ({{ timeAgo }})
+        </q-toolrbat-title>
+        <q-space />
         <q-btn flat round dense icon="apps" class="q-mr-xs" />
         <q-btn flat round dense icon="more_vert" />
       </q-toolbar>
