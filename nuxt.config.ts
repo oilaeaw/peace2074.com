@@ -29,7 +29,13 @@ export default defineNuxtConfig({
       '../server/uils',
     ],
   },
-  devtools: { enabled: false },
+  devtools: {
+    enabled: false,
+
+    timeline: {
+      enabled: true,
+    },
+  },
   devtools: {
     enabled: true,
   },

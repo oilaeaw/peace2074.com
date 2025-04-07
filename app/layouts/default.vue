@@ -47,7 +47,8 @@ function toggleDrawer() {
 
     <q-drawer
       v-model="toggleLeftDrawer"
-      min-width="150"
+      min-width="300"
+      width="400"
       mini
       elevated
       side="left"

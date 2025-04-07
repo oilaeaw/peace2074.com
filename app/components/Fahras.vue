@@ -11,8 +11,7 @@ interface ONET {
   Verses: string[]
 }
 
-const Quran: ONET[] = $Book as unkown as ONET[]
-const names = Quran// .map(v => ({ names: v.name }))
+const names = $Book.map(v => ({ names: v.name }))
 const router = useRouter()
 
 function navToLok(lok: number) {
@@ -22,12 +21,12 @@ function navToLok(lok: number) {
 </script>
 
 <template>
-  <ol v-if="!!Quran" class="column q-mt-xl q-pt-lg">
-    <!-- <nuxt-link
-      v-for="(i, ind) in names" :key="i.names" class="cursor-pointer"
+  <ol v-if="!!names" class="column q-mt-xl q-pt-lg text-ceter">
+    <nuxt-link
+      v-for="(i, ind) in names" :key="i.names" class="text-ceter q-mx-xs cursor-pointer"
       @click="navToLok(ind)"
     >
       {{ ind + 1 }}-{{ i.names }}
-    </nuxt-link> -->
+    </nuxt-link>
   </ol>
 </template>
