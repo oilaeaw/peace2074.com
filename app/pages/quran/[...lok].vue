@@ -99,8 +99,8 @@ useHead({
           </q-card-section>
           <q-card-section>
             {{ t("pages.quran.sura.bookmark") }}
-            <div>
-              <span v-for="b in bookmarks" :key="b" @click="navToHash(b)">
+            <div class="column">
+              <span v-for="b in bookmarks" :key="b">
                 {{ b }}
               </span>
             </div>
@@ -112,15 +112,15 @@ useHead({
           </q-card-section>
           <q-card-section>
             <div class="just fit verse block capitalize">
-              <i v-for="aya in sura.ayat" :key="aya.verse" class="q-mx-sm" :hash="aya.verse">{{ aya.text }}
+              <i v-for="(aya, n) in sura.ayat" :key="aya.verse" class="q-mx-sm" :hash="n + 1 + aya.verse">{{ aya.text }}
                 <q-chip class="bg-green text-white">{{ aya.verse }}</q-chip>
                 <q-btn
                   dense
                   fab-mini
                   color="yellow"
-                  size="10"
+                  size="4"
                   icon="bookmark"
-                  @click="saveBookmark(aya.verse)"
+                  @click="saveBookmark(`${(!n ? 1 : 1)}:${aya.verse}`)"
                 />
               </i>
               <q-space />

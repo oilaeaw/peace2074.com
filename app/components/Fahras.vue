@@ -14,7 +14,7 @@ const quran: Ref<ONET[]> = ref({})
 watch(
   $Book,
   (val) => {
-    quran.value = val
+    quran.value = val[0]
   },
   { deep: true },
 )
