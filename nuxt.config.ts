@@ -68,14 +68,14 @@ export default defineNuxtConfig({
   routeRules: {
     '/api/quran': {
       cache: {
-        maxAge: 31536000000,
+        maxAge: 24,
         swr: true,
-        name: 'quran',
+        name: 'holybook',
       },
     },
     '/api/holynames': {
       cache: {
-        maxAge: 31536000000,
+        maxAge: 24,
         swr: true,
         name: 'holynames',
       },

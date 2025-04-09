@@ -1,5 +1,7 @@
 import { defineNuxtPlugin, useFetch, useState } from 'nuxt/app'
 
+const StaticName = 'holybook'
+
 export default defineNuxtPlugin(async (nuxtApp: NuxtApp) => {
   if (import.meta.client) {
     const q2p = useQ2P()
@@ -16,8 +18,8 @@ export default defineNuxtPlugin(async (nuxtApp: NuxtApp) => {
 
     if (data && data.value) {
       const readyData = data.value
-      useState('Book', () => readyData)
-      nuxtApp.provide('Book', readyData)
+      useState(StaticName, () => readyData)
+      nuxtApp.provide(StaticName, readyData)
       q2p.setQuran(readyData)
     }
   }

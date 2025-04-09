@@ -1,7 +1,7 @@
 <script lang="ts" async setup>
 import { useHead, useI18n } from '#imports'
 
-const { $Book } = useNuxtApp()
+const { $holybook } = useNuxtApp()
 
 export interface AYAT {
   chapter: number
@@ -29,7 +29,7 @@ const router = useRouter({
     }
   },
 })
-const Quran: ONE_INTERFACE[] = $Book
+const Quran: ONE_INTERFACE[] = $holybook
 
 const sura: Ref<ONE_INTERFACE> = computed(() => Quran[lok.value - 1])
 const PageTite: Ref<strig> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
@@ -42,7 +42,7 @@ watchEffect(() => {
   lok.value = route.params.lok
 })
 function saveBookmark(bm: number) {
-  bookmarks.value.push(`${lok.value}:${bm}`)
+  bookmarks.value.push(bm)
 }
 function navToHash(hash: string) {
   router.go(hash)
@@ -81,9 +81,9 @@ useHead({
 
           <q-card-section class="rtl flex">
             <div>
-              <h4 class="text-h3">
+              <h1 class="text-h3">
                 <span class="text-h6">{{ t("pages.quran.sura.name") }}</span>{{ sura.name }}
-              </h4>
+              </h1>
               <h5 class="text-h5">
                 <span class="text-h6">{{ t("pages.quran.sura.id") }}</span>:{{ sura.id }}
               </h5>
@@ -100,9 +100,7 @@ useHead({
           <q-card-section>
             {{ t("pages.quran.sura.bookmark") }}
             <div class="column">
-              <span v-for="b in bookmarks" :key="b">
-                {{ b }}
-              </span>
+              <a v-for="b in bookmarks" :key="b" :href="b" @click.prevent="navToHash(b)">{{ b }}</a>
             </div>
           </q-card-section>
         </q-card>
@@ -112,7 +110,7 @@ useHead({
           </q-card-section>
           <q-card-section>
             <div class="just fit verse block capitalize">
-              <i v-for="(aya, n) in sura.ayat" :key="aya.verse" class="q-mx-sm" :hash="n + 1 + aya.verse">{{ aya.text }}
+              <i v-for="aya in sura.ayat" :key="aya.verse" class="q-mx-sm" :href="`#${aya.verse}`">{{ aya.text }}
                 <q-chip class="bg-green text-white">{{ aya.verse }}</q-chip>
                 <q-btn
                   dense
@@ -120,7 +118,7 @@ useHead({
                   color="yellow"
                   size="4"
                   icon="bookmark"
-                  @click="saveBookmark(`${(!n ? 1 : 1)}:${aya.verse}`)"
+                  @click="saveBookmark(`#${aya.verse}`)"
                 />
               </i>
               <q-space />
