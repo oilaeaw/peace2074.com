@@ -100,7 +100,7 @@ useHead({
           <q-card-section>
             {{ t("pages.quran.sura.bookmark") }}
             <div class="column">
-              <a v-for="b in bookmarks" :key="b" :href="b" @click.prevent="navToHash(b)">{{ b }}</a>
+              <a v-for="b in bookmarks" :key="b" :href="b">{{ b }}</a>
             </div>
           </q-card-section>
         </q-card>
