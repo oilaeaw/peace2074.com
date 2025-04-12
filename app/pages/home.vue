@@ -2,14 +2,12 @@
 import { definePageMeta, useOnline } from '#imports'
 
 const { t } = useI18n()
-const { note } = useNote()
 
 definePageMeta({
   layout: 'default',
   title: 'Main Page',
 })
 const online = useOnline()
-note.success('On')
 </script>
 
 <template>

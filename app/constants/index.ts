@@ -22,6 +22,8 @@ export const NSNAME = 'peace_ns:data'
 // Nuxt Mongo Key Name
 export const MONSNAME = 'peace_ms:data'
 
+export const StaticName = 'holybook'
+
 export const links1 = [
   { icon: 'person', text: 'navigation.Profile', dist: '/auth/profile' },
   { icon: 'star_border', text: 'navigation.Favorites', dist: '/auth/favorites' },
