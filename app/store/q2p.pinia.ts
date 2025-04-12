@@ -105,6 +105,7 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   getters: {
+    IdexNames: state => state.Quran.map(v => ({ names: v.name })),
     Legend: state => state.LLegend,
     GetQ: state => state.Quran,
     GetS: state => state.style.pixel,
