@@ -1,7 +1,7 @@
 <script lang="ts" async setup>
 import { useHead, useI18n } from '#imports'
 
-const { $holybook } = useNuxtApp()
+const q2p = useQ2P()
 
 export interface AYAT {
   chapter: number
@@ -29,10 +29,11 @@ const router = useRouter({
     }
   },
 })
-const Quran: ONE_INTERFACE[] = $holybook
+const Quran: ONE_INTERFACE[] = q2p.GetQ
 
 const sura: Ref<ONE_INTERFACE> = computed(() => Quran[lok.value - 1])
 const PageTite: Ref<strig> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
+
 const options = Object.values(Quran).map((Single: ONE_INTERFACE) =>
   ({
     name: `${Single.id}-${Single.name}`,
@@ -44,9 +45,7 @@ watchEffect(() => {
 function saveBookmark(bm: number) {
   bookmarks.value.push(bm)
 }
-function navToHash(hash: string) {
-  router.go(hash)
-}
+
 watch(
   lok,
   (current: number) => {
@@ -59,6 +58,17 @@ useHead({
   ogTitle: PageTite,
   ogDescription: appDescription,
 })
+const hideScroll: Ref<boolean> = ref(false)
+
+// const foptions = {
+//   includeScore: true,
+//   keys: [
+//     { name: 'title', getFn: sura => sura.value.name },
+//     { name: 'authorName', getFn: sura => sura.value.id },
+//   ],
+// }
+// const fuse = new Fuse(sura.value.ayat, foptions)
+// const result = fuse.search({ authorName: 'Steve' })
 </script>
 
 <template>
@@ -66,7 +76,9 @@ useHead({
     <q-page padding class="rtl">
       <div class="q-gutter-md" column>
         <q-card class="text-md">
-          <q-card-section class="pcs block">
+          <q-card-section v-if="hideScroll" class="pcs block">
+            <q-btn color="yellow-7" mini rounded icon="info" label="hide" @click.prevent="hideScroll = false" />
+
             <VueScrollPicker v-model="lok" :options="options" />
             <q-input
               v-model="lok"
@@ -78,7 +90,7 @@ useHead({
               label="Sura"
             />
           </q-card-section>
-
+          <q-btn v-else color="yellow-7" mini rounded icon="info" label="show" @click.prevent="hideScroll = true" />
           <q-card-section class="rtl flex">
             <div>
               <h1 class="text-h3">
@@ -103,27 +115,28 @@ useHead({
               <a v-for="b in bookmarks" :key="b" :href="b">{{ b }}</a>
             </div>
           </q-card-section>
-        </q-card>
-        <q-card class="q-mt-xs">
-          <q-card-section>
-            <h3>{{ AlFateha }}</h3>
-          </q-card-section>
-          <q-card-section>
-            <div class="just fit verse block capitalize">
-              <i v-for="aya in sura.ayat" :key="aya.verse" class="q-mx-sm" :href="`#${aya.verse}`">{{ aya.text }}
-                <q-chip class="bg-green text-white">{{ aya.verse }}</q-chip>
-                <q-btn
-                  dense
-                  fab-mini
-                  color="yellow"
-                  size="4"
-                  icon="bookmark"
-                  @click="saveBookmark(`#${aya.verse}`)"
-                />
-              </i>
-              <q-space />
-            </div>
-          </q-card-section>
+
+          <q-card class="q-mt-xs">
+            <q-card-section>
+              <h3>{{ AlFateha }}</h3>
+            </q-card-section>
+            <q-card-section>
+              <div class="just fit verse block capitalize">
+                <i v-for="aya in sura.ayat" :key="aya.verse" class="q-mx-sm" :href="`#${aya.verse}`">{{ aya.text }}
+                  <q-chip class="bg-green text-white">{{ aya.verse }}</q-chip>
+                  <q-btn
+                    dense
+                    fab-mini
+                    color="yellow"
+                    size="4"
+                    icon="bookmark"
+                    @click="saveBookmark(`#${aya.verse}`)"
+                  />
+                </i>
+                <q-space />
+              </div>
+            </q-card-section>
+          </q-card>
         </q-card>
       </div>
     </q-page>

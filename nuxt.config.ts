@@ -92,7 +92,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-05',
   nitro: {
     rollupConfig: {
-      external: ['resolve', '@quasar/extras'],
+      external: ['resolve', '@quasar/extras', 'fuse.js'],
     },
     esbuild: {
       options: {
