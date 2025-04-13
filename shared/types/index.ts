@@ -39,7 +39,7 @@ export interface WindowI {
   Etherium: any
   web3: any
 }
-/** User Roles from casl */
+
 export interface RoleI {
   name: NameT
   subject: NameT
@@ -50,15 +50,13 @@ export interface RoleI {
   reason?: NameT
 }
 
-/** Loght Modes */
 export enum LightModesE {
   Dark = 'dark',
   Light = 'light',
   System = 'auto',
 }
 
-/** Enum Note Actions */
-export enum NoteAcionsE {
+export enum NoteActionsE {
   Show = 'show',
   Hide = 'hide',
   Success = 'positive',
@@ -67,12 +65,12 @@ export enum NoteAcionsE {
   Errror = 'negative',
   Loading = 'loading',
 }
-/** Loding Defaults */
+
 export interface LoadingDefaultsT {
   spinner: string
   message: string
 }
-/** Notify Positions */
+
 export enum PositionsE {
   top = 'top',
   topRight = 'top-right',
@@ -84,7 +82,7 @@ export enum PositionsE {
   left = 'left',
   center = 'center',
 }
-/** Education History interface */
+
 export interface HistoryI {
   key: KeyT
   color: ColorT
@@ -93,17 +91,19 @@ export interface HistoryI {
   year: YearT
   text: string
 }
-/** Project interface */
+
 export interface IProject {
   key: string
   value: ValueT
   selected: boolean
 }
+
 export interface SponsorI {
   name: string
   img: string
   url: string
 }
+
 export interface WorkOptionsI {
   name?: 'SHA-256' | 'PBKDF2'
   encode?: 'base64' | 'utf8' | 'hex'
@@ -111,7 +111,7 @@ export interface WorkOptionsI {
   hash?: string
   length?: number
 }
-/** Authentication Strategies */
+
 export enum NetworksNamesE {
   google = 'google',
   facebook = 'facebook',
@@ -120,14 +120,13 @@ export enum NetworksNamesE {
   passport = 'passport',
 }
 
-/** Social login user scopes */
 export enum ScopesNamesE {
   profile = 'profile',
   social = 'social',
   email = 'email',
   fullname = 'fullname',
 }
-/** Social login scope */
+
 export interface ScopeI {
   name?: string
   network: Partial<NetworksNamesE>
@@ -135,33 +134,46 @@ export interface ScopeI {
   icon?: string
   emitName?: string | Function
 }
+
 export type ScopeT = ScopeI
 
-export interface HarfI {
-  name: string
-  weight: number
-  value: string
-  description?: string
-  color?: string
-  encoding?: string
-}
-export interface KalimatI extends HarfI {
-  horuf: HarfI[]
-}
-export interface AyaI extends KalimatI {
-  Kalemat: kalimatI[]
-}
-export interface SuraI extends AyaI {
-  Ayat: AyaI[]
-}
-export interface QuranI extends SuraI {
-  Surah: SuraI[]
-}
-interface aya {
+export interface aya_interface {
   chapter: number
   verse: number
   text: string
 }
+
+export interface HarfI {
+  value: string
+  name?: string
+  weight?: number
+  description?: string
+  color?: string
+  encoding?: string
+}
+
+export interface KalimatI extends HarfI, aya_interface {
+  horuf: HarfI[]
+}
+
+export interface AyaI extends KalimatI, HarfI, aya_interface {
+  Kalemat: KalimatI[]
+}
+
+export interface SuraI extends AyaI, HarfI, aya_interface {
+  [k: string]: number | string | AyaI[]
+  id: number
+  name: string
+  e_name: string
+  type: string
+  total: number
+  ayat: AyaI[]
+}
+
+export interface QuranI extends SuraI, AyaI, HarfI, aya_interface {
+  Surah: SuraI[]
+}
+
 export interface QDBI {
   [key: number]: any
   id: number
@@ -169,8 +181,9 @@ export interface QDBI {
   e_name?: string
   type: string
   total_verses: number
-  ayat: aya[]
+  ayat: aya_interface[]
 }
+
 export interface StateI {
   quran: QuranI
   Surah: SuraI[]
@@ -180,31 +193,28 @@ export interface StateI {
 export interface Q2bI {
   state: StateI
 }
+
 export interface LinkT {
   text: string
   icon: string
 }
 
-export interface HistoryI {
-  key: KeyT
-  color: ColorT
-  name: NameT
-  link: LinkT
-  year: YearT
-  text: string
-}
 export interface ProjectsI {
   key: string
   value: ValueT
   selected: boolean
 }
+
 export type ProjectsT = ProjectsI
+
 export interface SponsorsI {
   name: string
   img: string
   url: string
 }
+
 export type SponsorsT = SponsorsI
+
 export interface TransactionInterfaceI {
   addressFrom: string
   addressTo: string
@@ -217,9 +227,11 @@ export interface TransactionInterfaceI {
   receiver: string
   sender: string
 }
+
 export type TransactionT = TransactionInterfaceI & {
   id?: string | number
 }
+
 export type TransactionsT = TransactionT[]
 
 export interface UserI {
@@ -233,17 +245,12 @@ export interface UserI {
   last_name?: string
   profileImage?: string
   role: string
-  // Refresh token
   refreshToken?: RefreshToken[]
-
-  // Auth0
   auth0Id?: string
-
-  // Tweet
   tweet?: Tweet[]
-  // MediaFiles
   mediaFiles?: MediaFile[]
 }
+
 export type UserT = UserI
 
 export interface PermessionI {
@@ -258,6 +265,7 @@ export interface PermessionI {
   createdAt?: string
   updatedAt?: string
 }
+
 export type PermessionT = PermessionI
 
 export interface TokenI {
@@ -265,6 +273,7 @@ export interface TokenI {
   iat: number
   exp: number
 }
+
 export interface TokenT {
   id: string
   token: string
@@ -282,7 +291,7 @@ export interface RegisterUserT {
   last_name: string
 }
 
-export interface SubscriptionI {
+export interface UserSubscriptionI {
   id: string
   endpoint: string
   expirationTime: string
@@ -294,7 +303,7 @@ export interface SubscriptionI {
   user: UserI
 }
 
-export interface ReshreshTokenT {
+export interface RefreshTokenT {
   id: string
   token: string
   userId: string
@@ -324,6 +333,7 @@ export enum CaslActionE {
   DELETE = 'delete',
   MANAGE = 'manage',
 }
+
 export enum CaslSubjectE {
   ALL = 'all',
   ADMIN = 'admin',
@@ -337,13 +347,15 @@ export enum CaslSubjectE {
   TWEET = 'tweet',
   USER = 'user',
 }
-// CASL
+
 export type CaslActionsT = CaslActionE.CREATE | CaslActionE.READ | CaslActionE.UPDATE | CaslActionE.DELETE
+
 export type CaslSubjectsT = CaslSubjectE.CATEGORY | CaslSubjectE.LIKES | CaslSubjectE.MEDIAFILE | CaslSubjectE.PERMISSIONS | CaslSubjectE.POST | CaslSubjectE.ROLES | CaslSubjectE.TWEET | CaslSubjectE.USER | CaslSubjectE.ADMIN
 
 export interface CaslActionsI {
   actions: CaslActionsT
 }
+
 export interface CaslSubjectsI {
   actions: CaslSubjectsT
 }
@@ -352,9 +364,11 @@ interface KeysT {
   p256dh: string
   auth: string
 }
-export interface SubscriptionI {
+
+export interface PushSubscriptionI {
   endpoint: string
   expirationTime: string
   keys: KeysT
 }
-export type SubscriptionT = SubscriptionI
+
+export type SubscriptionT = PushSubscriptionI

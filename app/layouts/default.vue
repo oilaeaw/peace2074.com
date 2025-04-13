@@ -47,8 +47,8 @@ function toggleDrawer() {
 
     <q-drawer
       v-model="toggleLeftDrawer"
-      min-width="300"
-      width="400"
+      min-width="250"
+      width="300"
       mini
       elevated
       side="left"
@@ -70,9 +70,9 @@ function toggleDrawer() {
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>
-        <q-toolrbat-title class="q-mx-auto text-center" :class="isDark ? 'text-dark ' : 'text-white' ">
+        <q-tooltip class="q-mx-auto text-center" :class="isDark ? 'text-dark ' : 'text-white' ">
           Built at: {{ BuildTime }} ({{ timeAgo }})
-        </q-toolrbat-title>
+        </q-tooltip>
         <q-space />
         <q-btn flat round dense icon="apps" class="q-mr-xs" />
         <q-btn flat round dense icon="more_vert" />

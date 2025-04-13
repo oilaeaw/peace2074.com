@@ -1,27 +1,22 @@
+import type { QuranI, SuraI } from '~~/shared/types'
 import { defineStore } from 'pinia'
 
-type state = () => {
-  Quran: ONE_INTERFACE[]
-  Sura: ONE_INTERFACE
+interface Style {
+  display: string
+  backgroundColor: string
+  height: number
+  width: number
+}
+
+interface State {
+  Quran: QuranI[]
+  Sura: SuraI
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
-  style: {
-    pixel: {
-      display: string
-      backgroundColor: string
-      height: number
-      width: number
-    }
-    container: {
-      display: string
-      backgroundColor: string
-      height: number
-      width: number
-    }
-  }
+  style: Style
 }
 export const useQ2P = defineStore('q2p', {
-  state: (): state => ({
+  state: (): State => ({
     Quran: [],
     Sura: {},
     Index: 1,
@@ -80,11 +75,13 @@ export const useQ2P = defineStore('q2p', {
     },
   }),
   actions: {
-    async setUpQuran(data: ONE_INTERFACE[]) {
-      this.Quran = [...data]
+    async setUpQuran() {
+      if (localStorage.key(CSNAME) && localStorage.getItem(CSNAME))
+        this.Quran = uStore.locale.get(CSNAME) as ONE_INTERFACE
     },
     setQuran(payload: ONE_INTERFACE[]) {
-      this.Quran = [...payload]
+      this.Quran = payload
+      localStorage.setItem(CSNAME, payload)
     },
     setSura(payload: ONE_INTERFACE) {
       this.Sura = { ...payload }
@@ -105,7 +102,7 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   getters: {
-    IdexNames: state => state.Quran.map(v => ({ names: v.name })),
+    IndexNames: state => state.Quran.map(v => ({ names: v.name })),
     Legend: state => state.LLegend,
     GetQ: state => state.Quran,
     GetS: state => state.style.pixel,

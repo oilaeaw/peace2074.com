@@ -1,4 +1,5 @@
 <script lang="ts" async setup>
+import type { AyaI } from '~~/shared/types'
 import { useHead, useI18n } from '#imports'
 
 const q2p = useQ2P()
@@ -15,7 +16,7 @@ export interface ONE_INTERFACE {
   e_name: string
   type: string
   total: number
-  ayat: AYAT[]
+  ayat: AyaI[]
 }
 const { t } = useI18n()
 const appName = t('general.SiteTitle')

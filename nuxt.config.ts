@@ -139,6 +139,9 @@ export default defineNuxtConfig({
     vueI18nLoader: true,
     vueI18n: '../i18n.config',
   },
+  optimizeDeps: {
+    include: [],
+  },
 
   pwa,
   quasar: QuasarOptions,
