@@ -14,6 +14,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@pinia/colada": "^0.14.2",
     "@quasar/extras": "^1.16.17",
     "fuse.js": "^7.1.0",
     "moment": "^2.30.1",

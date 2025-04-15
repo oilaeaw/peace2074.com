@@ -81,7 +81,7 @@ export const useQ2P = defineStore('q2p', {
     },
     setQuran(payload: ONE_INTERFACE[]) {
       this.Quran = payload
-      localStorage.setItem(CSNAME, payload)
+      localStorage.setItem(CSNAME, JSON.stringify(payload))
     },
     setSura(payload: ONE_INTERFACE) {
       this.Sura = { ...payload }

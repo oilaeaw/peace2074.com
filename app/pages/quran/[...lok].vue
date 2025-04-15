@@ -1,6 +1,7 @@
 <script lang="ts" async setup>
 import type { AyaI } from '~~/shared/types'
 import { useHead, useI18n } from '#imports'
+import { StaticName } from '../../constants/'
 
 const q2p = useQ2P()
 
@@ -60,6 +61,11 @@ useHead({
   ogDescription: appDescription,
 })
 const hideScroll: Ref<boolean> = ref(false)
+onMounted(() => {
+  const oldD = localStorage.getItem(StaticName)
+  if (JSON.stringify(oldD))
+    q2p.setQuran(oldD)
+})
 
 // const foptions = {
 //   includeScore: true,
