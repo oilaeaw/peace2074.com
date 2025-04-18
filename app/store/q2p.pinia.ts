@@ -9,7 +9,7 @@ interface Style {
 }
 
 interface State {
-  Quran: QuranI[]
+  Book: QuranI[]
   Sura: SuraI
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
@@ -17,7 +17,7 @@ interface State {
 }
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
-    Quran: [],
+    Book: [],
     Sura: {},
     Index: 1,
     LLegend: [
@@ -75,13 +75,13 @@ export const useQ2P = defineStore('q2p', {
     },
   }),
   actions: {
-    async setUpQuran() {
-      if (localStorage.key(CSNAME) && localStorage.getItem(CSNAME))
-        this.Quran = uStore.locale.get(CSNAME) as ONE_INTERFACE
+    setUpBook() {
+      const Test = localStorage.getItem(CSNAME)
+      if (localStorage.key(CSNAME) && Test)
+        this.Book = JSON.parse(Test) as ONE_INTERFACE
     },
-    setQuran(payload: ONE_INTERFACE[]) {
-      this.Quran = payload
-      localStorage.setItem(CSNAME, JSON.stringify(payload))
+    setBook(payload: ONE_INTERFACE[]) {
+      this.Book = payload
     },
     setSura(payload: ONE_INTERFACE) {
       this.Sura = { ...payload }
@@ -102,12 +102,15 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   getters: {
-    IndexNames: state => state.Quran.map(v => ({ names: v.name })),
+    IndexNames: state => state.Book, // .map(v => ({ names: v.name })),
     Legend: state => state.LLegend,
-    GetQ: state => state.Quran,
+    GetQ: state => state.Book,
     GetS: state => state.style.pixel,
     getContainerStyle: state => state.style.container,
   },
 
 })
-export default useQ2P
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useQ2P, import.meta.hot))
+}

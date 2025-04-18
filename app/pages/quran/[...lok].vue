@@ -3,6 +3,9 @@ import type { AyaI } from '~~/shared/types'
 import { useHead, useI18n } from '#imports'
 import { StaticName } from '../../constants/'
 
+const nuxtApp = useNuxtApp()
+const { $holybook } = nuxtApp
+
 const q2p = useQ2P()
 
 export interface AYAT {
@@ -31,9 +34,9 @@ const router = useRouter({
     }
   },
 })
-const Quran: ONE_INTERFACE[] = q2p.GetQ
+const Quran: ONE_INTERFACE[] = ref($holybook)
 
-const sura: Ref<ONE_INTERFACE> = computed(() => Quran[lok.value - 1])
+const sura: Ref<ONE_INTERFACE> = computed(() => Quran.value[lok.value - 1])
 const PageTite: Ref<strig> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
 
 const options = Object.values(Quran).map((Single: ONE_INTERFACE) =>
@@ -64,7 +67,7 @@ const hideScroll: Ref<boolean> = ref(false)
 onMounted(() => {
   const oldD = localStorage.getItem(StaticName)
   if (JSON.stringify(oldD))
-    q2p.setQuran(oldD)
+    q2p.setBook(oldD)
 })
 
 // const foptions = {

@@ -1,5 +1,10 @@
 import { PiniaColada } from '@pinia/colada'
 import { createPinia } from 'pinia'
+import piniaPluginPersistedstate from 'pinia-plugin-persistedstate'
+
+const pinia = createPinia()
+
+pinia.use(piniaPluginPersistedstate)
 
 export default defineNuxtPlugin((_nuxtApp) => {
   if (import.meta.client) {
@@ -7,11 +12,8 @@ export default defineNuxtPlugin((_nuxtApp) => {
     // install after pinia
     const savedData = localStorage.getItem(StaticName)
     const q2p = useQ2P()
-    // app.use(PiniaColada, {
-    //   // optional options
-    // })
     if (savedData) {
-      q2p.setQuran(savedData)
+      q2p.setBook(savedData)
     }
   }
 })

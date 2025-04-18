@@ -1,18 +1,14 @@
 <script lang="ts" setup>
+const nuxtApp = useNuxtApp()
+const { $holybook } = nuxtApp
+
 const q2p = useQ2P()
 
-const quran = q2p.GetQ
+const quran = ref($holybook)
 
-watch(
-  q2p,
-  (val) => {
-    quran.value = val
-  },
-  { deep: true },
-)
 onNuxtReady(() => {
-  if (q2p) {
-    quran.value = q2p.GetQ
+  if ($holybook) {
+    quran.value = $holybook
   }
 })
 
@@ -26,7 +22,7 @@ function navToLok(lok: number) {
 </script>
 
 <template>
-  <ol v-if="!!names" class="column q-mt-xl q-pt-lg text-ceter">
+  <ol v-if="names" class="column q-mt-xl q-pt-lg text-ceter">
     <nuxt-link
       v-for="(i, ind) in names" :key="i.names" class="text-ceter q-mx-xs cursor-pointer"
       @click="navToLok(ind)"
