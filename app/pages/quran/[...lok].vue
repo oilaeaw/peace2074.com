@@ -25,7 +25,7 @@ export interface ONE_INTERFACE {
 const { t } = useI18n()
 const appName = t('general.SiteTitle')
 const route = useRoute()
-const lok: Ref<number> = ref(1)
+const lok: Ref<number> = ref(Number(route.params.lok) || 1)
 const bookmarks: Ref<string[]> = ref([])
 const router = useRouter({
   scrollBehavior(to: any, _from: string) {
@@ -34,10 +34,10 @@ const router = useRouter({
     }
   },
 })
-const Quran: ONE_INTERFACE[] = ref($holybook)
+const Quran: Ref<ONE_INTERFACE[]> = ref($holybook || [])
 
 const sura: Ref<ONE_INTERFACE> = computed(() => Quran.value[lok.value - 1])
-const PageTite: Ref<strig> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
+const PageTite: Ref<string> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
 
 const options = Object.values(Quran.value).map((Single: ONE_INTERFACE) =>
   ({
@@ -45,7 +45,9 @@ const options = Object.values(Quran.value).map((Single: ONE_INTERFACE) =>
     value: Single.id,
   }))
 watchEffect(() => {
-  lok.value = route.params.lok
+  if (route.params.lok) {
+    lok.value = Number(route.params.lok)
+  }
 })
 function saveBookmark(bm: number) {
   bookmarks.value.push(bm)
@@ -65,9 +67,13 @@ useHead({
 })
 const hideScroll: Ref<boolean> = ref(false)
 onMounted(() => {
+  if (!$holybook || !$holybook.length) {
+    console.error('Holybook data is not loaded. Please check the data source.')
+  }
+
   const oldD = localStorage.getItem(StaticName)
-  if (JSON.stringify(oldD))
-    q2p.setBook(oldD)
+  if (oldD)
+    q2p.setBook(JSON.parse(oldD))
 })
 
 // const foptions = {

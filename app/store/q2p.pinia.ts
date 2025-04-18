@@ -13,12 +13,18 @@ interface State {
   Sura: SuraI
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
-  style: Style
+  style: {
+    pixel: Style
+    container: Style
+  }
 }
+
+const CSNAME = 'quranBook' // Define the localStorage key properly
+
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
     Book: [],
-    Sura: {},
+    Sura: {} as SuraI,
     Index: 1,
     LLegend: [
       { letter: ' ', color: '#ffffff', value: 0 },
@@ -76,39 +82,50 @@ export const useQ2P = defineStore('q2p', {
   }),
   actions: {
     setUpBook() {
-      const Test = localStorage.getItem(CSNAME)
-      if (localStorage.key(CSNAME) && Test)
-        this.Book = JSON.parse(Test) as ONE_INTERFACE
+      try {
+        const storedBook = localStorage.getItem(CSNAME)
+        if (storedBook) {
+          this.Book = JSON.parse(storedBook) as QuranI[]
+        }
+      }
+      catch (error) {
+        console.error('Failed to load book from localStorage:', error)
+      }
     },
-    setBook(payload: ONE_INTERFACE[]) {
+    setBook(payload: QuranI[]) {
       this.Book = payload
+      try {
+        localStorage.setItem(CSNAME, JSON.stringify(payload))
+      }
+      catch (error) {
+        console.error('Failed to save book to localStorage:', error)
+      }
     },
-    setSura(payload: ONE_INTERFACE) {
+    setSura(payload: SuraI) {
       this.Sura = { ...payload }
     },
-    setIndex(payload: any) {
-      this.Index = { ...payload }
+    setIndex(payload: number) {
+      this.Index = payload
     },
     setLegend(payload: { letter: string, color: string, value: number }) {
       if (!payload.letter) {
         return
       }
-      this.LLegend.map((one) => {
+      this.LLegend = this.LLegend.map((one) => {
         if (one.letter === payload.letter) {
-          one.color = payload.color
+          return { ...one, color: payload.color }
         }
         return one
       })
     },
   },
   getters: {
-    IndexNames: state => state.Book, // .map(v => ({ names: v.name })),
+    IndexNames: state => state.Book.map(v => ({ names: v.name })),
     Legend: state => state.LLegend,
     GetQ: state => state.Book,
     GetS: state => state.style.pixel,
     getContainerStyle: state => state.style.container,
   },
-
 })
 
 if (import.meta.hot) {

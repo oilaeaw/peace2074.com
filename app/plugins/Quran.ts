@@ -2,32 +2,37 @@ import { defineNuxtPlugin, useFetch, useState } from 'nuxt/app'
 
 const StaticName = 'holybook'
 
-export default defineNuxtPlugin(async (nuxtApp: NuxtApp) => {
+export default defineNuxtPlugin(async (nuxtApp) => {
   if (import.meta.client) {
     const q2p = useQ2P()
     q2p.setUpBook()
 
-    const { data } = await useFetch('/api/quran/', {
-      headers: {
-        Accept: 'application/json',
-      },
-      getCachedData(key) {
-        return nuxtApp.payload.data[key] || nuxtApp.static.data[key]
-      },
-    })
-    const oldD = localStorage.getItem(StaticName)
-    if (!oldD && oldD?.length)
-      q2p.setBook(oldD)
+    try {
+      const { data } = await useFetch('/api/quran/', {
+        headers: {
+          Accept: 'application/json',
+        },
+        getCachedData(key) {
+          return nuxtApp.payload?.data?.[key] || nuxtApp.static?.data?.[key]
+        },
+      })
 
-    console.warn('status', status.value)
+      const oldData = localStorage.getItem(StaticName)
+      if (oldData) {
+        q2p.setBook(oldData)
+      }
 
-    if (data && data.value) {
-      const readyData = data.value
+      if (data?.value) {
+        const readyData = data.value
 
-      useState(StaticName, () => readyData)
-      nuxtApp.provide(StaticName, readyData)
-      q2p.setBook(JSON.stringify(readyData))
-      localStorage.setItem(StaticName, readyData)
+        useState(StaticName, () => readyData)
+        nuxtApp.provide(StaticName, readyData)
+        q2p.setBook(JSON.stringify(readyData))
+        localStorage.setItem(StaticName, JSON.stringify(readyData))
+      }
+    }
+    catch (error) {
+      console.error('Error fetching Quran data:', error)
     }
   }
 })
