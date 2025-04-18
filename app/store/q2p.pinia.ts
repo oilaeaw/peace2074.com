@@ -19,7 +19,7 @@ interface State {
   }
 }
 
-const CSNAME = 'quranBook' // Define the localStorage key properly
+const CSNAME = 'holybook' // Define the localStorage key properly
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
