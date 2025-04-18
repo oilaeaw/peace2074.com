@@ -39,7 +39,7 @@ const Quran: ONE_INTERFACE[] = ref($holybook)
 const sura: Ref<ONE_INTERFACE> = computed(() => Quran.value[lok.value - 1])
 const PageTite: Ref<strig> = computed(() => `${appName}-${sura.value.id}:${sura.value.name}`)
 
-const options = Object.values(Quran).map((Single: ONE_INTERFACE) =>
+const options = Object.values(Quran.value).map((Single: ONE_INTERFACE) =>
   ({
     name: `${Single.id}-${Single.name}`,
     value: Single.id,
@@ -92,8 +92,7 @@ onMounted(() => {
             <VueScrollPicker v-model="lok" :options="options" />
             <q-input
               v-model="lok"
-              fab
-              mini
+              mini fab
               type="number"
               :max="114"
               :min="1"
