@@ -20,6 +20,9 @@ importers:
       '@quasar/extras':
         specifier: ^1.16.17
         version: 1.16.17
+      '@quasar/quasar-ui-qmediaplayer':
+        specifier: 2.0.0-beta.6
+        version: 2.0.0-beta.6
       fuse.js:
         specifier: ^7.1.0
         version: 7.1.0
@@ -1476,6 +1479,9 @@ packages:
 
   '@quasar/extras@1.16.17':
     resolution: {integrity: sha512-4aX9XU/oj1+8O2C7LQCgywmoIw7suyUEZMPFFLWI61f21mF55VOsMdLCBhjeFgL5U4EWy079mfOR6/J8thi/ag==}
+
+  '@quasar/quasar-ui-qmediaplayer@2.0.0-beta.6':
+    resolution: {integrity: sha512-j0Y6NCMkup/fjwpOT2kWPG+w3X1yVxmRaSHxQRtWLsWHjiSheaJLWKqZDJ9UarEKL8rtS/CUtadD+ENvcBEHHQ==}
 
   '@rollup/plugin-alias@5.1.1':
     resolution: {integrity: sha512-PR9zDb+rOzkRb2VD+EuKB7UC41vU5DIwZ5qqCpk0KJudcWAyi8rvYOhS7+L5aZCspw1stTViLgN5v6FF1p5cgQ==}
@@ -7579,6 +7585,10 @@ snapshots:
   '@poppinss/exception@1.2.1': {}
 
   '@quasar/extras@1.16.17': {}
+
+  '@quasar/quasar-ui-qmediaplayer@2.0.0-beta.6':
+    dependencies:
+      '@quasar/extras': 1.16.17
 
   '@rollup/plugin-alias@5.1.1(rollup@4.37.0)':
     optionalDependencies:

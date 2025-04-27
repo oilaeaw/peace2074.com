@@ -5,15 +5,16 @@ import moment from 'moment'
 
 const $q = useQuasar()
 const { t } = useI18n()
-
+useQ2P().init()
 const toggleLeftDrawer = ref(false)
+const { savedName } = useUserStore()
 
 const { toggle } = $q.dark
 function toggleDark() {
   toggle()
   return $q.dark.mode
 }
-const isDark = computed(() => $q.dark.mode)
+// const isDark = computed(() => $q.dark.mode)
 
 const date = '__DATE__'
 const timeAgo = useTimeAgo(date)
@@ -33,14 +34,11 @@ function toggleDrawer() {
           <nuxt-link :title="t('general.SiteTitle')" to="/">
             {{ t('general.SiteTitle') }}
           </nuxt-link>
-
           <q-space />
         </q-toolbar-title>
-        <q-btn
-          color="lemon-9"
-          :icon="$q.fullscreen.isActive ? 'fullscreen_exit' : 'fullscreen'"
-          @click="$q.fullscreen.toggle()"
-        />
+        <span>{{ savedName }}</span>
+        <q-space />
+
         <q-btn dense flat round icon="light" @click="toggleDark" />
       </q-toolbar>
     </q-header>
@@ -70,9 +68,9 @@ function toggleDrawer() {
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>
-        <q-tooltip class="q-mx-auto bg-black text-center text-white">
+        <div class="q-mx-auto text-center text-white">
           Built at: {{ BuildTime }} ({{ timeAgo }})
-        </q-tooltip>
+        </div>
         <q-space />
         <q-btn flat round dense icon="apps" class="q-mr-xs" />
         <q-btn flat round dense icon="more_vert" />

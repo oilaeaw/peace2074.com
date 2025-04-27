@@ -1,15 +1,15 @@
 import type { H3Event } from 'h3'
 import type { QDBI } from '../../shared/types'
 
-import hdetails from '../data/chapters/en.json' assert {type: 'json'}
-import hbook from '../data/quran.json' assert { type: 'json' }
+import hdetails from '~~/shared/data/chapters/en.json' assert {type: 'json'}
+import hbook from '~~/shared/data/quran.json' assert { type: 'json' }
 
-interface QSDT {
+export interface QSDT {
   chapter: number
   verse: number
   text: string[]
 }
-interface IDT {
+export interface IDT {
   id: number
   name: string
   transliteration: string

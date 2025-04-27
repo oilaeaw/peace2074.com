@@ -160,7 +160,7 @@ export interface AyaI extends KalimatI, HarfI, aya_interface {
   Kalemat: KalimatI[]
 }
 
-export interface SuraI extends AyaI, HarfI, aya_interface {
+export interface SuraI extends AyaI, KalimatI, HarfI, aya_interface {
   [k: string]: number | string | AyaI[]
   id: number
   name: string

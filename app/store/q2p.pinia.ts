@@ -1,15 +1,17 @@
 import type { QuranI, SuraI } from '~~/shared/types'
 import { defineStore } from 'pinia'
+import hdetails from '~~/shared/data/chapters/en.json'
+import hbook from '~~/shared/data/quran.json'
 
 interface Style {
   display: string
-  backgroundColor: string
+  backgroundColor?: string
   height: number
   width: number
 }
 
 interface State {
-  Book: QuranI[]
+  Book: QuranI
   Sura: SuraI
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
@@ -18,12 +20,24 @@ interface State {
     container: Style
   }
 }
+const ready = []
 
-const CSNAME = 'holybook' // Define the localStorage key properly
+hdetails.forEach((item: IDT) => {
+  const qr: QSDT = hbook[item.id]
+  qr.find((v, index) => v[index] === item.id)
+  ready.push({
+    id: item.id,
+    name: item.name,
+    e_name: item.translation,
+    type: item.type,
+    total_verses: item.total_verses,
+    ayat: qr,
+  })
+}) as QuranI
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
-    Book: [],
+    Book: ready as QuranI,
     Sura: {} as SuraI,
     Index: 1,
     LLegend: [
@@ -81,31 +95,15 @@ export const useQ2P = defineStore('q2p', {
     },
   }),
   actions: {
-    setUpBook() {
-      try {
-        const storedBook = localStorage.getItem(CSNAME)
-        if (storedBook) {
-          this.Book = JSON.parse(storedBook) as QuranI[]
-        }
-      }
-      catch (error) {
-        console.error('Failed to load book from localStorage:', error)
-      }
+    init(): QuranI {
+      this.setIndex(1)
+      this.Sura = this.Book[this.Index]
     },
-    setBook(payload: QuranI[]) {
-      this.Book = payload
-      try {
-        localStorage.setItem(CSNAME, JSON.stringify(payload))
-      }
-      catch (error) {
-        console.error('Failed to save book to localStorage:', error)
-      }
-    },
-    setSura(payload: SuraI) {
-      this.Sura = { ...payload }
+    setSura(payload: SuraI): void {
+      this.Sura = payload
     },
     setIndex(payload: number) {
-      this.Index = payload
+      this.Index = payload || 1
     },
     setLegend(payload: { letter: string, color: string, value: number }) {
       if (!payload.letter) {
@@ -120,9 +118,11 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   getters: {
-    IndexNames: state => state.Book.map(v => ({ names: v.name })),
+    QuranIndex: state => state.Index,
+    FahrasP: state => state.Book.map(v => ({ [v.id]: [v.name] })),
     Legend: state => state.LLegend,
     GetQ: state => state.Book,
+    GetSura: state => state.Book[state.Index - 1],
     GetS: state => state.style.pixel,
     getContainerStyle: state => state.style.container,
   },

@@ -1,33 +1,8 @@
 <script lang="ts" setup>
-const quran = ref(null)
-const names = ref<{ names: string }[]>([])
-const isLoading = ref(true)
-const errorMessage = ref<string | null>(null) // Add error message state
+const q2p = useQ2P()
 
-onMounted(async () => {
-  try {
-    const { data } = await useFetch('/api/quran/', {
-      headers: {
-        Accept: 'application/json',
-      },
-    })
-
-    if (data?.value) {
-      quran.value = data.value
-      names.value = quran.value.map((v: { name: string }) => ({ names: v.name }))
-    }
-    else {
-      throw new Error('No data received from API')
-    }
-  }
-  catch (error) {
-    console.error('Error fetching Quran data:', error)
-    errorMessage.value = 'Failed to load Quran data. Please try again later.'
-  }
-  finally {
-    isLoading.value = false
-  }
-})
+const quran = q2p.GetQ
+const names = q2p.FahrasP
 
 const router = useRouter()
 
@@ -38,23 +13,20 @@ function navToLok(lok: number) {
 </script>
 
 <template>
-  <div v-if="isLoading" class="q-mt-xl q-pt-lg text-center">
-    <q-skeleton type="QInput" class="fit" />
-  </div>
-  <div v-else-if="errorMessage" class="q-mt-xl q-pt-lg text-center">
-    <p>{{ errorMessage }}</p>
-  </div>
-  <ol v-else-if="quran" class="column q-mt-xl q-pt-lg text-center">
-    <nuxt-link
-      v-for="(item, index) in names"
-      :key="item.names"
-      class="q-mx-xs cursor-pointer text-center"
-      @click="navToLok(index)"
-    >
-      {{ index + 1 }}-{{ item.names }}
-    </nuxt-link>
-  </ol>
-  <div v-else class="q-mt-xl q-pt-lg text-center">
-    <p>No data available</p>
+  <div>
+    <ol v-if="quran" class="column q-mt-xl q-pt-lg text-center">
+      <!-- <pre>{{ names }}</pre> -->
+      <nuxt-link
+        v-for="(item, L) in names"
+        :key="item.lok"
+        class="q-mx-xs cursor-pointer text-center"
+        @click="navToLok(L)"
+      >
+        {{ item }}
+      </nuxt-link>
+    </ol>
+    <div v-else class="q-mt-xl q-pt-lg text-center">
+      <p>No data available</p>
+    </div>
   </div>
 </template>

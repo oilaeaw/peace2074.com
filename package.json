@@ -16,6 +16,7 @@
   "dependencies": {
     "@pinia/colada": "^0.14.2",
     "@quasar/extras": "^1.16.17",
+    "@quasar/quasar-ui-qmediaplayer": "2.0.0-beta.6",
     "fuse.js": "^7.1.0",
     "moment": "^2.30.1",
     "nuxt-quasar-ui": "^2.1.12",
