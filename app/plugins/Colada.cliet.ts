@@ -10,10 +10,7 @@ export default defineNuxtPlugin((_nuxtApp) => {
   if (import.meta.client) {
     createPinia().use(PiniaColada)
     // install after pinia
-    const savedData = localStorage.getItem(StaticName)
     const q2p = useQ2P()
-    if (savedData) {
-      q2p.setBook(savedData)
-    }
+    q2p.init()
   }
 })
