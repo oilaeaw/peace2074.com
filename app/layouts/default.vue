@@ -45,10 +45,8 @@ function toggleDrawer() {
 
     <q-drawer
       v-model="toggleLeftDrawer"
-      :min-width="250"
-      :width="300"
-      mini
-      elevated
+      :min-width="300"
+      :width="350"
       side="left"
       bordered
     >
@@ -64,7 +62,7 @@ function toggleDrawer() {
 
     <q-footer reveal class="bg-green-9">
       <q-toolbar class="bg-green-4 text-white">
-        <q-btn flat round dense icon="assignment_ind" />
+        <q-btn flat round dense icon="assignment_ind" class="cursor" to="/authenticate" />
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>
