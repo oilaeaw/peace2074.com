@@ -22,7 +22,7 @@ function navToLok(lok: number) {
         class="q-mx-xs cursor-pointer text-center"
         @click="navToLok(L)"
       >
-        {{ item }}
+        {{ L + 1 }}-{{ item }}
       </nuxt-link>
     </ol>
     <div v-else class="q-mt-xl q-pt-lg text-center">

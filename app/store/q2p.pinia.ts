@@ -119,7 +119,7 @@ export const useQ2P = defineStore('q2p', {
   },
   getters: {
     QuranIndex: state => state.Index,
-    FahrasP: state => state.Book.map(v => ({ [v.id]: [v.name] })),
+    FahrasP: state => state.Book.map(v => (v.name)),
     Legend: state => state.LLegend,
     GetQ: state => state.Book,
     GetSura: state => state.Book[state.Index - 1],
