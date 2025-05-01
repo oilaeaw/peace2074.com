@@ -2,10 +2,10 @@ import { /* fasEarthAmericas, */ fasFlask } from '@quasar/extras/fontawesome-v6'
 import { QSpinnerGears } from 'quasar'
 
 // App Name
-export const appName = 'عبد السلام ٢٠٧٤'
+export const appName = 'Peace2074'
 
 // App Desciption
-export const appDescription = 'الموقع ٢٠٧٤'
+export const appDescription = 'Quran research and study'
 
 // Local Storage Key Name
 export const LSNAME = 'peace_ls:data'

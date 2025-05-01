@@ -1,16 +1,17 @@
 <script lang="ts" setup>
-const imgSrc = ref("/nuxt.svg")
+const imgSrc = ref('/900x900.png')
 </script>
+
 <template>
   <div flex cursor-default text-3xl font-300>
     <div flex class="q-mx-auto q-pa-md">
-      <q-img h-18 w-18 mx-auto class="q-mx-auto" :src="imgSrc" alt="Nuxt 4" />
-      <span mt--2 mx-auto text-green5 class=" text-h4 block q-mx-auto">Nuxt 4</span>
+      <q-img mx-auto h-18 w-18 class="q-mx-auto" :src="imgSrc" :alt="appName" />
     </div>
   </div>
 </template>
+
 <style scoped>
-.mx-auto{
+.mx-auto {
   margin: 0 auto;
 }
 </style>
