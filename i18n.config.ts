@@ -5,7 +5,7 @@ export type LocalesT = Locale[]
 
 export default defineI18nConfig(() => ({
   legacy: false,
-  locale: 'ar',
+  locale: 'en',
   locales: [
     {
       code: 'en',
