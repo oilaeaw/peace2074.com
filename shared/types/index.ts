@@ -11,7 +11,15 @@ export interface User {
   email: string
   password: string
 }
-
+export enum NoteAcionsE {
+  Show = 'show',
+  Hide = 'hide',
+  success = 'success',
+  Info = 'info',
+  warning = 'warning',
+  Errror = 'error',
+  Loading = 'loading',
+}
 export interface Post {
   _id: ObjectId
   user: User

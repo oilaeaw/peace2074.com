@@ -8,14 +8,13 @@ const router = useRouter()
 
 function navToLok(lok: number) {
   const advanced = lok + 1
-  router.replace(`/quran/${advanced}`)
+  router.push(`/quran/${advanced}`)
 }
 </script>
 
 <template>
   <div>
     <ol v-if="quran" class="column q-mt-xl q-pt-lg text-center">
-      <!-- <pre>{{ names }}</pre> -->
       <nuxt-link
         v-for="(item, L) in names"
         :key="item.lok"

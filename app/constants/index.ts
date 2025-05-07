@@ -1,6 +1,7 @@
 import { /* fasEarthAmericas, */ fasFlask } from '@quasar/extras/fontawesome-v6'
 import { QSpinnerGears } from 'quasar'
-
+// isClient!
+export const isClient: bool = (): boolean => computed(() => Boolean(typeof window !== 'undefined' && 'serviceWorker' in navigator))
 // App Name
 export const appName = 'Peace2074'
 
@@ -90,7 +91,7 @@ export const loadingBarDefaults = {
   position: 'top',
 }
 
-export const defaultStyles = {
+export const defaultStyles = ({
   info: {
     icon: 'info',
     color: 'info',
@@ -111,7 +112,7 @@ export const defaultStyles = {
     color: 'negative',
     type: 'negative',
   },
-}
+})
 
 export function c(can: (arg0: string, arg1: string) => void) {
   can('read', 'post')

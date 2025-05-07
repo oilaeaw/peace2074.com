@@ -16,7 +16,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'nuxt-gtag',
   ],
-  ssr: true,
+  ssr: false,
   imports: {
     autoImport: true,
     dirs: [
@@ -30,8 +30,7 @@ export default defineNuxtConfig({
     ],
   },
   devtools: {
-    enabled: false,
-
+    enabled: true,
     timeline: {
       enabled: true,
     },
