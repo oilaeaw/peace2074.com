@@ -15,6 +15,11 @@ function toggleDark() {
   return $q.dark.mode
 }
 // const isDark = computed(() => $q.dark.mode)
+function refresh(done) {
+  setTimeout(() => {
+    done()
+  }, 1000)
+}
 
 const date = '__DATE__'
 const timeAgo = useTimeAgo(date)
@@ -37,6 +42,11 @@ function toggleDrawer() {
           <q-space />
         </q-toolbar-title>
         <span>{{ savedName }}</span>
+        <q-space />
+        <q-pull-to-refresh @refresh="refresh">
+          {{ t('button.reload') }}
+        </q-pull-to-refresh>
+
         <q-space />
 
         <q-btn dense flat round icon="light" @click="toggleDark" />
