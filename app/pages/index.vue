@@ -39,9 +39,9 @@ const online = useOnline()
         {{ locale }}
       </nuxt-link>
       <hr>
-      <q-btn color="primary" icon="home" :label="t('button.home')" to="/home" />
-      <q-btn color="primary" icon="en" label="English" @click="setLocale('en')" />
-      <q-btn color="primary" icon="en" label="Arabic" @click="setLocale('ar')" />
+      <q-btn color="orange" icon="home" :label="t('button.home')" to="/home" />
+      <q-btn color="green" icon="en" label="English" @click="setLocale('en')" />
+      <q-btn color="yellow" icon="en" label="Arabic" @click="setLocale('ar')" />
       <PageView class="q-mt-xl" />
     </div>
     <div v-else text-gray:80>
