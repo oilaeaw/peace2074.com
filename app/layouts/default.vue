@@ -42,10 +42,10 @@ function toggleDrawer() {
           <q-space />
         </q-toolbar-title>
         <span>{{ savedName }}</span>
-        <q-space />
+        <!-- <q-space />
         <q-pull-to-refresh @refresh="refresh">
           {{ t('button.reload') }}
-        </q-pull-to-refresh>
+        </q-pull-to-refresh> -->
 
         <q-space />
 

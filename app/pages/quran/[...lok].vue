@@ -228,7 +228,7 @@ onUnmounted(() => {
                 @scroll="onScroll"
               >
                 <q-card-section>
-                  <div ref="sectionRefEl" class="just fit verse inline capitalize">
+                  <div ref="sectionRefEl" class="verse capitalize">
                     <section
                       v-for="aya in sura.ayat"
                       :id="`${sura.id}_${aya.verse}`"
@@ -237,15 +237,16 @@ onUnmounted(() => {
                       class="contents text-black"
                       :href="`#id_${aya.verse}`"
                     >
-                      <div
+                      <span
                         class="contents"
                         @dblclick.prevent="saveBookmark(`${sura.id}_${aya.verse}`)"
                         @click.prevent="navigateTo(`${sura.id}_${aya.verse}`)"
-                        v-html="highlightWords(aya.text)"
-                      />
-                      <q-chip class="bg-green-5">
-                        {{ aya.verse }}
-                      </q-chip>
+                      >
+                        {{ highlightWords(aya.text) }}
+                        <q-chip class="bg-green-5">
+                          {{ aya.verse }}
+                        </q-chip>
+                      </span>
                     </section>
                   </div>
                 </q-card-section>
