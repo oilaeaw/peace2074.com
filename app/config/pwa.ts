@@ -474,7 +474,7 @@ export const pwa: ModuleOptions = {
   workbox: {
     globPatterns: ['**/*.{js,css,html,txt,png,ico,svg}'],
     navigateFallbackDenylist: [/^\/api\//],
-navigateFallback: '/index.html',
+      navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
     runtimeCaching: [
       {
