@@ -234,7 +234,7 @@ onUnmounted(() => {
                       :id="`${sura.id}_${aya.verse}`"
                       :key="aya.verse"
                       :ref="`#id_${aya.verse}`"
-                      class="contents text-black"
+                      class="contents"
                       :href="`#id_${aya.verse}`"
                     >
                       <span
