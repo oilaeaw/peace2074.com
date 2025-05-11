@@ -1,13 +1,8 @@
 <script setup lang="ts">
 import { definePageMeta, useOnline } from '#imports'
-import { useUserStore } from '~/composables/user'
 
 const { locale, locales, setLocale } = useI18n()
 const switchLocalePath = useSwitchLocalePath()
-
-const availableLocales = computed(() => {
-  return locales.value.filter(i => i.code !== locale.value)
-})
 const { t } = useI18n()
 const { savedName } = useUserStore()
 
@@ -16,15 +11,6 @@ definePageMeta({
   title: 'Main Page',
 })
 const online = useOnline()
-// onMounted(() => {
-//   connect()
-// })
-// function send() {
-//   if (input.value.trim) {
-//     sendMessage(input.value)
-//     input.value = ''
-//   }
-// }
 </script>
 
 <template>
@@ -33,10 +19,10 @@ const online = useOnline()
     <div v-if="online">
       <div class="header">
         <h1 class="islamic-title">
-          {{ t('pages.main.title') }}
+          {{ t('general.SiteTitle') }}
         </h1>
         <p class="islamic-subtitle">
-          {{ t('pages.main.subtitle') }}
+          {{ t('general.Home') }}
         </p>
       </div>
       <div class="links">

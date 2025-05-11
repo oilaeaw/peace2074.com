@@ -2,8 +2,7 @@ import type { ModuleOptions } from '@vite-pwa/nuxt'
 import process from 'node:process'
 import { appDescription, appName } from '../constants/index'
 
-const scope = '/'
-navigateFallback: '/index.html',
+const scope = '/';
 
 export const pwa: ModuleOptions = {
   registerType: 'autoUpdate',

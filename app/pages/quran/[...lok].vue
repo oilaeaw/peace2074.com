@@ -157,16 +157,27 @@ onUnmounted(() => {
 </template>
 
 <style lang="scss" scoped>
+.q-page {
+  min-height: 100vh;
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+}
+
 .islamic-design {
-  background: url('/assets/patterns/islamic-pattern.svg') repeat;
+  background: var(--background-pattern);
   background-size: cover;
-  color: #155724;
+  background-repeat: no-repeat;
+  background-position: center;
+  min-height: 100vh;
+  width: 100%;
+  color: var(--text-color);
 }
 
 .islamic-title {
   font-family: 'Amiri', serif;
   font-size: 2.5rem;
-  color: #155724;
+  color: var(--title-color);
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -174,7 +185,7 @@ onUnmounted(() => {
 .islamic-subtitle {
   font-family: 'Amiri', serif;
   font-size: 1.5rem;
-  color: #6c757d;
+  color: var(--subtitle-color);
   text-align: center;
   margin-bottom: 1rem;
 }
@@ -182,7 +193,7 @@ onUnmounted(() => {
 .islamic-text {
   font-family: 'Amiri', serif;
   font-size: 1.2rem;
-  color: #155724;
+  color: var(--text-color);
   text-align: center;
   margin-bottom: 0.5rem;
 }
@@ -190,16 +201,16 @@ onUnmounted(() => {
 .islamic-section-title {
   font-family: 'Amiri', serif;
   font-size: 1.8rem;
-  color: #155724;
+  color: var(--title-color);
   text-align: center;
   margin-bottom: 1rem;
 }
 
 .islamic-link {
   font-family: 'Amiri', serif;
-  color: #155724;
+  color: var(--link-color);
   text-decoration: none;
-  border: 1px solid #155724;
+  border: 1px solid var(--link-border-color);
   padding: 0.5rem 1rem;
   border-radius: 5px;
   transition: all 0.3s ease;
@@ -208,13 +219,13 @@ onUnmounted(() => {
 }
 
 .islamic-link:hover {
-  background-color: #155724;
-  color: #fff;
+  background-color: var(--link-hover-bg);
+  color: var(--link-hover-color);
 }
 
 .islamic-card {
-  background-color: #f9f9f9;
-  border: 1px solid #155724;
+  background-color: var(--card-bg);
+  border: 1px solid var(--card-border);
   border-radius: 10px;
   padding: 1rem;
 }
@@ -222,10 +233,10 @@ onUnmounted(() => {
 .islamic-verse {
   font-family: 'Amiri', serif;
   font-size: 1.5rem;
-  color: #155724;
+  color: var(--text-color);
   margin-bottom: 1rem;
   padding: 0.5rem;
-  border-bottom: 1px solid #ddd;
+  border-bottom: 1px solid var(--verse-border);
 }
 
 .islamic-ayat {
@@ -237,6 +248,43 @@ onUnmounted(() => {
 .islamic-chip {
   font-family: 'Amiri', serif;
   font-size: 1rem;
-  color: #fff;
+  color: var(--chip-text-color);
+  background-color: var(--chip-bg);
+}
+
+/* Light Mode Variables */
+:root {
+  --background-pattern: url('/assets/patterns/islamic-pattern-light.svg');
+  --text-color: #155724;
+  --title-color: #155724;
+  --subtitle-color: #6c757d;
+  --link-color: #155724;
+  --link-border-color: #155724;
+  --link-hover-bg: #155724;
+  --link-hover-color: #fff;
+  --card-bg: #f9f9f9;
+  --card-border: #155724;
+  --verse-border: #ddd;
+  --chip-text-color: #fff;
+  --chip-bg: #28a745;
+}
+
+/* Dark Mode Variables */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --background-pattern: url('/assets/patterns/islamic-pattern-dark.svg');
+    --text-color: #e0e0e0;
+    --title-color: #e0e0e0;
+    --subtitle-color: #b0b0b0;
+    --link-color: #e0e0e0;
+    --link-border-color: #e0e0e0;
+    --link-hover-bg: #e0e0e0;
+    --link-hover-color: #000;
+    --card-bg: #333;
+    --card-border: #444;
+    --verse-border: #555;
+    --chip-text-color: #000;
+    --chip-bg: #e0e0e0;
+  }
 }
 </style>
