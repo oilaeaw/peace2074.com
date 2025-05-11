@@ -25,6 +25,8 @@ export const MONSNAME = 'peace_ms:data'
 
 export const StaticName = 'holybook'
 
+export const allah = String.fromCharCode(1575, 1604, 1604, 1607)
+
 export const links1 = [
   { icon: 'person', text: 'navigation.Profile', dist: '/auth/profile' },
   { icon: 'star_border', text: 'navigation.Favorites', dist: '/auth/favorites' },

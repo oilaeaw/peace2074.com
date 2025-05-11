@@ -1,6 +1,5 @@
-// import materialIcons from 'quasar/icon-set/svg-material-icons'
-// import materialIconsRound from 'quasar/icon-set/svg-material-icons-round'
-// import '@quasar/quasar-ui-qmediaplayer/dist/index.css'
+import 'quasar/icon-set/svg-material-icons'
+import 'quasar/icon-set/svg-material-icons-round'
 
 export const QuasarOptions = {
   plugins: [

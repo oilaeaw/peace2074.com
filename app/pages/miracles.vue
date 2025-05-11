@@ -19,11 +19,18 @@ const CountOfAyat = quran.map((one: ONE_INTERFACE) => ({
 <template>
   <ClientOnly>
     <Suspense>
-      <q-page v-if="!!quran" padding class="fit flex bg-white">
-        <h1>{{ t('pages.miracles.pageTitle') }}</h1>
+      <q-page v-if="!!quran" padding class="fit flex text-center">
+        <h1 class="text-h3 q-mx-auto">
+          {{ t('pages.miracles.pageTitle') }}
+        </h1>
         <q-cart>
           <q-card-section>
-            <pre>{{ CountOfAyat }}</pre>
+            <!-- <pre>{{ CountOfAyat }}</pre> -->
+          </q-card-section>
+          <q-card-section>
+            <h3 class="text-h1 q-mx-auto block">
+              {{ allah }}
+            </h3>
           </q-card-section>
         </q-cart>
       </q-page>
