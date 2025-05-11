@@ -9,15 +9,15 @@
     color: white!important;
 }
 .text-dark{
-    color: black!important;
+    color: var(--q-dark)!important;
 }
 body.body--light{
-    color: black;
+    color: var(--q-dark);
     background-color: white;
 }
 body.body--dark{
     color: white;
-    background-color: black;
+    background-color: var(--q-dark);
 }
 .vue-scroll-picker-layer-top{
     background-color: green !important;
