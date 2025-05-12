@@ -17,14 +17,6 @@ const online = useOnline()
   <q-page padding class="index-page islamic-design">
     <Logos mb-1 />
     <div v-if="online">
-      <div class="header">
-        <h1 class="islamic-title">
-          {{ t('general.SiteTitle') }}
-        </h1>
-        <p class="islamic-subtitle">
-          {{ t('general.Home') }}
-        </p>
-      </div>
       <div class="links">
         <NuxtLink
           class="text-h5 q-mt-xl islamic-link block"
