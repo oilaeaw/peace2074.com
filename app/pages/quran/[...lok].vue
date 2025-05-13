@@ -1,25 +1,22 @@
 <script lang="ts" setup>
-import { useHead, useI18n } from '#imports'
-import { useQuasar } from 'quasar'
-import { computed, ref, watchEffect } from 'vue'
-
 const $q = useQuasar()
 const q2p = useQ2P()
+const bookStore = useBookmarksStore()
 const { t } = useI18n()
 const appName = computed(() => t('general.SiteTitle'))
 const route = useRoute()
-const router = useRouter({
-  scrollBehavior(to, from) {
-    if (from !== to && to.hash)
-      return { el: to.hash }
-  },
-})
+// const router = useRouter({
+//   scrollBehavior(to, from) {
+//     if (from !== to && to.hash)
+//       return { el: to.hash }
+//   },
+// })
 const currentPath = ref(route.hash)
 const lok = ref(Number(route.params.lok) || 1)
 q2p.setIndex(lok.value)
 const Quran = computed(() => q2p.GetQ)
 const sura = computed(() => q2p.GetSura)
-const bookmarks = ref([])
+const bookmarks = computed(() => bookStore.bookmarks)
 const PageTite = computed(() => `${appName.value} - ${sura.value.id}:${sura.value.name}`)
 
 function navigateToHash(hash: string) {
@@ -34,14 +31,6 @@ function navigateToHash(hash: string) {
     else {
       console.warn(`Element with hash ${validHash} not found.`)
     }
-  }
-}
-
-function saveBookmark(bm: string) {
-  if (bm) {
-    bookmarks.value.push(bm)
-    updateCurrentPath()
-    $q.notify({ message: 'saved!', type: 'positive' })
   }
 }
 
@@ -70,6 +59,7 @@ onMounted(() => {
       console.error('Holybook data is not loaded. Please check the data source.')
     }
   }
+  bookStore.fetchBookmarks()
 })
 
 onUnmounted(() => {
@@ -77,6 +67,19 @@ onUnmounted(() => {
     window.removeEventListener('hashchange', updateCurrentPath)
   }
 })
+
+function saveBookmark(bm: string) {
+  if (bm && !bookmarks.value.includes(bm)) {
+    bookStore.saveBookmark(bm)
+    updateCurrentPath()
+    $q.notify({ message: 'Bookmark saved!', type: 'positive' })
+  }
+}
+
+function deleteBookmark(bm: string) {
+  bookStore.deleteBookmark(bm)
+  $q.notify({ message: 'Bookmark removed!', type: 'negative' })
+}
 </script>
 
 <template>
@@ -105,13 +108,10 @@ onUnmounted(() => {
                 {{ t("pages.quran.sura.bookmark") }}
               </h3>
               <div class="bookmarks">
-                <a
-                  v-for="b in bookmarks"
-                  :key="b"
-                  :href="b"
-                  class="islamic-link"
-                  @click="navigateToHash(b)"
-                >{{ b }}</a>
+                <div v-for="b in bookmarks" :key="b" class="bookmark-item">
+                  <a :href="b" class="islamic-link" @click.prevent="navigateToHash(b)">{{ b }}</a>
+                  <q-btn flat dense icon="delete" color="negative" @click="deleteBookmark(b)" />
+                </div>
               </div>
             </q-card-section>
 
@@ -129,7 +129,7 @@ onUnmounted(() => {
                 @scroll="onScroll"
               >
                 <q-card-section>
-                  <div ref="sectionRefEl" class="verse capitalize">
+                  <div class="verse capitalize">
                     <section
                       v-for="aya in sura.ayat"
                       :id="`${sura.id}_${aya.verse}`"

@@ -380,3 +380,11 @@ export interface PushSubscriptionI {
 }
 
 export type SubscriptionT = PushSubscriptionI
+
+export interface BookmarkI {
+  _id: string
+  userId: string
+  bookmark: string
+  createdAt: string
+  updatedAt: string,
+}

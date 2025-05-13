@@ -15,6 +15,8 @@ export default defineNuxtConfig({
     'nuxt-quasar-ui',
     '@nuxtjs/i18n',
     'nuxt-gtag',
+    'nuxt-mongoose',
+
   ],
   ssr: false,
   imports: {
@@ -139,6 +141,12 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     vueI18nLoader: true,
     vueI18n: '../i18n.config',
+  },
+  mongoose: {
+    uri: import.meta.env.MONGODB_URI,
+    options: {},
+    modelsDir: 'models',
+    devtools: true,
   },
   optimizeDeps: {
     include: [],
