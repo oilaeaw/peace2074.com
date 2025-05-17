@@ -1,5 +1,4 @@
 <script lang="ts" setup>
-import { ref, useQuasar } from '#imports'
 import { useTimeAgo } from '@vueuse/core'
 import moment from 'moment'
 
@@ -7,6 +6,7 @@ const $q = useQuasar()
 const { t } = useI18n()
 useQ2P().init()
 const toggleLeftDrawer = ref(false)
+const toggleRightDrawer = ref(false)
 const { savedName } = useUserStore()
 
 const { toggle } = $q.dark
@@ -14,13 +14,6 @@ function toggleDark() {
   toggle()
   return $q.dark.mode
 }
-// const isDark = computed(() => $q.dark.mode)
-function refresh(done) {
-  setTimeout(() => {
-    done()
-  }, 1000)
-}
-
 const date = '__DATE__'
 const timeAgo = useTimeAgo(date)
 const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
@@ -42,25 +35,48 @@ function toggleDrawer() {
           <q-space />
         </q-toolbar-title>
         <span>{{ savedName }}</span>
-        <!-- <q-space />
-        <q-pull-to-refresh @refresh="refresh">
-          {{ t('button.reload') }}
-        </q-pull-to-refresh> -->
-
         <q-space />
-
-        <q-btn dense flat round icon="light" @click="toggleDark" />
+        <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
+        <q-btn dense flat round icon="menu" class="bg-green-9 text-white" @click="toggleRightDrawer" />
       </q-toolbar>
     </q-header>
 
     <q-drawer
       v-model="toggleLeftDrawer"
-      :min-width="300"
-      :width="350"
+      :min-width="250"
+      :width="300"
       side="left"
       bordered
     >
       <fahras />
+    </q-drawer>
+
+    <q-drawer
+      v-model="toggleRightDrawer"
+      side="right"
+      :min-width="250"
+      :width="300" bordered
+    >
+      <q-list bordered class="q-pa-lg">
+        <q-item v-ripple clickable to="/terms">
+          <q-item-section>
+            <q-icon name="gavel" class="q-mr-sm" />
+            <span>{{ t('terms_and_conditions') }}</span>
+          </q-item-section>
+        </q-item>
+        <q-item v-ripple clickable to="/privacy">
+          <q-item-section>
+            <q-icon name="privacy_tip" class="q-mr-sm" />
+            <span>{{ t('privacy_policy') }}</span>
+          </q-item-section>
+        </q-item>
+        <q-item v-ripple clickable to="/authenticate">
+          <q-item-section>
+            <q-icon name="person" class="q-mr-sm" />
+            <span>{{ t('auth') }}</span>
+          </q-item-section>
+        </q-item>
+      </q-list>
     </q-drawer>
 
     <q-page-container>

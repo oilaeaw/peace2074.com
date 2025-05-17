@@ -16,7 +16,6 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'nuxt-gtag',
     'nuxt-mongoose',
-
   ],
   ssr: false,
   imports: {
@@ -36,9 +35,6 @@ export default defineNuxtConfig({
     timeline: {
       enabled: true,
     },
-  },
-  devtools: {
-    enabled: true,
   },
   app: {
     head: {
@@ -68,6 +64,9 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+  build: {
+    transpile: ['feathers-vuex'],
+  },
   routeRules: {
     '/api/quran': {
       cache: {
@@ -95,7 +94,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-05',
   nitro: {
     rollupConfig: {
-      external: ['resolve', '@quasar/extras', 'fuse.js'],
+      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex'],
     },
     esbuild: {
       options: {

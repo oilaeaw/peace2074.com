@@ -12,12 +12,17 @@ useHead(() => ({
 useHead({
   title: appName,
 })
+
+const drawer = ref(false)
 </script>
 
 <template>
   <VitePwaManifest />
   <NuxtLayout>
+    <q-btn icon="menu" class="z-top fixed right-2 top-2" color="primary" round size="md" @click="drawer = true" />
+    <InfoDrawer v-model:drawer="drawer" />
     <NuxtPage />
+    <CookieConsent />
   </NuxtLayout>
 </template>
 

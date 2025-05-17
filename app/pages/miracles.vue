@@ -5,15 +5,15 @@ const q2p = useQ2P()
 
 const quran: ONE_INTERFACE[] = q2p.GetQ
 const { t } = useI18n()
-const CountOfAyat = quran.map((one: ONE_INTERFACE) => ({
-  // id: one,
-  // ayat: one.ayat.map(() => (
-  //   {
-  //     // [`${one.id}:${t.verse}`]: t.text.split(' ').map((a, i) => ({ word: `${i + 1}-${a}` })),
+// const CountOfAyat = quran.map((one: ONE_INTERFACE) => ({
+// id: one,
+// ayat: one.ayat.map(() => (
+//   {
+//     // [`${one.id}:${t.verse}`]: t.text.split(' ').map((a, i) => ({ word: `${i + 1}-${a}` })),
 
-  //   }),
-  // ),
-}))
+//   }),
+// ),
+// }))
 </script>
 
 <template>

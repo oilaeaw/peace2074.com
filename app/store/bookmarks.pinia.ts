@@ -1,5 +1,6 @@
 import { defineStore } from 'pinia'
-import { deleteBookmark, fetchDataBookmarks, saveBookmark } from './services'
+
+const { $hapi } = useNuxtApp()
 
 export const useBookmarksStore = defineStore('bookStore', {
   state: () => ({
@@ -7,20 +8,29 @@ export const useBookmarksStore = defineStore('bookStore', {
   }),
   actions: {
     async init() {
-      this.bookmarks = await fetchBookmarks()
+      const res = await $hapi.service('bookmarks').find()
+      this.bookmarks = Array.isArray(res) ? res : res.data
     },
     async fetchBookmarks() {
-      this.bookmarks = await fetchDataBookmarks()
+      const res = await $hapi.service('bookmarks').find()
+      this.bookmarks = Array.isArray(res) ? res : res.data
     },
-    async saveBookmark(bm: string) {
+    async createBookmark(bm: string) {
       if (bm && !this.bookmarks.includes(bm)) {
-        await saveBookmark(bm)
-        this.bookmarks.push(bm)
+        const created = await $hapi.service('bookmarks').create({ bookmark: bm })
+        this.bookmarks.push(created.bookmark || bm)
       }
     },
-    async deleteBookmark(bm: string) {
-      await deleteBookmark(bm)
-      this.bookmarks = this.bookmarks.filter(b => b !== bm)
+    async updateBookmark(id: string, newBm: string) {
+      // id should be the bookmark's unique identifier
+      const updated = await $hapi.service('bookmarks').patch(id, { bookmark: newBm })
+      const idx = this.bookmarks.findIndex(b => b === id || b === updated.bookmark)
+      if (idx !== -1)
+        this.bookmarks[idx] = updated.bookmark || newBm
+    },
+    async deleteBookmark(id: string) {
+      await $hapi.service('bookmarks').remove(id)
+      this.bookmarks = this.bookmarks.filter(b => b !== id)
     },
   },
   getters: {
