@@ -69,8 +69,8 @@ onUnmounted(() => {
 })
 
 function saveBookmark(bm: string) {
-  if (bm && !bookmarks.value.includes(bm)) {
-    bookStore.saveBookmark(bm)
+  if (bm) {
+    useBookmarksStore().createBookmark(bm)
     updateCurrentPath()
     $q.notify({ message: 'Bookmark saved!', type: 'positive' })
   }
@@ -135,7 +135,7 @@ function deleteBookmark(bm: string) {
                       :id="`${sura.id}_${aya.verse}`"
                       :key="aya.verse"
                       class="islamic-verse"
-                      @dblclick.prevent="saveBookmark(`${sura.id}_${aya.verse}`)"
+                      @dblclick="saveBookmark(`${sura.id}_${aya.verse}`)"
                       @click.prevent="navigateToHash(`${sura.id}_${aya.verse}`)"
                     >
                       <span class="islamic-ayat">

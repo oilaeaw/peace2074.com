@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
-
-const { $hapi } = useNuxtApp()
+import { createBookmark as createBookmarkService, deleteBookmark as deleteBookmarkService, getBookmarks, updateBookmark as updateBookmarkService } from './services/index'
 
 export const useBookmarksStore = defineStore('bookStore', {
   state: () => ({
@@ -8,28 +7,27 @@ export const useBookmarksStore = defineStore('bookStore', {
   }),
   actions: {
     async init() {
-      const res = await $hapi.service('bookmarks').find()
-      this.bookmarks = Array.isArray(res) ? res : res.data
+      const res = await getBookmarks()
+      this.bookmarks = Array.isArray(res) ? res : res?.value || []
     },
     async fetchBookmarks() {
-      const res = await $hapi.service('bookmarks').find()
-      this.bookmarks = Array.isArray(res) ? res : res.data
+      const res = await getBookmarks()
+      this.bookmarks = Array.isArray(res) ? res : res?.value || []
     },
     async createBookmark(bm: string) {
       if (bm && !this.bookmarks.includes(bm)) {
-        const created = await $hapi.service('bookmarks').create({ bookmark: bm })
-        this.bookmarks.push(created.bookmark || bm)
+        const created = await createBookmarkService(bm)
+        this.bookmarks.push(created?.bookmark || bm)
       }
     },
     async updateBookmark(id: string, newBm: string) {
-      // id should be the bookmark's unique identifier
-      const updated = await $hapi.service('bookmarks').patch(id, { bookmark: newBm })
-      const idx = this.bookmarks.findIndex(b => b === id || b === updated.bookmark)
+      const updated = await updateBookmarkService(id, newBm)
+      const idx = this.bookmarks.findIndex(b => b === id || b === updated?.bookmark)
       if (idx !== -1)
-        this.bookmarks[idx] = updated.bookmark || newBm
+        this.bookmarks[idx] = updated?.bookmark || newBm
     },
     async deleteBookmark(id: string) {
-      await $hapi.service('bookmarks').remove(id)
+      await deleteBookmarkService(id)
       this.bookmarks = this.bookmarks.filter(b => b !== id)
     },
   },

@@ -47,5 +47,8 @@
   },
   "search.useGlobalIgnoreFiles": true,
   "search.useParentIgnoreFiles": true,
-  "nuxt.isNuxtApp": false
+  "nuxt.isNuxtApp": false,
+  "i18n-ally.localesPaths": [
+    "app/locale"
+  ]
 }

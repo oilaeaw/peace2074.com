@@ -103,7 +103,7 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
-      routes: ['', 'quran', 'holynames', 'miracles', 'home'],
+      routes: ['', 'quran', 'holynames', 'miracles', 'home', 'terms', 'privacy'],
     },
     imports: {
       autoImport: true,
