@@ -109,7 +109,7 @@ function deleteBookmark(bm: string) {
               </h3>
               <div class="bookmarks">
                 <div v-for="b in bookmarks" :key="b" class="bookmark-item">
-                  <a :href="b" class="islamic-link" @click.prevent="navigateToHash(b)">{{ b }}</a>
+                  <a :href="b" class="islamic-link" @click="navigateToHash(b)">{{ b }}</a>
                   <q-btn flat dense icon="delete" color="negative" @click="deleteBookmark(b)" />
                 </div>
               </div>

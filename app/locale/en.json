@@ -156,5 +156,18 @@
   "limitation_of_liability": "Limitation of Liability",
   "limitation_of_liability_text": "We are not liable for any damages arising from your use of the site.",
   "changes_to_terms": "Changes to Terms",
-  "changes_to_terms_text": "We may update these terms at any time. Continued use of the site means you accept the new terms."
+  "changes_to_terms_text": "We may update these terms at any time. Continued use of the site means you accept the new terms.",
+  "auth": "Authentication",
+  "login": "Login",
+  "signup": "Sign Up",
+  "user": "User",
+  "password": "Password",
+  "sign_in_with_google": "Sign in with Google",
+  "sign_up": "Sign Up",
+  "signup_success": "Account created! Please log in.",
+  "login_success": "Logged in successfully",
+  "please_accept_terms": "Please accept the terms and conditions.",
+  "email": "Email",
+  "submit": "send",
+  "reset": "Reset"
 }

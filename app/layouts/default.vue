@@ -21,13 +21,16 @@ const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value
 }
+function toggleRight() {
+  toggleRightDrawer.value = !toggleRightDrawer.value
+}
 </script>
 
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-green-9 text-white" height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" @click="toggleDrawer" />
+        <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleDrawer" />
         <q-toolbar-title>
           <nuxt-link :title="t('general.SiteTitle')" to="/">
             {{ t('general.SiteTitle') }}
@@ -37,7 +40,8 @@ function toggleDrawer() {
         <span>{{ savedName }}</span>
         <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
-        <q-btn dense flat round icon="menu" class="bg-green-9 text-white" @click="toggleRightDrawer" />
+
+        <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleRight" />
       </q-toolbar>
     </q-header>
 
@@ -47,17 +51,22 @@ function toggleDrawer() {
       :width="300"
       side="left"
       bordered
+      class="bg-green-9 text-white"
     >
-      <fahras />
+      <q-list bordered class="q-pa-lg bg-green-9 text-white">
+        <fahras />
+      </q-list>
     </q-drawer>
 
     <q-drawer
       v-model="toggleRightDrawer"
       side="right"
-      :min-width="250"
-      :width="300" bordered
+      :width="300"
+      bordered
+      :overlay="true"
+      class="bg-green-9 text-white"
     >
-      <q-list bordered class="q-pa-lg">
+      <q-list bordered class="q-pa-lg bg-green-9 text-white">
         <q-item v-ripple clickable to="/terms">
           <q-item-section>
             <q-icon name="gavel" class="q-mr-sm" />

@@ -1,7 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
 
-const { $hapi } = useNuxtApp()
 const $q = useQuasar()
 const userName = ref('hello@feathersjs.com')
 const password = ref('supersecret')
@@ -10,24 +9,34 @@ const tab = ref('login')
 const signupEmail = ref('')
 const signupPassword = ref('')
 const acceptTerms = ref(false)
+const loading = ref(false)
 
 const { t } = useI18n()
 
 async function onSubmit() {
+  loading.value = true
   try {
-    // Authenticate with the local email/password strategy
-    const user = await $hapi.authenticate({
-      strategy: 'local',
-      email: userName.value,
-      password: password.value,
+    const res = await fetch('/api/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: userName.value,
+        password: password.value,
+      }),
+      credentials: 'include',
     })
+    if (!res.ok)
+      throw new Error('Login failed')
+    const user = await res.json()
     userStore.setUser(user)
-    $q.notify({ message: 'Logged in successfully', type: 'positive' })
+    $q.notify({ message: t('login_success'), type: 'positive' })
   }
   catch (error: any) {
     $q.notify({ message: error.message, type: 'negative' })
-    // Handle authentication error
     console.error('Authentication error', error)
+  }
+  finally {
+    loading.value = false
   }
 }
 
@@ -41,12 +50,19 @@ async function onSignup() {
     $q.notify({ message: t('please_accept_terms'), type: 'negative' })
     return
   }
+  loading.value = true
   try {
-    await $hapi.service('users').create({
-      email: signupEmail.value,
-      password: signupPassword.value,
+    const res = await fetch('/api/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: signupEmail.value,
+        password: signupPassword.value,
+      }),
     })
-    $q.notify({ message: 'Account created! Please log in.', type: 'positive' })
+    if (!res.ok)
+      throw new Error('Signup failed')
+    $q.notify({ message: t('signup_success'), type: 'positive' })
     tab.value = 'login'
     signupEmail.value = ''
     signupPassword.value = ''
@@ -55,6 +71,9 @@ async function onSignup() {
   catch (error: any) {
     $q.notify({ message: error.message, type: 'negative' })
     console.error('Signup error', error)
+  }
+  finally {
+    loading.value = false
   }
 }
 
@@ -79,18 +98,27 @@ watch(tab, (val) => {
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="login">
             <q-form class="q-gutter-md" @submit="onSubmit" @reset="onReset">
-              <q-input v-model="userName" type="text" label="user" />
-              <q-input v-model="password" type="password" label="password" />
+              <q-input v-model="userName" type="text" :label="t('user')" />
+              <q-input v-model="password" type="password" :label="t('password')" />
               <div>
-                <q-btn label="Submit" type="submit" color="primary" />
-                <q-btn label="Reset" type="reset" color="primary" flat class="q-ml-sm" />
+                <q-btn :loading="loading" :label="t('submit')" type="submit" color="primary" />
+                <q-btn :label="t('reset')" type="reset" color="primary" flat class="q-ml-sm" />
+              </div>
+              <div class="q-mt-md">
+                <q-btn
+                  outline
+                  color="red"
+                  icon="fab fa-google"
+                  :label="t('sign_in_with_google')"
+                  @click="onGoogleLogin"
+                />
               </div>
             </q-form>
           </q-tab-panel>
           <q-tab-panel name="signup">
             <q-form class="q-gutter-md" @submit.prevent="onSignup">
-              <q-input v-model="signupEmail" type="text" label="Email" />
-              <q-input v-model="signupPassword" type="password" label="Password" />
+              <q-input v-model="signupEmail" type="text" :label="t('email')" />
+              <q-input v-model="signupPassword" type="password" :label="t('password')" />
               <q-checkbox v-model="acceptTerms" :label="t('accept_terms_and_conditions')">
                 <template #default>
                   <span>
@@ -102,7 +130,7 @@ watch(tab, (val) => {
                 </template>
               </q-checkbox>
               <div>
-                <q-btn :disable="!acceptTerms" label="Sign Up" type="submit" color="primary" />
+                <q-btn :loading="loading" :disable="!acceptTerms" :label="t('sign_up')" type="submit" color="primary" />
               </div>
             </q-form>
           </q-tab-panel>

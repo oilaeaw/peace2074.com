@@ -94,7 +94,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-05',
   nitro: {
     rollupConfig: {
-      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex'],
+      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'passport'],
     },
     esbuild: {
       options: {
@@ -103,7 +103,7 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
-      routes: ['', 'quran', 'holynames', 'miracles', 'home', 'terms', 'privacy'],
+      routes: ['', 'quran', 'holynames', 'miracles', 'home', 'terms', 'privacy', 'authenticate'],
     },
     imports: {
       autoImport: true,

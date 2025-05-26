@@ -1,7 +1,6 @@
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 export const useUserStore = defineStore('user', () => {
-  const { $hapi } = useNuxtApp()
   const $q = useQuasar()
 
   const user = ref(null)
@@ -46,12 +45,17 @@ export const useUserStore = defineStore('user', () => {
     }
   }
 
+  function setUser(u: any) {
+    user.value = u
+  }
+
   return {
     user,
     isAuthenticated,
     login,
     logout,
     checkAuth,
+    setUser,
   }
 })
 
