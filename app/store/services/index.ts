@@ -27,10 +27,10 @@ export async function getBookmarks() {
   return data
 }
 
-export async function createBookmark(bookmark: string) {
+export async function createBookmark({ bookmark, userId }: { bookmark: string, userId: string }) {
   const { data, error, clear } = useFetch('/api/bookmarks', {
     method: 'POST',
-    body: { bookmark },
+    body: { bookmark, userId },
   })
   if (error) {
     console.warn(error)

@@ -26,5 +26,15 @@ export default defineEventHandler(async (event) => {
 
   // Issue JWT
   const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' })
-  return { token, user: { id: user._id, email: user.email } }
+  return {
+    token,
+    user: {
+      id: user._id,
+      email: user.email,
+      first_name: user.first_name,
+      last_name: user.last_name,
+      name: user.name,
+      role: user.role,
+    },
+  }
 })

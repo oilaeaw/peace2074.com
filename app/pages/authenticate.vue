@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 
 const $q = useQuasar()
 const userName = ref('hello@feathersjs.com')
@@ -8,8 +9,11 @@ const userStore = useUserStore()
 const tab = ref('login')
 const signupEmail = ref('')
 const signupPassword = ref('')
+const signupFirstName = ref('')
+const signupLastName = ref('')
 const acceptTerms = ref(false)
 const loading = ref(false)
+const router = useRouter()
 
 const { t } = useI18n()
 
@@ -30,6 +34,7 @@ async function onSubmit() {
     const user = await res.json()
     userStore.setUser(user)
     $q.notify({ message: t('login_success'), type: 'positive' })
+    router.push('/') // Redirect to main page after login
   }
   catch (error: any) {
     $q.notify({ message: error.message, type: 'negative' })
@@ -58,6 +63,8 @@ async function onSignup() {
       body: JSON.stringify({
         email: signupEmail.value,
         password: signupPassword.value,
+        first_name: signupFirstName.value,
+        last_name: signupLastName.value,
       }),
     })
     if (!res.ok)
@@ -66,6 +73,8 @@ async function onSignup() {
     tab.value = 'login'
     signupEmail.value = ''
     signupPassword.value = ''
+    signupFirstName.value = ''
+    signupLastName.value = ''
     acceptTerms.value = false
   }
   catch (error: any) {
@@ -119,6 +128,8 @@ watch(tab, (val) => {
             <q-form class="q-gutter-md" @submit.prevent="onSignup">
               <q-input v-model="signupEmail" type="text" :label="t('email')" />
               <q-input v-model="signupPassword" type="password" :label="t('password')" />
+              <q-input v-model="signupFirstName" type="text" :label="t('first_name')" />
+              <q-input v-model="signupLastName" type="text" :label="t('last_name')" />
               <q-checkbox v-model="acceptTerms" :label="t('accept_terms_and_conditions')">
                 <template #default>
                   <span>

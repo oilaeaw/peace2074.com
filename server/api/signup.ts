@@ -4,7 +4,7 @@ import User from '../models/user'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const { email, password } = body
+  const { email, password, first_name, last_name } = body
 
   if (!email || !password) {
     return sendError(event, createError({ statusCode: 400, statusMessage: 'Email and password are required.' }))
@@ -20,10 +20,10 @@ export default defineEventHandler(async (event) => {
   const hashedPassword = await bcrypt.hash(password, 10)
 
   // Save the user
-  const user = await User.create({ email, password: hashedPassword })
+  const user = await User.create({ email, password: hashedPassword, first_name, last_name, role: 'user' })
   if (!user) {
     return sendError(event, createError({ statusCode: 500, statusMessage: 'User creation failed.' }))
   }
 
-  return { message: 'Signup successful!', user: { email: user.email, id: user._id } }
+  return { message: 'Signup successful!', user: { email: user.email, id: user._id, first_name: user.first_name, last_name: user.last_name, role: user.role } }
 })

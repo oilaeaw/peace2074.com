@@ -49,6 +49,16 @@ export const useUserStore = defineStore('user', () => {
     user.value = u
   }
 
+  const savedName = computed(() => {
+    if (!user.value)
+      return ''
+    // Prefer full name if available, then email, then id
+    if (user.value.first_name || user.value.last_name) {
+      return `${user.value.first_name || ''} ${user.value.last_name || ''}`.trim()
+    }
+    return user.value.name || user.value.email || user.value.id || user.value._id || ''
+  })
+
   return {
     user,
     isAuthenticated,
@@ -56,6 +66,7 @@ export const useUserStore = defineStore('user', () => {
     logout,
     checkAuth,
     setUser,
+    savedName,
   }
 })
 

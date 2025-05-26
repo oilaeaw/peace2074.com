@@ -7,7 +7,8 @@ const { t } = useI18n()
 useQ2P().init()
 const toggleLeftDrawer = ref(false)
 const toggleRightDrawer = ref(false)
-const { savedName } = useUserStore()
+const userStore = useUserStore()
+const { user, isAuthenticated } = userStore
 
 const { toggle } = $q.dark
 function toggleDark() {
@@ -37,7 +38,8 @@ function toggleRight() {
           </nuxt-link>
           <q-space />
         </q-toolbar-title>
-        <span>{{ savedName }}</span>
+        <span v-if="isAuthenticated" class="q-mr-md">{{ user.user.first_name }}</span>
+        <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="userStore.logout()" />
         <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
 
