@@ -76,10 +76,38 @@ async function onSignup() {
     signupFirstName.value = ''
     signupLastName.value = ''
     acceptTerms.value = false
+    // update user store if needed
   }
   catch (error: any) {
     $q.notify({ message: error.message, type: 'negative' })
     console.error('Signup error', error)
+  }
+  finally {
+    loading.value = false
+  }
+}
+
+async function onWebAuthnLogin() {
+  loading.value = true
+  try {
+    // You may want to prompt for email if not filled
+    const email = userName.value || ''
+    if (!email) {
+      $q.notify({ message: t('please_enter_email'), type: 'negative' })
+      loading.value = false
+      return
+    }
+    // Call the Pinia store's webauthnRegister (for demo, use as login)
+    const result = await userStore.webauthnRegister({
+      userId: email, // In real use, use a unique user ID (e.g. from DB)
+      email,
+      displayName: email,
+    })
+    $q.notify({ message: t('login_success'), type: 'positive' })
+    router.push('/')
+  }
+  catch (error) {
+    $q.notify({ message: error.message, type: 'negative' })
   }
   finally {
     loading.value = false
@@ -106,7 +134,15 @@ watch(tab, (val) => {
         <q-separator />
         <q-tab-panels v-model="tab" animated>
           <q-tab-panel name="login">
-            <q-form class="q-gutter-md" @submit="onSubmit" @reset="onReset">
+            <div v-if="userStore.isAuthenticated">
+              <q-banner class="q-mb-md" dense>
+                {{ t('already_logged_in') }}
+                <q-btn color="primary" flat @click="() => { userStore.logout(); $q.notify({ message: t('logout_success'), type: 'positive' }); }">
+                  {{ t('logout') }}
+                </q-btn>
+              </q-banner>
+            </div>
+            <q-form v-else class="q-gutter-md" @submit="onSubmit" @reset="onReset">
               <q-input v-model="userName" type="text" :label="t('user')" />
               <q-input v-model="password" type="password" :label="t('password')" />
               <div>
@@ -115,11 +151,9 @@ watch(tab, (val) => {
               </div>
               <div class="q-mt-md">
                 <q-btn
-                  outline
-                  color="red"
-                  icon="fab fa-google"
-                  :label="t('sign_in_with_google')"
-                  @click="onGoogleLogin"
+                  color="secondary"
+                  :label="t('sign_in_with_security_key')"
+                  @click="onWebAuthnLogin"
                 />
               </div>
             </q-form>
