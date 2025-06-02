@@ -1,6 +1,5 @@
 import { defineStore } from 'pinia'
 import { createBookmark as createBookmarkService, deleteBookmark as deleteBookmarkService, getBookmarks, updateBookmark as updateBookmarkService } from './services/index'
-import { useUserStore } from './user.pinia'
 
 export const useBookmarksStore = defineStore('bookStore', {
   state: () => ({
@@ -17,8 +16,8 @@ export const useBookmarksStore = defineStore('bookStore', {
     },
     async createBookmark(bm: string) {
       if (bm && !this.bookmarks.includes(bm)) {
-        const userStore = useUserStore()
-        const userId = userStore.user?.id || userStore.user?._id
+        const auth = authStore()
+        const userId = auth.user?.id || auth.user?._id
         if (!userId) {
           console.warn('No user ID found, cannot save bookmark to DB.')
           this.bookmarks.push(bm)

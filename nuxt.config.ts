@@ -1,3 +1,5 @@
+import process from 'node:process'
+import { fileURLToPath, URL } from 'node:url'
 import replace from '@rollup/plugin-replace'
 // https://nuxt.com/docs/api/configuration/nuxt-config
 import { pwa } from './app/config/pwa'
@@ -64,6 +66,17 @@ export default defineNuxtConfig({
   colorMode: {
     classSuffix: '',
   },
+  runtimeConfig: {
+    email_public_key: import.meta.env.NUXT_EMAIL_PUBLIC_KEY,
+    email_private_key: import.meta.env.NUXT_EMAIL_PRIVATE_KEY,
+    email_template: import.meta.env.NUXT_EMAIL_TEMPLATE,
+    mailjs_api_url: import.meta.env.NUXT_MAILJS_API_URL || 'https://api.emailjs.com/api/v1.0/email/send',
+    session_password: import.meta.env.SESSION_PASSWORD || 'default_session_password',
+  },
+  alias: {
+    'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
+    '@server': fileURLToPath(new URL('./server', import.meta.url)),
+  },
   build: {
     transpile: ['feathers-vuex'],
   },
@@ -94,7 +107,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-05',
   nitro: {
     rollupConfig: {
-      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'passport'],
+      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'passport', 'h3-session', 'iron-session', 'hellojs'],
     },
     esbuild: {
       options: {
@@ -123,7 +136,6 @@ export default defineNuxtConfig({
       }),
     ],
   },
-
   eslint: {
     config: {
       standalone: false,
@@ -150,7 +162,6 @@ export default defineNuxtConfig({
   optimizeDeps: {
     include: [],
   },
-
   pwa,
   quasar: QuasarOptions,
 })

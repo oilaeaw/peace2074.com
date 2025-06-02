@@ -1,6 +1,6 @@
+import type { NoteAcionsE } from '~~/shared/types'
+import type { defaultStyles, notifyDefaults } from '../constants'
 import { Dialog, Notify } from 'quasar'
-import { NoteAcionsE } from '~~/shared/types'
-import { defaultStyles, notifyDefaults } from '../constants'
 
 /**
  * useNote composable for managing notifications and dialogs.

@@ -6,6 +6,11 @@ interface HolyNameI {
 }
 const { $HolyNames } = nuxtApp
 const holynames: HolyNameI[] = $HolyNames as HolyNameI[]
+
+definePageMeta({
+  layout: 'default',
+  title: 'Holy Names  ',
+})
 </script>
 
 <template>

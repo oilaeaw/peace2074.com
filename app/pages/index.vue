@@ -1,15 +1,14 @@
 <script setup lang="ts">
-import { definePageMeta, useOnline } from '#imports'
+import { useOnline } from '#imports'
 
-const { locale, locales, setLocale } = useI18n()
-const switchLocalePath = useSwitchLocalePath()
+const { setLocale } = useI18n()
 const { t } = useI18n()
-const { savedName } = useUserStore()
-
+const _myLangsStore = useMyLangsStore()
 definePageMeta({
   layout: 'default',
   title: 'Main Page',
 })
+
 const online = useOnline()
 </script>
 

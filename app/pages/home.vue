@@ -1,8 +1,7 @@
 <script setup lang="ts">
-import { definePageMeta, useOnline } from '#imports'
+import { useOnline } from '#imports'
 
 const { t } = useI18n()
-
 definePageMeta({
   layout: 'default',
   title: 'Main Page',
@@ -22,7 +21,7 @@ const online = useOnline()
           >
             {{ t("pages.quran.pageTitle") }}
           </NuxtLink>
-          
+
           <PageView class="q-mt-xl" />
         </div>
         <div v-else text-gray:80>

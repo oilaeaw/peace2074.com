@@ -4,11 +4,13 @@ import moment from 'moment'
 
 const $q = useQuasar()
 const { t } = useI18n()
-useQ2P().init()
+const _q2p = useQ2P()
+
+onMounted(() => {
+  useQ2P().init()
+})
 const toggleLeftDrawer = ref(false)
 const toggleRightDrawer = ref(false)
-const userStore = useUserStore()
-const { savedName, isAuthenticated } = userStore
 
 const { toggle } = $q.dark
 function toggleDark() {
@@ -22,9 +24,8 @@ const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value
 }
-function toggleRight() {
-  toggleRightDrawer.value = !toggleRightDrawer.value
-}
+
+const auth = authStore()
 </script>
 
 <template>
@@ -37,11 +38,15 @@ function toggleRight() {
             {{ t('general.SiteTitle') }}
           </nuxt-link>
         </q-toolbar-title>
-        <span v-if="isAuthenticated" class="q-mr-md">{{ savedName }}</span>
-        <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="userStore.logout()" />
+        <div class="q-mr-md">
+          {{ auth.savedName }}
+        </div>
+
+        <!-- <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="userStore.logout()" /> -->
+        <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
 
-        <!-- <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleRight" /> -->
+        <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleRight" />
       </q-toolbar>
     </q-header>
 
@@ -97,7 +102,7 @@ function toggleRight() {
 
     <q-footer reveal class="bg-green-9">
       <q-toolbar class="bg-green-4 text-white">
-        <q-btn flat round dense icon="assignment_ind" class="cursor" to="/authenticate" />
+        <q-btn flat round dense icon="assignment_ind" class="cursor" to="/auth/authenticate" />
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>

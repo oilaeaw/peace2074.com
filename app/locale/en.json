@@ -31,7 +31,8 @@
         "location": "sura Location",
         "totverses": "number of verses",
         "bookmark": "bookmark"
-      }
+      },
+      "holynames": "Holy Names"
     },
     "miracles": {
       "pageTitle": "Miracles Page"
@@ -169,5 +170,14 @@
   "please_accept_terms": "Please accept the terms and conditions.",
   "email": "Email",
   "submit": "send",
-  "reset": "Reset"
+  "reset": "Reset",
+  "Login": "Login",
+  "password_login": "Signin with Email",
+  "username": "Userame",
+  "username_required": "Password is required",
+  "hello": "Hello",
+  "logout": "Logout",
+  "already_logged_in": "Already Logged",
+  "login_method": "Login Methods",
+  "logout_success": "you have logged out successfully"
 }
