@@ -1,5 +1,9 @@
 <script setup lang="ts">
 // No script needed for static privacy page
+definePageMeta({
+  title: 'Our Privacy',
+
+})
 </script>
 
 <template>

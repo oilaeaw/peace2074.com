@@ -1,10 +1,9 @@
 <script setup lang="ts">
-const drawer = defineModel<boolean>('drawer', { default: false })
 const { t } = useI18n()
 </script>
 
 <template>
-  <q-drawer v-model="drawer" side="right" overlay :width="260">
+  <q-drawer side="right" :width="260">
     <q-list>
       <q-item v-ripple clickable to="/terms">
         <q-item-section>

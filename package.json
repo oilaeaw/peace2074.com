@@ -14,6 +14,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
     "@feathersjs/authentication-client": "^5.0.34",
     "@feathersjs/feathers": "^5.0.34",
     "@feathersjs/socketio-client": "^5.0.34",
@@ -24,6 +25,9 @@
     "bcryptjs": "^3.0.2",
     "crypto": "^1.0.1",
     "fuse.js": "^7.1.0",
+    "h3-session": "^0.2.5",
+    "hellojs": "^1.20.0",
+    "iron-session": "^8.0.4",
     "moment": "^2.30.1",
     "mongoose": "^8.14.3",
     "nuxt-quasar-ui": "^2.1.12",
