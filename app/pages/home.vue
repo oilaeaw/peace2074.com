@@ -17,7 +17,7 @@ const online = useOnline()
           <NuxtLink
             class="q-mt-xl text-h5 block"
             :title="t('pages.quran.pageTitle')"
-            to="/quran/1"
+            to="/quran"
           >
             {{ t("pages.quran.pageTitle") }}
           </NuxtLink>
