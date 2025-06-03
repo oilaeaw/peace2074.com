@@ -179,5 +179,6 @@
   "logout": "Logout",
   "already_logged_in": "Already Logged",
   "login_method": "Login Methods",
-  "logout_success": "you have logged out successfully"
+  "logout_success": "you have logged out successfully",
+  "back": "Back"
 }

@@ -56,9 +56,8 @@ const auth = authStore()
       :width="300"
       side="left"
       bordered
-      class="bg-green-9 text-white"
     >
-      <q-list bordered class="q-pa-lg bg-green-9 text-white">
+      <q-list bordered class="q-pa-lg text-green-9">
         <fahras />
       </q-list>
     </q-drawer>
