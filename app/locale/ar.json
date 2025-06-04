@@ -172,5 +172,6 @@
   "already_logged_in": "حسابك فعال",
   "login_method": "طرق الدخول",
   "logout_success": "لقد قمت بتسجيل الخروج بنجاح",
-  "back": "خلف"
+  "back": "خلف",
+  "auth": "خدمات التسجيل"
 }

@@ -6,6 +6,7 @@ definePageMeta({
   layout: 'q-layout',
   title: 'Authenticate',
 })
+
 const $q = useQuasar()
 const { t, locale } = useI18n()
 const auth = authStore()
@@ -108,10 +109,10 @@ async function onSignup() {
 
 // Social login handlers
 function onGoogleLogin() {
-  $helllo.login()
+  window.location.href = '/api/auth/google'
 }
 function onGithubLogin() {
-  window.location.href = '/.netlify/identity/login/github' // Netlify Identity GitHub login
+  window.location.href = '/api/auth/github'
 }
 
 function switchLang(lang: string) {

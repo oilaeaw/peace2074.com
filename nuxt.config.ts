@@ -72,6 +72,9 @@ export default defineNuxtConfig({
     email_template: import.meta.env.NUXT_EMAIL_TEMPLATE,
     mailjs_api_url: import.meta.env.NUXT_MAILJS_API_URL || 'https://api.emailjs.com/api/v1.0/email/send',
     session_password: import.meta.env.SESSION_PASSWORD || 'default_session_password',
+    githubClientId: import.meta.env.GITHUB_CLIENT_ID,
+    githubClientSecret: import.meta.env.GITHUB_CLIENT_SECRET,
+    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL, // Add callback URL to runtime config
   },
   alias: {
     'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
