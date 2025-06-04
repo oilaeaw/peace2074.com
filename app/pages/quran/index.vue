@@ -15,6 +15,11 @@ const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1))
 function navToSura(id: number) {
   router.push(`/quran/${id}`)
 }
+
+function showTranslation(sura: any) {
+  // Only show translation if it differs from the sura name
+  return sura.e_name && sura.e_name !== sura.name
+}
 </script>
 
 <template>
@@ -25,19 +30,26 @@ function navToSura(id: number) {
           v-for="sura in surasLeft"
           :key="sura.id"
           class="sura-card islamic-card sura-hover"
+          tabindex="0"
+          role="button"
+          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${sura.total_verses} ${t('pages.quran.sura.totverses')}`"
           @click="navToSura(sura.id)"
+          @keyup.enter="navToSura(sura.id)"
         >
           <div class="sura-header">
             <span class="sura-id">{{ sura.id }}</span>
             <span class="sura-name">{{ sura.name }}</span>
-            <span class="sura-name">{{ sura.e_name }}</span>
           </div>
           <div class="sura-info details-on-hover">
-            <span class="sura-translation" :title="sura.e_name">
+            <span
+              v-if="showTranslation(sura)"
+              class="sura-translation"
+              :title="sura.e_name"
+            >
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total">{{ sura.total_verses }} آيات</span>
+            <span class="sura-total">{{ sura.total_verses }} {{ t('pages.quran.sura.totverses') }}</span>
           </div>
         </div>
       </div>
@@ -46,15 +58,22 @@ function navToSura(id: number) {
           v-for="sura in surasRight"
           :key="sura.id"
           class="sura-card islamic-card sura-hover"
+          tabindex="0"
+          role="button"
+          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${sura.total_verses} ${t('pages.quran.sura.totverses')}`"
           @click="navToSura(sura.id)"
+          @keyup.enter="navToSura(sura.id)"
         >
           <div class="sura-header">
             <span class="sura-id">{{ sura.id }}</span>
             <span class="sura-name">{{ sura.name }}</span>
-            <span class="sura-name">{{ sura.e_name }}</span>
           </div>
           <div class="sura-info details-on-hover">
-            <span class="sura-translation" :title="sura.e_name">
+            <span
+              v-if="showTranslation(sura)"
+              class="sura-translation"
+              :title="sura.e_name"
+            >
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
@@ -81,12 +100,15 @@ function navToSura(id: number) {
   justify-content: center;
   align-items: flex-start;
   width: 100%;
+  max-width: 100vw;
+  box-sizing: border-box;
 }
 .mushaf-column {
   flex: 1 1 0;
   display: flex;
   flex-direction: column;
   gap: 0.7rem;
+  min-width: 0;
 }
 .sura-card {
   background: var(--card-bg);
@@ -99,8 +121,10 @@ function navToSura(id: number) {
   text-align: center;
   font-family: 'Amiri', serif;
   font-size: 1.45rem;
-  min-width: 220px;
+  min-width: 0;
+  width: 100%;
   max-width: 340px;
+  box-sizing: border-box;
   transition:
     box-shadow 0.2s,
     background 0.2s;
@@ -201,6 +225,47 @@ function navToSura(id: number) {
     --card-bg-hover: #2c313a;
     --chip-bg: #006400;
     --chip-text-color: #fff;
+  }
+}
+
+@media (max-width: 900px) {
+  .mushaf-columns {
+    flex-direction: row;
+    gap: 0.5rem;
+    align-items: flex-start;
+  }
+  .mushaf-column {
+    width: 50%;
+    max-width: 50vw;
+    flex-direction: column;
+    flex-wrap: nowrap;
+    gap: 0.5rem;
+    justify-content: flex-start;
+  }
+  .sura-card {
+    min-width: 0;
+    max-width: 98vw;
+    font-size: 1rem;
+    margin: 0 0 0.2rem 0;
+    padding: 0.3em 0.1em;
+  }
+}
+@media (max-width: 600px) {
+  .sura-card {
+    font-size: 0.78rem;
+    padding: 0.18em 0.05em;
+  }
+  .sura-header {
+    font-size: 0.95rem;
+  }
+  .sura-name {
+    font-size: 0.85rem;
+    padding: 0.08em 0.3em;
+  }
+  .sura-id {
+    width: 1.2rem;
+    height: 1.2rem;
+    font-size: 0.7rem;
   }
 }
 </style>
