@@ -1,22 +1,20 @@
 import { defineEventHandler } from 'h3'
+import jwt from 'jsonwebtoken'
 import passport from 'passport'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
-    passport.authenticate('github', { failureRedirect: '/' }, (err, user, info) => {
-      if (err) {
-        // Optionally log error
+    passport.authenticate('github', { failureRedirect: '/' }, (err: any, user: any) => {
+      if (err)
         return reject(err)
-      }
-      if (!user) {
-        // If user is not authenticated, redirect to home
-        event.node.res.writeHead(302, { Location: '/' }).end()
-        return resolve(undefined)
-      }
-      // Here you would typically create a session or JWT for the user
-      // For now, just redirect to home (or dashboard)
+      if (!user)
+        return resolve(event.node.res.writeHead(302, { Location: '/' }).end())
+      // Here you would set a session/cookie or JWT
+      const config = useRuntimeConfig()
+      const token = jwt.sign({ id: user.id, username: user.username, provider: 'github' }, config.jwtSecret || 'dev_secret', { expiresIn: '7d' })
+      event.node.res.setHeader('Set-Cookie', `auth_token=${token}; Path=/; HttpOnly; SameSite=Lax`)
       event.node.res.writeHead(302, { Location: '/' }).end()
-      resolve(undefined)
+      return resolve(undefined)
     })(event.node.req, event.node.res)
   })
 })
