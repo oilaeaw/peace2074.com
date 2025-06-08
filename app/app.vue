@@ -1,6 +1,5 @@
 <script setup lang="ts">
 import { onMounted, ref } from 'vue'
-import { appName } from './constants/index'
 
 const showSplash = ref(true)
 
