@@ -4,6 +4,10 @@ command = "pnpm run build"
 
 [build.environment]
 NODE_VERSION = "20"
+NPM_FLAGS = "--production=false"
+
+[functions]
+node_bundler = "esbuild"
 
 [[redirects]]
 from = "/*"
