@@ -1,4 +1,3 @@
-import process from 'node:process'
 import { fileURLToPath, URL } from 'node:url'
 import replace from '@rollup/plugin-replace'
 // https://nuxt.com/docs/api/configuration/nuxt-config
@@ -29,7 +28,7 @@ export default defineNuxtConfig({
       '../app/composables',
       '../app/components',
       '../shared',
-      '../server/uils',
+      '../server/utils',
     ],
   },
   devtools: {
@@ -67,6 +66,7 @@ export default defineNuxtConfig({
     classSuffix: '',
   },
   runtimeConfig: {
+    nuxtJWTSecret: import.meta.env.NUXT_JWT_ACCESS_TOKEN_SECRET,
     email_public_key: import.meta.env.NUXT_EMAIL_PUBLIC_KEY,
     email_private_key: import.meta.env.NUXT_EMAIL_PRIVATE_KEY,
     email_template: import.meta.env.NUXT_EMAIL_TEMPLATE,
@@ -110,7 +110,7 @@ export default defineNuxtConfig({
   compatibilityDate: '2025-03-05',
   nitro: {
     rollupConfig: {
-      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'passport', 'h3-session', 'iron-session', 'hellojs'],
+      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'passport', 'h3-session', 'iron-session'],
     },
     esbuild: {
       options: {
@@ -148,10 +148,9 @@ export default defineNuxtConfig({
     },
   },
   gtag: {
-    id: 'G-XN9FGVQBKX',
+    id: import.meta.env.NUXT_GOOGLE_ANALYTICS_ID,
   },
   i18n: {
-    baseUrl: 'https://peace2074.com',
     defaultLocale: 'en',
     vueI18nLoader: true,
     vueI18n: '../i18n.config',

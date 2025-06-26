@@ -65,6 +65,9 @@ importers:
       mongoose:
         specifier: ^8.15.1
         version: 8.15.1
+      nodemailer:
+        specifier: ^7.0.3
+        version: 7.0.3
       nuxt-quasar-ui:
         specifier: ^2.1.12
         version: 2.1.12(@quasar/extras@1.17.0)(magicast@0.3.5)(quasar@2.18.1)
@@ -5218,6 +5221,10 @@ packages:
     resolution: {integrity: sha512-3VW/8JpPqPvnJvseXowjZcirPisssnBuDikk6JIZ8jQzF7KJQX52iPFX4RYYxLycYH7IbMRSPUOga/esVjy5Yg==}
     engines: {node: '>=18'}
 
+  nodemailer@7.0.3:
+    resolution: {integrity: sha512-Ajq6Sz1x7cIK3pN6KesGTah+1gnwMnx5gKl3piQlQQE/PwyJ4Mbc8is2psWYxK3RJTVeqsDaCv8ZzXLCDHMTZw==}
+    engines: {node: '>=6.0.0'}
+
   nopt@8.1.0:
     resolution: {integrity: sha512-ieGu42u/Qsa4TFktmaKEwM6MQH0pOWnaB3htzh0JRtx84+Mebc0cbZYN5bC+6WTZ4+77xrL9Pn5m7CV6VIkV7A==}
     engines: {node: ^18.17.0 || >=20.5.0}
@@ -9462,7 +9469,7 @@ snapshots:
 
   '@types/connect@3.4.38':
     dependencies:
-      '@types/node': 16.18.126
+      '@types/node': 22.15.30
 
   '@types/content-disposition@0.5.9': {}
 
@@ -9501,7 +9508,7 @@ snapshots:
 
   '@types/etag@1.8.3':
     dependencies:
-      '@types/node': 16.18.126
+      '@types/node': 22.15.30
 
   '@types/express-serve-static-core@5.0.6':
     dependencies:
@@ -9602,7 +9609,7 @@ snapshots:
   '@types/serve-static@1.15.7':
     dependencies:
       '@types/http-errors': 2.0.5
-      '@types/node': 16.18.126
+      '@types/node': 22.15.30
       '@types/send': 0.17.5
 
   '@types/serve-static@1.15.8':
@@ -9647,13 +9654,13 @@ snapshots:
 
   '@types/webpack-sources@3.2.3':
     dependencies:
-      '@types/node': 16.18.126
+      '@types/node': 22.15.30
       '@types/source-list-map': 0.1.6
       source-map: 0.7.4
 
   '@types/webpack@4.41.40':
     dependencies:
-      '@types/node': 16.18.126
+      '@types/node': 22.15.30
       '@types/tapable': 1.0.12
       '@types/uglify-js': 3.17.5
       '@types/webpack-sources': 3.2.3
@@ -13470,6 +13477,8 @@ snapshots:
   node-source-walk@7.0.1:
     dependencies:
       '@babel/parser': 7.27.5
+
+  nodemailer@7.0.3: {}
 
   nopt@8.1.0:
     dependencies:

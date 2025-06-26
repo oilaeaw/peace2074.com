@@ -167,7 +167,7 @@
   "sign_up": "Sign Up",
   "signup_success": "Account created! Please log in.",
   "login_success": "Logged in successfully",
-  "please_accept_terms": "Please accept the terms and conditions.",
+  "please_accept_terms": "Accept our terms and conditions.",
   "email": "Email",
   "submit": "send",
   "reset": "Reset",
@@ -180,5 +180,15 @@
   "already_logged_in": "Already Logged",
   "login_method": "Login Methods",
   "logout_success": "you have logged out successfully",
-  "back": "Back"
+  "back": "Back",
+  "username_taken": "Userame Taken",
+  "accept_terms_and_conditions": "Accept out terms & conditions",
+  "password_required": "Password Required",
+  "resend_verification_email": "resend verification email",
+  "password_signup": "signup",
+  "username_optional": "Username",
+  "first_name": "First name",
+  "last_name": "Last name",
+  "username_hint": "username",
+  "email_required": "Email required"
 }

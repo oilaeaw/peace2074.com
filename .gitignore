@@ -9,3 +9,6 @@ public/assets/fonts
 node_modules
 /sw.js
 
+
+# Local Netlify folder
+.netlify

@@ -173,5 +173,10 @@
   "login_method": "طرق الدخول",
   "logout_success": "لقد قمت بتسجيل الخروج بنجاح",
   "back": "خلف",
-  "auth": "خدمات التسجيل"
+  "auth": "خدمات التسجيل",
+  "password_required": "",
+  "resend_verification_email": "",
+  "password_signup": "للاشترك",
+  "first_name": "الاسم الشخصي",
+  "last_name": "اسم العائله"
 }
