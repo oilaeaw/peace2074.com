@@ -386,5 +386,5 @@ export interface BookmarkI {
   userId: string
   bookmark: string
   createdAt: string
-  updatedAt: string,
+  updatedAt: string
 }
