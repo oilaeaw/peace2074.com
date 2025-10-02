@@ -1,6 +1,9 @@
 <script lang="ts" setup>
+import { useQuasar } from 'quasar'
+import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useAuthStore } from '../store/auth.pinia'
 
 definePageMeta({
   layout: 'q-layout',
@@ -9,10 +12,10 @@ definePageMeta({
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
-const auth = authStore()
+const auth = useAuthStore()
 
 const tab = ref('login')
-const acceptTerms: Ref<boolean> = ref(false)
+const acceptTerms = ref(false)
 const loading = ref(false)
 const router = useRouter()
 
@@ -20,30 +23,17 @@ interface SP {
   email: string
   password: string
   username: string
-  first_nam: string
+  first_name: string
   last_name: string
 }
-interface LoginI {
-  email?: string
-  password: string
-  username?: string
-}
-const signInPayload: Ref<LoginI> = ref({
-  email: '',
-  password: '',
-  username: '',
-})
-const signup_payload: Ref<SP> = ref<SP>({
-  email: '',
-  password: '',
-  username: '',
-  first_name: '',
-  last_name: '',
-})
+
+// Use reactive objects so template auto-unwrapping works consistently
+const loginPayload = reactive({ email: '', password: '', username: '' })
+const signupPayload = reactive<SP>({ email: '', password: '', username: '', first_name: '', last_name: '' })
 
 const loginOptions = [
-  { label: t('email'), value: signInPayload.value.email },
-  { label: t('username'), value: signInPayload.value.username },
+  { label: t('email'), value: loginPayload.email },
+  { label: t('username'), value: loginPayload.username },
 ]
 const loginType = ref('email')
 const showPassword = ref(false)
@@ -56,60 +46,55 @@ async function onSubmit() {
   loading.value = true
   showResend.value = false
   try {
-    const loginPayload = {
-      password: signInPayload.value.password,
-    }
+    const payload: Record<string, any> = { password: loginPayload.password }
     if (loginType.value === 'email') {
-      loginPayload.email = signInPayload.value.email
-      lastTriedEmail.value = signInPayload.value.email
+      payload.email = loginPayload.email
+      lastTriedEmail.value = loginPayload.email
     }
     else {
-      loginPayload.username = signInPayload.value.username
+      payload.username = loginPayload.username
     }
-    // Use useFetch for login
+
     const { data, error } = await useFetch('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(loginPayload),
+      body: JSON.stringify(payload),
       credentials: 'include',
     })
 
-    if (error.value) {
-      if (error.value.statusCode === 403) {
+    if (error?.value) {
+      if (error.value.statusCode === 403)
         showResend.value = true
-      }
       throw new Error('Login failed')
     }
-    const result = data.value
+    const result = data?.value
     if (result && result.user && result.token) {
-      auth.setUser(result.user)
+      auth.setUserInfo(result.user)
       if (import.meta.client) {
         localStorage.setItem('jwt', result.token)
-        // Save user ID to localStorage for bookmark persistence
-        if (result.user.id || result.user._id) {
-          if (import.meta.client) {
-            localStorage.setItem('userId', result.user.id || result.user._id)
-          }
-        }
+        if (result.user.id || result.user._id)
+          localStorage.setItem('userId', result.user.id || result.user._id)
       }
-      $q.notify({ message: userName.value + t('login_success'), type: 'positive' })
-      router.push('/')
-      $q.notify({ message: savedName, type: 'positive' })
+      $q.notify({ message: t('login_success'), type: 'positive' })
+      await router.push('/')
     }
     else {
       throw new Error('Invalid login response')
     }
   }
-  catch (error: any) {
-    console.error('Authentication error', error)
+  catch (err: any) {
+    console.error('Authentication error', err)
+    $q.notify({ message: err.message || t('login_failed'), type: 'negative' })
   }
   finally {
     loading.value = false
   }
 }
+
 function onReset() {
-  userName.value = ''
-  password.value = ''
+  loginPayload.email = ''
+  loginPayload.password = ''
+  loginPayload.username = ''
 }
 
 // --- Password signup ---
@@ -125,32 +110,31 @@ async function onSignup() {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({
-        email: signup_payload.value.email,
-        password: signup_payload.value.password,
-        username: signup_payload.value.username,
-        first_name: signup_payload.value.first_name,
-        last_name: signup_payload.value.last_name,
+        email: signupPayload.email,
+        password: signupPayload.password,
+        username: signupPayload.username,
+        first_name: signupPayload.first_name,
+        last_name: signupPayload.last_name,
         role,
       }),
     })
     if (!res.ok) {
       const err = await res.json().catch(() => null)
-      if (err && err.error && err.error.includes('username')) {
+      if (err && err.error && err.error.includes('username'))
         throw new Error(t('username_taken'))
-      }
       throw new Error('Signup failed')
     }
     $q.notify({ message: t('signup_success'), type: 'positive' })
     tab.value = 'login'
-    signupEmail.value = ''
-    signupPassword.value = ''
-    signupUsername.value = ''
-    signupFirstName.value = ''
-    signupLastName.value = ''
+    signupPayload.email = ''
+    signupPayload.password = ''
+    signupPayload.username = ''
+    signupPayload.first_name = ''
+    signupPayload.last_name = ''
     acceptTerms.value = false
   }
   catch (error: any) {
-    $q.notify({ message: error.message, type: 'negative' })
+    $q.notify({ message: error.message || t('signup_failed'), type: 'negative' })
     console.error('Signup error', error)
   }
   finally {
@@ -170,13 +154,9 @@ function switchLang(lang: string) {
   locale.value = lang
 }
 
-watch(
-  tab,
-  (val) => {
-    useHead({ title: t(val === 'login' ? 'login' : 'signup') })
-  },
-  { immediate: true },
-)
+watch(tab, (val) => {
+  useHead({ title: t(val === 'login' ? 'login' : 'signup') })
+}, { immediate: true })
 
 async function resendVerification() {
   if (!lastTriedEmail.value)

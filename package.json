@@ -1,7 +1,7 @@
 {
   "type": "module",
   "private": false,
-  "packageManager": "pnpm@9.15.4",
+  "packageManager": "pnpm@10.17.1",
   "scripts": {
     "build": "nuxi build",
     "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
@@ -23,7 +23,6 @@
     "@quasar/quasar-ui-qmediaplayer": "2.0.0-beta.6",
     "@types/passport-http-bearer": "^1.0.41",
     "bcryptjs": "^3.0.2",
-    "crypto": "^1.0.1",
     "fuse.js": "^7.1.0",
     "h3-session": "^0.2.5",
     "hellojs": "^1.20.0",

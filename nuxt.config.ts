@@ -1,3 +1,5 @@
+import { Buffer } from 'node:buffer'
+import nodeCrypto from 'node:crypto'
 import { fileURLToPath, URL } from 'node:url'
 import replace from '@rollup/plugin-replace'
 import express from 'express'
@@ -134,11 +136,58 @@ export default defineNuxtConfig({
   },
   vite: {
     plugins: [
+      // Vite-side shim: enforce pre so this runs before plugin-vue and other plugins
+      {
+        name: 'vite-global-crypto-shim',
+        enforce: 'pre',
+        configResolved() {
+          const nodeWebCrypto = (nodeCrypto as any).webcrypto
+          if (typeof (globalThis as any).crypto === 'undefined') {
+            ;(globalThis as any).crypto = nodeWebCrypto || {}
+          }
+          // Provide crypto.subtle if available from Node
+          if (!((globalThis as any).crypto as any).subtle && nodeWebCrypto?.subtle) {
+            ;(globalThis as any).crypto.subtle = nodeWebCrypto.subtle
+          }
+          if (typeof (globalThis as any).crypto.hash !== 'function') {
+            ;(globalThis as any).crypto.hash = (alg: string, data: ArrayBuffer | Uint8Array | string) => {
+              let buf: Buffer
+              if (typeof data === 'string')
+                buf = Buffer.from(data)
+              else if (data instanceof ArrayBuffer)
+                buf = Buffer.from(new Uint8Array(data))
+              else if (data instanceof Uint8Array)
+                buf = Buffer.from(data)
+              else buf = Buffer.from(String(data))
+
+              const algMap: Record<string, string> = {
+                'SHA-256': 'sha256',
+                'SHA256': 'sha256',
+                'sha-256': 'sha256',
+                'SHA-1': 'sha1',
+                'SHA1': 'sha1',
+                'MD5': 'md5',
+              }
+              const nodeAlg = (algMap as any)[alg] || String(alg).toLowerCase()
+              // Return hex string (plugin-vue's getHash will accept string or buffer)
+              return nodeCrypto.createHash(nodeAlg).update(buf).digest('hex')
+            }
+          }
+        },
+      },
       replace({
         __DATE__: new Date().toISOString(),
         preventAssignment: true,
       }),
     ],
+    // Ensure imports of `crypto` use Node's built-in implementation
+    resolve: {
+      alias: {
+        'crypto': 'node:crypto',
+        // Ensure direct imports of `node:crypto` resolve to the local shim during dev
+        'node:crypto': fileURLToPath(new URL('./.vite-node-crypto-shim.mjs', import.meta.url)),
+      },
+    },
   },
   eslint: {
     config: {
