@@ -225,11 +225,11 @@ export default defineNuxtConfig({
       }),
     ],
     // Ensure imports of `crypto` use Node's built-in implementation
-      resolve: {
-        alias: {
-          crypto: 'node:crypto',
-        },
+    resolve: {
+      alias: {
+        crypto: 'node:crypto',
       },
+    },
   },
   eslint: {
     config: {
