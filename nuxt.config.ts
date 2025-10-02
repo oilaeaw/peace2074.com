@@ -16,9 +16,12 @@ try {
   if (typeof nc.hash !== 'function') {
     nc.hash = (alg: string, data: ArrayBuffer | Uint8Array | string, encoding?: string) => {
       let buf: Buffer
-      if (typeof data === 'string') buf = Buffer.from(data)
-      else if (data instanceof ArrayBuffer) buf = Buffer.from(new Uint8Array(data))
-      else if (data instanceof Uint8Array) buf = Buffer.from(data)
+      if (typeof data === 'string')
+        buf = Buffer.from(data)
+      else if (data instanceof ArrayBuffer)
+        buf = Buffer.from(new Uint8Array(data))
+      else if (data instanceof Uint8Array)
+        buf = Buffer.from(data)
       else buf = Buffer.from(String(data))
 
       const algMap: Record<string, string> = {
@@ -40,9 +43,12 @@ try {
   if (typeof (globalThis as any).crypto.hash !== 'function') {
     ;(globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
       let buf: Buffer
-      if (typeof data === 'string') buf = Buffer.from(data)
-      else if (data instanceof ArrayBuffer) buf = Buffer.from(new Uint8Array(data))
-      else if (data instanceof Uint8Array) buf = Buffer.from(data)
+      if (typeof data === 'string')
+        buf = Buffer.from(data)
+      else if (data instanceof ArrayBuffer)
+        buf = Buffer.from(new Uint8Array(data))
+      else if (data instanceof Uint8Array)
+        buf = Buffer.from(data)
       else buf = Buffer.from(String(data))
       const algMap: Record<string, string> = {
         'SHA-256': 'sha256',
@@ -57,7 +63,8 @@ try {
       return hash.buffer.slice(hash.byteOffset, hash.byteOffset + hash.byteLength)
     }
   }
-} catch {
+}
+catch {
   // best-effort; do not crash Nuxt config parsing
 }
 
