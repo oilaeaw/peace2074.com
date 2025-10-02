@@ -1,6 +1,6 @@
 {
   "type": "module",
-  "private": true,
+  "private": false,
   "packageManager": "pnpm@9.15.4",
   "scripts": {
     "build": "nuxi build",
@@ -34,6 +34,7 @@
     "nodemailer": "^7.0.3",
     "nuxt-quasar-ui": "^2.1.12",
     "nuxt-socket-io": "^3.0.13",
+    "nuxt": "latest",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-http-bearer": "^1.0.1",
@@ -62,7 +63,6 @@
     "eslint-plugin-format": "^1.0.1",
     "fontawesome-v6": "link:@quasar/extras/fontawesome-v6",
     "jsdom": "^26.1.0",
-    "nuxt": "^3.17.5",
     "nuxt-gtag": "3.0.2",
     "nuxt-mongoose": "1.0.6",
     "pinia": "^2.3.1",
