@@ -1,4 +1,3 @@
-import { defineEventHandler } from 'h3'
 import jwt from 'jsonwebtoken'
 import passport from 'passport'
 
