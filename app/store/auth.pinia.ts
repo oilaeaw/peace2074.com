@@ -1,7 +1,7 @@
 import type { UserT } from '../../shared/types'
 import { createMongoAbility } from '@casl/ability'
 import { defineStore } from 'pinia'
-import { CaslActionE, CaslSubjectE } from '../../shared/types'
+import { CaslActionE, CaslSubjectE } from '~~/shared/types'
 
 const ability = createMongoAbility()
 export const useAuthStore = defineStore('auth', {

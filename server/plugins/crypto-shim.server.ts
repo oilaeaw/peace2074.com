@@ -40,4 +40,38 @@ export default defineNitroPlugin(() => {
       return hash.buffer.slice(hash.byteOffset, hash.byteOffset + hash.byteLength)
     }
   }
+
+  // Also attach a `hash` helper to Node's `crypto` module itself so libraries
+  // that import `node:crypto` and call `crypto.hash(alg, data, encoding)` (like
+  // newer Vite/plugin versions) work on older Node versions.
+  try {
+    const nc = nodeCrypto as any
+    if (typeof nc.hash !== 'function') {
+      nc.hash = (alg: string, data: ArrayBuffer | Uint8Array | string, encoding?: string) => {
+        let buf: Buffer
+        if (typeof data === 'string')
+          buf = Buffer.from(data)
+        else if (data instanceof ArrayBuffer)
+          buf = Buffer.from(new Uint8Array(data))
+        else if (data instanceof Uint8Array)
+          buf = Buffer.from(data)
+        else buf = Buffer.from(String(data))
+
+        const algMap: Record<string, string> = {
+          'SHA-256': 'sha256',
+          'SHA256': 'sha256',
+          'sha-256': 'sha256',
+          'SHA-1': 'sha1',
+          'SHA1': 'sha1',
+          'MD5': 'md5',
+        }
+        const nodeAlg = (algMap as any)[alg] || String(alg).toLowerCase()
+        const result = nodeCrypto.createHash(nodeAlg).update(buf).digest(encoding as any)
+        return result
+      }
+    }
+  }
+  catch {
+    // ignore if we cannot patch
+  }
 })

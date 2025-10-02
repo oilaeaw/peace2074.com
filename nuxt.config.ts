@@ -8,6 +8,59 @@ import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 import { QuasarOptions } from './qusarOptions'
 
+// Synchronous startup shim: ensure `node:crypto.hash` and `globalThis.crypto.hash`
+// are present before any Vite transform plugins (plugin-vue) call them.
+try {
+  const nc: any = nodeCrypto as any
+  // Attach node:crypto.hash if missing
+  if (typeof nc.hash !== 'function') {
+    nc.hash = (alg: string, data: ArrayBuffer | Uint8Array | string, encoding?: string) => {
+      let buf: Buffer
+      if (typeof data === 'string') buf = Buffer.from(data)
+      else if (data instanceof ArrayBuffer) buf = Buffer.from(new Uint8Array(data))
+      else if (data instanceof Uint8Array) buf = Buffer.from(data)
+      else buf = Buffer.from(String(data))
+
+      const algMap: Record<string, string> = {
+        'SHA-256': 'sha256',
+        'SHA256': 'sha256',
+        'sha-256': 'sha256',
+        'SHA-1': 'sha1',
+        'SHA1': 'sha1',
+        'MD5': 'md5',
+      }
+      const nodeAlg = (algMap as any)[alg] || String(alg).toLowerCase()
+      return nc.createHash(nodeAlg).update(buf).digest(encoding as any)
+    }
+  }
+
+  if (typeof (globalThis as any).crypto === 'undefined') {
+    ;(globalThis as any).crypto = (nc as any).webcrypto || {}
+  }
+  if (typeof (globalThis as any).crypto.hash !== 'function') {
+    ;(globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
+      let buf: Buffer
+      if (typeof data === 'string') buf = Buffer.from(data)
+      else if (data instanceof ArrayBuffer) buf = Buffer.from(new Uint8Array(data))
+      else if (data instanceof Uint8Array) buf = Buffer.from(data)
+      else buf = Buffer.from(String(data))
+      const algMap: Record<string, string> = {
+        'SHA-256': 'sha256',
+        'SHA256': 'sha256',
+        'sha-256': 'sha256',
+        'SHA-1': 'sha1',
+        'SHA1': 'sha1',
+        'MD5': 'md5',
+      }
+      const nodeAlg = (algMap as any)[alg] || String(alg).toLowerCase()
+      const hash = nc.createHash(nodeAlg).update(buf).digest()
+      return hash.buffer.slice(hash.byteOffset, hash.byteOffset + hash.byteLength)
+    }
+  }
+} catch {
+  // best-effort; do not crash Nuxt config parsing
+}
+
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
@@ -149,30 +202,8 @@ export default defineNuxtConfig({
           if (!((globalThis as any).crypto as any).subtle && nodeWebCrypto?.subtle) {
             ;(globalThis as any).crypto.subtle = nodeWebCrypto.subtle
           }
-          if (typeof (globalThis as any).crypto.hash !== 'function') {
-            ;(globalThis as any).crypto.hash = (alg: string, data: ArrayBuffer | Uint8Array | string) => {
-              let buf: Buffer
-              if (typeof data === 'string')
-                buf = Buffer.from(data)
-              else if (data instanceof ArrayBuffer)
-                buf = Buffer.from(new Uint8Array(data))
-              else if (data instanceof Uint8Array)
-                buf = Buffer.from(data)
-              else buf = Buffer.from(String(data))
-
-              const algMap: Record<string, string> = {
-                'SHA-256': 'sha256',
-                'SHA256': 'sha256',
-                'sha-256': 'sha256',
-                'SHA-1': 'sha1',
-                'SHA1': 'sha1',
-                'MD5': 'md5',
-              }
-              const nodeAlg = (algMap as any)[alg] || String(alg).toLowerCase()
-              // Return hex string (plugin-vue's getHash will accept string or buffer)
-              return nodeCrypto.createHash(nodeAlg).update(buf).digest('hex')
-            }
-          }
+          // Import our custom crypto implementation that works everywhere
+          import('./app/utils/crypto')
         },
       },
       replace({

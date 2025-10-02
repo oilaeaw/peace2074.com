@@ -14,6 +14,7 @@
     "typecheck": "vue-tsc --noEmit"
   },
   "dependencies": {
+    "@casl/ability": "^6.7.3",
     "@emailjs/browser": "^4.4.1",
     "@feathersjs/authentication-client": "^5.0.34",
     "@feathersjs/feathers": "^5.0.34",
