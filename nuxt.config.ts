@@ -68,6 +68,12 @@ catch {
   // best-effort; do not crash Nuxt config parsing
 }
 
+// Note: we intentionally avoid aliasing `node:crypto` to a local shim in the
+// production Vite build because the shim imports node-only modules (like
+// `node:buffer`) which cannot be bundled for the browser. Any dev-only shim
+// must run only in the dev server environment and not be included in the
+// production client bundle.
+
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
@@ -219,13 +225,11 @@ export default defineNuxtConfig({
       }),
     ],
     // Ensure imports of `crypto` use Node's built-in implementation
-    resolve: {
-      alias: {
-        'crypto': 'node:crypto',
-        // Ensure direct imports of `node:crypto` resolve to the local shim during dev
-        'node:crypto': fileURLToPath(new URL('./.vite-node-crypto-shim.mjs', import.meta.url)),
+      resolve: {
+        alias: {
+          crypto: 'node:crypto',
+        },
       },
-    },
   },
   eslint: {
     config: {
