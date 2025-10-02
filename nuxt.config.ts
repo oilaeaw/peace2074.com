@@ -100,10 +100,11 @@ export default defineNuxtConfig({
       '../server/utils',
     ],
   },
+  // Enable devtools and HMR only in development
   devtools: {
-    enabled: true,
+    enabled: import.meta.env.MODE === 'development',
     timeline: {
-      enabled: true,
+      enabled: import.meta.env.MODE === 'development',
     },
   },
   app: {
@@ -232,6 +233,13 @@ export default defineNuxtConfig({
       alias: {
         crypto: 'node:crypto',
       },
+    },
+    server: {
+      // Ensure HMR is disabled in production deployments where the dev server
+      // isn't available (prevents browser console trying to connect to
+      // ws://localhost:3000/_nuxt/). Nuxt/Vite will ignore HMR in production
+      // builds but this config prevents accidental client-side attempts.
+      hmr: import.meta.env.MODE === 'development' ? undefined : false,
     },
   },
   eslint: {
