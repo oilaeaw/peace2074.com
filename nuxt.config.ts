@@ -1,6 +1,7 @@
 import { fileURLToPath, URL } from 'node:url'
 import replace from '@rollup/plugin-replace'
-// https://nuxt.com/docs/api/configuration/nuxt-config
+import express from 'express'
+
 import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 import { QuasarOptions } from './qusarOptions'
@@ -166,4 +167,9 @@ export default defineNuxtConfig({
   },
   pwa,
   quasar: QuasarOptions,
+  serverMiddleware: [
+    express.json(),
+    // Api middleware
+    { path: '/api', handler: '@server/api/index.ts' },
+  ],
 })
