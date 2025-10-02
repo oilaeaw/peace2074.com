@@ -163,6 +163,9 @@ importers:
       express:
         specifier: ^5.1.0
         version: 5.1.0
+      fontawesome-v6:
+        specifier: link:@quasar/extras/fontawesome-v6
+        version: link:@quasar/extras/fontawesome-v6
       jsdom:
         specifier: ^26.1.0
         version: 26.1.0
