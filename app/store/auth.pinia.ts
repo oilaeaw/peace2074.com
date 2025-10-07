@@ -49,6 +49,12 @@ export const useAuthStore = defineStore('auth', () => {
   }
 
   async function logout() {
+    // Call server to clear http-only auth cookie
+    try {
+      if (isClient)
+        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+    }
+    catch {}
     _user.value = null
     try {
       $q.notify({ message: 'Logged out successfully', type: 'info' })
@@ -127,7 +133,7 @@ export const useAuthStore = defineStore('auth', () => {
     // expose ability for advanced callers
     ability,
   }
-}, { persist: true })
+})
 
 // Backwards-compatible alias: some modules called `authStore()` directly
 export const authStore = useAuthStore

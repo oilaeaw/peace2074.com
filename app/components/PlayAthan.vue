@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const aSrc = ref('assets/audio/Athan.mp3')
+import aFile from '~/assets/audio/Athan.mp3'
+
+const aSrc = ref(aFile)
 </script>
 
 <template>

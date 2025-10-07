@@ -95,15 +95,17 @@ export const useQ2P = defineStore('q2p', {
     },
   }),
   actions: {
-    init(): QuranI {
-      this.setIndex(1)
-      this.Sura = this.Book[this.Index]
+    init(index?: number): QuranI {
+      this.setIndex(index || 1)
+      return this.Book
     },
     setSura(payload: SuraI): void {
       this.Sura = payload
     },
     setIndex(payload: number) {
       this.Index = payload || 1
+      // Update the Sura when index changes
+      this.Sura = this.Book[this.Index - 1] || this.Book[0]
     },
     setLegend(payload: { letter: string, color: string, value: number }) {
       if (!payload.letter) {

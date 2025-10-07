@@ -1,6 +1,9 @@
+import process from 'node:process'
+import Bookmark from '@server/models/bookmark'
 import { getCookie } from 'h3'
 import jwt from 'jsonwebtoken'
-import Bookmark from '../models/bookmark'
+
+const JWT_SECRET = process.env.JWT_SECRET || 'changeme'
 
 export default defineEventHandler(async (event) => {
   // Get JWT from cookie
@@ -9,13 +12,14 @@ export default defineEventHandler(async (event) => {
     return []
   let userId
   try {
-    const config = useRuntimeConfig()
-    const decoded = jwt.verify(token, config.jwtSecret || 'dev_secret')
-    userId = decoded.id
+    const decoded: any = jwt.verify(token, JWT_SECRET)
+    userId = decoded.id || decoded.userId
   }
   catch (e) {
+    console.error('JWT verification failed:', e)
     return []
   }
   // Only return bookmarks for this user
-  return await Bookmark.find({ userId })
+  const bookmarks = await Bookmark.find({ userId })
+  return bookmarks
 })

@@ -1,4 +1,4 @@
-import Bookmark from '../../models/bookmark'
+import Bookmark from '@server/models/bookmark'
 
 export default defineEventHandler(async (event) => {
   const { id } = event.context.params

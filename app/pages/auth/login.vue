@@ -1,114 +1,118 @@
 <script lang="ts" setup>
-import { useQuasar } from "quasar";
-import { reactive, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useAuthStore } from "~/store/auth.pinia";
+import { useQuasar } from 'quasar'
+import { reactive, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { useAuthStore } from '~/store/auth.pinia'
 
-definePageMeta({ layout: "q-layout", title: "Login" });
+definePageMeta({ layout: 'q-layout', title: 'Login' })
 
-const $q = useQuasar();
-const { t, locale } = useI18n();
-const auth = useAuthStore();
+const $q = useQuasar()
+const { t, locale } = useI18n()
+const auth = useAuthStore()
 
-const loading = ref(false);
-const router = useRouter();
+const loading = ref(false)
+const router = useRouter()
 
-const loginPayload = reactive({ email: "", password: "", username: "" });
-const loginType = ref("email");
-const showPassword = ref(false);
-const showResend = ref(false);
-const lastTriedEmail = ref("");
+const loginPayload = reactive({ email: '', password: '', username: '' })
+const loginType = ref('email')
+const showPassword = ref(false)
+const showResend = ref(false)
+const lastTriedEmail = ref('')
 
 const loginOptions = [
-  { label: t("email"), value: "email" },
-  { label: t("username"), value: "username" },
-];
+  { label: t('email'), value: 'email' },
+  { label: t('username'), value: 'username' },
+]
 
 async function onSubmit() {
-  loading.value = true;
-  showResend.value = false;
+  loading.value = true
+  showResend.value = false
   try {
-    const payload: Record<string, any> = { password: loginPayload.password };
-    if (loginType.value === "email") {
-      payload.email = loginPayload.email;
-      lastTriedEmail.value = loginPayload.email;
+    const payload: Record<string, any> = { password: loginPayload.password }
+    if (loginType.value === 'email') {
+      payload.email = loginPayload.email
+      lastTriedEmail.value = loginPayload.email
     }
 
-    const { data, error } = await useFetch("/api/auth/login", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const { data, error } = await useFetch('/api/auth/login', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
-      credentials: "include",
-    });
+      credentials: 'include',
+    })
 
     if (error?.value) {
-      if (error.value.statusCode === 403) showResend.value = true;
-      throw new Error("Login failed");
+      if (error.value.statusCode === 403)
+        showResend.value = true
+      throw new Error('Login failed')
     }
-    const result = data?.value;
-    if (result && result.user && result.token) {
-      auth.setUserInfo(result.user);
-      if (import.meta.client) {
-        localStorage.setItem("jwt", result.token);
-        if (result.user.id || result.user._id)
-          localStorage.setItem("userId", result.user.id || result.user._id);
-      }
-      
-      $q.notify({ message: t("login_success"), type: "positive" });
-      await router.push("/");
-    } else {
-      throw new Error("Invalid login response");
+    const result = data?.value
+    if (result && result.user) {
+      // server sets httpOnly cookie for auth; fetch current user to populate client state
+      auth.setUserInfo(result.user)
+
+      $q.notify({ message: t('login_success'), type: 'positive' })
+      await router.push('/')
     }
-  } catch (err: any) {
-    console.error("Authentication error", err);
-    $q.notify({ message: err.message || t("login_failed"), type: "negative" });
-  } finally {
-    loading.value = false;
+    else {
+      throw new Error('Invalid login response')
+    }
+  }
+  catch (err: any) {
+    console.error('Authentication error', err)
+    $q.notify({ message: err.message || t('login_failed'), type: 'negative' })
+  }
+  finally {
+    loading.value = false
   }
 }
 
 function onReset() {
-  loginPayload.email = "";
-  loginPayload.password = "";
-  loginPayload.username = "";
+  loginPayload.email = ''
+  loginPayload.password = ''
+  loginPayload.username = ''
 }
 
 function onGoogleLogin() {
-  window.location.href = "/api/auth/google";
+  window.location.href = '/api/auth/google'
 }
 function onGithubLogin() {
-  window.location.href = "/api/auth/github";
+  window.location.href = '/api/auth/github'
 }
 
 function switchLang(lang: string) {
-  locale.value = lang;
+  locale.value = lang
 }
 
 watch(
   () => loginType.value,
   () => {
-    useHead({ title: t("login") });
+    useHead({ title: t('login') })
   },
-  { immediate: true }
-);
+  { immediate: true },
+)
 
 async function resendVerification() {
-  if (!lastTriedEmail.value) return;
-  loading.value = true;
+  if (!lastTriedEmail.value)
+    return
+  loading.value = true
   try {
-    const res = await fetch("/api/resend-verification", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
+    const res = await fetch('/api/resend-verification', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: lastTriedEmail.value }),
-    });
-    if (!res.ok) throw new Error("Failed to resend verification email");
-    $q.notify({ message: t("verification_email_resent"), type: "positive" });
-    showResend.value = false;
-  } catch {
-    $q.notify({ message: t("error_resending_verification"), type: "negative" });
-  } finally {
-    loading.value = false;
+    })
+    if (!res.ok)
+      throw new Error('Failed to resend verification email')
+    $q.notify({ message: t('verification_email_resent'), type: 'positive' })
+    showResend.value = false
+  }
+  catch {
+    $q.notify({ message: t('error_resending_verification'), type: 'negative' })
+  }
+  finally {
+    loading.value = false
   }
 }
 </script>

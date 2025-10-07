@@ -26,14 +26,20 @@ export default defineEventHandler(async (event) => {
 
   // Issue JWT
   const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' })
+  setCookie(event, 'auth_token', token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure: useRuntimeConfig().nodeEnv === 'production',
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60,
+  })
   return {
-    token,
     user: {
       id: user._id,
       email: user.email,
       first_name: user.first_name,
       last_name: user.last_name,
-      name: user.name,
+      username: user.username,
       role: user.role,
     },
   }

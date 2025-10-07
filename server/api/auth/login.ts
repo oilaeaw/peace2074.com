@@ -35,8 +35,20 @@ export default defineEventHandler(async (event) => {
 
   // Issue JWT
   const token = jwt.sign({ id: user._id, email: user.email }, JWT_SECRET, { expiresIn: '7d' })
+
+  // Set the token as an httpOnly cookie so it cannot be accessed by JavaScript
+  const runtime = useRuntimeConfig()
+  const secure = runtime.nodeEnv === 'production'
+  setCookie(event, 'auth_token', token, {
+    httpOnly: true,
+    sameSite: 'lax',
+    secure,
+    path: '/',
+    maxAge: 7 * 24 * 60 * 60, // 7 days
+  })
+
+  // Return only the user object (no token in response body)
   return {
-    token,
     user: {
       id: user._id,
       email: user.email,

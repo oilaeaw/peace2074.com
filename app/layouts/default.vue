@@ -67,7 +67,7 @@ function toggleDrawer() {
           {{ isAuthenticated ? t('welcome_back', { name: username }) : t('welcome_guest') }}
         </div>
 
-        <!-- <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="userStore.logout()" /> -->
+        <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="auth.logout()" />
         <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
 

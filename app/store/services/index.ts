@@ -19,7 +19,7 @@ export async function getHolyBook() {
 }
 
 export async function getBookmarks() {
-  const { data, error, clear } = useFetch('/api/bookmarks')
+  const { data, error, clear } = useFetch('/api/bookmarks', { credentials: 'include' })
   if (error) {
     console.warn(error)
     clear()
@@ -27,10 +27,12 @@ export async function getBookmarks() {
   return data
 }
 
-export async function createBookmark({ bookmark, userId }: { bookmark: string, userId: string }) {
+export async function createBookmark({ bookmark }: { bookmark: string }) {
   const { data, error, clear } = useFetch('/api/bookmarks', {
     method: 'POST',
-    body: { bookmark, userId },
+    body: { bookmark },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
   })
   if (error) {
     console.warn(error)
@@ -43,6 +45,8 @@ export async function updateBookmark(id: string, bookmark: string) {
   const { data, error, clear } = useFetch(`/api/bookmarks/${id}`, {
     method: 'PUT',
     body: { bookmark },
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
   })
   if (error) {
     console.warn(error)
@@ -54,6 +58,8 @@ export async function updateBookmark(id: string, bookmark: string) {
 export async function deleteBookmark(id: string) {
   const { data, error, clear } = useFetch(`/api/bookmarks/${id}`, {
     method: 'DELETE',
+    credentials: 'include',
+    headers: { 'Content-Type': 'application/json' },
   })
   if (error) {
     console.warn(error)
