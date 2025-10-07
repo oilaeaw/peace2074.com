@@ -16,7 +16,7 @@ definePageMeta({
 </script>
 
 <template>
-  <QPage padding class="holynames-page fit rtl beautiful-bg">
+  <QPage padding class="holynames-page fit rtl beautiful-bg column flex">
     <div class="bismillah">
       ﷽
     </div>
@@ -51,12 +51,15 @@ definePageMeta({
 }
 .bismillah {
   font-family: 'Amiri', serif;
-  font-size: 3rem;
+  /* Responsive font-size: grows with viewport but clamps to a reasonable max */
+  font-size: clamp(2rem, 6vw, 8rem);
   color: #bfa14a;
   text-align: center;
-  margin-top: 2rem;
+  margin-top: 3rem;
   letter-spacing: 0.2em;
   text-shadow: 0 2px 8px #e0d7c6;
+  display: block;
+  clear: both;
 }
 .page-title {
   text-align: center;
