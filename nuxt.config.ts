@@ -269,7 +269,13 @@ export default defineNuxtConfig({
   },
   mongoose: {
     uri: import.meta.env.MONGODB_URI,
-    options: {},
+    options: {
+      connectTimeoutMS: 30000, // 30 seconds
+      socketTimeoutMS: 30000,
+      serverSelectionTimeoutMS: 30000,
+      bufferMaxEntries: 0,
+      bufferCommands: false,
+    },
     modelsDir: 'models',
     devtools: true,
   },
