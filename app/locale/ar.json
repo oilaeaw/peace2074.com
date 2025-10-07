@@ -178,5 +178,8 @@
   "resend_verification_email": "",
   "password_signup": "للاشترك",
   "first_name": "الاسم الشخصي",
-  "last_name": "اسم العائله"
+  "last_name": "اسم العائله",
+  "The 99 Holy Names of Allah": "اسماء الله الحسنى",
+  "welcome_back": "مرحبا بعودتك، {name}",
+  "welcome_guest": "اهلا يا غريب"
 }

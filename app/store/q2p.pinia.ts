@@ -39,7 +39,7 @@ export const useQ2P = defineStore('q2p', {
   state: (): State => ({
     Book: ready as QuranI,
     Sura: {} as SuraI,
-    Index: 1,
+    Index: 0,
     LLegend: [
       { letter: ' ', color: '#ffffff', value: 0 },
       { letter: 'ا', color: '#000000', value: 1 },

@@ -5,6 +5,16 @@
 @supports not (-webkit-touch-callout: none) {
     /* CSS for other than iOS devices */
 }
+@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+
+/* Utility: prefer high-quality Arabic types for Quran pages */
+.arabic-font,
+.arabic-text,
+.sura-name,
+.bismillah,
+.allah {
+    font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif !important;
+}
 .text-whit{
     color: white!important;
 }

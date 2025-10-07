@@ -1,10 +1,30 @@
 <script lang="ts" setup>
 import { useTimeAgo } from '@vueuse/core'
 import moment from 'moment'
+import { useAuthStore } from '~/store/auth.pinia'
 
 const $q = useQuasar()
 const { t } = useI18n()
 const _q2p = useQ2P()
+
+// Use the auth store and compute a safe username string (handles null user)
+const auth = useAuthStore()
+const isAuthenticated = computed(() => auth.isAuthenticated)
+const username = computed(() => {
+  const u = auth.user
+  if (!u)
+    return ''
+  // user object might be nested (from server responses) or flat
+  if (u.user) {
+    const fn = u.user.first_name || ''
+    const ln = u.user.last_name || ''
+    const full = `${fn} ${ln}`.trim()
+    if (full)
+      return full
+    return u.user.username || u.user.email || ''
+  }
+  return u.username || u.name || u.email || ''
+})
 
 onMounted(() => {
   useQ2P().init()
@@ -24,29 +44,41 @@ const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value
 }
-
-const auth = authStore()
 </script>
 
 <template>
   <q-layout view="hHh lpR fFf">
     <q-header elevated class="bg-green-9 text-white" height-hint="98">
       <q-toolbar>
-        <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleDrawer" />
+        <q-btn
+          dense
+          flat
+          round
+          icon="menu"
+          class="q-mx-md bg-green-9 text-white"
+          @click="toggleDrawer"
+        />
         <q-toolbar-title>
           <nuxt-link :title="t('general.SiteTitle')" to="/">
-            {{ t('general.SiteTitle') }}
+            {{ t("general.SiteTitle") }}
           </nuxt-link>
         </q-toolbar-title>
         <div class="q-mr-md">
-          {{ auth.savedName }}
+          {{ isAuthenticated ? t('welcome_back', { name: username }) : t('welcome_guest') }}
         </div>
 
         <!-- <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="userStore.logout()" /> -->
         <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
 
-        <q-btn dense flat round icon="menu" class="q-mx-md bg-green-9 text-white" @click="toggleRight" />
+        <q-btn
+          dense
+          flat
+          round
+          icon="menu"
+          class="q-mx-md bg-green-9 text-white"
+          @click="toggleRight"
+        />
       </q-toolbar>
     </q-header>
 
@@ -74,19 +106,19 @@ const auth = authStore()
         <q-item v-ripple clickable to="/terms">
           <q-item-section>
             <q-icon name="gavel" class="q-mr-sm" />
-            <span>{{ t('terms_and_conditions') }}</span>
+            <span>{{ t("terms_and_conditions") }}</span>
           </q-item-section>
         </q-item>
         <q-item v-ripple clickable to="/privacy">
           <q-item-section>
             <q-icon name="privacy_tip" class="q-mr-sm" />
-            <span>{{ t('privacy_policy') }}</span>
+            <span>{{ t("privacy_policy") }}</span>
           </q-item-section>
         </q-item>
         <q-item v-ripple clickable to="/authenticate">
           <q-item-section>
             <q-icon name="person" class="q-mr-sm" />
-            <span>{{ t('auth') }}</span>
+            <span>{{ t("auth") }}</span>
           </q-item-section>
         </q-item>
       </q-list>
@@ -101,7 +133,18 @@ const auth = authStore()
 
     <q-footer reveal class="bg-green-9">
       <q-toolbar class="bg-green-4 text-white">
-        <q-btn flat round dense icon="assignment_ind" class="cursor" to="/auth/authenticate" />
+        <q-btn
+          flat
+          round
+          dense
+          icon="assignment_ind"
+          class="cursor"
+          to="/auth/authenticate"
+        >
+          <q-tooltip v-model="showing">
+            {{ username }}
+          </q-tooltip>
+        </q-btn>
         <q-toolbar-title>
           <nuxt-link :title="appName" to="/" />
         </q-toolbar-title>

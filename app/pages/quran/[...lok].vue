@@ -1,97 +1,176 @@
+<!-- eslint-disable unused-imports/no-unused-vars -->
 <script lang="ts" setup>
-const $q = useQuasar()
-const q2p = useQ2P()
-const { t } = useI18n()
-const appName = computed(() => t('general.SiteTitle'))
-const route = useRoute()
-// const router = useRouter({
-//   scrollBehavior(to, from) {
-//     if (from !== to && to.hash)
-//       return { el: to.hash }
-//   },
-// })
-const currentPath = ref(route.hash)
-const lok = ref(Number(route.params.lok) || 1)
-const Quran = computed(() => q2p.GetQ)
-const sura = computed(() => q2p.GetSura)
-const PageTite = computed(() => `${appName.value} - ${sura.value.id}:${sura.value.name}`)
-const router = useRouter()
-function navigateToHash(hash: string) {
-  if (!hash)
-    return
-  if (isClient) {
-    const validHash = `#id_${hash.replace(/^#/, '')}`
-    const element = document.getElementById(validHash)
-    if (element) {
-      element.scrollIntoView({ behavior: 'smooth' })
-    }
-    else {
-      console.warn(`Element with hash ${validHash} not found.`)
-    }
-  }
+import { useQuasar } from "quasar";
+
+const $q = useQuasar();
+const q2p = useQ2P();
+const { t } = useI18n();
+const appName = computed(() => t("general.SiteTitle"));
+const route = useRoute();
+const lok = ref(Number(route.params.lok) || 1);
+const Quran = computed(() => q2p.GetQ);
+const sura = computed(() => q2p.GetSura);
+const PageTite = computed(
+  () => `${appName.value} - ${sura.value?.id || ""}:${sura.value?.name || ""}`
+);
+const router = useRouter();
+const bookmarksStore = q2p;
+const showBookmarks = ref(true);
+
+function formatBookmarkLabel(bm: string) {
+  // bm is expected to be 'id_<sura>_<verse>' — show as 'sura:verse' for readability
+  if (!bm) return bm;
+  const normalized = bm.startsWith("id_") ? bm.slice(3) : bm;
+  const parts = normalized.split("_");
+  if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+  return bm;
 }
 
+// eslint-disable-next-line unused-imports/no-unused-vars
+const thumbStyle = ref({});
+// eslint-disable-next-line unused-imports/no-unused-vars
+function onScroll() {
+  /* noop for now */
+}
+
+function escapeHtml(str: string) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
+}
+
+function _bookmarkKey(sId: number | string, verse: number | string) {
+  return `${sId}_${verse}`;
+}
+
+const suraParagraphHtml = computed(() => {
+  const s = sura.value;
+  if (!s || !s.ayat) return "";
+
+  // regex to capture a trailing sequence of ASCII or Arabic-Indic digits at end of the aya text
+  const trailingDigitsRe = /([0-9\u0660-\u0669\u06F0-\u06F9]+)\s*$/u;
+
+  return (
+    s.ayat
+      .map((a: any) => {
+        const raw = String(a.text || "");
+        const match = raw.match(trailingDigitsRe);
+        const numberFromText = match ? match[1] : null;
+        const textOnly = numberFromText ? raw.replace(trailingDigitsRe, "").trim() : raw;
+
+        const text = escapeHtml(textOnly);
+        const verse = escapeHtml(String(numberFromText ?? a.verse));
+        const id = _bookmarkKey(s.id, a.verse);
+
+        // render the aya text and append an explicit inline verse number element
+        return `<span class="aya-inline" id="id_${id}" data-verse="${verse}"><span class="arabic-text">${text}</span><span class="verse-num" aria-hidden="true">${verse}</span></span>`;
+      })
+      // join ayas with a narrow no-break space so letters don't run together across spans
+      .join("\u202F")
+  );
+});
+
 function updateCurrentPath() {
-  currentPath.value = route.hash
+  /* noop: path gets updated by router */
 }
 
 watchEffect(() => {
   if (+route.params.lok) {
-    lok.value = Number(route.params.lok)
-    q2p.setIndex(lok.value) // Use the local lok ref for cohesion
+    lok.value = Number(route.params.lok);
+    q2p.setIndex(lok.value);
   }
-})
+});
 
 useHead({
   title: PageTite,
   appDescription: appName,
   ogTitle: PageTite,
   ogDescription: appName,
-})
+});
 
 function goToBakara() {
-  router.push('/quran/2')
+  q2p.setIndex(2);
+  router.push("/quran/2");
 }
-
 function goToNextSura() {
-  if (lok.value < Quran.value.length) {
-    router.push(`/quran/${lok.value + 1}`)
-  }
+  router.push(`/quran/${lok.value + 1}`);
 }
 
 onMounted(() => {
-  if (isClient) {
-    window.addEventListener('hashchange', updateCurrentPath)
-    if (!Quran.value || !Quran.value.length) {
-      console.error('Holybook data is not loaded. Please check the data source.')
-    }
-    // Keyboard navigation: left/right arrow keys
-    window.addEventListener('keydown', (e) => {
-      if (e.key === 'ArrowLeft') {
-        goToNextSura()
-      }
-      else if (e.key === 'ArrowRight') {
-        goToBakara()
-      }
-    })
+  try {
+    $$q.init();
+  } catch (error) {
+    $q.notify({ message: "Failed to load bookmarks", type: "negative" });
   }
-})
+  if (isClient) window.addEventListener("hashchange", updateCurrentPath);
+});
 
 onUnmounted(() => {
-  if (isClient) {
-    window.removeEventListener('hashchange', updateCurrentPath)
-    // Remove keyboard navigation listener
-    window.removeEventListener('keydown', () => {})
-  }
-})
+  if (isClient) window.removeEventListener("hashchange", updateCurrentPath);
+});
 
-function saveBookmark(bm: string) {
-  if (bm) {
-    useBookmarksStore().createBookmark(bm)
-    updateCurrentPath()
-    $q.notify({ message: 'Bookmark saved!', type: 'positive' })
-  }
+function _saveBookmark(bm: string) {
+  if (!bm) return;
+  bookmarksStore.createBookmark(bm);
+  $q.notify({ message: "Bookmark saved!", type: "positive" });
 }
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+function handleAyaClick(e: Event) {
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) navigateToHash(id);
+}
+
+// eslint-disable-next-line unused-imports/no-unused-vars
+function handleAyaDblClick(e: Event) {
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) _saveBookmark(id);
+}
+
+function navigateToHash(hash: string) {
+  if (!hash || !isClient) return;
+
+  let normalized = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (!normalized.startsWith("id_")) normalized = `id_${normalized}`;
+  const element = document.getElementById(normalized);
+  if (element) element.scrollIntoView({ behavior: "smooth" });
+}
+
+function onAyaClick(e: Event) {
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) navigateToHash(id);
+}
+
+function onAyaDblClick(e: Event) {
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) _saveBookmark(id);
+}
+
+watchEffect(() => {
+  if (+route.params.lok) {
+    lok.value = Number(route.params.lok);
+    q2p.setIndex(lok.value);
+  }
+});
 </script>
 
 <template>
@@ -105,45 +184,73 @@ function saveBookmark(bm: string) {
           class="back-btn"
           @click="router.push('/quran')"
         >
-          {{ t('back') }}
+          {{ t("back") }}
         </q-btn>
+
+        <div class="sura-controls">
+          <q-space />
+          <q-menu auto-close>
+            <template #anchor>
+              <q-btn flat icon="bookmark" label="Bookmarks" />
+            </template>
+            <q-list class="border-greee" style="min-width: 220px">
+              <q-chip
+                v-for="bm in bookmarksStore.bookmarks"
+                :key="bm"
+                clickable
+                @click="navigateToHash(bm)"
+              >
+                <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    dense
+                    flat
+                    icon="delete"
+                    @click.stop.prevent="bookmarksStore.deleteBookmark(bm)"
+                  />
+                </q-item-section>
+              </q-chip>
+              <q-item v-if="!bookmarksStore.bookmarks.length">
+                <q-item-section>{{ t("no_bookmarks") || "No bookmarks" }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
+
         <q-slide-transition>
-          <q-card v-touch:swipe.left="goToNextSura" v-touch:swipe.right="goToBakara" class="text-md islamic-card">
+          <q-card class="text-md islamic-card">
             <q-card v-if="sura" class="q-mt-xs islamic-card">
               <q-card-section>
-                <h1 class="islamic-title sura-hover-details center-sura-title">
-                  {{ sura.e_name }} - {{ sura.name }}
-                  <span class="sura-details-popup">
-                    <span>{{ t('pages.quran.sura.id') }}: {{ sura.id }}</span><br>
-                    <span>{{ t('pages.quran.sura.totverses') }}: {{ sura.total_verses }}</span><br>
-                    <span>{{ t('pages.quran.sura.location') }}: {{ sura.type }}</span>
-                  </span>
-                </h1>
-              </q-card-section>
-              <q-scroll-observable
-                visible
-                :thumb-style="thumbStyle"
-                style="height: 200px"
-                class="col"
-                @scroll="onScroll"
-              >
-                <q-card-section>
-                  <div class="verse capitalize">
-                    <section
-                      v-for="aya in sura.ayat"
-                      :id="`${sura.id}_${aya.verse}`"
-                      :key="aya.verse"
-                      class="islamic-verse"
-                      @dblclick="saveBookmark(`${sura.id}_${aya.verse}`)"
-                      @click.prevent="navigateToHash(`${sura.id}_${aya.verse}`)"
+                <div class="sura-plate">
+                  <div class="sura-name">{{ sura.e_name }} - {{ sura.name }}</div>
+                  <div class="sura-meta">
+                    <span>{{ t("pages.quran.sura.id") }}: {{ sura.id }}</span>
+                    <span>•</span>
+                    <span
+                      >{{ t("pages.quran.sura.totverses") }}:
+                      {{ sura.total_verses }}</span
                     >
-                      <span class="islamic-ayat">
-                        {{ aya.text }}
-                        <q-chip class="islamic-chip bg-green-5">
-                          {{ aya.verse }}
-                        </q-chip>
-                      </span>
-                    </section>
+                    <span>•</span>
+                    <span>{{ t("pages.quran.sura.location") }}: {{ sura.type }}</span>
+                  </div>
+                  <div v-if="sura && sura.id" class="bismillah-line">
+                    <span class="bismillah">بِسْمِ</span>
+                    <span class="allah">اللّٰهِ</span>
+                    <span class="bismillah">الرَّحْمـَنِ الرَّحِيمِ</span>
+                  </div>
+                </div>
+              </q-card-section>
+
+              <q-scroll-observable visible class="col verse-scroll">
+                <q-card-section>
+                  <div class="verse">
+                    <div
+                      class="ayah-paragraph"
+                      aria-live="polite"
+                      @click="onAyaClick"
+                      @dblclick="onAyaDblClick"
+                      v-html="suraParagraphHtml"
+                    />
                   </div>
                 </q-card-section>
               </q-scroll-observable>
@@ -155,183 +262,221 @@ function saveBookmark(bm: string) {
   </KeepAlive>
 </template>
 
-<style lang="scss" scoped>
-.q-page {
-  height: var(--vh);
-  width: var(--vw);
-  display: flex;
-  flex-direction: column;
-}
-
+<style scoped lang="scss">
 .islamic-design {
   background: var(--background-pattern);
   background-size: cover;
   background-repeat: no-repeat;
   background-position: center;
-  height: var(--vh);
-  width: var(--vw);
+  min-height: 100vh;
   color: var(--text-color);
 }
 
-.islamic-title {
-  font-family: 'Amiri', serif;
-  font-size: 2.5rem;
-  color: var(--title-color);
-  text-align: center;
-  margin-bottom: 1rem;
-  width: 100%;
-  margin-left: auto;
-  margin-right: auto;
-}
-
-.islamic-subtitle {
-  font-family: 'Amiri', serif;
-  font-size: 1.5rem;
-  color: var(--subtitle-color);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.islamic-text {
-  font-family: 'Amiri', serif;
-  font-size: 1.2rem;
-  color: var(--text-color);
-  text-align: center;
-  margin-bottom: 0.5rem;
-}
-
-.islamic-section-title {
-  font-family: 'Amiri', serif;
-  font-size: 1.8rem;
-  color: var(--title-color);
-  text-align: center;
-  margin-bottom: 1rem;
-}
-
-.islamic-link {
-  font-family: 'Amiri', serif;
-  color: var(--link-color);
-  text-decoration: none;
-  border: 1px solid var(--link-border-color);
-  padding: 0.5rem 1rem;
-  border-radius: 5px;
-  transition: all 0.3s ease;
-  display: inline-block;
-  margin: 0.2rem;
-}
-
-.islamic-link:hover {
-  background-color: var(--link-hover-bg);
-  color: var(--link-hover-color);
-}
-
-.islamic-card {
-  border: 1px solid var(--card-border);
-  border-radius: 10px;
-  padding: 1rem;
-}
-
-.islamic-verse {
-  font-family: 'Amiri', serif;
-  font-size: 1.5rem;
-  color: var(--text-color);
-  margin-bottom: 1rem;
-  padding: 0.5rem;
-  border-bottom: 1px solid var(--verse-border);
-}
-
-.islamic-ayat {
+.sura-controls {
   display: flex;
   align-items: center;
-  justify-content: space-between;
-}
-
-.islamic-chip {
-  font-family: 'Amiri', serif;
-  font-size: 1rem;
-  color: var(--chip-text-color);
-  background-color: var(--chip-bg);
+  gap: 0.5rem;
+  margin: 0.5rem 0;
 }
 
 .back-btn {
   margin-bottom: 1rem;
-  font-size: 1.2rem;
-  align-self: flex-start;
+  font-size: 1.05rem;
   z-index: 2;
 }
 
-.center-sura-title {
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  position: relative;
+.sura-plate {
   text-align: center;
-  width: 100%;
+  padding: 0.6rem 1rem 1rem 1rem;
+}
+.sura-name {
+  font-family: "Scheherazade", "Amiri", serif;
+  font-size: 2.2rem;
+  font-weight: 700;
+  color: var(--title-color);
+  margin-bottom: 0.2rem;
+}
+.sura-meta {
+  font-size: 0.95rem;
+  color: var(--subtitle-color);
+  margin-bottom: 0.6rem;
+}
+.bismillah-line {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.6rem;
+  justify-content: center;
+  margin-top: 0.4rem;
+}
+.bismillah,
+.allah {
+  font-family: "Scheherazade", "Amiri", serif;
+  font-size: 1.5rem;
+  color: var(--title-color);
+}
+.allah {
+  color: #b30000;
+  font-weight: 800;
+  font-size: 1.8rem;
+}
+
+.verse {
+  display: block;
+  line-height: 2.4rem;
+  text-align: right;
+  direction: rtl;
+  font-family: "Scheherazade", "Amiri", serif;
+  font-size: 2.2rem;
+  padding: 0.8rem 1rem;
+  text-align: justify;
+}
+.ayah-paragraph {
+  direction: rtl;
+  unicode-bidi: isolate;
+  text-align: justify;
+  text-justify: inter-word;
+  line-height: 2.8rem;
+  font-size: 3rem;
+  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
+  margin: 0;
+  padding: 0;
+  hyphens: none;
+  word-break: normal;
+  -webkit-font-feature-settings: "rlig" 1, "calt" 1;
+  text-rendering: optimizeLegibility;
+}
+
+.aya-inline {
+  display: inline;
+  vertical-align: baseline;
+  padding: 0 0.04rem;
+  white-space: normal;
+}
+
+.arabic-text {
+  display: inline;
+  max-width: none;
+  text-align: right;
+  line-height: 2.8rem;
+  font-size: inherit;
+}
+
+.verse-medallion {
+  display: inline-block;
+  width: 20px;
+  height: 20px;
+  margin-inline-start: 0.4rem;
+  vertical-align: baseline;
+  line-height: 0;
+  pointer-events: none;
+}
+.verse-medallion circle {
+  stroke: #caa14b;
+}
+.verse-medallion text {
+  font-family: "Amiri", serif;
+  font-size: 8px;
+}
+.verse-medallion svg {
+  /* previously set to block which forced line breaks; keep SVG inline */
+  display: inline-block;
+  width: 18px;
+  height: 18px;
+  vertical-align: middle;
+}
+
+/* Force inline flow for all children inside the paragraph. This overrides
+   any accidental block-level markup coming from the source and ensures
+   the whole sura renders as a single flowing paragraph with inline
+   medallions. */
+.ayah-paragraph,
+.ayah-paragraph * {
+  display: inline !important;
+  margin: 0 !important;
+  padding: 0 !important;
+  vertical-align: baseline !important;
+}
+
+/* Make sure medallion remains tight and doesn't create gaps */
+.ayah-paragraph .verse-medallion {
+  display: inline-block !important;
+  width: 18px !important;
+  height: 18px !important;
+  margin-inline-start: 0.12rem !important;
+}
+
+/* Use a generated pseudo-element for verse numbers so they remain inline */
+/* style explicit verse number elements that are now rendered as
+   <span class="verse-num">N</span> inside each .aya-inline */
+.aya-inline .verse-num {
+  display: inline-block;
+  width: 22px;
+  height: 22px;
+  margin-inline-start: 0.36rem;
+  border-radius: 50%;
+  /* decorative inline SVG as background (gold medallion) - percent-encoded */
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%220.35%22%20cy%3D%220.35%22%20r%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fff7e6%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23f3dfb8%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23e6c97a%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20fill%3D%22url(%23g)%22%20stroke%3D%22%23caa14b%22%20stroke-width%3D%221.2%22/%3E%3C/svg%3E");
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: #2b1a00;
+  font-family: "Amiri", serif;
+  font-size: 10px;
+  line-height: 1;
+  vertical-align: text-bottom;
+  box-sizing: border-box;
+  padding: 0;
+}
+.verse-scroll {
+  min-height: 60vh;
+  max-height: calc(100vh - 12rem);
+  overflow: auto;
+}
+
+.islamic-card {
+  max-width: 820px;
   margin-left: auto;
   margin-right: auto;
+  padding: 1rem 1.2rem;
+  background: #fff;
+  border: 12px solid transparent;
+  box-shadow: inset 0 0 0 6px #d6b76e, 0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
 }
-
-.sura-hover-details {
-  position: relative;
-  display: inline-block;
-  cursor: pointer;
-}
-
-.sura-details-popup {
-  display: none;
-  position: absolute;
-  right: 50%;
-  top: 110%;
-  background: var(--card-bg, #fff);
-  color: var(--text-color, #155724);
-  border: 1px solid var(--card-border, #155724);
-  border-radius: 8px;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.08);
-  padding: 0.7rem 1.2rem;
-  font-size: 1.1rem;
-  z-index: 10;
-  min-width: 180px;
-  text-align: right;
-  white-space: pre-line;
-}
-
-.sura-hover-details:hover .sura-details-popup {
+.islamic-card::before {
+  content: "";
   display: block;
+  width: 100%;
+  height: 48px;
+  background-image: url("~assets/images/decor-top.svg");
+  margin-top: -12px;
+}
+.islamic-card::after {
+  content: "";
+  display: block;
+  width: 100%;
+  height: 48px;
+  background-image: url("~assets/images/decor-bottom.svg");
+  margin-bottom: -12px;
 }
 
-/* Light Mode Variables */
 :root {
-  --background-pattern: url('/assets/patterns/islamic-pattern-light.svg');
+  --background-pattern: url("~assets/patterns/islamic-pattern-light.svg");
   --text-color: #155724;
   --title-color: #155724;
   --subtitle-color: #6c757d;
-  --link-color: #155724;
-  --link-border-color: #155724;
-  --link-hover-bg: #155724;
-  --link-hover-color: #fff;
   --card-bg: #f9f9f9;
-  --card-border: #155724;
-  --verse-border: #ddd;
-  --chip-text-color: #fff;
-  --chip-bg: #28a745;
 }
-
-/* Dark Mode Variables */
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-pattern: url('/assets/patterns/islamic-pattern-dark.svg');
+    --background-pattern: url("~assets/patterns/islamic-pattern-dark.svg");
     --text-color: #e0e0e0;
     --title-color: #e0e0e0;
     --subtitle-color: #b0b0b0;
-    --link-color: #e0e0e0;
-    --link-border-color: #e0e0e0;
-    --link-hover-bg: #e0e0e0;
-    --link-hover-color: #000;
     --card-bg: #333;
-    --card-border: #444;
-    --verse-border: #555;
-    --chip-text-color: #000;
-    --chip-bg: #e0e0e0;
   }
 }
 </style>

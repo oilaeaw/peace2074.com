@@ -4,8 +4,8 @@
   "packageManager": "pnpm@10.17.1",
   "scripts": {
     "build": "nuxi build",
-    "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
-    "dev": "nuxi dev",
+    "dev:pwa": "NODE_OPTIONS=--require=./node-crypto-patch.cjs VITE_PLUGIN_PWA=true nuxi dev",
+    "dev": "NODE_OPTIONS=--require=./node-crypto-patch.cjs nuxi dev",
     "generate": "nuxi generate",
     "prepare": "nuxi prepare",
     "start": "node .output/server/index.mjs",
@@ -77,13 +77,13 @@
   "pnpm": {
     "overrides": {
       "@intlify/message-compiler": "^11.1.2",
+      "cookie@<0.7.0": ">=0.7.0",
       "engine.io@>=4.0.0 <6.2.1": ">=6.2.1",
       "engine.io@>=5.0.0 <5.2.1": ">=5.2.1",
-      "ws@>=7.0.0 <7.5.10": ">=7.5.10",
+      "engine.io@>=5.1.0 <6.4.2": ">=6.4.2",
       "socket.io-parser@>=4.0.4 <4.2.3": ">=4.2.3",
       "socket.io@>=3.0.0 <4.6.2": ">=4.6.2",
-      "engine.io@>=5.1.0 <6.4.2": ">=6.4.2",
-      "cookie@<0.7.0": ">=0.7.0"
+      "ws@>=7.0.0 <7.5.10": ">=7.5.10"
     }
   },
   "resolutions": {
