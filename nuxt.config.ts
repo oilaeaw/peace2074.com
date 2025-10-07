@@ -144,7 +144,16 @@ export default defineNuxtConfig({
     session_password: import.meta.env.NUXT_SESSION_PASSWORD || 'default_session_password',
     githubClientId: import.meta.env.GITHUB_CLIENT_ID,
     githubClientSecret: import.meta.env.NUXT_GITHUB_CLIENT_SECRET,
-    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL, // Add callback URL to runtime config
+    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL,
+    // Server-only config (private)
+    jwtSecret: import.meta.env.JWT_SECRET || 'changeme',
+    mongodbUri: import.meta.env.MONGODB_URI,
+    databaseUrl: import.meta.env.DATABASE_URL,
+    nodeEnv: import.meta.env.NODE_ENV || 'development',
+    // Public config (exposed to client)
+    public: {
+      apiBase: import.meta.env.API_BASE_URL || '/api',
+    },
   },
   alias: {
     'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
