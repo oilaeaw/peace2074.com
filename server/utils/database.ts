@@ -20,7 +20,6 @@ export async function ensureDbConnection(maxRetries = 3, timeoutMs = 30000) {
         connectTimeoutMS: timeoutMs,
         socketTimeoutMS: timeoutMs,
         serverSelectionTimeoutMS: timeoutMs,
-        bufferMaxEntries: 0,
         bufferCommands: false,
       })
 
