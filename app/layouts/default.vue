@@ -44,6 +44,9 @@ const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value
 }
+function toggleRight() {
+  toggleRightDrawer.value = !toggleRightDrawer.value
+}
 </script>
 
 <template>
@@ -64,10 +67,21 @@ function toggleDrawer() {
           </nuxt-link>
         </q-toolbar-title>
         <div class="q-mr-md">
-          {{ isAuthenticated ? t('welcome_back', { name: username }) : t('welcome_guest') }}
+          {{
+            isAuthenticated ? t("welcome_back", { name: username }) : t("welcome_guest")
+          }}
         </div>
 
-        <q-btn v-if="isAuthenticated" dense flat round icon="logout" class="q-mx-md" :title="t('logout')" @click="auth.logout()" />
+        <q-btn
+          v-if="isAuthenticated"
+          dense
+          flat
+          round
+          icon="logout"
+          class="q-mx-md"
+          :title="t('logout')"
+          @click="auth.logout()"
+        />
         <q-space />
         <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
 
