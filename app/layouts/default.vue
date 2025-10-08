@@ -129,7 +129,7 @@ function toggleRight() {
             <span>{{ t("privacy_policy") }}</span>
           </q-item-section>
         </q-item>
-        <q-item v-ripple clickable to="/authenticate">
+        <q-item v-ripple clickable to="/auth/authenticate">
           <q-item-section>
             <q-icon name="person" class="q-mr-sm" />
             <span>{{ t("auth") }}</span>
