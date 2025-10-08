@@ -23,6 +23,7 @@
   },
   "pages": {
     "holynames": "God's Glory Names",
+    "tasbeeh": "Digital Tasbeeh",
     "quran": {
       "pageTitle": "The Holy Quran",
       "sura": {
@@ -194,5 +195,21 @@
   "The 99 Holy Names of Allah": "The 99 Holy Names of Allah",
   "welcome_back": "Welcome back, {name}",
   "welcome_guest": "Hello Guest",
-  "no_bookmarks": "No saved Bookmarks"
+  "no_bookmarks": "No saved Bookmarks",
+  "tasbeeh": {
+    "title": "Digital Tasbeeh",
+    "subtitle": "Islamic Prayer Beads",
+    "tapToCount": "Tap to Count",
+    "reset": "Reset",
+    "settings": "Settings",
+    "selectPhrase": "Select Dhikr Phrase",
+    "todayStats": "Today's Statistics",
+    "total": "Total",
+    "sessions": "Sessions",
+    "completed": "Completed Sets",
+    "continue": "Continue",
+    "vibration": "Vibration Feedback",
+    "sound": "Sound Feedback",
+    "autoNext": "Auto Next Phrase"
+  }
 }

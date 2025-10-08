@@ -23,6 +23,7 @@
   },
   "pages": {
     "holynames": "اسماء الله الحسنا",
+    "tasbeeh": "تسبيح إلكتروني",
     "quran": {
       "pageTitle": "القرآن الكريم",
       "sura": {
@@ -181,5 +182,21 @@
   "last_name": "اسم العائله",
   "The 99 Holy Names of Allah": "اسماء الله الحسنى",
   "welcome_back": "مرحبا بعودتك، {name}",
-  "welcome_guest": "اهلا يا غريب"
+  "welcome_guest": "اهلا يا غريب",
+  "tasbeeh": {
+    "title": "تسبيح إلكتروني",
+    "subtitle": "المسبحة الرقمية",
+    "tapToCount": "اضغط للعد",
+    "reset": "إعادة تعيين",
+    "settings": "الإعدادات",
+    "selectPhrase": "اختر عبارة الذكر",
+    "todayStats": "إحصائيات اليوم",
+    "total": "المجموع",
+    "sessions": "الجلسات",
+    "completed": "المجموعات المكتملة",
+    "continue": "متابعة",
+    "vibration": "الاهتزاز",
+    "sound": "الصوت",
+    "autoNext": "التالي تلقائياً"
+  }
 }
