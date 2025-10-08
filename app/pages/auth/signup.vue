@@ -66,6 +66,8 @@ async function onSignup() {
         <div class="q-mb-md row items-center justify-end">
           <q-btn dense flat color="primary" label="English" :disable="locale === 'en'" class="q-mr-xs" @click="switchLang('en')" />
           <q-btn dense flat color="primary" label="العربية" :disable="locale === 'ar'" class="q-mr-xs" @click="switchLang('ar')" />
+          <q-btn dense flat color="primary" label="Deutsch" :disable="locale === 'de'" class="q-mr-xs" @click="switchLang('de')" />
+          <q-btn dense flat color="primary" label="Русский" :disable="locale === 'ru'" class="q-mr-xs" @click="switchLang('ru')" />
         </div>
 
         <h1 class="text-h5 q-mb-md">

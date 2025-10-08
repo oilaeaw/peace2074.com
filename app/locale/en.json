@@ -211,5 +211,8 @@
     "vibration": "Vibration Feedback",
     "sound": "Sound Feedback",
     "autoNext": "Auto Next Phrase"
+  },
+  "account": {
+    "title": "Account"
   }
 }

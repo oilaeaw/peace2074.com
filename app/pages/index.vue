@@ -1,15 +1,15 @@
 <script setup lang="ts">
-import { useOnline } from '#imports'
+import { useOnline } from "#imports";
 
-const { setLocale } = useI18n()
-const { t } = useI18n()
-const _myLangsStore = useMyLangsStore()
+const { setLocale } = useI18n();
+const { t } = useI18n();
+const _myLangsStore = useMyLangsStore();
 definePageMeta({
-  layout: 'default',
-  title: 'Main Page',
-})
+  layout: "default",
+  title: "Main Page",
+});
 
-const online = useOnline()
+const online = useOnline();
 </script>
 
 <template>
@@ -50,18 +50,44 @@ const online = useOnline()
         </NuxtLink>
       </div>
       <div class="language-buttons">
-        <q-btn color="green" class="q-my-md islamic-btn" icon="en" label="English" @click="setLocale('en')" />
-        <q-btn color="yellow" class="q-my-md islamic-btn" icon="ar" label="Arabic" @click="setLocale('ar')" />
+        <q-btn
+          color="blue"
+          class="q-my-md islamic-btn text-center"
+          icon="en"
+          label="English"
+          @click="setLocale('en')"
+        />
+        <q-btn
+          color="green"
+          class="q-my-md islamic-btn text-center"
+          icon="ar"
+          label="Arabic"
+          @click="setLocale('ar')"
+        />
+        <q-btn
+          color="orange"
+          class="q-my-md islamic-btn text-center"
+          icon="de"
+          label="Deutsch"
+          @click="setLocale('de')"
+        />
+        <q-btn
+          color="red"
+          class="q-my-md islamic-btn text-middle"
+          icon="ru"
+          label="Русский"
+          @click="setLocale('ru')"
+        />
       </div>
       <PlayAthan />
       <PageView class="q-mt-xl" />
     </div>
     <div v-else text-gray:80>
-      {{ t('pages.main.offlineMessage') }}
+      {{ t("pages.main.offlineMessage") }}
     </div>
     <template #fallback>
       <div italic op50>
-        <span animate-pulse>{{ t('pages.main.loading') }}</span>
+        <span animate-pulse>{{ t("pages.main.loading") }}</span>
         <q-skeleton :animation="true" class="fit" bordered />
       </div>
     </template>
@@ -72,7 +98,8 @@ const online = useOnline()
 .index-page {
   height: 100vh;
   width: 100vw;
-  font-size: 0.19vw;
+  /* responsive base font size for mobile/desktop */
+  font-size: clamp(14px, 2.5vw, 18px);
   background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
   display: flex;
   flex-direction: column;
@@ -81,13 +108,13 @@ const online = useOnline()
 }
 
 .islamic-design {
-  background: url('/assets/patterns/islamic-pattern.svg') repeat;
+  background: url("/assets/patterns/islamic-pattern.svg") repeat;
   background-size: cover;
   color: #155724;
 }
 
 .islamic-title {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 2.5rem;
   color: #155724;
   text-align: center;
@@ -95,7 +122,7 @@ const online = useOnline()
 }
 
 .islamic-subtitle {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 1.5rem;
   color: #6c757d;
   text-align: center;
@@ -103,7 +130,7 @@ const online = useOnline()
 }
 
 .islamic-link {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   color: #155724;
   text-decoration: none;
   border: 1px solid #155724;
@@ -119,12 +146,13 @@ const online = useOnline()
 
 .language-buttons {
   display: flex;
+  flex-wrap: wrap;
   gap: 1rem;
   margin-top: 2rem;
 }
 
 .islamic-btn {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 1rem;
 }
 </style>

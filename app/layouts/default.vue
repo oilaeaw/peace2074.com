@@ -83,8 +83,6 @@ function toggleRight() {
           @click="auth.logout()"
         />
         <q-space />
-        <q-btn dense flat round icon="light" class="q-mx-md" @click="toggleDark" />
-
         <q-btn
           dense
           flat
@@ -129,7 +127,21 @@ function toggleRight() {
             <span>{{ t("privacy_policy") }}</span>
           </q-item-section>
         </q-item>
-        <q-item v-ripple clickable to="/auth/authenticate">
+        <template v-if="isAuthenticated">
+          <q-item v-ripple clickable to="/auth/profile">
+            <q-item-section>
+              <q-icon name="person" class="q-mr-sm" />
+              <span>{{ t("profile.title") || "Profile" }}</span>
+            </q-item-section>
+          </q-item>
+          <q-item v-ripple clickable to="/account/settings">
+            <q-item-section>
+              <q-icon name="settings" class="q-mr-sm" />
+              <span>{{ t("settings.title") || "Settings" }}</span>
+            </q-item-section>
+          </q-item>
+        </template>
+        <q-item v-else v-ripple clickable to="/auth/authenticate">
           <q-item-section>
             <q-icon name="person" class="q-mr-sm" />
             <span>{{ t("auth") }}</span>

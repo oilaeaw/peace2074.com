@@ -78,4 +78,21 @@ body,
   font-weight: bold;
   color: #1a7f37;
 }
+
+@media (max-width: 600px) {
+  .splash-logo {
+    width: 80px;
+    height: 80px;
+  }
+  .splash-title {
+    font-size: 1.25rem;
+  }
+}
+
+/* make language buttons and other interactive elements easier to tap on mobile */
+.language-buttons .q-btn,
+.q-btn {
+  min-height: 44px;
+  min-width: 44px;
+}
 </style>

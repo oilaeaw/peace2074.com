@@ -13,6 +13,14 @@ export const useMyLangsStore = defineStore({
         code: 'ar',
         name: 'Arabic',
       },
+      {
+        code: 'de',
+        name: 'Deutsch',
+      },
+      {
+        code: 'ru',
+        name: 'Русский',
+      },
     ],
     locale: '',
   }),

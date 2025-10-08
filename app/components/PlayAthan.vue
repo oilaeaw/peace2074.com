@@ -1,18 +1,16 @@
 <script lang="ts" setup>
-import aFile from '~/assets/audio/Athan.mp3'
+import aFile from "~/assets/audio/Athan.mp3";
 
-const aSrc = ref(aFile)
+const aSrc = ref(aFile);
 </script>
 
 <template>
   <div class="q-mx-auto text-ceter inline-block">
     <audio controls class="inline-block">
-      <source :src="aSrc" type="audio/mpeg">
+      <source :src="aSrc" type="audio/mpeg" />
       Your browser does not support the audio element.
     </audio>
   </div>
 </template>
 
-<style>
-
-</style>
+<style></style>

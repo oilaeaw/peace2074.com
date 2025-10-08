@@ -1,5 +1,6 @@
 import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github2'
+import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()
@@ -13,6 +14,18 @@ export default defineNitroPlugin((nitroApp) => {
     // For now, just pass the profile
     return done(null, profile)
   }))
+
+  // Optionally register Google OAuth if credentials are provided
+  if (config.googleClientId && config.googleClientSecret && config.googleCallbackUrl) {
+    passport.use(new GoogleStrategy({
+      clientID: config.googleClientId,
+      clientSecret: config.googleClientSecret,
+      callbackURL: config.googleCallbackUrl,
+    }, (accessToken, refreshToken, profile, done) => {
+      // find or create the user in DB; for now pass profile
+      return done(null, profile)
+    }))
+  }
 
   passport.serializeUser((user, done) => {
     done(null, user)

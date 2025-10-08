@@ -1,4 +1,4 @@
-import { ar, en } from './app/locale'
+import { ar, de, en, ru } from './app/locale'
 
 export interface LocaleT { code: string, name?: string, messages?: string[] }
 export type LocalesT = Locale[]
@@ -17,9 +17,21 @@ export default defineI18nConfig(() => ({
       name: 'Arabic',
       messages: ar,
     },
+    {
+      code: 'de',
+      name: 'Deutsch',
+      messages: de,
+    },
+    {
+      code: 'ru',
+      name: 'Русский',
+      messages: ru,
+    },
   ],
   messages: {
     en,
     ar,
+    de,
+    ru,
   },
 }))

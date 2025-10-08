@@ -26,6 +26,7 @@
     "tasbeeh": "تسبيح إلكتروني",
     "quran": {
       "pageTitle": "القرآن الكريم",
+      "holynames": "الأسماء الحسنى",
       "sura": {
         "name": "اسم السورة",
         "id": "رقم السورة",
@@ -40,7 +41,7 @@
   },
   "general": {
     "Home": "البيت",
-    "SiteTitle": "عبد السلام ٢٠٧٤",
+    "SiteTitle": "Peace2074",
     "SiteDomain": "https://peace2074.com",
     "navigationLinks": "روابط التنقل",
     "CurrentVersion": "النسخة الحالية",
@@ -118,8 +119,20 @@
     "MediaPageCaption": "صفحة الوسائط الخاصة بنا",
     "Signin": "تسجيل الدخول",
     "Signout": "خروج",
-    "Register": "تسجيل"
+    "Register": "تسجيل",
+    "AdminPage": "صفحة المشرف"
   },
+  "login": "تسجيل الدخول",
+  "signup": "تسجيل حساب جديد",
+  "username": "اسم المستخدم",
+  "username_required": "اسم المستخدم مطلوب",
+  "hello": "مرحباً",
+  "username_taken": "اسم المستخدم محجوز",
+  "accept_terms_and_conditions": "أوافق على الشروط والأحكام",
+  "username_optional": "اسم المستخدم (اختياري)",
+  "username_hint": "اسم المستخدم",
+  "email_required": "البريد الإلكتروني مطلوب",
+  "no_bookmarks": "لا توجد إشارات محفوظة",
   "about": {
     "title": "ويليو",
     "par10": "زعيم متنوع / انتقائي في العالم الرقمي ، مع أكثر من عقدين من النجاح المهني."
@@ -175,8 +188,8 @@
   "logout_success": "لقد قمت بتسجيل الخروج بنجاح",
   "back": "خلف",
   "auth": "خدمات التسجيل",
-  "password_required": "",
-  "resend_verification_email": "",
+  "password_required": "كلمة المرور مطلوبة",
+  "resend_verification_email": "إعادة إرسال رسالة التحقق",
   "password_signup": "للاشترك",
   "first_name": "الاسم الشخصي",
   "last_name": "اسم العائله",
@@ -198,5 +211,8 @@
     "vibration": "الاهتزاز",
     "sound": "الصوت",
     "autoNext": "التالي تلقائياً"
+  },
+  "account": {
+    "title": "مشترك"
   }
 }
