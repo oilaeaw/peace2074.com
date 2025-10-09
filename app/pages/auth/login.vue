@@ -14,6 +14,14 @@ const auth = useAuthStore()
 const loading = ref(false)
 const router = useRouter()
 
+const isSignup = ref(false)
+const signupPayload = reactive({
+  email: '',
+  username: '',
+  password: '',
+  confirmPassword: '',
+})
+
 const loginPayload = reactive({ email: '', password: '', username: '' })
 const loginType = ref('email')
 const showPassword = ref(false)
@@ -79,6 +87,54 @@ function onGoogleLogin() {
 }
 function onGithubLogin() {
   window.location.href = '/api/auth/github'
+}
+
+async function onSignup() {
+  loading.value = true
+  try {
+    if (!signupPayload.email || !signupPayload.password || !signupPayload.username) {
+      throw new Error(t('please_fill_all_fields') || 'Please fill all fields')
+    }
+    if (signupPayload.password !== signupPayload.confirmPassword) {
+      throw new Error(t('passwords_do_not_match') || 'Passwords don\'t match')
+    }
+
+    const res = await fetch('/api/auth/signup', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        email: signupPayload.email,
+        username: signupPayload.username,
+        password: signupPayload.password,
+      }),
+    })
+
+    if (!res.ok) {
+      const err = await res.json().catch(() => ({}))
+      throw new Error(err.message || t('signup_failed') || 'Signup failed')
+    }
+
+    $q.notify({
+      message:
+        t('signup_success') || 'Account created — please check your email to verify',
+      type: 'positive',
+    })
+    // After signup, switch back to login view
+    isSignup.value = false
+    // Optionally pre-fill the email in login form
+    loginPayload.email = signupPayload.email
+    signupPayload.email = ''
+    signupPayload.username = ''
+    signupPayload.password = ''
+    signupPayload.confirmPassword = ''
+  }
+  catch (err: any) {
+    console.error('Signup error', err)
+    $q.notify({ message: err.message || t('signup_failed'), type: 'negative' })
+  }
+  finally {
+    loading.value = false
+  }
 }
 
 function switchLang(lang: string) {
@@ -185,16 +241,79 @@ async function resendVerification() {
         <q-card flat bordered class="q-mb-md">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
-              <q-select
-                v-model="loginType"
-                :options="loginOptions"
-                :label="t('login_method')"
-                filled
-                dense
-                style="max-width: 200px"
-              />
+              <div class="row items-center justify-between">
+                <q-select
+                  v-model="loginType"
+                  :options="loginOptions"
+                  :label="t('login_method')"
+                  filled
+                  dense
+                  style="max-width: 200px"
+                />
+                <div>
+                  <q-btn dense flat color="primary" @click="isSignup = !isSignup">
+                    {{ isSignup ? t("back_to_login") : t("create_account") }}
+                  </q-btn>
+                </div>
+              </div>
             </div>
-            <q-form class="q-gutter-md" @submit.prevent="onSubmit" @reset="onReset">
+
+            <!-- Signup form -->
+            <q-form v-if="isSignup" class="q-gutter-md" @submit.prevent="onSignup">
+              <q-input
+                v-model="signupPayload.username"
+                type="text"
+                :label="t('username')"
+                :rules="[(val) => !!val || t('username_required')]"
+              />
+              <q-input
+                v-model="signupPayload.email"
+                type="email"
+                :label="t('email')"
+                :rules="[(val) => !!val || t('email_required')]"
+              />
+              <q-input
+                v-model="signupPayload.password"
+                :type="showPassword ? 'text' : 'password'"
+                :label="t('password')"
+                :rules="[(val) => !!val || t('password_required')]"
+              >
+                <template #append>
+                  <q-icon
+                    :name="showPassword ? 'visibility_off' : 'visibility'"
+                    class="cursor-pointer"
+                    @click="showPassword = !showPassword"
+                  />
+                </template>
+              </q-input>
+              <q-input
+                v-model="signupPayload.confirmPassword"
+                :type="showPassword ? 'text' : 'password'"
+                :label="t('confirm_password')"
+              />
+              <div>
+                <q-btn
+                  :loading="loading"
+                  :label="t('sign_up')"
+                  type="submit"
+                  color="primary"
+                />
+                <q-btn
+                  flat
+                  class="q-ml-sm"
+                  :label="t('cancel')"
+                  @click="isSignup = false"
+                />
+              </div>
+            </q-form>
+
+            <!-- Login form -->
+            <q-form
+              v-else
+              class="q-gutter-md"
+              @submit.prevent="onSubmit"
+              @reset="onReset"
+            >
               <q-input
                 v-if="loginType === 'email'"
                 v-model="loginPayload.email"
