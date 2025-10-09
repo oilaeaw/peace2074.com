@@ -1,6 +1,11 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'q-layout', title: 'Settings' })
-const { t } = useI18n()
+import { useQuasar } from 'quasar'
+import { computed, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+
+definePageMeta({ layout: 'q-layout' })
+
+const { t, locale, te } = useI18n()
 const $q = useQuasar()
 
 const dark = computed(() => $q.dark.isActive)
@@ -9,10 +14,23 @@ function toggleDark() {
 }
 
 function changeLang(lang: string) {
-  const i18n = useI18n()
-  i18n.locale.value = lang
+  locale.value = lang
   localStorage.setItem('lang', lang)
 }
+
+// Set head title and update it whenever locale changes
+// Prefer `settings.title` if available, otherwise fall back to `settings` key
+function pageTitle() {
+  if (te('settings.title'))
+    return t('settings.title')
+  if (te('settings'))
+    return t('settings')
+  return 'Settings'
+}
+useHead({ title: pageTitle() })
+watch(locale, () => {
+  useHead({ title: pageTitle() })
+})
 </script>
 
 <template>
@@ -20,7 +38,7 @@ function changeLang(lang: string) {
     <q-card>
       <q-card-section>
         <div class="text-h6">
-          {{ t('settings.title') || 'Settings' }}
+          {{ te('settings.title') ? t('settings.title') : (te('settings') ? t('settings') : 'Settings') }}
         </div>
       </q-card-section>
       <q-card-section>
