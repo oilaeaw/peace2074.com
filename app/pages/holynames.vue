@@ -9,9 +9,10 @@ interface HolyNameI {
 const { $HolyNames } = nuxtApp
 const holynames: HolyNameI[] = $HolyNames as HolyNameI[]
 
+// Keep meta title as a static string (avoid calling i18n at module evaluation)
 definePageMeta({
   layout: 'default',
-  title: 'Holy Names',
+  title: 'pages.holynames',
 })
 </script>
 

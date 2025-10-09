@@ -1,10 +1,13 @@
 <script lang="ts" setup>
 import { useTimeAgo } from '@vueuse/core'
 import moment from 'moment'
+import { watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
 import { useAuthStore } from '~/store/auth.pinia'
 
-const $q = useQuasar()
-const { t } = useI18n()
+const { t, te, locale } = useI18n()
+const route = useRoute()
 const _q2p = useQ2P()
 
 // Use the auth store and compute a safe username string (handles null user)
@@ -32,11 +35,7 @@ onMounted(() => {
 const toggleLeftDrawer = ref(false)
 const toggleRightDrawer = ref(false)
 
-const { toggle } = $q.dark
-function toggleDark() {
-  toggle()
-  return $q.dark.mode
-}
+// use $q.dark.toggle() directly where needed
 const date = '__DATE__'
 const timeAgo = useTimeAgo(date)
 const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
@@ -47,6 +46,39 @@ function toggleDrawer() {
 function toggleRight() {
   toggleRightDrawer.value = !toggleRightDrawer.value
 }
+
+// Dynamic, localized page title: use route meta.title if present and resolve via i18n.
+function resolveTitle(metaTitle: any) {
+  // metaTitle may be undefined or a string. Try multiple candidate keys.
+  if (!metaTitle)
+    return t('general.SiteTitle')
+  const raw = String(metaTitle)
+  const candidates = [
+    raw,
+    raw.toLowerCase(),
+    raw.toLowerCase().replace(/\s+/g, '_'),
+    `${raw.toLowerCase()}.title`,
+    `${raw}.title`,
+    `pages.${route.name}.pageTitle`,
+  ]
+  for (const c of candidates) {
+    try {
+      if (te(c))
+        return t(c)
+    }
+    catch {
+      // ignore
+    }
+  }
+  // If no i18n key found, return the raw meta title string
+  return raw
+}
+
+// Set head initially and update when route or locale changes.
+useHead({ title: resolveTitle(route.meta.title) })
+watch([() => route.fullPath, () => locale.value], () => {
+  useHead({ title: resolveTitle(route.meta.title) })
+})
 </script>
 
 <template>
