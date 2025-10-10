@@ -1,6 +1,8 @@
 <script setup lang="ts">
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from '#imports'
 
+// Do not render the splash on the server — wrap it with <client-only>
+// in the template to avoid SSR/client markup mismatches.
 const showSplash = ref(true)
 
 onMounted(() => {
@@ -23,23 +25,21 @@ useHead(() => ({
 useHead({
   title: appName,
 })
-definePageMeta({
-  layout: 'default',
-  title: 'Main Page',
-})
 </script>
 
 <template>
-  <div v-if="showSplash" class="splash-screen">
-    <div class="splash-content">
-      <img src="/900x900.png" alt="Logo" class="splash-logo">
-      <div class="splash-title">
-        {{ appName }}
+  <client-only>
+    <div v-if="showSplash" class="splash-screen">
+      <div class="splash-content">
+        <img src="/900x900.png" alt="Logo" class="splash-logo">
+        <div class="splash-title">
+          {{ appName }}
+        </div>
       </div>
     </div>
-  </div>
+  </client-only>
   <VitePwaManifest />
-  <NuxtLayout v-show="!showSplash">
+  <NuxtLayout>
     <NuxtPage />
     <CookieConsent />
   </NuxtLayout>

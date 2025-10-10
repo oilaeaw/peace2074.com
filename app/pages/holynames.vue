@@ -13,6 +13,7 @@ const holynames: HolyNameI[] = $HolyNames as HolyNameI[]
 definePageMeta({
   layout: 'default',
   title: 'pages.holynames',
+  description: 'meta.holynames',
 })
 </script>
 

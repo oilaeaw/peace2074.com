@@ -1,6 +1,11 @@
 <script lang="ts" setup>
 import type { ONE_INTERFACE } from './quran/[...lok].vue'
 
+definePageMeta({
+  title: 'pages.miracles.pageTitle',
+  description: 'meta.miracles',
+})
+
 const q2p = useQ2P()
 
 const quran: ONE_INTERFACE[] = q2p.GetQ

@@ -3,6 +3,42 @@
 // to support tools (vite/plugin-vue) that call crypto.hash on older Node versions.
 try {
   const { Buffer } = require('node:buffer')
+  // Minimal File/Blob polyfills for server-side tooling that expects DOM globals
+  // Undici's web fetch implementation imports webidl which expects File/Blob.
+  if (typeof globalThis.File === 'undefined') {
+    // Simple polyfill - enough shape for libraries that only check existence/type
+    globalThis.File = class File extends Uint8Array {
+      constructor(bits = [], name = '', options = {}) {
+        super(typeof bits === 'string' ? Buffer.from(bits) : (bits instanceof Uint8Array ? bits : Buffer.from(String(bits))))
+        this.name = name
+        this.lastModified = options.lastModified || Date.now()
+        this.type = options.type || ''
+      }
+
+      text() { return Promise.resolve(Buffer.from(this).toString()) }
+      arrayBuffer() { return Promise.resolve(this.buffer) }
+    }
+  }
+  if (typeof globalThis.Blob === 'undefined') {
+    globalThis.Blob = class Blob extends Uint8Array {
+      constructor(parts = [], options = {}) {
+        const data = parts.map(p => (typeof p === 'string' ? Buffer.from(p) : (p instanceof Uint8Array ? Buffer.from(p) : Buffer.from(String(p)))))
+        const buf = Buffer.concat(data)
+        super(buf)
+        this.type = options.type || ''
+        this.size = this.length
+      }
+
+      text() { return Promise.resolve(Buffer.from(this).toString()) }
+      arrayBuffer() { return Promise.resolve(this.buffer) }
+    }
+  }
+  if (typeof globalThis.FileReader === 'undefined') {
+    globalThis.FileReader = class FileReader {
+      readAsArrayBuffer(blob) { this.result = blob.buffer; this.onload && this.onload({ target: this }) }
+      readAsText(blob) { this.result = Buffer.from(blob).toString(); this.onload && this.onload({ target: this }) }
+    }
+  }
   const nativeCrypto = require('node:crypto')
   if (typeof nativeCrypto.hash !== 'function') {
     nativeCrypto.hash = (alg, data, encoding) => {

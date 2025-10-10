@@ -1,4 +1,3 @@
-import type { LocaleT } from './../../i18n.config'
 import { defineStore } from 'pinia'
 
 export const useMyLangsStore = defineStore({
@@ -25,11 +24,11 @@ export const useMyLangsStore = defineStore({
     locale: '',
   }),
   actions: {
-    setLocale(lcl: LocaleT) {
+    setLocale(lcl: string) {
       this.locale = lcl
     },
   },
   getters: {
-    locale: state => state.locale,
+    currentLocale: state => state.locale,
   },
 })

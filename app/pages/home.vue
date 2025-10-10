@@ -4,7 +4,8 @@ import { useOnline } from '#imports'
 const { t } = useI18n()
 definePageMeta({
   layout: 'default',
-  title: 'Main Page',
+  title: 'navigation.HomePageTitle',
+  description: 'meta.home',
 })
 const online = useOnline()
 </script>

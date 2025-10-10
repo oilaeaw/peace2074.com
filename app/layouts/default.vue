@@ -1,7 +1,7 @@
 <script lang="ts" setup>
 import { useTimeAgo } from '@vueuse/core'
 import moment from 'moment'
-import { watch } from 'vue'
+import { computed, onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { useAuthStore } from '~/store/auth.pinia'
@@ -34,6 +34,8 @@ onMounted(() => {
 })
 const toggleLeftDrawer = ref(false)
 const toggleRightDrawer = ref(false)
+// Tooltip state used by QTooltip in the footer
+const showing = ref(false)
 
 // use $q.dark.toggle() directly where needed
 const date = '__DATE__'
@@ -74,10 +76,40 @@ function resolveTitle(metaTitle: any) {
   return raw
 }
 
+// Resolve meta descriptions similarly. metaDesc can be an i18n key or raw string.
+function resolveDescription(metaDesc: any) {
+  if (!metaDesc)
+    return t('general.SiteTitle')
+  const raw = String(metaDesc)
+  const candidates = [raw, raw.toLowerCase(), `${raw}.description`, `meta.${raw}`, `meta.${route.name}`]
+  for (const c of candidates) {
+    try {
+      if (te(c))
+        return t(c)
+    }
+    catch {
+      // ignore
+    }
+  }
+  return raw
+}
+
 // Set head initially and update when route or locale changes.
-useHead({ title: resolveTitle(route.meta.title) })
+useHead({
+  title: resolveTitle(route.meta.title),
+  meta: [
+    { name: 'description', content: resolveDescription(route.meta.description) },
+    { property: 'og:description', content: resolveDescription(route.meta.description) },
+  ],
+})
 watch([() => route.fullPath, () => locale.value], () => {
-  useHead({ title: resolveTitle(route.meta.title) })
+  useHead({
+    title: resolveTitle(route.meta.title),
+    meta: [
+      { name: 'description', content: resolveDescription(route.meta.description) },
+      { property: 'og:description', content: resolveDescription(route.meta.description) },
+    ],
+  })
 })
 </script>
 

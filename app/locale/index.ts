@@ -1,7 +1,7 @@
-import ar_raw from './ar.json' assert { type: 'json' }
-import de_raw from './de.json' assert { type: 'json' }
-import en_raw from './en.json' assert { type: 'json' }
-import ru_raw from './ru.json' assert { type: 'json' }
+import ar_raw from './ar.json'
+import de_raw from './de.json'
+import en_raw from './en.json'
+import ru_raw from './ru.json'
 
 const en: typeof en_raw = en_raw
 const ar: typeof ar_raw = ar_raw

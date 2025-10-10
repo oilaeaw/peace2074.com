@@ -1,127 +1,127 @@
 <script lang="ts" setup>
-const { t } = useI18n();
-const router = useRouter();
-const $q = useQuasar();
+const { t } = useI18n()
+const router = useRouter()
+const $q = useQuasar()
 
 // Reactive state
-const currentCount = ref(0);
-const targetCount = ref(33);
-const selectedTasbeeh = ref(0);
-const showSettings = ref(false);
-const completedSets = ref(0);
+const currentCount = ref(0)
+const targetCount = ref(33)
+const selectedTasbeeh = ref(0)
+const showSettings = ref(false)
+const completedSets = ref(0)
 
 // Settings
 const settings = ref({
   vibration: true,
   sound: true,
   autoNext: false,
-});
+})
 
 // Target count options
 const targetOptions = [
-  { label: "33", value: 33 },
-  { label: "99", value: 99 },
-  { label: "100", value: 100 },
-  { label: "∞", value: 999999 },
-];
+  { label: '33', value: 33 },
+  { label: '99', value: 99 },
+  { label: '100', value: 100 },
+  { label: '∞', value: 999999 },
+]
 
 // Tasbeeh phrases
 const tasbeehList = [
   {
-    arabic: "سُبْحَانَ اللّٰهِ",
-    transliteration: "SubhanAllah",
-    translation: "Glory be to Allah",
+    arabic: 'سُبْحَانَ اللّٰهِ',
+    transliteration: 'SubhanAllah',
+    translation: 'Glory be to Allah',
   },
   {
-    arabic: "الْحَمْدُ لِلّٰهِ",
-    transliteration: "Alhamdulillah",
-    translation: "Praise be to Allah",
+    arabic: 'الْحَمْدُ لِلّٰهِ',
+    transliteration: 'Alhamdulillah',
+    translation: 'Praise be to Allah',
   },
   {
-    arabic: "اللّٰهُ أَكْبَرُ",
-    transliteration: "Allahu Akbar",
-    translation: "Allah is Greatest",
+    arabic: 'اللّٰهُ أَكْبَرُ',
+    transliteration: 'Allahu Akbar',
+    translation: 'Allah is Greatest',
   },
   {
-    arabic: "لَا إِلٰهَ إِلَّا اللّٰهُ",
-    transliteration: "La ilaha illa Allah",
-    translation: "There is no god but Allah",
+    arabic: 'لَا إِلٰهَ إِلَّا اللّٰهُ',
+    transliteration: 'La ilaha illa Allah',
+    translation: 'There is no god but Allah',
   },
   {
-    arabic: "أَسْتَغْفِرُ اللّٰهَ",
-    transliteration: "Astaghfirullah",
-    translation: "I seek forgiveness from Allah",
+    arabic: 'أَسْتَغْفِرُ اللّٰهَ',
+    transliteration: 'Astaghfirullah',
+    translation: 'I seek forgiveness from Allah',
   },
   {
-    arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ",
-    transliteration: "La hawla wa la quwwata illa billah",
-    translation: "There is no power except with Allah",
+    arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ',
+    transliteration: 'La hawla wa la quwwata illa billah',
+    translation: 'There is no power except with Allah',
   },
-];
+]
 
 // Computed properties
-const currentTasbeeh = computed(() => tasbeehList[selectedTasbeeh.value]);
-const progressPercentage = computed(() => (currentCount.value / targetCount.value) * 100);
+const currentTasbeeh = computed(() => tasbeehList[selectedTasbeeh.value])
+const progressPercentage = computed(() => (currentCount.value / targetCount.value) * 100)
 
 // Today's statistics
 const todayStats = ref({
   total: 0,
   sessions: 0,
   date: new Date().toDateString(),
-});
+})
 
 // Functions
 function incrementCount() {
-  currentCount.value++;
+  currentCount.value++
 
   // Vibration feedback
   if (settings.value.vibration && navigator.vibrate) {
-    navigator.vibrate(50);
+    navigator.vibrate(50)
   }
 
   // Sound feedback
   if (settings.value.sound) {
     // Could add audio feedback here
     $q.notify({
-      message: "",
+      message: '',
       timeout: 100,
-      position: "center",
-      color: "transparent",
-    });
+      position: 'center',
+      color: 'transparent',
+    })
   }
 
   // Check if target reached
   if (currentCount.value >= targetCount.value && targetCount.value !== 999999) {
-    onTargetReached();
+    onTargetReached()
   }
 
   // Update today's stats
-  updateTodayStats();
+  updateTodayStats()
 }
 
 function onTargetReached() {
-  completedSets.value++;
+  completedSets.value++
 
   $q.notify({
-    message: t("tasbeeh.completed") || "Set completed! ماشاء الله",
-    type: "positive",
-    position: "center",
+    message: t('tasbeeh.completed') || 'Set completed! ماشاء الله',
+    type: 'positive',
+    position: 'center',
     timeout: 2000,
     actions: [
       {
-        label: t("tasbeeh.continue") || "Continue",
-        color: "white",
+        label: t('tasbeeh.continue') || 'Continue',
+        color: 'white',
         handler: () => resetCount(),
       },
     ],
-  });
+  })
 
   // Auto next phrase
   if (settings.value.autoNext) {
     setTimeout(() => {
-      nextTasbeeh();
-      resetCount();
-    }, 2000);
+      nextTasbeeh()
+      resetCount()
+    }, 2000)
   }
 
   // If authenticated, send session to server
@@ -132,24 +132,24 @@ function onTargetReached() {
       target: targetCount.value,
     },
     date: new Date().toDateString(),
-  });
+  })
 }
 
 function resetCount() {
-  currentCount.value = 0;
+  currentCount.value = 0
 }
 
 function selectTasbeeh(index: number) {
-  selectedTasbeeh.value = index;
-  resetCount();
+  selectedTasbeeh.value = index
+  resetCount()
 }
 
 function nextTasbeeh() {
-  selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.length;
+  selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.length
 }
 
 function updateTodayStats() {
-  const today = new Date().toDateString();
+  const today = new Date().toDateString()
 
   // Reset if new day
   if (todayStats.value.date !== today) {
@@ -157,95 +157,102 @@ function updateTodayStats() {
       total: 0,
       sessions: 0,
       date: today,
-    };
+    }
   }
 
-  todayStats.value.total++;
+  todayStats.value.total++
 
   // Save to localStorage
-  localStorage.setItem("tasbeeh_stats", JSON.stringify(todayStats.value));
+  localStorage.setItem('tasbeeh_stats', JSON.stringify(todayStats.value))
 
   // Send incremental update to server if authenticated
   sendStatsToServer({
     date: todayStats.value.date,
     total: todayStats.value.total,
     sessions: todayStats.value.sessions,
-  });
+  })
 }
 
 async function sendStatsToServer(payload: any) {
   try {
-    await useFetch("/api/tasbeeh", {
-      method: "POST",
+    await useFetch('/api/tasbeeh', {
+      method: 'POST',
       body: payload,
-      credentials: "include",
-    });
-  } catch (e) {
+      credentials: 'include',
+    })
+  }
+  catch (e) {
     // ignore network errors — keep local copy
-    console.warn("Failed to persist tasbeeh to server", e);
+    console.warn('Failed to persist tasbeeh to server', e)
   }
 }
 
 // Lifecycle
 onMounted(async () => {
   // Load saved stats from localStorage first
-  const saved = localStorage.getItem("tasbeeh_stats");
+  const saved = localStorage.getItem('tasbeeh_stats')
   if (saved) {
-    const parsed = JSON.parse(saved);
+    const parsed = JSON.parse(saved)
     if (parsed.date === new Date().toDateString()) {
-      todayStats.value = parsed;
+      todayStats.value = parsed
     }
   }
 
   // Load settings
-  const savedSettings = localStorage.getItem("tasbeeh_settings");
+  const savedSettings = localStorage.getItem('tasbeeh_settings')
   if (savedSettings) {
-    settings.value = { ...settings.value, ...JSON.parse(savedSettings) };
+    settings.value = { ...settings.value, ...JSON.parse(savedSettings) }
   }
 
   // If authenticated, try to fetch server-side stored stats
   try {
-    const { data, error } = await useFetch("/api/tasbeeh", { credentials: "include" });
+    const { data, error } = await useFetch('/api/tasbeeh', { credentials: 'include' })
     if (!error.value && data.value && data.value.data) {
-      const remote = data.value.data;
+      const remote = data.value.data
       // Merge today's stats if present
       if (remote.daily && Array.isArray(remote.daily)) {
-        const today = new Date().toDateString();
-        const rec = remote.daily.find((d: any) => d.date === today);
+        const today = new Date().toDateString()
+        const rec = remote.daily.find((d: any) => d.date === today)
         if (rec) {
           todayStats.value = {
             total: rec.total || 0,
             sessions: rec.sessions || 0,
             date: rec.date,
-          };
+          }
         }
       }
     }
-  } catch (e) {
-    // ignore fetch errors and continue with local-only data
-    console.warn("Failed to fetch remote tasbeeh data", e);
   }
-});
+  catch (e) {
+    // ignore fetch errors and continue with local-only data
+    console.warn('Failed to fetch remote tasbeeh data', e)
+  }
+})
 
 // Watch settings changes
 watch(
   settings,
   (newSettings) => {
-    localStorage.setItem("tasbeeh_settings", JSON.stringify(newSettings));
+    localStorage.setItem('tasbeeh_settings', JSON.stringify(newSettings))
   },
-  { deep: true }
-);
+  { deep: true },
+)
 
 // Page meta
 useHead({
-  title: "Digital Tasbeeh - Peace2074",
+  title: 'Digital Tasbeeh - Peace2074',
   meta: [
     {
-      name: "description",
-      content: "Digital prayer beads for Islamic remembrance and dhikr",
+      name: 'description',
+      content: 'Digital prayer beads for Islamic remembrance and dhikr',
     },
   ],
-});
+})
+
+definePageMeta({
+  title: 'pages.tasbeeh',
+  description: 'meta.tasbeeh',
+})
 </script>
 
 <template>
@@ -291,7 +298,9 @@ useHead({
           <div class="count-number">
             {{ currentCount }}
           </div>
-          <div class="count-label">/ {{ targetCount }}</div>
+          <div class="count-label">
+            / {{ targetCount }}
+          </div>
         </div>
         <div class="progress-ring">
           <q-circular-progress
@@ -466,7 +475,7 @@ useHead({
   }
 
   .page-title {
-    font-family: "Scheherazade", "Amiri", serif;
+    font-family: 'Scheherazade', 'Amiri', serif;
     font-size: 2.5rem;
     color: var(--title-color);
     margin: 0;
@@ -490,7 +499,7 @@ useHead({
     border: 3px solid #d6b76e;
 
     .arabic-text {
-      font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
       font-size: 2.5rem;
       color: #155724;
       margin-bottom: 1rem;
@@ -618,7 +627,7 @@ useHead({
     }
 
     .item-arabic {
-      font-family: "Noto Naskh Arabic", "Amiri", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', serif;
       font-size: 1.4rem;
       color: #155724;
       margin-bottom: 0.25rem;

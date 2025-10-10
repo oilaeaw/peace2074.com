@@ -1,9 +1,9 @@
 <script lang="ts" setup>
+import { reactive, ref } from '#imports'
 import { useQuasar } from 'quasar'
-import { reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-definePageMeta({ layout: 'q-layout', title: 'Sign Up' })
+definePageMeta({ layout: 'q-layout', title: 'navigation.AuthPageTitle', description: 'Create a new account' })
 
 const $q = useQuasar()
 const { t, locale } = useI18n()

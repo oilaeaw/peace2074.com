@@ -1,27 +1,40 @@
 <script setup lang="ts">
-const accepted = ref(false)
+import { onMounted, ref } from '#imports'
+
+// Avoid rendering cookie consent on the server so we don't access
+// localStorage during SSR or render content that differs on the client.
+const accepted = ref<boolean | null>(null)
 
 onMounted(() => {
-  if (localStorage.getItem('cookieAccepted') === 'true') {
-    accepted.value = true
+  // Now that we're on the client, we can safely read localStorage.
+  try {
+    accepted.value = localStorage.getItem('cookieAccepted') === 'true'
+  }
+  catch {
+    accepted.value = false
   }
 })
 
 function acceptCookies() {
-  localStorage.setItem('cookieAccepted', 'true')
+  try {
+    localStorage.setItem('cookieAccepted', 'true')
+  }
+  catch {}
   accepted.value = true
 }
 </script>
 
 <template>
-  <div v-if="!accepted" class="cookie-consent">
-    <span>
-      We use cookies to improve your experience. By using our site, you accept cookies.
-    </span>
-    <q-btn color="primary" size="sm" @click="acceptCookies">
-      Accept
-    </q-btn>
-  </div>
+  <client-only>
+    <div v-if="accepted === false" class="cookie-consent">
+      <span>
+        We use cookies to improve your experience. By using our site, you accept cookies.
+      </span>
+      <q-btn color="primary" size="sm" @click="acceptCookies">
+        Accept
+      </q-btn>
+    </div>
+  </client-only>
 </template>
 
 <style scoped>

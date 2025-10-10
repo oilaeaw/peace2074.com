@@ -221,5 +221,13 @@
   },
   "account": {
     "title": "Konto"
+  },
+  "meta": {
+    "home": "Peace2074 — Islamische Ressourcen, Gebetstools und nachdenkliche Artikel zur Unterstützung Ihrer spirituellen Reise.",
+    "holynames": "Entdecken Sie die 99 heiligen Namen Allahs mit Bedeutungen und Audio-Rezitationen.",
+    "tasbeeh": "Digitales Tasbeeh — ein schöner Zähler für Dhikr mit Sitzungsverfolgung und Einstellungen.",
+    "miracles": "Lesen Sie inspirierende Geschichten und Reflexionen über Zeichen und Wunder.",
+    "quran": "Der Heilige Koran — lesen, navigieren und Suren mit schöner arabischer Typographie und responsive Layouts markieren.",
+    "privacy": "Erfahren Sie, wie wir Ihre Daten schützen und Ihre Privatsphäre beim Besuch der Seite wahren."
   }
 }

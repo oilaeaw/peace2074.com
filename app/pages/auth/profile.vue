@@ -1,5 +1,5 @@
 <script setup lang="ts">
-definePageMeta({ layout: 'q-layout', title: 'Profile' })
+definePageMeta({ layout: 'q-layout', title: 'navigation.Profile', description: 'Your account profile' })
 const auth = useAuthStore()
 const { t } = useI18n()
 

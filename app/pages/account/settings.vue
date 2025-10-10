@@ -1,6 +1,6 @@
 <script setup lang="ts">
+import { computed, watch } from '#imports'
 import { useQuasar } from 'quasar'
-import { computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 
 definePageMeta({ layout: 'q-layout' })

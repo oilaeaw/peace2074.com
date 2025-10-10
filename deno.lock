@@ -45,6 +45,7 @@
         "npm:nuxt-socket-io@^3.0.13",
         "npm:nuxt@latest",
         "npm:passport-github2@~0.1.12",
+        "npm:passport-google-oauth20@2",
         "npm:passport-http-bearer@^1.0.1",
         "npm:passport-local@1",
         "npm:passport@0.7",

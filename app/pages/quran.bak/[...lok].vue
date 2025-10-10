@@ -1,82 +1,77 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script lang="ts" setup>
-import { useQuasar } from 'quasar'
-import { useBookmarksStore } from '~/store/bookmarks.pinia'
+import { useQuasar } from "quasar";
+import { useBookmarksStore } from "~/store/bookmarks.pinia";
 
-const $q = useQuasar()
-const q2p = useQ2P()
-const { t } = useI18n()
-const appName = computed(() => t('general.SiteTitle'))
-const route = useRoute()
-const lok = ref(0) // Initialize with default value
-
+const $q = useQuasar();
+const q2p = useQ2P();
+const { t } = useI18n();
+const appName = computed(() => t("general.SiteTitle"));
+const route = useRoute();
+const lok = ref(0); // Initialize with default value
 // Extract the sura number from route params - handle both array and single value
 function getLokFromRoute() {
-  const param = route.params.lok
+  const param = route.params.lok;
   console.warn(
-    'Route param lok:',
+    "Route param lok:",
     param,
-    'Type:',
+    "Type:",
     typeof param,
-    'IsArray:',
-    Array.isArray(param),
-  )
+    "IsArray:",
+    Array.isArray(param)
+  );
   if (Array.isArray(param)) {
     // If it's an array, take the first element
-    const result = Number(param[0]) || 1
-    console.warn('Extracted from array:', result)
-    return result
+    const result = Number(param[0]) || 1;
+    console.warn("Extracted from array:", result);
+    return result;
   }
-  const result = Number(param) || 1
-  console.warn('Extracted directly:', result)
-  return result
+  const result = Number(param) || 1;
+  console.warn("Extracted directly:", result);
+  return result;
 }
-const Quran = computed(() => q2p.GetQ)
-const sura = computed(() => q2p.GetSura)
+const Quran = computed(() => q2p.GetQ);
+const sura = computed(() => q2p.GetSura);
 const PageTite = computed(
-  () => `${appName.value} - ${sura.value?.id || ''}:${sura.value?.name || ''}`,
-)
-const router = useRouter()
-const bookmarksStore = useBookmarksStore()
-const showBookmarks = ref(true)
-const targetInput = ref('')
-const selectedBookmark = ref('')
+  () => `${appName.value} - ${sura.value?.id || ""}:${sura.value?.name || ""}`
+);
+const router = useRouter();
+const bookmarksStore = useBookmarksStore();
+const showBookmarks = ref(true);
+const targetInput = ref("");
+const selectedBookmark = ref("");
 
 function normalizeBookmarkId(bm: any) {
-  const bookmarkStr = typeof bm === 'string' ? bm : bm?.bookmark || ''
-  if (!bookmarkStr)
-    return ''
-  return bookmarkStr.startsWith('id_') ? bookmarkStr : `id_${bookmarkStr}`
+  const bookmarkStr = typeof bm === "string" ? bm : bm?.bookmark || "";
+  if (!bookmarkStr) return "";
+  return bookmarkStr.startsWith("id_") ? bookmarkStr : `id_${bookmarkStr}`;
 }
 
 function isBookmarkSelected(bm: any) {
-  return normalizeBookmarkId(bm) === selectedBookmark.value
+  return normalizeBookmarkId(bm) === selectedBookmark.value;
 }
 
 function deleteBookmarkItem(bm: any) {
   // Pass the bookmark string for deletion
-  const bookmarkStr = typeof bm === 'string' ? bm : bm?.bookmark || ''
+  const bookmarkStr = typeof bm === "string" ? bm : bm?.bookmark || "";
   if (bookmarkStr) {
-    bookmarksStore.deleteBookmark(bookmarkStr)
-    if (isBookmarkSelected(bm))
-      selectedBookmark.value = ''
+    bookmarksStore.deleteBookmark(bookmarkStr);
+    if (isBookmarkSelected(bm)) selectedBookmark.value = "";
   }
 }
 
 function formatBookmarkLabel(bm: any) {
   // bm can be a string or a bookmark object - get the bookmark string
-  const bookmarkStr = typeof bm === 'string' ? bm : bm?.bookmark || ''
-  if (!bookmarkStr)
-    return bookmarkStr
-  const normalized = bookmarkStr.startsWith('id_') ? bookmarkStr.slice(3) : bookmarkStr
-  const parts = normalized.split('_')
-  if (parts.length >= 2)
-    return `${parts[0]}:${parts[1]}`
-  return bookmarkStr
+  const bookmarkStr = typeof bm === "string" ? bm : bm?.bookmark || "";
+  if (!bookmarkStr) return bookmarkStr;
+  const normalized = bookmarkStr.startsWith("id_") ? bookmarkStr.slice(3) : bookmarkStr;
+  const parts = normalized.split("_");
+  if (parts.length >= 2) return `${parts[0]}:${parts[1]}`;
+  return bookmarkStr;
 }
 
 // eslint-disable-next-line unused-imports/no-unused-vars
-const thumbStyle = ref({})
+const thumbStyle = ref({});
 // eslint-disable-next-line unused-imports/no-unused-vars
 function onScroll() {
   /* noop for now */
@@ -84,44 +79,43 @@ function onScroll() {
 
 function escapeHtml(str: string) {
   return String(str)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;')
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#39;");
 }
 
 function _bookmarkKey(sId: number | string, verse: number | string) {
-  return `${sId}_${verse}`
+  return `${sId}_${verse}`;
 }
 
 const suraParagraphHtml = computed(() => {
-  const s = sura.value
-  if (!s || !s.ayat)
-    return ''
+  const s = sura.value;
+  if (!s || !s.ayat) return "";
 
   // regex to capture a trailing sequence of ASCII or Arabic-Indic digits at end of the aya text
-  const trailingDigitsRe = /([0-9\u0660-\u0669\u06F0-\u06F9]+)\s*$/u
+  const trailingDigitsRe = /([0-9\u0660-\u0669\u06F0-\u06F9]+)\s*$/u;
 
   return (
     s.ayat
       .map((a: any) => {
-        const raw = String(a.text || '')
-        const match = raw.match(trailingDigitsRe)
-        const numberFromText = match ? match[1] : null
-        const textOnly = numberFromText ? raw.replace(trailingDigitsRe, '').trim() : raw
+        const raw = String(a.text || "");
+        const match = raw.match(trailingDigitsRe);
+        const numberFromText = match ? match[1] : null;
+        const textOnly = numberFromText ? raw.replace(trailingDigitsRe, "").trim() : raw;
 
-        const text = escapeHtml(textOnly)
-        const verse = escapeHtml(String(numberFromText ?? a.verse))
-        const id = _bookmarkKey(s.id, a.verse)
+        const text = escapeHtml(textOnly);
+        const verse = escapeHtml(String(numberFromText ?? a.verse));
+        const id = _bookmarkKey(s.id, a.verse);
 
         // render the aya text and append an explicit inline verse number element
-        return `<span class="aya-inline" id="${id}" data-verse="${verse}"><span class="arabic-text">${text}</span><span class="verse-num" aria-hidden="true">${verse}</span></span>`
+        return `<span class="aya-inline" id="${id}" data-verse="${verse}"><span class="arabic-text">${text}</span><span class="verse-num" aria-hidden="true">${verse}</span></span>`;
       })
       // join ayas with a narrow no-break space so letters don't run together across spans
-      .join('\u202F')
-  )
-})
+      .join("\u202F")
+  );
+});
 
 function updateCurrentPath() {
   /* noop: path gets updated by router */
@@ -129,188 +123,165 @@ function updateCurrentPath() {
 
 // Watch for route changes and update lok value
 watchEffect(() => {
-  const newLok = getLokFromRoute()
-  console.warn('watchEffect: newLok =', newLok, 'current lok =', lok.value)
+  const newLok = getLokFromRoute();
+  console.warn("watchEffect: newLok =", newLok, "current lok =", lok.value);
   if (newLok !== lok.value) {
-    console.warn('Setting new lok value:', newLok)
-    lok.value = newLok
-    q2p.setIndex(newLok)
+    console.warn("Setting new lok value:", newLok);
+    lok.value = newLok;
+    q2p.setIndex(newLok);
   }
-})
+});
 
 useHead({
   title: PageTite,
   appDescription: appName,
   ogTitle: PageTite,
   ogDescription: appName,
-})
+});
 
 function goToBakara() {
-  q2p.setIndex(2)
-  router.push('/quran/2')
+  q2p.setIndex(2);
+  router.push("/quran/2");
 }
 function goToNextSura() {
-  router.push(`/quran/${lok.value + 1}`)
+  router.push(`/quran/${lok.value + 1}`);
 }
 
 onMounted(() => {
   // Set initial lok value from route
-  lok.value = getLokFromRoute()
+  lok.value = getLokFromRoute();
 
   try {
-    q2p.init(lok.value)
+    q2p.init(lok.value);
+  } catch (error) {
+    $q.notify({ message: error.message, type: "negative" });
   }
-  catch (error) {
-    $q.notify({ message: error.message, type: 'negative' })
-  }
-  if (isClient)
-    window.addEventListener('hashchange', updateCurrentPath)
+  if (isClient) window.addEventListener("hashchange", updateCurrentPath);
   // initialize bookmarks (will load from server if logged-in or from local guest storage)
   try {
-    bookmarksStore.init()
-  }
-  catch {}
-})
+    bookmarksStore.init();
+  } catch {}
+});
 
 onUnmounted(() => {
-  if (isClient)
-    window.removeEventListener('hashchange', updateCurrentPath)
-})
+  if (isClient) window.removeEventListener("hashchange", updateCurrentPath);
+});
 
 function _saveBookmark(bm: string) {
-  if (!bm)
-    return
-  bookmarksStore.createBookmark(bm)
-  $q.notify({ message: 'Bookmark saved!', type: 'positive' })
+  if (!bm) return;
+  bookmarksStore.createBookmark(bm);
+  $q.notify({ message: "Bookmark saved!", type: "positive" });
 }
 
 function parseTarget(input: string) {
-  if (!input)
-    return null
+  if (!input) return null;
   const m = String(input)
     .trim()
-    .match(/^\s*(\d+)[\s:/]+(\d+)\s*$/)
-  if (!m)
-    return null
+    .match(/^\s*(\d+)[\s:/]+(\d+)\s*$/);
+  if (!m) return null;
   // return the parsed sura and verse numbers
-  return [m[1], m[2]]
+  return [m[1], m[2]];
 }
 
 async function goToAya() {
-  const parsed = parseTarget(targetInput.value)
+  const parsed = parseTarget(targetInput.value);
   if (!parsed) {
     $q.notify({
-      message: 'Invalid target, use <sura>:<verse> (e.g. 2:255)',
-      type: 'negative',
-    })
-    return
+      message: "Invalid target, use <sura>:<verse> (e.g. 2:255)",
+      type: "negative",
+    });
+    return;
   }
-  const [s, v] = parsed
+  const [s, v] = parsed;
   if (!s || !v) {
-    $q.notify({ message: 'Invalid sura or verse', type: 'negative' })
-    return
+    $q.notify({ message: "Invalid sura or verse", type: "negative" });
+    return;
   }
   // If already on the requested sura, just navigate to the aya element id
   if (Number(s) === Number(lok.value)) {
-    navigateToHash(`${s}_${v}`)
-    return
+    navigateToHash(`${s}_${v}`);
+    return;
   }
 
   // Otherwise route to the requested sura and include the hash. The page's onMounted will attempt to scroll to the hash,
   // but we also attempt a delayed scroll as a fallback in case the DOM wasn't ready.
   try {
-    await router.push({ path: `/quran/${s}`, hash: `#${s}_${v}` })
-    setTimeout(() => navigateToHash(`${s}_${v}`), 250)
-  }
-  catch (err: any) {
-    $q.notify({ message: err?.message || 'Navigation failed', type: 'negative' })
+    await router.push({ path: `/quran/${s}`, hash: `#${s}_${v}` });
+    setTimeout(() => navigateToHash(`${s}_${v}`), 250);
+  } catch (err: any) {
+    $q.notify({ message: err?.message || "Navigation failed", type: "negative" });
   }
 }
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 function handleAyaClick(e: Event) {
-  const target = e.target as HTMLElement
-  const aya = target.closest('.aya-inline') as HTMLElement | null
-  if (!aya)
-    return
-  const id
-    = aya.getAttribute('id') || aya.querySelector('.verse-medallion')?.textContent || ''
-  if (id)
-    navigateToHash(id)
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) navigateToHash(id);
 }
 
 // eslint-disable-next-line unused-imports/no-unused-vars
 function handleAyaDblClick(e: Event) {
-  const target = e.target as HTMLElement
-  const aya = target.closest('.aya-inline') as HTMLElement | null
-  if (!aya)
-    return
-  const id
-    = aya.getAttribute('id') || aya.querySelector('.verse-medallion')?.textContent || ''
-  if (id)
-    _saveBookmark(id)
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) _saveBookmark(id);
 }
 
 function navigateToHash(hash: string) {
-  if (!hash || !isClient)
-    return
+  if (!hash || !isClient) return;
 
   // Normalize the hash - remove # if present, ensure it doesn't have id_ prefix
-  let normalized = hash.startsWith('#') ? hash.slice(1) : hash
-  if (normalized.startsWith('id_'))
-    normalized = normalized.slice(3)
+  let normalized = hash.startsWith("#") ? hash.slice(1) : hash;
+  if (normalized.startsWith("id_")) normalized = normalized.slice(3);
 
-  const element = document.getElementById(normalized)
+  const element = document.getElementById(normalized);
 
   // mark selected bookmark so list entry can be highlighted
   try {
-    selectedBookmark.value = `id_${normalized}`
-  }
-  catch {}
+    selectedBookmark.value = `id_${normalized}`;
+  } catch {}
 
-  if (element)
-    element.scrollIntoView({ behavior: 'smooth', block: 'center' })
+  if (element) element.scrollIntoView({ behavior: "smooth", block: "center" });
   // briefly highlight the target aya so the user can spot it
   try {
     // clear previous highlights
     document
-      .querySelectorAll('.aya-highlight')
-      .forEach(el => el.classList.remove('aya-highlight'))
-  }
-  catch {}
+      .querySelectorAll(".aya-highlight")
+      .forEach((el) => el.classList.remove("aya-highlight"));
+  } catch {}
   try {
-    element.classList.add('aya-highlight')
+    element.classList.add("aya-highlight");
     // remove highlight after 2s
     setTimeout(() => {
       try {
-        element.classList.remove('aya-highlight')
-      }
-      catch {}
-    }, 2000)
-  }
-  catch {}
+        element.classList.remove("aya-highlight");
+      } catch {}
+    }, 2000);
+  } catch {}
 }
 
 function onAyaClick(e: Event) {
-  const target = e.target as HTMLElement
-  const aya = target.closest('.aya-inline') as HTMLElement | null
-  if (!aya)
-    return
-  const id
-    = aya.getAttribute('id') || aya.querySelector('.verse-medallion')?.textContent || ''
-  if (id)
-    navigateToHash(id)
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) navigateToHash(id);
 }
 
 function onAyaDblClick(e: Event) {
-  const target = e.target as HTMLElement
-  const aya = target.closest('.aya-inline') as HTMLElement | null
-  if (!aya)
-    return
-  const id
-    = aya.getAttribute('id') || aya.querySelector('.verse-medallion')?.textContent || ''
-  if (id)
-    _saveBookmark(id)
+  const target = e.target as HTMLElement;
+  const aya = target.closest(".aya-inline") as HTMLElement | null;
+  if (!aya) return;
+  const id =
+    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  if (id) _saveBookmark(id);
 }
 </script>
 
@@ -349,7 +320,7 @@ function onAyaDblClick(e: Event) {
                     icon="delete"
                     @click.stop.prevent="
                       bookmarksStore.deleteBookmark(
-                        typeof bm === 'string' ? bm : bm.bookmark,
+                        typeof bm === 'string' ? bm : bm.bookmark
                       )
                     "
                   />
@@ -421,14 +392,14 @@ function onAyaDblClick(e: Event) {
             <q-card v-if="sura" class="q-mt-xs islamic-card">
               <q-card-section>
                 <div class="sura-plate">
-                  <div class="sura-name">
-                    {{ sura.e_name }} - {{ sura.name }}
-                  </div>
+                  <div class="sura-name">{{ sura.e_name }} - {{ sura.name }}</div>
                   <div class="sura-meta">
                     <span>{{ t("pages.quran.sura.id") }}: {{ sura.id }}</span>
                     <span>•</span>
-                    <span>{{ t("pages.quran.sura.totverses") }}:
-                      {{ sura.total_verses }}</span>
+                    <span
+                      >{{ t("pages.quran.sura.totverses") }}:
+                      {{ sura.total_verses }}</span
+                    >
                     <span>•</span>
                     <span>{{ t("pages.quran.sura.location") }}: {{ sura.type }}</span>
                   </div>
@@ -440,7 +411,7 @@ function onAyaDblClick(e: Event) {
                 </div>
               </q-card-section>
 
-              <q-scroll-observable visible class="col verse-scroll">
+              <q-virtual-scroll visible class="col verse-scroll">
                 <q-card-section>
                   <div class="verse">
                     <div
@@ -452,7 +423,7 @@ function onAyaDblClick(e: Event) {
                     />
                   </div>
                 </q-card-section>
-              </q-scroll-observable>
+              </q-virtual-scroll>
             </q-card>
           </q-card>
         </q-slide-transition>
@@ -489,7 +460,7 @@ function onAyaDblClick(e: Event) {
   padding: 0.6rem 1rem 1rem 1rem;
 }
 .sura-name {
-  font-family: 'Noto Naskh Arabic', 'Scheherazade', 'Amiri', serif;
+  font-family: "Noto Naskh Arabic", "Scheherazade", "Amiri", serif;
   font-size: 2.4rem;
   font-weight: 700;
   color: var(--title-color);
@@ -511,7 +482,7 @@ function onAyaDblClick(e: Event) {
 }
 .bismillah,
 .allah {
-  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
+  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
   font-size: 1.6rem;
   color: var(--title-color);
   text-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
@@ -527,7 +498,7 @@ function onAyaDblClick(e: Event) {
   line-height: 2.6rem;
   text-align: right;
   direction: rtl;
-  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
+  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
   font-size: 2.4rem;
   padding: 0.8rem 1rem;
   text-align: justify;
@@ -540,7 +511,7 @@ function onAyaDblClick(e: Event) {
   text-justify: inter-word;
   line-height: 3.1rem;
   font-size: 3.2rem;
-  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
+  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
   margin: 0;
   padding: 0;
   hyphens: none;
@@ -585,7 +556,7 @@ function onAyaDblClick(e: Event) {
   stroke: #caa14b;
 }
 .verse-medallion text {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 8px;
 }
 .verse-medallion svg {
@@ -613,9 +584,7 @@ function onAyaDblClick(e: Event) {
 .aya-highlight {
   display: inline-block !important;
   background-color: rgba(255, 235, 59, 0.85) !important;
-  transition:
-    background-color 0.4s ease-in-out,
-    box-shadow 0.2s ease-in-out;
+  transition: background-color 0.4s ease-in-out, box-shadow 0.2s ease-in-out;
   border-radius: 6px;
   padding: 0 0.22rem !important;
   box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.12) inset;
@@ -645,12 +614,12 @@ function onAyaDblClick(e: Event) {
   height: 22px;
   margin-inline-start: 0.36rem;
   border-radius: 50%;
-  background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%220.35%22%20cy%3D%220.35%22%20r%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fff7e6%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23f3dfb8%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23e6c97a%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20fill%3D%22url(%23g)%22%20stroke%3D%22%23caa14b%22%20stroke-width%3D%221.2%22/%3E%3C/svg%3E');
+  background-image: url("data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%220.35%22%20cy%3D%220.35%22%20r%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fff7e6%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23f3dfb8%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23e6c97a%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20fill%3D%22url(%23g)%22%20stroke%3D%22%23caa14b%22%20stroke-width%3D%221.2%22/%3E%3C/svg%3E");
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
   color: #2b1a00;
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 10px;
   line-height: 1;
   vertical-align: text-bottom;
@@ -669,32 +638,34 @@ function onAyaDblClick(e: Event) {
   margin-left: auto;
   margin-right: auto;
   padding: 1.2rem 1.6rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 250, 246, 0.98));
+  background: linear-gradient(
+    180deg,
+    rgba(255, 255, 255, 0.98),
+    rgba(250, 250, 246, 0.98)
+  );
   border: 12px solid transparent;
-  box-shadow:
-    inset 0 0 0 6px #d6b76e,
-    0 18px 40px rgba(0, 0, 0, 0.08);
+  box-shadow: inset 0 0 0 6px #d6b76e, 0 18px 40px rgba(0, 0, 0, 0.08);
   border-radius: 10px;
 }
 .islamic-card::before {
-  content: '';
+  content: "";
   display: block;
   width: 100%;
   height: 48px;
-  background-image: url('~assets/images/decor-top.svg');
+  background-image: url("~assets/images/decor-top.svg");
   margin-top: -12px;
 }
 .islamic-card::after {
-  content: '';
+  content: "";
   display: block;
   width: 100%;
   height: 48px;
-  background-image: url('~assets/images/decor-bottom.svg');
+  background-image: url("~assets/images/decor-bottom.svg");
   margin-bottom: -12px;
 }
 
 :root {
-  --background-pattern: url('~assets/patterns/islamic-pattern-light.svg');
+  --background-pattern: url("~assets/patterns/islamic-pattern-light.svg");
   --text-color: #173a2e;
   --title-color: #14492e;
   --subtitle-color: #6c757d;
@@ -702,7 +673,7 @@ function onAyaDblClick(e: Event) {
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-pattern: url('~assets/patterns/islamic-pattern-dark.svg');
+    --background-pattern: url("~assets/patterns/islamic-pattern-dark.svg");
     --text-color: #e0e0e0;
     --title-color: #e0e0e0;
     --subtitle-color: #b0b0b0;

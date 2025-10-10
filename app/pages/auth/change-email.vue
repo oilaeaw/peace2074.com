@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+definePageMeta({ layout: 'q-layout', title: 'navigation.AuthPageTitle', description: 'Change email verification' })
 const athCode = ref('')
 </script>
 

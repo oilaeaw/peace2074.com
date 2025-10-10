@@ -1,8 +1,8 @@
 import type { H3Event } from 'h3'
 import type { QDBI } from '../../shared/types'
 
-import hdetails from '~~/shared/data/chapters/en.json' assert {type: 'json'}
-import hbook from '~~/shared/data/quran.json' assert { type: 'json' }
+import hdetails from '~~/shared/data/chapters/en.json'
+import hbook from '~~/shared/data/quran.json'
 
 export interface QSDT {
   chapter: number

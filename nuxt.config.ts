@@ -87,7 +87,10 @@ export default defineNuxtConfig({
     'nuxt-gtag',
     'nuxt-mongoose',
   ],
-  ssr: false,
+  // Enable server-side rendering so Nitro can prerender routes to static HTML.
+  // This improves SEO and allows meta tags (titles/descriptions) to be included
+  // in the generated HTML for crawlers.
+  ssr: true,
   imports: {
     autoImport: true,
     dirs: [
@@ -201,7 +204,24 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
-      routes: ['', 'quran', 'holynames', 'miracles', 'home', 'terms', 'privacy', 'auth/authenticate'],
+      // Explicitly pre-render common public pages. Dynamic routes (e.g. quran/:sura)
+      // are not listed here and will be discovered via crawlLinks when possible.
+      // Use leading slashes for routes so Nitro recognizes them correctly.
+      routes: [
+        '/',
+        '/home',
+        '/quran',
+        '/holynames',
+        '/tasbeeh',
+        '/miracles',
+        '/terms',
+        '/privacy',
+        '/auth/login',
+        '/auth/signup',
+        '/auth/authenticate',
+        '/account',
+        '/account/settings',
+      ],
     },
     imports: {
       autoImport: true,
@@ -266,6 +286,8 @@ export default defineNuxtConfig({
     defaultLocale: 'en',
     vueI18nLoader: true,
     vueI18n: '../i18n.config',
+    // baseUrl is required by nuxt-i18n to generate proper SEO links (canonical/hreflang)
+    baseUrl: import.meta.env.SITE_BASE_URL || 'https://peace2074.com',
   },
   mongoose: {
     uri: import.meta.env.MONGODB_URI,

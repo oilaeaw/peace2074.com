@@ -1,8 +1,8 @@
 <script setup lang="ts">
 // No script needed for static privacy page
 definePageMeta({
-  title: 'Our Privacy',
-
+  title: 'navigation.PrivacyPageTitle',
+  description: 'Privacy policy for Peace2074',
 })
 </script>
 

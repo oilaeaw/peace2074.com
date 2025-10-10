@@ -1,4 +1,4 @@
-import { watch } from 'vue'
+import { watch } from '#imports'
 import { useAuthStore } from '~/store/auth.pinia'
 import { useBookmarksStore } from '~/store/bookmarks.pinia'
 

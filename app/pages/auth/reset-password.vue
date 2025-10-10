@@ -1,44 +1,48 @@
 <script lang="ts" setup>
-import { ref } from "vue";
-import { useRouter } from "vue-router";
+import { ref } from '#imports'
+import { useRouter } from 'vue-router'
 
-const router = useRouter();
-const athCode = ref("");
-const newPassword = ref("");
-const confirmPassword = ref("");
-const loading = ref(false);
-const error = ref("");
+definePageMeta({ layout: 'q-layout', title: 'navigation.AuthPageTitle', description: 'Reset your account password' })
+
+const router = useRouter()
+const athCode = ref('')
+const newPassword = ref('')
+const confirmPassword = ref('')
+const loading = ref(false)
+const error = ref('')
 
 async function handleResetPassword() {
   if (newPassword.value !== confirmPassword.value) {
-    error.value = "Passwords do not match";
-    return;
+    error.value = 'Passwords do not match'
+    return
   }
 
   try {
-    loading.value = true;
+    loading.value = true
     // Send reset request to your API endpoint
-    const response = await fetch("/api/auth/reset-password", {
-      method: "POST",
+    const response = await fetch('/api/auth/reset-password', {
+      method: 'POST',
       headers: {
-        "Content-Type": "application/json",
+        'Content-Type': 'application/json',
       },
       body: JSON.stringify({
         code: athCode.value,
         newPassword: newPassword.value,
       }),
-    });
+    })
 
     if (!response.ok) {
-      throw new Error("Password reset failed");
+      throw new Error('Password reset failed')
     }
 
     // Redirect to login page on success
-    router.push("/auth/login");
-  } catch (e) {
-    error.value = e.message || "Failed to reset password";
-  } finally {
-    loading.value = false;
+    router.push('/auth/login')
+  }
+  catch (e) {
+    error.value = e.message || 'Failed to reset password'
+  }
+  finally {
+    loading.value = false
   }
 }
 </script>
@@ -48,7 +52,9 @@ async function handleResetPassword() {
     <div class="q-pa-md" style="max-width: 400px; margin: 0 auto">
       <q-card class="q-pa-md">
         <q-card-section>
-          <div class="text-h6">Reset Password</div>
+          <div class="text-h6">
+            Reset Password
+          </div>
         </q-card-section>
 
         <q-card-section>

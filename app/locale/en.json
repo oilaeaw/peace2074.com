@@ -221,5 +221,12 @@
   },
   "account": {
     "title": "Account"
+  },
+  "meta": {
+    "home": "Peace2074 — Islamic resources, prayer tools, and thoughtful articles to support your spiritual journey.",
+    "holynames": "Explore the 99 Holy Names of Allah with meanings and audio recitations.",
+    "tasbeeh": "Digital Tasbeeh — a simple, beautiful counter for dhikr with session tracking and settings.",
+    "miracles": "Read inspiring stories and reflections on signs and miracles.",
+    "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout."
   }
 }

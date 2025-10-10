@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { onMounted, ref } from 'vue'
+import { onMounted, ref } from '#imports'
 import aFile from '~/assets/audio/Athan.mp3'
 
 // Reactive state

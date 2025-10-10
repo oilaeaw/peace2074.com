@@ -1,5 +1,9 @@
 <script setup lang="ts">
 // No script needed for static terms page
+definePageMeta({
+  title: 'navigation.TermsPageTitle',
+  description: 'Terms and conditions for using Peace2074',
+})
 </script>
 
 <template>

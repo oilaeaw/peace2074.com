@@ -1,11 +1,11 @@
 <script lang="ts" setup>
+import { reactive, ref, watch } from '#imports'
 import { useQuasar } from 'quasar'
-import { reactive, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/store/auth.pinia'
 
-definePageMeta({ layout: 'q-layout', title: 'Login' })
+definePageMeta({ layout: 'q-layout', title: 'navigation.AuthPageTitle', description: 'User login and authentication' })
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
