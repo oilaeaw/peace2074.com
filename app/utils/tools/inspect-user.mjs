@@ -1,11 +1,8 @@
-import dotenv from 'dotenv'
 import mongoose from 'mongoose'
 
-dotenv.config()
-const uri = process.env.MONGODB_URI || process.env.MONGODB_URL || process.env.MONGO_URI
+const uri = import.meta.env.MONGODB_URI || import.meta.env.MONGODB_URL || process.env.MONGO_URI
 if (!uri) {
   console.error('No MongoDB URI found in env')
-  process.exit(2)
 }
 
 async function run() {
@@ -13,10 +10,10 @@ async function run() {
   const User = mongoose.model('User', new mongoose.Schema({}, { strict: false }), 'users')
   const u = await User.findOne({ email: 'wahbehw@gmail.com' }).lean()
   if (!u) {
-    console.log('User not found')
-    process.exit(0)
+    console.warn('User not found')
+    return 0
   }
-  console.log('User:', {
+  console.warn('User:', {
     email: u.email,
     username: u.username,
     verified: u.verified,
@@ -25,4 +22,4 @@ async function run() {
   })
   await mongoose.disconnect()
 }
-run().catch((err) => { console.error(err); process.exit(1) })
+run().catch(err => console.error(err))

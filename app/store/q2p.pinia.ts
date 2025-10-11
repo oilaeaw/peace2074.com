@@ -1,7 +1,7 @@
-import type { QuranI, SuraI } from '~~/shared/types'
-import { defineStore, acceptHMRUpdate } from 'pinia'
-import hdetails from '~~/shared/data/chapters/en.json'
-import hbook from '~~/shared/data/quran.json'
+import type { QuranI, SuraI } from '@shared/types'
+import hdetails from '@shared/data/chapters/en.json'
+import hbook from '@shared/data/quran.json'
+import { acceptHMRUpdate, defineStore } from 'pinia'
 
 interface QSDT {
   chapter: number
@@ -119,21 +119,29 @@ export const useQ2P = defineStore('q2p', {
         try {
           const parsed = JSON.parse(value)
           return parsed
-        } catch {
+        }
+        catch {
           return null
         }
       },
       serialize: (value: any) => {
         try {
           return JSON.stringify(value)
-        } catch {
+        }
+        catch {
           return '{}'
         }
-      }
-    }
+      },
+    },
   },
   actions: {
     init(index?: number): QuranI {
+      // Ensure Book is populated — persisted state may have an empty or
+      // malformed Book array. Fall back to the compiled `ready` data.
+      if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
+        this.Book = ready as QuranI
+      }
+
       this.setIndex(index || 1)
       return this.Book
     },
@@ -141,7 +149,14 @@ export const useQ2P = defineStore('q2p', {
       this.Sura = payload
     },
     setIndex(payload: number) {
-      this.Index = payload || 1
+      // Defensive: coerce to number and ensure within bounds. Default to 1.
+      let idx = Number(payload) || 1
+      if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0)
+        this.Book = ready as QuranI
+      if (idx < 1 || idx > this.Book.length)
+        idx = 1
+
+      this.Index = idx
       // Update the Sura when index changes
       this.Sura = this.Book[this.Index - 1] || this.Book[0]
     },
@@ -159,14 +174,16 @@ export const useQ2P = defineStore('q2p', {
   },
   getters: {
     QuranIndex: state => state.Index,
-    FahrasP: state => {
-      if (!state.Book || !Array.isArray(state.Book)) return []
+    FahrasP: (state) => {
+      if (!state.Book || !Array.isArray(state.Book))
+        return []
       return state.Book.map(v => v && typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, 'name') ? v.name : '')
     },
     Legend: state => state.LLegend,
     GetQ: state => state.Book || [],
-    GetSura: state => {
-      if (!state.Book || !Array.isArray(state.Book) || state.Index < 1) return null
+    GetSura: (state) => {
+      if (!state.Book || !Array.isArray(state.Book) || state.Index < 1)
+        return null
       return state.Book[state.Index - 1] || null
     },
     GetS: state => state.style.pixel,

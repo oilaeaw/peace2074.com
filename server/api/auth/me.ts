@@ -1,16 +1,13 @@
-import { getCookie } from 'h3'
-import jwt from 'jsonwebtoken'
-import User from '../../models/user'
+import User from '@server/models/user'
+import { getUserFromEvent } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const token = getCookie(event, 'auth_token')
-  if (!token)
+  const userData = await getUserFromEvent(event)
+  if (!userData?.id)
     return { user: null }
 
   try {
-    const config = useRuntimeConfig()
-    const decoded: any = jwt.verify(token, config.jwtSecret || 'changeme')
-    const user = await User.findById(decoded.id)
+    const user = await User.findById(userData.id)
     if (!user)
       return { user: null }
     return { user: {

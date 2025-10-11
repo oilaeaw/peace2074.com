@@ -228,5 +228,6 @@
     "tasbeeh": "Digital Tasbeeh — a simple, beautiful counter for dhikr with session tracking and settings.",
     "miracles": "Read inspiring stories and reflections on signs and miracles.",
     "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout."
-  }
+  },
+  "bookmarks": "bookmark"
 }

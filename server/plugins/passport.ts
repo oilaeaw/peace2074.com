@@ -1,9 +1,9 @@
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
 import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github2'
 import { Strategy as GoogleStrategy } from 'passport-google-oauth20'
 import { Strategy as LocalStrategy } from 'passport-local'
-import User from '../models/user'
 
 export default defineNitroPlugin((nitroApp) => {
   const config = useRuntimeConfig()

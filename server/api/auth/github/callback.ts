@@ -1,8 +1,7 @@
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
-import { getHeader, setCookie } from 'h3'
-import jwt from 'jsonwebtoken'
+import { getHeader } from 'h3'
 import passport from 'passport'
-import User from '../../../models/user'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
@@ -13,8 +12,12 @@ export default defineEventHandler((event) => {
     passport.authenticate('github', { failureRedirect: '/', session: false, callbackURL }, async (err: any, profile: any) => {
       if (err)
         return reject(err)
-      if (!profile)
-        return resolve(event.node.res.writeHead(302, { Location: '/' }).end())
+      if (!profile) {
+        // Use H3 redirect if possible
+        try { sendRedirect(event, '/') }
+        catch { /* fallback */ }
+        return resolve(undefined)
+      }
 
       // Normalize GitHub profile
       const username: string = profile.username || profile._json?.login || `github_${profile.id}`
@@ -41,22 +44,21 @@ export default defineEventHandler((event) => {
       }
       catch {}
 
-      const config = useRuntimeConfig()
       const payload: any = {
         id: dbUser?._id?.toString() || profile.id,
         email: dbUser?.email || email,
         username: dbUser?.username || username,
         provider: 'github',
       }
-      const token = jwt.sign(payload, config.jwtSecret || 'changeme', { expiresIn: '7d' })
-      setCookie(event, 'auth_token', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: useRuntimeConfig().nodeEnv === 'production',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60,
-      })
-      event.node.res.writeHead(302, { Location: '/' }).end()
+      const { issueAuthToken } = await import('../../../utils/auth')
+      await issueAuthToken(event, payload)
+      try { sendRedirect(event, '/') }
+      catch {
+        // if sendRedirect isn't available or fails, try writing to node res
+        if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
+          event.node.res.writeHead(302, { Location: '/' }).end()
+        }
+      }
       return resolve(undefined)
     })(event.node.req, event.node.res)
   })

@@ -79,6 +79,7 @@ export default defineNuxtConfig({
     '@nuxtjs/i18n',
     'nuxt-gtag',
     'nuxt-mongoose',
+    'nuxt-auth-utils',
   ],
   ssr: true,
   imports: {
@@ -105,7 +106,7 @@ export default defineNuxtConfig({
       viewport: 'width=device-width,initial-scale=1',
       link: [
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
-        { rel: 'icon', type: 'image/svg+xml', href: 'logo.svg' },
+        { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
         { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/quasar@2.17.7/dist/quasar.prod.css' },
         { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@quasar/quasar-ui-qmediaplayer@next/dist/QMediaPlayer.min.css' },
@@ -135,6 +136,19 @@ export default defineNuxtConfig({
     email_template: import.meta.env.NUXT_EMAIL_TEMPLATE,
     mailjs_api_url: import.meta.env.NUXT_MAILJS_API_URL || 'https://api.emailjs.com/api/v1.0/email/send',
     session_password: import.meta.env.NUXT_SESSION_PASSWORD || 'default_session_password',
+    // Session config used by nuxt-auth-utils (secure, encrypted cookie)
+    session: {
+      // cookie name
+      name: 'nuxt-session',
+      // encryption password (must be set in .env as NUXT_SESSION_PASSWORD)
+      password: import.meta.env.NUXT_SESSION_PASSWORD || '',
+      // maxAge in seconds (default: 1 week)
+      maxAge: 60 * 60 * 24 * 7,
+      // cookie options
+      cookie: {
+        sameSite: 'lax',
+      },
+    },
     githubClientId: import.meta.env.GITHUB_CLIENT_ID,
     githubClientSecret: import.meta.env.NUXT_GITHUB_CLIENT_SECRET,
     // Use explicit callback when provided, otherwise derive from SITE_BASE_URL

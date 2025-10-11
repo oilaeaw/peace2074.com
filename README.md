@@ -115,3 +115,19 @@ socket.emit('client:event', { hello: 'world' })
 Notes:
 - The optional `scripts/socket-server.mjs` is intentionally a separate process to avoid coupling with the Nuxt/Nitro build process. This is low-risk for development and portable to production if you decide to run a dedicated realtime server.
 - If you prefer to attach sockets to the Nuxt server directly, see `nuxt`/Nitro plugin approaches (requires adding `socket.io` as a server dependency and wiring it during server startup); open a follow-up and I can add a Nitro plugin that attaches to the built server.
+
+## OAuth (Google & GitHub) setup
+
+This project includes server-side OAuth handlers for GitHub and Google under `server/api/auth/*` and a passport plugin at `server/plugins/passport.ts`.
+
+Quick setup:
+
+1. Copy `.env.example` to `.env` and fill values for `GITHUB_CLIENT_ID`, `NUXT_GITHUB_CLIENT_SECRET`, `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`. Optionally set explicit `GITHUB_CALLBACK_URL` or `GOOGLE_CALLBACK_URL`.
+
+2. Register the callback URLs with providers (examples):
+	- GitHub OAuth App Authorization callback URL: `${SITE_BASE_URL}/api/auth/github/callback`
+	- Google OAuth 2.0 Authorized redirect URI: `${SITE_BASE_URL}/api/auth/google/callback`
+
+3. Run `pnpm dev` and visit `/auth/login` (or hit `/api/auth/github` or `/api/auth/google`) to start OAuth flows.
+
+Note: The server derives callback URLs dynamically from incoming request headers if explicit callback env vars are not set. When deploying behind a proxy or on a different domain, prefer setting explicit `GITHUB_CALLBACK_URL` / `GOOGLE_CALLBACK_URL` in your environment and ensure the provider registration matches exactly.

@@ -4,6 +4,7 @@ const { t } = useI18n()
 const $q = useQuasar()
 useQ2P().init()
 const { toggle } = $q.dark
+const header = ref(true)
 function _toggleDark() {
   toggle()
   return $q.dark.mode
@@ -17,7 +18,7 @@ function _toggleDark() {
         <q-btn flat round dense icon="assignment_ind" />
         <q-toolbar-title>
           <NuxtLink to="/">
-            {{ t('general.SiteTitle') }}-{{ t('auth') }}
+            {{ t("general.SiteTitle") }}-{{ t("auth") }}
           </NuxtLink>
         </q-toolbar-title>
         <q-btn flat round dense icon="apps" class="q-mr-xs" />

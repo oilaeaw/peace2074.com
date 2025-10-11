@@ -1,10 +1,9 @@
 import bcrypt from 'bcryptjs'
-import { createError, defineEventHandler, readBody, sendError, setCookie } from 'h3'
-import jwt from 'jsonwebtoken'
-import User from '../../models/user'
+import { createError, defineEventHandler, readBody, sendError } from 'h3'
+import User from '~~/server/models/user'
 
 export default defineEventHandler(async (event) => {
-  const { nodeEnv, jwtSecret } = useRuntimeConfig()
+  const { nodeEnv } = useRuntimeConfig()
   if (nodeEnv === 'production') {
     return sendError(event, createError({ statusCode: 403, statusMessage: 'Dev login disabled in production.' }))
   }
@@ -31,14 +30,8 @@ export default defineEventHandler(async (event) => {
     })
   }
 
-  const token = jwt.sign({ id: user._id, email: user.email }, jwtSecret || 'changeme', { expiresIn: '7d' })
-  setCookie(event, 'auth_token', token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: nodeEnv === 'production',
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60,
-  })
+  const { issueAuthToken } = await import('../../utils/auth')
+  await issueAuthToken(event, { id: user._id, email: user.email })
 
   return {
     user: {

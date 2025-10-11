@@ -1,6 +1,6 @@
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
 import { createError, readBody, sendError } from 'h3'
-import User from '../models/user'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)

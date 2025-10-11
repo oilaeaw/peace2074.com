@@ -1,19 +1,14 @@
-import process from 'node:process'
-import Bookmark from '@server/models/bookmark'
-import { getCookie } from 'h3'
-import jwt from 'jsonwebtoken'
-
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme'
+import Bookmark from '~~/server/models/bookmark'
 
 export default defineEventHandler(async (event) => {
+  const { getUserFromEvent } = await import('../../utils/auth')
   const body = await readBody(event)
-  const token = getCookie(event, 'auth_token')
-  if (!token) {
+  const userData = await getUserFromEvent(event)
+  const userId = userData?.id
+  if (!userId) {
     throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
   }
   try {
-    const decoded: any = jwt.verify(token, JWT_SECRET)
-    const userId = decoded.id || decoded.userId
     const payload = {
       userId,
       bookmark: body.bookmark || body?.bookmark?.value || body,

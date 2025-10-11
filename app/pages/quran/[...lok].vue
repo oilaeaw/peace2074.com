@@ -9,6 +9,7 @@ const { t } = useI18n()
 const appName = computed(() => t('general.SiteTitle'))
 const route = useRoute()
 const lok = ref(0) // Initialize with default value
+
 // Extract the sura number from route params - handle both array and single value
 function getLokFromRoute() {
   const param = route.params.lok
@@ -439,7 +440,7 @@ function onAyaDblClick(e: Event) {
                 </div>
               </q-card-section>
 
-              <q-virtual-scroll visible class="col verse-scroll">
+              <q-scroll-observable visible class="col verse-scroll">
                 <q-card-section>
                   <div class="verse">
                     <div
@@ -451,7 +452,7 @@ function onAyaDblClick(e: Event) {
                     />
                   </div>
                 </q-card-section>
-              </q-virtual-scroll>
+              </q-scroll-observable>
             </q-card>
           </q-card>
         </q-slide-transition>
@@ -488,13 +489,11 @@ function onAyaDblClick(e: Event) {
   padding: 0.6rem 1rem 1rem 1rem;
 }
 .sura-name {
-  font-family: 'Noto Naskh Arabic', 'Scheherazade', 'Amiri', serif;
-  font-size: 2.4rem;
+  font-family: 'Scheherazade', 'Amiri', serif;
+  font-size: 2.2rem;
   font-weight: 700;
   color: var(--title-color);
   margin-bottom: 0.2rem;
-  text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
 }
 .sura-meta {
   font-size: 0.95rem;
@@ -510,10 +509,9 @@ function onAyaDblClick(e: Event) {
 }
 .bismillah,
 .allah {
-  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
-  font-size: 1.6rem;
+  font-family: 'Scheherazade', 'Amiri', serif;
+  font-size: 1.5rem;
   color: var(--title-color);
-  text-shadow: 0 1px 0 rgba(0, 0, 0, 0.02);
 }
 .allah {
   color: #b30000;
@@ -523,59 +521,52 @@ function onAyaDblClick(e: Event) {
 
 .verse {
   display: block;
-  line-height: 2.6rem;
+  line-height: 2.4rem;
   text-align: right;
   direction: rtl;
-  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
-  font-size: 2.4rem;
+  font-family: 'Scheherazade', 'Amiri', serif;
+  font-size: 2.2rem;
   padding: 0.8rem 1rem;
   text-align: justify;
-  text-rendering: optimizeLegibility;
 }
 .ayah-paragraph {
   direction: rtl;
   unicode-bidi: isolate;
   text-align: justify;
   text-justify: inter-word;
-  line-height: 3.1rem;
-  font-size: 3.2rem;
+  line-height: 2.8rem;
+  font-size: 3rem;
   font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
   margin: 0;
   padding: 0;
   hyphens: none;
   word-break: normal;
-  -webkit-font-feature-settings: normal;
-  font-feature-settings: normal;
-  font-variant-ligatures: contextual;
-  font-kerning: normal;
+  -webkit-font-feature-settings:
+    'rlig' 1,
+    'calt' 1;
   text-rendering: optimizeLegibility;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
 }
 
 .aya-inline {
   display: inline;
   vertical-align: baseline;
-  padding: 0 0.06rem;
+  padding: 0 0.04rem;
   white-space: normal;
-  letter-spacing: 0.01em; /* slight breathing room */
 }
 
 .arabic-text {
   display: inline;
   max-width: none;
   text-align: right;
-  line-height: inherit;
+  line-height: 2.8rem;
   font-size: inherit;
-  color: var(--text-color);
-  text-shadow: 0 0.6px 0 rgba(0, 0, 0, 0.02);
 }
 
 .verse-medallion {
   display: inline-block;
-  width: 22px;
-  height: 22px;
-  margin-inline-start: 0.36rem;
+  width: 20px;
+  height: 20px;
+  margin-inline-start: 0.4rem;
   vertical-align: baseline;
   line-height: 0;
   pointer-events: none;
@@ -601,7 +592,6 @@ function onAyaDblClick(e: Event) {
    medallions. */
 .ayah-paragraph,
 .ayah-paragraph * {
-  /* keep most items inline, but allow medallions and verse numbers to be inline-block */
   display: inline !important;
   margin: 0 !important;
   padding: 0 !important;
@@ -611,13 +601,13 @@ function onAyaDblClick(e: Event) {
 /* temporary highlight style applied when jumping to an aya */
 .aya-highlight {
   display: inline-block !important;
-  background-color: rgba(255, 235, 59, 0.85) !important;
+  background-color: rgba(255, 235, 59, 0.85) !important; /* stronger yellow */
   transition:
     background-color 0.4s ease-in-out,
     box-shadow 0.2s ease-in-out;
   border-radius: 6px;
-  padding: 0 0.22rem !important;
-  box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.12) inset;
+  padding: 0 0.18rem !important;
+  box-shadow: 0 0 0 2px rgba(255, 235, 59, 0.15) inset;
 }
 
 /* highlight selected item in bookmarks list */
@@ -628,8 +618,8 @@ function onAyaDblClick(e: Event) {
 /* Make sure medallion remains tight and doesn't create gaps */
 .ayah-paragraph .verse-medallion {
   display: inline-block !important;
-  width: 20px !important;
-  height: 20px !important;
+  width: 18px !important;
+  height: 18px !important;
   margin-inline-start: 0.12rem !important;
 }
 
@@ -637,17 +627,19 @@ function onAyaDblClick(e: Event) {
 /* style explicit verse number elements that are now rendered as
    <span class="verse-num">N</span> inside each .aya-inline */
 .aya-inline .verse-num {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
+  display: inline-block;
   width: 22px;
   height: 22px;
   margin-inline-start: 0.36rem;
   border-radius: 50%;
+  /* decorative inline SVG as background (gold medallion) - percent-encoded */
   background-image: url('data:image/svg+xml,%3Csvg%20xmlns%3D%22http%3A//www.w3.org/2000/svg%22%20viewBox%3D%220%200%2024%2024%22%3E%3Cdefs%3E%3CradialGradient%20id%3D%22g%22%20cx%3D%220.35%22%20cy%3D%220.35%22%20r%3D%221%22%3E%3Cstop%20offset%3D%220%25%22%20stop-color%3D%22%23fff7e6%22/%3E%3Cstop%20offset%3D%2250%25%22%20stop-color%3D%22%23f3dfb8%22/%3E%3Cstop%20offset%3D%22100%25%22%20stop-color%3D%22%23e6c97a%22/%3E%3C/radialGradient%3E%3C/defs%3E%3Ccircle%20cx%3D%2212%22%20cy%3D%2212%22%20r%3D%2210%22%20fill%3D%22url(%23g)%22%20stroke%3D%22%23caa14b%22%20stroke-width%3D%221.2%22/%3E%3C/svg%3E');
   background-size: contain;
   background-repeat: no-repeat;
   background-position: center;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   color: #2b1a00;
   font-family: 'Amiri', serif;
   font-size: 10px;
@@ -660,27 +652,26 @@ function onAyaDblClick(e: Event) {
   min-height: 60vh;
   max-height: calc(100vh - 12rem);
   overflow: auto;
-  -webkit-overflow-scrolling: touch;
 }
 
 .islamic-card {
-  max-width: 900px;
+  max-width: 820px;
   margin-left: auto;
   margin-right: auto;
-  padding: 1.2rem 1.6rem;
-  background: linear-gradient(180deg, rgba(255, 255, 255, 0.98), rgba(250, 250, 246, 0.98));
+  padding: 1rem 1.2rem;
+  background: #fff;
   border: 12px solid transparent;
   box-shadow:
     inset 0 0 0 6px #d6b76e,
-    0 18px 40px rgba(0, 0, 0, 0.08);
-  border-radius: 10px;
+    0 10px 30px rgba(0, 0, 0, 0.08);
+  border-radius: 6px;
 }
 .islamic-card::before {
   content: '';
   display: block;
   width: 100%;
   height: 48px;
-  background-image: url('~assets/images/decor-top.svg');
+  background-image: url('~/assets/images/decor-top.svg');
   margin-top: -12px;
 }
 .islamic-card::after {
@@ -688,117 +679,24 @@ function onAyaDblClick(e: Event) {
   display: block;
   width: 100%;
   height: 48px;
-  background-image: url('@assets/images/decor-bottom.svg');
+  background-image: url('~/assets/images/decor-bottom.svg');
   margin-bottom: -12px;
 }
 
 :root {
-  --background-pattern: url('@assets/patterns/islamic-pattern-light.svg');
-  --text-color: #173a2e;
-  --title-color: #14492e;
+  --background-pattern: url('~/assets/patterns/islamic-pattern-light.svg');
+  --text-color: #155724;
+  --title-color: #155724;
   --subtitle-color: #6c757d;
-  --card-bg: #fbfbf8;
+  --card-bg: #f9f9f9;
 }
 @media (prefers-color-scheme: dark) {
   :root {
-    --background-pattern: url('@assets/patterns/islamic-pattern-dark.svg');
+    --background-pattern: url('~/assets/patterns/islamic-pattern-dark.svg');
     --text-color: #e0e0e0;
     --title-color: #e0e0e0;
     --subtitle-color: #b0b0b0;
     --card-bg: #333;
-  }
-}
-
-/* Page-level sizing variables to keep font sizes even and consistent */
-.islamic-design {
-  --quran-base-size: 18px; /* adjust this to scale the whole page */
-  font-size: var(--quran-base-size);
-}
-
-/* Make the main reading card fluid and use available horizontal space */
-.islamic-card {
-  max-width: none; /* allow the card to expand */
-  width: calc(100% - 3rem);
-  margin-left: 1.5rem;
-  margin-right: 1.5rem;
-  padding: 1.6rem 2rem;
-}
-
-@media (min-width: 1400px) {
-  .islamic-card {
-    width: calc(100% - 6rem);
-    margin-left: 3rem;
-    margin-right: 3rem;
-    padding: 2rem 3rem;
-  }
-}
-
-/* Normalize Arabic font sizing to be consistent across elements */
-.ayah-paragraph,
-.arabic-text,
-.verse,
-.sura-name,
-.bismillah {
-  /* use rem so changes to --quran-base-size scale everything */
-  font-size: 1.8rem; /* relative to page font-size */
-}
-.ayah-paragraph {
-  line-height: 1.72; /* relative to font-size for consistent rhythm */
-}
-
-/* Bookmarks: rounded, encapsulating appearance for chips and list items */
-.bookmarks-panel .q-chip,
-.sura-controls .q-chip {
-  border-radius: 999px;
-  padding: 0.22rem 0.7rem;
-  background: rgba(20, 73, 46, 0.06);
-  color: var(--title-color);
-  box-shadow: none;
-  margin: 0.18rem 0.12rem;
-}
-
-.bookmarks-panel q-item,
-.bookmarks-panel .q-item {
-  border-radius: 12px;
-  padding: 0.35rem 0.6rem;
-}
-
-.bookmarks-panel .bookmark-selected,
-.bookmarks-panel q-item.bookmark-selected {
-  background: linear-gradient(90deg, rgba(202, 161, 75, 0.12), rgba(202, 161, 75, 0.06));
-  box-shadow: 0 2px 8px rgba(20, 73, 46, 0.06);
-  border-radius: 12px;
-}
-
-/* Ensure chips in the top menu also appear rounded and encapsulating */
-.sura-controls q-chip,
-.sura-controls .q-chip {
-  border-radius: 999px;
-}
-
-/* Make verse medallions a little subtler on wide screens */
-@media (min-width: 1024px) {
-  .aya-inline .verse-num {
-    width: 24px;
-    height: 24px;
-    font-size: 11px;
-    margin-inline-start: 0.42rem;
-  }
-}
-
-/* Small screens: slightly reduce paragraph font to fit comfortably */
-@media (max-width: 480px) {
-  .ayah-paragraph,
-  .arabic-text,
-  .verse {
-    font-size: 1.35rem;
-    line-height: 1.6;
-  }
-  .islamic-card {
-    width: calc(100% - 1rem);
-    margin-left: 0.5rem;
-    margin-right: 0.5rem;
-    padding: 1rem;
   }
 }
 </style>

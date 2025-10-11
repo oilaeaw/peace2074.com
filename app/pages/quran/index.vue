@@ -1,29 +1,24 @@
 <script lang="ts" setup>
-import { computed } from "#imports";
-import { useRouter } from "vue-router";
-import { useQ2P } from "~/store/q2p.pinia";
+import { computed } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQ2P } from '~/store/q2p.pinia'
 
-const { t } = useI18n();
-
-definePageMeta({
-  title: "pages.quran.pageTitle",
-  description: "Browse suras of the Holy Quran",
-});
+const { t } = useI18n()
 
 // const q2p = useQ2P()
-const router = useRouter();
-const suras = computed(() => useQ2P().GetQ);
+const router = useRouter()
+const suras = computed(() => useQ2P().GetQ)
 
-const surasLeft = computed(() => suras.value.filter((_, i) => i % 2 === 0));
-const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1));
+const surasLeft = computed(() => suras.value.filter((_, i) => i % 2 === 0))
+const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1))
 
 function navToSura(id: number) {
-  router.push(`/quran/${id}`);
+  router.push(`/quran/${id}`)
 }
 
 function showTranslation(sura: any) {
   // Only show translation if it differs from the sura name
-  return sura.e_name && sura.e_name !== sura.name;
+  return sura.e_name && sura.e_name !== sura.name
 }
 </script>
 
@@ -56,9 +51,7 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total"
-              >{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span
-            >
+            <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
           </div>
         </div>
       </div>
@@ -88,9 +81,7 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total"
-              >{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span
-            >
+            <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
           </div>
         </div>
       </div>
@@ -132,13 +123,15 @@ function showTranslation(sura: any) {
   flex-direction: column;
   align-items: center;
   text-align: center;
-  font-family: "Amiri", serif;
+  font-family: 'Amiri', serif;
   font-size: 1.45rem;
   min-width: 0;
   width: 100%;
   max-width: 340px;
   box-sizing: border-box;
-  transition: box-shadow 0.2s, background 0.2s;
+  transition:
+    box-shadow 0.2s,
+    background 0.2s;
   cursor: pointer;
   margin-bottom: 0.1rem;
 }
@@ -177,7 +170,7 @@ function showTranslation(sura: any) {
   padding: 0.2em 1em;
   margin: 0 0.5em;
   display: inline-block;
-  font-family: "Amiri", serif;
+  font-family: 'Amiri', serif;
   border: none;
 }
 .sura-info {

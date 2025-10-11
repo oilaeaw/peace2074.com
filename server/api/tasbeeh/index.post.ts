@@ -1,25 +1,14 @@
-import process from 'node:process'
 import Tasbeeh from '@server/models/tasbeeh'
-import { getCookie } from 'h3'
-import jwt from 'jsonwebtoken'
-
-const JWT_SECRET = process.env.JWT_SECRET || 'changeme'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
-  const token = getCookie(event, 'auth_token')
-  if (!token)
-    throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
 
-  let userId
-  try {
-    const decoded: any = jwt.verify(token, JWT_SECRET)
-    userId = decoded.id || decoded.userId
-  }
-  catch (err) {
-    console.error('JWT verify failed for /api/tasbeeh POST:', err)
-    throw createError({ statusCode: 401, statusMessage: 'Invalid token' })
-  }
+  const { getUserFromEvent } = await import('../../utils/auth')
+  const userData = await getUserFromEvent(event)
+  const userId = userData?.id
+
+  if (!userId)
+    throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
 
   // body may contain { date, total, sessions, session: { phraseIndex, count, target } }
   const { date, total, sessions, session } = body

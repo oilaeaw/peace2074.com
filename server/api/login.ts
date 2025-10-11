@@ -1,7 +1,6 @@
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
 import { createError, readBody, sendError } from 'h3'
-import jwt from 'jsonwebtoken'
-import User from '../models/user'
 
 export default defineEventHandler(async (event) => {
   const body = await readBody(event)
@@ -28,16 +27,9 @@ export default defineEventHandler(async (event) => {
     return sendError(event, createError({ statusCode: 401, statusMessage: 'Invalid credentials' }))
   }
 
-  // Issue JWT using runtime secret for consistency
-  const { jwtSecret, nodeEnv } = useRuntimeConfig()
-  const token = jwt.sign({ id: user._id, email: user.email }, jwtSecret || 'changeme', { expiresIn: '7d' })
-  setCookie(event, 'auth_token', token, {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: nodeEnv === 'production',
-    path: '/',
-    maxAge: 7 * 24 * 60 * 60,
-  })
+  // Issue and set session cookie using central helper
+  const { issueAuthToken } = await import('../utils/auth')
+  issueAuthToken(event, { id: user._id, email: user.email })
   return {
     user: {
       id: user._id,

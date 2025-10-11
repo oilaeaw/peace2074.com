@@ -1,9 +1,8 @@
 import crypto from 'node:crypto'
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
-import { defineEventHandler, getHeader, setCookie } from 'h3'
-import jwt from 'jsonwebtoken'
+import { defineEventHandler, getHeader } from 'h3'
 import passport from 'passport'
-import User from '../../../models/user'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
@@ -19,7 +18,7 @@ export default defineEventHandler((event) => {
       if (!profile) {
         return resolve(event.node.res.writeHead(302, { Location: '/' }).end())
       }
-      
+
       const email: string | null = (profile.emails && profile.emails[0]?.value) || profile._json?.email || null
       const displayName: string = profile.displayName || profile._json?.name || ''
       const baseUsername: string = (displayName || (email ? email.split('@')[0] : '') || `google_${profile.id || profile._json?.sub || 'user'}`).toLowerCase().replace(/\s+/g, '_')
@@ -53,22 +52,20 @@ export default defineEventHandler((event) => {
         return resolve(undefined)
       }
 
-      const config = useRuntimeConfig()
       const payload: any = {
         id: dbUser?._id?.toString() || profile._json?.sub || profile.id,
         email: dbUser?.email || email,
         username: dbUser?.username || baseUsername,
         provider: 'google',
       }
-      const token = jwt.sign(payload, config.jwtSecret || 'changeme', { expiresIn: '7d' })
-      setCookie(event, 'auth_token', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: useRuntimeConfig().nodeEnv === 'production',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60,
-      })
-      event.node.res.writeHead(302, { Location: '/' }).end()
+      const { issueAuthToken } = await import('../../../utils/auth')
+      await issueAuthToken(event, payload)
+      try { sendRedirect(event, '/') }
+      catch {
+        if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
+          event.node.res.writeHead(302, { Location: '/' }).end()
+        }
+      }
       return resolve(undefined)
     })(event.node.req, event.node.res)
   })

@@ -1,11 +1,6 @@
 export default defineEventHandler(async (event) => {
   // Clear the auth_token cookie
-  setCookie(event, 'auth_token', '', {
-    httpOnly: true,
-    sameSite: 'lax',
-    secure: useRuntimeConfig().nodeEnv === 'production',
-    path: '/',
-    maxAge: 0,
-  })
+  const { clearAuthToken } = await import('../../utils/auth')
+  clearAuthToken(event)
   return { ok: true }
 })

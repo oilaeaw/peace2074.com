@@ -1,8 +1,7 @@
+import type { QDBI } from '@shared/types'
 import type { H3Event } from 'h3'
-import type { QDBI } from '../../shared/types'
-
-import hdetails from '~~/shared/data/chapters/en.json'
-import hbook from '~~/shared/data/quran.json'
+import hdetails from '@server/data/editions/en.json'
+import hbook from '@server/data/quran.json'
 
 export interface QSDT {
   chapter: number
@@ -17,13 +16,15 @@ export interface IDT {
   type: string
   total_verses: number
 }
+
 export default defineEventHandler((event: H3Event) => {
   const params = getQuery(event)
   const { s } = params
   const ready = []
   hdetails.forEach((item: IDT) => {
     const qr: QSDT = hbook[item.id]
-    qr.find((v, index) => v[index] === item.id)
+    // The following line is likely incorrect, as qr is probably an array of verses, not an object with keys matching item.id
+    // qr.find((v, index) => v[index] === item.id)
     ready.push({
       id: item.id,
       name: item.name,

@@ -1,7 +1,7 @@
-import type { UserT } from '../../shared/types'
+import type { UserT } from '@shared/types'
 import { createMongoAbility } from '@casl/ability'
+import { CaslActionE, CaslSubjectE } from '@shared/types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
-import { CaslActionE, CaslSubjectE } from '~~/shared/types'
 
 // Central CASL ability instance
 const ability = createMongoAbility()

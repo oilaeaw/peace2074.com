@@ -1,8 +1,7 @@
-import type { UserT } from './../../shared/types/index'
+import type { UserT } from '@shared/types/index'
+import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
-import { createError, readBody, sendError, setCookie } from 'h3'
-import jwt from 'jsonwebtoken'
-import User from '../../models/user'
+import { createError, readBody, sendError } from 'h3'
 
 // JWT secret is provided via Nuxt runtimeConfig
 
@@ -31,9 +30,7 @@ export default defineEventHandler(async (event) => {
     const query: any = isEmail ? { email: id } : { username: id }
     const user: UserT | null = await User.findOne(query)
 
-    // --- Temporary Debugging --- //
-    console.log('USER OBJECT FROM DB:', user)
-    // ------------------------- //
+    // --- Temporary Debugging removed ---
 
     if (!user) {
       return sendError(event, createError({ statusCode: 401, statusMessage: 'Invalid credentials' }))
@@ -49,19 +46,9 @@ export default defineEventHandler(async (event) => {
       return sendError(event, createError({ statusCode: 401, statusMessage: 'Invalid credentials' }))
     }
 
-    // Issue JWT with runtime secret
-    const { jwtSecret } = useRuntimeConfig()
-    const token = jwt.sign({ id: user._id, email: user.email }, jwtSecret || 'changeme', { expiresIn: '7d' })
-
-    // Set the token as an httpOnly cookie so it cannot be accessed by JavaScript
-    const secure = useRuntimeConfig().nodeEnv === 'production'
-    setCookie(event, 'auth_token', token, {
-      httpOnly: true,
-      sameSite: 'lax',
-      secure,
-      path: '/',
-      maxAge: 7 * 24 * 60 * 60, // 7 days
-    })
+    // Issue and set session cookie using central helper
+    const { issueAuthToken } = await import('../../utils/auth')
+    issueAuthToken(event, { id: user._id, email: user.email })
 
     // Return only the user object (no token in response body)
     return {

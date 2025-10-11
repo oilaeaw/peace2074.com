@@ -1,5 +1,4 @@
-import { createError, defineEventHandler, readBody, sendError, setCookie } from 'h3'
-import jwt from 'jsonwebtoken'
+import { createError, defineEventHandler, readBody, sendError } from 'h3'
 import passport from 'passport'
 
 export default defineEventHandler(async (event) => {
@@ -18,16 +17,8 @@ export default defineEventHandler(async (event) => {
       if (!user)
         return resolve(sendError(event, createError({ statusCode: 401, statusMessage: info?.message || 'Invalid credentials' })))
 
-      const { jwtSecret, nodeEnv } = useRuntimeConfig()
-      const token = jwt.sign({ id: user.id, email: user.email }, jwtSecret || 'changeme', { expiresIn: '7d' })
-      setCookie(event, 'auth_token', token, {
-        httpOnly: true,
-        sameSite: 'lax',
-        secure: nodeEnv === 'production',
-        path: '/',
-        maxAge: 7 * 24 * 60 * 60,
-      })
-
+      const { issueAuthToken } = await import('../../utils/auth')
+      issueAuthToken(event, { id: user.id, email: user.email })
       return resolve({ user })
     })(event.node.req, event.node.res)
   })
