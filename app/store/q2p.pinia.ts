@@ -1,7 +1,22 @@
 import type { QuranI, SuraI } from '~~/shared/types'
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 import hdetails from '~~/shared/data/chapters/en.json'
 import hbook from '~~/shared/data/quran.json'
+
+interface QSDT {
+  chapter: number
+  verse: number
+  text: string[]
+}
+
+interface IDT {
+  id: number
+  name: string
+  transliteration: string
+  translation: string
+  type: string
+  total_verses: number
+}
 
 interface Style {
   display: string
@@ -20,20 +35,22 @@ interface State {
     container: Style
   }
 }
-const ready = []
+const ready: any[] = []
 
 hdetails.forEach((item: IDT) => {
-  const qr: QSDT = hbook[item.id]
-  qr.find((v, index) => v[index] === item.id)
-  ready.push({
-    id: item.id,
-    name: item.name,
-    e_name: item.translation,
-    type: item.type,
-    total_verses: item.total_verses,
-    ayat: qr,
-  })
-}) as QuranI
+  const qr: QSDT = hbook[item.id as keyof typeof hbook]
+  if (qr) {
+    qr.find((v: any, index: number) => v[index] === item.id)
+    ready.push({
+      id: item.id,
+      name: item.name,
+      e_name: item.translation,
+      type: item.type,
+      total_verses: item.total_verses,
+      ayat: qr,
+    })
+  }
+})
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
@@ -94,6 +111,27 @@ export const useQ2P = defineStore('q2p', {
       },
     },
   }),
+  persist: {
+    key: 'q2p-store',
+    storage: typeof window !== 'undefined' ? localStorage : undefined,
+    serializer: {
+      deserialize: (value: string) => {
+        try {
+          const parsed = JSON.parse(value)
+          return parsed
+        } catch {
+          return null
+        }
+      },
+      serialize: (value: any) => {
+        try {
+          return JSON.stringify(value)
+        } catch {
+          return '{}'
+        }
+      }
+    }
+  },
   actions: {
     init(index?: number): QuranI {
       this.setIndex(index || 1)
@@ -121,10 +159,16 @@ export const useQ2P = defineStore('q2p', {
   },
   getters: {
     QuranIndex: state => state.Index,
-    FahrasP: state => state.Book.map(v => (v.name)),
+    FahrasP: state => {
+      if (!state.Book || !Array.isArray(state.Book)) return []
+      return state.Book.map(v => v && typeof v === 'object' && Object.prototype.hasOwnProperty.call(v, 'name') ? v.name : '')
+    },
     Legend: state => state.LLegend,
-    GetQ: state => state.Book,
-    GetSura: state => state.Book[state.Index - 1],
+    GetQ: state => state.Book || [],
+    GetSura: state => {
+      if (!state.Book || !Array.isArray(state.Book) || state.Index < 1) return null
+      return state.Book[state.Index - 1] || null
+    },
     GetS: state => state.style.pixel,
     getContainerStyle: state => state.style.container,
   },
