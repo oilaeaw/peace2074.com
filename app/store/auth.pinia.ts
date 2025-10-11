@@ -12,7 +12,10 @@ export const useAuthStore = defineStore('auth', () => {
 
   // Core user state (nullable to match previous user.pinia behaviour)
   const _user = ref<any>(null)
-  const isAuthenticated = computed(() => Boolean(_user.value && Object.keys(_user.value).length))
+  const isAuthenticated = computed(() => {
+    const user = _user.value
+    return Boolean(user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'id') && Object.keys(user).length > 0)
+  })
 
   // Permissions and CASL ability
   const _permissions = ref<any[]>([
@@ -25,12 +28,16 @@ export const useAuthStore = defineStore('auth', () => {
   ])
 
   // Exposed computed values  const isAuthenticated: ComputedRef<boolean> = computed(() => user !== null)
-  const authenticated = computed(() => Boolean(_user.value && Object.keys(_user.value).length))
+  const authenticated = computed(() => {
+    const user = _user.value
+    return Boolean(user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'id') && Object.keys(user).length > 0)
+  })
   const permissions = computed(() => _permissions.value)
 
   // Friendly saved name like the previous store
   const savedName = computed(() => {
-    return _user.value.username
+    const user = _user.value
+    return user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'username') ? user.username : null
   })
 
   // Basic actions

@@ -180,6 +180,8 @@ export default defineNuxtConfig({
         name: 'holynames',
       },
     },
+    '/quran': { ssr: false },
+    '/quran/**': { ssr: false },
   },
   future: {
     compatibilityVersion: 4,
@@ -204,13 +206,13 @@ export default defineNuxtConfig({
     },
     prerender: {
       crawlLinks: true,
+      ignore: ['/quran', '/quran/**'],
       // Explicitly pre-render common public pages. Dynamic routes (e.g. quran/:sura)
       // are not listed here and will be discovered via crawlLinks when possible.
       // Use leading slashes for routes so Nitro recognizes them correctly.
       routes: [
         '/',
         '/home',
-        '/quran',
         '/holynames',
         '/tasbeeh',
         '/miracles',
