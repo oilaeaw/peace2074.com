@@ -1,16 +1,16 @@
 <script setup lang="ts">
-import { useOnline } from '#imports'
+import { useOnline } from "#imports";
 
-const { setLocale } = useI18n()
-const { t } = useI18n()
-const _myLangsStore = useMyLangsStore()
+const { setLocale } = useI18n();
+const { t } = useI18n();
+const _myLangsStore = useMyLangsStore();
 definePageMeta({
-  layout: 'default',
-  title: 'navigation.HomePageTitle',
-  description: 'meta.home',
-})
+  layout: "default",
+  title: "navigation.HomePageTitle",
+  description: "meta.home",
+});
 
-const online = useOnline()
+const online = useOnline();
 </script>
 
 <template>
@@ -110,14 +110,14 @@ const online = useOnline()
 
 .islamic-design {
   /* Use the light/dark pattern assets that exist in app/assets/patterns/ */
-  background: var(--index-background, url('~/assets/patterns/islamic-pattern-light.svg'));
+  background: var(--index-background, url("~/assets/patterns/islamic-pattern-light.svg"));
   background-repeat: repeat;
   background-size: cover;
   color: #155724;
 }
 
 .islamic-title {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 2.5rem;
   color: #155724;
   text-align: center;
@@ -125,7 +125,7 @@ const online = useOnline()
 }
 
 .islamic-subtitle {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 1.5rem;
   color: #6c757d;
   text-align: center;
@@ -133,7 +133,7 @@ const online = useOnline()
 }
 
 .islamic-link {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   color: #155724;
   text-decoration: none;
   border: 1px solid #155724;
@@ -155,7 +155,7 @@ const online = useOnline()
 }
 
 .islamic-btn {
-  font-family: 'Amiri', serif;
+  font-family: "Amiri", serif;
   font-size: 1rem;
 }
 </style>
