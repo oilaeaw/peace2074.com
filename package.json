@@ -1,11 +1,13 @@
 {
+  "name": "peace2074.com",
   "type": "module",
+  "version": "0.0.2",
   "private": false,
   "packageManager": "pnpm@10.17.1",
   "scripts": {
+    "dev": "nuxi dev",
+    "dev:pwa": "VITE_PLUGIN_PWA=true nuxi dev",
     "build": "nuxi build",
-    "dev:pwa": "NODE_OPTIONS=--require=./node-crypto-patch.cjs VITE_PLUGIN_PWA=true nuxi dev",
-    "dev": "NODE_OPTIONS=--require=./node-crypto-patch.cjs nuxi dev",
     "generate": "nuxi generate",
     "prepare": "nuxi prepare",
     "start": "node .output/server/index.mjs",
@@ -45,7 +47,8 @@
     "resolve": "^1.22.10",
     "socket.io": "^4.8.1",
     "socket.io-client": "^4.8.1",
-    "vue-scroll-picker": "^2.0.0"
+    "vue-scroll-picker": "^2.0.0",
+    "webpack": "^5.99.9"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^4.14.1",
@@ -76,8 +79,7 @@
     "sass": "^1.89.1",
     "typescript": "^5.8.3",
     "unhead": "2.0.0-rc.9",
-    "vue-tsc": "^2.2.10",
-    "webpack": "^5.99.9"
+    "vue-tsc": "^2.2.10"
   },
   "pnpm": {
     "overrides": {
@@ -95,6 +97,5 @@
     "@nuxt/devtools": "^2.0.0",
     "unplugin": "^2.1.2",
     "vite": "^6.1.0"
-  },
-  "version": "0.0.1"
+  }
 }

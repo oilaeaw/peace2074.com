@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     last_name,
     username,
     role: 'user',
-    verified: false,
+    verified: useRuntimeConfig().nodeEnv !== 'production',
     verificationToken,
     verificationTokenExpires,
   })
@@ -50,8 +50,18 @@ export default defineEventHandler(async (event) => {
     return sendError(event, createError({ statusCode: 500, statusMessage: 'User creation failed.' }))
   }
 
-  // Send verification email
-  await sendVerificationEmail(email, verificationToken)
+  // Send verification email (best-effort in dev)
+  try {
+    await sendVerificationEmail(email, verificationToken)
+  }
+  catch (e) {
+    if (useRuntimeConfig().nodeEnv === 'production')
+      throw e
+    // In development, don't block signup on mail failures
+  }
 
-  return { message: 'Signup successful! Please check your email to verify your account.', user: { email: user.email, id: user._id, username: user.username, first_name: user.first_name, last_name: user.last_name, role: user.role } }
+  const msg = useRuntimeConfig().nodeEnv === 'production'
+    ? 'Signup successful! Please check your email to verify your account.'
+    : 'Signup successful! (Dev mode: verification skipped)'
+  return { message: msg, user: { email: user.email, id: user._id, username: user.username, first_name: user.first_name, last_name: user.last_name, role: user.role } }
 })

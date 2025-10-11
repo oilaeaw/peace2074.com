@@ -12,7 +12,7 @@ export async function sendVerificationEmail(email: string, token: string) {
     },
   })
 
-  const verifyUrl = `${import.meta.env.BASE_URL || 'http://localhost:3001'}/api/verify-email?token=${token}`
+  const verifyUrl = `${import.meta.env.BASE_URL || 'http://localhost:3001'}/api/auth/verify-email?token=${token}`
   const mailOptions = {
     from: import.meta.env.SMTP_FROM || 'peace2074@yourdomain.com',
     to: email,

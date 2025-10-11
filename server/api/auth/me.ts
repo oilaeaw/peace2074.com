@@ -9,7 +9,7 @@ export default defineEventHandler(async (event) => {
 
   try {
     const config = useRuntimeConfig()
-    const decoded: any = jwt.verify(token, config.jwtSecret || 'dev_secret')
+    const decoded: any = jwt.verify(token, config.jwtSecret || 'changeme')
     const user = await User.findById(decoded.id)
     if (!user)
       return { user: null }

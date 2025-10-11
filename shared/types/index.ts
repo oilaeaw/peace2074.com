@@ -244,7 +244,7 @@ export type TransactionsT = TransactionT[]
 
 export interface UserI {
   [x: string]: any
-  id?: string
+  id?: string | ObjectId
   email: string
   username: string
   handle?: string
@@ -257,6 +257,9 @@ export interface UserI {
   auth0Id?: string
   tweet?: Tweet[]
   mediaFiles?: MediaFile[]
+  verified: boolean
+  verificationToken?: string
+  verificationTokenExpires?: Date
 }
 
 export type UserT = UserI

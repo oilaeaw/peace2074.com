@@ -5,7 +5,11 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '~/store/auth.pinia'
 
-definePageMeta({ layout: 'q-layout', title: 'navigation.AuthPageTitle', description: 'User login and authentication' })
+definePageMeta({
+  layout: 'q-layout',
+  title: 'navigation.AuthPageTitle',
+  description: 'User login and authentication',
+})
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
@@ -22,25 +26,25 @@ const signupPayload = reactive({
   confirmPassword: '',
 })
 
-const loginPayload = reactive({ email: '', password: '', username: '' })
-const loginType = ref('email')
+const loginPayload = reactive({ identifier: '', password: '' })
 const showPassword = ref(false)
 const showResend = ref(false)
 const lastTriedEmail = ref('')
-
-const loginOptions = [
-  { label: t('email'), value: 'email' },
-  { label: t('username'), value: 'username' },
-]
 
 async function onSubmit() {
   loading.value = true
   showResend.value = false
   try {
-    const payload: Record<string, any> = { password: loginPayload.password }
-    if (loginType.value === 'email') {
-      payload.email = loginPayload.email
-      lastTriedEmail.value = loginPayload.email
+    const payload: Record<string, any> = {
+      password: loginPayload.password,
+      identifier: loginPayload.identifier,
+    }
+    // Only remember last tried email if it looks like an email
+    if (
+      typeof loginPayload.identifier === 'string'
+      && loginPayload.identifier.includes('@')
+    ) {
+      lastTriedEmail.value = loginPayload.identifier
     }
 
     const { data, error } = await useFetch('/api/auth/login', {
@@ -53,7 +57,13 @@ async function onSubmit() {
     if (error?.value) {
       if (error.value.statusCode === 403)
         showResend.value = true
-      throw new Error('Login failed')
+      const emsg
+        = (error.value.data
+          && (error.value.data.statusMessage || error.value.data.message))
+        || error.value.statusMessage
+        || error.value.message
+        || 'Login failed'
+      throw new Error(emsg)
     }
     const result = data?.value
     if (result && result.user) {
@@ -77,9 +87,8 @@ async function onSubmit() {
 }
 
 function onReset() {
-  loginPayload.email = ''
+  loginPayload.identifier = ''
   loginPayload.password = ''
-  loginPayload.username = ''
 }
 
 function onGoogleLogin() {
@@ -121,8 +130,8 @@ async function onSignup() {
     })
     // After signup, switch back to login view
     isSignup.value = false
-    // Optionally pre-fill the email in login form
-    loginPayload.email = signupPayload.email
+    // Optionally pre-fill the email/username in login form
+    loginPayload.identifier = signupPayload.email
     signupPayload.email = ''
     signupPayload.username = ''
     signupPayload.password = ''
@@ -142,9 +151,9 @@ function switchLang(lang: string) {
 }
 
 watch(
-  () => loginType.value,
-  () => {
-    useHead({ title: t('login') })
+  () => isSignup.value,
+  (val) => {
+    useHead({ title: val ? t('sign_up') : t('login') })
   },
   { immediate: true },
 )
@@ -154,7 +163,7 @@ async function resendVerification() {
     return
   loading.value = true
   try {
-    const res = await fetch('/api/resend-verification', {
+    const res = await fetch('/api/auth/resend-verification', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify({ email: lastTriedEmail.value }),
@@ -217,7 +226,7 @@ async function resendVerification() {
         </div>
 
         <h1 class="text-h5 q-mb-md">
-          {{ t("login") }}
+          {{ isSignup ? t("sign_up") : t("login") }}
         </h1>
 
         <div v-if="auth.isAuthenticated">
@@ -241,20 +250,10 @@ async function resendVerification() {
         <q-card flat bordered class="q-mb-md">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
-              <div class="row items-center justify-between">
-                <q-select
-                  v-model="loginType"
-                  :options="loginOptions"
-                  :label="t('login_method')"
-                  filled
-                  dense
-                  style="max-width: 200px"
-                />
-                <div>
-                  <q-btn dense flat color="primary" @click="isSignup = !isSignup">
-                    {{ isSignup ? t("back_to_login") : t("create_account") }}
-                  </q-btn>
-                </div>
+              <div class="row items-center justify-end">
+                <q-btn dense flat color="primary" @click="isSignup = !isSignup">
+                  {{ isSignup ? t("back_to_login") : t("create_account") }}
+                </q-btn>
               </div>
             </div>
 
@@ -315,20 +314,11 @@ async function resendVerification() {
               @reset="onReset"
             >
               <q-input
-                v-if="loginType === 'email'"
-                v-model="loginPayload.email"
-                type="email"
-                :label="t('email')"
-                autocomplete="username"
-                :rules="[(val) => !!val || t('email_required')]"
-              />
-              <q-input
-                v-else
-                v-model="loginPayload.username"
+                v-model="loginPayload.identifier"
                 type="text"
-                :label="t('username')"
+                label="Email or Username"
                 autocomplete="username"
-                :rules="[(val) => !!val || t('username_required')]"
+                :rules="[(val) => !!val || 'Email or username is required']"
               />
               <q-input
                 v-model="loginPayload.password"
