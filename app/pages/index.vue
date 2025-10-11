@@ -110,7 +110,10 @@ const online = useOnline();
 
 .islamic-design {
   /* Use the light/dark pattern assets that exist in app/assets/patterns/ */
-  background: var(--index-background, url("~/assets/patterns/islamic-pattern-light.svg"));
+  background: var(
+    --index-background,
+    url('"~/assets/patterns/islamic-pattern-light.svg"')
+  );
   background-repeat: repeat;
   background-size: cover;
   color: #155724;
