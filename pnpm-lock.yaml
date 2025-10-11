@@ -108,6 +108,9 @@ importers:
       resolve:
         specifier: ^1.22.10
         version: 1.22.10
+      socket.io:
+        specifier: ^4.8.1
+        version: 4.8.1
       socket.io-client:
         specifier: ^4.8.1
         version: 4.8.1

@@ -9,6 +9,6 @@ public/assets/fonts
 node_modules
 /sw.js
 
-
+copilot-instructions.md
 # Local Netlify folder
 .netlify

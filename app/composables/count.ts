@@ -7,7 +7,7 @@ export function useCount() {
   // Delay client-side randomization until after mount so the SSR output
   // matches exactly what was rendered on the server.
   if (import.meta.client) {
-    const { onMounted } = from '#imports' as any
+    const { onMounted } = from('#imports') as any
     onMounted(() => {
       // Only initialize once if still the server default
       if (count.value === 0) {

@@ -68,12 +68,6 @@ catch {
   // best-effort; do not crash Nuxt config parsing
 }
 
-// Note: we intentionally avoid aliasing `node:crypto` to a local shim in the
-// production Vite build because the shim imports node-only modules (like
-// `node:buffer`) which cannot be bundled for the browser. Any dev-only shim
-// must run only in the dev server environment and not be included in the
-// production client bundle.
-
 export default defineNuxtConfig({
   modules: [
     '@vueuse/nuxt',
@@ -87,9 +81,6 @@ export default defineNuxtConfig({
     'nuxt-gtag',
     'nuxt-mongoose',
   ],
-  // Enable server-side rendering so Nitro can prerender routes to static HTML.
-  // This improves SEO and allows meta tags (titles/descriptions) to be included
-  // in the generated HTML for crawlers.
   ssr: true,
   imports: {
     autoImport: true,
@@ -159,8 +150,9 @@ export default defineNuxtConfig({
     },
   },
   alias: {
-    'images': fileURLToPath(new URL('./assets/images', import.meta.url)),
+    '@assets': fileURLToPath(new URL('./app/assets', import.meta.url)),
     '@server': fileURLToPath(new URL('./server', import.meta.url)),
+    '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
   },
   build: {
     transpile: ['feathers-vuex'],

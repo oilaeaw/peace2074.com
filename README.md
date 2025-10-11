@@ -78,3 +78,40 @@ npx degit antfu/vitesse-nuxt my-nuxt-app
 cd my-nuxt-app
 pnpm i # If you don't have pnpm installed, run: npm install -g pnpm
 ```
+
+## Websockets (optional)
+
+This project ships client-side socket support (`socket.io-client`) and is ready to integrate real-time features. To run a small optional Socket.IO server (separate process) for ad-hoc information or development, install the server package and run the script included in `scripts/`.
+
+1. Install Socket.IO (server):
+
+```bash
+pnpm add socket.io
+```
+
+2. Start the optional socket server (default port 3001):
+
+```bash
+node scripts/socket-server.mjs
+```
+
+3. Client example (already available in the repo via `socket.io-client`):
+
+```js
+import { io } from 'socket.io-client'
+
+const socket = io('http://localhost:3001')
+
+socket.on('connect', () => {
+	console.log('connected', socket.id)
+})
+
+socket.on('health', (payload) => console.log('health', payload))
+
+// Emit an ad-hoc event to the server
+socket.emit('client:event', { hello: 'world' })
+```
+
+Notes:
+- The optional `scripts/socket-server.mjs` is intentionally a separate process to avoid coupling with the Nuxt/Nitro build process. This is low-risk for development and portable to production if you decide to run a dedicated realtime server.
+- If you prefer to attach sockets to the Nuxt server directly, see `nuxt`/Nitro plugin approaches (requires adding `socket.io` as a server dependency and wiring it during server startup); open a follow-up and I can add a Nitro plugin that attaches to the built server.
