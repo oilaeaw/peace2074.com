@@ -8,6 +8,10 @@ export default defineEventHandler((event) => {
     const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
     const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
     const callbackURL = `${proto}://${host}/api/auth/github/callback`
+    try {
+      console.debug('[auth/github/callback] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto)
+    }
+    catch {}
 
     passport.authenticate('github', { failureRedirect: '/', session: false, callbackURL }, async (err: any, profile: any) => {
       if (err)
