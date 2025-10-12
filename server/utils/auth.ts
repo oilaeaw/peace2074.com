@@ -17,6 +17,7 @@ export async function issueAuthToken(event: any, payload: Record<string, any>, o
         user: payload,
         loggedInAt: Date.now(),
       })
+      try { console.debug('[auth] issued session via nuxt-auth-utils for user:', (payload && payload.id) || payload) } catch {}
       return { type: 'session' }
     }
   }
@@ -36,6 +37,7 @@ export async function issueAuthToken(event: any, payload: Record<string, any>, o
     path: '/',
     maxAge: typeof expiresIn === 'number' ? expiresIn : 7 * 24 * 60 * 60,
   })
+  try { console.debug('[auth] issued JWT cookie: auth_token (httpOnly), secure:', secure, 'path:/, maxAge:', typeof expiresIn === 'number' ? expiresIn : 7 * 24 * 60 * 60) } catch {}
   return { type: 'jwt', token }
 }
 

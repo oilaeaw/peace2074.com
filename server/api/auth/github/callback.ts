@@ -55,8 +55,9 @@ export default defineEventHandler((event) => {
         provider: 'github',
       }
       const { issueAuthToken } = await import('../../../utils/auth')
-      await issueAuthToken(event, payload)
-      try { sendRedirect(event, '/') }
+  const issued = await issueAuthToken(event, payload)
+  try { console.debug('[auth/github/callback] issued token result:', issued) } catch {}
+  try { sendRedirect(event, '/') }
       catch {
         // if sendRedirect isn't available or fails, try writing to node res
         if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
