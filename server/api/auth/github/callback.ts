@@ -8,12 +8,13 @@ export default defineEventHandler((event) => {
     const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
     const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
     const callbackURL = `${proto}://${host}/api/auth/github/callback`
+    const homeURL = `${proto}://${host}/`
     try {
       console.debug('[auth/github/callback] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto)
     }
     catch {}
 
-    passport.authenticate('github', { failureRedirect: '/', session: false, callbackURL }, async (err: any, profile: any) => {
+    passport.authenticate('github', { failureRedirect: homeURL, session: false, callbackURL }, async (err: any, profile: any) => {
       if (err)
         return reject(err)
       if (!profile) {
@@ -55,14 +56,26 @@ export default defineEventHandler((event) => {
         provider: 'github',
       }
       const { issueAuthToken } = await import('../../../utils/auth')
-  const issued = await issueAuthToken(event, payload)
-  try { console.debug('[auth/github/callback] issued token result:', issued) } catch {}
-  try { sendRedirect(event, '/') }
+      const issued = await issueAuthToken(event, payload)
+      try { console.debug('[auth/github/callback] issued token result:', issued) } catch {}
+
+      // First, attempt a proper server-side redirect to absolute home URL
+      try {
+        return sendRedirect(event, homeURL)
+      }
       catch {
-        // if sendRedirect isn't available or fails, try writing to node res
-        if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
-          event.node.res.writeHead(302, { Location: '/' }).end()
+        // Fallback: write a minimal HTML page that forces the browser to navigate
+        // to the site root via client-side script. This is robust for popup or
+        // cross-site scenarios where Set-Cookie + redirect ordering might be off.
+        try {
+          if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
+            const body = `<!doctype html><html><head><meta charset="utf-8"><title>Redirecting...</title></head><body><script>try{window.location.replace(${JSON.stringify(homeURL)})}catch(e){window.location.href=${JSON.stringify(homeURL)}}</script><noscript><a href="${homeURL}">Continue</a></noscript></body></html>`
+            event.node.res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+            event.node.res.end(body)
+            return resolve(undefined)
+          }
         }
+        catch {}
       }
       return resolve(undefined)
     })(event.node.req, event.node.res)
