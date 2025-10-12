@@ -1,6 +1,3 @@
-import 'quasar/icon-set/svg-material-icons'
-import 'quasar/icon-set/svg-material-icons-round'
-
 export const QuasarOptions = {
   plugins: [
     'AppFullscreen',
