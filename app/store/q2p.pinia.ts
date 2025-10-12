@@ -111,9 +111,11 @@ export const useQ2P = defineStore('q2p', {
       },
     },
   }),
-  persist: {
+  // Persist config must be client-only to avoid server-side hydration issues
+  // (Pinia's persist plugin can cause payload serialization errors during SSR).
+  persist: import.meta.client ? {
     key: 'q2p-store',
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
+    storage: localStorage,
     serializer: {
       deserialize: (value: string) => {
         try {
@@ -133,7 +135,7 @@ export const useQ2P = defineStore('q2p', {
         }
       },
     },
-  },
+  } : undefined,
   actions: {
     init(index?: number): QuranI {
       // Ensure Book is populated — persisted state may have an empty or
