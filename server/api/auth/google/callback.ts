@@ -8,7 +8,8 @@ export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
     const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
     const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
-    const callbackURL = `${proto}://${host}/api/auth/google/callback`
+  const callbackURL = `${proto}://${host}/api/auth/google/callback`
+  try { console.debug('[auth/google/callback] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto) } catch {}
 
     passport.authenticate('google', { failureRedirect: '/', session: false, callbackURL, scope: ['openid', 'email', 'profile'] }, async (err: any, profile: any) => {
       if (err) {
@@ -59,7 +60,8 @@ export default defineEventHandler((event) => {
         provider: 'google',
       }
       const { issueAuthToken } = await import('../../../utils/auth')
-      await issueAuthToken(event, payload)
+      const issued = await issueAuthToken(event, payload)
+      try { console.debug('[auth/google/callback] issued token result:', issued) } catch {}
       try { sendRedirect(event, '/') }
       catch {
         if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
