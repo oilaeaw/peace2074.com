@@ -136,8 +136,8 @@ const suraParagraphHtml = computed(() => {
           `<span class="verse-num bookmark-action" role="button" tabindex="0" aria-label="Bookmark aya" data-bm="${id}">` +
           `<svg class="verse-medallion" width="1em" height="1em" viewBox="0 0 28 28" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">` +
           `<defs><radialGradient id="${gid}" cx="0.35" cy="0.35" r="1"><stop offset="0%" stop-color="var(--verse-medallion-light, #fff7e6)"/><stop offset="50%" stop-color="var(--verse-medallion-mid, #f3dfb8)"/><stop offset="100%" stop-color="var(--verse-medallion-dark, #e6c97a)"/></radialGradient></defs>` +
-          `<circle cx="14" cy="14" r="12" fill="url(#${gid})" stroke="var(--verse-medallion-stroke, #caa14b)" stroke-width="1.2"/>` +
-          `<text x="14" y="19" text-anchor="middle" font-family="Amiri, serif" font-size="12" fill="currentColor">${verse}</text>` +
+          `<circle cx="14" cy="14" r="12" fill="url(#${gid})" stroke="var(--verse-medallion-stroke, #caa14b)" stroke-width="1"/>` +
+          `<text x="14" y="19" text-anchor="middle" font-family="Amiri, serif" font-size="10" fill="currentColor">${verse}</text>` +
           `</svg>` +
           `</span>` +
           `</span>` +
@@ -566,7 +566,7 @@ function onAyaDblClick(e: Event) {
   text-align: right;
   direction: rtl;
   font-family: "Scheherazade", "Amiri", serif;
-  font-size: 2.2rem;
+  font-size: 1.2rem;
   padding: 0.8rem 1rem;
   text-align: justify;
 }
@@ -676,8 +676,8 @@ function onAyaDblClick(e: Event) {
 /* style explicit verse number elements that are now rendered as
    <span class="verse-num">N</span> inside each .aya-inline */
 .aya-inline {
-  /* verse medallion sizing: default is 1.25em relative to the aya font-size */
-  --verse-size: 1.25em;
+  /* verse medallion sizing: smaller so numbers are less dominant */
+  --verse-size: 0.75em;
   --verse-medallion-light: #fff7e6;
   --verse-medallion-mid: #f3dfb8;
   --verse-medallion-dark: #e6c97a;
@@ -706,8 +706,9 @@ function onAyaDblClick(e: Event) {
 }
 .verse-wrap > .verse-num {
   display: inline-block;
-  width: 0; /* no intrinsic width so it doesn't affect text flow */
-  height: 0;
+  /* allow natural sizing so ::after or SVG content can layout properly */
+  width: auto !important;
+  height: auto !important;
   position: relative;
 }
 .verse-wrap > .verse-num::after {
@@ -733,7 +734,8 @@ function onAyaDblClick(e: Event) {
   border: 1px solid var(--verse-medallion-stroke, rgba(150, 100, 22, 0.9)) !important;
   color: var(--verse-medallion-text, #2b1606) !important;
   font-family: "Amiri", serif;
-  font-size: 0.95em;
+  /* slightly smaller numeric text so it fits neatly inside reduced medallion */
+  font-size: 0.8em;
   line-height: 1;
   box-shadow: 0 1px 0 rgba(0, 0, 0, 0.05) inset, 0 1px 4px rgba(0, 0, 0, 0.06);
 }
@@ -780,6 +782,18 @@ function onAyaDblClick(e: Event) {
     --verse-medallion-text,
     #2b1606
   ) !important; /* text uses currentColor inside SVG */
+}
+
+/* Ensure the verse-num used for bookmark-action is inline-flex so it can center
+   its pseudo-element or child SVG correctly and not collapse due to global rules */
+.ayah-paragraph .aya-inline .verse-wrap > .verse-num.bookmark-action {
+  display: inline-flex !important;
+  align-items: center !important;
+  justify-content: center !important;
+  vertical-align: text-bottom !important;
+  width: auto !important;
+  height: auto !important;
+  padding: 0 !important;
 }
 .verse-scroll {
   min-height: 60vh;

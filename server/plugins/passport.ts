@@ -11,8 +11,9 @@ export default defineNitroPlugin((nitroApp) => {
   passport.use(new GitHubStrategy({
     clientID: config.githubClientId,
     clientSecret: config.githubClientSecret,
-    callbackURL: config.githubCallbackUrl, // Use runtime config for callback URL
-  }, (accessToken, refreshToken, profile, done) => {
+    callbackURL: config.githubCallbackUrl,
+  }, 
+  (accessToken, refreshToken, profile, done) => {
     // Here you would find or create the user in your DB
     // For now, just pass the profile
     return done(null, profile)
