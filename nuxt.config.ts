@@ -37,10 +37,10 @@ try {
   }
 
   if (typeof (globalThis as any).crypto === 'undefined') {
-    ;(globalThis as any).crypto = (nc as any).webcrypto || {}
+    ; (globalThis as any).crypto = (nc as any).webcrypto || {}
   }
   if (typeof (globalThis as any).crypto.hash !== 'function') {
-    ;(globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
+    ; (globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
       let buf: Buffer
       if (typeof data === 'string')
         buf = Buffer.from(data)
@@ -123,8 +123,8 @@ export default defineNuxtConfig({
   },
   css: [
     '@unocss/reset/tailwind.css',
-    '~/assets/app.scss',
     '@quasar/quasar-ui-qmediaplayer/dist/index.css',
+    '~/assets/app.scss',
   ],
   colorMode: {
     classSuffix: '',
@@ -154,7 +154,7 @@ export default defineNuxtConfig({
     // Use explicit callback when provided, otherwise derive from SITE_BASE_URL
     githubCallbackUrl:
       import.meta.env.GITHUB_CALLBACK_URL
-        || `${import.meta.env.SITE_BASE_URL || 'http://localhost:3001'}/api/auth/github/callback`,
+      || `${import.meta.env.SITE_BASE_URL || 'http://localhost:3001'}/api/auth/github/callback`,
     // Google OAuth (server-only)
     // Prefer explicit GOOGLE_* vars; fall back to keys exported by Google JSON (client_id, client_secret, redirect_uris)
     googleClientId: (import.meta.env as any).GOOGLE_CLIENT_ID || (import.meta.env as any).client_id,
@@ -261,11 +261,11 @@ export default defineNuxtConfig({
         configResolved() {
           const nodeWebCrypto = (nodeCrypto as any).webcrypto
           if (typeof (globalThis as any).crypto === 'undefined') {
-            ;(globalThis as any).crypto = nodeWebCrypto || {}
+            ; (globalThis as any).crypto = nodeWebCrypto || {}
           }
           // Provide crypto.subtle if available from Node
           if (!((globalThis as any).crypto as any).subtle && nodeWebCrypto?.subtle) {
-            ;(globalThis as any).crypto.subtle = nodeWebCrypto.subtle
+            ; (globalThis as any).crypto.subtle = nodeWebCrypto.subtle
           }
           // Import our custom crypto implementation that works everywhere
           import('./app/utils/crypto')

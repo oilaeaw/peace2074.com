@@ -1,4 +1,3 @@
-import { /* fasEarthAmericas, */ fasFlask } from 'https://use.fontawesome.com/releases/v6.1.1/css/all.css'
 import { QSpinnerGears } from 'quasar'
 // isClient!
 export const isClient: bool = (): boolean => computed(() => Boolean(typeof window !== 'undefined' && 'serviceWorker' in navigator))

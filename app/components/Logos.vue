@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-const imgSrc = ref('/900x900.png')
+const imgSrc = ref("900x900.png");
 </script>
 
 <template>
