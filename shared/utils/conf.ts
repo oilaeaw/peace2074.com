@@ -166,10 +166,13 @@ class Conf {
     // replace the reactive store with a real Solid store when available.
     if (typeof import.meta !== 'undefined' && (import.meta as any).client) {
       // dynamic import - don't await in constructor; swap when ready
-  // Type-checker: allow dynamic import even if `solid-js` isn't installed in all environments
-  // @ts-ignore
-  import('solid-js/store')
-        .then((mod) => {
+  // Use a non-static import string so Vite won't try to resolve the package at
+  // build-time. This keeps the runtime dynamic import (and your runtime
+  // fallback) while avoiding the dev-time warning when `solid-js` isn't
+  // installed.
+  const _modName = 'solid-js/store'
+  import(_modName)
+    .then((mod) => {
           try {
             const createStore = (mod as any).createStore
             if (typeof createStore === 'function') {

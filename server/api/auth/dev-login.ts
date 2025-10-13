@@ -31,9 +31,9 @@ export default defineEventHandler(async (event) => {
   }
 
   const { issueAuthToken } = await import('../../utils/auth')
-  await issueAuthToken(event, { id: user._id, email: user.email })
+  const tokenResp = await issueAuthToken(event, { id: user._id, email: user.email })
 
-  return {
+  const response: any = {
     user: {
       id: user._id,
       email: user.email,
@@ -43,4 +43,16 @@ export default defineEventHandler(async (event) => {
       role: user.role,
     },
   }
+
+  // For convenience in development, return the raw JWT when JWT fallback is
+  // used. Do NOT return this in production.
+  try {
+    if ((useRuntimeConfig().nodeEnv !== 'production') && tokenResp && tokenResp.type === 'jwt' && tokenResp.token) {
+      response.token = tokenResp.token
+    }
+  } catch (e) {
+    // ignore
+  }
+
+  return response
 })

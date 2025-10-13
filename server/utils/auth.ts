@@ -1,8 +1,51 @@
-import { getCookie, setCookie } from 'h3'
+import { getCookie, setCookie, getQuery } from 'h3'
 import jwt from 'jsonwebtoken'
 
 export function getTokenFromEvent(event: any) {
-  return getCookie(event, 'auth_token')
+  try {
+    // Prefer Authorization header if present: "Bearer <token>"
+    const headers = (event && event.node && event.node.req && event.node.req.headers) || (event && event.req && event.req.headers)
+    const authHeader = headers && (headers.authorization || headers.Authorization)
+    if (typeof authHeader === 'string') {
+      const m = authHeader.match(/Bearer\s+(.+)/i)
+      if (m && m[1]) return m[1]
+    }
+  }
+  catch (e) {
+    // ignore and fallback to cookie
+  }
+
+  // Try h3 cookie helper first
+  const cookieToken = getCookie(event, 'auth_token')
+  if (cookieToken)
+    return cookieToken
+
+  // Fallback: try to parse raw Cookie header in case helper failed
+  try {
+    const headers = (event && event.node && event.node.req && event.node.req.headers) || (event && event.req && event.req.headers)
+    const cookieHeader = headers && (headers.cookie || headers.Cookie)
+    if (typeof cookieHeader === 'string') {
+      const m = cookieHeader.match(/(?:^|;\s*)auth_token=([^;]+)/)
+      if (m && m[1]) return decodeURIComponent(m[1])
+    }
+  }
+  catch (e) {
+    // ignore
+  }
+
+  // Final fallback: allow token via query parameter (useful for dev/testing) - check both 'token' and 'auth_token'
+  try {
+    const q = getQuery(event) as Record<string, any>
+    if (q) {
+      if (q.token) return q.token
+      if (q.auth_token) return q.auth_token
+    }
+  }
+  catch (e) {
+    // ignore
+  }
+
+  return undefined
 }
 
 // Try to use nuxt-auth-utils session helpers when available. If not present,
