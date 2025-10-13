@@ -5,9 +5,9 @@
   "private": false,
   "packageManager": "pnpm@10.18.2",
   "scripts": {
-    "dev": "node ./scripts/dev.cjs",
-    "dev:pwa": "node ./scripts/dev.cjs -- VITE_PLUGIN_PWA=true",
-    "dev:runner": "node ./scripts/dev.cjs",
+    "dev": "node ./shared/utils/scripts/dev.cjs",
+    "dev:pwa": "node ./shared/utils/scripts/dev.cjs -- VITE_PLUGIN_PWA=true",
+    "dev:runner": "node ./shared/utils/scripts/dev.cjs",
     "build": "nuxi build",
     "generate": "nuxi generate",
     "prepare": "nuxi prepare",
