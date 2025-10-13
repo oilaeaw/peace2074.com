@@ -1,76 +1,84 @@
 
-import { createStorage } from "unstorage";
+import { createStorage } from 'unstorage'
 
-export class UCORE {
-  public _STORE: typeof createStorage;
-  constructor() {
-    this._STORE = () => createStorage(/* opts */);
+type AnyObject = Record<string, any>
+
+class Core {
+  private storage = createStorage()
+
+  async get<T = unknown>(key: string): Promise<T | null> {
+    const v = await (this.storage as any).getItem(key)
+    return v === undefined ? null : (v as T)
   }
 
-  get(key: string) {
-    return this._STORE().getItem(key)
-
-
+  async set<T = unknown>(key: string, value: T): Promise<void> {
+    await (this.storage as any).setItem(key, value)
   }
-  getItem(key: string) {
 
-    return this._STORE().get(key)
+  async remove(key: string): Promise<void> {
+    await (this.storage as any).removeItem(key)
   }
-  setItem(k: string, val: string | number | object | any[] | boolean) {
 
-    return this._STORE().setItem(k, val)
+  async has(key: string): Promise<boolean> {
+    const v = await (this.storage as any).getItem(key)
+    return v !== undefined && v !== null
   }
-  removeItem(k: string) {
-    if (!k) throw new Error("Key is needed");
 
-    var self = this;
-    let ls = self._STORE;
-    if (k.match(/:/)) {
-      const keys = k.split(":");
-      if (keys.length > 2) throw new Error("cannot nest more that one layer");
-
-      if ((keys.length = 2)) {
-        try {
-          delete ls[keys[0]];
-          self._STORE = { ...ls };
-          return ls[keys[0]];
-        } catch (error) {
-          return "undefined";
-        }
-      }
+  // nested helpers: use colon (:) to address nested properties inside a root object
+  async getNested<T = unknown>(nestedKey: string): Promise<T | undefined> {
+    if (!nestedKey.includes(':')) {
+      return this.get<T>(nestedKey) as Promise<T | undefined>
     }
-    // @ts-ignore
-    ls = { [k]: null };
-    delete ls[k];
-    self._STORE = { ...ls };
 
-    return !!(this.getItem(k) === "null");
+    const [root, ...rest] = nestedKey.split(':')
+    const rootVal = await (this.storage as any).getItem(root)
+    if (rootVal == null) return undefined
+
+    let cur: AnyObject | undefined
+    if (typeof rootVal === 'string') {
+      try { cur = JSON.parse(rootVal) } catch { cur = undefined }
+    }
+    else if (typeof rootVal === 'object') {
+      cur = rootVal as AnyObject
+    }
+    else {
+      return undefined
+    }
+
+    for (const part of rest) {
+      if (!cur || typeof cur !== 'object' || !(part in cur)) return undefined
+      cur = cur[part] as AnyObject
+    }
+
+    return cur as unknown as T
   }
-  public set value(v: string) {
-    this._STORE = JSON.stringify(v[0] === "{") ? JSON.stringify(v) : v;
-  }
 
-  public get value(): string {
-    return this._STORE
-  }
-  has(key: string) {
-    return Boolean(this.getItem(key));
-  }
+  async setNested<T = unknown>(nestedKey: string, value: T): Promise<void> {
+    if (!nestedKey.includes(':')) return this.set(nestedKey, value)
 
-  _buildNestedKey(nestedKey: string) {
-    const keys = nestedKey.split(":");
-    let storeKey = this._STORE;
+    const [root, ...rest] = nestedKey.split(':')
+    const rawRoot = await (this.storage as any).getItem(root)
+    let rootVal: AnyObject = {}
+    if (rawRoot == null) rootVal = {}
+    else if (typeof rawRoot === 'string') {
+      try { rootVal = JSON.parse(rawRoot) as AnyObject } catch { rootVal = {} }
+    }
+    else if (typeof rawRoot === 'object') rootVal = rawRoot as AnyObject
 
-    keys.forEach(function (k: string) {
-      try {
-        storeKey = storeKey[k];
-      } catch (e) {
-        return undefined;
-      }
-    });
-
-    return storeKey;
+    let cur: AnyObject = rootVal
+    for (let i = 0; i < rest.length - 1; i++) {
+      const p = rest[i]
+      if (!p) continue
+      if (!(p in cur) || typeof cur[p] !== 'object') cur[p] = {}
+      cur = cur[p] as AnyObject
+    }
+    const last = rest[rest.length - 1]
+    if (last) cur[last] = value as any
+    await (this.storage as any).setItem(root, rootVal)
   }
 }
-const core = new UCORE()
-export { core };
+
+const core = new Core()
+
+export { core, Core }
+export default core

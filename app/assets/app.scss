@@ -70,3 +70,23 @@ body.body--dark{
   font-style: normal;
   font-display: swap;
 }
+
+/* Global theme variables for Islamic design pages.
+     These ensure consistent colors and background pattern across pages. */
+:root {
+    --background-pattern: url('~/assets/patterns/islamic-pattern-light.svg');
+    --text-color: #173a2e;
+    --title-color: #14492e;
+    --subtitle-color: #6c757d;
+    --card-bg: #fbfbf8;
+}
+
+@media (prefers-color-scheme: dark) {
+    :root {
+        --background-pattern: url('~/assets/patterns/islamic-pattern-dark.svg');
+        --text-color: #e0e0e0;
+        --title-color: #e0e0e0;
+        --subtitle-color: #b0b0b0;
+        --card-bg: #333;
+    }
+}

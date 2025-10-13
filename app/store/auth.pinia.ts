@@ -81,6 +81,16 @@ export const useAuthStore = defineStore('auth', () => {
     // Remove persisted user data from localStorage when running in browser
     if (isClient) {
       try {
+        const core = (globalThis as any)?.$core || undefined
+        if (core && typeof core.remove === 'function') {
+          try { void core.remove('user') } catch {}
+          try { void core.remove('pinia_user') } catch {}
+          try { void core.remove('pinia') } catch {}
+          return
+        }
+      }
+      catch {}
+      try {
         localStorage.removeItem('user')
         localStorage.removeItem('pinia_user')
         localStorage.removeItem('pinia')

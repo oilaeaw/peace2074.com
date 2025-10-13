@@ -14,7 +14,11 @@ export default defineNuxtPlugin(async (nuxtApp) => {
     useState('HolyNames', () => data.value.data)
     nuxtApp.provide('HolyNames', data.value.data)
     if (import.meta.client) {
-      localStorage.getItem('holybook', JSON.stringify(data.value.data))
+      try {
+  const core = (nuxtApp as any).$core || (await import('@shared/utils/core')).default
+        void core.set('holybook', data.value.data)
+      }
+      catch {}
     }
   }
 })

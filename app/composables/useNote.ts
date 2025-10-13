@@ -1,5 +1,5 @@
-import type { NoteAcionsE } from '~~@shared/types'
-import type { defaultStyles, notifyDefaults } from '../constants'
+import { NoteAcionsE } from '~~@shared/types'
+import { defaultStyles, notifyDefaults } from '../constants'
 import { Dialog, Notify } from 'quasar'
 
 /**
@@ -10,7 +10,7 @@ export default function useNote() {
   const $q = useQuasar()
   // Set default notification options
   Notify.setDefaults({
-    position: notifyDefaults.position,
+    position: notifyDefaults.position as any,
     timeout: notifyDefaults.timeout,
     textColor: 'white',
   })
@@ -42,8 +42,8 @@ export default function useNote() {
   note.success = (message: string, config = notifyDefaults) => {
     return Notify.create({
       message,
-      type: defaultStyles.success.type,
-      ...config,
+      type: defaultStyles.success.type as any,
+      ...(config as any),
     })
   }
 
@@ -55,8 +55,8 @@ export default function useNote() {
   note.info = (message: string, config = notifyDefaults) => {
     return Notify.create({
       message,
-      type: NoteAcionsE.Info,
-      ...config,
+      type: NoteAcionsE.Info as any,
+      ...(config as any),
     })
   }
 
@@ -68,8 +68,8 @@ export default function useNote() {
   note.warning = (message: string, config = notifyDefaults) => {
     return Notify.create({
       message,
-      type: NoteAcionsE.warning,
-      ...config,
+      type: NoteAcionsE.warning as any,
+      ...(config as any),
     })
   }
 
@@ -78,14 +78,16 @@ export default function useNote() {
    * @param error - The error object or message to display.
    * @param config - Optional configuration for the notification.
    */
-  note.error = (error: any, config = notifyDefaults) => {
-    const { status, statusCode, errorMessage, message, statusMessage } = error
+  note.error = (error: unknown, config = notifyDefaults) => {
+    // handle unknown error shapes safely
+    const e: any = error || {}
+    const { status, statusCode, errorMessage, message, statusMessage } = e
     const errorMsg = message || errorMessage || statusMessage || 'Unhandled Error!'
     Notify.create({
       message: errorMsg,
       type: 'negative',
-      caption: status || statusCode,
-      ...config,
+      caption: (status || statusCode) as any,
+      ...(config as any),
     })
   }
 

@@ -74,11 +74,11 @@
     "consola": "^3.4.2",
     "eslint": "^9.28.0",
     "eslint-plugin-format": "^1.0.1",
-  "eslint-plugin-unused-imports": "^3.1.0",
-  "eslint-plugin-import": "^2.29.1",
-  "eslint-plugin-node": "^11.1.0",
-  "@typescript-eslint/eslint-plugin": "^5.61.0",
-  "eslint-plugin-ts": "^1.0.0",
+    "eslint-plugin-unused-imports": "^3.1.0",
+    "eslint-plugin-import": "^2.29.1",
+    "eslint-plugin-node": "^11.1.0",
+    "@typescript-eslint/eslint-plugin": "^5.61.0",
+    "eslint-plugin-ts": "^1.0.0",
     "express": "^5.1.0",
     "fontawesome-v6": "link:@quasar/extras/fontawesome-v6",
     "jsdom": "^26.1.0",
@@ -89,9 +89,7 @@
     "sass": "^1.89.1",
     "typescript": "^5.8.3",
     "unhead": "2.0.0-rc.9",
-    "vue-tsc": "^2.2.10"
-  },
-  "devDependencies": {
+    "vue-tsc": "^2.2.10",
     "vitest": "^1.4.4"
   },
   "pnpm": {

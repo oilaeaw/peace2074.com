@@ -9,43 +9,64 @@ type PT = typeof prod
 type ST = typeof server
 
 class Conf {
-  [x: string]: object;
+  // explicit typed internal fields
+  private _store: Record<string, any> = {}
+  private _server?: ST
+  private _client?: CT
+  private _dev?: DT
+  private _prod?: PT
+  private _env?: 'client' | 'server'
+
   constructor() {
-    // eslint-disable-next-line ts/no-this-alias
-    const self = this
+    // initialize environment and values
+    this.setEnvironment()
+    this._server = this.getServerVars() as ST
+    this._client = this.getClientVars() as CT
+    this._dev = this.getUrgentOverrides() as DT
+    this._prod = this.getUrgentOverrides() as PT
 
-    self.setEnvironment()
-    self._server = self.getServerVars() as ST
-    self._client = self.getClientVars() as CT
-    self._dev = self.getUrgentOverrides() as DT
-    self._prod = self.getUrgentOverrides() as PT
-
-    self._store = Object.assign(
-      { ...self._client },
-      { ...(self._server ? self._server : self._server) },
-      { ...self._dev },
-      { client: self._client },
-      { server: self._server ? self._server : self._server },
-      { dev: self._dev },
+    this._store = Object.assign(
+      { ...(this._client || {}) },
+      { ...(this._server || {}) },
+      { ...(this._dev || {}) },
+      { client: this._client },
+      { server: this._server || {} },
+      { dev: this._dev },
     )
-    // console.log("this._store", this._store);
   }
 
   set(key: string, value: string | number | object) {
     if (key.match(/:/)) {
       const keys = key.split(':')
-      let storeKey = this._store
+      let storeKey: Record<string, any> = this._store
 
-      keys.forEach((k: string | number, i: number) => {
+      keys.forEach((rawK: string, i: number) => {
+        const k = String(rawK)
+
+        // initialize the nested level if it doesn't exist
+        if (storeKey[k] === undefined) {
+          // if it's the last key, assign the value directly
+          if (keys.length === i + 1) {
+            storeKey[k] = value
+            return
+          }
+          storeKey[k] = {}
+        }
+
+        // if last key and wasn't handled above, set it
         if (keys.length === i + 1) {
           storeKey[k] = value
         }
 
-        if (storeKey[k] === undefined) {
+        // descend
+        const next = storeKey[k]
+        if (typeof next === 'object' && next !== null) {
+          storeKey = next as Record<string, any>
+        } else {
+          // overwrite non-object with object to continue descent
           storeKey[k] = {}
+          storeKey = storeKey[k]
         }
-
-        storeKey = storeKey[k]
       })
     }
     else {
@@ -53,48 +74,47 @@ class Conf {
     }
   }
 
-  getAll() {
+  getAll(): Record<string, any> {
     return this._store
   }
 
-  getItem(key: string) {
-    return this._store[key]
+  getItem(key: string): any {
+    return this._store?.[key]
   }
 
-  get(key: string) {
+  get(key: string): any {
     // Is the key a nested object
     if (key.match(/:/)) {
       // Transform getter string into object
-      const storeKey = this.buildNestedKey(key)
-      return storeKey
+      return this.buildNestedKey(key)
     }
 
     // Return regular key
-    return this._store[key]
+    return this._store?.[key]
   }
 
-  client() {
+  client(): CT | undefined {
     return this.getItem('client')
   }
 
-  dev() {
+  dev(): DT | undefined {
     return this.getItem('dev')
   }
 
-  server() {
+  server(): ST | undefined {
     return this.getItem('server')
   }
 
-  store() {
+  store(): Record<string, any> {
     return this._store
   }
 
-  has(key: any) {
+  has(key: any): boolean {
     return Boolean(this.get(key))
   }
 
   setEnvironment() {
-    if (import.meta.client) {
+    if (typeof import.meta !== 'undefined' && (import.meta as any).client) {
       this._env = 'client'
     }
     else {
@@ -102,10 +122,10 @@ class Conf {
     }
   }
 
-  getServerVars() {
-    let serverVars = {}
+  getServerVars(): ST | {} {
+    let serverVars: ST | {} = {}
 
-    if (import.meta.server) {
+    if (typeof import.meta !== 'undefined' && (import.meta as any).server) {
       try {
         serverVars = server
       }
@@ -121,16 +141,16 @@ class Conf {
     return serverVars
   }
 
-  getClientVars() {
-    let clientVars
+  getClientVars(): CT | {} {
+    let clientVars: CT | {} = {}
 
     try {
-      clientVars = client
+      clientVars = client as CT
     }
     // eslint-disable-next-line unused-imports/no-unused-vars
     catch (e) {
       clientVars = {}
-      if (import.meta.dev) {
+      if (typeof import.meta !== 'undefined' && (import.meta as any).dev) {
         console.warn('Didn\'t find a client config in `./config`.')
       }
     }
@@ -138,14 +158,11 @@ class Conf {
     return clientVars
   }
 
-  getUrgentOverrides() {
-    let overrides
-    const filename = import.meta.dev ? 'dev' : 'prod'
+  getUrgentOverrides(): DT | {} {
+    let overrides: DT | {} = {}
+    const filename = (typeof import.meta !== 'undefined' && (import.meta as any).dev) ? 'dev' : 'prod'
     try {
-      overrides
-        = import.meta.dev
-          ? dev
-          : prod
+      overrides = (typeof import.meta !== 'undefined' && (import.meta as any).dev) ? dev as DT : prod as PT
       if (filename === 'dev') {
         console.warn(
           `FYI: data in \`./config/${filename}.js\` file will override Server & Client equal data/values.`,
@@ -161,12 +178,14 @@ class Conf {
   }
 
   // Builds out a nested key to get nested values
-  buildNestedKey(nestedKey: string) {
+  buildNestedKey(nestedKey: string): any {
     // Transform getter string into object
     const keys = nestedKey.split(':')
-    let storeKey = this._store
+    let storeKey: any = this._store
 
-    keys.forEach((k: string | number) => {
+    for (const rawK of keys) {
+      const k = String(rawK)
+      if (storeKey === undefined || storeKey === null) return undefined
       try {
         storeKey = storeKey[k]
       }
@@ -174,7 +193,7 @@ class Conf {
       catch (e) {
         return undefined
       }
-    })
+    }
 
     return storeKey
   }
