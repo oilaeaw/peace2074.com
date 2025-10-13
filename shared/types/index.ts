@@ -1,6 +1,7 @@
 import type { MediaFile, RefreshToken, Tweet } from '@prisma/client'
 import type { JWTPayload } from 'jose'
 import type { ObjectId } from 'mongoose'
+import type { RouteLocationNormalized, NavigationGuard } from 'vue-router'
 
 export interface AuthPayload extends JWTPayload {
   email?: string
@@ -168,8 +169,7 @@ export interface AyaI extends KalimatI, HarfI, aya_interface {
   Kalemat: KalimatI[]
 }
 
-export interface SuraI extends AyaI, KalimatI, HarfI, aya_interface {
-  [k: string]: number | string | AyaI[]
+export interface SuraI {
   id: number
   name: string
   e_name: string
@@ -178,12 +178,12 @@ export interface SuraI extends AyaI, KalimatI, HarfI, aya_interface {
   ayat: AyaI[]
 }
 
-export interface QuranI extends SuraI, AyaI, HarfI, aya_interface {
+export interface QuranI {
   Surah: SuraI[]
 }
 
 export interface QDBI {
-  [key: number]: any
+  [key: string]: any
   id: number
   name: string
   e_name?: string

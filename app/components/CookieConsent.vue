@@ -5,10 +5,13 @@ import { onMounted, ref } from '#imports'
 // localStorage during SSR or render content that differs on the client.
 const accepted = ref<boolean | null>(null)
 
-onMounted(() => {
-  // Now that we're on the client, we can safely read localStorage.
+import useCore from '~/composables/useCore'
+
+onMounted(async () => {
+  // Now that we're on the client, we can safely read persisted consent.
   try {
-    accepted.value = localStorage.getItem('cookieAccepted') === 'true'
+    const v = await useCore().get('cookieAccepted')
+    accepted.value = v === 'true' || v === true
   }
   catch {
     accepted.value = false
@@ -16,10 +19,7 @@ onMounted(() => {
 })
 
 function acceptCookies() {
-  try {
-    localStorage.setItem('cookieAccepted', 'true')
-  }
-  catch {}
+  try { void useCore().set('cookieAccepted', 'true') } catch {}
   accepted.value = true
 }
 </script>

@@ -37,10 +37,10 @@ try {
   }
 
   if (typeof (globalThis as any).crypto === 'undefined') {
-    ;(globalThis as any).crypto = (nc as any).webcrypto || {}
+    ; (globalThis as any).crypto = (nc as any).webcrypto || {}
   }
   if (typeof (globalThis as any).crypto.hash !== 'function') {
-    ;(globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
+    ; (globalThis as any).crypto.hash = async (alg: string, data: ArrayBuffer | Uint8Array | string) => {
       let buf: Buffer
       if (typeof data === 'string')
         buf = Buffer.from(data)
@@ -123,8 +123,8 @@ export default defineNuxtConfig({
   },
   css: [
     '@unocss/reset/tailwind.css',
-    '~/assets/app.scss',
     '@quasar/quasar-ui-qmediaplayer/dist/index.css',
+    '~/assets/app.scss',
   ],
   colorMode: {
     classSuffix: '',
@@ -134,9 +134,8 @@ export default defineNuxtConfig({
     email_public_key: import.meta.env.NUXT_EMAIL_PUBLIC_KEY,
     email_private_key: import.meta.env.NUXT_EMAIL_PRIVATE_KEY,
     email_template: import.meta.env.NUXT_EMAIL_TEMPLATE,
-    mailjs_api_url: import.meta.env.NUXT_MAILJS_API_URL || 'https://api.emailjs.com/api/v1.0/email/send',
-    session_password: import.meta.env.NUXT_SESSION_PASSWORD || 'default_session_password',
-    // Session config used by nuxt-auth-utils (secure, encrypted cookie)
+    mailjs_api_url: import.meta.env.NUXT_MAILJS_API_URL,
+    session_password: import.meta.env.NUXT_SESSION_PASSWORD,
     session: {
       // cookie name
       name: 'nuxt-session',
@@ -151,27 +150,16 @@ export default defineNuxtConfig({
     },
     githubClientId: import.meta.env.GITHUB_CLIENT_ID,
     githubClientSecret: import.meta.env.NUXT_GITHUB_CLIENT_SECRET,
-    // Use explicit callback when provided, otherwise derive from SITE_BASE_URL
-    githubCallbackUrl:
-      import.meta.env.GITHUB_CALLBACK_URL
-        || `${import.meta.env.SITE_BASE_URL || 'http://localhost:3001'}/api/auth/github/callback`,
-    // Google OAuth (server-only)
-    // Prefer explicit GOOGLE_* vars; fall back to keys exported by Google JSON (client_id, client_secret, redirect_uris)
-    googleClientId: (import.meta.env as any).GOOGLE_CLIENT_ID || (import.meta.env as any).client_id,
-    googleClientSecret: (import.meta.env as any).GOOGLE_CLIENT_SECRET || (import.meta.env as any).client_secret,
-    // Prefer explicit GOOGLE_CALLBACK_URL. If absent, try redirect_uris (from JSON),
-    // otherwise derive from SITE_BASE_URL to ensure an absolute URL for OAuth.
-    googleCallbackUrl:
-      (import.meta.env as any).GOOGLE_CALLBACK_URL
-      || ((((import.meta.env as any).redirect_uris || '').split(',')[0]) || `${import.meta.env.SITE_BASE_URL || 'http://localhost:3001'}/api/auth/google/callback`),
-    // Server-only config (private)
-    jwtSecret: import.meta.env.JWT_SECRET || 'changeme',
+    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL,
+    googleClientId: import.meta.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: import.meta.env.NUXT_GOOGLE_CLIENT_ID,
+    googleCallbackUrl:import.meta.env.GOOGLE_CALLBACK_URL,
+    jwtSecret: import.meta.env.JWT_SECRET,
     mongodbUri: import.meta.env.MONGODB_URI,
     databaseUrl: import.meta.env.DATABASE_URL,
-    nodeEnv: import.meta.env.NODE_ENV || 'development',
-    // Public config (exposed to client)
+    nodeEnv: import.meta.env.NODE_ENV,
     public: {
-      apiBase: import.meta.env.API_BASE_URL || '/api',
+      apiBase: import.meta.env.API_BASE_URL
     },
   },
   alias: {
@@ -261,11 +249,11 @@ export default defineNuxtConfig({
         configResolved() {
           const nodeWebCrypto = (nodeCrypto as any).webcrypto
           if (typeof (globalThis as any).crypto === 'undefined') {
-            ;(globalThis as any).crypto = nodeWebCrypto || {}
+            ; (globalThis as any).crypto = nodeWebCrypto || {}
           }
           // Provide crypto.subtle if available from Node
           if (!((globalThis as any).crypto as any).subtle && nodeWebCrypto?.subtle) {
-            ;(globalThis as any).crypto.subtle = nodeWebCrypto.subtle
+            ; (globalThis as any).crypto.subtle = nodeWebCrypto.subtle
           }
           // Import our custom crypto implementation that works everywhere
           import('./app/utils/crypto')

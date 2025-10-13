@@ -1,7 +1,5 @@
 import Tasbeeh from '@server/models/tasbeeh'
 
-// const JWT_SECRET = import.env.JWT_SECRET || 'changeme'
-
 export default defineEventHandler(async (event) => {
   const { getUserFromEvent } = await import('../../utils/auth')
   const userData = await getUserFromEvent(event)

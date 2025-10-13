@@ -1,116 +1,114 @@
 <script lang="ts" setup>
-import { useTimeAgo } from '@vueuse/core'
-import moment from 'moment'
-import { computed, onMounted, ref, watch } from 'vue'
-import { useI18n } from 'vue-i18n'
-import { useRoute } from 'vue-router'
-import { useAuthStore } from '~/store/auth.pinia'
+import { useTimeAgo } from "@vueuse/core";
+import moment from "moment";
+import { computed, onMounted, ref, watch } from "vue";
+import { useI18n } from "vue-i18n";
+import { useRoute } from "vue-router";
+import { useAuthStore } from "~/store/auth.pinia";
 
-const { t, te, locale } = useI18n()
-const route = useRoute()
-const _q2p = useQ2P()
+const { t, te, locale } = useI18n();
+const route = useRoute();
+const _q2p = useQ2P();
 
 // Use the auth store and compute a safe username string (handles null user)
-const auth = useAuthStore()
-const isAuthenticated = computed(() => auth.isAuthenticated)
+const auth = useAuthStore();
+const isAuthenticated = computed(() => auth.isAuthenticated);
 const username = computed(() => {
-  const u = auth.user
-  if (!u)
-    return ''
+  const u = auth.user;
+  if (!u) return "";
   // user object might be nested (from server responses) or flat
   if (u.user) {
-    const fn = u.user.first_name || ''
-    const ln = u.user.last_name || ''
-    const full = `${fn} ${ln}`.trim()
-    if (full)
-      return full
-    return u.user.username || u.user.email || ''
+    const fn = u.user.first_name || "";
+    const ln = u.user.last_name || "";
+    const full = `${fn} ${ln}`.trim();
+    if (full) return full;
+    return u.user.username || u.user.email || "";
   }
-  return u.username || u.name || u.email || ''
-})
+  return u.username || u.name || u.email || "";
+});
 
 onMounted(() => {
-  useQ2P().init()
-})
-const toggleLeftDrawer = ref(false)
-const toggleRightDrawer = ref(false)
+  useQ2P().init();
+});
+const toggleLeftDrawer = ref(false);
+const toggleRightDrawer = ref(false);
 // Tooltip state used by QTooltip in the footer
-const showing = ref(false)
+const showing = ref(false);
 
 // use $q.dark.toggle() directly where needed
-const date = '__DATE__'
-const timeAgo = useTimeAgo(date)
-const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')
+const date = "__DATE__";
+const timeAgo = useTimeAgo(date);
+const BuildTime: string = moment(date).format("ddd MMM DD, YYYY [at] HH:mm");
 
 function toggleDrawer() {
-  toggleLeftDrawer.value = !toggleLeftDrawer.value
+  toggleLeftDrawer.value = !toggleLeftDrawer.value;
 }
 function toggleRight() {
-  toggleRightDrawer.value = !toggleRightDrawer.value
+  toggleRightDrawer.value = !toggleRightDrawer.value;
 }
 
 // Dynamic, localized page title: use route meta.title if present and resolve via i18n.
 function resolveTitle(metaTitle: any) {
   // metaTitle may be undefined or a string. Try multiple candidate keys.
-  if (!metaTitle)
-    return t('general.SiteTitle')
-  const raw = String(metaTitle)
+  if (!metaTitle) return t("general.SiteTitle");
+  const raw = String(metaTitle);
   const candidates = [
     raw,
     raw.toLowerCase(),
-    raw.toLowerCase().replace(/\s+/g, '_'),
+    raw.toLowerCase().replace(/\s+/g, "_"),
     `${raw.toLowerCase()}.title`,
     `${raw}.title`,
     `pages.${route.name}.pageTitle`,
-  ]
+  ];
   for (const c of candidates) {
     try {
-      if (te(c))
-        return t(c)
-    }
-    catch {
+      if (te(c)) return t(c);
+    } catch {
       // ignore
     }
   }
   // If no i18n key found, return the raw meta title string
-  return raw
+  return raw;
 }
 
 // Resolve meta descriptions similarly. metaDesc can be an i18n key or raw string.
 function resolveDescription(metaDesc: any) {
-  if (!metaDesc)
-    return t('general.SiteTitle')
-  const raw = String(metaDesc)
-  const candidates = [raw, raw.toLowerCase(), `${raw}.description`, `meta.${raw}`, `meta.${route.name}`]
+  if (!metaDesc) return t("general.SiteTitle");
+  const raw = String(metaDesc);
+  const candidates = [
+    raw,
+    raw.toLowerCase(),
+    `${raw}.description`,
+    `meta.${raw}`,
+    `meta.${route.name}`,
+  ];
   for (const c of candidates) {
     try {
-      if (te(c))
-        return t(c)
-    }
-    catch {
+      if (te(c)) return t(c);
+    } catch {
       // ignore
     }
   }
-  return raw
+  return raw;
 }
 
 // Set head initially and update when route or locale changes.
 useHead({
   title: resolveTitle(route.meta.title),
   meta: [
-    { name: 'description', content: resolveDescription(route.meta.description) },
-    { property: 'og:description', content: resolveDescription(route.meta.description) },
+    { name: "description", content: resolveDescription(route.meta.description) },
+    { property: "og:description", content: resolveDescription(route.meta.description) },
   ],
-})
+});
 watch([() => route.fullPath, () => locale.value], () => {
   useHead({
     title: resolveTitle(route.meta.title),
     meta: [
-      { name: 'description', content: resolveDescription(route.meta.description) },
-      { property: 'og:description', content: resolveDescription(route.meta.description) },
+      { name: "description", content: resolveDescription(route.meta.description) },
+      { property: "og:description", content: resolveDescription(route.meta.description) },
     ],
-  })
-})
+  });
+});
 </script>
 
 <template>
@@ -215,7 +213,11 @@ watch([() => route.fullPath, () => locale.value], () => {
     </q-drawer>
 
     <q-page-container>
-      <slot />
+      <!-- Centered, max-width container to keep the app stable and prevent wobbling -->
+      <div class="app-container q-pa-md">
+        <slot />
+      </div>
+
       <q-page-scroller position="bottom" :scroll-offset="20" :offset="[0, 0]">
         <q-btn fab icon="keyboard_arrow_up" color="green" />
       </q-page-scroller>
@@ -249,4 +251,20 @@ watch([() => route.fullPath, () => locale.value], () => {
   </q-layout>
 </template>
 
-<style scoped></style>
+<style scoped>
+.app-container {
+  max-width: 1100px;
+  margin-left: auto;
+  margin-right: auto;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+/* Reduce horizontal padding on small screens while keeping content readable */
+@media (max-width: 640px) {
+  .app-container {
+    padding-left: 12px !important;
+    padding-right: 12px !important;
+  }
+}
+</style>

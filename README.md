@@ -13,6 +13,7 @@
 <a href="https://stackblitz.com/github/antfu/vitesse-nuxt"><img src="https://developer.stackblitz.com/img/open_in_stackblitz.svg" alt=""></a>
 </p>
 [![Netlify Status](https://api.netlify.com/api/v1/badges/07cec8d0-adce-4c33-8136-ea8f423036eb/deploy-status)](https://app.netlify.com/projects/peace2074/deploys)
+[![CI](https://github.com/peace2074/peace2074.com/actions/workflows/ci.yml/badge.svg?branch=main)](https://github.com/peace2074/peace2074.com/actions/workflows/ci.yml)
 ## Features
 
 - 💚 [Nuxt 3](https://nuxt.com/) - SSR, ESR, File-based routing, components auto importing, modules, etc.

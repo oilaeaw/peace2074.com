@@ -1,4 +1,5 @@
 import { defineStore } from 'pinia'
+import core from '@shared/utils/core'
 import { useAuthStore } from './auth.pinia'
 import { createBookmark as createBookmarkService, deleteBookmark as deleteBookmarkService, getBookmarks, updateBookmark as updateBookmarkService } from './services/index'
 
@@ -24,7 +25,7 @@ export const useBookmarksStore = defineStore('bookBook', {
   },
   actions: {
     // Initialize bookmarks: if user logged in, load from server. Otherwise load guest local bookmarks.
-    async init() {
+  async init() {
       const auth = useAuthStore()
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
       if (userId) {
@@ -39,11 +40,11 @@ export const useBookmarksStore = defineStore('bookBook', {
         }
       }
       else {
-        const guestId = this._getOrCreateGuestId()
+        const guestId = await this._getOrCreateGuestId()
         const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
         try {
-          const raw = localStorage.getItem(key)
-          this.bookmarks = raw ? JSON.parse(raw) : []
+          const raw = await core.get(key)
+          this.bookmarks = raw ? (Array.isArray(raw) ? raw : JSON.parse(String(raw))) : []
         }
         catch {
           this.bookmarks = []
@@ -65,11 +66,11 @@ export const useBookmarksStore = defineStore('bookBook', {
         }
       }
       else {
-        const guestId = this._getOrCreateGuestId()
+        const guestId = await this._getOrCreateGuestId()
         const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
         try {
-          const raw = localStorage.getItem(key)
-          this.bookmarks = raw ? JSON.parse(raw) : []
+          const raw = await core.get(key)
+          this.bookmarks = raw ? (Array.isArray(raw) ? raw : JSON.parse(String(raw))) : []
         }
         catch {
           this.bookmarks = []
@@ -77,24 +78,30 @@ export const useBookmarksStore = defineStore('bookBook', {
       }
     },
 
-    _getOrCreateGuestId() {
-      if (typeof localStorage === 'undefined')
-        return ''
-      let id = localStorage.getItem(GUEST_ID_KEY)
-      if (!id) {
-        id = genGuestId()
-        try { localStorage.setItem(GUEST_ID_KEY, id) }
-        catch {}
+    async _getOrCreateGuestId() {
+      try {
+        let id = await core.get(GUEST_ID_KEY)
+        if (!id) {
+          id = genGuestId()
+          try { await core.set(GUEST_ID_KEY, id) } catch {}
+        }
+        return String(id || '')
       }
-      return id
+      catch {}
+      // If core is unavailable we fallback to generating a guest id but do not attempt
+      // to write to localStorage (avoid SSR/local env issues).
+      return genGuestId()
     },
 
-    _saveGuestBookmarks(bookmarks: string[]) {
-      const guestId = this._getOrCreateGuestId()
+    async _saveGuestBookmarks(bookmarks: string[]) {
+      const guestId = await this._getOrCreateGuestId()
       if (!guestId)
         return
       const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
-      try { localStorage.setItem(key, JSON.stringify(bookmarks)) }
+      try {
+        await core.set(key, bookmarks)
+        return
+      }
       catch {}
     },
 
