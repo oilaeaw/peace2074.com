@@ -1,4 +1,4 @@
-import Bookmark from '~~/server/models/bookmark'
+import Bookmark from '@server/models/bookmark'
 
 export default defineEventHandler(async (event) => {
   const { getUserFromEvent } = await import('../../utils/auth')

@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody, sendError, createError } from 'h3'
-import User from '~~/server/models/user'
+import User from '@server/models/user'
 
 export default defineEventHandler(async (event) => {
   const { nodeEnv } = useRuntimeConfig()

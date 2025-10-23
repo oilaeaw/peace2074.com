@@ -1,0 +1,56 @@
+# Query: @shared/
+# Flags: CaseSensitive WordMatch
+# ContextLines: 1
+
+14 results - 10 files
+
+app/composables/useCore.ts:
+  1  import { useNuxtApp } from '#app'
+  2: import type CoreClass from '@shared/utils/core'
+  3  
+
+  5    const nuxt = useNuxtApp()
+  6:   return nuxt.$core as typeof import('@shared/utils/core').default
+  7  }
+
+app/composables/useNote.ts:
+  1: import { NoteAcionsE } from '@shared/types'
+  2  import { defaultStyles, notifyDefaults } from '../constants'
+
+app/plugins/core.plugin.ts:
+  1: import core from '@shared/utils/core'
+  2  
+
+app/plugins/HolyName.ts:
+  17        try {
+  18:   const core = (nuxtApp as any).$core || (await import('@shared/utils/core')).default
+  19          void core.set('holybook', data.value.data)
+
+app/store/auth.pinia.ts:
+  1: import type { UserT } from '@shared/types'
+  2  import { createMongoAbility } from '@casl/ability'
+  3: import { CaslActionE, CaslSubjectE } from '@shared/types'
+  4  import { acceptHMRUpdate, defineStore } from 'pinia'
+
+app/store/bookmarks.pinia.ts:
+  1  import { defineStore } from 'pinia'
+  2: import core from '@shared/utils/core'
+  3  import { useAuthStore } from './auth.pinia'
+
+app/store/q2p.pinia.ts:
+  1: import type { QuranI, SuraI } from '@shared/types'
+  2: import hdetails from '@shared/data/chapters/en.json'
+  3: import hbook from '@shared/data/quran.json'
+  4  import { acceptHMRUpdate, defineStore } from 'pinia'
+
+server/api/quran.ts:
+  1: import type { QDBI } from '@shared/types'
+  2  import type { H3Event } from 'h3'
+
+server/api/auth/login.ts:
+  1: import type { UserT } from '@shared/types/index'
+  2  import User from '@server/models/user'
+
+shared/types/core.d.ts:
+  1: import type core from '@shared/utils/core'
+  2  
