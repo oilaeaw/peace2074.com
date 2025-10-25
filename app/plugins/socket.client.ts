@@ -8,7 +8,7 @@ export default defineNuxtPlugin((nuxtApp) => {
     return
 
   const runtime = useRuntimeConfig()
-  const enabled = runtime.public?.socketEnabled === true || runtime.public?.socketEnabled === 'true'
+  const enabled = String((runtime.public as any)?.socketEnabled) === 'true'
   const socketPath = (runtime.public as any)?.socketPath || '/_socket.io'
   const socketUrl = (runtime.public as any)?.socketUrl || undefined
   if (!enabled) {

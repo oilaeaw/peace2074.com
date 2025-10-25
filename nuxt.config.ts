@@ -159,10 +159,15 @@ export default defineNuxtConfig({
     databaseUrl: import.meta.env.DATABASE_URL,
     nodeEnv: import.meta.env.NODE_ENV,
     public: {
-      apiBase: import.meta.env.API_BASE_URL
+      apiBase: import.meta.env.API_BASE_URL,
+      // Socket client toggles (client plugin reads these)
+      socketEnabled: (import.meta.env.NUXT_PUBLIC_SOCKET_ENABLED as any) ?? false,
+      socketPath: (import.meta.env.NUXT_PUBLIC_SOCKET_PATH as any) ?? '/_socket.io',
+      socketUrl: (import.meta.env.NUXT_PUBLIC_SOCKET_URL as any) ?? undefined,
     },
   },
   alias: {
+    '@app': fileURLToPath(new URL('./app', import.meta.url)),
     '@assets': fileURLToPath(new URL('./app/assets', import.meta.url)),
     '@server': fileURLToPath(new URL('./server', import.meta.url)),
     '@shared': fileURLToPath(new URL('./shared', import.meta.url)),

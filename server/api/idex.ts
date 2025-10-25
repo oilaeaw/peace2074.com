@@ -11,7 +11,9 @@ router.use((req, res, next) => {
   next()
 })
 
+// IMPORTANT: Mount Express under a non-conflicting base path to avoid shadowing
+// Nitro's file-based /api/* routes.
 export default {
-  path: '/api',
+  path: '/_express',
   handler: router,
 }

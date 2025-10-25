@@ -177,6 +177,20 @@ watch([() => route.fullPath, () => locale.value], () => {
       class="bg-green-9 text-white"
     >
       <q-list bordered class="q-pa-lg bg-green-9 text-white">
+        <!-- Quick navigation -->
+        <q-item v-ripple clickable :to="{ path: '/chat', query: { room: 'general' } }">
+          <q-item-section>
+            <q-icon name="forum" class="q-mr-sm" />
+            <span>Chat Room</span>
+          </q-item-section>
+        </q-item>
+        <q-item v-ripple clickable to="/chat">
+          <q-item-section>
+            <q-icon name="chat" class="q-mr-sm" />
+            <span>Chat</span>
+          </q-item-section>
+        </q-item>
+        <q-separator spaced color="white" />
         <q-item v-ripple clickable to="/terms">
           <q-item-section>
             <q-icon name="gavel" class="q-mr-sm" />
@@ -238,7 +252,7 @@ watch([() => route.fullPath, () => locale.value], () => {
           </q-tooltip>
         </q-btn>
         <q-toolbar-title>
-          <nuxt-link :title="appName" to="/" />
+          <nuxt-link :title="t('general.SiteTitle')" to="/" />
         </q-toolbar-title>
         <div class="q-mx-auto text-center text-white">
           Built at: {{ BuildTime }} ({{ timeAgo }})

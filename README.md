@@ -45,6 +45,25 @@ Environment tips:
 - Set `SITE_BASE_URL` for correct canonical links and PWA behavior.
 - For auth-related endpoints (optional), see envs in the docs and `server/plugins/passport.ts`.
 
+### Websockets in dev
+
+Two supported modes (configure via `.env`):
+
+- Nitro-attached (default):
+	- `NUXT_SOCKET_ATTACH=true`
+	- `NUXT_PUBLIC_SOCKET_ENABLED=true`
+	- `NUXT_PUBLIC_SOCKET_URL=` (empty → same-origin)
+	- `NUXT_PUBLIC_SOCKET_PATH=/_socket.io`
+	- Visit `/chat` in two tabs to test. `GET /api/socket-status` shows socketEnabled: true.
+
+- Standalone (opt-in):
+	- `WS_STANDALONE=true`, `SOCKET_PORT=3001`
+	- `NUXT_SOCKET_ATTACH=false`
+	- `NUXT_PUBLIC_SOCKET_ENABLED=true`
+	- `NUXT_PUBLIC_SOCKET_URL=http://localhost:3001`
+	- `NUXT_PUBLIC_SOCKET_PATH=/socket.io`
+	- Status endpoint reflects Nitro only (will show false in this mode).
+
 ## Contributing
 
 Issues and pull requests are welcome. Please keep changes respectful, focused, and aligned with the project’s purpose: sharing peaceful, authentic knowledge.

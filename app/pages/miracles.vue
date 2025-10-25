@@ -172,6 +172,7 @@ watch([scope, suraIndex, verseIndex, cellSize, gap, maxWidth, () => store.Legend
 <template>
   <ClientOnly>
     <div class="q-pa-md">
+      <MiraclesSwitcher />
       <h3>Quran letter visualiser</h3>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
         <label>Scope

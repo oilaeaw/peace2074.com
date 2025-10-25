@@ -49,13 +49,44 @@ if (patchPath) {
   childEnv.NODE_OPTIONS = existing
 }
 
+// Option A: Standalone Socket.IO dev server for reliable WS upgrades in dev
+// Start by default (disable with WS_STANDALONE=false)
+let wsChild = null
+if (childEnv.WS_STANDALONE !== 'false') {
+  try {
+    wsChild = spawn('node', [path.resolve(__dirname, 'socket-server.mjs')], {
+      stdio: 'inherit',
+      env: Object.assign({}, childEnv, {
+        SOCKET_PORT: childEnv.SOCKET_PORT || '3010',
+      }),
+    })
+  }
+  catch (e) {
+    console.warn('Failed to start standalone socket server:', e && e.message)
+  }
+}
+
+// Nuxt dev server
 const child = spawn(cmd, cmdArgs, {
   stdio: 'inherit',
-  env: childEnv,
+  env: Object.assign(childEnv, {
+    // Prefer standalone socket server in dev by default
+    NUXT_SOCKET_ATTACH: childEnv.NUXT_SOCKET_ATTACH || 'false',
+    // Enable client socket plugin by default in dev
+    NUXT_PUBLIC_SOCKET_ENABLED: childEnv.NUXT_PUBLIC_SOCKET_ENABLED || 'true',
+    // Point client to standalone server by default
+    NUXT_PUBLIC_SOCKET_URL: childEnv.NUXT_PUBLIC_SOCKET_URL || 'http://localhost:3010',
+    NUXT_PUBLIC_SOCKET_PATH: childEnv.NUXT_PUBLIC_SOCKET_PATH || '/socket.io',
+  }),
 })
 
 child.on('exit', code => proc.exit(code))
 child.on('error', (err) => {
   console.error('Failed to start dev server:', err)
   proc.exit(1)
+})
+
+// Ensure both are cleaned up on exit
+process.on('exit', () => {
+  try { wsChild && wsChild.kill() } catch {}
 })

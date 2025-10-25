@@ -19,6 +19,8 @@ const io = new Server(server, {
 io.on('connection', (socket) => {
   console.log('socket connected', socket.id)
 
+  try { socket.emit('server:id', socket.id) } catch {}
+
   // Emit a simple health ping every 10 seconds
   const interval = setInterval(() => {
     socket.emit('health', {
@@ -31,6 +33,22 @@ io.on('connection', (socket) => {
     console.log('client:event', data)
     // Echo back as an acknowledgement
     socket.emit('server:ack', { received: true, data })
+  })
+
+  // Broadcast chat messages to all connected clients (dev parity with Nitro plugin)
+  socket.on('chat:message', (payload, ack) => {
+    try {
+      const normalized = {
+        id: socket.id,
+        text: String(payload?.text ?? ''),
+        author: String(payload?.author ?? 'anonymous'),
+        ts: new Date().toISOString(),
+      }
+      io.emit('chat:message', normalized)
+      if (typeof ack === 'function') ack({ ok: true })
+    } catch (err) {
+      if (typeof ack === 'function') ack({ ok: false, error: err?.message || 'error' })
+    }
   })
 
   socket.on('disconnect', (reason) => {
