@@ -35,9 +35,10 @@ async function onSubmit() {
   loading.value = true
   showResend.value = false
   try {
-    const payload: Record<string, any> = {
+    // The payload now uses 'username', which the Passport 'local' strategy expects.
+    const payload = {
       password: loginPayload.password,
-      identifier: loginPayload.identifier,
+      username: loginPayload.identifier,
     }
     // Only remember last tried email if it looks like an email
     if (
