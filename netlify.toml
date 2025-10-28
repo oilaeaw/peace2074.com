@@ -10,6 +10,7 @@ NPM_FLAGS = "--production=false"
 
 [functions]
 node_bundler = "esbuild"
+included_files = ["server/api/**", "server/data/**", "shared/**"]
 
 # Send all requests (pages and APIs) to the Nitro SSR function. This ensures
 # file-based server routes under /api/* work in production on Netlify.
