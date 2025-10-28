@@ -317,4 +317,11 @@ export default defineNuxtConfig({
   },
   pwa,
   quasar: QuasarOptions,
+  auth: {
+    provider: {
+      type: 'authjs',
+      // IMPORTANT: The `globalAppMiddleware` property must be set to `true` for the middleware to be registered correctly.
+      globalAppMiddleware: true,
+    },
+  },
 })
