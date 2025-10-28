@@ -1,5 +1,6 @@
 [build]
-publish = "dist"
+# Build the Nitro server (SSR) and place public assets under .output/public
+publish = ".output/public"
 command = "pnpm run build"
 
 [build.environment]
@@ -9,7 +10,9 @@ NPM_FLAGS = "--production=false"
 [functions]
 node_bundler = "esbuild"
 
+# Send all requests (pages and APIs) to the Nitro SSR function. This ensures
+# file-based server routes under /api/* work in production on Netlify.
 [[redirects]]
 from = "/*"
-to = "/"
+to = "/.netlify/functions/server"
 status = 200
