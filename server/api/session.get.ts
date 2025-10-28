@@ -1,8 +1,9 @@
 import { defineEventHandler, useSession } from 'h3'
 
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig(event)
   const session = await useSession(event, {
-    password: import.meta.env.SESSION_PASSWORD,
+    password: config.session.password,
   })
   if (!session) {
     return { error: 'No session found' }
