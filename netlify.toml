@@ -18,3 +18,9 @@ included_files = ["server/api/**", "server/data/**", "shared/**"]
 from = "/*"
 to = "/.netlify/functions/server"
 status = 200
+
+[[redirects]]
+from = "/api/*"
+to = "/.netlify/functions/server"
+status = 200
+force = true
