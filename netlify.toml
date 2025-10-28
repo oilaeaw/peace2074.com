@@ -1,26 +1,59 @@
-[build]
+# This file configures the build and deployment settings for Netlify.[build]
+
 # Build the Nitro server (SSR). With the Netlify Nitro preset, public assets are emitted to
-# the `dist` folder, and the SSR function to `.netlify/functions-internal/server`.
-publish = "dist"
+
+# Build settings for a Nuxt 3 SSR application.# the `dist` folder, and the SSR function to `.netlify/functions-internal/server`.
+
+[build]publish = "dist"
+
+# The command to build the project.command = "pnpm run build"
+
 command = "pnpm run build"
 
-[build.environment]
-NODE_VERSION = "20"
-NPM_FLAGS = "--production=false"
+# The directory that contains the deploy-ready assets. For Nuxt 3 with the[build.environment]
 
-[functions]
-node_bundler = "esbuild"
-included_files = ["server/api/**", "server/data/**", "shared/**"]
+# Netlify preset, this is 'dist'.NODE_VERSION = "20"
 
-# Send all requests (pages and APIs) to the Nitro SSR function. This ensures
+publish = "dist"NPM_FLAGS = "--production=false"
+
+
+
+# Environment variables to use during the build.[functions]
+
+[build.environment]node_bundler = "esbuild"
+
+NODE_VERSION = "20"included_files = ["server/api/**", "server/data/**", "shared/**"]
+
+# Ensure devDependencies are installed, as some build tools might be there.
+
+NPM_FLAGS = "--production=false"# Send all requests (pages and APIs) to the Nitro SSR function. This ensures
+
 # file-based server routes under /api/* work in production on Netlify.
+
+# Settings for Netlify Functions.[[redirects]]
+
+[functions]from = "/*"
+
+# Use esbuild for bundling, which is fast and efficient.to = "/.netlify/functions/server"
+
+node_bundler = "esbuild"status = 200
+
+# Explicitly include server-side directories to ensure they are available
+
+# in the serverless function environment. This is crucial for API routes,[[redirects]]
+
+# database models, and shared utilities.from = "/api/*"
+
+included_files = ["server/**", "shared/**"]to = "/.netlify/functions/server"
+
+status = 200
+
+# Redirect rules to handle routing for the SSR application.force = true
+
+# This rule directs all incoming requests to the Nuxt serverless function,
+# allowing Nuxt to handle all routing, including pages and API endpoints.
 [[redirects]]
 from = "/*"
 to = "/.netlify/functions/server"
 status = 200
-
-[[redirects]]
-from = "/api/*"
-to = "/.netlify/functions/server"
-status = 200
-force = true
+force = true # Use force to ensure this rule takes precedence.
