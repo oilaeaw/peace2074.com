@@ -1,6 +1,7 @@
 [build]
-# Build the Nitro server (SSR) and place public assets under .output/public
-publish = ".output/public"
+# Build the Nitro server (SSR). With the Netlify Nitro preset, public assets are emitted to
+# the `dist` folder, and the SSR function to `.netlify/functions-internal/server`.
+publish = "dist"
 command = "pnpm run build"
 
 [build.environment]
