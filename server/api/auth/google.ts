@@ -3,10 +3,12 @@ import passport from 'passport'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
-    // Derive callback URL dynamically from the current request
+    // Prefer configured callback URL; fallback to deriving dynamically from the current request
+    const cfg = useRuntimeConfig()
     const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
-    const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
-    const callbackURL = `${proto}://${host}/api/auth/google/callback`
+    const proto = getHeader(event, 'x-forwarded-proto') || (cfg.nodeEnv === 'production' ? 'https' : 'http')
+    const derived = `${proto}://${host}/api/auth/google/callback`
+    const callbackURL = cfg.googleCallbackUrl || derived
     try { console.debug('[auth/google] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto) } catch {}
 
     passport.authenticate('google', {
