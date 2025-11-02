@@ -140,7 +140,11 @@ export default defineNuxtConfig({
       // cookie name
       name: 'nuxt-session',
       // encryption password (must be set in .env as NUXT_SESSION_PASSWORD)
-      password: import.meta.env.NUXT_SESSION_PASSWORD || '',
+      // nuxt-auth-utils (iron-session) requires a secret >= 32 chars.
+      // Fallback to JWT_SECRET if NUXT_SESSION_PASSWORD is not defined to avoid 500s on /api/_auth/session.
+      password: (import.meta.env.NUXT_SESSION_PASSWORD
+        || import.meta.env.JWT_SECRET
+        || 'please-change-this-session-secret-64chars-min-0123456789abcdef') as string,
       // maxAge in seconds (default: 1 week)
       maxAge: 60 * 60 * 24 * 7,
       // cookie options
