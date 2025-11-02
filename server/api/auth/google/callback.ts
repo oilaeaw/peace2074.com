@@ -75,10 +75,20 @@ export default defineEventHandler((event) => {
   const { issueAuthToken } = await import('../../../utils/auth')
       const issued = await issueAuthToken(event, payload)
       try { console.debug('[auth/google/callback] issued token result:', issued) } catch {}
-      try { sendRedirect(event, '/') }
+
+      // Prefer an absolute redirect to the current origin to avoid host mismatches on some platforms
+      try {
+        const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
+        const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
+        const absoluteHome = `${proto}://${host}/`
+        sendRedirect(event, absoluteHome)
+      }
       catch {
         if (event?.node?.res && typeof event.node.res.writeHead === 'function') {
-          event.node.res.writeHead(302, { Location: '/' }).end()
+          const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
+          const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
+          const absoluteHome = `${proto}://${host}/`
+          event.node.res.writeHead(302, { Location: absoluteHome }).end()
         }
       }
       return resolve(undefined)

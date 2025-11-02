@@ -74,17 +74,30 @@ export async function issueAuthToken(event: any, payload: Record<string, any>, o
   const token = jwt.sign(payload as any, secret as any, { expiresIn: expiresIn as any } as any)
   const secure = cfg.nodeEnv === 'production'
 
-  // In production, set cookie domain to top-level (e.g., .peace2074.com) to avoid apex/www mismatches
+  // Compute cookie Domain attribute safely. Avoid setting Domain on public-suffix hosts (e.g., *.netlify.app)
   let domain: string | undefined
   try {
     if (cfg.nodeEnv === 'production') {
-      const host = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '').toString().toLowerCase()
-      // Strip port if present
-      const hostNoPort = host.split(':')[0]
-      // If host has at least two dots, set domain to the registrable domain with leading dot
-      const parts = hostNoPort.split('.').filter(Boolean)
-      if (parts.length >= 2) {
-        domain = `.${parts.slice(-2).join('.')}`
+  const rawHost = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '') as string
+  const host = String(rawHost).toLowerCase()
+  const hostNoPort: string = (host.split(':')[0] || '') as string
+      const publicSuffixes = [
+        '.netlify.app',
+        '.vercel.app',
+        '.onrender.com',
+        '.fly.dev',
+        '.herokuapp.com',
+        '.cloudflarepages.dev',
+        '.githubpreview.dev',
+      ]
+      const isPublicSuffix = publicSuffixes.some(suf => hostNoPort.endsWith(suf))
+      const isIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(hostNoPort)
+      if (!isPublicSuffix && !isIp) {
+        // If host has at least two labels, set domain to the registrable domain with leading dot
+        const parts = hostNoPort.split('.').filter(Boolean)
+        if (parts.length >= 2) {
+          domain = `.${parts.slice(-2).join('.')}`
+        }
       }
     }
   }
@@ -118,11 +131,25 @@ export async function clearAuthToken(event: any) {
   let domain: string | undefined
   try {
     if (cfg.nodeEnv === 'production') {
-      const host = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '').toString().toLowerCase()
-      const hostNoPort = host.split(':')[0]
-      const parts = hostNoPort.split('.').filter(Boolean)
-      if (parts.length >= 2) {
-        domain = `.${parts.slice(-2).join('.')}`
+  const rawHost = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '') as string
+  const host = String(rawHost).toLowerCase()
+  const hostNoPort: string = (host.split(':')[0] || '') as string
+      const publicSuffixes = [
+        '.netlify.app',
+        '.vercel.app',
+        '.onrender.com',
+        '.fly.dev',
+        '.herokuapp.com',
+        '.cloudflarepages.dev',
+        '.githubpreview.dev',
+      ]
+      const isPublicSuffix = publicSuffixes.some(suf => hostNoPort.endsWith(suf))
+      const isIp = /^(\d{1,3}\.){3}\d{1,3}$/.test(hostNoPort)
+      if (!isPublicSuffix && !isIp) {
+        const parts = hostNoPort.split('.').filter(Boolean)
+        if (parts.length >= 2) {
+          domain = `.${parts.slice(-2).join('.')}`
+        }
       }
     }
   }
