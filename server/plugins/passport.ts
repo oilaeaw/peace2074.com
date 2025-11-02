@@ -35,11 +35,16 @@ export default defineNitroPlugin((nitroApp) => {
   passport.use(new LocalStrategy({
     usernameField: 'identifier',
     passwordField: 'password',
-    session: false,
-  }, async (identifier: string, password: string, done) => {
+    passReqToCallback: true,
+  }, async (req: any, identifier: string, password: string, done) => {
     try {
-      const isEmail = typeof identifier === 'string' && identifier.includes('@')
-      const query: any = isEmail ? { email: identifier } : { username: identifier }
+      // Be flexible about incoming credentials: accept `identifier`, `username`, or `email`
+      const incoming = identifier || req?.body?.username || req?.body?.email
+      if (!incoming || !password)
+        return done(null, false, { message: 'Missing credentials' })
+
+      const isEmail = typeof incoming === 'string' && incoming.includes('@')
+      const query: any = isEmail ? { email: incoming } : { username: incoming }
       const user = await User.findOne(query)
       if (!user)
         return done(null, false, { message: 'Invalid credentials' })
