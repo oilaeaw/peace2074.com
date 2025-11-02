@@ -35,9 +35,11 @@ async function onSubmit() {
   loading.value = true
   showResend.value = false
   try {
-    // The payload now uses 'username', which the Passport 'local' strategy expects.
+    // Passport LocalStrategy is configured with usernameField: 'identifier'.
+    // Send both 'identifier' and 'username' for maximum compatibility during migration.
     const payload = {
       password: loginPayload.password,
+      identifier: loginPayload.identifier,
       username: loginPayload.identifier,
     }
     // Only remember last tried email if it looks like an email
