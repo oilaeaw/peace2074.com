@@ -2,6 +2,7 @@ import crypto from 'node:crypto'
 import User from '@server/models/user'
 import bcrypt from 'bcryptjs'
 import { defineEventHandler, getHeader } from 'h3'
+import { ensureDbConnection } from '@server/utils/database'
 import passport from 'passport'
 
 export default defineEventHandler((event) => {
@@ -18,6 +19,16 @@ export default defineEventHandler((event) => {
       }
       if (!profile) {
         return resolve(event.node.res.writeHead(302, { Location: '/' }).end())
+      }
+
+      // Ensure DB connection before any queries
+      try {
+        await ensureDbConnection()
+      }
+      catch (dbConnErr) {
+        console.error('GOOGLE_CALLBACK_DB_CONNECT_ERROR:', dbConnErr)
+        event.node.res.writeHead(302, { Location: '/auth/login?error=db_connect' }).end()
+        return resolve(undefined)
       }
 
       const email: string | null = (profile.emails && profile.emails[0]?.value) || profile._json?.email || null
@@ -59,7 +70,7 @@ export default defineEventHandler((event) => {
         username: dbUser?.username || baseUsername,
         provider: 'google',
       }
-      const { issueAuthToken } = await import('../../../utils/auth')
+  const { issueAuthToken } = await import('../../../utils/auth')
       const issued = await issueAuthToken(event, payload)
       try { console.debug('[auth/google/callback] issued token result:', issued) } catch {}
       try { sendRedirect(event, '/') }
