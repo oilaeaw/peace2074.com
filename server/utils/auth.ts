@@ -1,4 +1,4 @@
-import { getCookie, setCookie, getQuery } from 'h3'
+import { getCookie, setCookie, getQuery, getHeader } from 'h3'
 import jwt from 'jsonwebtoken'
 
 export function getTokenFromEvent(event: any) {
@@ -73,11 +73,29 @@ export async function issueAuthToken(event: any, payload: Record<string, any>, o
   const expiresIn = opts?.expiresIn || '7d'
   const token = jwt.sign(payload as any, secret as any, { expiresIn: expiresIn as any } as any)
   const secure = cfg.nodeEnv === 'production'
+
+  // In production, set cookie domain to top-level (e.g., .peace2074.com) to avoid apex/www mismatches
+  let domain: string | undefined
+  try {
+    if (cfg.nodeEnv === 'production') {
+      const host = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '').toString().toLowerCase()
+      // Strip port if present
+      const hostNoPort = host.split(':')[0]
+      // If host has at least two dots, set domain to the registrable domain with leading dot
+      const parts = hostNoPort.split('.').filter(Boolean)
+      if (parts.length >= 2) {
+        domain = `.${parts.slice(-2).join('.')}`
+      }
+    }
+  }
+  catch {}
+
   setCookie(event, 'auth_token', token, {
     httpOnly: true,
     sameSite: 'lax',
     secure,
     path: '/',
+    domain,
     maxAge: typeof expiresIn === 'number' ? expiresIn : 7 * 24 * 60 * 60,
   })
   try { console.debug('[auth] issued JWT cookie: auth_token (httpOnly), secure:', secure, 'path:/, maxAge:', typeof expiresIn === 'number' ? expiresIn : 7 * 24 * 60 * 60) } catch {}
@@ -96,11 +114,26 @@ export async function clearAuthToken(event: any) {
     // fallback
   }
 
+  const cfg = useRuntimeConfig()
+  let domain: string | undefined
+  try {
+    if (cfg.nodeEnv === 'production') {
+      const host = (getHeader(event, 'x-forwarded-host') || getHeader(event, 'host') || '').toString().toLowerCase()
+      const hostNoPort = host.split(':')[0]
+      const parts = hostNoPort.split('.').filter(Boolean)
+      if (parts.length >= 2) {
+        domain = `.${parts.slice(-2).join('.')}`
+      }
+    }
+  }
+  catch {}
+
   setCookie(event, 'auth_token', '', {
     httpOnly: true,
     sameSite: 'lax',
-    secure: useRuntimeConfig().nodeEnv === 'production',
+    secure: cfg.nodeEnv === 'production',
     path: '/',
+    domain,
     maxAge: 0,
   })
 }
