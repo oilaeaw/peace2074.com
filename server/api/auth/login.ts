@@ -1,5 +1,5 @@
 import passport from 'passport'
-import { defineEventHandler, H3Event, createError } from 'h3'
+import { defineEventHandler, H3Event, createError, readBody } from 'h3'
 import type { UserT } from '@shared/types/index'
 
 // Shape returned by our LocalStrategy's `done(null, user)`
@@ -7,7 +7,11 @@ type AuthUser = Pick<UserT, 'email' | 'username' | 'first_name' | 'last_name' | 
 
 interface AuthInfo { message?: string }
 
-export default defineEventHandler((event: H3Event) => {
+export default defineEventHandler(async (event: H3Event) => {
+  // Ensure request body is available to passport-local (h3 doesn't populate req.body by default)
+  const body = await readBody(event).catch(() => ({})) as Record<string, unknown>
+  ;(event.node.req as any).body = body
+
   return new Promise((resolve, reject) => {
     // Ensure passport is initialized for this request
     // Note: we rely on stateless auth (JWT/nuxt-auth-utils). No passport session.
