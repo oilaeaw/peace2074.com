@@ -23,7 +23,6 @@
     "@emailjs/browser": "^4.4.1",
     "@feathersjs/authentication-client": "^5.0.34",
     "@feathersjs/feathers": "^5.0.34",
-    "@feathersjs/socketio-client": "^5.0.34",
     "@pinia/colada": "^0.14.2",
     "@quasar/extras": "^1.17.0",
     "@quasar/quasar-ui-qmediaplayer": "2.0.0-beta.6",
@@ -40,7 +39,6 @@
     "nuxt": "latest",
     "nuxt-auth-utils": "0.5.25",
     "nuxt-quasar-ui": "^2.1.12",
-    "nuxt-socket-io": "^3.0.13",
     "passport": "^0.7.0",
     "passport-github2": "^0.1.12",
     "passport-google-oauth20": "^2.0.0",
@@ -49,8 +47,7 @@
     "pinia-plugin-persistedstate": "^4.3.0",
     "quasar": "^2.18.1",
     "resolve": "^1.22.10",
-    "socket.io": "^4.8.1",
-    "socket.io-client": "^4.8.1",
+    
     "solid-js": "^1.9.9",
     "vue-scroll-picker": "^2.0.0",
     "webpack": "^5.99.9"
@@ -98,13 +95,7 @@
     "overrides": {
       "@intlify/message-compiler": "^11.1.2",
       "cookie@<0.7.0": ">=0.7.0",
-      "engine.io@>=4.0.0 <6.2.1": ">=6.2.1",
-      "engine.io@>=5.0.0 <5.2.1": ">=5.2.1",
-      "engine.io@>=5.1.0 <6.4.2": ">=6.4.2",
-      "eslint-plugin-unicorn": "59.0.0",
-      "socket.io-parser@>=4.0.4 <4.2.3": ">=4.2.3",
-      "socket.io@>=3.0.0 <4.6.2": ">=4.6.2",
-      "ws@>=7.0.0 <7.5.10": ">=7.5.10"
+      "eslint-plugin-unicorn": "59.0.0"
     },
     "ignoredBuiltDependencies": [
       "@parcel/watcher",

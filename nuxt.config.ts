@@ -164,10 +164,6 @@ export default defineNuxtConfig({
     nodeEnv: import.meta.env.NODE_ENV,
     public: {
       apiBase: import.meta.env.API_BASE_URL,
-      // Socket client toggles (client plugin reads these)
-      socketEnabled: (import.meta.env.NUXT_PUBLIC_SOCKET_ENABLED as any) ?? false,
-      socketPath: (import.meta.env.NUXT_PUBLIC_SOCKET_PATH as any) ?? '/_socket.io',
-      socketUrl: (import.meta.env.NUXT_PUBLIC_SOCKET_URL as any) ?? undefined,
     },
   },
   alias: {

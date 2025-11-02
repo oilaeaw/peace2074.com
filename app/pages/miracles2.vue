@@ -1,6 +1,5 @@
 <script lang="ts" setup>
-import { computed, ref, onMounted, onBeforeUnmount, watch } from "#imports";
-import { useSocket } from "~/composables/useSocket";
+import { computed, ref, onMounted, watch } from "#imports";
 
 definePageMeta({
   title: "pages.miracles.pageTitle",
@@ -60,36 +59,7 @@ watch(arabicText, (val) => {
   metrics.value = computeMetrics(val || "");
 });
 
-// --- Live demo: Socket.IO health + ping ---
-const { on, off, emit } = useSocket()
-const connectionId = ref<string | null>(null)
-const lastHealth = ref<any>(null)
-const connected = ref(false)
-
-onMounted(() => {
-  const unConnect = on('connect', () => {
-    connected.value = true
-  })
-  const unDisconnect = on('disconnect', () => {
-    connected.value = false
-  })
-  const unId = on<string>('server:id', (id) => {
-    connectionId.value = id
-  })
-  const unHealth = on<any>('health', (payload) => {
-    lastHealth.value = payload
-  })
-  onBeforeUnmount(() => {
-    unConnect()
-    unDisconnect()
-    unId()
-    unHealth()
-  })
-})
-
-function pingServer() {
-  emit('client:event', { ts: Date.now(), note: 'ping from miracles page' })
-}
+// Websocket demo removed
 </script>
 
 <template>
@@ -97,22 +67,7 @@ function pingServer() {
     <Suspense>
       <q-page padding>
         <MiraclesSwitcher />
-        <!-- Realtime demo (Socket.IO) -->
-        <q-card class="q-pa-md q-mx-auto q-mt-md" style="max-width: 820px">
-          <q-card-section>
-            <div class="row items-center justify-between">
-              <div class="text-subtitle2">Realtime connection</div>
-              <q-badge :color="connected ? 'positive' : 'negative'">
-                {{ connected ? 'Connected' : 'Disconnected' }}
-              </q-badge>
-            </div>
-            <div class="q-mt-sm text-caption">ID: {{ connectionId || '—' }}</div>
-            <div class="q-mt-sm text-caption">Last health: {{ lastHealth?.timestamp || '—' }}</div>
-            <div class="q-mt-md">
-              <q-btn color="primary" outline label="Ping server" @click="pingServer" />
-            </div>
-          </q-card-section>
-        </q-card>
+        <!-- Realtime demo removed for this deployment platform -->
 
         <!-- Pilot card 1: linguistic metrics for a single verse -->
         <q-card class="q-pa-md q-mx-auto q-mt-md" style="max-width: 820px">
