@@ -1,4 +1,5 @@
 import User from '@server/models/user'
+import { ensureDbConnection } from '@server/utils/database'
 import bcrypt from 'bcryptjs'
 import passport from 'passport'
 import { Strategy as GitHubStrategy } from 'passport-github2'
@@ -43,7 +44,10 @@ export default defineNitroPlugin((nitroApp) => {
       if (!incoming || !password)
         return done(null, false, { message: 'Missing credentials' })
 
-      const isEmail = typeof incoming === 'string' && incoming.includes('@')
+  // Ensure database connection (handles bufferCommands=false)
+  await ensureDbConnection()
+
+  const isEmail = typeof incoming === 'string' && incoming.includes('@')
       const query: any = isEmail ? { email: incoming } : { username: incoming }
       const user = await User.findOne(query)
       if (!user)
