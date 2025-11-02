@@ -1,4 +1,5 @@
 import User from '@server/models/user'
+import { ensureDbConnection } from '@server/utils/database'
 import bcrypt from 'bcryptjs'
 import { getHeader } from 'h3'
 import passport from 'passport'
@@ -28,6 +29,11 @@ export default defineEventHandler((event) => {
       const username: string = profile.username || profile._json?.login || `github_${profile.id}`
       const email: string | null = (profile.emails && profile.emails[0]?.value) || profile._json?.email || null
 
+      // Ensure DB connection then find or create user
+      try { await ensureDbConnection() } catch (e) {
+        try { return sendRedirect(event, '/auth/login?error=db_connect') } catch {}
+        return resolve(undefined)
+      }
       // Find or create user
       let dbUser = null
       try {
