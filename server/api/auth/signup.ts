@@ -3,8 +3,10 @@ import User from '@server/models/user'
 import { sendVerificationEmail } from '@server/utils/sendVerificationEmail'
 import bcrypt from 'bcryptjs'
 import { createError, readBody, sendError } from 'h3'
+import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
+  await ensureDbConnection()
   const body = await readBody(event)
   const { email, password, first_name, last_name, username } = body
 

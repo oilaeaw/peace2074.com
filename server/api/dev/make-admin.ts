@@ -1,7 +1,9 @@
 import { defineEventHandler, readBody, sendError, createError } from 'h3'
 import User from '@server/models/user'
+import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
+  try { await ensureDbConnection() } catch {}
   const { nodeEnv } = useRuntimeConfig()
   if (nodeEnv === 'production') return sendError(event, createError({ statusCode: 403, statusMessage: 'disabled in production' }))
 

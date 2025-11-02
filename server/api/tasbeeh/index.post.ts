@@ -1,6 +1,8 @@
 import Tasbeeh from '@server/models/tasbeeh'
+import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
+  await ensureDbConnection()
   const body = await readBody(event)
 
   const auth = await import('../../utils/auth')

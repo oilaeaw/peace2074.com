@@ -1,8 +1,11 @@
 import bcrypt from 'bcryptjs'
 import { createError, defineEventHandler, readBody, sendError } from 'h3'
 import User from '@server/models/user'
+import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
+  // Ensure DB connection before any queries when bufferCommands=false
+  try { await ensureDbConnection() } catch (e) {}
   const { nodeEnv } = useRuntimeConfig()
   if (nodeEnv === 'production') {
     return sendError(event, createError({ statusCode: 403, statusMessage: 'Dev login disabled in production.' }))

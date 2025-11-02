@@ -1,6 +1,8 @@
 import Bookmark from '@server/models/bookmark'
+import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
+  await ensureDbConnection()
   const { id } = event.context.params
   const body = await readBody(event)
   const { getUserFromEvent } = await import('../../utils/auth')
