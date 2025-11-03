@@ -32,3 +32,12 @@
 	to = "/.netlify/functions/server"
 	status = 200
 	force = true
+
+	# Security and CSP headers: do NOT require Trusted Types, allow needed script origins
+	[[headers]]
+		for = "/*"
+		[headers.values]
+			# Conservative defaults; adjust as needed. We intentionally avoid 'require-trusted-types-for' here
+			# to prevent runtime errors like "This document requires 'TrustedScript' assignment." If you later
+			# enforce Trusted Types, ensure a robust default policy or upgrade libraries to use Trusted Types.
+			Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://www.google-analytics.com; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; base-uri 'self';"

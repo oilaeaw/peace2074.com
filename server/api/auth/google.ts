@@ -1,4 +1,6 @@
 import { defineEventHandler, getHeader } from 'h3'
+import { ensureDbConnection } from '@server/utils/database'
+import OAuthLog from '@server/models/oauth-log'
 import passport from 'passport'
 
 export default defineEventHandler((event) => {
@@ -18,6 +20,22 @@ export default defineEventHandler((event) => {
     })(event.node.req, event.node.res, (err: any) => {
       if (err)
         return reject(err)
+      // Best-effort log that we started the OAuth flow (non-blocking)
+      ;(async () => {
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({
+            provider: 'google',
+            direction: 'start',
+            url: `${proto}://${host}/api/auth/google`,
+            callbackURL,
+            host,
+            proto,
+            outcome: 'init',
+          })
+        }
+        catch {}
+      })()
       resolve(undefined)
     })
   })

@@ -45,6 +45,17 @@ Environment tips:
 - Set `SITE_BASE_URL` for correct canonical links and PWA behavior.
 - For auth-related endpoints (optional), see envs in the docs and `server/plugins/passport.ts`.
 
+### Google OAuth: capture and verify the auth URL
+
+- Endpoint to inspect the exact Google OAuth URL this server would use for the current host:
+	- `GET /api/auth/google/auth-url` → returns `{ url, callbackURL, clientId }`
+- Callback diagnostics: the handler logs the full incoming callback URL so you can compare it with Google’s redirect.
+- Local example output matches Google’s link format:
+	- `https://accounts.google.com/o/oauth2/v2/auth?...&redirect_uri=http%3A%2F%2Flocalhost%3A3000%2Fapi%2Fauth%2Fgoogle%2Fcallback&scope=openid+email+profile&client_id=...`
+- Required envs (set in your shell or Netlify):
+	- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, optional `GOOGLE_CALLBACK_URL`
+	- If `GOOGLE_CALLBACK_URL` is not set, it’s derived from the current host/proto.
+
 ### Websockets in dev
 
 Two supported modes (configure via `.env`):

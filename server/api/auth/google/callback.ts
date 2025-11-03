@@ -1,12 +1,24 @@
 import crypto from 'node:crypto'
 import User from '@server/models/user'
+import OAuthLog from '@server/models/oauth-log'
 import bcrypt from 'bcryptjs'
-import { defineEventHandler, getHeader } from 'h3'
+import { defineEventHandler, getHeader, getRequestURL, getQuery } from 'h3'
 import { ensureDbConnection } from '@server/utils/database'
 import passport from 'passport'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
+    // Capture and log the exact incoming callback URL for debugging purposes
+    let capturedUrl = ''
+    let capturedQuery: any = undefined
+    try {
+      const reqUrl = getRequestURL(event)
+      capturedUrl = reqUrl.toString()
+      capturedQuery = getQuery(event)
+      console.debug('[auth/google/callback] incoming URL:', capturedUrl)
+    }
+    catch {}
+
     const cfg = useRuntimeConfig()
     const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
     const proto = getHeader(event, 'x-forwarded-proto') || (cfg.nodeEnv === 'production' ? 'https' : 'http')
@@ -17,9 +29,41 @@ export default defineEventHandler((event) => {
     passport.authenticate('google', { failureRedirect: '/', session: false, callbackURL, scope: ['openid', 'email', 'profile'] }, async (err: any, profile: any) => {
       if (err) {
         console.error('GOOGLE_PASSPORT_ERROR:', err)
+        // Best-effort log persistence on error
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({
+            provider: 'google',
+            direction: 'callback',
+            url: capturedUrl || derived,
+            callbackURL,
+            host,
+            proto,
+            query: capturedQuery,
+            outcome: 'failure',
+            error: String(err?.message || err),
+          })
+        }
+        catch {}
         return reject(err)
       }
       if (!profile) {
+        // Persist no-profile case
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({
+            provider: 'google',
+            direction: 'callback',
+            url: capturedUrl || derived,
+            callbackURL,
+            host,
+            proto,
+            query: capturedQuery,
+            outcome: 'failure',
+            error: 'No profile returned from Google',
+          })
+        }
+        catch {}
         return resolve(event.node.res.writeHead(302, { Location: '/' }).end())
       }
 
@@ -81,6 +125,24 @@ export default defineEventHandler((event) => {
         const host = getHeader(event, 'x-forwarded-host') || getHeader(event, 'host')
         const proto = getHeader(event, 'x-forwarded-proto') || (useRuntimeConfig().nodeEnv === 'production' ? 'https' : 'http')
         const absoluteHome = `${proto}://${host}/`
+        // Persist success log
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({
+            provider: 'google',
+            direction: 'callback',
+            url: capturedUrl || derived,
+            callbackURL,
+            host,
+            proto,
+            query: capturedQuery,
+            userId: dbUser?._id,
+            profileId: profile?._json?.sub || profile?.id,
+            email: dbUser?.email || email,
+            outcome: 'success',
+          })
+        }
+        catch {}
         sendRedirect(event, absoluteHome)
       }
       catch {
