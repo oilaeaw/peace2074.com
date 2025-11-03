@@ -5,10 +5,35 @@ import { onMounted, ref } from '#imports'
 // localStorage during SSR or render content that differs on the client.
 const accepted = ref<boolean | null>(null)
 
-import useCore from '~/composables/useCore'
+import useCore from '@app/composables/useCore'
+
+function readCookie(name: string): string | null {
+  try {
+    const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
+    return match ? decodeURIComponent(match[2]) : null
+  }
+  catch {
+    return null
+  }
+}
+
+function writeCookie(name: string, value: string, days = 365) {
+  try {
+    const expires = new Date(Date.now() + days * 864e5).toUTCString()
+    document.cookie = `${name}=${encodeURIComponent(value)}; Expires=${expires}; Path=/; SameSite=Lax` + (location.protocol === 'https:' ? '; Secure' : '')
+  }
+  catch {}
+}
 
 onMounted(async () => {
-  // Now that we're on the client, we can safely read persisted consent.
+  // Prefer a durable first-party cookie (1 year), fallback to core storage
+  const cookie = readCookie('cookieAccepted')
+  if (cookie === '1' || cookie === 'true') {
+    accepted.value = true
+    try { void useCore().set('cookieAccepted', 'true') } catch {}
+    return
+  }
+
   try {
     const v = await useCore().get('cookieAccepted')
     accepted.value = v === 'true' || v === true
@@ -20,6 +45,7 @@ onMounted(async () => {
 
 function acceptCookies() {
   try { void useCore().set('cookieAccepted', 'true') } catch {}
+  writeCookie('cookieAccepted', '1', 365)
   accepted.value = true
 }
 </script>

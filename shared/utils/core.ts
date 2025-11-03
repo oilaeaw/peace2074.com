@@ -1,10 +1,16 @@
 
 import { createStorage } from 'unstorage'
+import localStorageDriver from 'unstorage/drivers/localstorage'
 
 type AnyObject = Record<string, any>
 
 class Core {
-  private storage = createStorage()
+  private storage = createStorage({
+    // In the browser, persist to localStorage; on server, default memory.
+    driver: (typeof window !== 'undefined')
+      ? localStorageDriver({ base: 'peace2074' })
+      : undefined,
+  })
 
   async get<T = unknown>(key: string): Promise<T | null> {
     const v = await (this.storage as any).getItem(key)
