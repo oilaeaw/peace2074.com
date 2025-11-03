@@ -86,6 +86,7 @@ else {
 const ignoreGlobs = [
   '.nuxt/**',
   '.output/**',
+  '.netlify/**',
   '--port/.nuxt/**',
   'types/**',
     'public/**',

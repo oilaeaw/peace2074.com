@@ -148,8 +148,14 @@ export default defineNuxtConfig({
       // maxAge in seconds (default: 1 week)
       maxAge: 60 * 60 * 24 * 7,
       // cookie options
+      // Make sure the session cookie is secure in production and optionally
+      // set a Domain for apex+www sharing in production deployments.
       cookie: {
         sameSite: 'lax',
+        secure: process.env.NODE_ENV === 'production',
+        // Set SESSION_COOKIE_DOMAIN=".peace2074.com" in production to share across apex/www.
+        // Leave undefined on previews (Netlify/Vercel) to avoid public-suffix rejections.
+        domain: process.env.SESSION_COOKIE_DOMAIN as any,
       },
     },
   githubClientId: import.meta.env.GITHUB_CLIENT_ID,
