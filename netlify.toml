@@ -1,0 +1,34 @@
+#############################################################
+# Netlify configuration for Nuxt 3 SSR (Nitro Netlify preset)
+#############################################################
+
+[build]
+	command = "pnpm run build"
+	publish = "dist"
+
+[build.environment]
+	NODE_VERSION = "20"
+	# Ensure devDependencies are installed for build tools
+	NPM_FLAGS = "--production=false"
+
+[functions]
+	# Use esbuild for serverless bundling
+	node_bundler = "esbuild"
+	# Explicitly include server-side dirs for serverless context (models, data, shared)
+	included_files = [
+		"server/**",
+		"shared/**"
+	]
+
+# Route API paths to Nitro SSR function to ensure file-based routes under /api/** work
+[[redirects]]
+	from = "/api/*"
+	to = "/.netlify/functions/server"
+	status = 200
+
+# Route all other paths to the Nitro SSR function (SSR pages)
+[[redirects]]
+	from = "/*"
+	to = "/.netlify/functions/server"
+	status = 200
+	force = true

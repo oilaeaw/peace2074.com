@@ -213,7 +213,7 @@ export default defineNuxtConfig({
       // Do not externalize 'passport' so serverless functions (Netlify) have it
       // available at runtime. Bundling passport into the server build avoids
       // "Cannot find package 'passport'" errors in deployed functions.
-      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex', 'h3-session', 'iron-session'],
+      external: ['resolve', '@quasar/extras', 'fuse.js', 'feathers-vuex'],
     },
     esbuild: {
       options: {
