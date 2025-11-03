@@ -1,7 +1,8 @@
 import User from '@server/models/user'
+import OAuthLog from '@server/models/oauth-log'
 import { ensureDbConnection } from '@server/utils/database'
 import bcrypt from 'bcryptjs'
-import { getHeader } from 'h3'
+import { getHeader, getRequestURL, getQuery } from 'h3'
 import passport from 'passport'
 
 export default defineEventHandler((event) => {
@@ -15,10 +16,31 @@ export default defineEventHandler((event) => {
     }
     catch {}
 
+    let capturedUrl = ''
+    let capturedQuery: any = undefined
+    try {
+      const reqUrl = getRequestURL(event)
+      capturedUrl = reqUrl.toString()
+      capturedQuery = getQuery(event)
+    }
+    catch {}
+
     passport.authenticate('github', { failureRedirect: homeURL, session: false, callbackURL }, async (err: any, profile: any) => {
-      if (err)
+      if (err) {
+        // persist failure
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: String(err?.message || err) })
+        }
+        catch {}
         return reject(err)
+      }
       if (!profile) {
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: 'No profile returned from GitHub' })
+        }
+        catch {}
         // Use H3 redirect if possible
         try { sendRedirect(event, '/') }
         catch { /* fallback */ }
@@ -62,11 +84,17 @@ export default defineEventHandler((event) => {
         provider: 'github',
       }
       const { issueAuthToken } = await import('../../../utils/auth')
-      const issued = await issueAuthToken(event, payload)
+  const issued = await issueAuthToken(event, payload)
       try { console.debug('[auth/github/callback] issued token result:', issued) } catch {}
 
       // First, attempt a proper server-side redirect to absolute home URL
       try {
+        // persist success
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'success', userId: dbUser?._id, profileId: profile?.id, email: dbUser?.email || email })
+        }
+        catch {}
         return sendRedirect(event, homeURL)
       }
       catch {

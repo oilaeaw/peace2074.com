@@ -1,5 +1,7 @@
 import { defineEventHandler, getHeader } from 'h3'
 import passport from 'passport'
+import { ensureDbConnection } from '@server/utils/database'
+import OAuthLog from '@server/models/oauth-log'
 
 export default defineEventHandler((event) => {
   return new Promise((resolve, reject) => {
@@ -15,6 +17,22 @@ export default defineEventHandler((event) => {
     passport.authenticate('github', { scope: ['user:email'], callbackURL })(event.node.req, event.node.res, (err: any) => {
       if (err)
         return reject(err)
+      // best-effort: record start of flow
+      ;(async () => {
+        try {
+          await ensureDbConnection()
+          await OAuthLog.create({
+            provider: 'github',
+            direction: 'start',
+            url: `${proto}://${host}/api/auth/github`,
+            callbackURL,
+            host,
+            proto,
+            outcome: 'init',
+          })
+        }
+        catch {}
+      })()
       resolve(undefined)
     })
   })

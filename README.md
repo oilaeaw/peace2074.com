@@ -56,6 +56,23 @@ Environment tips:
 	- `GOOGLE_CLIENT_ID`, `GOOGLE_CLIENT_SECRET`, optional `GOOGLE_CALLBACK_URL`
 	- If `GOOGLE_CALLBACK_URL` is not set, it’s derived from the current host/proto.
 
+### GitHub OAuth: capture and verify the auth URL
+
+- Endpoint to inspect the exact GitHub OAuth URL this server would use for the current host:
+	- `GET /api/auth/github/auth-url` → returns `{ url, callbackURL, clientId }`
+- Start the flow (normal):
+	- `GET /api/auth/github`
+- Callback is handled at:
+	- `/api/auth/github/callback` and is persisted to the `OAuthLog` collection
+- Required envs (set in your shell or Netlify):
+	- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, optional `GITHUB_CALLBACK_URL`
+	- If `GITHUB_CALLBACK_URL` is not set, it’s derived from the current host/proto.
+
+### Inspect recent OAuth logs (dev only)
+
+- `GET /api/dev/oauth-logs` → returns latest 20 OAuth log entries with provider, direction, URL, and outcome.
+- Returns 403 in production.
+
 ### Websockets in dev
 
 Two supported modes (configure via `.env`):
