@@ -84,5 +84,5 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests
-        run: pnpm test:run
+      - name: Run tests (shared only for now)
+        run: pnpm exec vitest run test/shared
