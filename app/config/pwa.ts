@@ -16,8 +16,6 @@ export const pwa: ModuleOptions = {
     description: appDescription,
     theme_color: '#ffffff',
     icons: [
-      {
-        icons: [
           {
             src: 'windows11/SmallTile.scale-100.png',
             sizes: '71x71',
@@ -466,8 +464,6 @@ export const pwa: ModuleOptions = {
             src: 'ios/1024.png',
             sizes: '1024x1024',
           },
-        ],
-      },
     ],
   },
   workbox: {

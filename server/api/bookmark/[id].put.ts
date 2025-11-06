@@ -3,10 +3,10 @@ import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
   await ensureDbConnection()
-  const { id } = event.context.params
+  const id = (event.context.params as any)?.id
   const body = await readBody(event)
   const { getUserFromEvent } = await import('../../utils/auth')
-  const userData = await getUserFromEvent(event)
+  const userData = await getUserFromEvent(event) as any
   const userId = userData?.id
   if (!userId)
     throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })

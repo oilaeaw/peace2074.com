@@ -3,10 +3,10 @@ import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
   await ensureDbConnection()
-  const { id } = event.context.params
+  const id = (event.context.params as any)?.id
 
   try {
-    const deletedBookmark = await Bookmark.findByIdAndDelete(id)
+  const deletedBookmark = await Bookmark.findByIdAndDelete(id)
     if (!deletedBookmark) {
       throw createError({
         statusCode: 404,

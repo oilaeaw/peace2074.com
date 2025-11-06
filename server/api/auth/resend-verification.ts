@@ -11,7 +11,8 @@ export default defineEventHandler(async (event) => {
   if (!email) {
     return sendError(event, createError({ statusCode: 400, statusMessage: 'Email is required.' }))
   }
-  const user = await User.findOne({ email })
+  const U: any = User as any
+  const user = await U.findOne({ email })
   if (!user) {
     return sendError(event, createError({ statusCode: 404, statusMessage: 'User not found.' }))
   }

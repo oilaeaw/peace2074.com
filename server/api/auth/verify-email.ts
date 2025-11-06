@@ -10,7 +10,8 @@ export default defineEventHandler(async (event) => {
   }
 
   // Find user by token and check expiry
-  const user = await User.findOne({ verificationToken: token, verificationTokenExpires: { $gt: new Date() } })
+  const U: any = User as any
+  const user = await U.findOne({ verificationToken: token, verificationTokenExpires: { $gt: new Date() } })
   if (!user) {
     return sendError(event, createError({ statusCode: 400, statusMessage: 'Invalid or expired verification token.' }))
   }

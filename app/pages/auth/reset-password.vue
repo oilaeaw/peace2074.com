@@ -39,7 +39,8 @@ async function handleResetPassword() {
     router.push('/auth/login')
   }
   catch (e) {
-    error.value = e.message || 'Failed to reset password'
+    const err = e as any
+    error.value = err?.message || 'Failed to reset password'
   }
   finally {
     loading.value = false
@@ -48,7 +49,7 @@ async function handleResetPassword() {
 </script>
 
 <template>
-  <q-page :style-fn="myTweak" padding>
+  <q-page padding>
     <div class="q-pa-md" style="max-width: 400px; margin: 0 auto">
       <q-card class="q-pa-md">
         <q-card-section>

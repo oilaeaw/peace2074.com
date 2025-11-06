@@ -13,7 +13,8 @@ export default defineEventHandler(async (event) => {
 
   const isEmail = identifier.includes('@')
   const query = isEmail ? { email: identifier } : { username: identifier }
-  const user = await User.findOne(query)
+  const U: any = User as any
+  const user = await U.findOne(query)
   if (!user) return sendError(event, createError({ statusCode: 404, statusMessage: 'user not found' }))
 
   user.role = 'admin'

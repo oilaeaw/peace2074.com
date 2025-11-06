@@ -10,7 +10,7 @@ import useCore from '@app/composables/useCore'
 function readCookie(name: string): string | null {
   try {
     const match = document.cookie.match(new RegExp('(^| )' + name + '=([^;]+)'))
-    return match ? decodeURIComponent(match[2]) : null
+  return match ? decodeURIComponent(match[2] || '') : null
   }
   catch {
     return null

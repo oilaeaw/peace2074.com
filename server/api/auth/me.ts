@@ -3,13 +3,14 @@ import { ensureDbConnection } from '@server/utils/database'
 import { getUserFromEvent } from '../../utils/auth'
 
 export default defineEventHandler(async (event) => {
-  const userData = await getUserFromEvent(event)
+  const userData = await getUserFromEvent(event) as any
   if (!userData?.id)
     return { user: null }
 
   try {
     await ensureDbConnection()
-    const user = await User.findById(userData.id)
+    const U: any = User as any
+    const user = await U.findById(userData.id)
     if (!user)
       return { user: null }
     return { user: {

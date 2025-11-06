@@ -31,7 +31,8 @@ export default defineEventHandler((event) => {
   ;(async () => {
     try {
       await ensureDbConnection()
-      await OAuthLog.create({
+        const OLog = OAuthLog as any
+        await OLog.create({
         provider: 'google',
         direction: 'auth-url',
         url,

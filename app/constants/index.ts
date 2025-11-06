@@ -1,6 +1,6 @@
-import { QSpinnerGears } from 'quasar'
-// isClient!
-export const isClient: bool = (): boolean => computed(() => Boolean(typeof window !== 'undefined' && 'serviceWorker' in navigator))
+import { computed } from 'vue'
+// isClient computed flag
+export const isClient = computed<boolean>(() => typeof window !== 'undefined' && 'serviceWorker' in navigator)
 // App Name
 export const appName = 'Peace2074'
 

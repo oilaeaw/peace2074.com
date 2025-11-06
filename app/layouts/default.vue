@@ -1,10 +1,10 @@
 <script lang="ts" setup>
-import { useTimeAgo } from "@vueuse/core";
-import moment from "moment";
+import { useTimeAgo } from '@vueuse/core'
+import moment from "moment"
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { useAuthStore } from "~/store/auth.pinia";
+import { useAuthStore } from "@app/store/auth.pinia";
 
 const { t, te, locale } = useI18n();
 const route = useRoute();
@@ -201,6 +201,12 @@ watch([() => route.fullPath, () => locale.value], () => {
           <q-item-section>
             <q-icon name="privacy_tip" class="q-mr-sm" />
             <span>{{ t("privacy_policy") }}</span>
+          </q-item-section>
+        </q-item>
+                <q-item v-ripple clickable to="/contact">
+          <q-item-section>
+            <q-icon name="privacy_tip" class="q-mr-sm" />
+            <span>{{ t("contact") }}</span>
           </q-item-section>
         </q-item>
         <template v-if="isAuthenticated">

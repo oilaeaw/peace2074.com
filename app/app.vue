@@ -14,7 +14,8 @@ onMounted(() => {
   }, 1500)
 })
 
-const i18nHead = useLocaleHead('./locals', { seo: { canonicalQueries: ['ar', 'en'] } })
+// Generate localized head metadata using nuxt-i18n v9 API (use defaults for compatibility)
+const i18nHead = useLocaleHead()
 useHead(() => ({
   htmlAttrs: {
     lang: i18nHead.value.htmlAttrs!.lang,

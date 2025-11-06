@@ -5,7 +5,7 @@
 // const d = new Date()
 
 const { data } = await useFetch('/api/pageview')
-const time = useTimeAgo(() => data.value?.startAt)
+const time = useTimeAgo(() => data.value?.startAt ?? Date.now())
 // const date = `__DATE__`
 // const timeAgo = useTimeAgo(date)
 // const BuildTime: string = moment(date).format('ddd MMM DD, YYYY [at] HH:mm')

@@ -18,13 +18,14 @@ export default defineEventHandler(async (event) => {
   }
 
   // Check if user already exists (by email)
-  const existingUser = await User.findOne({ email })
+  const U: any = User as any
+  const existingUser = await U.findOne({ email })
   if (existingUser) {
     return sendError(event, createError({ statusCode: 409, statusMessage: 'User already exists.' }))
   }
 
   // Check if username is taken
-  const existingUsername = await User.findOne({ username })
+  const existingUsername = await U.findOne({ username })
   if (existingUsername) {
     return sendError(event, createError({ statusCode: 409, statusMessage: 'Username already taken.' }))
   }
@@ -37,7 +38,7 @@ export default defineEventHandler(async (event) => {
   const verificationTokenExpires = new Date(Date.now() + 1000 * 60 * 60) // 1 hour
 
   // Save the user (unverified)
-  const user = await User.create({
+  const user = await U.create({
     email,
     password: hashedPassword,
     first_name,

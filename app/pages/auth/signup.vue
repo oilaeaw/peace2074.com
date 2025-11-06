@@ -57,6 +57,13 @@ async function onSignup() {
     loading.value = false
   }
 }
+
+function goGoogle() {
+  try { navigateTo('/api/auth/google') } catch { if (typeof window !== 'undefined') window.location.href = '/api/auth/google' }
+}
+function goGithub() {
+  try { navigateTo('/api/auth/github') } catch { if (typeof window !== 'undefined') window.location.href = '/api/auth/github' }
+}
 </script>
 
 <template>
@@ -102,8 +109,8 @@ async function onSignup() {
               </div>
             </q-form>
             <div class="q-mt-md">
-              <q-btn class="q-mb-sm full-width" label="Sign up with Google" icon="fab fa-google" style="background: #fff; color: #4285f4; border: 1px solid #4285f4" @click="() => (window.location.href = '/api/auth/google')" />
-              <q-btn class="full-width" label="Sign up with GitHub" icon="fab fa-github" style="background: #24292e; color: #fff" @click="() => (window.location.href = '/api/auth/github')" />
+              <q-btn class="q-mb-sm full-width" label="Sign up with Google" icon="fab fa-google" style="background: #fff; color: #4285f4; border: 1px solid #4285f4" @click="goGoogle" />
+              <q-btn class="full-width" label="Sign up with GitHub" icon="fab fa-github" style="background: #24292e; color: #fff" @click="goGithub" />
             </div>
           </q-card-section>
         </q-card>

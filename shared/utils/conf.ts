@@ -65,7 +65,7 @@ function createLocalStore(initial: Record<string, any>) {
         const keys = key.split(':')
         let cur: any = state
         for (let i = 0; i < keys.length; i++) {
-          const k = keys[i]
+          const k = String(keys[i])
           if (i === keys.length - 1) {
             cur[k] = value
           } else {
@@ -263,7 +263,7 @@ class Conf {
   // Usage:
   //  conf.update(s => { s.foo = 'bar' })        -> replaces store with mutated snapshot
   //  conf.update('nested:count', v => v + 1)    -> updates nested key with returned value
-  update<T = any>(updater: ((s: Record<string, any>) => Record<string, any>) | string, maybeFn?: (v: T) => T) {
+  update<T extends string | number | object = any>(updater: ((s: Record<string, any>) => Record<string, any>) | string, maybeFn?: (v: T) => T) {
     // Functional update over the whole store
     if (typeof updater === 'function') {
       try {
@@ -294,7 +294,7 @@ class Conf {
     if (typeof maybeFn !== 'function') return
     const old = this.get(key)
     const result = maybeFn(old)
-    this.set(key, result)
+  this.set(key, result as unknown as string | number | object)
   }
 
   // Replace the whole store with a plain object

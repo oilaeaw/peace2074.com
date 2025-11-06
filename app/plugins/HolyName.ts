@@ -11,12 +11,13 @@ export default defineNuxtPlugin(async (nuxtApp) => {
   })
 
   if (data && data.value) {
-    useState('HolyNames', () => data.value.data)
-    nuxtApp.provide('HolyNames', data.value.data)
+    const list = (data.value as any)?.data || []
+    useState('HolyNames', () => list)
+    nuxtApp.provide('HolyNames', list)
     if (import.meta.client) {
       try {
   const core = (nuxtApp as any).$core || (await import('@shared/utils/core')).default
-        void core.set('holybook', data.value.data)
+        void core.set('holybook', list)
       }
       catch {}
     }

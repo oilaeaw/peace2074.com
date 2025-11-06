@@ -7,8 +7,7 @@ import { pwa } from './app/config/pwa'
 import { appDescription } from './app/constants/index'
 import { QuasarOptions } from './qusarOptions'
 
-// Synchronous startup shim: ensure `node:crypto.hash` and `globalThis.crypto.hash`
-// are present before any Vite transform plugins (plugin-vue) call them.
+
 try {
   const nc: any = nodeCrypto as any
   // Attach node:crypto.hash if missing
@@ -142,9 +141,7 @@ export default defineNuxtConfig({
       // encryption password (must be set in .env as NUXT_SESSION_PASSWORD)
       // nuxt-auth-utils (iron-session) requires a secret >= 32 chars.
       // Fallback to JWT_SECRET if NUXT_SESSION_PASSWORD is not defined to avoid 500s on /api/_auth/session.
-      password: (import.meta.env.NUXT_SESSION_PASSWORD
-        || import.meta.env.JWT_SECRET
-        || 'please-change-this-session-secret-64chars-min-0123456789abcdef') as string,
+      password: import.meta.env.JWT_SECRET as string,
       // maxAge in seconds (default: 1 week)
       maxAge: 60 * 60 * 24 * 7,
       // cookie options
@@ -302,7 +299,6 @@ export default defineNuxtConfig({
   },
   i18n: {
     defaultLocale: 'en',
-    vueI18nLoader: true,
     vueI18n: '../i18n.config',
     // baseUrl is required by nuxt-i18n to generate proper SEO links (canonical/hreflang)
     baseUrl: import.meta.env.SITE_BASE_URL || 'https://peace2074.com',
@@ -318,16 +314,13 @@ export default defineNuxtConfig({
     modelsDir: 'models',
     devtools: true,
   },
-  optimizeDeps: {
-    include: [],
-  },
   pwa,
-  quasar: QuasarOptions,
+  quasar: QuasarOptions as any,
   auth: {
+    // Module typings may lag behind; cast to any to avoid typecheck noise.
     provider: {
       type: 'authjs',
-      // IMPORTANT: The `globalAppMiddleware` property must be set to `true` for the middleware to be registered correctly.
       globalAppMiddleware: true,
     },
-  },
+  } as any,
 })

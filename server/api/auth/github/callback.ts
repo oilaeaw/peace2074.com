@@ -25,12 +25,13 @@ export default defineEventHandler((event) => {
     }
     catch {}
 
-    passport.authenticate('github', { failureRedirect: homeURL, session: false, callbackURL }, async (err: any, profile: any) => {
+  ;(passport as any).authenticate('github', { failureRedirect: homeURL, session: false, callbackURL }, async (err: any, profile: any) => {
       if (err) {
         // persist failure
         try {
           await ensureDbConnection()
-          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: String(err?.message || err) })
+          const OLog = OAuthLog as any
+          await OLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: String(err?.message || err) })
         }
         catch {}
         return reject(err)
@@ -38,7 +39,8 @@ export default defineEventHandler((event) => {
       if (!profile) {
         try {
           await ensureDbConnection()
-          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: 'No profile returned from GitHub' })
+          const OLog = OAuthLog as any
+          await OLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'failure', error: 'No profile returned from GitHub' })
         }
         catch {}
         // Use H3 redirect if possible
@@ -57,16 +59,17 @@ export default defineEventHandler((event) => {
         return resolve(undefined)
       }
       // Find or create user
-      let dbUser = null
+      let dbUser: any = null
       try {
+        const U: any = User as any
         if (email)
-          dbUser = await User.findOne({ email })
+          dbUser = await U.findOne({ email })
         if (!dbUser)
-          dbUser = await User.findOne({ username })
+          dbUser = await U.findOne({ username })
         if (!dbUser) {
           const randomPassword = (await import('node:crypto')).randomBytes(24).toString('hex')
           const hashed = await bcrypt.hash(randomPassword, 10)
-          dbUser = await User.create({
+          dbUser = await U.create({
             email: email || undefined,
             username,
             password: hashed,
@@ -92,7 +95,8 @@ export default defineEventHandler((event) => {
         // persist success
         try {
           await ensureDbConnection()
-          await OAuthLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'success', userId: dbUser?._id, profileId: profile?.id, email: dbUser?.email || email })
+          const OLog = OAuthLog as any
+          await OLog.create({ provider: 'github', direction: 'callback', url: capturedUrl || callbackURL, callbackURL, host, proto, query: capturedQuery, outcome: 'success', userId: dbUser?._id, profileId: profile?.id, email: dbUser?.email || email })
         }
         catch {}
         return sendRedirect(event, homeURL)

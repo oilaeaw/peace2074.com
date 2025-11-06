@@ -10,20 +10,20 @@ export default defineNuxtPlugin((nuxtApp) => {
       // (the @pinia/nuxt module commonly installs Pinia automatically).
       const candidate = createPinia()
       candidate.use(piniaPluginPersistedstate)
-      candidate.use(PiniaColada)
+  candidate.use(PiniaColada as any)
 
       // Detect whether a Pinia instance is already provided by the app.
       // We look for a provided object that looks like Pinia (has `use` fn).
       // This is a best-effort detection to avoid trying to set $pinia when
       // it's provided as a read-only getter by Nuxt's Pinia integration.
-      const provided = (nuxtApp.vueApp && (nuxtApp.vueApp._context || nuxtApp.vueApp.$) && (nuxtApp.vueApp._context?.provides || (nuxtApp.vueApp as any).$?.provides)) || {}
+  const provided = (nuxtApp.vueApp && nuxtApp.vueApp._context && nuxtApp.vueApp._context.provides) || {}
       const existingPinia = Object.values(provided).find((v: any) => v && typeof v.use === 'function')
 
       if (existingPinia) {
         // Attach plugins to the existing Pinia instance instead of installing a new one
         try {
           existingPinia.use(piniaPluginPersistedstate)
-          existingPinia.use(PiniaColada)
+          existingPinia.use(PiniaColada as any)
         }
         catch {
           // non-fatal — plugin may already be installed
@@ -31,7 +31,7 @@ export default defineNuxtPlugin((nuxtApp) => {
       }
       else {
         // No existing Pinia found — safe to install the one we created
-        nuxtApp.vueApp.use(candidate)
+  nuxtApp.vueApp.use(candidate)
       }
 
       // Initialize q2p (quietly) — it's safe to call regardless of Pinia state

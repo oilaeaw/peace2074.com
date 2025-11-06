@@ -18,13 +18,14 @@ export default defineEventHandler(async (event) => {
   }
 
   const isEmail = identifier.includes('@')
-  let user = await User.findOne(isEmail ? { email: identifier } : { username: identifier })
+  const U: any = User as any
+  let user = await U.findOne(isEmail ? { email: identifier } : { username: identifier })
 
   if (!user) {
     const randomPassword = (await import('node:crypto')).randomBytes(16).toString('hex')
     const hashed = await bcrypt.hash(randomPassword, 10)
     const username = isEmail ? identifier.split('@')[0] : identifier
-    user = await User.create({
+    user = await U.create({
       email: isEmail ? identifier : undefined,
       username,
       password: hashed,

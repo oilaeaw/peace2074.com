@@ -213,7 +213,7 @@ onMounted(async () => {
 
   // If authenticated, try to fetch server-side stored stats
   try {
-    const { data, error } = await useFetch("/api/tasbeeh", { credentials: "include" });
+    const { data, error } = await useFetch<{ message: string; data?: any }>("/api/tasbeeh", { credentials: "include" });
     if (!error.value && data.value && data.value.data) {
       const remote = data.value.data;
       // Merge today's stats if present
@@ -287,13 +287,13 @@ definePageMeta({
       <div class="current-tasbeeh">
         <div class="tasbeeh-card">
           <div class="arabic-text">
-            {{ currentTasbeeh.arabic }}
+            {{ currentTasbeeh?.arabic }}
           </div>
           <div class="transliteration">
-            {{ currentTasbeeh.transliteration }}
+            {{ currentTasbeeh?.transliteration }}
           </div>
           <div class="translation">
-            {{ currentTasbeeh.translation }}
+            {{ currentTasbeeh?.translation }}
           </div>
         </div>
       </div>

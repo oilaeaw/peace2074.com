@@ -86,12 +86,7 @@ const online = useOnline()
     <div v-else text-gray:80>
       {{ t("pages.main.offlineMessage") }}
     </div>
-    <template #fallback>
-      <div italic op50>
-        <span animate-pulse>{{ t("pages.main.loading") }}</span>
-        <q-skeleton :animation="true" class="fit" bordered />
-      </div>
-    </template>
+    <!-- Removed invalid #fallback slot on QPage; use Suspense/ClientOnly when needed -->
   </q-page>
 </template>
 

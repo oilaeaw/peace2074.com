@@ -26,13 +26,14 @@ export default defineEventHandler((event) => {
     const callbackURL = cfg.googleCallbackUrl || derived
     try { console.debug('[auth/google/callback] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto) } catch {}
 
-    passport.authenticate('google', { failureRedirect: '/', session: false, callbackURL, scope: ['openid', 'email', 'profile'] }, async (err: any, profile: any) => {
+    ;(passport as any).authenticate('google', { failureRedirect: '/', session: false, callbackURL, scope: ['openid', 'email', 'profile'] }, async (err: any, profile: any) => {
       if (err) {
         console.error('GOOGLE_PASSPORT_ERROR:', err)
         // Best-effort log persistence on error
         try {
           await ensureDbConnection()
-          await OAuthLog.create({
+          const OLog = OAuthLog as any
+          await OLog.create({
             provider: 'google',
             direction: 'callback',
             url: capturedUrl || derived,
@@ -51,7 +52,8 @@ export default defineEventHandler((event) => {
         // Persist no-profile case
         try {
           await ensureDbConnection()
-          await OAuthLog.create({
+          const OLog = OAuthLog as any
+          await OLog.create({
             provider: 'google',
             direction: 'callback',
             url: capturedUrl || derived,
@@ -83,16 +85,18 @@ export default defineEventHandler((event) => {
 
       let dbUser = null
       try {
+        const U: any = User as any
         if (email) {
-          dbUser = await User.findOne({ email })
+          dbUser = await U.findOne({ email })
         }
         if (!dbUser) {
-          dbUser = await User.findOne({ username: baseUsername })
+          dbUser = await U.findOne({ username: baseUsername })
         }
         if (!dbUser) {
           const randomPassword = crypto.randomBytes(24).toString('hex')
           const hashed = await bcrypt.hash(randomPassword, 10)
-          dbUser = await User.create({
+          
+          dbUser = await U.create({
             email: email || undefined,
             username: baseUsername,
             password: hashed,
@@ -128,7 +132,8 @@ export default defineEventHandler((event) => {
         // Persist success log
         try {
           await ensureDbConnection()
-          await OAuthLog.create({
+          const OLog = OAuthLog as any
+          await OLog.create({
             provider: 'google',
             direction: 'callback',
             url: capturedUrl || derived,

@@ -6,7 +6,7 @@ import hbook from '@server/data/quran.json'
 export interface QSDT {
   chapter: number
   verse: number
-  text: string[]
+  text: string
 }
 export interface IDT {
   id: number
@@ -18,21 +18,38 @@ export interface IDT {
 }
 
 export default defineEventHandler((event: H3Event) => {
-  const params = getQuery(event)
-  const { s } = params
-  const ready = []
-  hdetails.forEach((item: IDT) => {
-    const qr: QSDT = hbook[item.id]
-    // The following line is likely incorrect, as qr is probably an array of verses, not an object with keys matching item.id
-    // qr.find((v, index) => v[index] === item.id)
+  const params = getQuery(event) as Record<string, any>
+  const s = params?.s
+  const ready: Array<{
+    id: number
+    name: string
+    e_name: string
+    type: string
+    total_verses: number
+    ayat: QSDT[]
+  }> = []
+
+  // hdetails is a map keyed by chapter number as string -> array of verses with english text
+  // hbook is the arabic text with same shape. We will use metadata from one and ayat from hbook.
+  Object.keys(hdetails as any).forEach((key) => {
+    const id = Number(key)
+    const metaSample = ((hdetails as any)[key] || [])[0] as any
+    const ayat = ((hbook as any)[key] || []) as QSDT[]
+    if (!Array.isArray(ayat)) return
     ready.push({
-      id: item.id,
-      name: item.name,
-      e_name: item.translation,
-      type: item.type,
-      total_verses: item.total_verses,
-      ayat: qr,
+      id,
+      name: String(metaSample?.suraName || ''),
+      e_name: String(metaSample?.suraName || ''),
+      type: String(metaSample?.type || ''),
+      total_verses: ayat.length,
+      ayat: ayat as QSDT[],
     })
   })
-  return s ? ready[s] : ready as QDBI
+
+  if (s) {
+    const idx = Number(Array.isArray(s) ? s[0] : s)
+    const found = ready.find(r => r.id === idx)
+    return found as unknown as QDBI
+  }
+  return ready as unknown as QDBI
 })

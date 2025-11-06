@@ -9,6 +9,7 @@ export default defineEventHandler(async (event) => {
     return { error: 'Forbidden in production' }
   }
   await ensureDbConnection()
-  const logs = await OAuthLog.find({}).sort({ createdAt: -1 }).limit(20).lean()
+  const OLog = OAuthLog as any
+  const logs = await OLog.find({}).sort({ createdAt: -1 }).limit(20).lean()
   return { logs }
 })

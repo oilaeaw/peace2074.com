@@ -6,7 +6,7 @@ import { acceptHMRUpdate, defineStore } from 'pinia'
 interface QSDT {
   chapter: number
   verse: number
-  text: string[]
+  text: string
 }
 
 interface IDT {
@@ -26,8 +26,8 @@ interface Style {
 }
 
 interface State {
-  Book: QuranI
-  Sura: SuraI
+  Book: any[]
+  Sura: any
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
   style: {
@@ -37,16 +37,17 @@ interface State {
 }
 const ready: any[] = []
 
-hdetails.forEach((item: IDT) => {
-  const qr: QSDT = hbook[item.id as keyof typeof hbook]
-  if (qr) {
-    qr.find((v: any, index: number) => v[index] === item.id)
+Object.keys(hdetails as any).forEach((key) => {
+  const id = Number(key)
+  const metaSample = ((hdetails as any)[key] || [])[0] as any
+  const qr = ((hbook as any)[key] || []) as QSDT[]
+  if (Array.isArray(qr)) {
     ready.push({
-      id: item.id,
-      name: item.name,
-      e_name: item.translation,
-      type: item.type,
-      total_verses: item.total_verses,
+      id,
+      name: String(metaSample?.suraName || metaSample?.name || ''),
+      e_name: String(metaSample?.translation || metaSample?.suraName || ''),
+      type: String(metaSample?.type || ''),
+      total_verses: qr.length,
       ayat: qr,
     })
   }
@@ -56,7 +57,7 @@ export const useQ2P = defineStore('q2p', {
   state: (): State => ({
   // Use a deep-cloned plain object for Book to avoid prototype/serialization issues
   // (some JSON imports or transforms may produce objects that trip devalue/pinia during SSR).
-  Book: JSON.parse(JSON.stringify(ready)) as QuranI,
+  Book: JSON.parse(JSON.stringify(ready)) as any[],
     Sura: {} as SuraI,
     Index: 0,
     LLegend: [
@@ -137,11 +138,11 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   actions: {
-    init(index?: number): QuranI {
+  init(index?: number): any[] {
       // Ensure Book is populated — persisted state may have an empty or
       // malformed Book array. Fall back to the compiled `ready` data.
       if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
-        this.Book = ready as QuranI
+  this.Book = ready as any[]
       }
 
       this.setIndex(index || 1)
@@ -170,10 +171,10 @@ export const useQ2P = defineStore('q2p', {
         }
 
         // Update our Book array: replace or insert the sura at (id - 1)
-        if (!this.Book || !Array.isArray(this.Book)) this.Book = [] as unknown as QuranI
-        this.Book[id - 1] = sura
+  if (!this.Book || !Array.isArray(this.Book)) this.Book = [] as any[]
+  this.Book[id - 1] = sura
         this.setIndex(id)
-        this.Sura = sura
+  this.Sura = sura
         return this.Sura
       } catch (err) {
         // network or parse error — fallback
@@ -185,7 +186,7 @@ export const useQ2P = defineStore('q2p', {
       // Defensive: coerce to number and ensure within bounds. Default to 1.
       let idx = Number(payload) || 1
       if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0)
-        this.Book = ready as QuranI
+        this.Book = ready as any[]
       if (idx < 1 || idx > this.Book.length)
         idx = 1
 

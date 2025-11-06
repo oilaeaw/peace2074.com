@@ -8,7 +8,7 @@ export default defineEventHandler(async (event) => {
   const auth = await import('../../utils/auth')
   const { getUserFromEvent, getTokenFromEvent, verifyAuthToken } = auth
   let userData = await getUserFromEvent(event)
-  let userId = userData?.id
+  let userId = (userData as any)?.id
 
   // Last-resort: if no user from session helpers, try verifying any raw token ourselves.
   if (!userId) {
@@ -37,9 +37,10 @@ export default defineEventHandler(async (event) => {
   // body may contain { date, total, sessions, session: { phraseIndex, count, target } }
   const { date, total, sessions, session } = body
 
-  let doc = await Tasbeeh.findOne({ userId })
+  const T: any = Tasbeeh as any
+  let doc = await T.findOne({ userId })
   if (!doc) {
-    doc = await Tasbeeh.create({ userId, daily: [], sessions: [] })
+  doc = await T.create({ userId, daily: [], sessions: [] })
   }
 
   // Update daily record

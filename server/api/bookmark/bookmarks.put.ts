@@ -3,8 +3,8 @@ import { ensureDbConnection } from '@server/utils/database'
 
 export default defineEventHandler(async (event) => {
   await ensureDbConnection()
-  const { id } = event.context.params
-  const body = await useBody(event)
+  const id = (event.context.params as any)?.id
+  const body = await readBody(event)
 
   try {
     const updatedBookmark = await Bookmark.findByIdAndUpdate(id, body, { new: true })

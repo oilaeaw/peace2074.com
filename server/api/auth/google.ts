@@ -13,7 +13,7 @@ export default defineEventHandler((event) => {
     const callbackURL = cfg.googleCallbackUrl || derived
     try { console.debug('[auth/google] computed callbackURL:', callbackURL, 'hostHeader:', host, 'protoHeader:', proto) } catch {}
 
-    passport.authenticate('google', {
+    ;(passport as any).authenticate('google', {
       scope: ['openid', 'email', 'profile'],
       session: false,
       callbackURL,
@@ -24,7 +24,8 @@ export default defineEventHandler((event) => {
       ;(async () => {
         try {
           await ensureDbConnection()
-          await OAuthLog.create({
+          const OLog = OAuthLog as any
+          await OLog.create({
             provider: 'google',
             direction: 'start',
             url: `${proto}://${host}/api/auth/google`,

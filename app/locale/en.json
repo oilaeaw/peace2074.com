@@ -64,13 +64,23 @@
   "notfound": "Not found",
   "contact": {
     "help": "We are here",
-    "offer_help": "Please let us know how we can help!",
-    "accept_terms": "View our terms and conditions.",
-    "terms_accepted": "I accept the terms and conditions.",
-    "name": {
-      "label": "Your name *",
-      "hint": "Name and surname",
-      "placeholder": "What is your name"
+   "offer_help": "Please let us know how we can help!",
+  "accept_terms": "View our terms and conditions.",
+  "terms_accepted": "I accept the terms and conditions.",
+  "name": {
+    "label": "Your name *",
+    "hint": "Name and surname",
+    "placeholder": "What is your name"
+  },
+  "email1": {
+    "label": "Your email address *",
+    "hint": "Your email",
+    "placeholder": "In order to get back to you. "    
+  },
+  "message1": {
+    "label": "Your message *",
+    "hint": "Input your message",
+    "placeholder": "Tell us how we can help"
     },
     "email": {
       "label": "Your email address *",

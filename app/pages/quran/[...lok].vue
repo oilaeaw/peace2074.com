@@ -12,7 +12,7 @@ const lok = ref(0); // Initialize with default value
 
 // Extract the sura number from route params - handle both array and single value
 function getLokFromRoute() {
-  const param = route.params.lok;
+  const param = (route.params as any)?.lok;
   console.warn(
     "Route param lok:",
     param,
@@ -164,12 +164,14 @@ watchEffect(() => {
   }
 });
 
-useHead({
-  title: PageTite,
-  appDescription: appName,
-  ogTitle: PageTite,
-  ogDescription: appName,
-});
+useHead(() => ({
+  title: PageTite.value,
+  meta: [
+    { name: 'description', content: appName.value },
+    { property: 'og:title', content: PageTite.value },
+    { property: 'og:description', content: appName.value },
+  ],
+}))
 
 function goToBakara() {
   q2p.setIndex(2);
@@ -186,7 +188,8 @@ onMounted(() => {
   try {
     q2p.init(lok.value);
   } catch (error) {
-    $q.notify({ message: error.message, type: "negative" });
+    const err = error as any
+    $q.notify({ message: err?.message || 'Failed to init', type: "negative" });
   }
   if (isClient) window.addEventListener("hashchange", updateCurrentPath);
   // initialize bookmarks (will load from server if logged-in or from local guest storage)
@@ -326,11 +329,11 @@ function navigateToHash(hash: string) {
       .forEach((el) => el.classList.remove("aya-highlight"));
   } catch {}
   try {
-    element.classList.add("aya-highlight");
+  element?.classList.add("aya-highlight");
     // remove highlight after 2s
     setTimeout(() => {
       try {
-        element.classList.remove("aya-highlight");
+        element?.classList.remove("aya-highlight");
       } catch {}
     }, 2000);
   } catch {}
@@ -371,11 +374,9 @@ function onAyaDblClick(e: Event) {
 
         <div class="sura-controls">
           <q-space />
-          <q-menu auto-close>
-            <template #anchor>
-              <q-btn flat icon="bookmark" label="Bookmarks" />
-            </template>
-            <q-list class="border-green" style="min-width: 220px">
+          <q-btn flat icon="bookmark" label="Bookmarks">
+            <q-menu auto-close>
+              <q-list class="border-green" style="min-width: 220px">
               <q-chip
                 v-for="bm in bookmarksStore.bookmarks"
                 :key="typeof bm === 'string' ? bm : bm._id"
@@ -396,8 +397,9 @@ function onAyaDblClick(e: Event) {
                   />
                 </q-item-section>
               </q-chip>
-            </q-list>
-          </q-menu>
+              </q-list>
+            </q-menu>
+          </q-btn>
           <!-- quick jump to specific aya (format: sura:verse) -->
           <div style="display: flex; align-items: center; gap: 0.5rem">
             <q-input

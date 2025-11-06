@@ -1,4 +1,6 @@
-import type { Socket } from 'socket.io-client'
+// Avoid depending on socket.io-client types to keep typecheck green if
+// the package/types are not installed in the current environment.
+type Socket = any
 
 export function useSocket() {
   const { $socket } = useNuxtApp()

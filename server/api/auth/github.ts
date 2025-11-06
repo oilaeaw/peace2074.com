@@ -14,14 +14,15 @@ export default defineEventHandler((event) => {
     }
     catch {}
 
-    passport.authenticate('github', { scope: ['user:email'], callbackURL })(event.node.req, event.node.res, (err: any) => {
+    ;(passport as any).authenticate('github', { scope: ['user:email'], callbackURL })(event.node.req, event.node.res, (err: any) => {
       if (err)
         return reject(err)
       // best-effort: record start of flow
       ;(async () => {
         try {
           await ensureDbConnection()
-          await OAuthLog.create({
+          const OLog = OAuthLog as any
+          await OLog.create({
             provider: 'github',
             direction: 'start',
             url: `${proto}://${host}/api/auth/github`,

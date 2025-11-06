@@ -137,8 +137,8 @@ function draw() {
 
   let index = 0
   for (let i = 0; i < total; i += step) {
-    const ch = chars[i]
-    const color = legendMap.value.get(ch) || legendMap.value.get(ch?.trim())
+    const ch: string = chars[i] || ''
+    const color = legendMap.value.get(ch) || legendMap.value.get((ch || '').trim())
     if (color) {
       const cx = (index % cols) * (cellSize.value + gap.value)
       const cy = Math.floor(index / cols) * (cellSize.value + gap.value)

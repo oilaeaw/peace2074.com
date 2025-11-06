@@ -155,9 +155,10 @@ export const useBookmarksStore = defineStore('bookBook', {
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
       if (userId) {
         const updated = await updateBookmarkService(id, newBm)
-        const idx = this.bookmarks.findIndex(b => b === id || b === updated?.bookmark)
+        const val = (updated && (updated as any).value !== undefined) ? (updated as any).value : updated
+        const idx = this.bookmarks.findIndex(b => (typeof b === 'string' ? b === id : (b?._id === id || b?.bookmark === id)))
         if (idx !== -1)
-          this.bookmarks[idx] = updated?.bookmark || newBm
+          this.bookmarks[idx] = (val as any)?.bookmark || newBm
       }
       else {
         const idx = this.bookmarks.findIndex(b => b === id)

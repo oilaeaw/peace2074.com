@@ -50,7 +50,7 @@ async function onSubmit() {
       lastTriedEmail.value = loginPayload.identifier
     }
 
-    const { data, error } = await useFetch('/api/auth/login', {
+  const { data, error } = await useFetch<any>('/api/auth/login', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
       body: JSON.stringify(payload),
@@ -68,7 +68,7 @@ async function onSubmit() {
         || 'Login failed'
       throw new Error(emsg)
     }
-    const result = data?.value
+  const result = data?.value as any
     if (result && result.user) {
       // server sets httpOnly cookie for auth; fetch current user to populate client state
       auth.setUserInfo(result.user)

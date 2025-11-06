@@ -8,7 +8,7 @@ const loading = ref(false);
 const status = ref("");
 const viewMode = ref<"table" | "raw">("table");
 
-const note = useNote();
+const $q = useQuasar();
 const auth = useAuthStore();
 const isAuthenticated = computed(() => !!auth.isAuthenticated);
 
@@ -62,7 +62,7 @@ async function loadAllFiles() {
   }
 
   // pick first locale as selected if not already set
-  if (!selected.value && locales.value.length) selected.value = locales.value[0];
+  if (!selected.value && locales.value.length) selected.value = locales.value[0] as string;
 
   for (const f of locales.value) {
     try {
@@ -76,7 +76,7 @@ async function loadAllFiles() {
     }
   }
   // ensure editor shows selected file
-  editor.value = JSON.stringify(localesData[selected.value] || {}, null, 2);
+  editor.value = JSON.stringify(localesData[selected.value as string] || {}, null, 2);
   loading.value = false;
 }
 
@@ -95,12 +95,13 @@ function setValue(file: string, dotted: string, value: any) {
   if (!localesData[file] || typeof localesData[file] !== "object") localesData[file] = {};
   let cur = localesData[file];
   for (let i = 0; i < parts.length; i++) {
-    const p = parts[i];
+    const p = String(parts[i]);
     if (i === parts.length - 1) {
-      cur[p] = value;
+      // final assignment
+      (cur as any)[p] = value;
     } else {
-      if (!cur[p] || typeof cur[p] !== "object") cur[p] = {};
-      cur = cur[p];
+      if (!(cur as any)[p] || typeof (cur as any)[p] !== "object") (cur as any)[p] = {};
+      cur = (cur as any)[p];
     }
   }
 }
@@ -137,11 +138,19 @@ loadAllFiles();
 
 onBeforeMount(() => {
   if (!isAuthenticated.value) {
-    note.warning("You must be logged in to access the translation editor.");
+    try { $q.notify({ message: 'You must be logged in to access the translation editor.', type: 'warning' }) } catch {}
     const router = useRouter();
     router.push("/auth/login");
   }
 });
+
+function promptEdit(file: string, key: string) {
+  const current = getValue(file, key) ?? ''
+  const v = (typeof window !== 'undefined' && typeof window.prompt === 'function')
+    ? window.prompt(`Edit value for ${file} ${key}`, String(current))
+    : null
+  if (v !== null) setValue(file, key, v)
+}
 </script>
 
 <template>
@@ -206,17 +215,7 @@ onBeforeMount(() => {
                             flat
                             small
                             label="Edit"
-                            @click="
-                              (() => {
-                                const v = prompt(
-                                  'Edit value for ' + f + ' ' + k,
-                                  getValue(f, k) ?? ''
-                                );
-                                if (v !== null) {
-                                  setValue(f, k, v);
-                                }
-                              })()
-                            "
+                            @click="() => promptEdit(f as string, k as string)"
                           />
                         </div>
                       </div>
@@ -240,7 +239,7 @@ onBeforeMount(() => {
               <q-btn
                 label="Save"
                 color="primary"
-                @click="() => saveLocaleFile(selected.value)"
+                @click="() => saveLocaleFile(selected as string)"
               />
               <q-btn label="Reload All" flat @click="loadAllFiles" />
             </div>

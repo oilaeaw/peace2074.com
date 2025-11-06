@@ -27,10 +27,11 @@ export async function ensureDbConnection(maxRetries = 3, timeoutMs = 30000) {
       return mongoose.connection
     }
     catch (error) {
-      console.error(`Database connection attempt ${attempt} failed:`, error.message)
+      const err = error as any
+      console.error(`Database connection attempt ${attempt} failed:`, err?.message || err)
 
       if (attempt === maxRetries) {
-        throw new Error(`Failed to connect to database after ${maxRetries} attempts: ${error.message}`)
+        throw new Error(`Failed to connect to database after ${maxRetries} attempts: ${err?.message || err}`)
       }
 
       // Wait before retry (exponential backoff)
@@ -42,7 +43,7 @@ export async function ensureDbConnection(maxRetries = 3, timeoutMs = 30000) {
 }
 
 export function getDbConnectionStatus() {
-  const states = {
+  const states: Record<number, string> = {
     0: 'disconnected',
     1: 'connected',
     2: 'connecting',

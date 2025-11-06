@@ -2,7 +2,7 @@
 import { storeToRefs } from 'pinia'
 
 const q2p = useQ2P()
-const { index } = storeToRefs(q2p)
+const { Index } = storeToRefs(q2p)
 const quran = q2p.GetQ
 const names = q2p.FahrasP
 const router = useRouter()
@@ -21,7 +21,7 @@ function navToLok(lok: number) {
         v-for="(item, L) in names"
         :key="item.lok"
         class="q-mx-xs cursor-pointer text-center"
-        :class="{ 'active-sura': index === L }"
+  :class="{ 'active-sura': Index === L + 1 }"
         @click="navToLok(L)"
       >
         {{ L + 1 }}-{{ item }}

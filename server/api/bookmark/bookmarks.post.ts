@@ -5,8 +5,8 @@ export default defineEventHandler(async (event) => {
   await ensureDbConnection()
   const { getUserFromEvent } = await import('../../utils/auth')
   const body = await readBody(event)
-  const userData = await getUserFromEvent(event)
-  const userId = userData?.id
+    const userData = await getUserFromEvent(event) as any
+    const userId = userData?.id
   if (!userId) {
     throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
   }
