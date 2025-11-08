@@ -46,6 +46,24 @@ function findButtonByText(wrapper: any, text: string): DOMWrapper<HTMLButtonElem
   return wrapper.findAll('button').find((btn: DOMWrapper<HTMLButtonElement>) => btn.text() === text)
 }
 
+// Quasar component stubs
+const quasarStubs = {
+  QPage: { template: '<div><slot /></div>' },
+  QCard: { template: '<div><slot /></div>' },
+  QCardSection: { template: '<div><slot /></div>' },
+  QForm: { template: '<form @submit.prevent><slot /></form>' },
+  QInput: { template: '<input />', props: ['modelValue', 'type', 'label'] },
+  QBtn: { template: '<button><slot /></button>', props: ['label', 'loading', 'disable'] },
+  QIcon: { template: '<i></i>', props: ['name'] },
+  QBanner: { template: '<div><slot /></div>' },
+}
+
+const mountOptions = {
+  global: {
+    stubs: quasarStubs,
+  },
+}
+
 describe('LoginPage', () => {
   beforeEach(() => {
     setActivePinia(createPinia())
@@ -58,14 +76,14 @@ describe('LoginPage', () => {
   })
 
   it('renders login form by default', () => {
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     expect(wrapper.find('h1').text()).toBe('login')
     expect(wrapper.find('input[label="Email or Username"]').exists()).toBe(true)
     expect(wrapper.find('input[label="password"]').exists()).toBe(true)
   })
 
   it('switches to signup form and back', async () => {
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     const createAccountButton = findButtonByText(wrapper, 'create_account')
     await createAccountButton?.trigger('click')
     
@@ -87,7 +105,7 @@ describe('LoginPage', () => {
       error: vueRef(null),
     })
 
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await wrapper.find('input[label="Email or Username"]').setValue('testuser')
     await wrapper.find('input[label="password"]').setValue('password')
     await wrapper.find('form').trigger('submit.prevent')
@@ -104,7 +122,7 @@ describe('LoginPage', () => {
       error: vueRef({ statusCode: 403, message: 'Account not verified' }),
     })
 
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await wrapper.find('input[label="Email or Username"]').setValue('unverified@example.com')
     await wrapper.find('form').trigger('submit.prevent')
 
@@ -118,7 +136,7 @@ describe('LoginPage', () => {
       data: vueRef(null),
       error: vueRef({ statusCode: 403, message: 'Account not verified' }),
     })
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await wrapper.find('input[label="Email or Username"]').setValue('unverified@example.com')
     await wrapper.find('form').trigger('submit.prevent')
 
@@ -137,7 +155,7 @@ describe('LoginPage', () => {
       json: () => Promise.resolve({}),
     })
 
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'create_account')?.trigger('click')
 
     await wrapper.find('input[label="username"]').setValue('newuser')
@@ -152,7 +170,7 @@ describe('LoginPage', () => {
   })
 
   it('handles signup with mismatched passwords', async () => {
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'create_account')?.trigger('click')
 
     await wrapper.find('input[label="username"]').setValue('newuser')
@@ -166,13 +184,13 @@ describe('LoginPage', () => {
   })
 
   it('handles social login for Google', async () => {
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'Login with Google')?.trigger('click')
     expect(window.location.href).toBe('/api/auth/google')
   })
 
   it('handles social login for GitHub', async () => {
-    const wrapper = mount(LoginPage)
+    const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'Login with GitHub')?.trigger('click')
     expect(window.location.href).toBe('/api/auth/github')
   })
