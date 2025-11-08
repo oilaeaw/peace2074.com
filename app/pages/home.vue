@@ -11,19 +11,21 @@ const online = useOnline()
 </script>
 
 <template>
-  <q-page padding class="index-page">
-    <ClientOnly>
+  <q-page class="index-page page-width">
+    <div class="content-center text-center">
+      <ClientOnly>
       <Suspense>
         <div v-if="online">
+          <Logos mb-1 />
           <NuxtLink
-            class="q-mt-xl text-h5 block"
+            class="q-mt-md text-h5 block"
             :title="t('pages.quran.pageTitle')"
             to="/quran"
           >
             {{ t("pages.quran.pageTitle") }}
           </NuxtLink>
 
-          <PageView class="q-mt-xl" />
+           <PageView class="q-mt-md w-full" />
         </div>
         <div v-else text-gray:80>
           You're offline
@@ -40,14 +42,29 @@ const online = useOnline()
           <span animate-pulse>...</span>
         </div>
       </template>
-    </ClientOnly>
+      </ClientOnly>
+    </div>
   </q-page>
 </template>
 
 <style lang="scss">
 .index-page {
-  height: 100--vh;
-  width: 100--vw;
-  font-size: 0.19--vw;
+  min-height: 100dvh; /* account for mobile browser UI */
+  width: 100%;
+  font-size: 0.19vw;
+  margin: 0;
+  padding: 0; /* remove side padding so left/right are exactly equal */
+  box-sizing: border-box;
+  display: flex; /* allow inner container to center vertically */
+}
+
+.content-center {
+  flex: 1;
+  width: 100%;
+  margin: 0 auto;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center; /* center vertically */
 }
 </style>

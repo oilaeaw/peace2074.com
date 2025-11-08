@@ -1,4 +1,4 @@
-/* eslint-disable node/prefer-global/process */
+ 
 import type { H3Event } from 'h3'
 import { readFileSync } from 'node:fs'
 

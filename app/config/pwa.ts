@@ -8,6 +8,10 @@ export const pwa: ModuleOptions = {
   registerType: 'autoUpdate',
   scope,
   base: scope,
+  includeAssets: [
+    // Ensure Athan is always precached and available offline
+    'assets/audio/Athan.mp3',
+  ],
   manifest: {
     id: scope,
     scope,
@@ -467,7 +471,7 @@ export const pwa: ModuleOptions = {
     ],
   },
   workbox: {
-    globPatterns: ['**/*.{js,css,html,txt,png,ico,svg}'],
+    globPatterns: ['**/*.{js,css,html,txt,png,ico,svg,mp3,ogg,wav}'],
     navigateFallbackDenylist: [/^\/api\//],
       navigateFallback: '/index.html',
     cleanupOutdatedCaches: true,
@@ -498,6 +502,19 @@ export const pwa: ModuleOptions = {
           cacheableResponse: {
             statuses: [0, 200],
           },
+        },
+      },
+      // Cache-first strategy for audio so Athan is resilient
+      {
+        urlPattern: /\.(?:mp3|ogg|wav)(\?.*)?$/i,
+        handler: 'CacheFirst',
+        options: {
+          cacheName: 'audio-assets',
+          expiration: {
+            maxEntries: 10,
+            maxAgeSeconds: 60 * 60 * 24 * 365,
+          },
+          cacheableResponse: { statuses: [0, 200] },
         },
       },
     ],

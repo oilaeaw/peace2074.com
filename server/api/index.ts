@@ -1,4 +1,4 @@
-// eslint-disable-next-line import/no-duplicates
+ 
 import express, { Router } from 'express'
 
 const app = express()

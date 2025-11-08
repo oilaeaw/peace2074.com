@@ -24,10 +24,20 @@
 body.body--light{
     color: var(--q-dark);
     background-color: white;
+    background-image: var(--background-pattern);
+    background-size: 600px 600px; /* constrain pattern repeat size */
+    background-repeat: repeat;
+    background-attachment: fixed;
+    overflow-x: hidden; /* prevent horizontal growth from pattern positioning */
 }
 body.body--dark{
     color: white;
     background-color: var(--q-dark);
+    background-image: var(--background-pattern);
+    background-size: 600px 600px;
+    background-repeat: repeat;
+    background-attachment: fixed;
+    overflow-x: hidden;
 }
 .vue-scroll-picker-layer-top{
     background-color: green !important;
@@ -79,6 +89,7 @@ body.body--dark{
     --title-color: #14492e;
     --subtitle-color: #6c757d;
     --card-bg: #fbfbf8;
+    --page-max-width: 1200px;
 }
 
 @media (prefers-color-scheme: dark) {
@@ -88,5 +99,22 @@ body.body--dark{
         --title-color: #e0e0e0;
         --subtitle-color: #b0b0b0;
         --card-bg: #333;
+                --page-max-width: 1200px;
     }
+}
+
+/* Constrain root layout width and ensure centered without stray overflow */
+html, body {
+    max-width: 100vw;
+    width: 100%;
+}
+
+.layout-width, .page-width {
+    width: 100%;
+    max-width: var(--page-max-width);
+    margin-left: auto;
+    margin-right: auto;
+    box-sizing: border-box;
+    padding-left: 1rem;
+    padding-right: 1rem;
 }

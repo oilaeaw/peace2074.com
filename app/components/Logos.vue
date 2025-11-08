@@ -4,8 +4,14 @@ const imgSrc = ref("900x900.png");
 
 <template>
   <div flex cursor-default text-3xl font-300>
-    <div flex class="q-mx-auto q-pa-md">
-      <q-img mx-auto h-50 w-50 class="q-mx-auto" :src="imgSrc" :alt="appName" />
+    <div flex class="q-mx-auto q-pa-sm">
+      <q-img
+        class="q-mx-auto logo-img"
+        :src="imgSrc"
+        :alt="appName"
+        fit="contain"
+        no-spinner
+      />
     </div>
   </div>
 </template>
@@ -13,5 +19,14 @@ const imgSrc = ref("900x900.png");
 <style scoped>
 .mx-auto {
   margin: 0 auto;
+}
+.logo-img {
+  max-height: 56px; /* smaller logo height */
+  width: auto;
+}
+@media (max-width: 640px) {
+  .logo-img {
+    max-height: 48px;
+  }
 }
 </style>

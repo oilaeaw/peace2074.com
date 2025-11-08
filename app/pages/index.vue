@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useOnline } from '#imports'
 
-const { setLocale } = useI18n()
 const { t } = useI18n()
 const _myLangsStore = useMyLangsStore()
 definePageMeta({
@@ -49,36 +48,6 @@ const online = useOnline()
         >
           {{ t("pages.miracles.pageTitle") }}
         </NuxtLink>
-      </div>
-      <div class="language-buttons">
-        <q-btn
-          color="blue"
-          class="q-my-md islamic-btn text-center"
-          icon="en"
-          label="English"
-          @click="setLocale('en')"
-        />
-        <q-btn
-          color="green"
-          class="q-my-md islamic-btn text-center"
-          icon="ar"
-          label="Arabic"
-          @click="setLocale('ar')"
-        />
-        <q-btn
-          color="orange"
-          class="q-my-md islamic-btn text-center"
-          icon="de"
-          label="Deutsch"
-          @click="setLocale('de')"
-        />
-        <q-btn
-          color="red"
-          class="q-my-md islamic-btn text-middle"
-          icon="ru"
-          label="Русский"
-          @click="setLocale('ru')"
-        />
       </div>
       <PlayAthan />
       <PageView class="q-mt-xl" />
@@ -141,15 +110,5 @@ const online = useOnline()
   color: #fff;
 }
 
-.language-buttons {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 1rem;
-  margin-top: 2rem;
-}
 
-.islamic-btn {
-  font-family: 'Amiri', serif;
-  font-size: 1rem;
-}
 </style>

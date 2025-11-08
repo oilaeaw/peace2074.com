@@ -55,6 +55,7 @@
     "webpack": "^5.102.1"
   },
   "devDependencies": {
+    "@vitejs/plugin-vue": "^6.0.5",
     "@antfu/eslint-config": "^4.19.0",
     "@iconify-json/carbon": "^1.2.14",
     "@iconify-json/twemoji": "^1.2.4",

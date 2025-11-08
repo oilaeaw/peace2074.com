@@ -186,7 +186,7 @@ class Conf {
           }
           catch (e) {
             // swallow - keep proxy fallback
-            // eslint-disable-next-line no-console
+             
             console.warn('solid-js store import failed, using fallback proxy store.')
           }
         })
@@ -392,9 +392,9 @@ class Conf {
       try {
         serverVars = server
       }
-      // eslint-disable-next-line unused-imports/no-unused-vars
+       
       catch (err: any) {
-        // eslint-disable-next-line node/prefer-global/process
+         
         if (process.env.NODE_ENV === 'development') {
           console.warn('Didn\'t find a server config in `./config`.')
         }
@@ -410,7 +410,7 @@ class Conf {
     try {
       clientVars = client as CT
     }
-    // eslint-disable-next-line unused-imports/no-unused-vars
+     
     catch (e) {
       clientVars = {}
       if (typeof import.meta !== 'undefined' && (import.meta as any).dev) {
@@ -432,7 +432,7 @@ class Conf {
         )
       }
     }
-    // eslint-disable-next-line unused-imports/no-unused-vars
+     
     catch (e) {
       overrides = {}
     }
@@ -452,7 +452,7 @@ class Conf {
       try {
         storeKey = storeKey[k]
       }
-      // eslint-disable-next-line unused-imports/no-unused-vars
+       
       catch (e) {
         return undefined
       }

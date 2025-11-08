@@ -254,7 +254,7 @@ watch([() => route.fullPath, () => locale.value], () => {
           to="/auth/authenticate"
         >
           <q-tooltip v-model="showing">
-            {{ username }}
+            {{ username || t('auth') }}
           </q-tooltip>
         </q-btn>
         <q-toolbar-title>
@@ -264,8 +264,82 @@ watch([() => route.fullPath, () => locale.value], () => {
           Built at: {{ BuildTime }} ({{ timeAgo }})
         </div>
         <q-space />
-        <q-btn flat round dense icon="apps" class="q-mr-xs" />
-        <q-btn flat round dense icon="more_vert" />
+        
+        <!-- Language Dropdown -->
+        <q-btn-dropdown
+          flat
+          dense
+          round
+          icon="language"
+          class="q-mr-xs"
+        >
+          <q-list>
+            <q-item
+              v-close-popup
+              clickable
+              :active="locale === 'en'"
+              @click="locale = 'en'"
+            >
+              <q-item-section avatar>
+                <q-icon name="language" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>English</q-item-label>
+              </q-item-section>
+              <q-item-section side v-if="locale === 'en'">
+                <q-icon name="check" color="primary" />
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :active="locale === 'ar'"
+              @click="locale = 'ar'"
+            >
+              <q-item-section avatar>
+                <q-icon name="language" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>العربية</q-item-label>
+              </q-item-section>
+              <q-item-section side v-if="locale === 'ar'">
+                <q-icon name="check" color="primary" />
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :active="locale === 'de'"
+              @click="locale = 'de'"
+            >
+              <q-item-section avatar>
+                <q-icon name="language" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Deutsch</q-item-label>
+              </q-item-section>
+              <q-item-section side v-if="locale === 'de'">
+                <q-icon name="check" color="primary" />
+              </q-item-section>
+            </q-item>
+            <q-item
+              v-close-popup
+              clickable
+              :active="locale === 'ru'"
+              @click="locale = 'ru'"
+            >
+              <q-item-section avatar>
+                <q-icon name="language" />
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>Русский</q-item-label>
+              </q-item-section>
+              <q-item-section side v-if="locale === 'ru'">
+                <q-icon name="check" color="primary" />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-btn-dropdown>
       </q-toolbar>
     </q-footer>
   </q-layout>

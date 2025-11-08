@@ -71,9 +71,9 @@ function formatBookmarkLabel(bm: any) {
   return bookmarkStr;
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+ 
 const thumbStyle = ref({});
-// eslint-disable-next-line unused-imports/no-unused-vars
+ 
 function onScroll() {
   /* noop for now */
 }
@@ -286,7 +286,7 @@ async function goToAya() {
   }
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+ 
 function handleAyaClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;
@@ -296,7 +296,7 @@ function handleAyaClick(e: Event) {
   if (id) navigateToHash(id);
 }
 
-// eslint-disable-next-line unused-imports/no-unused-vars
+ 
 function handleAyaDblClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;

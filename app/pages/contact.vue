@@ -76,13 +76,13 @@ export default {
         emailjs_user.value,
       )
         .then(() => {
-          // eslint-disable-next-line no-alert
+           
           alert('Message Was set successfully.')
           onReset()
           return true
         })
         .catch((exception: object) => {
-          // eslint-disable-next-line no-console
+           
           console.error(exception)
           return exception
         })

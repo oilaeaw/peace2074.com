@@ -30,11 +30,11 @@ vi.mock('vue-router', () => ({
   }),
 }))
 
-// Mock Nuxt composables
-const mockUseFetch = vi.fn()
+// Use vi.hoisted to declare mockUseFetch safely for hoisted factory
+const mockUseFetch = vi.hoisted(() => vi.fn())
 vi.mock('#imports', () => ({
   reactive: (obj: any) => obj,
-  ref: (val: any) => vueRef(val), // Use real ref for reactivity
+  ref: (val: any) => vueRef(val),
   watch: vi.fn(),
   definePageMeta: vi.fn(),
   useFetch: mockUseFetch,
@@ -92,7 +92,7 @@ describe('LoginPage', () => {
     await wrapper.find('input[label="password"]').setValue('password')
     await wrapper.find('form').trigger('submit.prevent')
 
-    expect(mockUseFetch).toHaveBeenCalledWith('/api/auth/login', expect.any(Object))
+  expect(mockUseFetch).toHaveBeenCalledWith('/api/auth/login', expect.any(Object))
     expect(setUserInfoSpy).toHaveBeenCalledWith({ id: 1, username: 'test' })
     expect(mockNotify).toHaveBeenCalledWith({ message: 'login_success', type: 'positive' })
     expect(mockRouterPush).toHaveBeenCalledWith('/')
