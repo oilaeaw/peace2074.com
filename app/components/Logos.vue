@@ -1,5 +1,7 @@
 <script lang="ts" setup>
-const imgSrc = ref("900x900.png");
+const { t } = useI18n()
+const imgSrc = ref("/900x900.png")
+const appName = computed(() => t("general.SiteTitle"))
 </script>
 
 <template>
@@ -12,6 +14,8 @@ const imgSrc = ref("900x900.png");
         fit="contain"
         no-spinner
       />
+      <!-- Redundant plain img for guaranteed visibility -->
+  <img :src="imgSrc" :alt="appName" style="max-height:200px; width:auto; display:block; margin:12px auto 0 auto; background:#fff;" />
     </div>
   </div>
 </template>
@@ -21,12 +25,12 @@ const imgSrc = ref("900x900.png");
   margin: 0 auto;
 }
 .logo-img {
-  max-height: 56px; /* smaller logo height */
+  max-height: 200px; /* Make it very visible for testing */
   width: auto;
 }
 @media (max-width: 640px) {
   .logo-img {
-    max-height: 48px;
+    max-height: 150px;
   }
 }
 </style>
