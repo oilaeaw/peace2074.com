@@ -7,10 +7,10 @@ const quran = q2p.GetQ
 const names = q2p.FahrasP
 const router = useRouter()
 function navToLok(lok: number) {
-  // Set the index in the store before navigating
-  q2p.setIndex(lok)
-  const advanced = lok + 1
-  router.push(`/quran/${advanced}`)
+  // Always use 1-based index for setIndex
+  const idx = lok + 1
+  q2p.setIndex(idx)
+  router.push(`/quran/${idx}`)
 }
 </script>
 
@@ -22,7 +22,7 @@ function navToLok(lok: number) {
         :key="item.lok"
         class="q-mx-xs cursor-pointer text-center"
   :class="{ 'active-sura': Index === L + 1 }"
-        @click="navToLok(L)"
+  @click="navToLok(L)"
       >
         {{ L + 1 }}-{{ item }}
       </nuxt-link>
