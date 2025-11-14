@@ -168,37 +168,25 @@ export const useBookmarksStore = defineStore('bookBook', {
       }
     },
 
-    async deleteBookmark(id: string) {
+    async deleteBookmark(bookmarkIdentifier: string) {
       const auth = useAuthStore()
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
       if (userId) {
         try {
-          // Find the bookmark to delete - could be by MongoDB _id or bookmark string
+          // For authenticated users, the identifier is the MongoDB _id.
           const bookmarkToDelete = this.bookmarks.find((bm: any) =>
-            typeof bm === 'string' ? bm === id : (bm?._id === id || bm?.bookmark === id),
+            bm?._id === bookmarkIdentifier,
           )
 
           if (!bookmarkToDelete) {
             try { const $q = useQuasar(); $q.notify({ message: 'Bookmark not found', type: 'negative' }) }
             catch {}
-            return
+            return;
           }
 
-          // Get the MongoDB _id for the API call
-          const mongoId = typeof bookmarkToDelete === 'string' ? null : bookmarkToDelete._id
-
-          if (mongoId) {
-            await deleteBookmarkService(mongoId)
-            this.bookmarks = this.bookmarks.filter((bm: any) =>
-              typeof bm === 'string' ? bm !== id : bm?._id !== mongoId,
-            )
-          }
-          else {
-            // Fallback for string-based bookmarks (guests or legacy)
-            this.bookmarks = this.bookmarks.filter((bm: any) =>
-              typeof bm === 'string' ? bm !== id : bm?.bookmark !== id,
-            )
-          }
+          // Always use the _id for server-side deletion
+          await deleteBookmarkService(bookmarkToDelete._id)
+          this.bookmarks = this.bookmarks.filter((bm: any) => bm._id !== bookmarkToDelete._id)
 
           try { const $q = useQuasar(); $q.notify({ message: 'Bookmark removed', type: 'info' }) }
           catch {}
@@ -209,10 +197,11 @@ export const useBookmarksStore = defineStore('bookBook', {
         }
       }
       else {
+        // For guests, the identifier is the bookmark string itself.
         this.bookmarks = this.bookmarks.filter((bm: any) =>
-          typeof bm === 'string' ? bm !== id : bm?.bookmark !== id,
+          (typeof bm === 'string' ? bm : bm?.bookmark) !== bookmarkIdentifier,
         )
-        this._saveGuestBookmarks(this.bookmarks.map((b: any) => typeof b === 'string' ? b : b?.bookmark).filter(Boolean))
+        await this._saveGuestBookmarks(this.bookmarks.map((b: any) => typeof b === 'string' ? b : b?.bookmark).filter(Boolean))
       }
     },
   },

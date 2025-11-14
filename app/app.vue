@@ -3,40 +3,44 @@ import { onMounted, ref } from '#imports'
 
 // Do not render the splash on the server — wrap it with <client-only>
 // in the template to avoid SSR/client markup mismatches.
-const showSplash = ref(true)
-
+const isSplashVisible = ref(true)
+const isSplashMounted = ref(true)
+const logoSrc = ref('/900x900.png')
 onMounted(() => {
   window.addEventListener('nuxt:app:mounted', () => {
-    showSplash.value = false
-  })
-  setTimeout(() => {
-    showSplash.value = false
-  }, 1500)
+    // Start the fade-out transition
+    isSplashVisible.value = false
+    // Remove the splash screen from the DOM after the transition completes
+    setTimeout(() => {
+      isSplashMounted.value = false
+    }, 400) // This duration should match the CSS transition duration
+  }, { once: true })
 })
 
 // Generate localized head metadata using nuxt-i18n v9 API (use defaults for compatibility)
 const i18nHead = useLocaleHead()
 useHead(() => ({
+  title: appName,
   htmlAttrs: {
     lang: i18nHead.value.htmlAttrs!.lang,
   },
   link: [...(i18nHead.value.link || [])],
   meta: [...(i18nHead.value.meta || [])],
 }))
-useHead({
-  title: appName,
-})
 </script>
 
 <template>
   <client-only>
-    <div v-if="showSplash" class="splash-screen">
+    <div
+      v-if="isSplashMounted"
+      class="splash-screen"
+      :class="{ 'fade-out': !isSplashVisible }"
+    >
       <div class="splash-content">
-        <img src="900x900.png" alt="Logo" class="splash-logo">
+        <q-img :src="logoSrc" alt="Logo" class="splash-logo" />
         <div class="splash-title">
           {{ appName }}
         </div>
-      </div>
     </div>
   </client-only>
   <NuxtLayout>
@@ -63,7 +67,10 @@ body,
   align-items: center;
   justify-content: center;
   flex-direction: column;
-  transition: opacity 0.4s;
+  transition: opacity 0.4s ease-in-out;
+}
+.splash-screen.fade-out {
+  opacity: 0;
 }
 .splash-content {
   text-align: center;

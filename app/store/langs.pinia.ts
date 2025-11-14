@@ -1,34 +1,38 @@
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 
-export const useMyLangsStore = defineStore({
-  id: 'myLangsStore',
-  state: () => ({
-    locales: [
-      {
-        code: 'en',
-        name: 'English',
-      },
-      {
-        code: 'ar',
-        name: 'Arabic',
-      },
-      {
-        code: 'de',
-        name: 'Deutsch',
-      },
-      {
-        code: 'ru',
-        name: 'Русский',
-      },
-    ],
-    locale: '',
-  }),
-  actions: {
-    setLocale(lcl: string) {
-      this.locale = lcl
+export const useLangsStore = defineStore('langs', () => {
+  const locales = ref([
+    {
+      code: 'en',
+      name: 'English',
     },
-  },
-  getters: {
-    currentLocale: state => state.locale,
-  },
+    {
+      code: 'ar',
+      name: 'Arabic',
+    },
+    {
+      code: 'de',
+      name: 'Deutsch',
+    },
+    {
+      code: 'ru',
+      name: 'Русский',
+    },
+  ])
+
+  const locale = ref('')
+
+  function setLocale(newLocale: string) {
+    locale.value = newLocale
+  }
+
+  const currentLocale = computed(() => {
+    return locales.value.find(l => l.code === locale.value) || null
+  })
+
+  return { locales, locale, setLocale, currentLocale }
 })
+
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useLangsStore, import.meta.hot))
+}

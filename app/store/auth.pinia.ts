@@ -8,61 +8,55 @@ const ability = createMongoAbility()
 
 export const useAuthStore = defineStore('auth', () => {
   // Quasar notifications
-  const $q = useQuasar()
+  const $q = useQuasar();
 
   // Core user state (nullable to match previous user.pinia behaviour)
-  const _user = ref<any>(null)
-  const isAuthenticated = computed(() => {
-    const user = _user.value
-    return Boolean(user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'id') && Object.keys(user).length > 0)
-  })
+  const _user = ref<UserT | null>(null);
+  const user = computed(() => _user.value);
 
   // Permissions and CASL ability
-  const _permissions = ref<any[]>([
+  const defaultPermissions = [
     { action: CaslActionE.READ, subject: CaslSubjectE.CATEGORY },
     { action: CaslActionE.READ, subject: CaslSubjectE.POST },
     { action: CaslActionE.CREATE, subject: CaslSubjectE.USER },
     { action: CaslActionE.READ, subject: CaslSubjectE.USER },
     { action: CaslActionE.UPDATE, subject: CaslSubjectE.USER },
     { action: CaslActionE.MANAGE, subject: CaslSubjectE.ADMIN },
-  ])
+  ];
+  const _permissions = ref<any[]>(defaultPermissions);
 
-  // Exposed computed values  const isAuthenticated: ComputedRef<boolean> = computed(() => user !== null)
-  const authenticated = computed(() => {
-    const user = _user.value
-    return Boolean(user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'id') && Object.keys(user).length > 0)
-  })
-  const permissions = computed(() => _permissions.value)
+  // Exposed computed values
+  const isAuthenticated = computed(() => !!_user.value?.id);
+  const permissions = computed(() => _permissions.value);
 
   // Friendly saved name like the previous store
   const savedName = computed(() => {
-    const user = _user.value
-    return user && typeof user === 'object' && Object.prototype.hasOwnProperty.call(user, 'username') ? user.username : null
-  })
+    return _user.value?.username || null;
+  });
 
   // Basic actions
   function setUserInfo(info: UserT) {
-    _user.value = info
+    setUser(info);
   }
 
-  function setUser(u: any) {
-    _user.value = u
+  function setUser(u: UserT | null) {
+    _user.value = u;
     try {
-      $q.notify({ message: 'User set successfully', type: 'positive' })
+      if (u) {
+        $q.notify({ message: 'User set successfully', type: 'positive' });
+      }
     }
     catch {
       // ignore if Quasar not available
     }
-    // Infer permissions from user role
-    try {
-      if (u && u.role === 'admin') {
-        _permissions.value.push({ action: CaslActionE.MANAGE, subject: CaslSubjectE.ADMIN })
-      }
-      else if (u && u.role === 'editor') {
-        _permissions.value.push({ action: CaslActionE.UPDATE, subject: CaslSubjectE.POST })
-      }
+    // Reset and infer permissions from user role
+    _permissions.value = [...defaultPermissions];
+    if (u?.role === 'admin') {
+      _permissions.value.push({ action: CaslActionE.MANAGE, subject: CaslSubjectE.ALL });
     }
-    catch {}
+    else if (u?.role === 'editor') {
+      _permissions.value.push({ action: CaslActionE.UPDATE, subject: CaslSubjectE.POST });
+    }
     SetAbilities()
   }
 
@@ -72,30 +66,21 @@ export const useAuthStore = defineStore('auth', () => {
       if (isClient)
         await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
     }
-    catch {}
-    _user.value = null
+    catch (e) {
+      console.error('Logout failed', e);
+    }
+    setUser(null);
     try {
       $q.notify({ message: 'Logged out successfully', type: 'info' })
     }
     catch {}
     // Remove persisted user data from localStorage when running in browser
-    if (isClient) {
-      try {
-        const core = (globalThis as any)?.$core || undefined
-        if (core && typeof core.remove === 'function') {
-          try { void core.remove('user') } catch {}
-          try { void core.remove('pinia_user') } catch {}
-          try { void core.remove('pinia') } catch {}
-          return
-        }
-      }
-      catch {}
-      try {
-        localStorage.removeItem('user')
-        localStorage.removeItem('pinia_user')
-        localStorage.removeItem('pinia')
-      }
-      catch {}
+    if (import.meta.client) {
+      const core = (globalThis as any)?.$core;
+      const keysToRemove = ['user', 'pinia_user', 'pinia'];
+      keysToRemove.forEach(key => {
+        try { core?.remove(key) ?? localStorage.removeItem(key) } catch {}
+      });
     }
   }
 
@@ -145,11 +130,9 @@ export const useAuthStore = defineStore('auth', () => {
   SetAbilities()
 
   return {
-    user: _user,
-    _user,
+    user,
     permissions,
     isAuthenticated,
-    authenticated,
     savedName,
     setUserInfo,
     setUser,

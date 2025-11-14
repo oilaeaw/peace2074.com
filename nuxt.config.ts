@@ -151,8 +151,9 @@ export default defineNuxtConfig({
       name: 'nuxt-session',
       // encryption password (must be set in .env as NUXT_SESSION_PASSWORD)
       // nuxt-auth-utils (iron-session) requires a secret >= 32 chars.
-      // Fallback to JWT_SECRET if NUXT_SESSION_PASSWORD is not defined to avoid 500s on /api/_auth/session.
-      password: import.meta.env.JWT_SECRET as string,
+      // Use a secure, long fallback for development only to prevent crashes if the env var is missing.
+      // In production, NUXT_SESSION_PASSWORD MUST be set.
+      password: import.meta.env.NUXT_SESSION_PASSWORD || (import.meta.env.NODE_ENV === 'development' ? 'a_secure_32_character_secret_for_development' : ''),
       // maxAge in seconds (default: 1 week)
       maxAge: 60 * 60 * 24 * 7,
       // cookie options
@@ -166,18 +167,28 @@ export default defineNuxtConfig({
         domain: import.meta.env.SESSION_COOKIE_DOMAIN as any,
       },
     },
-    githubClientId: import.meta.env.GITHUB_CLIENT_ID,
-    githubClientSecret: (import.meta.env.GITHUB_CLIENT_SECRET || import.meta.env.NUXT_GITHUB_CLIENT_SECRET) as any,
-    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL,
-    googleClientId: import.meta.env.GOOGLE_CLIENT_ID,
-    googleClientSecret: (import.meta.env.GOOGLE_CLIENT_SECRET || import.meta.env.NUXT_GOOGLE_CLIENT_SECRET) as any,
-    googleCallbackUrl: import.meta.env.GOOGLE_CALLBACK_URL,
-    jwtSecret: import.meta.env.JWT_SECRET,
     mongodbUri: import.meta.env.MONGODB_URI,
     databaseUrl: import.meta.env.DATABASE_URL,
     nodeEnv: import.meta.env.NODE_ENV,
     public: {
       apiBase: import.meta.env.API_BASE_URL,
+    },
+    auth: {
+      jwtSecret: import.meta.env.JWT_SECRET,
+    },
+    oauth: {
+      github: {
+        clientID: import.meta.env.GITHUB_CLIENT_ID,
+        clientSecret: import.meta.env.NUXT_GITHUB_CLIENT_SECRET as string,
+      },
+      facebook: {
+        clientID: import.meta.env.FACEBOOK_CLIENT_ID,
+        clientSecret: import.meta.env.NUXT_FACEBOOK_CLIENT_SECRET as string,
+      },
+      google: {
+        clientID: import.meta.env.GOOGLE_CLIENT_ID,
+        clientSecret: import.meta.env.NUXT_GOOGLE_CLIENT_SECRET as string,
+      },
     },
   },
   alias: {
@@ -332,6 +343,18 @@ export default defineNuxtConfig({
     provider: {
       type: 'authjs',
       globalAppMiddleware: true,
+    },
+    // Pass OAuth credentials directly to the module.
+    // This is required for the passport strategies to be initialized correctly.
+    oauth: {
+      github: {
+        clientID: import.meta.env.GITHUB_CLIENT_ID,
+        clientSecret: import.meta.env.NUXT_GITHUB_CLIENT_SECRET,
+      },
+      google: {
+        clientID: import.meta.env.GOOGLE_CLIENT_ID,
+        clientSecret: import.meta.env.NUXT_GOOGLE_CLIENT_SECRET,
+      },
     },
   } as any,
 })

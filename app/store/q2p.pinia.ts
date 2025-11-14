@@ -1,5 +1,5 @@
 import type { aya_interface, QDBI } from '~~/shared/types'
-import { defineStore } from 'pinia'
+import { defineStore, acceptHMRUpdate } from 'pinia'
 import hdetails from '~~/shared/data/chapters/en.json'
 import hbook from '~~/shared/data/quran.json'
 
@@ -12,7 +12,6 @@ interface Style {
 
 interface State {
   Book: QDBI[]
-  Sura: QDBI
   Index: number
   LLegend: { letter: string, color: string, value: number }[]
   style: {
@@ -30,25 +29,32 @@ interface ChapterDetails {
   total_verses: number
 }
 
-// Build a ready-to-use client-side shape from JSON sources
-const ready: QDBI[] = []
-;(hdetails as ChapterDetails[]).forEach((item) => {
-  const byChapter = hbook as unknown as Record<string, aya_interface[]>
-  const qr = byChapter[String(item.id)] || []
-  ready.push({
-    id: item.id,
-    name: item.name,
-    e_name: item.translation,
-    type: item.type,
-    total_verses: item.total_verses,
-    ayat: qr,
+// Singleton to hold the processed book data, built only once.
+let _book: QDBI[] | null = null
+
+function _buildBook(): QDBI[] {
+  if (_book) return _book
+
+  const ready: QDBI[] = []
+  ;(hdetails as ChapterDetails[]).forEach((item) => {
+    const byChapter = hbook as unknown as Record<string, aya_interface[]>
+    const qr = byChapter[String(item.id)] || []
+    ready.push({
+      id: item.id,
+      name: item.name,
+      e_name: item.translation,
+      type: item.type,
+      total_verses: item.total_verses,
+      ayat: qr,
+    })
   })
-})
+  _book = ready
+  return _book
+}
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
-    Book: ready,
-    Sura: {} as unknown as QDBI,
+    Book: _buildBook(),
     Index: 0,
     LLegend: [
       { letter: ' ', color: '#ffffff', value: 0 },
@@ -109,16 +115,8 @@ export const useQ2P = defineStore('q2p', {
       this.setIndex(index || 1)
       return this.Book
     },
-    setSura(payload: QDBI): void {
-      this.Sura = payload
-    },
     setIndex(payload: number) {
       this.Index = payload || 1
-      // Update the Sura when index changes
-      const next = this.Book[this.Index - 1] ?? this.Book[0]
-      if (next) {
-        this.Sura = next
-      }
     },
     setLegend(payload: { letter: string, color: string, value: number }) {
       if (!payload.letter) {
@@ -133,13 +131,11 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   getters: {
-    QuranIndex: state => state.Index,
-    FahrasP: state => state.Book.map((v: QDBI) => (v.name)),
-    Legend: state => state.LLegend,
-    GetQ: state => state.Book,
-    GetSura: state => state.Book[state.Index - 1],
-    GetS: state => state.style.pixel,
-    getContainerStyle: state => state.style.container,
+    suraIndex: state => state.Index,
+    suraList: state => state.Book.map((v: QDBI) => ({ id: v.id, name: v.name, e_name: v.e_name })),
+    currentSura: state => state.Book[state.Index - 1] ?? state.Book[0],
+    pixelStyle: state => state.style.pixel,
+    containerStyle: state => state.style.container,
   },
 })
 

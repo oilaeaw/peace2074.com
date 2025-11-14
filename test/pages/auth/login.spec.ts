@@ -81,8 +81,8 @@ describe('LoginPage', () => {
   it('renders login form by default', () => {
     const wrapper = mount(LoginPage, mountOptions)
     expect(wrapper.find('h1').text()).toBe('login')
-    expect(wrapper.find('input[label="Email or Username"]').exists()).toBe(true)
-    expect(wrapper.find('input[label="password"]').exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username' } }).exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'QInput', props: { label: 'auth.password' } }).exists()).toBe(true)
   })
 
   it('switches to signup form and back', async () => {
@@ -91,8 +91,8 @@ describe('LoginPage', () => {
     await createAccountButton?.trigger('click')
     
     expect(wrapper.find('h1').text()).toBe('sign_up')
-    expect(wrapper.find('input[label="username"]').exists()).toBe(true)
-    expect(wrapper.find('input[label="email"]').exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username_optional' } }).exists()).toBe(true)
+    expect(wrapper.findComponent({ name: 'QInput', props: { label: 'auth.email' } }).exists()).toBe(true)
 
     const backToLoginButton = findButtonByText(wrapper, 'back_to_login')
     await backToLoginButton?.trigger('click')
@@ -109,8 +109,8 @@ describe('LoginPage', () => {
     })
 
     const wrapper = mount(LoginPage, mountOptions)
-    await wrapper.find('input[label="Email or Username"]').setValue('testuser')
-    await wrapper.find('input[label="password"]').setValue('password')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username' } }).setValue('testuser')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.password' } }).setValue('password')
     await wrapper.find('form').trigger('submit.prevent')
 
   expect(mockUseFetch).toHaveBeenCalledWith('/api/auth/login', expect.any(Object))
@@ -126,7 +126,7 @@ describe('LoginPage', () => {
     })
 
     const wrapper = mount(LoginPage, mountOptions)
-    await wrapper.find('input[label="Email or Username"]').setValue('unverified@example.com')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username' } }).setValue('unverified@example.com')
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(mockNotify).toHaveBeenCalledWith({ message: 'Account not verified', type: 'negative' })
@@ -140,7 +140,7 @@ describe('LoginPage', () => {
       error: vueRef({ statusCode: 403, message: 'Account not verified' }),
     })
     const wrapper = mount(LoginPage, mountOptions)
-    await wrapper.find('input[label="Email or Username"]').setValue('unverified@example.com')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username' } }).setValue('unverified@example.com')
     await wrapper.find('form').trigger('submit.prevent')
 
     // Now, mock the resend API call
@@ -161,10 +161,10 @@ describe('LoginPage', () => {
     const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'create_account')?.trigger('click')
 
-    await wrapper.find('input[label="username"]').setValue('newuser')
-    await wrapper.find('input[label="email"]').setValue('new@example.com')
-    await wrapper.find('input[label="password"]').setValue('password123')
-    await wrapper.find('input[label="confirm_password"]').setValue('password123')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username_optional' } }).setValue('newuser')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.email' } }).setValue('new@example.com')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.password' } }).setValue('password123')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.confirm_password' } }).setValue('password123')
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(global.fetch).toHaveBeenCalledWith('/api/auth/signup', expect.any(Object))
@@ -176,10 +176,10 @@ describe('LoginPage', () => {
     const wrapper = mount(LoginPage, mountOptions)
     await findButtonByText(wrapper, 'create_account')?.trigger('click')
 
-    await wrapper.find('input[label="username"]').setValue('newuser')
-    await wrapper.find('input[label="email"]').setValue('new@example.com')
-    await wrapper.find('input[label="password"]').setValue('password123')
-    await wrapper.find('input[label="confirm_password"]').setValue('password456')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.username_optional' } }).setValue('newuser')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.email' } }).setValue('new@example.com')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.password' } }).setValue('password123')
+    await wrapper.findComponent({ name: 'QInput', props: { label: 'auth.confirm_password' } }).setValue('password456')
     await wrapper.find('form').trigger('submit.prevent')
 
     expect(global.fetch).not.toHaveBeenCalled()
@@ -188,13 +188,13 @@ describe('LoginPage', () => {
 
   it('handles social login for Google', async () => {
     const wrapper = mount(LoginPage, mountOptions)
-    await findButtonByText(wrapper, 'Login with Google')?.trigger('click')
+    await findButtonByText(wrapper, 'auth.sign_in_with_google')?.trigger('click')
     expect(window.location.href).toBe('/api/auth/google')
   })
 
   it('handles social login for GitHub', async () => {
     const wrapper = mount(LoginPage, mountOptions)
-    await findButtonByText(wrapper, 'Login with GitHub')?.trigger('click')
+    await findButtonByText(wrapper, 'auth.sign_in_with_github')?.trigger('click')
     expect(window.location.href).toBe('/api/auth/github')
   })
 })

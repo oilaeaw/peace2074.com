@@ -57,11 +57,4 @@ export default defineNuxtPlugin(() => {
       })
     }
   }, { immediate: true })
-
-  // On iOS Safari, ensure we try to update SW on each mount due to update throttling
-  onMounted(() => {
-    if ('serviceWorker' in navigator) {
-      navigator.serviceWorker.getRegistration().then((reg) => reg?.update().catch(() => {}))
-    }
-  })
 })

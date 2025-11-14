@@ -204,6 +204,8 @@
   "password_required": "Password Required",
   "resend_verification_email": "resend verification email",
   "password_signup": "signup",
+  "sign_in_with_github": "Sign in with GitHub",
+  "verification_email_resent": "Verification email resent",
   "username_optional": "Username",
   "first_name": "First name",
   "last_name": "Last name",
