@@ -32,14 +32,13 @@ useHead({
   <client-only>
     <div v-if="showSplash" class="splash-screen">
       <div class="splash-content">
-        <img src="/900x900.png" alt="Logo" class="splash-logo">
+        <img src="900x900.png" alt="Logo" class="splash-logo">
         <div class="splash-title">
           {{ appName }}
         </div>
       </div>
     </div>
   </client-only>
-  <VitePwaManifest />
   <NuxtLayout>
     <NuxtPage />
     <CookieConsent />

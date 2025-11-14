@@ -3,8 +3,6 @@ import { onMounted } from 'vue'
 import { Notify } from 'quasar'
 
 export default defineNuxtPlugin(() => {
-  const { t } = useI18n()
-
   // Register the service worker and handle update notifications
   const { needRefresh, offlineReady, updateServiceWorker } = useRegisterSW({
     immediate: true,
@@ -22,6 +20,7 @@ export default defineNuxtPlugin(() => {
   // Show a Quasar notification when the app can work offline
   watch(offlineReady, (ready) => {
     if (ready) {
+      const { t } = useI18n()
       Notify.create({
         message: t('button.offline_ready'),
         color: 'positive',
@@ -34,6 +33,7 @@ export default defineNuxtPlugin(() => {
   // When a new version is available, prompt and reload after activating the new SW
   watch(needRefresh, (refresh) => {
     if (refresh) {
+      const { t } = useI18n()
       Notify.create({
         message: t('button.new_content'),
         color: 'primary',

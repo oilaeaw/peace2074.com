@@ -67,6 +67,15 @@ catch {
 }
 
 export default defineNuxtConfig({
+  // Nuxt 4: Use app/ as source directory and map pages/layouts explicitly
+  srcDir: './app',
+  dir: {
+    pages: 'pages',
+    layouts: 'layouts',
+    middleware: 'middleware',
+    assets: 'assets',
+    public: 'public',
+  },
   modules: [
     '@vueuse/nuxt',
     '@unocss/nuxt',
@@ -126,14 +135,10 @@ export default defineNuxtConfig({
     'quasar/src/css/index.sass',
     // Quasar icon extras for reliability alongside QuasarOptions.extras
     '@quasar/extras/material-icons/material-icons.css',
-    '@quasar/extras/fontawesome-v6/fontawesome-v6.css',
     '@unocss/reset/tailwind.css',
     '@quasar/quasar-ui-qmediaplayer/dist/index.css',
     './app/assets/app.scss',
   ],
-  colorMode: {
-    classSuffix: '',
-  },
   runtimeConfig: {
     nuxtJWTSecret: import.meta.env.NUXT_JWT_ACCESS_TOKEN_SECRET,
     email_public_key: import.meta.env.NUXT_EMAIL_PUBLIC_KEY,
@@ -155,18 +160,18 @@ export default defineNuxtConfig({
       // set a Domain for apex+www sharing in production deployments.
       cookie: {
         sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        secure: import.meta.env.MODE === 'production',
         // Set SESSION_COOKIE_DOMAIN=".peace2074.com" in production to share across apex/www.
         // Leave undefined on previews (Netlify/Vercel) to avoid public-suffix rejections.
-        domain: process.env.SESSION_COOKIE_DOMAIN as any,
+        domain: import.meta.env.SESSION_COOKIE_DOMAIN as any,
       },
     },
-  githubClientId: import.meta.env.GITHUB_CLIENT_ID,
-  githubClientSecret: (import.meta.env.GITHUB_CLIENT_SECRET || import.meta.env.NUXT_GITHUB_CLIENT_SECRET) as any,
-  githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL,
-  googleClientId: import.meta.env.GOOGLE_CLIENT_ID,
-  googleClientSecret: (import.meta.env.GOOGLE_CLIENT_SECRET || import.meta.env.NUXT_GOOGLE_CLIENT_SECRET) as any,
-  googleCallbackUrl: import.meta.env.GOOGLE_CALLBACK_URL,
+    githubClientId: import.meta.env.GITHUB_CLIENT_ID,
+    githubClientSecret: (import.meta.env.GITHUB_CLIENT_SECRET || import.meta.env.NUXT_GITHUB_CLIENT_SECRET) as any,
+    githubCallbackUrl: import.meta.env.GITHUB_CALLBACK_URL,
+    googleClientId: import.meta.env.GOOGLE_CLIENT_ID,
+    googleClientSecret: (import.meta.env.GOOGLE_CLIENT_SECRET || import.meta.env.NUXT_GOOGLE_CLIENT_SECRET) as any,
+    googleCallbackUrl: import.meta.env.GOOGLE_CALLBACK_URL,
     jwtSecret: import.meta.env.JWT_SECRET,
     mongodbUri: import.meta.env.MONGODB_URI,
     databaseUrl: import.meta.env.DATABASE_URL,

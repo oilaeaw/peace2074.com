@@ -1,6 +1,6 @@
 <script lang="ts" setup>
 const { t } = useI18n()
-const imgSrc = ref("/900x900.png")
+const imgSrc = ref("900x900.png")
 const appName = computed(() => t("general.SiteTitle"))
 </script>
 
