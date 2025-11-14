@@ -41,3 +41,14 @@
 			# to prevent runtime errors like "This document requires 'TrustedScript' assignment." If you later
 			# enforce Trusted Types, ensure a robust default policy or upgrade libraries to use Trusted Types.
 			Content-Security-Policy = "default-src 'self'; script-src 'self' 'unsafe-inline' 'unsafe-eval' https://accounts.google.com https://www.googletagmanager.com https://www.google-analytics.com; connect-src 'self' https://accounts.google.com https://www.googleapis.com https://www.google-analytics.com; img-src 'self' data: https://www.google-analytics.com; style-src 'self' 'unsafe-inline'; frame-ancestors 'self'; base-uri 'self';"
+
+# Ensure the service worker is never cached by the browser/CDN to allow instant updates
+[[headers]]
+  for = "/sw.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"
+
+[[headers]]
+  for = "/workbox-*.js"
+  [headers.values]
+    Cache-Control = "no-cache, no-store, must-revalidate"

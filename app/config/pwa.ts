@@ -471,6 +471,9 @@ export const pwa: ModuleOptions = {
     ],
   },
   workbox: {
+    // Make the new service worker take control as soon as it's installed
+    clientsClaim: true,
+    skipWaiting: true,
     // Increase default 2MB limit to allow precaching larger audio like Athan.mp3 (~3.35MB)
     maximumFileSizeToCacheInBytes: 6 * 1024 * 1024,
     globPatterns: ['**/*.{js,css,html,txt,png,ico,svg,mp3,ogg,wav}'],
