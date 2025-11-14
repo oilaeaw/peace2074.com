@@ -52,8 +52,11 @@ const quasarStubs = {
   QCard: { template: '<div><slot /></div>' },
   QCardSection: { template: '<div><slot /></div>' },
   QForm: { template: '<form @submit.prevent><slot /></form>' },
-  QInput: { template: '<input />', props: ['modelValue', 'type', 'label'] },
-  QBtn: { template: '<button><slot /></button>', props: ['label', 'loading', 'disable'] },
+  // Expose the label prop as an attribute so tests can select by [label="..."]
+    // Expose the label prop as an attribute and emit v-model updates on input (no TS in template)
+    QInput: { template: '<input :label="label" @input="$emit(\'update:modelValue\', $event && $event.target && $event.target.value)" />', props: ['modelValue', 'type', 'label'] },
+  // Render slot content when provided, otherwise fall back to the label prop
+  QBtn: { template: '<button><slot>{{ label }}</slot></button>', props: ['label', 'loading', 'disable'] },
   QIcon: { template: '<i></i>', props: ['name'] },
   QBanner: { template: '<div><slot /></div>' },
 }

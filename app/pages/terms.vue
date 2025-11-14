@@ -25,7 +25,7 @@ definePageMeta({
         <p>{{ $t('limitation_of_liability_text') }}</p>
         <h2>{{ $t('changes_to_terms') }}</h2>
         <p>{{ $t('changes_to_terms_text') }}</p>
-        <h2>{{ $t('contact') }}</h2>
+        <h2>{{ $t('contact_heading') }}</h2>
         <p>{{ $t('contact_text') }}</p>
       </q-card-section>
     </q-card>

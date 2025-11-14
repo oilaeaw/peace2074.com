@@ -243,6 +243,13 @@
   "bookmarks": "bookmark",
   "profile": {
     "title": "Profile",
+    "subtitle": "Your account information",
+    "firstName": "First name",
+    "lastName": "Last name",
+    "username": "Username",
+    "email": "Email",
+    "permissions": "Permissions",
+    "noPermissions": "No special permissions",
     "edit": "Edit Profile",
     "save": "Save Changes"
   },
@@ -251,5 +258,7 @@
     "display": "Display Settings",
     "language": "Language Preference",
     "theme": "Theme"
-  }
+  },
+  "contact_heading": "Contact",
+  "Asma’ Allah Al-Husna": "Asma’ Allah Al-Husna"
 }

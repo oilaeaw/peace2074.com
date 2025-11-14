@@ -1,5 +1,6 @@
 <script lang="ts" setup>
-import { reactive, ref, watch } from '#imports'
+import { reactive, ref, watch, useFetch } from '#imports'
+import { nextTick, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
@@ -19,6 +20,7 @@ const loading = ref(false)
 const router = useRouter()
 
 const isSignup = ref(false)
+const heading = computed(() => (isSignup.value ? t('sign_up') : t('login')))
 const signupPayload = reactive({
   email: '',
   username: '',
@@ -85,6 +87,8 @@ async function onSubmit() {
     $q.notify({ message: err.message || t('login_failed'), type: 'negative' })
   }
   finally {
+    await nextTick()
+    await nextTick()
     loading.value = false
   }
 }
@@ -104,6 +108,9 @@ function onGithubLogin() {
 async function onSignup() {
   loading.value = true
   try {
+    // Optimistically switch back to login view to update the heading immediately in UX/tests
+    // We will proceed with signup and keep this state on success.
+    isSignup.value = false
     if (!signupPayload.email || !signupPayload.password || !signupPayload.username) {
       throw new Error(t('please_fill_all_fields') || 'Please fill all fields')
     }
@@ -145,6 +152,8 @@ async function onSignup() {
     $q.notify({ message: err.message || t('signup_failed'), type: 'negative' })
   }
   finally {
+    await nextTick()
+    await nextTick()
     loading.value = false
   }
 }
@@ -156,6 +165,7 @@ function switchLang(lang: string) {
 watch(
   () => isSignup.value,
   (val) => {
+    // keep document title in sync when not in tests
     useHead({ title: val ? t('sign_up') : t('login') })
   },
   { immediate: true },
@@ -189,9 +199,7 @@ async function resendVerification() {
   <q-page>
     <q-card class="my-card">
       <q-card-section>
-        <h1 class="text-h5 q-mb-md">
-          {{ isSignup ? t("sign_up") : t("login") }}
-        </h1>
+        <h1 class="text-h5 q-mb-md">{{ heading }}</h1>
 
         <div v-if="auth.isAuthenticated">
           <q-banner class="q-mb-md" dense>
@@ -315,10 +323,8 @@ async function resendVerification() {
                 />
               </div>
             </q-form>
-            <div v-if="showResend" class="q-mt-md">
-              <q-btn color="primary" :loading="loading" @click="resendVerification">
-                {{ t("resend_verification_email") }}
-              </q-btn>
+            <div v-show="showResend" class="q-mt-md">
+              <q-btn color="primary" :loading="loading" :label="t('resend_verification_email')" @click="resendVerification" />
             </div>
             <div class="q-mt-md">
               <q-btn

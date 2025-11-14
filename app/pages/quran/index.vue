@@ -1,22 +1,23 @@
 <script lang="ts" setup>
 import { computed } from 'vue'
 import { useRouter } from 'vue-router'
+import type { QDBI } from '~/../shared/types'
 import { useQ2P } from '~/store/q2p.pinia'
 
 const { t } = useI18n()
 
 // const q2p = useQ2P()
 const router = useRouter()
-const suras = computed(() => useQ2P().GetQ)
+const suras = computed<QDBI[]>(() => useQ2P().GetQ)
 
-const surasLeft = computed(() => suras.value.filter((_, i) => i % 2 === 0))
-const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1))
+const surasLeft = computed(() => suras.value.filter((_: QDBI, i: number) => i % 2 === 0))
+const surasRight = computed(() => suras.value.filter((_: QDBI, i: number) => i % 2 === 1))
 
 function navToSura(id: number) {
   router.push(`/quran/${id}`)
 }
 
-function showTranslation(sura: any) {
+function showTranslation(sura: QDBI) {
   // Only show translation if it differs from the sura name
   return sura.e_name && sura.e_name !== sura.name
 }

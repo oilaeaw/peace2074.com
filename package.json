@@ -55,7 +55,7 @@
     "webpack": "^5.102.1"
   },
   "devDependencies": {
-    "@vitejs/plugin-vue": "^6.0.5",
+    "@vitejs/plugin-vue": "^6.0.1",
     "@antfu/eslint-config": "^4.19.0",
     "@iconify-json/carbon": "^1.2.14",
     "@iconify-json/twemoji": "^1.2.4",
@@ -85,7 +85,6 @@
     "eslint-plugin-ts": "^1.0.0",
     "eslint-plugin-unused-imports": "^3.2.0",
     "express": "^5.1.0",
-    "fontawesome-v6": "link:@quasar/extras/fontawesome-v6",
     "jsdom": "^26.1.0",
     "nuxt-gtag": "3.0.2",
     "nuxt-mongoose": "1.0.6",

@@ -74,7 +74,7 @@ function extractTextsFromBook(book: any): string[] {
 }
 
 function getScopeText(): string {
-  const book = store.GetQ as any[] || []
+  const book = (store.GetQ || []) as any[]
   if (scope.value === 'book') {
     const t = extractTextsFromBook(book)
     return t.join('\n')

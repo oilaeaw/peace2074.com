@@ -19,7 +19,7 @@ function navToLok(lok: number) {
     <ol v-if="quran" class="column q-mt-xl q-pt-lg text-center">
       <nuxt-link
         v-for="(item, L) in names"
-        :key="item.lok"
+        :key="L"
         class="q-mx-xs cursor-pointer text-center"
   :class="{ 'active-sura': Index === L + 1 }"
   @click="navToLok(L)"

@@ -206,7 +206,7 @@ watch([() => route.fullPath, () => locale.value], () => {
                 <q-item v-ripple clickable to="/contact">
           <q-item-section>
             <q-icon name="privacy_tip" class="q-mr-sm" />
-            <span>{{ t("contact") }}</span>
+            <span>{{ t("button.Contact") }}</span>
           </q-item-section>
         </q-item>
         <template v-if="isAuthenticated">
