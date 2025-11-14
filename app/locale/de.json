@@ -233,6 +233,13 @@
   "bookmarks": "Lesezeichen",
   "profile": {
     "title": "Profil",
+    "subtitle": "Ihre Kontoinformationen",
+    "firstName": "Vorname",
+    "lastName": "Nachname",
+    "username": "Benutzername",
+    "email": "E-Mail",
+    "permissions": "Berechtigungen",
+    "noPermissions": "Keine besonderen Berechtigungen",
     "edit": "Profil bearbeiten",
     "save": "Änderungen speichern"
   },
