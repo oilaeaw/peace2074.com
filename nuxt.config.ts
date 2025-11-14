@@ -107,7 +107,8 @@ export default defineNuxtConfig({
         { rel: 'icon', href: '/favicon.ico', sizes: 'any' },
         { rel: 'icon', type: 'image/svg+xml', href: '/logo.svg' },
         { rel: 'apple-touch-icon', href: '/apple-touch-icon.png' },
-        { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/quasar@2.17.7/dist/quasar.prod.css' },
+        // Ensure Material Icons font is available for Quasar icon names (kept for redundancy; extras CSS also added in `css`)
+        { rel: 'stylesheet', href: 'https://fonts.googleapis.com/icon?family=Material+Icons' },
         { rel: 'stylesheet', href: 'https://cdn.jsdelivr.net/npm/@quasar/quasar-ui-qmediaplayer@next/dist/QMediaPlayer.min.css' },
         { rel: 'stylesheet', href: ' https://fonts.googleapis.com/css2?family=DM+Sans&family=DM+Serif+Display&family=DM+Mono&display=swap' },
       ],
@@ -121,6 +122,11 @@ export default defineNuxtConfig({
     },
   },
   css: [
+    // Core Quasar styles (Sass) — ensures full component styling without CDN
+    'quasar/src/css/index.sass',
+    // Quasar icon extras for reliability alongside QuasarOptions.extras
+    '@quasar/extras/material-icons/material-icons.css',
+    '@quasar/extras/fontawesome-v6/fontawesome-v6.css',
     '@unocss/reset/tailwind.css',
     '@quasar/quasar-ui-qmediaplayer/dist/index.css',
     './app/assets/app.scss',

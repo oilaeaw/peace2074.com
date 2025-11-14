@@ -68,8 +68,11 @@ const online = useOnline()
   background: linear-gradient(to bottom, #f3f4f6, #e5e7eb);
   display: flex;
   flex-direction: column;
-  align-items: center;
-  justify-content: center;
+  align-items: center; /* horizontal centering */
+  justify-content: center; /* vertical centering */
+  padding: 2rem 1rem; /* add balanced padding */
+  box-sizing: border-box;
+  text-align: center;
 }
 
 .islamic-design {
@@ -103,11 +106,35 @@ const online = useOnline()
   padding: 0.5rem 1rem;
   border-radius: 5px;
   transition: all 0.3s ease;
+  display: inline-block;
+  max-width: 600px;
+  width: 100%;
+  text-align: center;
 }
 
 .islamic-link:hover {
   background-color: #155724;
   color: #fff;
+}
+
+.links {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.75rem;
+  width: 100%;
+  padding: 0 1rem;
+  box-sizing: border-box;
+}
+
+.index-page > div[v-if],
+.index-page > div[text-gray\:80] {
+  /* Ensure both online and offline states are centered */
+  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
 }
 
 

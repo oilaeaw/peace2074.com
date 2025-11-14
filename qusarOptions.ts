@@ -10,7 +10,7 @@ export const QuasarOptions = {
   importStrategy: 'auto',
   extras: {
     font: 'roboto-font',
-    fontIcons: ['material-icons'],
+    fontIcons: ['material-icons', 'fontawesome-v6'],
     animations: 'all',
   },
   config: {

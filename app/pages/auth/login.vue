@@ -324,14 +324,14 @@ async function resendVerification() {
               <q-btn
                 class="q-mb-sm full-width"
                 label="Login with Google"
-                icon="fab fa-google"
+                icon="fa-brands fa-google"
                 style="background: #fff; color: #4285f4; border: 1px solid #4285f4"
                 @click="onGoogleLogin"
               />
               <q-btn
                 class="full-width"
                 label="Login with GitHub"
-                icon="fab fa-github"
+                icon="fa-brands fa-github"
                 style="background: #24292e; color: #fff"
                 @click="onGithubLogin"
               />

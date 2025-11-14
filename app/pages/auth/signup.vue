@@ -102,8 +102,8 @@ function goGithub() {
               </div>
             </q-form>
             <div class="q-mt-md">
-              <q-btn class="q-mb-sm full-width" label="Sign up with Google" icon="fab fa-google" style="background: #fff; color: #4285f4; border: 1px solid #4285f4" @click="goGoogle" />
-              <q-btn class="full-width" label="Sign up with GitHub" icon="fab fa-github" style="background: #24292e; color: #fff" @click="goGithub" />
+              <q-btn class="q-mb-sm full-width" label="Sign up with Google" icon="fa-brands fa-google" style="background: #fff; color: #4285f4; border: 1px solid #4285f4" @click="goGoogle" />
+              <q-btn class="full-width" label="Sign up with GitHub" icon="fa-brands fa-github" style="background: #24292e; color: #fff" @click="goGithub" />
             </div>
           </q-card-section>
         </q-card>

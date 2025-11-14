@@ -234,7 +234,7 @@ watch([() => route.fullPath, () => locale.value], () => {
 
     <q-page-container>
       <!-- Centered, max-width container to keep the app stable and prevent wobbling -->
-      <div class="app-container q-pa-md">
+      <div class="app-container">
         <slot />
       </div>
 
@@ -347,11 +347,27 @@ watch([() => route.fullPath, () => locale.value], () => {
 
 <style scoped>
 .app-container {
+clear: both;
   max-width: 1100px;
   margin-left: auto;
   margin-right: auto;
   width: 100%;
   box-sizing: border-box;
+}
+
+/* Center pages that opt-in with the `.islamic-design` class */
+:deep(.islamic-design) {
+  display: flex !important;
+  flex-direction: column !important;
+  align-items: center !important; /* horizontal */
+  justify-content: center !important; /* vertical */
+  text-align: center !important;
+  min-height: 100%;
+  width: 100%;
+}
+:deep(.islamic-design > *) {
+  margin-left: auto;
+  margin-right: auto;
 }
 
 /* Reduce horizontal padding on small screens while keeping content readable */
