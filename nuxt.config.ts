@@ -1,11 +1,65 @@
 // https://nuxt.com/docs/api/configuration/nuxt-config
+import { fileURLToPath } from 'node:url'
 export default defineNuxtConfig({
+  // Use the app/ directory as the source for pages/layouts/components
+  srcDir: './app',
+  // Nitro compatibility date to silence startup warning
+  compatibilityDate: '2025-11-15',
   modules: [
-    // ... other modules
+    'nuxt-quasar-ui',
     '@sidebase/nuxt-auth',
     'nuxt-mongoose',
-    // ... other modules
   ],
+  nitro:{
+    // Teach Nitro how to resolve custom aliases for the server build.
+    // This is separate from the top-level 'alias' which is for the client-side (Vite) build.
+    alias: {
+      '@server': fileURLToPath(new URL('./server', import.meta.url)),
+      '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
+    },
+    externals:{
+      // Trace and bundle these dependencies.
+      // This is necessary for some packages that have complex CJS/ESM interop.
+      inline: [
+        'passport', 'passport-local', 'passport-github2', 'passport-google-oauth20',
+      ],
+    },
+    // Silence resolver warnings by marking known virtual/external imports as external for Rollup
+    rollupConfig: {
+      external: [
+        '#auth-utils',
+        'next-auth',
+        'next-auth/core',
+        'next-auth/jwt',
+        'passport',
+        'passport-local',
+        'passport-github2',
+        'passport-google-oauth20',
+      ],
+    },
+
+  },
+
+  // Aliases for the client-side (Vite) build
+  alias: {
+    '@app': fileURLToPath(new URL('./app', import.meta.url)),
+    '@assets': fileURLToPath(new URL('./app/assets', import.meta.url)),
+    '@server': fileURLToPath(new URL('./server', import.meta.url)),
+    '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
+  },
+
+  quasar: {
+    plugins: [
+      'Notify',
+      'Dialog',
+    ],
+    extras: {
+      // Import Material Icons for general purpose icons
+      fontIcons: ['material-icons'],
+      // Import Font Awesome v6 brand icons for social logins
+      brands: ['fa-brands'],
+    },
+  },
 
   auth: {
     // The module is enabled.
@@ -38,4 +92,5 @@ export default defineNuxtConfig({
       },
     },
   },
+
 })

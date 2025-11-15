@@ -192,7 +192,7 @@ watch([() => route.fullPath, () => locale.value], () => {
         </q-item>
                 <q-item v-ripple clickable to="/contact">
           <q-item-section>
-            <q-icon name="privacy_tip" class="q-mr-sm" />
+            <q-icon name="contact_mail" class="q-mr-sm" />
             <span>{{ t("button.Contact") }}</span>
           </q-item-section>
         </q-item>

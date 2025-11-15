@@ -5,7 +5,7 @@ import CredentialsProvider from '@auth/core/providers/credentials'
 import { MongoDBAdapter } from '@auth/mongodb-adapter'
 import { MongoClient } from 'mongodb'
 import bcrypt from 'bcryptjs'
-import User from '~/server/models/user.model'
+import User from '@server/models/user'
 
 const runtimeConfig = useRuntimeConfig()
 
@@ -63,6 +63,8 @@ export default NuxtAuthHandler({
           name: user.username,
           email: user.email,
           role: user.role,
+          first_name: user.first_name,
+          last_name: user.last_name,
         }
       },
     }),
@@ -80,6 +82,8 @@ export default NuxtAuthHandler({
       if (user) {
         token.role = (user as any).role
         token.id = user.id
+        token.first_name = (user as any).first_name
+        token.last_name = (user as any).last_name
       }
       return token
     },
@@ -89,6 +93,8 @@ export default NuxtAuthHandler({
       if (session.user) {
         (session.user as any).role = token.role
         (session.user as any).id = token.sub
+        ;(session.user as any).first_name = token.first_name
+        ;(session.user as any).last_name = token.last_name
       }
       return session
     },

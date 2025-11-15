@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { reactive, ref, watch, computed } from '#imports'
+import { reactive, ref, watch } from '#imports'
 import { nextTick, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
@@ -65,7 +65,6 @@ async function onSubmit() {
   }
   finally {
     await nextTick()
-    await nextTick()
     loading.value = false
   }
 }
@@ -129,7 +128,6 @@ async function onSignup() {
     $q.notify({ message: err.message || t('signup_failed'), type: 'negative' })
   }
   finally {
-    await nextTick()
     await nextTick()
     loading.value = false
   }
@@ -267,7 +265,7 @@ async function resendVerification() {
                 type="text"
                 :label="t('email_or_username')"
                 autocomplete="username"
-                :rules="[(val) => !!val || 'Email or username is required']"
+                :rules="[(val) => !!val || t('email_required')]"
               />
               <q-input
                 v-model="loginPayload.password"

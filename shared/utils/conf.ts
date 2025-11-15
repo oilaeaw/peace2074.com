@@ -164,7 +164,7 @@ class Conf {
 
     // If running in client, attempt to dynamically load solid-js/store and
     // replace the reactive store with a real Solid store when available.
-    if (typeof import.meta !== 'undefined' && (import.meta as any).client) {
+    if (process.client) {
       // dynamic import - don't await in constructor; swap when ready
   // Use a non-static import string so Vite won't try to resolve the package at
   // build-time. This keeps the runtime dynamic import (and your runtime
@@ -377,7 +377,7 @@ class Conf {
   }
 
   setEnvironment() {
-    if (typeof import.meta !== 'undefined' && (import.meta as any).client) {
+    if (process.client) {
       this._env = 'client'
     }
     else {
@@ -388,7 +388,7 @@ class Conf {
   getServerVars(): ST | {} {
     let serverVars: ST | {} = {}
 
-    if (typeof import.meta !== 'undefined' && (import.meta as any).server) {
+    if (process.server) {
       try {
         serverVars = server
       }
@@ -410,10 +410,10 @@ class Conf {
     try {
       clientVars = client as CT
     }
-     
+    
     catch (e) {
       clientVars = {}
-      if (typeof import.meta !== 'undefined' && (import.meta as any).dev) {
+      if (process.dev) {
         console.warn('Didn\'t find a client config in `./config`.')
       }
     }
@@ -423,16 +423,16 @@ class Conf {
 
   getUrgentOverrides(): DT | {} {
     let overrides: DT | {} = {}
-    const filename = (typeof import.meta !== 'undefined' && (import.meta as any).dev) ? 'dev' : 'prod'
+    const filename = process.dev ? 'dev' : 'prod'
     try {
-      overrides = (typeof import.meta !== 'undefined' && (import.meta as any).dev) ? dev as DT : prod as PT
+      overrides = process.dev ? dev as DT : prod as PT
       if (filename === 'dev') {
         console.warn(
           `FYI: data in \`./config/${filename}.js\` file will override Server & Client equal data/values.`,
         )
       }
     }
-     
+    
     catch (e) {
       overrides = {}
     }

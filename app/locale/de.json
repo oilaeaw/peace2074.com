@@ -244,7 +244,17 @@
     "permissions": "Berechtigungen",
     "noPermissions": "Keine besonderen Berechtigungen",
     "edit": "Profil bearbeiten",
-    "save": "Änderungen speichern"
+    "save": "Änderungen speichern",
+    "saveSuccess": "Profil erfolgreich aktualisiert!",
+    "saveError": "Profil konnte nicht aktualisiert werden.",
+    "dangerZone": "Gefahrenzone",
+    "deleteWarning": "Das Löschen Ihres Kontos ist endgültig und kann nicht rückgängig gemacht werden.",
+    "deleteAccount": "Konto löschen",
+    "deleteConfirmTitle": "Kontolöschung bestätigen",
+    "deleteConfirmMessage": "Sind Sie sicher, dass Sie Ihr Konto dauerhaft löschen möchten? Diese Aktion kann nicht rückgängig gemacht werden.",
+    "deleteConfirmButton": "Ja, mein Konto löschen",
+    "deleteSuccess": "Ihr Konto wurde gelöscht.",
+    "deleteError": "Fehler beim Löschen Ihres Kontos."
   },
   "settings": {
     "title": "Einstellungen",

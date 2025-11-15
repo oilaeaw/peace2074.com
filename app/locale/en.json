@@ -72,16 +72,6 @@
     "hint": "Name and surname",
     "placeholder": "What is your name"
   },
-  "email1": {
-    "label": "Your email address *",
-    "hint": "Your email",
-    "placeholder": "In order to get back to you. "    
-  },
-  "message1": {
-    "label": "Your message *",
-    "hint": "Input your message",
-    "placeholder": "Tell us how we can help"
-    },
     "email": {
       "label": "Your email address *",
       "hint": "Your email",
@@ -192,8 +182,8 @@
   "reset": "Reset",
   "Login": "Login",
   "password_login": "Signin with Email",
-  "username": "Userame",
-  "username_required": "Password is required",
+  "username": "Username",
+  "username_required": "Username is required",
   "hello": "Hello",
   "logout": "Logout",
   "already_logged_in": "Already Logged",
@@ -201,9 +191,9 @@
   "logout_success": "you have logged out successfully",
   "login_failed": "Login failed. Please check your credentials.",
   "back": "Back",
-  "username_taken": "Userame Taken",
-  "accept_terms_and_conditions": "Accept out terms & conditions",
-  "password_required": "Password Required",
+  "username_taken": "Username Taken",
+  "accept_terms_and_conditions": "Accept our terms & conditions",
+  "password_required": "Password is required",
   "resend_verification_email": "resend verification email",
   "password_signup": "signup",
   "sign_in_with_github": "Sign in with GitHub",
@@ -245,7 +235,7 @@
     "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout.",
     "privacy": "Learn how we protect your data and privacy while using the site."
   },
-  "bookmarks": "bookmark",
+  "bookmarks": "Bookmarks",
   "profile": {
     "title": "Profile",
     "subtitle": "Your account information",
@@ -256,7 +246,17 @@
     "permissions": "Permissions",
     "noPermissions": "No special permissions",
     "edit": "Edit Profile",
-    "save": "Save Changes"
+    "save": "Save Changes",
+    "saveSuccess": "Profile updated successfully!",
+    "saveError": "Failed to update profile.",
+    "dangerZone": "Danger Zone",
+    "deleteWarning": "Deleting your account is permanent and cannot be undone.",
+    "deleteAccount": "Delete Account",
+    "deleteConfirmTitle": "Confirm Account Deletion",
+    "deleteConfirmMessage": "Are you sure you want to permanently delete your account? This action cannot be reversed.",
+    "deleteConfirmButton": "Yes, Delete My Account",
+    "deleteSuccess": "Your account has been deleted.",
+    "deleteError": "Failed to delete your account."
   },
   "settings": {
     "title": "Settings",

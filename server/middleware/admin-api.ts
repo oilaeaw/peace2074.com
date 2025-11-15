@@ -1,5 +1,5 @@
 import { getToken } from '#auth'
-import { defineAbilitiesFor } from '~/server/utils/abilities'
+import { defineAbilitiesFor } from '@server/utils/abilities'
 
 export default defineEventHandler(async (event) => {
   const url = getRequestURL(event)

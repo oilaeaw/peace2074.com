@@ -9,6 +9,10 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test/setup.ts'],
+    // Treat all files with a query string as external,
+    // which can prevent some warnings and improve performance.
+    // For example, `import MyComponent from './MyComponent.vue?raw'`
+    transformMode: { web: [/\.([cm]?[jt]sx?|json|vue|css|scss)$/] },
     // Optimize dependency handling for faster test execution.
     // By excluding large libraries that are mocked or stubbed in tests (like Quasar),
     // we prevent Vitest from unnecessarily processing them, which speeds up test startup.
@@ -26,6 +30,8 @@ export default defineConfig({
       { find: '#imports', replacement: fileURLToPath(new URL('.nuxt/imports.d.ts', import.meta.url)) },
       // Replicate aliases from nuxt.config.ts
       { find: '@app', replacement: fileURLToPath(new URL('./app', import.meta.url)) },
+      { find: '@server', replacement: fileURLToPath(new URL('./server', import.meta.url)) },
+      { find: '@shared', replacement: fileURLToPath(new URL('./shared', import.meta.url)) },
       { find: '@assets', replacement: fileURLToPath(new URL('./app/assets', import.meta.url)) },
       { find: '@server', replacement: fileURLToPath(new URL('./server', import.meta.url)) },
       { find: '@shared', replacement: fileURLToPath(new URL('./shared', import.meta.url)) },
