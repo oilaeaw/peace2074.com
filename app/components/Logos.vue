@@ -14,8 +14,6 @@ const appName = computed(() => t("general.SiteTitle"))
         fit="contain"
         no-spinner
       />
-      <!-- Redundant plain img for guaranteed visibility -->
-  <img :src="imgSrc" :alt="appName" style="max-height:200px; width:auto; display:block; margin:12px auto 0 auto; background:#fff;" />
     </div>
   </div>
 </template>

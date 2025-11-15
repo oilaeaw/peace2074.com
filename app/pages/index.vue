@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useOnline } from '#imports'
+import { useOnline } from '@vueuse/core'
 
 const { t } = useI18n()
 const _myLangsStore = useMyLangsStore()
@@ -14,48 +14,62 @@ const online = useOnline()
 
 <template>
   <q-page padding class="index-page islamic-design">
-    <Logos mb-1 />
-    <div v-if="online">
-      <div class="links">
-        <NuxtLink
-          class="text-h5 q-mt-xl islamic-link block"
-          :title="t('pages.quran.pageTitle')"
-          to="/quran"
-        >
-          {{ t("pages.quran.pageTitle") }}
-        </NuxtLink>
+    <ClientOnly>
+      <Suspense>
+        <div v-if="online" class="flex flex-col items-center justify-center w-full">
+          <Logos mb-1 />
+          <div class="links">
+            <NuxtLink
+              class="text-h5 q-mt-xl islamic-link block"
+              :title="t('pages.quran.pageTitle')"
+              to="/quran"
+            >
+              {{ t("pages.quran.pageTitle") }}
+            </NuxtLink>
 
-        <NuxtLink
-          class="text-h5 q-mt-xl islamic-link block"
-          :title="t('pages.holynames')"
-          to="/holynames"
-        >
-          {{ t("pages.holynames") }}
-        </NuxtLink>
+            <NuxtLink
+              class="text-h5 q-mt-xl islamic-link block"
+              :title="t('pages.holynames')"
+              to="/holynames"
+            >
+              {{ t("pages.holynames") }}
+            </NuxtLink>
 
-        <NuxtLink
-          class="text-h5 q-mt-xl islamic-link block"
-          :title="t('tasbeeh.title')"
-          to="/tasbeeh"
-        >
-          {{ t("tasbeeh.title") }}
-        </NuxtLink>
+            <NuxtLink
+              class="text-h5 q-mt-xl islamic-link block"
+              :title="t('tasbeeh.title')"
+              to="/tasbeeh"
+            >
+              {{ t("tasbeeh.title") }}
+            </NuxtLink>
 
-        <NuxtLink
-          class="text-h5 q-mt-xl islamic-link block"
-          :title="t('pages.miracles.pageTitle')"
-          to="/miracles"
-        >
-          {{ t("pages.miracles.pageTitle") }}
-        </NuxtLink>
-      </div>
-      <PlayAthan />
-      <PageView class="q-mt-xl" />
-    </div>
-    <div v-else text-gray:80>
-      {{ t("pages.main.offlineMessage") }}
-    </div>
-    <!-- Removed invalid #fallback slot on QPage; use Suspense/ClientOnly when needed -->
+            <NuxtLink
+              class="text-h5 q-mt-xl islamic-link block"
+              :title="t('pages.miracles.pageTitle')"
+              to="/miracles"
+            >
+              {{ t("pages.miracles.pageTitle") }}
+            </NuxtLink>
+          </div>
+          <PlayAthan class="q-mt-lg" />
+          <PageView class="q-mt-xl" />
+        </div>
+        <div v-else class="text-gray-500">
+          {{ t("pages.main.offlineMessage") }}
+        </div>
+        <template #fallback>
+          <div class="italic op50">
+            <span class="animate-pulse">Loading...</span>
+            <q-skeleton animation="pulse" bordered />
+          </div>
+        </template>
+      </Suspense>
+      <template #fallback>
+        <div class="op50">
+          <span class="animate-pulse">...</span>
+        </div>
+      </template>
+    </ClientOnly>
   </q-page>
 </template>
 
