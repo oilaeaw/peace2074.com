@@ -1,23 +1,23 @@
 <script lang="ts" setup>
-import { reactive, ref, watch, useFetch } from '#imports'
+import { reactive, ref, watch, computed } from '#imports'
 import { nextTick, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
-import { useAuthStore } from '~/store/auth.pinia'
 
 definePageMeta({
   layout: 'q-layout',
+  auth: false, // This page is public
   title: 'navigation.AuthPageTitle',
-  description: 'User login and authentication',
+  description: 'navigation.AuthPageCaption',
 })
 
 const $q = useQuasar()
 const { t, locale } = useI18n()
-const auth = useAuthStore()
+const router = useRouter()
+const { signIn, signOut, status, data: session } = useAuth()
 
 const loading = ref(false)
-const router = useRouter()
 
 const isSignup = ref(false)
 const heading = computed(() => (isSignup.value ? t('sign_up') : t('login')))
@@ -32,54 +32,31 @@ const loginPayload = reactive({ identifier: '', password: '' })
 const showPassword = ref(false)
 const showResend = ref(false)
 const lastTriedEmail = ref('')
+const isAuthenticated = computed(() => status.value === 'authenticated')
 
 async function onSubmit() {
   loading.value = true
   showResend.value = false
   try {
-    // Passport LocalStrategy is configured with usernameField: 'identifier'.
-    // Send both 'identifier' and 'username' for maximum compatibility during migration.
-    const payload = {
-      password: loginPayload.password,
-      identifier: loginPayload.identifier,
-      username: loginPayload.identifier,
-    }
-    // Only remember last tried email if it looks like an email
-    if (
-      typeof loginPayload.identifier === 'string'
-      && loginPayload.identifier.includes('@')
-    ) {
+    if (loginPayload.identifier.includes('@'))
       lastTriedEmail.value = loginPayload.identifier
-    }
 
-  const { data, error } = await useFetch<any>('/api/auth/login', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify(payload),
-      credentials: 'include',
+    const result = await signIn('credentials', {
+      identifier: loginPayload.identifier,
+      password: loginPayload.password,
+      redirect: false, // We will handle the redirect manually
     })
 
-    if (error?.value) {
-      if (error.value.statusCode === 403)
+    if (result?.error) {
+      // Special case for unverified email from the old system
+      if (result.error.includes('403'))
         showResend.value = true
-      const emsg
-        = (error.value.data
-          && (error.value.data.statusMessage || error.value.data.message))
-        || error.value.statusMessage
-        || error.value.message
-        || 'Login failed'
-      throw new Error(emsg)
+      throw new Error(result.error)
     }
-  const result = data?.value as any
-    if (result && result.user) {
-      // server sets httpOnly cookie for auth; fetch current user to populate client state
-      auth.setUserInfo(result.user)
 
+    if (result?.ok) {
       $q.notify({ message: t('login_success'), type: 'positive' })
       await router.push('/')
-    }
-    else {
-      throw new Error('Invalid login response')
     }
   }
   catch (err: any) {
@@ -99,10 +76,10 @@ function onReset() {
 }
 
 function onGoogleLogin() {
-  window.location.href = '/api/auth/google'
+  signIn('google')
 }
 function onGithubLogin() {
-  window.location.href = '/api/auth/github'
+  signIn('github')
 }
 
 async function onSignup() {
@@ -201,15 +178,15 @@ async function resendVerification() {
       <q-card-section>
         <h1 class="text-h5 q-mb-md">{{ heading }}</h1>
 
-        <div v-if="auth.isAuthenticated">
+        <div v-if="isAuthenticated">
           <q-banner class="q-mb-md" dense>
-            {{ t("already_logged_in") }}
+            {{ t("already_logged_in") }} - {{ session?.user?.name }}
             <q-btn
               color="primary"
               flat
               @click="
                 () => {
-                  auth.logout();
+                  signOut();
                   $q.notify({ message: t('logout_success'), type: 'positive' });
                 }
               "
@@ -288,7 +265,7 @@ async function resendVerification() {
               <q-input
                 v-model="loginPayload.identifier"
                 type="text"
-                label="Email or Username"
+                :label="t('email_or_username')"
                 autocomplete="username"
                 :rules="[(val) => !!val || 'Email or username is required']"
               />
@@ -329,14 +306,14 @@ async function resendVerification() {
             <div class="q-mt-md">
               <q-btn
                 class="q-mb-sm full-width"
-                label="Login with Google"
+                :label="t('sign_in_with_google')"
                 icon="fa-brands fa-google"
                 style="background: #fff; color: #4285f4; border: 1px solid #4285f4"
                 @click="onGoogleLogin"
               />
               <q-btn
                 class="full-width"
-                label="Login with GitHub"
+                :label="t('sign_in_with_github')"
                 icon="fa-brands fa-github"
                 style="background: #24292e; color: #fff"
                 @click="onGithubLogin"

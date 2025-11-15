@@ -9,6 +9,14 @@ export default defineConfig({
     environment: 'jsdom',
     globals: true,
     setupFiles: ['test/setup.ts'],
+    // Optimize dependency handling for faster test execution.
+    // By excluding large libraries that are mocked or stubbed in tests (like Quasar),
+    // we prevent Vitest from unnecessarily processing them, which speeds up test startup.
+    deps: {
+      optimizer: {
+        ssr: { exclude: ['quasar', 'vue-i18n'] },
+      },
+    },
   },
   resolve: {
     // Align Vitest's alias configuration with Nuxt's for consistency.

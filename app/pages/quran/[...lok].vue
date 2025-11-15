@@ -1,5 +1,11 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script lang="ts" setup>
+definePageMeta({
+  // Set `auth` to `false` to make this page public.
+  // Remove this block to protect the page.
+  auth: false,
+});
+
 import { useQuasar } from "quasar";
 import { useBookmarksStore } from "~/store/bookmarks.pinia";
 

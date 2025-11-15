@@ -177,6 +177,7 @@
   "login_success": "Erfolgreich angemeldet",
   "please_accept_terms": "Akzeptieren Sie unsere Allgemeinen Geschäftsbedingungen.",
   "email": "E-Mail",
+  "email_or_username": "E-Mail oder Benutzername",
   "submit": "senden",
   "reset": "Zurücksetzen",
   "Login": "Anmelden",
@@ -188,6 +189,7 @@
   "already_logged_in": "Bereits angemeldet",
   "login_method": "Anmeldemethoden",
   "logout_success": "Sie wurden erfolgreich abgemeldet",
+  "login_failed": "Anmeldung fehlgeschlagen. Bitte überprüfen Sie Ihre Anmeldedaten.",
   "back": "Zurück",
   "username_taken": "Benutzername bereits vergeben",
   "accept_terms_and_conditions": "Akzeptieren Sie unsere Bedingungen",
@@ -203,6 +205,7 @@
   "welcome_back": "Willkommen zurück, {name}",
   "welcome_guest": "Hallo Gast",
   "no_bookmarks": "Keine gespeicherten Lesezeichen",
+  "error_resending_verification": "Fehler beim erneuten Senden der Bestätigungs-E-Mail",
   "tasbeeh": {
     "title": "Digitales Tasbeeh",
     "subtitle": "Gebetskette (Tasbeeh)",

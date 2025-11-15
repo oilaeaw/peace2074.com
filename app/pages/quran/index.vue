@@ -6,6 +6,10 @@ import { useQ2P } from '~/store/q2p.pinia'
 
 const { t } = useI18n()
 
+definePageMeta({
+  auth: false, // This page should be public
+})
+
 // const q2p = useQ2P()
 const router = useRouter()
 const suras = computed<QDBI[]>(() => useQ2P().GetQ)

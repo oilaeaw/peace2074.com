@@ -32,7 +32,6 @@
 	from = "/*"
 	to = "/.netlify/functions/server"
 	status = 200
-	force = true
 
 	# Security and CSP headers: do NOT require Trusted Types, allow needed script origins
 	[[headers]]

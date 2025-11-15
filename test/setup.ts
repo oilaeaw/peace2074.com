@@ -40,7 +40,7 @@ globalThis.navigateTo = vi.fn()
 globalThis.useRouter = vi.fn(() => ({
   push: vi.fn(),
   replace: vi.fn(),
-  currentRoute: { value: { query: {} } },
+  currentRoute: ref({ query: {} }),
 }))
 globalThis.useRoute = vi.fn(() => ({
   query: {},

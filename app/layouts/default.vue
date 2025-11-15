@@ -4,28 +4,15 @@ import moment from "moment"
 import { computed, onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
-import { useAuthStore } from "@app/store/auth.pinia";
 
 const { t, te, locale } = useI18n();
 const route = useRoute();
 const _q2p = useQ2P();
 
-// Use the auth store and compute a safe username string (handles null user)
-const auth = useAuthStore();
-const isAuthenticated = computed(() => auth.isAuthenticated);
-const username = computed(() => {
-  const u = auth.user;
-  if (!u) return "";
-  // user object might be nested (from server responses) or flat
-  if (u.user) {
-    const fn = u.user.first_name || "";
-    const ln = u.user.last_name || "";
-    const full = `${fn} ${ln}`.trim();
-    if (full) return full;
-    return u.user.username || u.user.email || "";
-  }
-  return u.username || u.name || u.email || "";
-});
+// Use the new nuxt-auth composable for authentication state
+const { status, data, signOut } = useAuth();
+const isAuthenticated = computed(() => status.value === 'authenticated');
+const username = computed(() => data.value?.user?.name || data.value?.user?.email || '');
 
 onMounted(() => {
   useQ2P().init();
@@ -133,7 +120,7 @@ watch([() => route.fullPath, () => locale.value], () => {
             isAuthenticated ? t("welcome_back", { name: username }) : t("welcome_guest")
           }}
         </div>
-
+        
         <q-btn
           v-if="isAuthenticated"
           dense
@@ -141,8 +128,8 @@ watch([() => route.fullPath, () => locale.value], () => {
           round
           icon="logout"
           class="q-mx-md"
-          :title="t('logout')"
-          @click="auth.logout()"
+          :title="t('navigation.Signout')"
+          @click="() => signOut()"
         />
         <q-space />
         <q-btn
@@ -213,7 +200,7 @@ watch([() => route.fullPath, () => locale.value], () => {
           <q-item v-ripple clickable to="/auth/profile">
             <q-item-section>
               <q-icon name="person" class="q-mr-sm" />
-              <span>{{ t("profile.title") || "Profile" }}</span>
+              <span>{{ t("navigation.Profile") }}</span>
             </q-item-section>
           </q-item>
           <q-item v-ripple clickable to="/account/settings">
@@ -222,8 +209,15 @@ watch([() => route.fullPath, () => locale.value], () => {
               <span>{{ t("settings.title") || "Settings" }}</span>
             </q-item-section>
           </q-item>
+        <!-- Admin-only link -->
+        <q-item v-if="$ability.can('manage', 'all')" v-ripple clickable to="/admin">
+          <q-item-section>
+            <q-icon name="admin_panel_settings" class="q-mr-sm" />
+            <span>{{ t("navigation.AdminPage") }}</span>
+          </q-item-section>
+        </q-item>
         </template>
-        <q-item v-else v-ripple clickable to="/auth/authenticate">
+        <q-item v-else v-ripple clickable to="/auth/login">
           <q-item-section>
             <q-icon name="person" class="q-mr-sm" />
             <span>{{ t("auth") }}</span>
@@ -250,8 +244,8 @@ watch([() => route.fullPath, () => locale.value], () => {
           round
           dense
           icon="assignment_ind"
-          class="cursor"
-          to="/auth/authenticate"
+          class="cursor-pointer"
+          to="/auth/login"
         >
           <q-tooltip v-model="showing">
             {{ username || t('auth') }}
