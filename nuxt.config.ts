@@ -9,7 +9,36 @@ export default defineNuxtConfig({
     'nuxt-quasar-ui',
     '@sidebase/nuxt-auth',
     'nuxt-mongoose',
+    '@nuxtjs/i18n',
+    '@nuxtjs/color-mode',
+    '@pinia/nuxt',
+    '@vueuse/nuxt',
+    ...(process.env.VITE_PLUGIN_PWA ? ['@vite-pwa/nuxt'] as const : []),
   ],
+  
+  i18n: {
+    baseUrl: process.env.SITE_BASE_URL,
+    strategy: 'no_prefix',
+    defaultLocale: 'en',
+    locales: [
+      { code: 'en', name: 'English' },
+      { code: 'ar', name: 'Arabic', dir: 'rtl' },
+      { code: 'de', name: 'Deutsch' },
+      { code: 'ru', name: 'Русский' },
+    ],
+    // Point to the Vue I18n configuration file relative to the i18n/ directory
+    // The module resolves this path from <root>/i18n, so go up one level
+    vueI18n: '../i18n.config.ts',
+  },
+
+  vite: {
+    server: {
+      hmr: {
+        overlay: false,
+      },
+    },
+  },
+
   nitro:{
     // Teach Nitro how to resolve custom aliases for the server build.
     // This is separate from the top-level 'alias' which is for the client-side (Vite) build.
@@ -17,27 +46,6 @@ export default defineNuxtConfig({
       '@server': fileURLToPath(new URL('./server', import.meta.url)),
       '@shared': fileURLToPath(new URL('./shared', import.meta.url)),
     },
-    externals:{
-      // Trace and bundle these dependencies.
-      // This is necessary for some packages that have complex CJS/ESM interop.
-      inline: [
-        'passport', 'passport-local', 'passport-github2', 'passport-google-oauth20',
-      ],
-    },
-    // Silence resolver warnings by marking known virtual/external imports as external for Rollup
-    rollupConfig: {
-      external: [
-        '#auth-utils',
-        'next-auth',
-        'next-auth/core',
-        'next-auth/jwt',
-        'passport',
-        'passport-local',
-        'passport-github2',
-        'passport-google-oauth20',
-      ],
-    },
-
   },
 
   // Aliases for the client-side (Vite) build
@@ -56,25 +64,40 @@ export default defineNuxtConfig({
     extras: {
       // Import Material Icons for general purpose icons
       fontIcons: ['material-icons'],
-      // Import Font Awesome v6 brand icons for social logins
-      brands: ['fa-brands'],
     },
   },
 
   auth: {
     // The module is enabled.
     isEnabled: true,
-    // The origin of your app. This is required for security reasons.
-    // It's used to generate the callback URL and to verify the origin of the request.
-    origin: process.env.AUTH_ORIGIN,
-    // The base path to the authentication routes.
-    basePath: '/api/auth',
-    // Whether to periodically refresh the session.
-    enableSessionRefreshPeriodically: false,
-    // Whether to refresh the session on page load.
-    enableSessionRefreshOnWindowFocus: true,
+    // Keep auth middleware enabled globally
     // Global middleware is enabled by default.
     globalAppMiddleware: true,
+  },
+
+  runtimeConfig: {
+    // Optional session cookie configuration used by some dev/debug endpoints
+    session: {
+      name: 'nuxt-session',
+      cookie: {},
+    },
+    auth: {
+      secret: process.env.AUTH_SECRET, // You can generate one with `openssl rand -base64 32`
+      google: {
+        clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
+        clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
+      },
+      github: {
+        clientId: process.env.AUTH_GITHUB_CLIENT_ID,
+        clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET,
+      },
+    },
+    // MailJS (or similar) webhook settings
+    email_public_key: process.env.MAILJS_PUBLIC_KEY,
+    email_private_key: process.env.MAILJS_PRIVATE_KEY,
+    email_template: process.env.MAILJS_TEMPLATE,
+    mailjs_api_url: process.env.MAILJS_API_URL,
+    mongodbUri: process.env.MONGODB_URI,
   },
 
   mongoose: {
@@ -83,14 +106,27 @@ export default defineNuxtConfig({
     modelsDir: 'models',
   },
 
-  runtimeConfig: {
-    auth: {
-      secret: process.env.AUTH_SECRET, // You can generate one with `openssl rand -base64 32`
-      google: {
-        clientId: process.env.AUTH_GOOGLE_CLIENT_ID,
-        clientSecret: process.env.AUTH_GOOGLE_CLIENT_SECRET,
-      },
-    },
+  routeRules: {
+    '/': { ssr: false },
+    '/quran': { ssr: false },
+    '/quran/**': { ssr: false },
+    '/holynames': { ssr: false },
+    '/tasbeeh': { ssr: false },
+    '/miracles': { ssr: false },
+    '/miracles2': { ssr: false },
+    '/home': { ssr: false },
+    '/contact': { ssr: false },
+    '/account/**': { ssr: false },
+    '/auth/**': { ssr: false },
+  },
+
+  // Auto-import composables and utilities from these directories for both runtime and types
+  imports: {
+    dirs: [
+      'shared',
+      'server/utils',
+      'app/store',
+    ],
   },
 
 })

@@ -1,8 +1,11 @@
 <script setup lang="ts">
 import { useOnline } from '@vueuse/core'
 
-const { t } = useI18n()
-const _myLangsStore = useMyLangsStore()
+import { useLangsStore } from '~/store/langs.pinia'
+
+const _myLangsStore = useLangsStore()
+const { t } = useI18nSafe()
+
 definePageMeta({
   layout: 'default',
   title: 'navigation.HomePageTitle',
@@ -16,7 +19,7 @@ const online = useOnline()
   <q-page padding class="index-page islamic-design">
     <ClientOnly>
       <Suspense>
-        <div v-if="online" class="flex flex-col items-center justify-center w-full">
+        <div v-if="online" class="column items-center justify-center full-width">
           <Logos mb-1 />
           <div class="links">
             <NuxtLink
@@ -55,7 +58,7 @@ const online = useOnline()
           <PageView class="q-mt-xl" />
         </div>
         <div v-else class="text-gray-500">
-          {{ t("pages.main.offlineMessage") }}
+          {{ t('pages.main.offlineMessage') }}
         </div>
         <template #fallback>
           <div class="italic op50">
