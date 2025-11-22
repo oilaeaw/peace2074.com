@@ -1,6 +1,7 @@
 import { AbilityBuilder, createMongoAbility } from '@casl/ability'
+import type { CaslActionE, CaslSubjectE, UserT } from '@shared/types'
 
-interface User {
+interface User extends UserT {
   id: string
   role: string
 }

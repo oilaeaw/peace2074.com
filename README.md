@@ -43,7 +43,7 @@ See `.github/copilot-instructions.md` for architecture and developer workflow de
 
 Environment tips:
 - Set `SITE_BASE_URL` for correct canonical links and PWA behavior.
-- For auth-related endpoints (optional), see envs in the docs and `server/plugins/passport.ts`.
+- For auth with OAuth providers, this project uses `@sidebase/nuxt-auth`. See `.github/copilot-instructions.md` for details.
 
 ### Google OAuth: capture and verify the auth URL
 
@@ -60,10 +60,8 @@ Environment tips:
 
 - Endpoint to inspect the exact GitHub OAuth URL this server would use for the current host:
 	- `GET /api/auth/github/auth-url` → returns `{ url, callbackURL, clientId }`
-- Start the flow (normal):
-	- `GET /api/auth/github`
-- Callback is handled at:
-	- `/api/auth/github/callback` and is persisted to the `OAuthLog` collection
+  
+Note: These endpoints are provided for debugging the constructed OAuth URL. Actual authentication is handled by `@sidebase/nuxt-auth` routes under `/api/auth/*`.
 - Required envs (set in your shell or Netlify):
 	- `GITHUB_CLIENT_ID`, `GITHUB_CLIENT_SECRET`, optional `GITHUB_CALLBACK_URL`
 	- If `GITHUB_CALLBACK_URL` is not set, it’s derived from the current host/proto.

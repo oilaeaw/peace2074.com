@@ -33,12 +33,50 @@
         "totverses": "number of verses",
         "bookmark": "bookmark"
       },
-      "holynames": "Holy Names"
+      "holynames": "Holy Names",
+      "notfoundDetail": "The requested Sura or Ayah could not be found."
     },
     "miracles": {
-      "pageTitle": "Miracles Page"
+      "pageTitle": "Miracles Page",
+      "linguisticPilotTitle": "Linguistic pilot",
+      "numericExamplesTitle": "Examples of numerical miracles in the Qur’an",
+      "visualizer": {
+        "heading": "Quran Letter Visualizer",
+        "scope": "Scope",
+        "scopeWholeBook": "Whole Book",
+        "scopeSingleSura": "Single Sura",
+        "scopeSingleVerse": "Single Verse",
+        "sura": "Sura",
+        "verse": "Verse",
+        "cellSize": "Cell Size",
+        "gap": "Gap",
+        "maxWidth": "Max Width",
+        "draw": "Draw",
+        "downloadPng": "Download PNG",
+        "legendSummary": "Legend shows {count} letters. Canvas samples letters when the text is large to avoid huge images."
+      },
+      "metrics": {
+        "chars": "Chars",
+        "words": "Words",
+        "unique": "Unique"
+      },
+      "changeVerse": "Change verse",
+      "numericExamples": {
+        "oppositesTitle": "Repetition of opposite words:",
+        "oppositesBody": "The counts of some opposite words are equal, such as ‘the world’ and ‘the hereafter’ (115 each), ‘angels’ and ‘devils’ (88 each), and ‘light’ and ‘darkness’ (24 each).",
+        "structureTitle": "Relationships between counts of words, letters, verses, and surahs:",
+        "structureBody": "Focus on numerical patterns, such as the total number of chapters in the Qur’an being 114.",
+        "conceptsTitle": "Relationships between words and concepts:",
+        "conceptsBody": "Relating the number of times certain words are repeated to real-world counts, such as the word ‘month’ appearing 12 times (the number of months in a year).",
+        "lettersTitle": "Number of letters in certain verses:",
+        "lettersBody": "In some verses, the letter count aligns with a specific number mentioned in the verse itself."
+      }
+    },
+    "main": {
+      "offlineMessage": "You appear to be offline. Please check your connection."
     }
   },
+  "The requested Sura or Ayah could not be found.": "The requested Sura or Ayah could not be found.",
   "general": {
     "Home": "Home",
     "SiteTitle": "Peace2074",

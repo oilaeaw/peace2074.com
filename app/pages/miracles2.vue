@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted, watch } from "#imports";
+import { useQ2P } from '~/store/q2p.pinia'
 
 definePageMeta({
   title: "pages.miracles.pageTitle",
@@ -7,7 +8,7 @@ definePageMeta({
 });
 
 const q2p = useQ2P();
-const quran: any = q2p.GetQ;
+const quran: any = q2p.Book;
 const { t } = useI18n();
 
 // --- Pilot 1: Linguistic Metrics ---
@@ -79,15 +80,15 @@ watch(arabicText, (val) => {
             <div class="text-caption">{{ translation }}</div>
             <div class="row q-mt-md">
               <div class="col">
-                <div>Chars: {{ metrics.chars }}</div>
-                <div>Words: {{ metrics.words }}</div>
-                <div>Unique: {{ metrics.unique }}</div>
+                <div>{{ t('pages.miracles.metrics.chars') }}: {{ metrics.chars }}</div>
+                <div>{{ t('pages.miracles.metrics.words') }}: {{ metrics.words }}</div>
+                <div>{{ t('pages.miracles.metrics.unique') }}: {{ metrics.unique }}</div>
               </div>
             </div>
           </q-card-section>
           <q-separator />
           <q-card-actions align="right">
-            <q-btn flat label="Change verse" @click="nextVerse" />
+            <q-btn flat :label="t('pages.miracles.changeVerse')" @click="nextVerse" />
           </q-card-actions>
         </q-card>
 
@@ -103,31 +104,20 @@ watch(arabicText, (val) => {
             <div class="q-mt-sm">
               <ul class="q-pl-lg">
                 <li class="q-mb-sm">
-                  <strong>Repetition of opposite words:</strong>
-                  The numbers of some opposite words are equal, such as “the world” and
-                  “the hereafter” (115 times each), “angels” and “devils” (88 times each),
-                  and “light” and “darkness” (24 times each).
+                  <strong>{{ t('pages.miracles.numericExamples.oppositesTitle') }}</strong>
+                  {{ t('pages.miracles.numericExamples.oppositesBody') }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong
-                    >Relationships between the numbers of words, letters, verses, and
-                    surahs:</strong
-                  >
-                  The focus is on numbers, such as the number of chapters in the Qur’an
-                  being 114.
+                  <strong>{{ t('pages.miracles.numericExamples.structureTitle') }}</strong>
+                  {{ t('pages.miracles.numericExamples.structureBody') }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong>Relationships between words and concepts:</strong>
-                  Relating the number of times certain words are repeated to other
-                  numbers, such as the word “month” being repeated 12 times (the number of
-                  months in a year).
+                  <strong>{{ t('pages.miracles.numericExamples.conceptsTitle') }}</strong>
+                  {{ t('pages.miracles.numericExamples.conceptsBody') }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong>Number of letters in the verses:</strong>
-                  It is worth noting that the number of letters in some verses corresponds
-                  to a specific number, such as the number of letters from the beginning
-                  of a particular verse to its end being the same number mentioned in the
-                  verse itself.
+                  <strong>{{ t('pages.miracles.numericExamples.lettersTitle') }}</strong>
+                  {{ t('pages.miracles.numericExamples.lettersBody') }}
                 </li>
               </ul>
             </div>

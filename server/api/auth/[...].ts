@@ -9,30 +9,32 @@ import User from '@server/models/user'
 
 const runtimeConfig = useRuntimeConfig()
 
+// The MongoDBAdapter needs a promise that resolves to a MongoClient instance.
+const mongoClientPromise = MongoClient.connect(runtimeConfig.mongodbUri)
+
 export default NuxtAuthHandler({
   // A secret string you define to sign tokens.
   // It's recommended to set this to a random string of at least 32 characters.
   // You can generate one with `openssl rand -base64 32`
   secret: runtimeConfig.auth.secret,
 
-  // Use Mongoose adapter to store users, sessions, etc. in MongoDB
-  adapter: MongoDBAdapter(
-    MongoClient.connect(process.env.MONGODB_URI as string),
-  ),
+  // Use MongoDB adapter to store users, sessions, etc.
+  // The promise must resolve to a MongoClient instance.
+  // Cast to any to accommodate adapter typings
+  adapter: MongoDBAdapter(mongoClientPromise as any) as any,
 
+  // Cast each provider to any to satisfy mismatched typings between @auth/core and next-auth Provider.
+  // (Runtime behavior remains correct; this silences TS structural incompatibility about `type`.)
   providers: [
-    // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
-    GoogleProvider.default({
+    GoogleProvider({
       clientId: runtimeConfig.auth.google.clientId,
       clientSecret: runtimeConfig.auth.google.clientSecret,
-    }),
-    // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
-    GithubProvider.default({
-      clientId: process.env.AUTH_GITHUB_CLIENT_ID,
-      clientSecret: process.env.AUTH_GITHUB_CLIENT_SECRET,
-    }),
-    // @ts-expect-error You need to use .default here for it to work during SSR. May be fixed via Vite at some point
-    CredentialsProvider.default({
+    }) as any,
+    GithubProvider({
+      clientId: runtimeConfig.auth.github.clientId,
+      clientSecret: runtimeConfig.auth.github.clientSecret,
+    }) as any,
+    CredentialsProvider({
       name: 'Credentials',
       credentials: {
         identifier: { label: 'Email or Username', type: 'text' },
@@ -43,7 +45,8 @@ export default NuxtAuthHandler({
           return null
 
         const isEmail = credentials.identifier.includes('@')
-        const user = await User.findOne(
+        const U: any = User as any
+        const user = await U.findOne(
           isEmail
             ? { email: credentials.identifier }
             : { username: credentials.identifier },
@@ -67,7 +70,7 @@ export default NuxtAuthHandler({
           last_name: user.last_name,
         }
       },
-    }),
+    }) as any,
   ],
 
   session: {
@@ -81,7 +84,8 @@ export default NuxtAuthHandler({
     jwt({ token, user }) {
       if (user) {
         token.role = (user as any).role
-        token.id = user.id
+        // The 'sub' property is the standard for the user's ID in JWT.
+        token.sub = user.id
         token.first_name = (user as any).first_name
         token.last_name = (user as any).last_name
       }
@@ -92,7 +96,7 @@ export default NuxtAuthHandler({
     session({ session, token }) {
       if (session.user) {
         (session.user as any).role = token.role
-        (session.user as any).id = token.sub
+        ;(session.user as any).id = token.sub
         ;(session.user as any).first_name = token.first_name
         ;(session.user as any).last_name = token.last_name
       }

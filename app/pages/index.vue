@@ -2,10 +2,8 @@
 import { useOnline } from '@vueuse/core'
 
 import { useLangsStore } from '~/store/langs.pinia'
-
+const { t } = useI18n()
 const _myLangsStore = useLangsStore()
-const { t } = useI18nSafe()
-
 definePageMeta({
   layout: 'default',
   title: 'navigation.HomePageTitle',

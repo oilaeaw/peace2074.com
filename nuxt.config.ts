@@ -106,19 +106,8 @@ export default defineNuxtConfig({
     modelsDir: 'models',
   },
 
-  routeRules: {
-    '/': { ssr: false },
-    '/quran': { ssr: false },
-    '/quran/**': { ssr: false },
-    '/holynames': { ssr: false },
-    '/tasbeeh': { ssr: false },
-    '/miracles': { ssr: false },
-    '/miracles2': { ssr: false },
-    '/home': { ssr: false },
-    '/contact': { ssr: false },
-    '/account/**': { ssr: false },
-    '/auth/**': { ssr: false },
-  },
+  // Disable SSR globally to avoid i18n hydration issues in development
+  ssr: false,
 
   // Auto-import composables and utilities from these directories for both runtime and types
   imports: {

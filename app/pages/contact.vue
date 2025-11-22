@@ -7,6 +7,8 @@ export default {
   setup() {
     const router = useRouter()
     const { t } = useI18n()
+    // Fallback projects list if not provided from elsewhere
+    const projects: any[] = []
     const myProjects = reactive(projects)
     const accept = ref(false)
     const user_email = ref('')

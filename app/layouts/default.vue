@@ -1,31 +1,41 @@
 <script lang="ts" setup>
 import { useTimeAgo } from '@vueuse/core'
-import moment from "moment"
-import { computed, onMounted, ref, watch } from "vue";
+import { computed, ref } from "vue"
 import { useI18n } from "vue-i18n";
 import { useRoute } from "vue-router";
 
-const { t, te, locale } = useI18n();
+const { t, te } = useI18n();
 const route = useRoute();
-const _q2p = useQ2P();
 
-// Use the new nuxt-auth composable for authentication state
-const { status, data, signOut } = useAuth();
-const isAuthenticated = computed(() => status.value === 'authenticated');
-const username = computed(() => data.value?.user?.name || data.value?.user?.email || '');
+// `useAuth` returns a reactive object. We should not destructure it in <script setup>
+// to ensure that reactivity is preserved and it works correctly with SSR.
+const auth = useAuth();
 
-onMounted(() => {
-  useQ2P().init();
-});
+// Computed properties will safely access the auth state when it becomes available.
+const isAuthenticated = computed(() => auth.status.value === 'authenticated');
+const username = computed(() => auth.data.value?.user?.name || auth.data.value?.user?.email || '');
+
 const toggleLeftDrawer = ref(false);
 const toggleRightDrawer = ref(false);
 // Tooltip state used by QTooltip in the footer
 const showing = ref(false);
 
-// use $q.dark.toggle() directly where needed
-const date = "__DATE__";
-const timeAgo = useTimeAgo(date);
-const BuildTime: string = moment(date).format("ddd MMM DD, YYYY [at] HH:mm");
+// Build timestamp handling (replaces moment + __DATE__ placeholder).
+// Prefer an injected build time if provided (can be set via VITE_BUILD_TIME env at build).
+const buildEpoch = (import.meta as any).env?.VITE_BUILD_TIME || Date.now();
+const buildDate = new Date(typeof buildEpoch === 'string' ? Number(buildEpoch) || buildEpoch : buildEpoch);
+function formatBuildDate(d: Date) {
+  // Replicates: ddd MMM DD, YYYY [at] HH:mm (24h)
+  const weekday = d.toLocaleDateString('en-US', { weekday: 'short' });
+  const month = d.toLocaleDateString('en-US', { month: 'short' });
+  const day = String(d.getDate()).padStart(2, '0');
+  const year = d.getFullYear();
+  const hours = String(d.getHours()).padStart(2, '0');
+  const minutes = String(d.getMinutes()).padStart(2, '0');
+  return `${weekday} ${month} ${day}, ${year} at ${hours}:${minutes}`;
+}
+const BuildTime = formatBuildDate(buildDate);
+const timeAgo = useTimeAgo(buildDate);
 
 function toggleDrawer() {
   toggleLeftDrawer.value = !toggleLeftDrawer.value;
@@ -34,67 +44,31 @@ function toggleRight() {
   toggleRightDrawer.value = !toggleRightDrawer.value;
 }
 
-// Dynamic, localized page title: use route meta.title if present and resolve via i18n.
-function resolveTitle(metaTitle: any) {
-  // metaTitle may be undefined or a string. Try multiple candidate keys.
-  if (!metaTitle) return t("general.SiteTitle");
-  const raw = String(metaTitle);
-  const candidates = [
-    raw,
-    raw.toLowerCase(),
-    raw.toLowerCase().replace(/\s+/g, "_"),
-    `${raw.toLowerCase()}.title`,
-    `${raw}.title`,
-    `pages.${route.name}.pageTitle`,
-  ];
+/**
+ * Resolves a meta value (like title or description) by trying a list of
+ * potential i18n keys. Falls back to the original value if no key is found.
+ * @param {string | undefined} value - The meta value from the route.
+ * @param {string[]} candidates - An array of i18n key candidates to try.
+ * @param {string} fallbackKey - The i18n key to use if the value is missing.
+ */
+function resolveMeta(value: string | undefined, candidates: string[], fallbackKey: string): string {
+  if (!value) return t(fallbackKey);
   for (const c of candidates) {
-    try {
-      if (te(c)) return t(c);
-    } catch {
-      // ignore
-    }
+    if (te(c)) return t(c);
   }
-  // If no i18n key found, return the raw meta title string
-  return raw;
+  return value;
 }
 
-// Resolve meta descriptions similarly. metaDesc can be an i18n key or raw string.
-function resolveDescription(metaDesc: any) {
-  if (!metaDesc) return t("general.SiteTitle");
-  const raw = String(metaDesc);
-  const candidates = [
-    raw,
-    raw.toLowerCase(),
-    `${raw}.description`,
-    `meta.${raw}`,
-    `meta.${route.name}`,
-  ];
-  for (const c of candidates) {
-    try {
-      if (te(c)) return t(c);
-    } catch {
-      // ignore
-    }
-  }
-  return raw;
-}
-
-// Set head initially and update when route or locale changes.
+// Set head reactively. It will automatically update when the route or locale changes.
 useHead({
-  title: resolveTitle(route.meta.title),
+  title: computed(() => resolveMeta(route.meta.title as string, [
+    `pages.${String(route.name)}.pageTitle`,
+    `meta.${String(route.name)}.title`,
+  ], 'general.SiteTitle')),
   meta: [
-    { name: "description", content: resolveDescription(route.meta.description) },
-    { property: "og:description", content: resolveDescription(route.meta.description) },
+    { name: "description", content: computed(() => resolveMeta(route.meta.description as string, [`meta.${String(route.name)}`], 'meta.home')) },
+    { property: "og:description", content: computed(() => resolveMeta(route.meta.description as string, [`meta.${String(route.name)}`], 'meta.home')) },
   ],
-});
-watch([() => route.fullPath, () => locale.value], () => {
-  useHead({
-    title: resolveTitle(route.meta.title),
-    meta: [
-      { name: "description", content: resolveDescription(route.meta.description) },
-      { property: "og:description", content: resolveDescription(route.meta.description) },
-    ],
-  });
 });
 </script>
 
@@ -115,22 +89,11 @@ watch([() => route.fullPath, () => locale.value], () => {
             {{ t("general.SiteTitle") }}
           </nuxt-link>
         </q-toolbar-title>
-        <div class="q-mr-md">
-          {{
-            isAuthenticated ? t("welcome_back", { name: username }) : t("welcome_guest")
-          }}
-        </div>
-        
-        <q-btn
-          v-if="isAuthenticated"
-          dense
-          flat
-          round
-          icon="logout"
-          class="q-mx-md"
-          :title="t('navigation.Signout')"
-          @click="() => signOut()"
-        />
+        <!-- Wrap authentication-dependent UI in <ClientOnly> to prevent SSR errors -->
+        <ClientOnly>
+          <AuthStatus />
+        </ClientOnly>
+
         <q-space />
         <q-btn
           dense
@@ -150,9 +113,12 @@ watch([() => route.fullPath, () => locale.value], () => {
       side="left"
       bordered
     >
-      <q-list bordered class="q-pa-lg text-green-9">
-        <fahras />
-      </q-list>
+      <Suspense>
+        <LeftDrawerContent />
+        <template #fallback>
+          <q-skeleton class="q-ma-md" height="80vh" />
+        </template>
+      </Suspense>
     </q-drawer>
 
     <q-drawer
@@ -163,67 +129,12 @@ watch([() => route.fullPath, () => locale.value], () => {
       :overlay="true"
       class="bg-green-9 text-white"
     >
-      <q-list bordered class="q-pa-lg bg-green-9 text-white">
-        <!-- Quick navigation -->
-        <q-item v-ripple clickable :to="{ path: '/chat', query: { room: 'general' } }">
-          <q-item-section>
-            <q-icon name="forum" class="q-mr-sm" />
-            <span>Chat Room</span>
-          </q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/chat">
-          <q-item-section>
-            <q-icon name="chat" class="q-mr-sm" />
-            <span>Chat</span>
-          </q-item-section>
-        </q-item>
-        <q-separator spaced color="white" />
-        <q-item v-ripple clickable to="/terms">
-          <q-item-section>
-            <q-icon name="gavel" class="q-mr-sm" />
-            <span>{{ t("terms_and_conditions") }}</span>
-          </q-item-section>
-        </q-item>
-        <q-item v-ripple clickable to="/privacy">
-          <q-item-section>
-            <q-icon name="privacy_tip" class="q-mr-sm" />
-            <span>{{ t("privacy_policy") }}</span>
-          </q-item-section>
-        </q-item>
-                <q-item v-ripple clickable to="/contact">
-          <q-item-section>
-            <q-icon name="contact_mail" class="q-mr-sm" />
-            <span>{{ t("button.Contact") }}</span>
-          </q-item-section>
-        </q-item>
-        <template v-if="isAuthenticated">
-          <q-item v-ripple clickable to="/auth/profile">
-            <q-item-section>
-              <q-icon name="person" class="q-mr-sm" />
-              <span>{{ t("navigation.Profile") }}</span>
-            </q-item-section>
-          </q-item>
-          <q-item v-ripple clickable to="/account/settings">
-            <q-item-section>
-              <q-icon name="settings" class="q-mr-sm" />
-              <span>{{ t("settings.title") || "Settings" }}</span>
-            </q-item-section>
-          </q-item>
-        <!-- Admin-only link -->
-        <q-item v-if="$ability.can('manage', 'all')" v-ripple clickable to="/admin">
-          <q-item-section>
-            <q-icon name="admin_panel_settings" class="q-mr-sm" />
-            <span>{{ t("navigation.AdminPage") }}</span>
-          </q-item-section>
-        </q-item>
+      <Suspense>
+        <RightDrawerContent />
+        <template #fallback>
+          <q-skeleton class="q-ma-md" height="80vh" />
         </template>
-        <q-item v-else v-ripple clickable to="/auth/login">
-          <q-item-section>
-            <q-icon name="person" class="q-mr-sm" />
-            <span>{{ t("auth") }}</span>
-          </q-item-section>
-        </q-item>
-      </q-list>
+      </Suspense>
     </q-drawer>
 
     <q-page-container>
@@ -244,8 +155,8 @@ watch([() => route.fullPath, () => locale.value], () => {
           round
           dense
           icon="assignment_ind"
-          class="cursor-pointer"
-          to="/auth/login"
+          :class="{ 'cursor-pointer': !isAuthenticated }"
+          :to="isAuthenticated ? '/account' : '/auth/login'"
         >
           <q-tooltip v-model="showing">
             {{ username || t('auth') }}

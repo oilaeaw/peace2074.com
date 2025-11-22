@@ -1,37 +1,14 @@
 import { ar, de, en, ru } from './app/locale'
 
-export interface LocaleT { code: string, name?: string, messages?: string[] }
-export type LocalesT = Locale[]
-
 export default defineI18nConfig(() => ({
+  // Use Composition API
   legacy: false,
+  // Default locale
   locale: 'en',
-  locales: [
-    {
-      code: 'en',
-      name: 'English',
-      messages: en,
-    },
-    {
-      code: 'ar',
-      name: 'Arabic',
-      messages: ar,
-    },
-    {
-      code: 'de',
-      name: 'Deutsch',
-      messages: de,
-    },
-    {
-      code: 'ru',
-      name: 'Русский',
-      messages: ru,
-    },
-  ],
-  messages: {
-    en,
-    ar,
-    de,
-    ru,
-  },
+  // Fallback to English when a key is missing in the active locale
+  fallbackLocale: 'en',
+  // Use nested JSON structure (our locale files are nested)
+  flatJson: false,
+  // Bundle all messages directly (we are not using lazy loading here)
+  messages: { en, ar, de, ru },
 }))

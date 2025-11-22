@@ -1,38 +1,16 @@
 import Tasbeeh from '@server/models/tasbeeh'
 import { ensureDbConnection } from '@server/utils/database'
+import { readBody, createError } from 'h3'
+import { requireUser } from '@server/utils/auth'
 
-export default defineEventHandler(async (event) => {
-  await ensureDbConnection()
+// Use a named constant export to avoid temporal dead zone issues in Nitro lazy evaluation
+const handler = defineEventHandler(async (event) => {
   const body = await readBody(event)
+  await ensureDbConnection()
 
-  const auth = await import('../../utils/auth')
-  const { getUserFromEvent, getTokenFromEvent, verifyAuthToken } = auth
-  let userData = await getUserFromEvent(event)
-  let userId = (userData as any)?.id
-
-  // Last-resort: if no user from session helpers, try verifying any raw token ourselves.
-  if (!userId) {
-    try {
-      const token = getTokenFromEvent(event)
-      if (token) {
-        const verified = verifyAuthToken(token)
-        if (verified && verified.id) {
-          userData = verified
-          userId = verified.id
-        }
-      }
-    }
-    catch (e) {
-      // ignore
-    }
-  }
-
-  if (!userId) {
-    if (process.env.NODE_ENV !== 'production') {
-      try { console.debug('[tasbeeh] unauthenticated request to POST /api/tasbeeh — no userId from session or token') } catch {}
-    }
-    throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
-  }
+  // Ensure the user is authenticated
+  const user = await requireUser(event)
+  const userId = (user as any)?.id
 
   // body may contain { date, total, sessions, session: { phraseIndex, count, target } }
   const { date, total, sessions, session } = body
@@ -62,3 +40,5 @@ export default defineEventHandler(async (event) => {
   await doc.save()
   return { message: 'Saved', data: doc }
 })
+
+export default handler

@@ -123,15 +123,23 @@ export const useBookmarksStore = defineStore('bookBook', {
           // created may be a ref or raw object; normalize
           const saved = created && (created.value !== undefined) ? created.value : created
           if (!saved) {
-            try { const $q = useQuasar(); $q.notify({ message: 'Server did not return a bookmark', type: 'negative' }) }
-            catch {}
+            if (import.meta.client) {
+              try {
+                const { useQuasar } = await import('quasar')
+                useQuasar().notify({ message: 'Server did not return a bookmark', type: 'negative' })
+              } catch {}
+            }
             console.error('createBookmark: empty response', created)
             return
           }
           // push the saved bookmark object (includes _id for future operations)
           this.bookmarks.push(saved)
-          try { const $q = useQuasar(); $q.notify({ message: 'Bookmark saved to server', type: 'positive' }) }
-          catch {}
+          if (import.meta.client) {
+            try {
+              const { useQuasar } = await import('quasar')
+              useQuasar().notify({ message: 'Bookmark saved to server', type: 'positive' })
+            } catch {}
+          }
           // refresh to ensure server-side ids are in sync
           try { await this.fetchBookmarks() }
           catch {}
@@ -139,8 +147,12 @@ export const useBookmarksStore = defineStore('bookBook', {
         catch {
           // fallback to local push if server fails
           this.bookmarks.push(bm)
-          try { const $q = useQuasar(); $q.notify({ message: 'Saved locally (server unavailable)', type: 'warning' }) }
-          catch {}
+          if (import.meta.client) {
+            try {
+              const { useQuasar } = await import('quasar')
+              useQuasar().notify({ message: 'Saved locally (server unavailable)', type: 'warning' })
+            } catch {}
+          }
         }
       }
       else {
@@ -179,8 +191,12 @@ export const useBookmarksStore = defineStore('bookBook', {
           )
 
           if (!bookmarkToDelete) {
-            try { const $q = useQuasar(); $q.notify({ message: 'Bookmark not found', type: 'negative' }) }
-            catch {}
+            if (import.meta.client) {
+              try {
+                const { useQuasar } = await import('quasar')
+                useQuasar().notify({ message: 'Bookmark not found', type: 'negative' })
+              } catch {}
+            }
             return;
           }
 
@@ -188,12 +204,20 @@ export const useBookmarksStore = defineStore('bookBook', {
           await deleteBookmarkService(bookmarkToDelete._id)
           this.bookmarks = this.bookmarks.filter((bm: any) => bm._id !== bookmarkToDelete._id)
 
-          try { const $q = useQuasar(); $q.notify({ message: 'Bookmark removed', type: 'info' }) }
-          catch {}
+          if (import.meta.client) {
+            try {
+              const { useQuasar } = await import('quasar')
+              useQuasar().notify({ message: 'Bookmark removed', type: 'info' })
+            } catch {}
+          }
         }
         catch {
-          try { const $q = useQuasar(); $q.notify({ message: 'Failed to remove bookmark', type: 'negative' }) }
-          catch {}
+          if (import.meta.client) {
+            try {
+              const { useQuasar } = await import('quasar')
+              useQuasar().notify({ message: 'Failed to remove bookmark', type: 'negative' })
+            } catch {}
+          }
         }
       }
       else {

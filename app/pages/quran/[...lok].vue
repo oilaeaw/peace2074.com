@@ -7,10 +7,10 @@ definePageMeta({
 });
 
 import { useQuasar } from "quasar";
+import { isClient } from '@vueuse/core'
+import { useQ2P } from '~/store/q2p.pinia'
 import { useBookmarksStore } from "~/store/bookmarks.pinia";
 
-const $q = useQuasar();
-const q2p = useQ2P();
 const { t } = useI18n();
 const appName = computed(() => t("general.SiteTitle"));
 const route = useRoute();
@@ -37,8 +37,10 @@ function getLokFromRoute() {
   console.warn("Extracted directly:", result);
   return result;
 }
-const Quran = computed(() => q2p.GetQ);
-const sura = computed(() => q2p.GetSura);
+const q2p = useQ2P()
+const $q = useQuasar()
+const Quran = computed(() => q2p.Book);
+const sura = computed(() => q2p.currentSura);
 const PageTite = computed(
   () => `${appName.value} - ${sura.value?.id || ""}:${sura.value?.name || ""}`
 );

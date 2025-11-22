@@ -1,9 +1,10 @@
+/// <reference path="../../types/express-shim.d.ts" />
  
 import express, { Router } from 'express'
 
 const app = express()
 const router = Router()
-router.use((req, res, next) => {
+router.use((req: any, res: any, next: any) => {
   Object.setPrototypeOf(req, app.request)
   Object.setPrototypeOf(res, app.response)
   req.res = res

@@ -126,7 +126,6 @@ export enum NetworksNamesE {
   facebook = 'facebook',
   twitter = 'twitter',
   local = 'local',
-  passport = 'passport',
 }
 
 export enum ScopesNamesE {

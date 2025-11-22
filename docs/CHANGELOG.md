@@ -15,5 +15,5 @@ All notable changes to this project will be documented in this file.
 - Session: Harden session cookie config (`SameSite=Lax`, `Secure` in production, optional `SESSION_COOKIE_DOMAIN`) and provide long fallback secret for `runtimeConfig.session.password`.
 - Consent: Persist consent via 1-year first-party cookie and localStorage (unstorage driver) to prevent repeated prompts.
 - Realtime: Remove/neutralize websockets (Socket.IO) per deployment platform constraints; client/server plugins no-op.
-- Auth/OAuth: Stabilize Passport flows (Local/Google/GitHub), ensure absolute callback URLs and DB connection before queries.
+- Auth/OAuth: Stabilize OAuth flows (Local/Google/GitHub), ensure absolute callback URLs and DB connection before queries.
 - DB: Ensure Mongoose connection before model operations to avoid bufferCommands race errors.

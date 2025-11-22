@@ -1,4 +1,5 @@
 <script lang="ts" setup>
+import { useQ2P } from '~/store/q2p.pinia'
 const { t } = useI18n()
 
 const $q = useQuasar()

@@ -1,5 +1,4 @@
 import { Notify } from 'quasar'
-import { useI18n as useVueI18n } from 'vue-i18n'
 
 export default defineNuxtPlugin(async () => {
   // Only enable PWA in runs where the Vite PWA plugin is active.
@@ -28,20 +27,10 @@ export default defineNuxtPlugin(async () => {
     },
   })
 
-  // Helper to safely get i18n
-  const getI18n = () => {
-    try {
-      return useVueI18n()
-    } catch (e) {
-      return null
-    }
-  }
-
   // Show a Quasar notification when the app can work offline
   watch(offlineReady, (ready) => {
     if (ready) {
-      const i18n = getI18n()
-      const t = i18n?.t || ((key: string) => key)
+      const { t } = useI18n()
       Notify.create({
         message: t('button.offline_ready'),
         color: 'positive',
@@ -54,8 +43,7 @@ export default defineNuxtPlugin(async () => {
   // When a new version is available, prompt and reload after activating the new SW
   watch(needRefresh, (refresh) => {
     if (refresh) {
-      const i18n = getI18n()
-      const t = i18n?.t || ((key: string) => key)
+      const { t } = useI18n()
       Notify.create({
         message: t('button.new_content'),
         color: 'primary',

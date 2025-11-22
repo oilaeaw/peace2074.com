@@ -1,5 +1,7 @@
 <script setup lang="ts">
 import { onMounted, ref } from '#imports'
+import { useLocaleHead } from '#i18n'
+import { appName as APP_NAME } from '@app/constants'
 
 // Do not render the splash on the server — wrap it with <client-only>
 // in the template to avoid SSR/client markup mismatches.
@@ -20,7 +22,7 @@ onMounted(() => {
 // Generate localized head metadata using nuxt-i18n v9 API (use defaults for compatibility)
 const i18nHead = useLocaleHead()
 useHead(() => ({
-  title: appName,
+  title: APP_NAME,
   htmlAttrs: {
     lang: i18nHead.value.htmlAttrs!.lang,
   },
@@ -39,8 +41,9 @@ useHead(() => ({
       <div class="splash-content">
         <q-img :src="logoSrc" alt="Logo" class="splash-logo" />
         <div class="splash-title">
-          {{ appName }}
+          {{ APP_NAME }}
         </div>
+    </div>
     </div>
   </client-only>
   <NuxtLayout>

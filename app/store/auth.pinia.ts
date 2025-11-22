@@ -63,7 +63,8 @@ export const useAuthStore = defineStore('auth', () => {
   async function logout() {
     // Call server to clear http-only auth cookie
     try {
-      if (isClient)
+      // Use standard client environment check; `isClient` was undefined in tests.
+      if (import.meta.client)
         await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
     }
     catch (e) {
@@ -105,7 +106,8 @@ export const useAuthStore = defineStore('auth', () => {
       catch {}
       throw new Error('No credential created')
     }
-    _user.value = credential
+    // This is a placeholder; map credential to your UserT shape when integrating WebAuthn
+    _user.value = credential as any
     try { $q.notify({ message: 'Login successful', type: 'positive' }) }
     catch {}
   }

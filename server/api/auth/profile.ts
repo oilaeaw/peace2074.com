@@ -1,4 +1,5 @@
 import { getServerSession } from '#auth'
+import { createError, readBody } from 'h3'
 import User from '@server/models/user'
 
 export default defineEventHandler(async (event) => {
@@ -21,7 +22,8 @@ export default defineEventHandler(async (event) => {
   const userId = (session.user as any).id
 
   // Update the user in the database
-  const updatedUser = await User.findByIdAndUpdate(userId, {
+  const U: any = User as any
+  const updatedUser = await U.findByIdAndUpdate(userId, {
     first_name: body.first_name,
     last_name: body.last_name,
   }, { new: true }).lean()

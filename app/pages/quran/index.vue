@@ -10,9 +10,8 @@ definePageMeta({
   auth: false, // This page should be public
 })
 
-// const q2p = useQ2P()
 const router = useRouter()
-const suras = computed<QDBI[]>(() => useQ2P().GetQ)
+const suras = computed<QDBI[]>(() => useQ2P().Book)
 
 const surasLeft = computed(() => suras.value.filter((_: QDBI, i: number) => i % 2 === 0))
 const surasRight = computed(() => suras.value.filter((_: QDBI, i: number) => i % 2 === 1))
@@ -25,23 +24,24 @@ function showTranslation(sura: QDBI) {
   // Only show translation if it differs from the sura name
   return sura.e_name && sura.e_name !== sura.name
 }
+
+function getAriaLabel(sura: QDBI) {
+  const translation = showTranslation(sura) ? `, ${sura.e_name}` : ''
+  return `${t('pages.quran.sura.name')} ${sura.id}: ${sura.name}${translation}`
+}
 </script>
 
 <template>
   <q-page padding class="islamic-design rtl-quran">
+    <h2 class="sr-only">{{ t('pages.quran.pageTitle') }}</h2>
     <div class="mushaf-columns">
       <div class="mushaf-column">
-        <div
+        <NuxtLink
           v-for="sura in surasLeft"
           :key="sura.id"
+          :to="`/quran/${sura.id}`"
           class="sura-card islamic-card sura-hover"
-          tabindex="0"
-          role="button"
-          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${
-            sura.total_verses
-          } ${t('pages.quran.sura.totverses')}`"
-          @click="navToSura(sura.id)"
-          @keyup.enter="navToSura(sura.id)"
+          :aria-label="getAriaLabel(sura)"
         >
           <div class="sura-header">
             <span class="sura-id">{{ sura.id }}</span>
@@ -58,20 +58,15 @@ function showTranslation(sura: QDBI) {
             <span class="sura-type">{{ sura.type }}</span>
             <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
           </div>
-        </div>
+        </NuxtLink>
       </div>
       <div class="mushaf-column">
-        <div
+        <NuxtLink
           v-for="sura in surasRight"
           :key="sura.id"
+          :to="`/quran/${sura.id}`"
           class="sura-card islamic-card sura-hover"
-          tabindex="0"
-          role="button"
-          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${
-            sura.total_verses
-          } ${t('pages.quran.sura.totverses')}`"
-          @click="navToSura(sura.id)"
-          @keyup.enter="navToSura(sura.id)"
+          :aria-label="getAriaLabel(sura)"
         >
           <div class="sura-header">
             <span class="sura-id">{{ sura.id }}</span>
@@ -88,7 +83,7 @@ function showTranslation(sura: QDBI) {
             <span class="sura-type">{{ sura.type }}</span>
             <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
           </div>
-        </div>
+        </NuxtLink>
       </div>
     </div>
   </q-page>
@@ -98,6 +93,17 @@ function showTranslation(sura: QDBI) {
 .islamic-design {
   background: var(--background-pattern);
   color: var(--text-color);
+}
+.sr-only {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border-width: 0;
 }
 .rtl-quran {
   direction: rtl;

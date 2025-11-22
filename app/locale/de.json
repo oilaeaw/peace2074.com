@@ -33,12 +33,50 @@
         "totverses": "Anzahl der Verse",
         "bookmark": "Lesezeichen"
       },
-      "holynames": "Heilige Namen"
+      "holynames": "Heilige Namen",
+      "notfoundDetail": "Die angeforderte Sure oder der Vers wurde nicht gefunden."
     },
     "miracles": {
-      "pageTitle": "Wunderseite"
+      "pageTitle": "Wunderseite",
+      "linguisticPilotTitle": "Linguistischer Pilot",
+      "numericExamplesTitle": "Beispiele numerischer Wunder im Koran",
+      "visualizer": {
+        "heading": "Quran-Buchstaben-Visualizer",
+        "scope": "Bereich",
+        "scopeWholeBook": "Gesamter Koran",
+        "scopeSingleSura": "Einzelne Sure",
+        "scopeSingleVerse": "Einzelner Vers",
+        "sura": "Sure",
+        "verse": "Vers",
+        "cellSize": "Zellgröße",
+        "gap": "Abstand",
+        "maxWidth": "Maximale Breite",
+        "draw": "Zeichnen",
+        "downloadPng": "PNG herunterladen",
+        "legendSummary": "Die Legende zeigt {count} Buchstaben. Bei sehr viel Text werden Stichproben genommen, um riesige Bilder zu vermeiden."
+      },
+      "metrics": {
+        "chars": "Zeichen",
+        "words": "Wörter",
+        "unique": "Einzigartige"
+      },
+      "changeVerse": "Vers wechseln",
+      "numericExamples": {
+        "oppositesTitle": "Wiederholung gegensätzlicher Wörter:",
+        "oppositesBody": "Die Häufigkeit mancher Gegensatzpaare ist gleich, z. B. „Welt“ und „Jenseits“ (je 115), „Engel“ und „Teufel“ (je 88) sowie „Licht“ und „Finsternis“ (je 24).",
+        "structureTitle": "Beziehungen zwischen Anzahlen von Wörtern, Buchstaben, Versen und Suren:",
+        "structureBody": "Fokus auf Zahlenmustern, etwa dass der Koran 114 Kapitel (Suren) umfasst.",
+        "conceptsTitle": "Beziehungen zwischen Wörtern und Konzepten:",
+        "conceptsBody": "Verknüpfung von Wiederholungszahlen bestimmter Wörter mit Realwelt-Zahlen, z. B. erscheint das Wort „Monat“ 12 Mal (Anzahl der Monate im Jahr).",
+        "lettersTitle": "Buchstabenzahl in bestimmten Versen:",
+        "lettersBody": "In einigen Versen entspricht die Buchstabenzahl einer im Vers genannten Zahl."
+      }
+    },
+    "main": {
+      "offlineMessage": "Sie scheinen offline zu sein. Bitte prüfen Sie Ihre Verbindung."
     }
   },
+  "The requested Sura or Ayah could not be found.": "Die angeforderte Sure oder der Vers wurde nicht gefunden.",
   "general": {
     "Home": "Startseite",
     "SiteTitle": "Peace2074",

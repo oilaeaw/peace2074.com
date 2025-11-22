@@ -1,31 +1,50 @@
 <script lang="ts" setup>
-import { storeToRefs } from 'pinia'
+const props = defineProps({
+  /**
+   * The list of items to display.
+   */
+  items: {
+    type: Array as () => string[],
+    default: () => [],
+  },
+  /**
+   * The currently active index (1-based).
+   */
+  activeIndex: {
+    type: Number,
+    default: -1,
+  },
+  /**
+   * A flag to determine if data is available to render.
+   */
+  hasData: {
+    type: Boolean,
+    default: true,
+  },
+})
 
-const q2p = useQ2P()
-const { Index } = storeToRefs(q2p)
-const quran = q2p.GetQ
-const names = q2p.FahrasP
-const router = useRouter()
-function navToLok(lok: number) {
-  // Always use 1-based index for setIndex
-  const idx = lok + 1
-  q2p.setIndex(idx)
-  router.push(`/quran/${idx}`)
+const emit = defineEmits(['item-click'])
+
+function onItemClick(index: number) {
+  emit('item-click', index)
 }
 </script>
 
 <template>
   <div>
-    <ol v-if="quran" class="column q-mt-xl q-pt-lg text-center">
-      <nuxt-link
-        v-for="(item, L) in names"
-        :key="L"
-        class="q-mx-xs cursor-pointer text-center"
-  :class="{ 'active-sura': Index === L + 1 }"
-  @click="navToLok(L)"
-      >
-        {{ L + 1 }}-{{ item }}
-      </nuxt-link>
+    <ol v-if="hasData && items.length > 0" class="column q-mt-xl q-pt-lg text-center">
+      <li v-for="(item, index) in items" :key="index">
+        <!-- Use a scoped slot to allow for custom rendering, with a default -->
+        <slot name="item" :item="item" :index="index" :is-active="activeIndex === index + 1">
+          <a
+            class="q-mx-xs cursor-pointer text-center"
+            :class="{ 'active-sura': activeIndex === index + 1 }"
+            @click.prevent="onItemClick(index)"
+          >
+            {{ index + 1 }}-{{ item }}
+          </a>
+        </slot>
+      </li>
     </ol>
     <div v-else class="q-mt-xl q-pt-lg text-center">
       <p>No data available</p>
@@ -34,6 +53,11 @@ function navToLok(lok: number) {
 </template>
 
 <style scoped>
+/* Add list-style-none to remove default bullet points */
+ol {
+  list-style-type: none;
+  padding: 0;
+}
 .active-sura {
   /* No background! */
   color: var(--active-sura-color, #1a5e1a) !important;
@@ -44,7 +68,7 @@ function navToLok(lok: number) {
   outline: none;
 }
 
-.nuxt-link {
+.nuxt-link, a {
   transition:
     background 0.2s,
     color 0.2s,

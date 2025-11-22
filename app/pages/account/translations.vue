@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref, reactive, computed, onBeforeMount } from "#imports";
+import { useAuthStore } from '~/store/auth.pinia'
 
 const locales = ref<string[]>([]);
 const selected = ref("en.json");

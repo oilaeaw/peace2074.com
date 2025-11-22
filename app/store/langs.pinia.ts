@@ -19,7 +19,6 @@ export const useLangsStore = defineStore('langs', () => {
       name: 'Русский',
     },
   ])
-
   const locale = ref('')
 
   function setLocale(newLocale: string) {
