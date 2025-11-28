@@ -3,8 +3,6 @@ import { fileURLToPath } from 'node:url'
 export default defineNuxtConfig({
   // Use the app/ directory as the source for pages/layouts/components
   srcDir: './app',
-  // Nitro compatibility date to silence startup warning
-  compatibilityDate: '2025-11-15',
   modules: [
     'nuxt-quasar-ui',
     '@sidebase/nuxt-auth',
@@ -13,6 +11,7 @@ export default defineNuxtConfig({
     '@nuxtjs/color-mode',
     '@pinia/nuxt',
     '@vueuse/nuxt',
+     '@pinia/colada-nuxt',
     ...(process.env.VITE_PLUGIN_PWA ? ['@vite-pwa/nuxt'] as const : []),
   ],
   
@@ -114,7 +113,10 @@ export default defineNuxtConfig({
     dirs: [
       'shared',
       'server/utils',
+      // Corrected path: Pinia stores live in app/store (not app/stores)
       'app/store',
+      // Ensure composables directory is auto-imported (add if exists)
+      'app/composables',
     ],
   },
 

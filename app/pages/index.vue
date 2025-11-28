@@ -4,6 +4,16 @@ import { useOnline } from '@vueuse/core'
 import { useLangsStore } from '~/store/langs.pinia'
 const { t } = useI18n()
 const _myLangsStore = useLangsStore()
+// Debug: log i18n readiness (remove after fixing 500 navigation issue)
+if (process.client) {
+  // Wrap in try/catch to avoid throwing during SSR build
+  try {
+    console.debug('[index.vue] i18n t typeof:', typeof t)
+  }
+  catch (e) {
+    console.debug('[index.vue] i18n t inspection failed:', e)
+  }
+}
 definePageMeta({
   layout: 'default',
   title: 'navigation.HomePageTitle',
