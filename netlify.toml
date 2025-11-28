@@ -4,8 +4,8 @@
 
 [build]
 	command = "pnpm run build"
-	# Nuxt Nitro Netlify preset outputs static assets to .output/public; use that for publish to ensure assets are served.
-	publish = ".output/public"
+	# Nuxt Nitro Netlify preset outputs static assets to dist/
+	publish = "dist"
 
 [build.environment]
 	NODE_VERSION = "20"
