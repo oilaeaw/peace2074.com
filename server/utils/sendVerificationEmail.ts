@@ -1,24 +1,39 @@
-import nodemailer from 'nodemailer'
-
 export async function sendVerificationEmail(email: string, token: string) {
-  // Configure your SMTP or email service here
-  const transporter = nodemailer.createTransport({
-    host: import.meta.env.SMTP_HOST,
-    port: Number(import.meta.env.SMTP_PORT),
-    secure: false,
-    auth: {
-      user: import.meta.env.SMTP_USER,
-      pass: import.meta.env.SMTP_PASS,
-    },
-  })
+	const verifyUrl = `${import.meta.env.BASE_URL || 'http://localhost:3001'}/api/auth/verify-email?token=${token}`
 
-  const verifyUrl = `${import.meta.env.BASE_URL || 'http://localhost:3001'}/api/auth/verify-email?token=${token}`
-  const mailOptions = {
-    from: import.meta.env.SMTP_FROM || 'peace2074@yourdomain.com',
-    to: email,
-    subject: 'Verify your email',
-    html: `<p>Thank you for signing up! Please verify your email by clicking the link below:</p><p><a href="${verifyUrl}">${verifyUrl}</a></p>`,
-  }
+	const templateParams = {
+		to_email: email,
+		verify_url: verifyUrl,
+		// Add any other variables your EmailJS template expects
+	}
 
-  await transporter.sendMail(mailOptions)
+	const data = {
+		service_id: import.meta.env.EMAILJS_SERVICE_ID,
+		template_id: import.meta.env.EMAILJS_TEMPLATE_ID,
+		user_id: import.meta.env.EMAILJS_PUBLIC_KEY,
+		template_params: templateParams,
+		accessToken: import.meta.env.EMAILJS_PRIVATE_KEY,
+	}
+
+	try {
+		const response = await fetch('https://api.emailjs.com/api/v1.0/email/send', {
+			method: 'POST',
+			headers: {
+				'Content-Type': 'application/json',
+			},
+			body: JSON.stringify(data),
+		})
+
+		if (!response.ok) {
+			const errorText = await response.text()
+			throw new Error(`Failed to send verification email: ${response.status} ${response.statusText} - ${errorText}`)
+		}
+
+		// Email sent successfully
+		console.log('Verification email sent successfully via EmailJS.')
+	}
+	catch (error) {
+		console.error('Error sending verification email with EmailJS:', error)
+		throw error
+	}
 }
