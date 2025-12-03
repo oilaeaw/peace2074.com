@@ -1,7 +1,6 @@
-import { eventHandler } from "h3"
+import { defineEventHandler } from 'h3'
 
-// Learn more: https://nitro.build/guide/routing
-export default eventHandler((event) => {
+export default defineEventHandler(() => {
   return `
     <!DOCTYPE html>
     <html lang="en">
@@ -10,32 +9,47 @@ export default eventHandler((event) => {
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Peace2074.com - Islamic Platform</title>
       <style>
-        body { font-family: Arial, sans-serif; max-width: 800px; margin: 50px auto; padding: 20px; }
-        .header { text-align: center; margin-bottom: 40px; }
-        .api-list { background: #f5f5f5; padding: 20px; border-radius: 8px; }
-        .endpoint { margin: 10px 0; }
-        .method { color: #007bff; font-weight: bold; }
+        body { 
+          font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+          max-width: 800px; 
+          margin: 50px auto; 
+          padding: 20px;
+          background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+          color: white;
+          min-height: 100vh;
+        }
+        .container {
+          background: rgba(255, 255, 255, 0.1);
+          backdrop-filter: blur(10px);
+          padding: 40px;
+          border-radius: 20px;
+          text-align: center;
+        }
+        h1 { font-size: 2.5em; margin-bottom: 20px; }
+        .subtitle { font-size: 1.2em; opacity: 0.9; margin-bottom: 40px; }
+        .status { 
+          background: rgba(0, 255, 0, 0.2); 
+          padding: 15px; 
+          border-radius: 10px;
+          margin: 20px 0;
+        }
       </style>
     </head>
     <body>
-      <div class="header">
+      <div class="container">
         <h1>🕌 Peace2074.com</h1>
-        <p>Islamic Platform API - Built with Nitro & Deno</p>
-      </div>
-      
-      <div class="api-list">
-        <h2>📡 Available API Endpoints</h2>
-        <div class="endpoint"><span class="method">GET</span> <a href="/api">/api</a> - API Status</div>
-        <div class="endpoint"><span class="method">GET</span> <a href="/api/health">/api/health</a> - Health Check</div>
-        <div class="endpoint"><span class="method">POST</span> /api/auth/register - User Registration</div>
-        <div class="endpoint"><span class="method">POST</span> /api/auth/login - User Login</div>
-      </div>
-      
-      <div style="margin-top: 40px; text-align: center;">
-        <p>🚀 <strong>Status:</strong> Running on Deno + Nitro</p>
-        <p>📖 Learn more from <a href="https://nitro.build/guide" target="_blank">Nitro Documentation</a></p>
+        <p class="subtitle">Fresh Nitro + Deno Islamic Platform</p>
+        
+        <div class="status">
+          <h2>✅ Server Status: Running</h2>
+          <p>🚀 <strong>Powered by:</strong> Nitro + Deno</p>
+          <p>🌟 <strong>No Vercel:</strong> Pure clean setup</p>
+          <p>📅 <strong>Started:</strong> ${new Date().toLocaleString()}</p>
+        </div>
+        
+        <p>Ready to build amazing Islamic features! 🌙</p>
       </div>
     </body>
     </html>
-  `;
-});
+  `
+})

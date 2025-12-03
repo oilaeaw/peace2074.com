@@ -1,8 +1,7 @@
-node_modules
-dist
-.data
-.nitro
-.cache
-.output
+# Peace2074.com - NO VERCEL
+*.log
+.output/
+.nitro/
+node_modules/
 .env
-.env.local
+.DS_Store

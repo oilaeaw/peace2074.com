@@ -5,16 +5,11 @@
   "tasks": {
     "dev": "deno run --allow-all npm:nitropack/cli dev",
     "build": "deno run --allow-all npm:nitropack/cli build",
-    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
-    "start": "deno run --allow-net --allow-read .output/server/index.mjs"
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs"
   },
   "imports": {
     "nitropack": "npm:nitropack@^2.12.4",
-    "h3": "npm:h3@^1.15.4",
-    "mongoose": "npm:mongoose@^8.0.0",
-    "bcryptjs": "npm:bcryptjs@^2.4.3",
-    "jsonwebtoken": "npm:jsonwebtoken@^9.0.0",
-    "@auth/core": "npm:@auth/core@^0.41.1"
+    "h3": "npm:h3@^1.15.4"
   },
   "compilerOptions": {
     "allowJs": true,

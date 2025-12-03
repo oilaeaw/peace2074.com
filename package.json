@@ -4,16 +4,12 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "build": "nitro build",
     "dev": "nitro dev",
+    "build": "nitro build",
     "preview": "deno run --allow-net --allow-read .output/server/index.mjs"
   },
   "dependencies": {
-    "h3": "^1.15.4",
     "nitropack": "^2.12.4",
-    "mongoose": "^8.0.0",
-    "bcryptjs": "^2.4.3",
-    "jsonwebtoken": "^9.0.0",
-    "@auth/core": "^0.41.1"
+    "h3": "^1.15.4"
   }
 }
