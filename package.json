@@ -2,11 +2,12 @@
   "name": "peace2074-com",
   "version": "3.0.0",
   "type": "module",
-  "private": true,
+  "private": false,
   "scripts": {
     "dev": "nitro dev",
     "build": "nitro build",
-    "preview": "deno run --allow-net --allow-read .output/server/index.mjs"
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
+    "generate": "nitro build --preset=netlify"
   },
   "dependencies": {
     "nitropack": "^2.12.4",
