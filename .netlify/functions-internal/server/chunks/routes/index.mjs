@@ -6,6 +6,9 @@ import 'node:buffer';
 import 'node:fs';
 import 'node:path';
 import 'node:crypto';
+import 'mongoose';
+import '#auth';
+import '@server/utils/abilities';
 
 const index = defineEventHandler(async () => {
   return {

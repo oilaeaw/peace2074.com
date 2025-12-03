@@ -4,7 +4,10 @@ import { EventEmitter } from 'node:events';
 import { Buffer as Buffer$1 } from 'node:buffer';
 import { promises, existsSync } from 'node:fs';
 import { resolve, dirname, join } from 'node:path';
-import { createHash } from 'node:crypto';
+import nodeCrypto, { createHash } from 'node:crypto';
+import mongoose from 'mongoose';
+import { getToken } from '#auth';
+import { defineAbilitiesFor } from '@server/utils/abilities';
 
 const suspectProtoRx = /"(?:_|\\u0{2}5[Ff]){2}(?:p|\\u0{2}70)(?:r|\\u0{2}72)(?:o|\\u0{2}6[Ff])(?:t|\\u0{2}74)(?:o|\\u0{2}6[Ff])(?:_|\\u0{2}5[Ff]){2}"\s*:/;
 const suspectConstructorRx = /"(?:c|\\u0063)(?:o|\\u006[Ff])(?:n|\\u006[Ee])(?:s|\\u0073)(?:t|\\u0074)(?:r|\\u0072)(?:u|\\u0075)(?:c|\\u0063)(?:t|\\u0074)(?:o|\\u006[Ff])(?:r|\\u0072)"\s*:/;
@@ -92,7 +95,7 @@ function encodeQueryValue(input) {
 function encodeQueryKey(text) {
   return encodeQueryValue(text).replace(EQUAL_RE, "%3D");
 }
-function decode(text = "") {
+function decode$1(text = "") {
   try {
     return decodeURIComponent("" + text);
   } catch {
@@ -100,10 +103,10 @@ function decode(text = "") {
   }
 }
 function decodeQueryKey(text) {
-  return decode(text.replace(PLUS_RE, " "));
+  return decode$1(text.replace(PLUS_RE, " "));
 }
 function decodeQueryValue(text) {
-  return decode(text.replace(PLUS_RE, " "));
+  return decode$1(text.replace(PLUS_RE, " "));
 }
 
 function parseQuery(parametersString = "") {
@@ -210,7 +213,7 @@ function withQuery(input, query) {
   parsed.search = stringifyQuery(mergedQuery);
   return stringifyParsedURL(parsed);
 }
-function getQuery(input) {
+function getQuery$1(input) {
   return parseQuery(parseURL(input).search);
 }
 function isEmptyURL(url) {
@@ -284,6 +287,53 @@ function stringifyParsedURL(parsed) {
   const host = parsed.host || "";
   const proto = parsed.protocol || parsed[protocolRelative] ? (parsed.protocol || "") + "//" : "";
   return proto + auth + host + pathname + search + hash;
+}
+
+function parse(str, options) {
+  if (typeof str !== "string") {
+    throw new TypeError("argument str must be a string");
+  }
+  const obj = {};
+  const opt = {};
+  const dec = opt.decode || decode;
+  let index = 0;
+  while (index < str.length) {
+    const eqIdx = str.indexOf("=", index);
+    if (eqIdx === -1) {
+      break;
+    }
+    let endIdx = str.indexOf(";", index);
+    if (endIdx === -1) {
+      endIdx = str.length;
+    } else if (endIdx < eqIdx) {
+      index = str.lastIndexOf(";", eqIdx - 1) + 1;
+      continue;
+    }
+    const key = str.slice(index, eqIdx).trim();
+    if (opt?.filter && !opt?.filter(key)) {
+      index = endIdx + 1;
+      continue;
+    }
+    if (void 0 === obj[key]) {
+      let val = str.slice(eqIdx + 1, endIdx).trim();
+      if (val.codePointAt(0) === 34) {
+        val = val.slice(1, -1);
+      }
+      obj[key] = tryDecode(val, dec);
+    }
+    index = endIdx + 1;
+  }
+  return obj;
+}
+function decode(str) {
+  return str.includes("%") ? decodeURIComponent(str) : str;
+}
+function tryDecode(str, decode2) {
+  try {
+    return decode2(str);
+  } catch {
+    return str;
+  }
 }
 
 const NODE_TYPES = {
@@ -694,6 +744,10 @@ function sendError(event, error, debug) {
 function isError(input) {
   return input?.constructor?.__h3_error__ === true;
 }
+
+function getQuery(event) {
+  return getQuery$1(event.path || "");
+}
 function isMethod(event, expected, allowHead) {
   if (typeof expected === "string") {
     if (event.method === expected) {
@@ -720,6 +774,12 @@ function getRequestHeaders(event) {
   }
   return _headers;
 }
+function getRequestHeader(event, name) {
+  const headers = getRequestHeaders(event);
+  const value = headers[name.toLowerCase()];
+  return value;
+}
+const getHeader = getRequestHeader;
 function getRequestHost(event, opts = {}) {
   if (opts.xForwardedHost) {
     const _header = event.node.req.headers["x-forwarded-host"];
@@ -747,6 +807,7 @@ function getRequestURL(event, opts = {}) {
 }
 
 const RawBodySymbol = Symbol.for("h3RawBody");
+const ParsedBodySymbol = Symbol.for("h3ParsedBody");
 const PayloadMethods$1 = ["PATCH", "POST", "PUT", "DELETE"];
 function readRawBody(event, encoding = "utf8") {
   assertMethod(event, PayloadMethods$1);
@@ -814,6 +875,26 @@ function readRawBody(event, encoding = "utf8") {
   const result = encoding ? promise.then((buff) => buff.toString(encoding)) : promise;
   return result;
 }
+async function readBody(event, options = {}) {
+  const request = event.node.req;
+  if (hasProp(request, ParsedBodySymbol)) {
+    return request[ParsedBodySymbol];
+  }
+  const contentType = request.headers["content-type"] || "";
+  const body = await readRawBody(event);
+  let parsed;
+  if (contentType === "application/json") {
+    parsed = _parseJSON(body, options.strict ?? true);
+  } else if (contentType.startsWith("application/x-www-form-urlencoded")) {
+    parsed = _parseURLEncodedBody(body);
+  } else if (contentType.startsWith("text/")) {
+    parsed = body;
+  } else {
+    parsed = _parseJSON(body, options.strict ?? false);
+  }
+  request[ParsedBodySymbol] = parsed;
+  return parsed;
+}
 function getRequestWebStream(event) {
   if (!PayloadMethods$1.includes(event.method)) {
     return;
@@ -847,6 +928,35 @@ function getRequestWebStream(event) {
       });
     }
   });
+}
+function _parseJSON(body = "", strict) {
+  if (!body) {
+    return void 0;
+  }
+  try {
+    return destr(body, { strict });
+  } catch {
+    throw createError$1({
+      statusCode: 400,
+      statusMessage: "Bad Request",
+      message: "Invalid JSON body"
+    });
+  }
+}
+function _parseURLEncodedBody(body) {
+  const form = new URLSearchParams(body);
+  const parsedForm = /* @__PURE__ */ Object.create(null);
+  for (const [key, value] of form.entries()) {
+    if (hasProp(parsedForm, key)) {
+      if (!Array.isArray(parsedForm[key])) {
+        parsedForm[key] = [parsedForm[key]];
+      }
+      parsedForm[key].push(value);
+    } else {
+      parsedForm[key] = value;
+    }
+  }
+  return parsedForm;
 }
 
 function handleCacheHeaders(event, opts) {
@@ -901,6 +1011,13 @@ function sanitizeStatusCode(statusCode, defaultStatusCode = 200) {
     return defaultStatusCode;
   }
   return statusCode;
+}
+
+function parseCookies(event) {
+  return parse(event.node.req.headers.cookie || "");
+}
+function getCookie(event, name) {
+  return parseCookies(event)[name];
 }
 function splitCookiesString(cookiesString) {
   if (Array.isArray(cookiesString)) {
@@ -1024,6 +1141,10 @@ function setResponseHeaders(event, headers) {
   }
 }
 const setHeaders = setResponseHeaders;
+function setResponseHeader(event, name, value) {
+  event.node.res.setHeader(name, value);
+}
+const setHeader = setResponseHeader;
 function isStream(data) {
   if (!data || typeof data !== "object") {
     return false;
@@ -4052,7 +4173,7 @@ function createRouteRulesHandler(ctx) {
         }
         target = joinURL(target.slice(0, -3), targetPath);
       } else if (event.path.includes("?")) {
-        const query = getQuery(event.path);
+        const query = getQuery$1(event.path);
         target = withQuery(target, query);
       }
       return sendRedirect(event, target, routeRules.redirect.statusCode);
@@ -4067,7 +4188,7 @@ function createRouteRulesHandler(ctx) {
         }
         target = joinURL(target.slice(0, -3), targetPath);
       } else if (event.path.includes("?")) {
-        const query = getQuery(event.path);
+        const query = getQuery$1(event.path);
         target = withQuery(target, query);
       }
       return proxyRequest(event, target, {
@@ -4202,17 +4323,241 @@ async function errorHandler(error, event) {
   // H3 will handle fallback
 }
 
+function defineNitroPlugin(def) {
+  return def;
+}
+
+const _FuJWBC4RR2B2MtrXkPZr6cgFX02V3L_d6JRm77CwGYs = defineNitroPlugin(() => {
+  const nodeWebCrypto = nodeCrypto.webcrypto;
+  if (typeof globalThis.crypto === "undefined") {
+    globalThis.crypto = nodeWebCrypto || {};
+  }
+  if (typeof globalThis.crypto.hash !== "function") {
+    globalThis.crypto.hash = async (alg, data) => {
+      let buf;
+      if (typeof data === "string")
+        buf = Buffer$1.from(data);
+      else if (data instanceof ArrayBuffer)
+        buf = Buffer$1.from(new Uint8Array(data));
+      else if (data instanceof Uint8Array)
+        buf = Buffer$1.from(data);
+      else buf = Buffer$1.from(String(data));
+      const algMap = {
+        "SHA-256": "sha256",
+        "SHA256": "sha256",
+        "sha-256": "sha256",
+        "SHA-1": "sha1",
+        "SHA1": "sha1",
+        "MD5": "md5"
+      };
+      const nodeAlg = algMap[alg] || String(alg).toLowerCase();
+      const hash = nodeCrypto.createHash(nodeAlg).update(buf).digest();
+      return hash.buffer.slice(hash.byteOffset, hash.byteOffset + hash.byteLength);
+    };
+  }
+  try {
+    const nc = nodeCrypto;
+    if (typeof nc.hash !== "function") {
+      nc.hash = (alg, data, encoding) => {
+        let buf;
+        if (typeof data === "string")
+          buf = Buffer$1.from(data);
+        else if (data instanceof ArrayBuffer)
+          buf = Buffer$1.from(new Uint8Array(data));
+        else if (data instanceof Uint8Array)
+          buf = Buffer$1.from(data);
+        else buf = Buffer$1.from(String(data));
+        const algMap = {
+          "SHA-256": "sha256",
+          "SHA256": "sha256",
+          "sha-256": "sha256",
+          "SHA-1": "sha1",
+          "SHA1": "sha1",
+          "MD5": "md5"
+        };
+        const nodeAlg = algMap[alg] || String(alg).toLowerCase();
+        const result = nodeCrypto.createHash(nodeAlg).update(buf).digest(encoding);
+        return result;
+      };
+    }
+  } catch {
+  }
+});
+
+const _wHYB4IxQQL4qRfh0z17R0QJrXY5h8TTTIPe8UMdcmtk = defineNitroPlugin((nitroApp) => {
+  try {
+    const h3App = nitroApp == null ? void 0 : nitroApp.h3App;
+    if (!h3App)
+      return;
+    h3App.options = h3App.options || {};
+    const prevOnError = h3App.options.onError;
+    h3App.options.onError = (err, event) => {
+      try {
+        if (typeof prevOnError === "function") {
+          const res = prevOnError(err, event);
+          if (res !== void 0)
+            return res;
+        }
+      } catch (e) {
+        if (false)
+          ;
+      }
+      if (err instanceof Error) {
+        return sendError(event, err);
+      }
+      const statusCode = typeof err === "object" && err && "statusCode" in err ? Number(err.statusCode) || 500 : 500;
+      const data = typeof err === "object" && err ? err : { value: err };
+      const message = typeof (err == null ? void 0 : err.message) === "string" ? err.message : typeof err === "string" ? err : "Unhandled error";
+      const wrapped = createError$1({
+        statusCode,
+        statusMessage: "Internal Server Error",
+        message,
+        data
+      });
+      return sendError(event, wrapped);
+    };
+  } catch (e) {
+    console.warn("[error-normalize] failed to set error handler", (e == null ? void 0 : e.message) || e);
+  }
+});
+
+const _gQNeM2ECaWklaz9bg4vCcBBCAHdYK3JTsXTqXVBE90 = defineNitroPlugin(() => {
+  try {
+    process.on("unhandledRejection", (reason) => {
+      console.error("[unhandledRejection]", (reason == null ? void 0 : reason.stack) || reason);
+    });
+    process.on("uncaughtException", (err) => {
+      console.error("[uncaughtException]", (err == null ? void 0 : err.stack) || err);
+    });
+  } catch {
+  }
+});
+
+const _wBAplEMmDpB_xPXj4fXL2wfrX0CONPZr2jNvN9qQNcQ = defineNitroPlugin(async () => {
+  const config = useRuntimeConfig();
+  try {
+    if (mongoose.connection.readyState !== 1) {
+      await mongoose.connect(config.mongodbUri);
+      console.log("MongoDB connected successfully.");
+    }
+  } catch (error) {
+    console.error("MongoDB connection error:", error);
+  }
+});
+
+const _PdPPEuLls7g8t8A4MKd8_B8mCQmBxy2kkMPaeTxPyI = defineNitroPlugin(() => {
+});
+
 const plugins = [
-  
+  _FuJWBC4RR2B2MtrXkPZr6cgFX02V3L_d6JRm77CwGYs,
+_wHYB4IxQQL4qRfh0z17R0QJrXY5h8TTTIPe8UMdcmtk,
+_gQNeM2ECaWklaz9bg4vCcBBCAHdYK3JTsXTqXVBE90,
+_wBAplEMmDpB_xPXj4fXL2wfrX0CONPZr2jNvN9qQNcQ,
+_PdPPEuLls7g8t8A4MKd8_B8mCQmBxy2kkMPaeTxPyI
 ];
 
+const _j5k9MQ = defineEventHandler(async (event) => {
+  const url = getRequestURL(event);
+  if (url.pathname.startsWith("/api/admin")) {
+    const token = await getToken({ event });
+    const ability = defineAbilitiesFor(token);
+    if (!ability.can("manage", "all")) {
+      throw createError$1({
+        statusCode: 403,
+        statusMessage: "Forbidden: Admins only."
+      });
+    }
+  }
+});
+
+const _c7k7hw = defineEventHandler((_event) => {
+});
+
+const _lazy_kgHreY = () => import('../routes/api/auth/_..._.mjs');
+const _lazy_uPW2e_ = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.a; });
+const _lazy_7MwyGc = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.c; });
+const _lazy_g1YV8O = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.d; });
+const _lazy_FY3Cxv = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.b; });
+const _lazy_lDz6fs = () => import('../routes/api/auth/github/auth-url.mjs');
+const _lazy_zSraUg = () => import('../routes/api/auth/github/callback-url.mjs');
+const _lazy_fYqrmc = () => import('../routes/api/auth/google/auth-url.mjs');
+const _lazy_Mdk4X1 = () => import('../routes/api/auth/google/callback-url.mjs');
+const _lazy_LAbXDK = () => import('../routes/api/auth/me.mjs');
+const _lazy_Ozz4fX = () => import('../routes/api/auth/profile.mjs');
+const _lazy_KLqypb = () => import('../routes/api/auth/register.post.mjs');
+const _lazy_5_RWsF = () => import('../routes/api/auth/resend-verification.mjs');
+const _lazy_Kuq5qp = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.s; });
+const _lazy_CLW1xy = () => import('../routes/api/auth/validate-jwt.mjs').then(function (n) { return n.v; });
+const _lazy_eYpkRv = () => import('../routes/api/auth/verify-email.mjs');
+const _lazy_E6GlzI = () => import('../routes/api/bookmark/_id_.delete.mjs');
+const _lazy_aR9osh = () => import('../routes/api/bookmark/_id_.put.mjs');
+const _lazy_Rsi3Hy = () => import('../routes/api/bookmark/bookmarks.delete.mjs');
+const _lazy_TSiLpm = () => import('../routes/api/bookmark/bookmarks.get.mjs');
+const _lazy_Gyu5a1 = () => import('../routes/api/bookmark/bookmarks.post.mjs');
+const _lazy_W87hZc = () => import('../routes/api/bookmark/bookmarks.put.mjs');
+const _lazy_fN06dR = () => import('../routes/api/bookmark/bookmarks.mjs');
+const _lazy_J_w9LV = () => import('../routes/api/bookmarks.mjs');
+const _lazy_5hwPT_ = () => import('../routes/api/dev/debug-session.mjs');
+const _lazy_akaAI1 = () => import('../routes/api/dev/make-admin.mjs');
+const _lazy_6_7QRM = () => import('../routes/api/dev/oauth-logs.mjs');
 const _lazy_kFYoFQ = () => import('../routes/api/health.mjs');
+const _lazy_5JiNFl = () => import('../routes/api/holynames.mjs');
+const _lazy_k0a7Cg = () => import('../routes/api/identity-webhook.mjs');
 const _lazy_sP_Jr6 = () => import('../routes/index.mjs');
+const _lazy_CbOeLu = () => import('../routes/api/pageview.mjs');
+const _lazy_GaJIZw = () => import('../routes/api/quran.mjs');
+const _lazy_JSYWHf = () => import('../routes/api/quran/_sura_.mjs');
+const _lazy_njbS_P = () => import('../routes/api/socket-status.mjs');
+const _lazy_oh8Xfc = () => import('../routes/api/tanslations.mjs');
+const _lazy_nZcukz = () => import('../routes/api/index.get.mjs');
+const _lazy_9b1eVD = () => import('../routes/api/index.post.mjs');
+const _lazy_NQkU4e = () => import('../routes/api/tasbeeh/tasbeeh.get.mjs');
+const _lazy_AC6cOc = () => import('../routes/api/tasbeeh/tasbeeh.post.mjs');
 const _lazy_EunosZ = () => import('../routes/index2.mjs');
 
 const handlers = [
+  { route: '', handler: _j5k9MQ, lazy: false, middleware: true, method: undefined },
+  { route: '', handler: _c7k7hw, lazy: false, middleware: true, method: undefined },
+  { route: '/api/auth/**', handler: _lazy_kgHreY, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/admin', handler: _lazy_uPW2e_, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/check-username', handler: _lazy_7MwyGc, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/dev-cookie', handler: _lazy_g1YV8O, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/dev-login', handler: _lazy_FY3Cxv, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/github/auth-url', handler: _lazy_lDz6fs, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/github/callback-url', handler: _lazy_zSraUg, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/google/auth-url', handler: _lazy_fYqrmc, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/google/callback-url', handler: _lazy_Mdk4X1, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/me', handler: _lazy_LAbXDK, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/profile', handler: _lazy_Ozz4fX, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/register', handler: _lazy_KLqypb, lazy: true, middleware: false, method: "post" },
+  { route: '/api/auth/resend-verification', handler: _lazy_5_RWsF, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/signup', handler: _lazy_Kuq5qp, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/validate-jwt', handler: _lazy_CLW1xy, lazy: true, middleware: false, method: undefined },
+  { route: '/api/auth/verify-email', handler: _lazy_eYpkRv, lazy: true, middleware: false, method: undefined },
+  { route: '/api/bookmark/:id', handler: _lazy_E6GlzI, lazy: true, middleware: false, method: "delete" },
+  { route: '/api/bookmark/:id', handler: _lazy_aR9osh, lazy: true, middleware: false, method: "put" },
+  { route: '/api/bookmark/bookmarks', handler: _lazy_Rsi3Hy, lazy: true, middleware: false, method: "delete" },
+  { route: '/api/bookmark/bookmarks', handler: _lazy_TSiLpm, lazy: true, middleware: false, method: "get" },
+  { route: '/api/bookmark/bookmarks', handler: _lazy_Gyu5a1, lazy: true, middleware: false, method: "post" },
+  { route: '/api/bookmark/bookmarks', handler: _lazy_W87hZc, lazy: true, middleware: false, method: "put" },
+  { route: '/api/bookmark/bookmarks', handler: _lazy_fN06dR, lazy: true, middleware: false, method: undefined },
+  { route: '/api/bookmarks', handler: _lazy_J_w9LV, lazy: true, middleware: false, method: undefined },
+  { route: '/api/dev/debug-session', handler: _lazy_5hwPT_, lazy: true, middleware: false, method: undefined },
+  { route: '/api/dev/make-admin', handler: _lazy_akaAI1, lazy: true, middleware: false, method: undefined },
+  { route: '/api/dev/oauth-logs', handler: _lazy_6_7QRM, lazy: true, middleware: false, method: undefined },
   { route: '/api/health', handler: _lazy_kFYoFQ, lazy: true, middleware: false, method: undefined },
+  { route: '/api/holynames', handler: _lazy_5JiNFl, lazy: true, middleware: false, method: undefined },
+  { route: '/api/identity-webhook', handler: _lazy_k0a7Cg, lazy: true, middleware: false, method: undefined },
   { route: '/api', handler: _lazy_sP_Jr6, lazy: true, middleware: false, method: undefined },
+  { route: '/api/pageview', handler: _lazy_CbOeLu, lazy: true, middleware: false, method: undefined },
+  { route: '/api/quran', handler: _lazy_GaJIZw, lazy: true, middleware: false, method: undefined },
+  { route: '/api/quran/:sura', handler: _lazy_JSYWHf, lazy: true, middleware: false, method: undefined },
+  { route: '/api/socket-status', handler: _lazy_njbS_P, lazy: true, middleware: false, method: undefined },
+  { route: '/api/tanslations', handler: _lazy_oh8Xfc, lazy: true, middleware: false, method: undefined },
+  { route: '/api/tasbeeh', handler: _lazy_nZcukz, lazy: true, middleware: false, method: "get" },
+  { route: '/api/tasbeeh', handler: _lazy_9b1eVD, lazy: true, middleware: false, method: "post" },
+  { route: '/api/tasbeeh/tasbeeh', handler: _lazy_NQkU4e, lazy: true, middleware: false, method: "get" },
+  { route: '/api/tasbeeh/tasbeeh', handler: _lazy_AC6cOc, lazy: true, middleware: false, method: "post" },
   { route: '/', handler: _lazy_EunosZ, lazy: true, middleware: false, method: undefined }
 ];
 
@@ -4403,5 +4748,5 @@ function getCacheHeaders(url) {
   return {};
 }
 
-export { defineEventHandler as d, handler as h };
+export { getQuery as a, getCookie as b, createError$1 as c, defineEventHandler as d, setResponseStatus as e, setHeader as f, getHeader as g, handler as h, readBody as r, sendError as s, useRuntimeConfig as u };
 //# sourceMappingURL=nitro.mjs.map
