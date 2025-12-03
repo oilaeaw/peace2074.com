@@ -2,7 +2,6 @@
   ignore = "git diff --quiet $CACHED_COMMIT_REF $COMMIT_REF"
   command = "curl -fsSL https://deno.land/install.sh | sh && export PATH=$PATH:$HOME/.deno/bin && deno install && deno task build"
   publish = "public"
-  functions = ".netlify/functions-internal/server"
 
 [build.environment]
   NODE_VERSION = "18"
@@ -10,14 +9,6 @@
   SKIP_DEPENDENCY_INSTALL = "true"
 
 [[redirects]]
-  from = "/api/*"
-  to = "/.netlify/functions-internal/server"
-  status = 200
-
-[[redirects]]
   from = "/*"
-  to = "/.netlify/functions-internal/server"
+  to = "/.netlify/functions-internal/server/server"
   status = 200
-
-[functions]
-  directory = ".output/server"
