@@ -2,6 +2,7 @@
   "version": "5",
   "specifiers": {
     "npm:h3@^1.15.4": "1.15.4",
+    "npm:nitropack@*": "2.12.9_rollup@4.53.3_magicast@0.5.1_db0@0.3.4_ioredis@5.8.2",
     "npm:nitropack@^2.12.4": "2.12.9_rollup@4.53.3_magicast@0.5.1_db0@0.3.4_ioredis@5.8.2"
   },
   "npm": {
@@ -2205,12 +2206,6 @@
     "dependencies": [
       "npm:h3@^1.15.4",
       "npm:nitropack@^2.12.4"
-    ],
-    "packageJson": {
-      "dependencies": [
-        "npm:h3@^1.15.4",
-        "npm:nitropack@^2.12.4"
-      ]
-    }
+    ]
   }
 }
