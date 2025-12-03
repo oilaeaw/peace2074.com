@@ -1,0 +1,24 @@
+import Bookmark from '@server/models/bookmark'
+import { ensureDbConnection } from '@server/utils/database'
+
+export default defineEventHandler(async (event) => {
+  await ensureDbConnection()
+  const { getUserFromEvent } = await import('../../utils/auth')
+  const body = await readBody(event)
+    const userData = await getUserFromEvent(event) as any
+    const userId = userData?.id
+  if (!userId) {
+    throw createError({ statusCode: 401, statusMessage: 'Not authenticated' })
+  }
+  try {
+    const payload = {
+      userId,
+      bookmark: body.bookmark || body?.bookmark?.value || body,
+    }
+    const newBookmark = await Bookmark.create(payload)
+    return newBookmark
+  }
+  catch (err) {
+    throw createError({ statusCode: 500, statusMessage: 'Failed to create bookmark', data: err })
+  }
+})
