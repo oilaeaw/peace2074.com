@@ -1,20 +1,20 @@
 [build]
-  command = "npm run build"
-  publish = ".output/public"
-  functions = ".output/server"
+  command = "curl -fsSL https://deno.land/install.sh | sh && export PATH=$PATH:$HOME/.deno/bin && deno install && deno task build"
+  publish = "public"
+  functions = ".netlify/functions-internal/server"
 
 [build.environment]
   NODE_VERSION = "18"
-  NPM_FLAGS = "--production=false"
+  DENO_DEPLOY = "true"
 
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/server"
+  to = "/.netlify/functions-internal/server"
   status = 200
 
 [[redirects]]
   from = "/*"
-  to = "/index.html"
+  to = "/.netlify/functions-internal/server"
   status = 200
 
 [functions]
