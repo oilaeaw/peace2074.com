@@ -104,3 +104,30 @@ Deno.test("Response times are acceptable", async () => {
   
   console.log("✅ Response time tests passed");
 });
+
+Deno.test("About page loads successfully", async () => {
+  console.log(`🧪 Testing about page at: ${BASE_URL}/about`);
+  const response = await fetchWithTimeout(`${BASE_URL}/about`);
+  assertEquals(response.status, 200, "About page should return 200 status");
+  const html = await response.text();
+  assertStringIncludes(html, "<title>About Us - Peace 2074</title>", "About page should have correct title");
+  console.log("✅ About page test passed");
+});
+
+Deno.test("Contact page loads successfully", async () => {
+  console.log(`🧪 Testing contact page at: ${BASE_URL}/contact`);
+  const response = await fetchWithTimeout(`${BASE_URL}/contact`);
+  assertEquals(response.status, 200, "Contact page should return 200 status");
+  const html = await response.text();
+  assertStringIncludes(html, "<title>Contact Us - Peace 2074</title>", "Contact page should have correct title");
+  console.log("✅ Contact page test passed");
+});
+
+Deno.test("Favicon is available", async () => {
+  console.log(`🧪 Testing favicon at: ${BASE_URL}/favicon.ico`);
+  const response = await fetchWithTimeout(`${BASE_URL}/favicon.ico`);
+  assertEquals(response.status, 200, "Favicon should be available");
+  assertStringIncludes(response.headers.get("content-type") || "", "image/x-icon", "Favicon should have correct content type");
+  await response.body?.cancel(); // Consume body to prevent resource leak
+  console.log("✅ Favicon test passed");
+});
