@@ -1,18 +1,10 @@
 import { defineEventHandler } from 'h3'
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(() => {
     return {
-        message: "🕌 Peace2074.com API is running!",
-        status: "healthy",
+        message: '🕌 Peace2074.com API is running!',
+        status: 200,
         timestamp: new Date().toISOString(),
-        server: "Nitro + Deno",
-        deployment: "Netlify Ready",
-        features: [
-            "Authentication",
-            "Quran API",
-            "Prayer times",
-            "Bookmarks",
-            "Tasbeeh counter"
-        ]
+        server: 'Nitro + Deno'
     }
 })

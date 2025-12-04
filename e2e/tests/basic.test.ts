@@ -10,11 +10,11 @@ async function fetchWithTimeout(url: string, timeout = 5000): Promise<Response> 
   
   try {
     const response = await fetch(url, { signal: controller.signal });
-    clearTimeout(timeoutId);
     return response;
   } catch (error) {
-    clearTimeout(timeoutId);
     throw error;
+  } finally {
+    clearTimeout(timeoutId);
   }
 }
 
@@ -40,7 +40,7 @@ Deno.test("API endpoint responds correctly", async () => {
   
   const data = await response.json();
   assertEquals(data.message, "🕌 Peace2074.com API is running!", "API should return correct message");
-  assertEquals(data.status, "healthy", "API should report healthy status");
+  assertEquals(data.status, 200, "API should report healthy status");
   assertEquals(data.server, "Nitro + Deno", "API should report correct server type");
   
   console.log("✅ API test passed");
@@ -54,7 +54,7 @@ Deno.test("Health check endpoint works", async () => {
   
   const data = await response.json();
   assertEquals(data.status, "✅ Healthy", "Health check should report healthy");
-  assertStringIncludes(data.timestamp, "2025", "Should have valid timestamp");
+  assertStringIncludes(data.timestamp, new Date().getFullYear().toString(), "Should have valid timestamp");
   
   console.log("✅ Health check test passed");
 });
@@ -64,6 +64,7 @@ Deno.test("Content-Type headers are correct", async () => {
   
   // Test homepage HTML
   const htmlResponse = await fetchWithTimeout(BASE_URL);
+  await htmlResponse.text(); // Consume body
   assertStringIncludes(
     htmlResponse.headers.get("content-type") || "",
     "text/html",
@@ -72,6 +73,7 @@ Deno.test("Content-Type headers are correct", async () => {
   
   // Test API JSON
   const apiResponse = await fetchWithTimeout(`${BASE_URL}/api`);
+  await apiResponse.json(); // Consume body
   assertStringIncludes(
     apiResponse.headers.get("content-type") || "",
     "application/json",
@@ -86,12 +88,14 @@ Deno.test("Response times are acceptable", async () => {
   
   // Test homepage response time
   const startHome = Date.now();
-  await fetchWithTimeout(BASE_URL);
+  const homeRes = await fetchWithTimeout(BASE_URL);
+  await homeRes.text();
   const homeTime = Date.now() - startHome;
   
   // Test API response time
   const startApi = Date.now();
-  await fetchWithTimeout(`${BASE_URL}/api`);
+  const apiRes = await fetchWithTimeout(`${BASE_URL}/api`);
+  await apiRes.json();
   const apiTime = Date.now() - startApi;
   
   console.log(`📊 Homepage response time: ${homeTime}ms`);
