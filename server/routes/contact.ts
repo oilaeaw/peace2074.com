@@ -4,20 +4,19 @@ export default defineEventHandler(() => {
     <html lang="en">
       <head>
         <meta charset="utf-8" />
-        <title>Peace 2074 - Home</title>
+        <title>Contact Us - Peace 2074</title>
       </head>
       <body>
         <header>
           <nav>
-            <strong>Navigation:</strong>
             <a href="/">Home</a> |
-            <a href="/about">About Us</a> |
-            <a href="/contact">Contact Us</a>
+            <a href="/about">About</a> |
+            <a href="/contact">Contact</a>
           </nav>
         </header>
         <main>
-          <h1>Welcome to Peace 2074</h1>
-          <p>This is the main page. You should see navigation links above.</p>
+          <h1>Contact Us</h1>
+          <p>This is the contact page for Peace 2074.</p>
           <p>Powered by Deno and Nitro.</p>
         </main>
       </body>

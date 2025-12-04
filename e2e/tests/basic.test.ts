@@ -25,9 +25,8 @@ Deno.test("Homepage loads successfully", async () => {
   assertEquals(response.status, 200, "Homepage should return 200 status");
   
   const html = await response.text();
-  assertStringIncludes(html, "Peace2074.com", "Page should contain site title");
-  assertStringIncludes(html, "Islamic Platform", "Page should mention Islamic Platform");
-  assertStringIncludes(html, "Nitro + Deno", "Page should mention tech stack");
+  assertStringIncludes(html, "Peace 2074", "Page should contain site title");
+  assertStringIncludes(html, "Powered by Deno and Nitro", "Page should mention tech stack");
   
   console.log("✅ Homepage test passed");
 });
@@ -39,9 +38,7 @@ Deno.test("API endpoint responds correctly", async () => {
   assertEquals(response.status, 200, "API should return 200 status");
   
   const data = await response.json();
-  assertEquals(data.message, "🕌 Peace2074.com API is running!", "API should return correct message");
-  assertEquals(data.status, 200, "API should report healthy status");
-  assertEquals(data.server, "Nitro + Deno", "API should report correct server type");
+  assertEquals(data.message, "Hello from the API!", "API should return correct message");
   
   console.log("✅ API test passed");
 });
@@ -53,7 +50,7 @@ Deno.test("Health check endpoint works", async () => {
   assertEquals(response.status, 200, "Health endpoint should return 200 status");
   
   const data = await response.json();
-  assertEquals(data.status, "✅ Healthy", "Health check should report healthy");
+  assertEquals(data.status, "ok", "Health check should report healthy");
   assertStringIncludes(data.timestamp, new Date().getFullYear().toString(), "Should have valid timestamp");
   
   console.log("✅ Health check test passed");

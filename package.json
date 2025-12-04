@@ -1,21 +1,13 @@
 {
-  "name": "peace2074-com",
-  "version": "3.0.0",
-  "type": "module",
-  "private": true,
   "scripts": {
-    "dev": "nuxt dev",
-    "build": "nuxt build",
-    "start": "nuxt start",
-    "preview": "nuxt preview",
+    "dev": "nitro dev",
+    "build": "nitro build --preset=netlify-deno",
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
     "test:e2e": "deno test --allow-all e2e/",
     "test:e2e:local": "deno test --allow-all e2e/ -- --base-url=http://localhost:3000",
     "test:e2e:prod": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app"
   },
   "devDependencies": {
-    "@nuxt/devtools": "^3.1.1"
-  },
-  "dependencies": {
-    "nuxt": "^3.17.5"
+    "nitropack": "latest"
   }
 }

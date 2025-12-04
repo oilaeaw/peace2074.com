@@ -1,10 +1,4 @@
-import { defineEventHandler } from 'h3'
-
-export default defineEventHandler(() => {
-    return {
-        message: '🕌 Peace2074.com API is running!',
-        status: 200,
-        timestamp: new Date().toISOString(),
-        server: 'Nitro + Deno'
-    }
-})
+export default defineEventHandler(() => ({
+  message: 'Hello from the API!',
+  timestamp: new Date().toISOString(),
+}))
