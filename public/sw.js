@@ -1,4 +1,29 @@
-// Dev placeholder to avoid noisy 404s and HTML error overlays in terminal when browsers request /sw.js without PWA enabled.
-// This file is intentionally minimal.
-self.addEventListener('install', () => self.skipWaiting())
-self.addEventListener('activate', () => self.clients.claim())
+const CACHE_NAME = 'peace2074-cache-v1';
+const urlsToCache = [
+  '/',
+  '/api',
+  '/api/health',
+];
+
+self.addEventListener('install', (event) => {
+  event.waitUntil(
+    caches.open(CACHE_NAME)
+      .then((cache) => {
+        console.log('Opened cache');
+        return cache.addAll(urlsToCache);
+      })
+  );
+});
+
+self.addEventListener('fetch', (event) => {
+  event.respondWith(
+    caches.match(event.request)
+      .then((response) => {
+        if (response) {
+          return response;
+        }
+        return fetch(event.request);
+      }
+    )
+  );
+});
