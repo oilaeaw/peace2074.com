@@ -8,6 +8,8 @@ export default defineEventHandler(() => {
       <meta charset="utf-8">
       <meta name="viewport" content="width=device-width, initial-scale=1">
       <title>Peace2074.com - Islamic Platform</title>
+      <link rel="icon" href="/favico.png" type="image/png">
+      <link rel="apple-touch-icon" href="/apple-touch-icon.png">
       <link rel="manifest" href="/pwa">
       <script>
         if ('serviceWorker' in navigator) {

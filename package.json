@@ -4,12 +4,18 @@
   "type": "module",
   "private": true,
   "scripts": {
-    "dev": "nitro dev",
-    "build": "echo 'Using Deno build process'",
-    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
+    "dev": "nuxt dev",
+    "build": "nuxt build",
+    "start": "nuxt start",
+    "preview": "nuxt preview",
     "test:e2e": "deno test --allow-all e2e/",
     "test:e2e:local": "deno test --allow-all e2e/ -- --base-url=http://localhost:3000",
     "test:e2e:prod": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app"
   },
-  "dependencies": {}
+  "devDependencies": {
+    "@nuxt/devtools": "^3.1.1"
+  },
+  "dependencies": {
+    "nuxt": "^3.17.5"
+  }
 }
