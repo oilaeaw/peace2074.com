@@ -5,6 +5,7 @@ export default defineEventHandler(() => {
       <head>
         <meta charset="utf-8" />
         <title>About Us - Peace 2074</title>
+        <link rel="icon" href="/favicon.ico" type="image/x-icon">
       </head>
       <body>
         <header>

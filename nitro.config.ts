@@ -4,4 +4,10 @@ export default defineNitroConfig({
   preset: 'netlify-deno',
   srcDir: 'server',
   compatibilityDate: '2025-12-04',
+  publicAssets: [
+    {
+      dir: 'public',
+      baseURL: '/'
+    }
+  ]
 })
