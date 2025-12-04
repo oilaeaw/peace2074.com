@@ -5,11 +5,15 @@
   "tasks": {
     "dev": "deno run --allow-all npm:nitropack/cli dev",
     "build": "deno run --allow-all npm:nitropack/cli build",
-    "preview": "deno run --allow-net --allow-read .output/server/index.mjs"
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
+    "test:e2e": "deno test --allow-all e2e/",
+    "test:e2e:local": "deno test --allow-all e2e/tests/ -- --base-url=http://localhost:3000",
+    "test:e2e:prod": "deno test --allow-all e2e/tests/ -- --base-url=https://peace2074.netlify.app"
   },
   "imports": {
     "nitropack": "npm:nitropack@^2.12.4",
-    "h3": "npm:h3@^1.15.4"
+    "h3": "npm:h3@^1.15.4",
+    "@std/assert": "https://deno.land/std@0.208.0/assert/mod.ts"
   },
   "compilerOptions": {
     "allowJs": true,

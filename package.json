@@ -6,7 +6,10 @@
   "scripts": {
     "dev": "nitro dev",
     "build": "echo 'Using Deno build process'",
-    "preview": "deno run --allow-net --allow-read .output/server/index.mjs"
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
+    "test:e2e": "deno test --allow-all e2e/",
+    "test:e2e:local": "deno test --allow-all e2e/ -- --base-url=http://localhost:3000",
+    "test:e2e:production": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app"
   },
   "dependencies": {}
 }
