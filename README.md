@@ -46,4 +46,4 @@ Vercel pricing is extremely expensive for our needs. Netlify provides:
 - Great developer experience
 
 ---
-**Built with ❤️ for the Muslim community**
+**Built with ❤️**
