@@ -44,14 +44,14 @@ Use conventional commit messages:
 
 ### Creating a Release
 Releases are automated via GitHub Actions:
-- **Automatic**: Merging to `main`/`master` triggers an automatic patch release
+- **Automatic**: Merging to `main`/`master` triggers an automatic release with version determined by commit types (feat → minor, fix → patch, BREAKING CHANGE → major)
 - **Manual**: Use the "Release" workflow dispatch with the desired release type (patch/minor/major)
 
-Local release commands (for testing):
-- `pnpm run release` - automatic semantic version bump
-- `pnpm run release:patch` - bump patch version (0.0.x)
-- `pnpm run release:minor` - bump minor version (0.x.0)
-- `pnpm run release:major` - bump major version (x.0.0)
+Local release commands (for testing with npm or pnpm):
+- `npm run release` or `pnpm run release` - automatic semantic version bump based on commits
+- `npm run release:patch` or `pnpm run release:patch` - bump patch version (0.0.x)
+- `npm run release:minor` or `pnpm run release:minor` - bump minor version (0.x.0)
+- `npm run release:major` or `pnpm run release:major` - bump major version (x.0.0)
 
 ## Notes
 - Cookies and sessions: use `nuxt-auth-utils` (iron-session). In production, set `SESSION_COOKIE_DOMAIN` to share across apex and www. Avoid setting on public suffix hosts (e.g., Netlify previews).
