@@ -18,6 +18,8 @@ on:
 jobs:
   release:
     runs-on: ubuntu-latest
+    # Skip if the commit is from github-actions bot to prevent infinite loops
+    if: "!contains(github.event.head_commit.message, 'chore(release):')"
     permissions:
       contents: write
       issues: write
@@ -68,7 +70,12 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           TAG=$(git describe --tags --abbrev=0)
+          # Extract release notes for the current version from CHANGELOG.md
+          awk "/^### ${TAG#v}/,/^### [0-9]/" CHANGELOG.md | sed '1d;$d' > /tmp/release-notes.md
+          if [ ! -s /tmp/release-notes.md ]; then
+            echo "Release $TAG" > /tmp/release-notes.md
+          fi
           gh release create "$TAG" \
             --title "$TAG" \
-            --notes-file CHANGELOG.md \
+            --notes-file /tmp/release-notes.md \
             --verify-tag
