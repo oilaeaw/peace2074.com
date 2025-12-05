@@ -18,7 +18,3 @@ All notable changes to this project will be documented in this file. See [standa
 ### Documentation
 
 * improve release workflow and add versioning guide ([2e0c41f](https://github.com/peace2074/peace2074.com/commit/2e0c41ff90204f9580d23495ddd389d39baeed56))
-
-# Changelog
-
-All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
