@@ -1,0 +1,22 @@
+{
+  "types": [
+    { "type": "feat", "section": "Features" },
+    { "type": "fix", "section": "Bug Fixes" },
+    { "type": "chore", "section": "Chores", "hidden": false },
+    { "type": "docs", "section": "Documentation", "hidden": false },
+    { "type": "style", "section": "Styles", "hidden": true },
+    { "type": "refactor", "section": "Code Refactoring", "hidden": false },
+    { "type": "perf", "section": "Performance Improvements" },
+    { "type": "test", "section": "Tests", "hidden": true },
+    { "type": "build", "section": "Build System", "hidden": false },
+    { "type": "ci", "section": "Continuous Integration", "hidden": false }
+  ],
+  "commitUrlFormat": "https://github.com/peace2074/peace2074.com/commit/{{hash}}",
+  "compareUrlFormat": "https://github.com/peace2074/peace2074.com/compare/{{previousTag}}...{{currentTag}}",
+  "issueUrlFormat": "https://github.com/peace2074/peace2074.com/issues/{{id}}",
+  "userUrlFormat": "https://github.com/{{user}}",
+  "releaseCommitMessageFormat": "chore(release): {{currentTag}}",
+  "skip": {
+    "changelog": false
+  }
+}

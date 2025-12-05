@@ -45,5 +45,8 @@ Vercel pricing is extremely expensive for our needs. Netlify provides:
 - Excellent performance
 - Great developer experience
 
+## 📋 Versioning
+This project follows [Semantic Versioning](https://semver.org/) and uses automated releases via GitHub Actions. See [CHANGELOG.md](./CHANGELOG.md) for version history.
+
 ---
 **Built with ❤️ for the Muslim community**

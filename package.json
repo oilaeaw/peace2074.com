@@ -1,13 +1,21 @@
 {
+  "name": "peace2074.com",
+  "version": "1.0.0",
+  "description": "Modern Islamic platform built with Nitro + Deno",
   "scripts": {
     "dev": "nitro dev",
     "build": "nitro build --preset=netlify-deno",
     "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
     "test:e2e": "deno test --allow-all e2e/",
     "test:e2e:local": "deno test --allow-all e2e/ -- --base-url=http://localhost:3000",
-    "test:e2e:prod": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app"
+    "test:e2e:prod": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch"
   },
   "devDependencies": {
-    "nitropack": "latest"
+    "nitropack": "latest",
+    "standard-version": "^9.5.0"
   }
 }

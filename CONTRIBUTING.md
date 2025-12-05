@@ -31,6 +31,28 @@ If you use an automated assistant:
   - `pnpm -s build`
   - `pnpm test` or `pnpm test:run`
 
+## Versioning and Releases
+This project follows [Semantic Versioning](https://semver.org/) and uses [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Commit Message Format
+Use conventional commit messages:
+- `feat: add new feature` - for new features (minor version bump)
+- `fix: resolve bug` - for bug fixes (patch version bump)
+- `docs: update documentation` - for documentation changes
+- `chore: update dependencies` - for maintenance tasks
+- `BREAKING CHANGE:` in commit body - for breaking changes (major version bump)
+
+### Creating a Release
+Releases are automated via GitHub Actions:
+- **Automatic**: Merging to `main`/`master` triggers an automatic patch release
+- **Manual**: Use the "Release" workflow dispatch with the desired release type (patch/minor/major)
+
+Local release commands (for testing):
+- `pnpm run release` - automatic semantic version bump
+- `pnpm run release:patch` - bump patch version (0.0.x)
+- `pnpm run release:minor` - bump minor version (0.x.0)
+- `pnpm run release:major` - bump major version (x.0.0)
+
 ## Notes
 - Cookies and sessions: use `nuxt-auth-utils` (iron-session). In production, set `SESSION_COOKIE_DOMAIN` to share across apex and www. Avoid setting on public suffix hosts (e.g., Netlify previews).
 - Realtime: WebSockets are disabled for the current platform. Client plugin is a no-op; do not reintroduce WS without a deployment plan.
