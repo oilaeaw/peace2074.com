@@ -22,7 +22,7 @@
     "eslint-plugin-format": "^1.1.0",
     "eslint-plugin-import": "^2.0.0",
     "eslint-plugin-unused-imports": "^4.0.0",
-    "nitropack": "latest",
+    "nitropack": "^2.12.9",
     "typescript": "^5.0.0",
     "vitest": "^2.0.0",
     "vue-eslint-parser": "^9.0.0"

@@ -188,7 +188,7 @@ deno test --allow-all e2e/tests/basic.test.ts -- --base-url=http://localhost:300
 
 - Run `pnpm run lint:fix` to auto-fix many common issues
 - Review the ESLint config in `eslint.config.mjs`
-- Check the `.eslintignore` patterns if files are unexpectedly linted
+- Check the `ignores` patterns in `eslint.config.mjs` if files are unexpectedly linted
 
 ## Contributing
 
