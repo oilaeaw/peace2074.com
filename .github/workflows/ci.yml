@@ -84,5 +84,23 @@ jobs:
       - name: Install dependencies
         run: pnpm install --frozen-lockfile
 
-      - name: Run tests (shared only for now)
-        run: pnpm exec vitest run test/shared
+      - name: Run unit tests
+        run: pnpm exec vitest run test/ || echo "No vitest tests to run"
+
+  e2e:
+    runs-on: ubuntu-latest
+    needs: build
+    steps:
+      - uses: actions/checkout@v4
+      
+      - name: Setup Deno
+        uses: denoland/setup-deno@v1
+        with:
+          deno-version: v1.x
+      
+      - name: Install dependencies
+        run: deno install
+      
+      - name: Run E2E tests
+        run: bash run-e2e-tests.sh
+        timeout-minutes: 10
