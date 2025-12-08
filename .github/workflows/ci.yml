@@ -27,6 +27,7 @@ jobs:
 
       - name: Lint
         run: pnpm run lint
+        # Allow pre-existing linting issues while reporting them
         continue-on-error: true
 
   typecheck:
@@ -46,6 +47,7 @@ jobs:
 
       - name: Typecheck
         run: pnpm run typecheck
+        # Allow pre-existing type errors while reporting them
         continue-on-error: true
 
   build:
@@ -91,6 +93,7 @@ jobs:
 
       - name: Run unit tests
         run: pnpm run test
+        # Allow pre-existing test failures while reporting them
         continue-on-error: true
 
   e2e:
