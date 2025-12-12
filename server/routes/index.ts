@@ -6,6 +6,7 @@ export default defineEventHandler(() => {
         <meta charset="utf-8" />
         <title>Peace 2074 - Home</title>
         <link rel="icon" href="/favicon.ico" type="image/x-icon">
+        <link rel="manifest" href="/site.webmanifest">
       </head>
       <body>
         <header>

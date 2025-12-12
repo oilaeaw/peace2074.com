@@ -1,4 +1,4 @@
-import { assertEquals, assertStringIncludes } from "@std/assert";
+import { assertEquals, assertStringIncludes, assert } from "@std/assert";
 
 // Configuration
 const BASE_URL = Deno.args.find(arg => arg.startsWith('--base-url='))?.split('=')[1] || 'http://localhost:3000';
@@ -127,7 +127,9 @@ Deno.test("Favicon is available", async () => {
   console.log(`🧪 Testing favicon at: ${BASE_URL}/favicon.ico`);
   const response = await fetchWithTimeout(`${BASE_URL}/favicon.ico`);
   assertEquals(response.status, 200, "Favicon should be available");
-  assertStringIncludes(response.headers.get("content-type") || "", "image/x-icon", "Favicon should have correct content type");
+  const contentType = response.headers.get("content-type") || "";
+  const isCorrectContentType = contentType.includes("image/x-icon") || contentType.includes("image/vnd.microsoft.icon");
+  assert(isCorrectContentType, `Favicon should have correct content type, but got "${contentType}"`);
   await response.body?.cancel(); // Consume body to prevent resource leak
   console.log("✅ Favicon test passed");
 });

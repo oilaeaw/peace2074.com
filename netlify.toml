@@ -1,5 +1,8 @@
 [build]
-  command = "curl -fsSL https://deno.land/install.sh | sh && export PATH=$PATH:$HOME/.deno/bin && deno install && deno task build"
-  
-[build.environment]
-  NODE_VERSION = "18"
+  command = "npm run build"
+  publish = ".output/public"
+
+[[redirects]]
+  from = "/*"
+  to = "/.netlify/functions/server"
+  status = 200
