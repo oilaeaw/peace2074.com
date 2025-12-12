@@ -19,11 +19,25 @@
 
 ```bash
 # Install dependencies
-deno install
+pnpm install
 
 # Start development server
-deno task dev
+pnpm run dev
 ```
+
+## 🧪 Testing
+
+Comprehensive test suite with unit tests, E2E tests, linting, and type checking.
+
+```bash
+# Run all tests
+pnpm run test          # Unit tests
+pnpm run test:e2e      # E2E tests
+pnpm run lint          # Linting
+pnpm run typecheck     # Type checking
+```
+
+See [TESTING.md](./TESTING.md) for detailed testing documentation.
 
 ## 📦 Deployment
 
