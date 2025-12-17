@@ -1,0 +1,8 @@
+[build]
+  # Install Deno, ensure it's on PATH for the rest of the build, then run the Deno "build" task
+  command = "bash -lc 'curl -fsSL https://deno.land/install.sh | sh && export PATH=\"$HOME/.deno/bin:$PATH\" && deno --version && deno task build'"
+  publish = "dist"
+
+[build.environment]
+  # Ensure Netlify build environment picks up Deno binaries if needed by other processes
+  PATH = "$HOME/.deno/bin:$PATH"
