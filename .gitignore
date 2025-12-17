@@ -1,7 +1,0 @@
-# Peace2074.com - NO VERCEL
-*.log
-.output/
-.nitro/
-node_modules/
-.env
-.DS_Store
