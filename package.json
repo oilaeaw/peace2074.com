@@ -9,7 +9,7 @@
     "dev": "vite",
     "dev22": "nvm use 22 && node --version && node -e \"console.log('Using Node', process.version)\" && vite --port 3333 --open",
     "predev": "node -e \"const [maj, min, patch] = process.versions.node.split('.') ; if (Number(maj) < 22 || (Number(maj)==22 && Number(min)<12)) { console.error('Node 22.12+ required. Current:', process.versions.node); process.exit(1)}\"",
-    "build": "vue-tsc && vite build",
+    "build": "vite build",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",
