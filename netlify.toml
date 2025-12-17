@@ -3,9 +3,6 @@
   command = "bash -lc 'curl -fsSL https://deno.land/install.sh | sh && export PATH=\"$HOME/.deno/bin:$PATH\" && deno --version && deno task build'"
   publish = "dist"
 
-[build.environment]
-  # Ensure Netlify build environment picks up Deno binaries if needed by other processes
-  PATH = "$HOME/.deno/bin:$PATH"
 
 [[redirects]]
   from = "/*"
