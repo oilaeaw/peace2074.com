@@ -9,17 +9,13 @@ test('home -> quran list -> sura detail loads', async ({ page }) => {
     // Go to Quran list
     await page.click('text=Read Quran')
     await page.waitForURL(/\/quran/)
-    // Expect at least one surah tile or list
-    const list = page.locator('a[href^="/quran/"]')
+    // Expect at least one surah tile or list (sura cards are divs)
+    const list = page.locator('.sura-card')
     await expect(list.first()).toBeVisible()
 
-    // Open first sura detail
-    const href = await list.first().getAttribute('href')
-    if (href) {
-        await page.goto(href)
-    } else {
-        await page.goto('/quran/1')
-    }
+    // Open first sura detail by clicking the first card
+    await list.first().click()
+    await page.waitForURL(/\/quran\//)
 
     // Expect Arabic content or verse markers
     await expect(page.locator('.arabic-text').first()).toBeVisible()

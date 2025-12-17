@@ -23,7 +23,9 @@
       "~/*": ["src/*"],
       "~/assets/*": ["src/assets/*"],
       "~/store/*": ["src/stores/*"],
-      "~/app/*": ["src/*"]
+      "~/app/*": ["src/*"],
+      "@shared/*": ["src/shared/*"],
+      "@shared": ["src/shared"]
     }
   },
   "include": [

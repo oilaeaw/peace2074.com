@@ -46,6 +46,7 @@ export default defineConfig({
       "~/assets": fileURLToPath(new URL("./src/assets", import.meta.url)),
       "~/store": fileURLToPath(new URL("./src/stores", import.meta.url)),
       "~/app": fileURLToPath(new URL("./src", import.meta.url)),
+      "@shared": fileURLToPath(new URL("./src/shared", import.meta.url)),
     },
   },
 
