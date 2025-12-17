@@ -6,3 +6,8 @@
 [build.environment]
   # Ensure Netlify build environment picks up Deno binaries if needed by other processes
   PATH = "$HOME/.deno/bin:$PATH"
+
+[[redirects]]
+  from = "/*"
+  to = "/index.html"
+  status = 200
