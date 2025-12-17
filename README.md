@@ -1,66 +1,18 @@
-# Peace2074.com - Islamic Platform
+# Vue 3 + TypeScript + Vite
 
-🕌 Modern Islamic platform built with Nitro + Deno
+This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
-## ✨ Features
-- Prayer times and Quran reading
-- Islamic bookmarks and notes
-- Tasbeeh counter
-- Beautiful modern design
-- **NO VERCEL** - Pure clean architecture
+## Recommended IDE Setup
 
-## 🚀 Tech Stack
-- **Nitro 2.12.4** - Universal server framework
-- **Deno** - Modern JavaScript runtime
-- **TypeScript** - Type safety
-- **H3** - Fast HTTP framework
+- [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
-## 🏃‍♂️ Development
+## Type Support For `.vue` Imports in TS
 
-```bash
-# Install dependencies
-pnpm install
+TypeScript cannot handle type information for `.vue` imports by default, so we replace the `tsc` CLI with `vue-tsc` for type checking. In editors, we need [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin) to make the TypeScript language service aware of `.vue` types.
 
-# Start development server
-pnpm run dev
-```
+If the standalone TypeScript plugin doesn't feel fast enough to you, Volar has also implemented a [Take Over Mode](https://github.com/johnsoncodehk/volar/discussions/471#discussioncomment-1361669) that is more performant. You can enable it by the following steps:
 
-## 🧪 Testing
-
-Comprehensive test suite with unit tests, E2E tests, linting, and type checking.
-
-```bash
-# Run all tests
-pnpm run test          # Unit tests
-pnpm run test:e2e      # E2E tests
-pnpm run lint          # Linting
-pnpm run typecheck     # Type checking
-```
-
-See [TESTING.md](./TESTING.md) for detailed testing documentation.
-
-## 📦 Deployment
-
-### Netlify (Current)
-- Automatically deploys from GitHub
-- Configured with `netlify.toml`
-- Free tier with generous limits
-
-### Build Commands
-```bash
-npm run build     # Production build
-npm run generate  # Netlify-optimized build
-```
-
-## 🌟 Why No Vercel?
-Vercel pricing is extremely expensive for our needs. Netlify provides:
-- More generous free tier
-- Better pricing for scaling
-- Excellent performance
-- Great developer experience
-
-## 📋 Versioning
-This project follows [Semantic Versioning](https://semver.org/) and uses automated releases via GitHub Actions. See [CHANGELOG.md](./CHANGELOG.md) for version history.
-
----
-**Built with ❤️**
+1. Disable the built-in TypeScript Extension
+   1. Run `Extensions: Show Built-in Extensions` from VSCode's command palette
+   2. Find `TypeScript and JavaScript Language Features`, right click and select `Disable (Workspace)`
+2. Reload the VSCode window by running `Developer: Reload Window` from the command palette.
