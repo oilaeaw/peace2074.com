@@ -1,0 +1,37 @@
+{
+  "name": "peace2074.com",
+  "version": "1.1.0",
+  "description": "Modern Islamic platform built with Nitro + Deno",
+  "scripts": {
+    "dev": "nitro dev",
+    "build": "nitro build",
+    "preview": "deno run --allow-net --allow-read .output/server/index.mjs",
+    "lint": "eslint .",
+    "lint:fix": "eslint . --fix",
+    "typecheck": "tsc --noEmit",
+    "test": "vitest run",
+    "test:watch": "vitest watch",
+    "test:e2e": "bash run-e2e-tests.sh",
+    "test:e2e:local": "deno test --allow-all e2e/ -- --base-url=http://localhost:3000",
+    "test:e2e:prod": "deno test --allow-all e2e/ -- --base-url=https://peace2074.netlify.app",
+    "release": "standard-version",
+    "release:minor": "standard-version --release-as minor",
+    "release:major": "standard-version --release-as major",
+    "release:patch": "standard-version --release-as patch"
+  },
+  "devDependencies": {
+    "@antfu/eslint-config": "^3.0.0",
+    "@typescript-eslint/eslint-plugin": "^8.0.0",
+    "@typescript-eslint/parser": "^8.0.0",
+    "@unocss/eslint-plugin": "^66.5.10",
+    "@vue/compiler-sfc": "^3.5.25",
+    "eslint": "^9.0.0",
+    "eslint-plugin-format": "^1.1.0",
+    "eslint-plugin-import": "^2.0.0",
+    "eslint-plugin-unused-imports": "^4.0.0",
+    "nitropack": "^2.12.9",
+    "typescript": "^5.0.0",
+    "vitest": "^2.0.0",
+    "vue-eslint-parser": "^9.0.0"
+  }
+}

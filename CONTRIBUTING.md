@@ -1,0 +1,58 @@
+# Contributing and Change Policy
+
+This repository powers a Nuxt 3 + Nitro SSR app deployed to Netlify. To protect production and avoid surprises, all changes must follow this policy.
+
+## Principles
+- Respect the architecture documented in `.github/copilot-instructions.md`.
+- Prefer file-based Nitro routes under `server/api/*`. The Express router is mounted at `/_express` only—avoid overlap.
+- Keep changes minimal, reversible, and reviewed. Prefer PRs with small diffs.
+- Run quality gates: build, lint/typecheck, and tests must pass before merge.
+
+## Required workflow
+1. Open a PR from a feature branch. No direct pushes to `one` or default branches.
+2. The PR must:
+   - Describe the problem, the solution, and affected areas (files, routes).
+   - Include a quick test plan (manual steps or unit tests if possible).
+   - Pass CI (lint, typecheck, build, tests).
+3. Get approval from a CODEOWNER before merging.
+
+## Copilot Change Protocol
+If you use an automated assistant:
+- Never make sweeping or unrelated edits in a single PR.
+- Always write a short “What changed and why” section in the PR description.
+- Prefer safe defaults and feature flags/env vars for behavior changes.
+- Add temporary debug endpoints under `server/api/dev/*` and return 404 in production.
+
+## Commands
+- Install and start dev: `pnpm install` then `pnpm dev`
+- Quality checks:
+  - `pnpm lint`
+  - `pnpm typecheck`
+  - `pnpm -s build`
+  - `pnpm test` or `pnpm test:run`
+
+## Versioning and Releases
+This project follows [Semantic Versioning](https://semver.org/) and uses [Conventional Commits](https://www.conventionalcommits.org/).
+
+### Commit Message Format
+Use conventional commit messages:
+- `feat: add new feature` - for new features (minor version bump)
+- `fix: resolve bug` - for bug fixes (patch version bump)
+- `docs: update documentation` - for documentation changes
+- `chore: update dependencies` - for maintenance tasks
+- `BREAKING CHANGE:` in commit body - for breaking changes (major version bump)
+
+### Creating a Release
+Releases are automated via GitHub Actions:
+- **Automatic**: Merging to `main`/`master` triggers an automatic release with version determined by commit types (feat → minor, fix → patch, BREAKING CHANGE → major)
+- **Manual**: Use the "Release" workflow dispatch with the desired release type (patch/minor/major)
+
+Local release commands (for testing with npm or pnpm):
+- `npm run release` or `pnpm run release` - automatic semantic version bump based on commits
+- `npm run release:patch` or `pnpm run release:patch` - bump patch version (0.0.x)
+- `npm run release:minor` or `pnpm run release:minor` - bump minor version (0.x.0)
+- `npm run release:major` or `pnpm run release:major` - bump major version (x.0.0)
+
+## Notes
+- Cookies and sessions: use `nuxt-auth-utils` (iron-session). In production, set `SESSION_COOKIE_DOMAIN` to share across apex and www. Avoid setting on public suffix hosts (e.g., Netlify previews).
+- Realtime: WebSockets are disabled for the current platform. Client plugin is a no-op; do not reintroduce WS without a deployment plan.
