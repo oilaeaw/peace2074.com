@@ -1,0 +1,87 @@
+{
+    "name": "Peace2074",
+    "short_name": "Peace2074",
+    "description": "Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more. Learn Islamic knowledge in English, Arabic, German, and Russian.",
+    "start_url": "/",
+    "scope": "/",
+    "display": "standalone",
+    "orientation": "portrait-primary",
+    "theme_color": "#ffffff",
+    "background_color": "#ffffff",
+    "icons": [
+        {
+            "src": "/192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/maskable-icon.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "maskable"
+        },
+        {
+            "src": "/android-chrome-192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "purpose": "any"
+        },
+        {
+            "src": "/android-chrome-512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "purpose": "any"
+        }
+    ],
+    "screenshots": [
+        {
+            "src": "/512x512.png",
+            "sizes": "512x512",
+            "type": "image/png",
+            "form_factor": "wide"
+        },
+        {
+            "src": "/192x192.png",
+            "sizes": "192x192",
+            "type": "image/png",
+            "form_factor": "narrow"
+        }
+    ],
+    "categories": [
+        "education",
+        "reference"
+    ],
+    "shortcuts": [
+        {
+            "name": "Open Quran",
+            "short_name": "Quran",
+            "description": "Open the Quran page",
+            "url": "/quran",
+            "icons": [
+                {
+                    "src": "/192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        },
+        {
+            "name": "Tasbeeh Counter",
+            "short_name": "Tasbeeh",
+            "description": "Open Tasbeeh counter",
+            "url": "/tasbeeh",
+            "icons": [
+                {
+                    "src": "/192x192.png",
+                    "sizes": "192x192"
+                }
+            ]
+        }
+    ]
+}

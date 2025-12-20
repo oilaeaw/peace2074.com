@@ -54,4 +54,14 @@ try {
 // Register Quasar via centralized plugin
 registerQuasar(app as any);
 
+// Register Service Worker for PWA
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
+      // Service worker registration failed, but app will still work
+      console.log('PWA service worker registration failed');
+    });
+  });
+}
+
 app.mount("#app");

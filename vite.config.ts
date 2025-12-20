@@ -4,6 +4,7 @@ import { quasar } from '@quasar/vite-plugin'
 import Components from "unplugin-vue-components/vite";
 import { QuasarResolver } from 'unplugin-vue-components/resolvers'
 import AutoImport from "unplugin-auto-import/vite";
+import { VitePWA } from 'vite-plugin-pwa'
 import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
@@ -36,6 +37,83 @@ export default defineConfig({
       ],
       dts: "src/types/auto-imports.d.ts",
       vueTemplate: true,
+    }),
+
+    // PWA configuration
+    VitePWA({
+      registerType: 'autoUpdate',
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      manifest: {
+        name: 'Peace2074 - Islamic Knowledge Platform',
+        short_name: 'Peace2074',
+        description: 'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
+        icons: [
+          {
+            src: '/192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
+          },
+          {
+            src: '/maskable-icon.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
+          },
+        ],
+        screenshots: [
+          {
+            src: '/512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            form_factor: 'wide',
+          },
+          {
+            src: '/192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            form_factor: 'narrow',
+          },
+        ],
+      },
+      workbox: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        runtimeCaching: [
+          {
+            urlPattern: /^https:\/\/api\.example\.com\/.*/i,
+            handler: 'NetworkFirst',
+            options: {
+              cacheName: 'api-cache',
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 24 * 60 * 60, // 1 day
+              },
+            },
+          },
+          {
+            urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp|ico)$/,
+            handler: 'CacheFirst',
+            options: {
+              cacheName: 'image-cache',
+              expiration: {
+                maxEntries: 200,
+                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
+              },
+            },
+          },
+        ],
+      },
     }),
   ],
 

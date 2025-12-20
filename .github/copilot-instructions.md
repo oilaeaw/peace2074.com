@@ -1,58 +1,84 @@
 ## AI coding guide for this repo (PEACE2074)
 
-This is a Vue 3 + TypeScript + Vite app using Quasar UI, Vue Router, Pinia, and vue-i18n. Use these notes to navigate the codebase and follow its actual patterns.
+Vue 3 + TypeScript + Vite app with Quasar UI, Vue Router, Pinia, and vue-i18n for a multi-language Islamic knowledge platform. Follow existing patterns closely.
 
-### Project shape and architecture
+### Architecture at a glance
 
-- Entry: `src/main.ts` wires Router, Pinia, i18n, FontAwesome, and Quasar (`registerQuasar`).
-- Shell: `src/layouts/AppShell.vue` provides the Quasar layout (header/drawer/page/footer) and renders `<RouterView/>`.
-- Routing: `src/router/routes.ts` exports route constants and meta. Document titles are computed from `meta.titleKey` via i18n in `main.ts` (router.afterEach and locale watch). Prefer setting `meta: { titleKey: 'pages.<x>.<y>' }` over hard-coded strings.
-- Views/Pages: Primary pages live in `src/pages/**` (e.g., `quran/index.vue`, `quran/[id].vue`, `tasbeeh.vue`) and some in `src/views/**` (e.g., `Home.vue`). Dynamic routes use Nuxt-like conventions (`[id].vue`).
-- Components: Shared UI in `src/core/components/**` (auto-registered via unplugin-vue-components + `QuasarResolver`).
-- State: `src/plugins/pinia` creates the Pinia instance; individual stores live in `src/stores/**`.
-- i18n: Locales under `src/locale/{en,ar,de,ru}.json`, exported via `src/locale/index.ts`; configured in `src/i18n.ts` (default `en`).
+**Entry and Shell:** `src/main.ts` initializes Router, Pinia, i18n, FontAwesome, and Quasar. `src/layouts/AppShell.vue` (Quasar layout with header/drawer/page/footer) wraps all pages via `<RouterView/>`.
 
-### Data and APIs (Quran modules)
+**Routing:** `src/router/routes.ts` defines routes with `meta.titleKey` (e.g., `pages.quran.title`) for automatic i18n-driven document titles via `router.afterEach()` in main.ts. Always prefer `titleKey` over hard-coded `title`.
 
-- Use `src/composables/useQ2P.ts` to access Quran data. It prefers HTTP endpoints `/api/quran` and `/api/quran/:id`; on failure, it falls back to bundled data in `src/shared/data/quran.json` and `src/shared/data/chapters/*.json`.
-- When building new Quran features, reuse `useQ2P.init(index, locale)` and its computed getters `GetQ` and `GetSura`. Update or extend local data in `src/shared/data/**` if no API is available.
+**Pages and Components:** Primary pages in `src/pages/**` (using Nuxt-like `[id].vue` for dynamic routes). Some legacy views in `src/views/**`. Shared UI components auto-register from `src/core/components/**` (via unplugin-vue-components + QuasarResolver in vite.config.ts).
 
-### Auto-imports, aliases, and UI
+**State management:** Pinia stores in `src/stores/**` (e.g., `q2p.pinia.ts` for Quran data, `langs.pinia.ts` for locale). Stores with `.pinia.ts` suffix are auto-imported via unplugin-auto-import scanning `src/modules/**/store`.
 
-- Auto components: `vite.config.ts` registers components from `src/core/components` and `src/modules/**/components` and resolves Quasar components automatically.
-- Auto imports: `unplugin-auto-import` adds `vue`, `vue-router`, and `pinia`, and scans `src/modules/**/composables` and `src/modules/**/store`. Type stubs are emitted to `src/types/{auto-imports,components}.d.ts`.
-- Aliases: use `@` and `~` for `src`, and `@shared` for `src/shared`. Prefer alias imports over long relative paths.
+**i18n:** Four locales (en, ar, de, ru) in `src/locale/*.json`, initialized in `src/i18n.ts`. Locale changes propagate automatically through `watch(i18n.global.locale.value)` in AppShell, updating document titles via router's current route.
 
-### Build, dev, and tests
+### Data flow: Quran with fallback strategy
 
-- Node: requires 22.12+ (enforced by `predev`). Package manager: pnpm.
-- Dev server: Vite on port 3000 (`vite.config.ts: server.port = 3000`).
-- Scripts: `dev`, `build`, `preview`, `lint`, `typecheck` (see `package.json`).
-- E2E: Playwright reads tests from `tests/` (`playwright.config.ts`) and auto-starts the dev server with `pnpm run dev` at `http://localhost:3000`.
-  - Current test `tests/e2e.spec.ts` expects a "Read Quran" CTA on home and list items with `.sura-card` on the Quran page. If you change selectors in `src/pages/quran/index.vue`, update the test accordingly (or add `.sura-card` to list items).
-- Unit tests: `vitest.config.ts` points to `test/**` (singular). No unit tests are present by default; add files under `test/` if you create unit tests.
+`src/composables/useQ2P.ts` is the single entry point for Quran data:
 
-### Quasar usage
+1. **Prefers HTTP:** Calls `/api/quran` (list) or `/api/quran/:id` (single sura)
+2. **On API failure:** Falls back to bundled JSON in `src/shared/data/` (quran.json for verses, chapters/{en,ar,...}.json for metadata)
+3. **Usage:** Call `useQ2P().init(index, locale)` to load; access via computed `GetQ` and `GetSura` getters
 
-- Quasar is globally registered in `src/plugins/quasar.ts` with `Notify` plugin enabled; import `useQuasar()` where needed. Global styles come from Quasar CSS and project SCSS in `src/styles/scss/**`.
+When adding new Quran features, reuse this pattern—never fetch directly; always go through useQ2P.
 
-### Practical examples and patterns
+### State management patterns
 
-- Route with translated title: add `meta: { titleKey: 'pages.example.title' }` and a key in locale JSON; the document title updates automatically.
-- Quran list/detail: follow `src/pages/quran/index.vue` and `src/pages/quran/[id].vue`—load via `useQ2P`, show loading/error, and notify via `$q.notify`.
-- Component placement: drop shared components into `src/core/components` to enable auto-registration and typed imports.
+**Composable vs Store distinction:**
 
-### Linting/formatting
+- **Use composable (`useQ2P()`)** for page components that fetch and manage their own data lifecycle. Example: `src/pages/quran/index.vue` calls `useQ2P().init()` in `onMounted`, updates refs reactively, handles loading/error states locally. Each component gets its own instance, preventing cross-page pollution.
+- **Use Pinia store (`useQ2P` from q2p.pinia.ts)** for global state that persists across navigation or is shared by multiple unrelated components (style config, legends, computed maps). Store state is auto-injected and cached. Use when you need consistent data across routes or for frequently accessed reference data.
+- **Pattern:** Pages typically use the composable for data fetching + their own reactive state; the store provides stable, pre-computed data and constants (e.g., `LLegend` for letter-to-number mappings).
 
-- ESLint flat config via `eslint.config.js` (Vue + TS + Prettier). Run `pnpm lint` and `pnpm typecheck`. The alternative `eslint.config.mjs` (antfu) exists but is not the active setup.
+**Real examples:**
 
-### Quick references
+- ✅ Composable: `src/pages/quran/index.vue` uses `useQ2P()` to fetch and manage surah list with local loading/error states
+- ✅ Store: `src/stores/q2p.pinia.ts` maintains `LLegend` (letter-value mappings) and computed style maps for shared use across components
+- ✅ Mixed: A detail page might use composable to fetch current sura, but access store for `LLegend` decorations
 
-- Entry/layout: `src/main.ts`, `src/layouts/AppShell.vue`
-- Routing: `src/router/routes.ts`
-- Data: `src/composables/useQ2P.ts`, `src/shared/data/**`
-- i18n: `src/i18n.ts`, `src/locale/**`
-- Vite/plugins: `vite.config.ts`
-- E2E: `tests/e2e.spec.ts`, `playwright.config.ts`
+**Decision tree:**
 
-Keep documentation concrete: mirror existing patterns; if you introduce new files under `src/modules/**`, they benefit from the auto-import setup configured in Vite.
+1. Does data need to persist across route changes? → Use **Pinia store**
+2. Is it needed by multiple unrelated components? → Use **Pinia store**
+3. Is it page-specific state (loading, form data, local UI)? → Use **composable**
+4. Is it expensive to compute and accessed repeatedly? → Use **Pinia store** with getters
+5. Is it API-fetched data for one page/flow? → Use **composable**, store in Pinia only if needed elsewhere
+
+**When in doubt:** Start with the composable in page components; promote to the store only when the data or computed values are needed by sibling pages or persistent across route changes.
+
+### Auto-imports and aliases
+
+- **Components:** vite.config.ts auto-registers from `src/core/components` and `src/modules/**/components`; Quasar components resolved automatically
+- **Functions/stores:** `unplugin-auto-import` scans `src/modules/**/composables` and `src/modules/**/store` (`.pinia.ts` files)
+- **Aliases:** `@` and `~` → `src`, `@shared` → `src/shared`. Prefer these over relative paths
+
+### Build, dev, test
+
+- **Node:** 22.12+ required (checked by `npm predev` script)
+- **Dev:** `pnpm dev` runs Vite on port 3000
+- **Commands:** `build`, `preview`, `lint` (ESLint + Prettier), `typecheck` (vue-tsc)
+- **E2E:** Playwright tests in `tests/e2e.spec.ts` expect `.sura-card` selector on Quran page and "Read Quran" text on home
+- **Unit tests:** Directory is `test/` (singular); add files there as needed; runs via vitest
+
+### Quasar integration
+
+Globally registered in `src/plugins/quasar.ts` with Notify plugin enabled. Import `useQuasar()` to show notifications: `$q.notify({ type: 'positive', message: '...' })`. Styles combine Quasar CSS + project SCSS in `src/styles/scss/`.
+
+### Common patterns
+
+1. **Add translated route:** Create page file, add route to `src/router/routes.ts` with `meta: { titleKey: 'pages.new.title' }`, add translation key to `src/locale/*.json`
+2. **Quran list/detail:** Follow `src/pages/quran/index.vue` and `[id].vue`—use `useQ2P().init()`, handle loading/error, notify user changes
+3. **Global component:** Drop into `src/core/components/MyComponent.vue`, auto-imported and typed
+4. **Locale-aware data:** Store locale in `useI18n().locale.value`, watch for changes if caching
+
+### Legacy code and gradual migration
+
+**Two-directory situation:** Some routes import from `src/views/` (e.g., Home.vue, contact.vue, privacy.vue) while new routes use `src/pages/`. Both are functional; prefer migrating to `src/pages/**` for new routes to enable auto-component registration and follow the Nuxt-like convention.
+
+**Migration path:** When refactoring legacy views, move the `.vue` file to `src/pages/`, update the import in `src/router/routes.ts` from `import` to dynamic `() => import()`, and ensure `meta.titleKey` is set. Legacy files in `src/views/quran/` (e.g., `[...lok].vue`) are unused; safe to remove once `src/pages/quran/` routes are stable.
+
+### Linting and type-checking
+
+ESLint (flat config, `eslint.config.js` is active; ignore `.mjs` variant) with Prettier. Run `pnpm lint` and `pnpm typecheck` before commits.
