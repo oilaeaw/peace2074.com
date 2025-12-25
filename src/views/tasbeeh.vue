@@ -3,10 +3,22 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
+import athanSrc from "@/assets/audio/Athan.mp3";
 import useCore from "~/composables/useCore";
 const { t } = useI18n();
 const router = useRouter();
 const $q = useQuasar();
+
+// Athan audio: manual play only, not tied to tasbeeh logic
+const athanAudio = typeof Audio !== "undefined" ? new Audio(athanSrc) : null;
+
+function playAthan() {
+  if (!athanAudio) return;
+  try {
+    athanAudio.currentTime = 0;
+    void athanAudio.play().catch(() => {});
+  } catch {}
+}
 
 // Reactive state
 const currentCount = ref(0);
@@ -277,6 +289,15 @@ watch(
         <p class="page-subtitle">
           {{ t("tasbeeh.subtitle") || "Digital Prayer Beads" }}
         </p>
+        <div class="athan-controls">
+          <q-btn
+            flat
+            color="primary"
+            icon="volume_up"
+            :label="t('athan.play') || 'Play Athan'"
+            @click="playAthan"
+          />
+        </div>
       </div>
 
       <!-- Current Tasbeeh Display -->

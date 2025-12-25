@@ -12,6 +12,16 @@
 
         <q-input dense round placeholder="Search..." class="search" v-model="search" debounce="300" />
 
+        <q-btn
+          dense
+          round
+          color="primary"
+          icon="volume_up"
+          class="q-ml-md"
+          @click="playAthan"
+          aria-label="Play Athan"
+        />
+
         <q-select dense outlined :options="langs" v-model="localeValue" style="max-width:120px; margin-left:12px" />
       </q-toolbar>
     </q-header>
@@ -50,6 +60,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import athanSrc from '@/assets/audio/Athan.mp3'
 
 const leftDrawer = ref(false)
 const search = ref('')
@@ -63,6 +74,17 @@ const langs = [
 ]
 
 watch(localeValue, (v) => { locale.value = v })
+
+// Global Athan player - accessible from every page via header button
+const athanAudio = typeof Audio !== 'undefined' ? new Audio(athanSrc) : null
+
+function playAthan () {
+  if (!athanAudio) return
+  try {
+    athanAudio.currentTime = 0
+    void athanAudio.play().catch(() => {})
+  } catch {}
+}
 </script>
 
 <style scoped>
