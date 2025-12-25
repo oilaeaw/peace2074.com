@@ -8,54 +8,90 @@ type Sura = { id: number; name: string; e_name?: string; total_verses?: number; 
 const quranData = ref<Sura[]>([])
 const currentIndex = ref<number>(1)
 const currentLang = ref<string>('en')
+const API_BASE = (import.meta as any).env?.VITE_QURAN_API_BASE?.replace(/\/$/, '') ||
+    (typeof window !== 'undefined' ? window.location.origin.replace(/\/$/, '') : '')
+
+async function fetchJsonSequential(urls: string[]): Promise<any> {
+    for (const url of urls) {
+        try {
+            const res = await fetch(url)
+            if (!res.ok) continue
+            const ct = String(res.headers.get('content-type') || '')
+            if (!ct.includes('application/json')) continue
+            return await res.json()
+        } catch {
+            // try next
+        }
+    }
+    throw new Error('All API endpoints failed')
+}
 
 export default function useQ2P() {
+    // Build local fallback data structure from imported JSON
+    function buildLocalData() {
+        const ready: Sura[] = []
+        const chapters = Array.isArray(hdetails) ? hdetails : []
+
+        chapters.forEach((chapter: any) => {
+            const chapterId = chapter.id || chapter.number
+            const versesForChapter = (hbook as any)[String(chapterId)] || []
+
+            ready.push({
+                id: chapterId,
+                name: chapter.name || '',
+                e_name: chapter.translation || chapter.transliteration || '',
+                type: chapter.type || '',
+                total_verses: versesForChapter.length,
+                ayat: versesForChapter.map((v: any) => ({
+                    verse: v.verse,
+                    text: v.text,
+                    translation: v.translation,
+                })),
+            })
+        })
+        return ready
+    }
+
     async function init(index = 1, lang = 'en') {
         currentLang.value = lang
         try {
-            // Prefer server API for normalized data. If index provided, fetch single sura; else fetch list.
+            // Try API first (Nitro: /quran/:id, or Waelio: /api/quran?s=ID)
             if (!Number.isNaN(Number(index)) && Number(index) > 0) {
-                const res = await fetch(`/api/quran/${Number(index)}`)
-                if (res.ok) {
-                    const payload = await res.json()
-                    const sura = (payload && payload.sura) || null
-                    if (sura) {
-                        // Ensure list contains sura for consistency
-                        const existing = quranData.value.find(s => s.id === Number(index))
-                        if (existing) Object.assign(existing, sura)
-                        else quranData.value.push(sura)
-                    }
+                const id = Number(index)
+                const payload = await fetchJsonSequential([
+                    // Local Nitro API
+                    `${API_BASE}/quran/${id}`,
+                    // Remote Waelio-style API
+                    `${API_BASE}/api/quran?s=${id}`,
+                    `${API_BASE}/quran?s=${id}`,
+                    `/api/quran?s=${id}`,
+                ])
+                const sura = (payload && (payload.sura || payload)) || null
+                if (sura && (sura.id || sura.chapter || sura.number)) {
+                    // normalize id field
+                    const sid = Number(sura.id || sura.chapter || sura.number || id)
+                    const normalized = Object.assign({}, sura, { id: sid })
+                    const existing = quranData.value.find(s => s.id === sid)
+                    if (existing) Object.assign(existing, normalized)
+                    else quranData.value.push(normalized as any)
                 } else {
-                    throw new Error(`API ${res.status}`)
+                    throw new Error('API payload missing sura')
                 }
             } else {
-                const res = await fetch('/api/quran')
-                if (res.ok) quranData.value = await res.json()
-                else throw new Error(`API ${res.status}`)
+                const data = await fetchJsonSequential([
+                    // Local Nitro list endpoint, then generic /api/quran
+                    `${API_BASE}/quran`,
+                    `${API_BASE}/api/quran`,
+                    `/api/quran`,
+                ])
+                if (Array.isArray(data)) quranData.value = data as Sura[]
+                else if (data && typeof data === 'object' && Array.isArray((data as any).list)) quranData.value = (data as any).list
+                else throw new Error('API returned non-array data')
             }
         } catch (e) {
-            // Fallback: keep existing data or empty
+            // Fallback to local bundled data
             console.warn('API load failed, falling back to local data', e)
-            try {
-                // Build a minimal sura list from shipped data
-                const ready: any[] = []
-                Object.keys(hdetails as any).forEach((key) => {
-                    const id = Number(key)
-                    const metaSample = ((hdetails as any)[key] || [])[0] as any
-                    const qr = ((hbook as any)[key] || []) as Array<any>
-                    ready.push({
-                        id,
-                        name: String(metaSample?.suraName || metaSample?.name || ''),
-                        e_name: String(metaSample?.translation || metaSample?.suraName || ''),
-                        type: String(metaSample?.type || ''),
-                        total_verses: qr.length,
-                        ayat: qr,
-                    })
-                })
-                quranData.value = ready
-            } catch (ex) {
-                console.warn('Failed to load local fallback data', ex)
-            }
+            quranData.value = buildLocalData()
         }
         setIndex(index)
     }

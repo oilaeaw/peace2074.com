@@ -1,7 +1,7 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script lang="ts" setup>
 import { useQuasar } from "quasar";
-import { useBookmarksStore } from "~/store/bookmarks.pinia";
+import { useBookmarksStore } from "@/stores/bookmarks.pinia";
 
 const $q = useQuasar();
 const q2p = useQ2P();
@@ -71,9 +71,8 @@ function formatBookmarkLabel(bm: any) {
   return bookmarkStr;
 }
 
- 
 const thumbStyle = ref({});
- 
+
 function onScroll() {
   /* noop for now */
 }
@@ -181,8 +180,8 @@ onMounted(() => {
   try {
     q2p.init(lok.value);
   } catch (error) {
-    const err = error as any
-    $q.notify({ message: err?.message || 'Failed to init', type: "negative" });
+    const err = error as any;
+    $q.notify({ message: err?.message || "Failed to init", type: "negative" });
   }
   if (isClient) window.addEventListener("hashchange", updateCurrentPath);
   // initialize bookmarks (will load from server if logged-in or from local guest storage)
@@ -279,7 +278,6 @@ async function goToAya() {
   }
 }
 
- 
 function handleAyaClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;
@@ -289,7 +287,6 @@ function handleAyaClick(e: Event) {
   if (id) navigateToHash(id);
 }
 
- 
 function handleAyaDblClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;
@@ -322,7 +319,7 @@ function navigateToHash(hash: string) {
       .forEach((el) => el.classList.remove("aya-highlight"));
   } catch {}
   try {
-  element?.classList.add("aya-highlight");
+    element?.classList.add("aya-highlight");
     // remove highlight after 2s
     setTimeout(() => {
       try {
@@ -353,8 +350,7 @@ function onAyaDblClick(e: Event) {
 
 <template>
   <KeepAlive>
-    <client>
-      <q-page padding class="rtl islamic-design">
+    <q-page padding class="rtl islamic-design">
         <q-btn
           flat
           icon="arrow_back"
@@ -370,26 +366,22 @@ function onAyaDblClick(e: Event) {
           <q-btn flat icon="bookmark" label="Bookmarks">
             <q-menu auto-close>
               <q-list class="border-green" style="min-width: 220px">
-              <q-chip
-                v-for="bm in bookmarksStore.bookmarks"
-                :key="typeof bm === 'string' ? bm : bm._id"
-                clickable
-                @click="navigateToHash(typeof bm === 'string' ? bm : bm.bookmark)"
-              >
-                <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    dense
-                    flat
-                    icon="delete"
-                    @click.stop.prevent="
-                      bookmarksStore.deleteBookmark(
-                        typeof bm === 'string' ? bm : bm.bookmark
-                      )
-                    "
-                  />
-                </q-item-section>
-              </q-chip>
+                <q-chip
+                  v-for="(bm, idx) in bookmarksStore.bookmarks"
+                  :key="typeof bm === 'string' ? bm : bm?._id || idx"
+                  clickable
+                  @click="navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)"
+                >
+                  <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
+                  <q-item-section side>
+                    <q-btn
+                      dense
+                      flat
+                      icon="delete"
+                      @click.stop.prevent="deleteBookmarkItem(bm)"
+                    />
+                  </q-item-section>
+                </q-chip>
               </q-list>
             </q-menu>
           </q-btn>
@@ -426,11 +418,13 @@ function onAyaDblClick(e: Event) {
             <div class="q-mt-sm">
               <q-list>
                 <q-item
-                  v-for="bm in bookmarksStore.bookmarks"
-                  :key="typeof bm === 'string' ? bm : bm._id"
+                  v-for="(bm, idx) in bookmarksStore.bookmarks"
+                  :key="typeof bm === 'string' ? bm : bm?._id || idx"
                   clickable
                   :class="{ 'bookmark-selected': isBookmarkSelected(bm) }"
-                  @click="() => navigateToHash(typeof bm === 'string' ? bm : bm.bookmark)"
+                  @click="
+                    () => navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)
+                  "
                 >
                   <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
                   <q-item-section side>
@@ -461,10 +455,10 @@ function onAyaDblClick(e: Event) {
                   <div class="sura-meta">
                     <span>{{ t("pages.quran.sura.id") }}: {{ sura.id }}</span>
                     <span>•</span>
-                    <span
-                      >{{ t("pages.quran.sura.totverses") }}:
-                      {{ sura.total_verses }}</span
-                    >
+                    <span>
+                      {{ t("pages.quran.sura.totverses") }}:
+                      {{ sura.total_verses }}
+                    </span>
                     <span>•</span>
                     <span>{{ t("pages.quran.sura.location") }}: {{ sura.type }}</span>
                   </div>
@@ -493,7 +487,6 @@ function onAyaDblClick(e: Event) {
           </q-card>
         </q-slide-transition>
       </q-page>
-    </client>
   </KeepAlive>
 </template>
 

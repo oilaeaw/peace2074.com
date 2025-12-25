@@ -30,7 +30,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: '/tasbeeh',
     name: 'Tasbeeh',
-    component: () => import('@/pages/tasbeeh.vue'),
+    component: () => import('@/views/tasbeeh.vue'),
     meta: {
       title: 'Tasbeeh',
       titleKey: 'pages.tasbeeh',

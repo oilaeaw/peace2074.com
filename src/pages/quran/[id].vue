@@ -17,7 +17,7 @@ onMounted(async () => {
   const lok = Number(route.params.id || 1)
   try {
     await q2p.init(lok, locale.value || 'en')
-    sura.value = q2p.GetSura || null
+    sura.value = q2p.GetSura?.value || null
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
     $q.notify({ type: 'negative', message: error.value })

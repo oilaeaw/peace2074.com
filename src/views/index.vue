@@ -1,7 +1,8 @@
 <script lang="ts" setup>
 import { computed } from "vue";
 import { useRouter } from "vue-router";
-import { useQ2P } from "~/store/q2p.pinia";
+import { useQ2P } from "../stores/q2p.pinia";
+import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
@@ -51,9 +52,9 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total"
-              >{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span
-            >
+            <span class="sura-total">
+              {{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}
+            </span>
           </div>
         </div>
       </div>
@@ -83,9 +84,9 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total"
-              >{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span
-            >
+            <span class="sura-total">
+              {{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}
+            </span>
           </div>
         </div>
       </div>

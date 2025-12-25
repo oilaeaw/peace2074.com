@@ -5,7 +5,15 @@
         <q-avatar square size="32px" class="q-mr-sm">
           <img src="/logo.svg" alt="PEACE2074" />
         </q-avatar>
-        <q-toolbar-title>PEACE2074</q-toolbar-title>
+        <q-toolbar-title>
+          <RouterLink
+            to="/"
+            class="link"
+            style="color: inherit; text-decoration: none; font-weight: 700"
+          >
+            PEACE2074
+          </RouterLink>
+        </q-toolbar-title>
         <q-space />
         <nav class="nav">
           <RouterLink to="/" class="link">
@@ -41,11 +49,11 @@
 </template>
 
 <script setup lang="ts">
-import { useI18n } from 'vue-i18n'
-const { locale } = useI18n()
+import { useI18n } from "vue-i18n";
+const { locale } = useI18n();
 function onLangChange(e: Event) {
-  const val = (e.target as HTMLSelectElement).value
-  locale.value = val
+  const val = (e.target as HTMLSelectElement).value;
+  locale.value = val;
 }
 </script>
 
@@ -53,14 +61,26 @@ function onLangChange(e: Event) {
 .q-toolbar-title {
   font-weight: 700;
 }
-.nav { display: flex; gap: 8px; align-items: center; }
-.link { text-decoration: none; }
-.lang select { padding: 4px 6px; border-radius: 6px; }
+.nav {
+  display: flex;
+  gap: 8px;
+  align-items: center;
+}
+.link {
+  text-decoration: none;
+}
+.lang select {
+  padding: 4px 6px;
+  border-radius: 6px;
+}
 .footer {
   display: flex;
   align-items: center;
   justify-content: center;
   gap: 0.5rem;
 }
-.decor { height: 16px; opacity: 0.6; }
+.decor {
+  height: 16px;
+  opacity: 0.6;
+}
 </style>

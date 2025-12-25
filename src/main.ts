@@ -54,8 +54,8 @@ try {
 // Register Quasar via centralized plugin
 registerQuasar(app as any);
 
-// Register Service Worker for PWA
-if ('serviceWorker' in navigator) {
+// Register Service Worker for PWA (only in production; dev serves HTML at /sw.js)
+if (import.meta.env.PROD && 'serviceWorker' in navigator) {
   window.addEventListener('load', () => {
     navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
       // Service worker registration failed, but app will still work

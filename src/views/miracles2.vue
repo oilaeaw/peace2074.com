@@ -104,10 +104,10 @@ watch(arabicText, (val) => {
                   and “light” and “darkness” (24 times each).
                 </li>
                 <li class="q-mb-sm">
-                  <strong
-                    >Relationships between the numbers of words, letters, verses, and
-                    surahs:</strong
-                  >
+                  <strong>
+                    Relationships between the numbers of words, letters, verses, and
+                    surahs:
+                  </strong>
                   The focus is on numbers, such as the number of chapters in the Qur’an
                   being 114.
                 </li>

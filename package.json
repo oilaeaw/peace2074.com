@@ -35,6 +35,7 @@
     "typescript-eslint": "^8.45.0",
     "unplugin-auto-import": "^20.2.0",
     "unplugin-vue-components": "^29.1.0",
+    "unplugin-vue-router": "^0.19.1",
     "vite": "^7.1.11",
     "vite-plugin-pwa": "^1.2.0",
     "vue-eslint-parser": "^10.2.0",

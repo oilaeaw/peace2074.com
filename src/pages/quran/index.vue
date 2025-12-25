@@ -1,20 +1,22 @@
 <script setup lang="ts">
-import useQ2P from '@/composables/useQ2P'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted } from 'vue'
+import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useQ2P as useQ2PStore } from '@/stores/q2p.pinia'
 
-const { t, locale } = useI18n()
-const q2p = useQ2P()
+const { t } = useI18n()
 const $q = useQuasar()
-const surahs = ref<any[]>([])
+const store = useQ2PStore()
 const loading = ref(true)
 const error = ref('')
 
+// Reactive list from Pinia store so DevTools shows populated state
+const surahs = computed(() => store.GetQ)
+
 onMounted(async () => {
   try {
-    await q2p.init(1, locale.value || 'en')
-    surahs.value = q2p.GetQ || []
+    // Populate store from bundled data; API fetch (if any) can be done in detail page
+    store.init(1)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load chapters'
     $q.notify({ type: 'negative', message: error.value })
@@ -30,7 +32,7 @@ onMounted(async () => {
     <div v-if="loading" class="status">Loading…</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <div v-else class="q-gutter-md" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
-      <RouterLink v-for="s in surahs" :key="s.id" :to="`/quran/${s.id}`" class="q-card q-pa-sm" style="text-decoration: none; color: inherit;">
+      <RouterLink v-for="s in surahs" :key="s?.id" :to="`/quran/${s?.id}`" class="q-card q-pa-sm" style="text-decoration: none; color: inherit;">
         <div class="text-subtitle1">{{ s.id }}. {{ s.e_name || '' }}</div>
         <div class="text-body2">{{ s.name }}</div>
         <div class="text-caption">{{ s.total_verses }} verses • {{ s.type }}</div>

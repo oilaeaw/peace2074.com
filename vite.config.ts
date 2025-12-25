@@ -1,16 +1,31 @@
 import { defineConfig } from "vite";
 import vue from "@vitejs/plugin-vue";
-import { quasar } from '@quasar/vite-plugin'
+import { quasar } from "@quasar/vite-plugin";
 import Components from "unplugin-vue-components/vite";
-import { QuasarResolver } from 'unplugin-vue-components/resolvers'
+import { QuasarResolver } from "unplugin-vue-components/resolvers";
 import AutoImport from "unplugin-auto-import/vite";
-import { VitePWA } from 'vite-plugin-pwa'
+import { VitePWA } from "vite-plugin-pwa";
+import VueRouter from "unplugin-vue-router/vite";
 import { fileURLToPath, URL } from "node:url";
 
 // https://vitejs.dev/config/
 export default defineConfig({
+  base: "/",
   plugins: [
-    vue({ template: { transformAssetUrls: { /* defaults ok */ } } }),
+    // https://github.com/posva/unplugin-vue-router
+    VueRouter({
+      routesFolder: "src/views",
+      extensions: [".vue"],
+      dts: "src/types/typed-router.d.ts",
+    }),
+
+    vue({
+      template: {
+        transformAssetUrls: {
+          /* defaults ok */
+        },
+      },
+    }),
     quasar(),
 
     // https://github.com/antfu/unplugin-vue-components
@@ -41,60 +56,61 @@ export default defineConfig({
 
     // PWA configuration
     VitePWA({
-      registerType: 'autoUpdate',
-      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
+      registerType: "autoUpdate",
+      includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       manifest: {
-        name: 'Peace2074 - Islamic Knowledge Platform',
-        short_name: 'Peace2074',
-        description: 'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more',
-        theme_color: '#ffffff',
-        background_color: '#ffffff',
-        display: 'standalone',
-        scope: '/',
-        start_url: '/',
+        name: "Peace2074 - Islamic Knowledge Platform",
+        short_name: "Peace2074",
+        description:
+          "Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more",
+        theme_color: "#ffffff",
+        background_color: "#ffffff",
+        display: "standalone",
+        scope: "/",
+        start_url: "/",
         icons: [
           {
-            src: '/192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'any',
+            src: "/192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: '/512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            purpose: 'any',
+            src: "/512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            purpose: "any",
           },
           {
-            src: '/maskable-icon.png',
-            sizes: '192x192',
-            type: 'image/png',
-            purpose: 'maskable',
+            src: "/maskable-icon.png",
+            sizes: "192x192",
+            type: "image/png",
+            purpose: "maskable",
           },
         ],
         screenshots: [
           {
-            src: '/512x512.png',
-            sizes: '512x512',
-            type: 'image/png',
-            form_factor: 'wide',
+            src: "/512x512.png",
+            sizes: "512x512",
+            type: "image/png",
+            form_factor: "wide",
           },
           {
-            src: '/192x192.png',
-            sizes: '192x192',
-            type: 'image/png',
-            form_factor: 'narrow',
+            src: "/192x192.png",
+            sizes: "192x192",
+            type: "image/png",
+            form_factor: "narrow",
           },
         ],
       },
       workbox: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
         runtimeCaching: [
           {
             urlPattern: /^https:\/\/api\.example\.com\/.*/i,
-            handler: 'NetworkFirst',
+            handler: "NetworkFirst",
             options: {
-              cacheName: 'api-cache',
+              cacheName: "api-cache",
               expiration: {
                 maxEntries: 50,
                 maxAgeSeconds: 24 * 60 * 60, // 1 day
@@ -103,9 +119,9 @@ export default defineConfig({
           },
           {
             urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp|ico)$/,
-            handler: 'CacheFirst',
+            handler: "CacheFirst",
             options: {
-              cacheName: 'image-cache',
+              cacheName: "image-cache",
               expiration: {
                 maxEntries: 200,
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days

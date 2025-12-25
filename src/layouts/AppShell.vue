@@ -6,7 +6,9 @@
         <q-avatar square size="36px" class="q-ml-sm">
           <img src="/logo.svg" alt="PEACE2074" />
         </q-avatar>
-        <q-toolbar-title>PEACE2074</q-toolbar-title>
+        <q-toolbar-title>
+          <RouterLink to="/" class="brand-link">PEACE2074</RouterLink>
+        </q-toolbar-title>
 
         <q-input dense round placeholder="Search..." class="search" v-model="search" debounce="300" />
 
@@ -67,4 +69,5 @@ watch(localeValue, (v) => { locale.value = v })
 .search { max-width: 360px; margin-left: 12px; }
 .footer { display:flex; align-items:center; justify-content:center; gap:8px }
 .decor { height: 16px; opacity: 0.6 }
+.brand-link { color: inherit; text-decoration: none; font-weight: 600; }
 </style>

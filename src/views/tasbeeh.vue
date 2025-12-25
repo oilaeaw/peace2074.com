@@ -1,5 +1,9 @@
 <script lang="ts" setup>
-import useCore from '~/composables/useCore'
+import { ref, computed, watch, onMounted } from "vue";
+import { useRouter } from "vue-router";
+import { useI18n } from "vue-i18n";
+import { useQuasar } from "quasar";
+import useCore from "~/composables/useCore";
 const { t } = useI18n();
 const router = useRouter();
 const $q = useQuasar();
@@ -164,7 +168,9 @@ function updateTodayStats() {
   todayStats.value.total++;
 
   // Save to persistent core storage (fire-and-forget)
-  try { void useCore().set('tasbeeh_stats', todayStats.value) } catch {}
+  try {
+    void useCore().set("tasbeeh_stats", todayStats.value);
+  } catch {}
 
   // Send incremental update to server if authenticated
   sendStatsToServer({
@@ -180,7 +186,7 @@ async function sendStatsToServer(payload: any) {
       method: "POST",
       body: JSON.stringify(payload),
       credentials: "include",
-      headers: { 'Content-Type': 'application/json' },
+      headers: { "Content-Type": "application/json" },
     });
   } catch (e) {
     // ignore network errors — keep local copy
@@ -192,46 +198,47 @@ async function sendStatsToServer(payload: any) {
 onMounted(async () => {
   // Load saved stats from core storage first
   try {
-    const saved = await useCore().get('tasbeeh_stats')
+    const saved = await useCore().get("tasbeeh_stats");
     if (saved) {
-      const parsed = typeof saved === 'string' ? JSON.parse(saved as string) : saved
+      const parsed = typeof saved === "string" ? JSON.parse(saved as string) : saved;
       if (parsed && parsed.date === new Date().toDateString()) {
-        todayStats.value = parsed
+        todayStats.value = parsed;
       }
     }
-  }
-  catch {}
+  } catch {}
 
   // Load settings
   try {
-    const savedSettings = await useCore().get('tasbeeh_settings')
+    const savedSettings = await useCore().get("tasbeeh_settings");
     if (savedSettings) {
-      const parsed = typeof savedSettings === 'string' ? JSON.parse(savedSettings as string) : savedSettings
-      settings.value = { ...settings.value, ...parsed }
+      const parsed =
+        typeof savedSettings === "string"
+          ? JSON.parse(savedSettings as string)
+          : savedSettings;
+      settings.value = { ...settings.value, ...parsed };
     }
-  }
-  catch {}
+  } catch {}
 
-    // If authenticated, try to fetch server-side stored stats
+  // If authenticated, try to fetch server-side stored stats
   try {
-    const res = await fetch('/api/tasbeeh', { credentials: 'include' })
+    const res = await fetch("/api/tasbeeh", { credentials: "include" });
     if (res && res.ok) {
-      const json = await res.json()
-      const remote = json?.data
+      const json = await res.json();
+      const remote = json?.data;
       if (remote && remote.daily && Array.isArray(remote.daily)) {
-        const today = new Date().toDateString()
-        const rec = remote.daily.find((d: any) => d.date === today)
+        const today = new Date().toDateString();
+        const rec = remote.daily.find((d: any) => d.date === today);
         if (rec) {
           todayStats.value = {
             total: rec.total || 0,
             sessions: rec.sessions || 0,
             date: rec.date,
-          }
+          };
         }
       }
     }
   } catch (e) {
-    console.warn("Failed to fetch remote tasbeeh data", e)
+    console.warn("Failed to fetch remote tasbeeh data", e);
   }
 });
 
@@ -239,7 +246,9 @@ onMounted(async () => {
 watch(
   settings,
   (newSettings) => {
-    try { void useCore().set('tasbeeh_settings', newSettings) } catch {}
+    try {
+      void useCore().set("tasbeeh_settings", newSettings);
+    } catch {}
   },
   { deep: true }
 );

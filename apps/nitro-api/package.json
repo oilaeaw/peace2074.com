@@ -1,0 +1,13 @@
+{
+    "name": "nitro-api",
+    "private": true,
+    "type": "module",
+    "scripts": {
+        "dev": "nitro dev -p 3334",
+        "build": "nitro build",
+        "preview": "nitro preview -p 3334"
+    },
+    "dependencies": {
+        "nitropack": "^2.9.7"
+    }
+}

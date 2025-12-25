@@ -37,14 +37,16 @@ interface State {
 }
 const ready: any[] = []
 
-Object.keys(hdetails as any).forEach((key) => {
-  const id = Number(key)
-  const metaSample = ((hdetails as any)[key] || [])[0] as any
-  const qr = ((hbook as any)[key] || []) as QSDT[]
+// Normalize chapters structure: `hdetails` may be an array (compiled JSON) or an object.
+const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
+chapters.forEach((metaSample: any) => {
+  const id = Number(metaSample?.id || metaSample?.number || 0)
+  if (!id) return
+  const qr = ((hbook as any)[String(id)] || []) as QSDT[]
   if (Array.isArray(qr)) {
     ready.push({
       id,
-      name: String(metaSample?.suraName || metaSample?.name || ''),
+      name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
       e_name: String(metaSample?.translation || metaSample?.suraName || ''),
       type: String(metaSample?.type || ''),
       total_verses: qr.length,
@@ -55,9 +57,9 @@ Object.keys(hdetails as any).forEach((key) => {
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
-  // Use a deep-cloned plain object for Book to avoid prototype/serialization issues
-  // (some JSON imports or transforms may produce objects that trip devalue/pinia during SSR).
-  Book: JSON.parse(JSON.stringify(ready)) as any[],
+    // Use a deep-cloned plain object for Book to avoid prototype/serialization issues
+    // (some JSON imports or transforms may produce objects that trip devalue/pinia during SSR).
+    Book: JSON.parse(JSON.stringify(ready)) as any[],
     Sura: {} as SuraI,
     Index: 0,
     LLegend: [
@@ -138,11 +140,11 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   actions: {
-  init(index?: number): any[] {
+    init(index?: number): any[] {
       // Ensure Book is populated — persisted state may have an empty or
       // malformed Book array. Fall back to the compiled `ready` data.
       if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
-  this.Book = ready as any[]
+        this.Book = ready as any[]
       }
 
       this.setIndex(index || 1)
@@ -155,26 +157,40 @@ export const useQ2P = defineStore('q2p', {
       // Attempt to fetch a single sura from server API and update Book/Sura
       try {
         const id = Number(suraId) || 1
-        const runtimeBase = (typeof window !== 'undefined' && window.location) ? `${window.location.origin}` : ''
-        const url = `${runtimeBase}/api/quran/${id}`
-        const res = await fetch(url)
-        if (!res.ok) {
-          // fallback to compiled ready data
-          this.setIndex(id)
-          return this.Sura
+        const runtimeBase = (import.meta as any).env?.VITE_QURAN_API_BASE?.replace(/\/$/, '') || ((typeof window !== 'undefined' && window.location) ? `${window.location.origin}`.replace(/\/$/, '') : '')
+        const urls = [
+          // Prefer local Nitro API: /quran/:id
+          `${runtimeBase}/quran/${id}`,
+          // Fallback to Waelio-style query endpoint
+          `${runtimeBase}/api/quran?s=${id}`,
+          `${runtimeBase}/quran?s=${id}`,
+          `/api/quran?s=${id}`,
+        ]
+        let sura: any = null
+        for (const u of urls) {
+          try {
+            const res = await fetch(u)
+            if (!res.ok) continue
+            const ct = String(res.headers.get('content-type') || '')
+            if (!ct.includes('application/json')) continue
+            const json = await res.json()
+            sura = json?.sura || json
+            if (sura) break
+          } catch {
+            // try next
+          }
         }
-        const json = await res.json()
-        const sura = json?.sura
         if (!sura) {
           this.setIndex(id)
           return this.Sura
         }
 
         // Update our Book array: replace or insert the sura at (id - 1)
-  if (!this.Book || !Array.isArray(this.Book)) this.Book = [] as any[]
-  this.Book[id - 1] = sura
+        if (!this.Book || !Array.isArray(this.Book)) this.Book = [] as any[]
+        const sid = Number(sura.id || sura.chapter || sura.number || id)
+        this.Book[sid - 1] = Object.assign({}, sura, { id: sid })
         this.setIndex(id)
-  this.Sura = sura
+        this.Sura = sura
         return this.Sura
       } catch (err) {
         // network or parse error — fallback
