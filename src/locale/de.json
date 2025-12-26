@@ -21,10 +21,34 @@
     "new_content": "Neue Inhalte verfügbar, Seite neu laden, um zu aktualisieren.",
     "offline_ready": "App ist bereit für die Offline-Nutzung"
   },
+  "appShell": {
+    "searchPlaceholder": "Suchen…",
+    "playAthan": "Adhan abspielen",
+    "nav": {
+      "home": "Startseite",
+      "quran": "Koran",
+      "tasbeeh": "Tasbeeh",
+      "contact": "Kontakt"
+    }
+  },
   "pages": {
+    "home": {
+      "title": "Startseite",
+      "hero": {
+        "title": "Peace2074",
+        "lead": "Ein ruhiger Ort zum Lesen, Nachdenken und Erinnern.",
+        "ctaReadQuran": "Koran lesen",
+        "ctaTasbeeh": "Tasbeeh",
+        "cardTitle": "Tägliche Reflexion",
+        "cardBody": "Kurze ausgewählte Verse und Erinnerungen, die dir helfen, fokussiert zu bleiben."
+      }
+    },
     "holynames": "Die Namen Gottes",
     "tasbeeh": "Digitales Tasbeeh",
     "quran": {
+      "title": "Koran",
+      "detail": "Koran-Details",
+      "backToList": "Zurück zur Liste",
       "pageTitle": "Der Heilige Koran",
       "sura": {
         "name": "Name der Sure",

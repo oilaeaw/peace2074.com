@@ -29,7 +29,12 @@ onMounted(async () => {
 
 <template>
   <div class="q-pa-md">
-    <q-btn flat class="q-mb-md" to="/quran" label="← Back to list" />
+    <q-btn
+      flat
+      class="q-mb-md"
+      to="/quran"
+      :label="`← ${t('pages.quran.backToList')}`"
+    />
     <div v-if="loading" class="status">Loading…</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <q-card v-else-if="sura" class="q-pa-md">

@@ -1,0 +1,278 @@
+{
+    "welcome": "ברוכים הבאים",
+    "button": {
+        "about": "אודות",
+        "back": "חזרה",
+        "go": "התחל",
+        "home": "בית",
+        "toggle_dark": "החלף מצב כהה",
+        "toggle_langs": "שנה שפה",
+        "Privacy": "הפרטיות שלנו",
+        "Privacy_Short": "פרטיות",
+        "Terms": "התנאים שלנו",
+        "Terms_Short": "תנאים",
+        "Contact": "צרו קשר",
+        "TimeLine": "ציר זמן",
+        "Utils": "כלים",
+        "submit": "שלח",
+        "reset": "איפוס",
+        "reload": "רענן",
+        "close": "סגור",
+        "new_content": "תוכן חדש זמין, רענן כדי לעדכן.",
+        "offline_ready": "האפליקציה מוכנה לעבודה לא מקוונת"
+    },
+    "appShell": {
+        "searchPlaceholder": "חיפוש…",
+        "playAthan": "נגן אזהאן",
+        "nav": {
+            "home": "בית",
+            "quran": "קוראן",
+            "tasbeeh": "תסביח",
+            "contact": "צור קשר"
+        }
+    },
+    "pages": {
+        "home": {
+            "title": "בית",
+            "hero": {
+                "title": "Peace2074",
+                "lead": "מקום שקט לקריאה, התבוננות וזיכרון.",
+                "ctaReadQuran": "לקריאת הקוראן",
+                "ctaTasbeeh": "לתסביח",
+                "cardTitle": "הרהור יומי",
+                "cardBody": "פסוקים ותזכורות קצרות שיעזרו לך להתמקד."
+            }
+        },
+        "holynames": "שמות הקודש",
+        "tasbeeh": "תסביח דיגיטלי",
+        "quran": {
+            "title": "הקוראן",
+            "detail": "פרטי סורה",
+            "backToList": "חזרה לרשימה",
+            "pageTitle": "הקוראן הקדוש",
+            "sura": {
+                "name": "שם הסורה",
+                "id": "מספר הסורה",
+                "location": "מיקום הסורה",
+                "totverses": "מספר הפסוקים",
+                "bookmark": "סימנייה"
+            },
+            "holynames": "שמות קדושים"
+        },
+        "miracles": {
+            "pageTitle": "עמוד הניסים"
+        }
+    },
+    "general": {
+        "Home": "בית",
+        "SiteTitle": "Peace2074",
+        "SiteDomain": "https://peace2074.com",
+        "navigationLinks": "קישורי ניווט",
+        "CurrentVersion": "גרסה נוכחית",
+        "setLocale": "הגדרת שפת ברירת מחדל",
+        "CheckUpdates": "בדוק עדכונים",
+        "Services": "שירותים",
+        "fetchingUpdates": "מתעדכן",
+        "languages": "שפות",
+        "dark": "כהה",
+        "light": "בהיר",
+        "auto": "אוטומטי",
+        "lightMode": "שנה מצב תאורה",
+        "open": "פתח",
+        "close": "סגור",
+        "holdState": "תמיד פתוח"
+    },
+    "intro": {
+        "desc": "חובב JavaScript, אח בלהקת הזאבים, אוהב ברווזים ותמיד מחפש לשפר ולהשתמש מחדש."
+    },
+    "notfound": "לא נמצא",
+    "contact": {
+        "help": "אנחנו כאן בשבילך",
+        "offer_help": "ספר לנו איך נוכל לעזור!",
+        "accept_terms": "צפה בתנאים ובהתניות שלנו.",
+        "terms_accepted": "אני מאשר/ת את התנאים וההתניות.",
+        "name": {
+            "label": "השם שלך *",
+            "hint": "שם פרטי שם משפחה",
+            "placeholder": "מה שמך?"
+        },
+        "email1": {
+            "label": "כתובת האימייל שלך *",
+            "hint": "האימייל שלך",
+            "placeholder": "כדי שנוכל לחזור אליך"
+        },
+        "message1": {
+            "label": "ההודעה שלך *",
+            "hint": "הקלד את ההודעה",
+            "placeholder": "ספר לנו איך נוכל לעזור"
+        },
+        "email": {
+            "label": "כתובת האימייל שלך *",
+            "hint": "האימייל שלך",
+            "placeholder": "כדי שנוכל לחזור אליך"
+        },
+        "message": {
+            "label": "ההודעה שלך *",
+            "hint": "הקלד את ההודעה שלך",
+            "placeholder": "ספר לנו איך נוכל לעזור"
+        },
+        "projects": {
+            "label": "שם הפרויקט *",
+            "placeholder": "על איזה פרויקט אתה שואל?"
+        }
+    },
+    "navigation": {
+        "Profile": "הפרופיל שלי",
+        "Favorites": "המועדפים שלי",
+        "Messages": "הודעות",
+        "HomePageTitle": "דף הבית",
+        "HomePageCaption": "דף הבית",
+        "AuthPageTitle": "אימות",
+        "AuthPageCaption": "יצירת משתמש / התחברות",
+        "AboutPageTitle": "אודות",
+        "AboutPageCaption": "אודותינו",
+        "ContactPageTitle": "צור קשר",
+        "ContactPageCaption": "צור קשר",
+        "TermsPageTitle": "תנאים",
+        "TermsPageCaption": "תנאים והתניות",
+        "BlogPageTitle": "הבלוג שלנו",
+        "BlogPageCaption": "פוסטים ומאמרים",
+        "ProductsPageTitle": "מוצרים",
+        "ProductsPageCaption": "המוצרים שלנו",
+        "PrivacyPageTitle": "פרטיות",
+        "PrivacyPageCaption": "עמוד הפרטיות",
+        "ServicesPageTitle": "שירותים",
+        "ServicesPageCaption": "השירותים שלנו",
+        "SettingsPageTitle": "הגדרות",
+        "SettingsPageCaption": "הגדרות תצוגה",
+        "TranslationPageTitle": "תרגומים",
+        "TranslationPageCaption": "ניהול התרגומים שלך",
+        "GlossaryPageTitle": "מילון מונחים",
+        "GlossaryPageCaption": "עמוד המילון שלנו",
+        "MediaPageTitle": "מדיה",
+        "MediaPageCaption": "עמוד המדיה שלנו",
+        "Signin": "כניסה",
+        "Signout": "התנתקות",
+        "Register": "הרשמה",
+        "AdminPage": "עמוד מנהל"
+    },
+    "about": {
+        "title": "וואליו",
+        "par10": "מנהיג רב-תחומי בעולם הדיגיטלי עם מעל לשני עשורים של הצלחה מקצועית."
+    },
+    "demoContent": {
+        "q1": "האם אני יכול ליצור פוסט?",
+        "q2": "האם אני יכול לקרוא פוסט?",
+        "q3": "האם אני יכול לעדכן פוסט?",
+        "q4": "האם אני יכול למחוק פוסט?"
+    },
+    "privacy_intro": "הפרטיות שלך חשובה לנו. בעמוד זה נסביר כיצד אנו אוספים, משתמשים ומגנים על המידע שלך בעת השימוש באתר.",
+    "information_we_collect": "איזה מידע אנו אוספים",
+    "basic_account_info": "פרטי חשבון בסיסיים (כגון כתובת אימייל) כאשר נרשמים או מתחברים.",
+    "usage_data": "נתוני שימוש וקובצי Cookie לשיפור החוויה.",
+    "how_we_use_information": "כיצד אנו משתמשים במידע",
+    "provide_services": "כדי לספק ולתחזק את השירותים שלנו.",
+    "improve_experience": "כדי לשפר ולהתאים אישית את החוויה.",
+    "communicate_updates": "כדי ליצור איתך קשר לגבי עדכונים או תמיכה.",
+    "cookies": "קובצי Cookie",
+    "cookies_text": "אנחנו משתמשים בקובצי Cookie כדי לזכור את ההעדפות שלך ולשפר את החוויה. ניתן לאשר או לדחות אותם דרך הבאנר בתחתית האתר.",
+    "data_security": "אבטחת מידע",
+    "data_security_text": "אנחנו נוקטים אמצעים סבירים כדי להגן על הנתונים שלך, אך אף מערכת אינה מאובטחת לחלוטין.",
+    "contact_text": "אם יש לך שאלות על מדיניות הפרטיות שלנו, נשמח לשמוע ממך.",
+    "terms_and_conditions": "תנאים והתניות",
+    "terms_intro": "אנא קרא/י בעיון את התנאים האלה לפני שימוש באתר שלנו.",
+    "acceptance_of_terms": "הסכמה לתנאים",
+    "acceptance_of_terms_text": "באמצעות גישה או שימוש באתר אתה מסכים לתנאים האלה. אם אינך מסכים, אל תשתמש באתר.",
+    "use_of_site": "שימוש באתר",
+    "use_of_site_1": "יש להשתמש באתר בהתאם לכל החוקים והתקנות החלים.",
+    "use_of_site_2": "אסור להשתמש באתר לכל מטרה בלתי חוקית או אסורה.",
+    "intellectual_property": "קניין רוחני",
+    "intellectual_property_text": "כל התוכן באתר שייך לבעלי האתר או למעניקי הרישיון ומוגן בחוקי זכויות יוצרים.",
+    "limitation_of_liability": "הגבלת אחריות",
+    "limitation_of_liability_text": "איננו אחראים לנזקים הנגרמים עקב שימוש באתר.",
+    "changes_to_terms": "שינויים בתנאים",
+    "changes_to_terms_text": "ייתכן שנעדכן את התנאים בכל עת. שימוש מתמשך באתר מהווה הסכמה לתנאים המעודכנים.",
+    "auth": "אימות",
+    "login": "התחברות",
+    "signup": "הרשמה",
+    "user": "משתמש",
+    "password": "סיסמה",
+    "sign_in_with_google": "התחברות עם Google",
+    "sign_up": "הירשם",
+    "signup_success": "החשבון נוצר! אנא התחבר/י.",
+    "signup_failed": "ההרשמה נכשלה",
+    "create_account": "צור חשבון",
+    "back_to_login": "חזרה למסך ההתחברות",
+    "please_fill_all_fields": "נא למלא את כל השדות",
+    "passwords_do_not_match": "הסיסמאות אינן תואמות",
+    "confirm_password": "אישור סיסמה",
+    "cancel": "ביטול",
+    "login_success": "התחברת בהצלחה",
+    "please_accept_terms": "יש לאשר את התנאים וההתניות שלנו.",
+    "email": "אימייל",
+    "submit": "שלח",
+    "reset": "איפוס",
+    "Login": "התחברות",
+    "password_login": "התחברות באמצעות אימייל",
+    "username": "שם משתמש",
+    "username_required": "נדרשת סיסמה",
+    "hello": "שלום",
+    "logout": "התנתקות",
+    "already_logged_in": "כבר מחובר",
+    "login_method": "שיטות התחברות",
+    "logout_success": "התנתקת בהצלחה",
+    "back": "חזרה",
+    "username_taken": "שם המשתמש תפוס",
+    "accept_terms_and_conditions": "יש לאשר את התנאים וההתניות",
+    "password_required": "נדרשת סיסמה",
+    "resend_verification_email": "שלח מחדש אימייל אימות",
+    "password_signup": "הרשמה",
+    "username_optional": "שם משתמש",
+    "first_name": "שם פרטי",
+    "last_name": "שם משפחה",
+    "username_hint": "שם משתמש",
+    "email_required": "יש להזין אימייל",
+    "The 99 Holy Names of Allah": "99 שמותיו הקדושים של אללה",
+    "welcome_back": "ברוך שובך, {name}",
+    "welcome_guest": "שלום אורח",
+    "no_bookmarks": "אין סימניות שמורות",
+    "tasbeeh": {
+        "title": "תסביח דיגיטלי",
+        "subtitle": "מחרוזת תפילה",
+        "tapToCount": "לחצו לספירה",
+        "reset": "איפוס",
+        "settings": "הגדרות",
+        "selectPhrase": "בחרו נוסח דיכר",
+        "todayStats": "סטטיסטיקה יומית",
+        "total": "סה״כ",
+        "sessions": "סשנים",
+        "completed": "סטים שהושלמו",
+        "continue": "המשך",
+        "vibration": "משוב רטט",
+        "sound": "משוב צליל",
+        "autoNext": "מעבר אוטומטי לנוסח הבא"
+    },
+    "account": {
+        "title": "Account"
+    },
+    "meta": {
+        "home": "Peace2074 — Islamic resources, prayer tools, and thoughtful articles to support your spiritual journey.",
+        "holynames": "Explore the 99 Holy Names of Allah with meanings and audio recitations.",
+        "tasbeeh": "Digital Tasbeeh — a simple, beautiful counter for dhikr with session tracking and settings.",
+        "miracles": "Read inspiring stories and reflections on signs and miracles.",
+        "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout.",
+        "privacy": "Learn how we protect your data and privacy while using the site."
+    },
+    "bookmarks": "סימנייה",
+    "profile": {
+        "title": "פרופיל",
+        "edit": "ערוך פרופיל",
+        "save": "שמור שינויים"
+    },
+    "settings": {
+        "title": "הגדרות",
+        "display": "הגדרות תצוגה",
+        "language": "העדפת שפה",
+        "theme": "ערכת צבעים"
+    }
+}

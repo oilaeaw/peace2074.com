@@ -15,6 +15,43 @@ app.use(pinia);
 app.use(router);
 app.use(i18n);
 
+const LOCALE_STORAGE_KEY = 'app-locale'
+
+function resolveInitialLocale(): string {
+  if (typeof window === 'undefined') return 'en'
+  try {
+    const availableLocales = Object.keys((i18n.global as any).messages || {})
+    const persisted = window.localStorage?.getItem(LOCALE_STORAGE_KEY)
+    if (persisted && availableLocales.includes(persisted)) {
+      return persisted
+    }
+    const preferredList = Array.isArray(window.navigator.languages) && window.navigator.languages.length
+      ? window.navigator.languages
+      : [window.navigator.language]
+    for (const lang of preferredList) {
+      const normalized = lang?.toLowerCase()?.split('-')[0]
+      if (normalized && availableLocales.includes(normalized)) {
+        return normalized
+      }
+    }
+  } catch (e) {
+    /* noop */
+  }
+  return 'en'
+}
+
+const targetLocale = resolveInitialLocale()
+try {
+  const globalLocale: any = i18n.global.locale
+  if (globalLocale && typeof globalLocale === 'object' && 'value' in globalLocale) {
+    globalLocale.value = targetLocale
+  } else {
+    (i18n.global as any).locale = targetLocale
+  }
+} catch {
+  /* noop */
+}
+
 app.component("FontAwesomeIcon", FontAwesomeIcon);
 
 // Dynamic document.title from route meta and i18n

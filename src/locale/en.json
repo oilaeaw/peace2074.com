@@ -21,14 +21,34 @@
     "new_content": "New content available, reload to update.",
     "offline_ready": "App ready to work offline"
   },
+  "appShell": {
+    "searchPlaceholder": "Search…",
+    "playAthan": "Play Athan",
+    "nav": {
+      "home": "Home",
+      "quran": "Quran",
+      "tasbeeh": "Tasbeeh",
+      "contact": "Contact"
+    }
+  },
   "pages": {
     "home": {
-      "title": "Home"
+      "title": "Home",
+      "hero": {
+        "title": "Peace2074",
+        "lead": "A calm place to read, reflect and remember.",
+        "ctaReadQuran": "Read Quran",
+        "ctaTasbeeh": "Tasbeeh",
+        "cardTitle": "Daily Reflection",
+        "cardBody": "Short selected verses and reminders to help you focus."
+      }
     },
     "holynames": "God's Glory Names",
     "tasbeeh": "Digital Tasbeeh",
     "quran": {
       "title": "Quran",
+      "detail": "Quran Detail",
+      "backToList": "Back to list",
       "pageTitle": "The Holy Quran",
       "sura": {
         "name": "sura's Name",
@@ -59,8 +79,7 @@
     "auto": "auto",
     "lightMode": "Change Light Mode",
     "open": "open",
-    "close": "close",
-    "holdState": "Always Open"
+    "close": "close"
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."
