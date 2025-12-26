@@ -5,6 +5,7 @@ import { initFaLibrary, FontAwesomeIcon } from "@/plugins/font-awesome";
 import pinia from "@/plugins/pinia";
 import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
+import { registerSW } from "virtual:pwa-register";
 
 const app = createApp(App);
 
@@ -54,13 +55,16 @@ try {
 // Register Quasar via centralized plugin
 registerQuasar(app as any);
 
-// Register Service Worker for PWA (only in production; dev serves HTML at /sw.js)
-if (import.meta.env.PROD && 'serviceWorker' in navigator) {
-  window.addEventListener('load', () => {
-    navigator.serviceWorker.register('/sw.js', { scope: '/' }).catch(() => {
-      // Service worker registration failed, but app will still work
-      console.log('PWA service worker registration failed');
-    });
+// Register PWA Service Worker and force-refresh clients when a new build is available
+if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+  const updateSW = registerSW({
+    immediate: true,
+    onNeedRefresh() {
+      updateSW(true);
+    },
+    onRegisterError(error) {
+      console.error('PWA service worker registration failed', error);
+    },
   });
 }
 
