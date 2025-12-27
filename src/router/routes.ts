@@ -54,4 +54,31 @@ export const routes: Array<RouteRecordRaw> = [
       titleKey: 'pages.quran.detail',
     },
   },
+  {
+    path: '/chat',
+    name: 'Chat',
+    component: () => import('@/views/chat.vue'),
+    meta: {
+      title: 'Chat',
+      titleKey: 'pages.chat.title',
+    },
+  },
+  {
+    path: '/support',
+    name: 'Support',
+    component: () => import('@/views/support.vue'),
+    meta: {
+      title: 'Support',
+      titleKey: 'pages.support.title',
+    },
+  },
+  {
+    path: '/contact',
+    name: 'Contact',
+    component: () => import('@/views/contact.vue'),
+    meta: {
+      title: 'Contact',
+      titleKey: 'contact.help',
+    },
+  },
 ];

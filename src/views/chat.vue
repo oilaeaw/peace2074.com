@@ -12,6 +12,73 @@
       </div>
     </section>
 
+    <q-card class="q-mt-xl live-chat">
+      <q-card-section class="row items-center justify-between no-wrap">
+        <div class="text-h6">Live Chat</div>
+        <div class="row items-center q-gutter-sm">
+          <q-badge :color="statusColor" outline>{{ statusLabel }}</q-badge>
+          <q-btn dense flat icon="refresh" @click="refresh" :disable="messaging.connecting" :aria-label="'Reconnect'" />
+        </div>
+      </q-card-section>
+      <q-separator />
+
+      <q-card-section class="row chat-panel">
+        <div class="col-12 col-md-8 chat-messages">
+          <q-scroll-area style="height: 320px">
+            <q-list separator>
+              <q-item v-for="msg in messages" :key="msg.id">
+                <q-item-section avatar>
+                  <q-chip dense :color="msg.type === 'direct' ? 'secondary' : 'primary'" text-color="white">
+                    {{ msg.from || 'anon' }}
+                  </q-chip>
+                </q-item-section>
+                <q-item-section>
+                  <div class="row items-center justify-between">
+                    <div class="text-body1">{{ displayText(msg) }}</div>
+                    <div class="text-caption text-grey-6">{{ formatTs(msg.ts) }}</div>
+                  </div>
+                  <div class="text-caption text-grey-7">
+                    {{ msg.type }}
+                    <span v-if="msg.to"> → {{ msg.to }}</span>
+                    <span v-if="msg.room"> · {{ msg.room }}</span>
+                  </div>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-scroll-area>
+        </div>
+
+        <div class="col-12 col-md-4 chat-users">
+          <div class="text-subtitle2 q-mb-sm">Users</div>
+          <q-list bordered class="rounded-borders">
+            <q-item v-for="user in messaging.users" :key="user" clickable v-ripple @click="toggleUser(user)" :active="selectedUser === user">
+              <q-item-section>{{ user }}</q-item-section>
+              <q-item-section side v-if="me === user">
+                <q-badge color="positive" outline>you</q-badge>
+              </q-item-section>
+              <q-item-section side v-else-if="selectedUser === user">
+                <q-icon name="check" color="primary" />
+              </q-item-section>
+            </q-item>
+            <q-item v-if="!messaging.users.length">
+              <q-item-section class="text-grey-6">No users yet</q-item-section>
+            </q-item>
+          </q-list>
+        </div>
+      </q-card-section>
+
+      <q-separator />
+      <q-card-actions align="between" class="row no-wrap q-gutter-sm">
+        <div class="col">
+          <q-input v-model="draft" dense outlined :label="selectedUser ? 'Direct message' : 'Broadcast message'" @keyup.enter="send" />
+        </div>
+        <q-btn color="primary" unelevated :label="selectedUser ? 'Send direct' : 'Send'" @click="send" :disable="!messaging.connected" />
+      </q-card-actions>
+      <q-banner v-if="messaging.error" class="q-mt-sm" rounded dense color="negative" text-color="white">
+        {{ messaging.error }}
+      </q-banner>
+    </q-card>
+
     <div class="content-grid q-gutter-md q-mt-lg">
       <q-card>
         <q-card-section>
@@ -38,9 +105,73 @@
 </template>
 
 <script setup lang="ts">
+import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
+import { useMessagingStore } from "@/stores/messaging.pinia";
 
 const { t } = useI18n();
+const messaging = useMessagingStore();
+const draft = ref("");
+const selectedUser = ref<string | null>(null);
+
+const messages = computed(() => messaging.messages);
+const me = computed(() => messaging.me);
+
+const statusLabel = computed(() => {
+  if (messaging.connected) return "Connected";
+  if (messaging.connecting) return "Connecting";
+  return "Disconnected";
+});
+
+const statusColor = computed(() => {
+  if (messaging.connected) return "positive";
+  if (messaging.connecting) return "warning";
+  return "negative";
+});
+
+function send() {
+  const text = draft.value.trim();
+  if (!text) return;
+  if (selectedUser.value) {
+    messaging.sendDirect(text, selectedUser.value);
+  } else {
+    messaging.sendBroadcast(text);
+  }
+  draft.value = "";
+}
+
+function toggleUser(user: string) {
+  selectedUser.value = selectedUser.value === user ? null : user;
+}
+
+function refresh() {
+  messaging.disconnect();
+  messaging.connect();
+}
+
+function displayText(msg: any) {
+  if (msg?.text) return msg.text;
+  if (typeof msg?.payload === "string") return msg.payload;
+  if (msg?.payload) return JSON.stringify(msg.payload);
+  return "";
+}
+
+function formatTs(ts: number) {
+  if (!ts) return "";
+  try {
+    return new Date(ts).toLocaleTimeString();
+  } catch {
+    return "";
+  }
+}
+
+onMounted(() => {
+  messaging.connect();
+});
+
+onBeforeUnmount(() => {
+  messaging.disconnect();
+});
 </script>
 
 <style scoped>
@@ -60,6 +191,18 @@ const { t } = useI18n();
   justify-content: center;
   gap: 8px;
 }
+.live-chat {
+  border: 1px solid #e2e8f0;
+}
+.chat-panel {
+  gap: 16px;
+}
+.chat-messages .q-list {
+  background: #f8fafc;
+}
+.chat-users {
+  min-width: 220px;
+}
 .content-grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
@@ -71,6 +214,9 @@ const { t } = useI18n();
   }
   .hero-actions .q-btn {
     width: 100%;
+  }
+  .chat-panel {
+    flex-direction: column;
   }
 }
 </style>
