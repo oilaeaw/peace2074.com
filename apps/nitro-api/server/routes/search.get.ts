@@ -16,6 +16,17 @@ async function loadJSON<T = any>(p: string): Promise<T> {
     return JSON.parse(buf);
 }
 
+function normalizeText(str: string) {
+    const noHarakat = str
+        // Remove Arabic diacritics / tatweel
+        .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "")
+        // Normalize Arabic hamza forms
+        .replace(/[\u0622\u0623\u0624\u0625\u0626]/g, "ا")
+        // Keep letters/numbers/spaces; drop most punctuation
+        .replace(/[^\p{L}\p{N}\s]/gu, " ");
+    return noHarakat.toLowerCase().trim();
+}
+
 function normalizeLang(lang?: string) {
     if (!lang) return "en";
     const short = String(lang).toLowerCase().split("-")[0];
@@ -55,9 +66,9 @@ async function ensureChapters(lang: string) {
 
 export default defineEventHandler(async (event) => {
     const { q = "", limit = "20", lang = "en" } = getQuery(event);
-    const query = String(q || "")
-        .trim()
-        .toLowerCase();
+    const rawQuery = String(q || "");
+    const query = rawQuery.trim().toLowerCase();
+    const normQuery = normalizeText(rawQuery);
     const max = Math.min(50, Math.max(1, Number(limit) || 20));
 
     if (!query) return { results: [] };
@@ -76,7 +87,8 @@ export default defineEventHandler(async (event) => {
         const transliteration = String(c.transliteration || "");
         const translation = String(c.translation || "");
         const hay = `${name} ${transliteration} ${translation}`.toLowerCase();
-        if (hay.includes(query)) {
+        const hayNorm = normalizeText(`${name} ${transliteration} ${translation}`);
+        if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
             results.push({
                 type: "sura",
                 id: c.id,
@@ -93,7 +105,8 @@ export default defineEventHandler(async (event) => {
         for (const verse of verses || []) {
             const text = String(verse.text || "");
             const hay = text.toLowerCase();
-            if (hay.includes(query)) {
+            const hayNorm = normalizeText(text);
+            if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
                 const id = `${suraId}:${verse.verse || ""}`;
                 results.push({
                     type: "verse",
