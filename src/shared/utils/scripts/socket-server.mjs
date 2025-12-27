@@ -2,7 +2,7 @@ import http from 'node:http'
 import process from 'node:process'
 import { Server } from 'socket.io'
 
-const PORT = process.env.SOCKET_PORT || 3001
+const PORT = process.env.SOCKET_PORT || 3100
 
 const server = http.createServer((req, res) => {
   res.writeHead(200, { 'Content-Type': 'text/plain' })

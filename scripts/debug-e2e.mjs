@@ -5,7 +5,8 @@ import { chromium } from 'playwright';
   const context = await browser.newContext();
   const page = await context.newPage();
   try {
-    await page.goto('http://localhost:3000/');
+    const base = process.env.BASE_URL || 'http://localhost:3000';
+    await page.goto(`${base}/`);
     await page.waitForTimeout(1000);
     // click the Read Quran button
     const readBtn = page.locator('text=Read Quran');

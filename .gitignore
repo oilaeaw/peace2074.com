@@ -19,5 +19,6 @@ dist-ssr
 *.ntvs*
 *.njsproj
 *.sln
+apps/nitro-api/.nitro/
 *.sw?
 /pnpm-lock.yaml.bak

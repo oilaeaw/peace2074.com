@@ -8,6 +8,8 @@ export default defineNitroConfig({
     devServer: {
         port: DEFAULT_PORT,
         host: '0.0.0.0',
+        // Enforce the chosen port; if 3000 is busy, Nitro will error instead of auto-picking another port.
+        strictPort: true,
     },
     runtimeConfig: {
         // Secrets are automatically read from corresponding

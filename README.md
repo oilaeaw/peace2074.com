@@ -21,7 +21,7 @@ The Nitro API now exposes `POST /deepseek`, which proxies chat-completion reques
 
 1. Add `DEEPSEEK_API_KEY=<your key>` (and optionally `DEEPSEEK_BASE_URL`). CamelCase keys (`deepSeekApi`, `deepSeekBaseUrl`) still work for backward compatibility.
 2. Start the backend: `pnpm --filter nitro-api dev` (defaults to `http://localhost:3000`).
-3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from `VITE_QURAN_API_BASE` (falls back to same-origin `:3000` in dev).
+3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from same-origin (dev: http://localhost:3000) without needing a `VITE_` env.
 
 Example payload:
 
