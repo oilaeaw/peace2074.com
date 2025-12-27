@@ -66,6 +66,10 @@ function onLangChange(e: Event) {
   gap: 8px;
   align-items: center;
 }
+
+.q-avatar__content {
+  vertical-align: middle;
+}
 .link {
   text-decoration: none;
 }

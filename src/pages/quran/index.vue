@@ -32,7 +32,13 @@ onMounted(async () => {
     <div v-if="loading" class="status">Loading…</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <div v-else class="q-gutter-md" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
-      <RouterLink v-for="s in surahs" :key="s?.id" :to="`/quran/${s?.id}`" class="q-card q-pa-sm" style="text-decoration: none; color: inherit;">
+      <RouterLink
+        v-for="s in surahs"
+        :key="s?.id"
+        :to="`/quran/${s?.id}`"
+        class="sura-card q-card q-pa-sm"
+        style="text-decoration: none; color: inherit;"
+      >
         <div class="text-subtitle1">{{ s.id }}. {{ s.e_name || '' }}</div>
         <div class="text-body2">{{ s.name }}</div>
         <div class="text-caption">{{ s.total_verses }} verses • {{ s.type }}</div>

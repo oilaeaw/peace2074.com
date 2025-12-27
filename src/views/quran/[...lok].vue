@@ -2,6 +2,7 @@
 <script lang="ts" setup>
 import { useQuasar } from "quasar";
 import { useBookmarksStore } from "@/stores/bookmarks.pinia";
+import ThreeBackground from '@/components/common/ThreeBackground.vue';
 
 const $q = useQuasar();
 const q2p = useQ2P();
@@ -169,8 +170,10 @@ function goToBakara() {
   q2p.setIndex(2);
   router.push("/quran/2");
 }
-function goToNextSura() {
-  router.push(`/quran/${lok.value + 1}`);
+function goToPrevSura() {
+  if (lok.value > 1) {
+    router.push(`/quran/${lok.value - 1}`);
+  }
 }
 
 onMounted(() => {
@@ -349,156 +352,153 @@ function onAyaDblClick(e: Event) {
 </script>
 
 <template>
-  <KeepAlive>
-    <q-page padding class="rtl islamic-design">
+  <q-page padding class="mushaf-view">
+    <ThreeBackground />
+    <div class="mushaf-content">
+      <div class="sura-header">
         <q-btn
           flat
+          round
           icon="arrow_back"
-          color="primary"
-          class="back-btn"
           @click="router.push('/quran')"
-        >
-          {{ t("back") }}
+          aria-label="Back to Quran index"
+        />
+        <div class="sura-title">
+          <h1 class="sura-name-en">{{ sura?.e_name }}</h1>
+          <h2 class="sura-name-ar">{{ sura?.name }}</h2>
+        </div>
+        <q-btn flat round icon="bookmark" aria-label="View Bookmarks">
+          <q-menu auto-close>
+            <q-list dense style="min-width: 220px">
+              <q-item v-if="!bookmarksStore.bookmarks.length">
+                <q-item-section>{{ t("no_bookmarks") || "No bookmarks" }}</q-item-section>
+              </q-item>
+              <q-item
+                v-for="(bm, idx) in bookmarksStore.bookmarks"
+                :key="typeof bm === 'string' ? bm : bm?._id || idx"
+                clickable
+                @click="navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)"
+              >
+                <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
+                <q-item-section side>
+                  <q-btn
+                    dense
+                    flat
+                    round
+                    icon="delete"
+                    @click.stop.prevent="deleteBookmarkItem(bm)"
+                  />
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
         </q-btn>
+      </div>
 
-        <div class="sura-controls">
-          <q-space />
-          <q-btn flat icon="bookmark" label="Bookmarks">
-            <q-menu auto-close>
-              <q-list class="border-green" style="min-width: 220px">
-                <q-chip
-                  v-for="(bm, idx) in bookmarksStore.bookmarks"
-                  :key="typeof bm === 'string' ? bm : bm?._id || idx"
-                  clickable
-                  @click="navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)"
-                >
-                  <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
-                  <q-item-section side>
-                    <q-btn
-                      dense
-                      flat
-                      icon="delete"
-                      @click.stop.prevent="deleteBookmarkItem(bm)"
-                    />
-                  </q-item-section>
-                </q-chip>
-              </q-list>
-            </q-menu>
-          </q-btn>
-          <!-- quick jump to specific aya (format: sura:verse) -->
-          <div style="display: flex; align-items: center; gap: 0.5rem">
-            <q-input
-              v-model="targetInput"
-              dense
-              outlined
-              placeholder="sura:verse (e.g. 2:255)"
-              style="max-width: 220px"
-            />
-            <q-btn dense color="primary" flat label="Go" @click="goToAya" />
-          </div>
-        </div>
+      <div v-if="sura?.id !== 1 && sura?.id !== 9" class="bismillah-line">
+        بِسْمِ اللّٰهِ الرَّحْمـٰنِ الرَّحِيمِ
+      </div>
 
-        <!-- Visible bookmarks panel (toggleable) -->
-        <div v-if="showBookmarks" class="bookmarks-panel">
-          <q-card flat bordered class="q-pa-sm">
-            <div
-              class="bookmark-header"
-              style="
-                display: flex;
-                align-items: center;
-                justify-content: space-between;
-                margin-bottom: 0.5rem;
-              "
-            >
-              <div class="text-subtitle2" style="margin-left: 0.5rem">
-                {{ t("bookmarks") || "Bookmarks" }}
-              </div>
-            </div>
-            <q-separator />
-            <div class="q-mt-sm">
-              <q-list>
-                <q-item
-                  v-for="(bm, idx) in bookmarksStore.bookmarks"
-                  :key="typeof bm === 'string' ? bm : bm?._id || idx"
-                  clickable
-                  :class="{ 'bookmark-selected': isBookmarkSelected(bm) }"
-                  @click="
-                    () => navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)
-                  "
-                >
-                  <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
-                  <q-item-section side>
-                    <q-btn
-                      dense
-                      flat
-                      icon="delete"
-                      @click.stop.prevent="() => deleteBookmarkItem(bm)"
-                    />
-                  </q-item-section>
-                </q-item>
-                <q-item v-if="!bookmarksStore.bookmarks.length">
-                  <q-item-section>
-                    {{ t("no_bookmarks") || "No bookmarks" }}
-                  </q-item-section>
-                </q-item>
-              </q-list>
-            </div>
-          </q-card>
-        </div>
+      <q-separator class="q-my-md" />
 
-        <q-slide-transition>
-          <q-card class="text-md islamic-card">
-            <q-card v-if="sura" class="q-mt-xs islamic-card">
-              <q-card-section>
-                <div class="sura-plate">
-                  <div class="sura-name">{{ sura.e_name }} - {{ sura.name }}</div>
-                  <div class="sura-meta">
-                    <span>{{ t("pages.quran.sura.id") }}: {{ sura.id }}</span>
-                    <span>•</span>
-                    <span>
-                      {{ t("pages.quran.sura.totverses") }}:
-                      {{ sura.total_verses }}
-                    </span>
-                    <span>•</span>
-                    <span>{{ t("pages.quran.sura.location") }}: {{ sura.type }}</span>
-                  </div>
-                  <div v-if="sura && sura.id" class="bismillah-line">
-                    <span class="bismillah">بِسْمِ</span>
-                    <span class="allah">اللّٰهِ</span>
-                    <span class="bismillah">الرَّحْمـَنِ الرَّحِيمِ</span>
-                  </div>
-                </div>
-              </q-card-section>
+      <div
+        class="ayat-container"
+        aria-live="polite"
+        @click="onAyaClick"
+        @dblclick="onAyaDblClick"
+        v-html="suraParagraphHtml"
+      />
+    </div>
 
-              <q-scroll-observable visible class="col verse-scroll">
-                <q-card-section>
-                  <div class="verse">
-                    <div
-                      class="ayah-paragraph"
-                      aria-live="polite"
-                      @click="onAyaClick"
-                      @dblclick="onAyaDblClick"
-                      v-html="suraParagraphHtml"
-                    />
-                  </div>
-                </q-card-section>
-              </q-scroll-observable>
-            </q-card>
-          </q-card>
-        </q-slide-transition>
-      </q-page>
-  </KeepAlive>
+    <q-page-sticky position="bottom-right" :offset="[18, 18]">
+      <q-fab color="primary" icon="keyboard_arrow_up" direction="up">
+        <q-fab-action
+          color="secondary"
+          @click="goToNextSura"
+          icon="arrow_forward"
+          label="Next Sura"
+        />
+        <q-fab-action
+          color="secondary"
+          @click="goToPrevSura"
+          icon="arrow_back"
+          label="Prev Sura"
+        />
+      </q-fab>
+    </q-page-sticky>
+  </q-page>
 </template>
 
 <style scoped lang="scss">
-.islamic-design {
-  background: var(--background-pattern);
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center;
-  min-height: 100vh;
-  color: var(--text-color);
+.mushaf-view {
+  background-color: transparent; // Allow 3D background to show through
+  color: #2c3e50; // A darker, more readable text color
+  font-family: 'Amiri', serif; // A beautiful, classic Arabic font
 }
+
+.mushaf-content {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
+}
+
+.sura-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 1.5rem;
+  border-bottom: 2px solid #e0d6c2;
+  padding-bottom: 1rem;
+}
+
+.sura-title {
+  text-align: center;
+}
+
+.sura-name-en {
+  font-size: 2rem;
+  font-weight: 500;
+  color: #8d6e63; // A soft, earthy brown
+}
+
+.sura-name-ar {
+  font-size: 2.5rem;
+  font-weight: bold;
+}
+
+.bismillah-line {
+  text-align: center;
+  font-size: 2rem;
+  margin: 2rem 0;
+  font-family: 'Amiri', serif;
+}
+
+.ayat-container {
+  font-size: 1.8rem;
+  line-height: 2.5;
+  text-align: justify;
+  direction: rtl;
+
+  :deep(.aya-inline) {
+    margin: 0 0.2em;
+  }
+
+  :deep(.verse-medallion) {
+    fill: #f3dfb8;
+    stroke: #caa14b;
+  }
+
+  :deep(text) {
+    font-size: 10px;
+    fill: #2c3e50;
+  }
+}
+
+.q-page-sticky {
+  z-index: 1000;
+}
+</style>
+
 
 .sura-controls {
   display: flex;

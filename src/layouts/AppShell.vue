@@ -1,9 +1,17 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header elevated>
-      <q-toolbar>
-        <q-btn flat dense round icon="menu" @click="leftDrawer = !leftDrawer" aria-label="Toggle menu" />
-        <q-avatar square size="36px" class="q-ml-sm">
+    <q-header elevated class="app-header text-white">
+      <q-toolbar class="app-toolbar">
+        <q-btn
+          flat
+          dense
+          round
+          icon="menu"
+          color="white"
+          @click="leftDrawer = !leftDrawer"
+          aria-label="Toggle menu"
+        />
+        <q-avatar square size="36px" class="q-ml-sm brand-logo">
           <img src="/logo.svg" alt="PEACE2074" />
         </q-avatar>
         <q-toolbar-title>
@@ -13,8 +21,9 @@
         <q-input
           dense
           round
+          dark
           :placeholder="t('appShell.searchPlaceholder')"
-          class="search"
+          class="search glassy-field"
           v-model="search"
           debounce="300"
         />
@@ -32,13 +41,15 @@
         <q-select
           dense
           outlined
+          dark
           :options="langs"
           option-label="label"
           option-value="value"
           emit-value
           map-options
           v-model="localeValue"
-          style="max-width:120px; margin-left:12px"
+          class="glassy-field"
+          style="max-width:140px; margin-left:12px"
         />
       </q-toolbar>
     </q-header>
@@ -120,8 +131,57 @@ function playAthan () {
 </script>
 
 <style scoped>
+.app-header {
+  background: radial-gradient(circle at top, #1f2937, #0b1120 60%);
+  border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+}
+
+.app-toolbar {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+}
+
+.brand-logo {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: 12px;
+  padding: 4px;
+}
+
+.brand-logo img {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
+}
+
+.brand-link {
+  color: #ffffff;
+  text-decoration: none;
+  font-weight: 600;
+  letter-spacing: 0.02em;
+}
+
 .search { max-width: 360px; margin-left: 12px; }
+
+.glassy-field :deep(.q-field__control) {
+  background: rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(255, 255, 255, 0.2);
+  border-radius: 999px;
+  color: #fff;
+}
+
+.glassy-field :deep(.q-field__native),
+.glassy-field :deep(.q-field__input),
+.glassy-field :deep(.q-field__marginal) {
+  color: #fff;
+}
+
+.glassy-field :deep(.q-field__native::placeholder) {
+  color: rgba(255, 255, 255, 0.65);
+}
+
 .footer { display:flex; align-items:center; justify-content:center; gap:8px }
 .decor { height: 16px; opacity: 0.6 }
-.brand-link { color: inherit; text-decoration: none; font-weight: 600; }
 </style>

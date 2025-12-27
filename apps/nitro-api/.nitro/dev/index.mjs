@@ -1,6 +1,6 @@
 import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
 import destr from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/destr@2.0.5/node_modules/destr/dist/index.mjs';
-import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestURL, getRequestHeader, getResponseHeader, getRequestHeaders, setResponseHeaders, setResponseStatus, send, appendResponseHeader, removeResponseHeader, createError, setResponseHeader, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getQuery as getQuery$1 } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/h3@1.15.4/node_modules/h3/dist/index.mjs';
+import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, sendRedirect, proxyRequest, getRequestURL, getRequestHeader, getResponseHeader, getRequestHeaders, setResponseHeaders, setResponseStatus, send, appendResponseHeader, removeResponseHeader, createError, setResponseHeader, setHeader, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getQuery as getQuery$1 } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/h3@1.15.4/node_modules/h3/dist/index.mjs';
 import { createHooks } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs';
 import { createFetch, Headers as Headers$1 } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/ofetch@1.5.1/node_modules/ofetch/dist/node.mjs';
 import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/node-mock-http@1.0.4/node_modules/node-mock-http/dist/index.mjs';
@@ -9,13 +9,11 @@ import { prefixStorage } from 'file:///Users/waelio/Code/peace2074.com/apps/nitr
 import { createStorage } from 'file:///Users/waelio/Code/peace2074.com/node_modules/.pnpm/unstorage@1.17.3/node_modules/unstorage/dist/index.mjs';
 import unstorage_47drivers_47fs from 'file:///Users/waelio/Code/peace2074.com/node_modules/.pnpm/unstorage@1.17.3/node_modules/unstorage/drivers/fs.mjs';
 import { digest } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/ohash@2.0.11/node_modules/ohash/dist/index.mjs';
-import { klona } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/klona@2.0.6/node_modules/klona/dist/index.mjs';
-import defu, { defuFn } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/defu@6.1.4/node_modules/defu/dist/defu.mjs';
-import { snakeCase } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/scule@1.3.0/node_modules/scule/dist/index.mjs';
 import { getContext } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/unctx@2.5.0/node_modules/unctx/dist/index.mjs';
+import defu, { defuFn } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/defu@6.1.4/node_modules/defu/dist/defu.mjs';
 import { toRouteMatcher, createRouter } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/radix3@1.1.2/node_modules/radix3/dist/index.mjs';
 import { readFile } from 'node:fs/promises';
-import { resolve, dirname, join } from 'node:path';
+import path, { resolve, dirname, join } from 'node:path';
 import consola from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/consola@3.4.2/node_modules/consola/dist/index.mjs';
 import { ErrorParser } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/youch-core@0.3.3/node_modules/youch-core/build/index.js';
 import { Youch } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/youch@4.1.0-beta.13/node_modules/youch/build/index.js';
@@ -26,8 +24,11 @@ import { dirname as dirname$1, resolve as resolve$1 } from 'file:///Users/waelio
 import { Server } from 'node:http';
 import nodeCrypto from 'node:crypto';
 import { parentPort, threadId } from 'node:worker_threads';
+import { klona } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/klona@2.0.6/node_modules/klona/dist/index.mjs';
+import { snakeCase } from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/scule@1.3.0/node_modules/scule/dist/index.mjs';
+import OpenAI from 'file:///Users/waelio/Code/peace2074.com/apps/nitro-api/node_modules/.pnpm/openai@6.15.0/node_modules/openai/index.mjs';
 
-const serverAssets = [{"baseName":"server","dir":"/Users/waelio/Code/peace2074.com/apps/nitro-api/assets"}];
+const serverAssets = [{"baseName":"server","dir":"/Users/waelio/Code/peace2074.com/apps/nitro-api/server/assets"}];
 
 const assets$1 = createStorage();
 
@@ -40,7 +41,7 @@ const storage = createStorage({});
 storage.mount('/assets', assets$1);
 
 storage.mount('root', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/waelio/Code/peace2074.com/apps/nitro-api"}));
-storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/waelio/Code/peace2074.com/apps/nitro-api"}));
+storage.mount('src', unstorage_47drivers_47fs({"driver":"fs","readOnly":true,"base":"/Users/waelio/Code/peace2074.com/apps/nitro-api/server"}));
 storage.mount('build', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/waelio/Code/peace2074.com/apps/nitro-api/.nitro"}));
 storage.mount('cache', unstorage_47drivers_47fs({"driver":"fs","readOnly":false,"base":"/Users/waelio/Code/peace2074.com/apps/nitro-api/.nitro/cache"}));
 storage.mount('data', unstorage_47drivers_47fs({"driver":"fs","base":"/Users/waelio/Code/peace2074.com/apps/nitro-api/.data/kv"}));
@@ -617,7 +618,9 @@ const _inlineRuntimeConfig = {
   },
   "nitro": {
     "routeRules": {}
-  }
+  },
+  "deepseekApiKey": "sk-89ea9adf9e5f490bb068d824ce31da04",
+  "deepseekBaseUrl": "https://api.deepseek.com"
 };
 const envOptions = {
   prefix: "NITRO_",
@@ -996,8 +999,37 @@ const _bxigVh = eventHandler((event) => {
   return readAsset(id);
 });
 
+const _7w7Lp0 = defineEventHandler((event) => {
+  const allowedOrigins = ["http://localhost:4000", "https://peace2074.com", "https://www.peace2074.com"];
+  const origin = event.node.req.headers.origin;
+  if (origin && allowedOrigins.includes(origin)) {
+    setHeader(event, "Access-Control-Allow-Origin", origin);
+    setHeader(event, "Access-Control-Allow-Credentials", "true");
+  }
+  setHeader(event, "Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  setHeader(event, "Access-Control-Allow-Headers", "Content-Type,Authorization,Accept,Origin");
+  if (event.node.req.method === "OPTIONS") {
+    event.node.res.statusCode = 204;
+    event.node.res.end();
+  }
+});
+
+const _lazy_AYuhth = () => Promise.resolve().then(function () { return deepseek_post$1; });
+const _lazy_j3OHHf = () => Promise.resolve().then(function () { return health$1; });
+const _lazy_fwjwYf = () => Promise.resolve().then(function () { return index_get$1; });
+const _lazy_2gkxU4 = () => Promise.resolve().then(function () { return index$1; });
+const _lazy_gRX9g3 = () => Promise.resolve().then(function () { return quran$1; });
+const _lazy_FCksRZ = () => Promise.resolve().then(function () { return _id_$1; });
+
 const handlers = [
-  { route: '', handler: _bxigVh, lazy: false, middleware: true, method: undefined }
+  { route: '', handler: _bxigVh, lazy: false, middleware: true, method: undefined },
+  { route: '', handler: _7w7Lp0, lazy: false, middleware: true, method: undefined },
+  { route: '/deepseek', handler: _lazy_AYuhth, lazy: true, middleware: false, method: "post" },
+  { route: '/health', handler: _lazy_j3OHHf, lazy: true, middleware: false, method: undefined },
+  { route: '/', handler: _lazy_fwjwYf, lazy: true, middleware: false, method: "get" },
+  { route: '/', handler: _lazy_2gkxU4, lazy: true, middleware: false, method: undefined },
+  { route: '/quran', handler: _lazy_gRX9g3, lazy: true, middleware: false, method: undefined },
+  { route: '/quran/:id', handler: _lazy_FCksRZ, lazy: true, middleware: false, method: undefined }
 ];
 
 function createNitroApp() {
@@ -1263,4 +1295,162 @@ async function shutdown() {
   ]);
   parentPort?.postMessage({ event: "exit" });
 }
+
+const DEFAULT_MODEL = "deepseek-chat";
+const DEFAULT_BASE_URL = "https://api.deepseek.com";
+const deepseek_post = defineEventHandler(async (event) => {
+  var _a, _b, _c, _d, _e;
+  const config = useRuntimeConfig();
+  if (!config.deepseekApiKey) {
+    throw createError({
+      statusCode: 500,
+      statusMessage: "DeepSeek API key missing. Set DEEPSEEK_API_KEY in the environment."
+    });
+  }
+  const client = new OpenAI({
+    apiKey: config.deepseekApiKey,
+    baseURL: config.deepseekBaseUrl || DEFAULT_BASE_URL
+  });
+  const body = await readBody(event) || {};
+  if (!Array.isArray(body.messages) || body.messages.length === 0) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "Request body must include at least one message."
+    });
+  }
+  try {
+    const completion = await client.chat.completions.create({
+      model: body.model || DEFAULT_MODEL,
+      messages: body.messages,
+      temperature: (_a = body.temperature) != null ? _a : 0.7,
+      max_tokens: body.max_tokens
+    });
+    const message = (_c = (_b = completion.choices) == null ? void 0 : _b[0]) == null ? void 0 : _c.message;
+    return {
+      id: completion.id,
+      created: completion.created,
+      model: completion.model,
+      message,
+      usage: completion.usage,
+      raw: completion.choices
+    };
+  } catch (error) {
+    const statusCode = (_d = error == null ? void 0 : error.status) != null ? _d : 500;
+    const message = (error == null ? void 0 : error.message) || "DeepSeek request failed";
+    console.error(`[DeepSeek] request failed with status ${statusCode}:`, message);
+    setResponseStatus(event, statusCode);
+    return {
+      error: {
+        message,
+        status: statusCode,
+        data: (_e = error == null ? void 0 : error.error) == null ? void 0 : _e.message
+      }
+    };
+  }
+});
+
+const deepseek_post$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: deepseek_post
+});
+
+const health = defineEventHandler(() => ({ status: "OK", message: "Nitro API is healthy" }));
+
+const health$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: health
+});
+
+const index_get = defineEventHandler(() => ({
+  name: "Peace2074 API",
+  version: "1.0.0",
+  routes: [
+    "GET /",
+    "GET /health",
+    "GET /quran",
+    "GET /quran/:id",
+    "POST /deepseek"
+  ],
+  message: "Nitro API ready. Override PORT to change the default 3000 listener."
+}));
+
+const index_get$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: index_get
+});
+
+const index = defineEventHandler(() => ({
+  name: "Peace2074 API",
+  version: "1.0.0",
+  routes: [
+    "/health",
+    "/quran",
+    "/quran/:id",
+    "/deepseek"
+  ],
+  message: "Nitro API is running on port 3000 by default. Override with PORT env var if needed."
+}));
+
+const index$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: index
+});
+
+async function loadJSON$1(p) {
+  const buf = await readFile(p, "utf-8");
+  return JSON.parse(buf);
+}
+const quran = defineEventHandler(async () => {
+  const root = path.resolve(process.cwd(), "..", "..");
+  const chaptersPath = path.join(root, "src", "shared", "data", "chapters", "en.json");
+  const quranPath = path.join(root, "src", "shared", "data", "quran.json");
+  const chapters = await loadJSON$1(chaptersPath);
+  const book = await loadJSON$1(quranPath);
+  const list = (chapters || []).map((meta) => {
+    const id = Number((meta == null ? void 0 : meta.id) || (meta == null ? void 0 : meta.number));
+    const verses = Array.isArray(book[String(id)]) ? book[String(id)] : [];
+    return {
+      id,
+      name: String((meta == null ? void 0 : meta.name) || (meta == null ? void 0 : meta.suraName) || (meta == null ? void 0 : meta.transliteration) || ""),
+      e_name: String((meta == null ? void 0 : meta.translation) || (meta == null ? void 0 : meta.suraName) || ""),
+      type: String((meta == null ? void 0 : meta.type) || ""),
+      total_verses: verses.length
+    };
+  });
+  return list;
+});
+
+const quran$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: quran
+});
+
+async function loadJSON(p) {
+  const buf = await readFile(p, "utf-8");
+  return JSON.parse(buf);
+}
+const _id_ = defineEventHandler(async (event) => {
+  const id = Number(getRouterParam(event, "id") || 1);
+  const root = path.resolve(process.cwd(), "..", "..");
+  const chaptersPath = path.join(root, "src", "shared", "data", "chapters", "en.json");
+  const quranPath = path.join(root, "src", "shared", "data", "quran.json");
+  const chapters = await loadJSON(chaptersPath);
+  const book = await loadJSON(quranPath);
+  const meta = (chapters || []).find((c) => Number((c == null ? void 0 : c.id) || (c == null ? void 0 : c.number)) === id);
+  const verses = Array.isArray(book[String(id)]) ? book[String(id)] : [];
+  const sura = {
+    id,
+    name: String((meta == null ? void 0 : meta.name) || (meta == null ? void 0 : meta.suraName) || (meta == null ? void 0 : meta.transliteration) || ""),
+    e_name: String((meta == null ? void 0 : meta.translation) || (meta == null ? void 0 : meta.suraName) || ""),
+    type: String((meta == null ? void 0 : meta.type) || ""),
+    total_verses: verses.length,
+    ayat: verses.map((v) => ({ verse: v.verse, text: v.text, translation: v.translation }))
+  };
+  return { sura };
+});
+
+const _id_$1 = /*#__PURE__*/Object.freeze({
+  __proto__: null,
+  default: _id_
+});
 //# sourceMappingURL=index.mjs.map

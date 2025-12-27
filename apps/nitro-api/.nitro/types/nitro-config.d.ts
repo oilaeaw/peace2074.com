@@ -10,7 +10,9 @@ type UserAppConfig = Defu<{}, []>
 declare module "nitropack/types" {
   interface AppConfig extends UserAppConfig {}
   interface NitroRuntimeConfig {
+   deepseekApiKey: string,
 
+   deepseekBaseUrl: string,
   }
 }
 export {}

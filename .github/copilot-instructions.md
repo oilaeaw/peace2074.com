@@ -1,42 +1,55 @@
 # PEACE2074 AI Guide
 
-## Stack snapshot
-- Vue 3 + TypeScript + Vite with Quasar UI, Pinia stores, vue-i18n, vue-router, and PWA via `vite-plugin-pwa` (see `vite.config.ts`).
-- Node 22.12+ is enforced (`package.json` `predev`), and `pnpm` is the expected package manager (`pnpm-lock.yaml`).
+## Stack & entrypoints
 
-## Layout & routing
-- `src/main.ts` wires AppShell, router, Pinia, i18n, Quasar, FontAwesome, and service worker registration; keep new globals registered there.
-- The visible frame lives in `src/layouts/AppShell.vue` (Quasar `q-layout`, search, athan audio, language selector). Extend navigation via this shell, not by patching individual pages.
-- Canonical routes live in `src/router/routes.ts` using typed constants plus meta `title/titleKey` for localized document titles; update both route entry + translation key when adding pages.
-- `unplugin-vue-router` also scans `src/views` to emit type-safe helpers (`useRoute('/quran/[id]')`). Keep filenames aligned with their paths so typing stays correct.
+- Vue 3 + TS + Vite + Quasar; run the UI via `pnpm dev` (port 4000) after the Node ≥22.12 check enforced by the `predev` script.
+- Monorepo also ships a Nitro backend in `apps/nitro-api`; start it separately with `pnpm --filter nitro-api dev` (port 3000).
+- `pnpm` is canonical. Use `pnpm lint`, `pnpm typecheck`, and `pnpm exec playwright test` before PRs; Husky + lint-staged auto-format staged files.
 
-## State, data, and quran flows
-- Quran data originates from `src/shared/data/chapters/en.json` + `src/shared/data/quran.json` accessed through the `@shared/*` alias defined in `tsconfig.json`/`vite.config.ts`.
-- `src/stores/q2p.pinia.ts` hydrates a `Book` array on init, persists it to `localStorage`, and exposes getters (`GetQ`, `GetSura`) plus actions (`init`, `fetchSura`, `setLegend`). Always keep the `{ id, name, e_name, type, total_verses, ayat[] }` shape intact.
-- Detail pages rely on the `src/composables/useQ2P.ts` helper, which attempts API fetches (Nitro `/quran/:id`, Waelio `/api/quran?s=`) before falling back to bundled JSON. When adding endpoints, extend the sequential fetch list.
-- The e2e suite (`tests/e2e.spec.ts`) and debugging script (`scripts/debug-e2e.mjs`) look for `.sura-card` elements as defined in `src/views/quran/index.vue`; preserve that class or update the tests/scripts accordingly.
+## Layout, routing & navigation
 
-## API integration
-- A lightweight Nitro service lives in `apps/nitro-api` with `/quran` and `/quran/:id` routes that read from the same shared JSON. Run it locally with `pnpm --filter nitro-api dev` (defaults to port 3334).
-- Frontend defaults `VITE_QURAN_API_BASE` (see `.env`) to the Nitro port; keep this variable updated per environment and never commit real secrets.
+- `src/main.ts` wires router, Pinia, i18n, Quasar, FontAwesome, and service worker registration—add new globals here.
+- The visible frame lives in `src/layouts/AppShell.vue` (Quasar `q-layout` with search, athan audio, locale selector); extend nav inside this shell.
+- Route objects live in `src/router/routes.ts` while typed file-based routes live under `src/views`; keep filenames aligned for `unplugin-vue-router` helpers.
+- Legacy `src/pages` files exist, but routeable screens should prefer `src/views` going forward.
 
-## UI, styling, and assets
-- Quasar is registered through `src/plugins/quasar.ts` with Notify + brand colors; use `q-*` components for layout or register additional Quasar plugins here.
-- Auto-imports (configured in `vite.config.ts`) already provide Vue, router, Pinia APIs, and Quasar components in `src/core/components`; avoid redundant manual imports.
-- Global SCSS lives in `src/styles/scss`, while view-specific styling typically sits in each SFC via `<style scoped lang="scss">`.
-- Font Awesome icons are whitelisted in `src/plugins/font-awesome`; add icons there and consume the global `FontAwesomeIcon` component.
+## Data & Pinia flows
 
-## Internationalization & meta
-- Locale files sit under `src/locale/{en,ar,de,ru}.json` and are mounted in `src/i18n.ts`. Any new `meta.titleKey` must exist in all locale files (e.g., `pages.quran.title`).
-- `src/main.ts` watches both route changes and locale changes to recompute `document.title`; ensure new routes include either `meta.title` or `meta.titleKey`.
+- Quran metadata comes from `@shared/data/chapters/*.json` plus verses in `@shared/data/quran.json`; keep the `{ id, name, e_name, type, total_verses, ayat[] }` shape intact.
+- `src/stores/q2p.pinia.ts` hydrates the `Book` array, persists it via `localStorage`, and exposes `GetQ`/`GetSura`; guard browser APIs with `typeof window !== 'undefined'` when reusing logic.
+- `src/composables/useQ2P.ts` fetches from Nitro `/quran/:id`, then Waelio `/api/quran?s=`, finally bundled JSON—extend this sequence when adding sources.
+- `.sura-card` markup in `src/views/quran/index.vue` drives Playwright tests and `scripts/debug-e2e.mjs`; update selectors everywhere if you rename them.
 
-## Developer workflows
-- Primary commands: `pnpm install`, `pnpm dev` (frontend on 3000), `pnpm build`, `pnpm preview`, `pnpm lint`, `pnpm typecheck`, `pnpm exec playwright test` (or `pnpm run test:e2e` if you add a script).
-- For debugging e2e UIs, run `node scripts/debug-e2e.mjs` after starting the dev server(s) to capture screenshots and DOM dumps.
-- Service worker caching is enabled only in production builds; when adding new static assets ensure they are included in the PWA manifest/workbox patterns in `vite.config.ts`.
+## API & env
 
-## Conventions & gotchas
-- Respect the alias map (`@`, `~`, `@shared`) to avoid brittle relative paths.
-- Pinia persistence depends on browser-only APIs; guard any store access in SSR contexts (e.g., Nitro) with `typeof window !== 'undefined'` as seen in the store definitions.
-- `.env` already exists with many secrets—never print or check them into logs; introduce new frontend config via `VITE_*` keys only.
-- Keep `tests/`, `playwright-report/`, and `public/data/` in sync when tweaking Quran presentation to avoid regressions across automated + visual checks.
+- Nitro routes `/quran`, `/quran/:id`, and `/deepseek` all read the shared JSON; edit schemas in one place and mirror them both sides.
+- Frontend uses `VITE_QURAN_API_BASE` (see `.env`) to target the backend; never log real secrets and add new config as `VITE_*`.
+- DeepSeek proxy needs `DEEPSEEK_API_KEY`; call it through `sendDeepSeekChat()` in `src/stores/services/index.ts`.
+- `vite.config.ts` hosts the `vite-plugin-pwa` setup—register new static assets there so the service worker caches them.
+
+## UI, styling & assets
+
+- Quasar plugin (`src/plugins/quasar.ts`) registers Notify + brand palette; register additional Quasar plugins here and stick to `q-*` components.
+- Auto-imports (see `vite.config.ts`) expose Vue/Pinia/router/Quasar APIs to components; avoid redundant manual imports unless missing.
+- Global styles live in `src/styles/scss`; scope feature-specific rules inside each SFC with `<style scoped lang="scss">`.
+- Font Awesome icons are declared in `src/plugins/font-awesome/index.ts`; add icons there and reuse the global `FontAwesomeIcon` component.
+
+## Internationalization & document titles
+
+- Locale JSON files live under `src/locale/{en,ar,de,ru,he}.json` and mount via `src/i18n.ts`; new keys must exist in every locale before use.
+- Routes must define `meta.title` or `meta.titleKey`; `src/main.ts` recomputes `document.title` whenever route or locale changes.
+- Initial locale resolves from the `app-locale` localStorage key, then browser preference; AppShell’s header `q-select` controls the switcher.
+
+## Developer workflows & testing
+
+- Run `pnpm dev` (UI) and `pnpm --filter nitro-api dev` (API) together—API-dependent screens hang without both.
+- Use `node scripts/debug-e2e.mjs` after servers start to capture DOM dumps/screens for failing Playwright specs.
+- `pnpm build` + `pnpm preview` validate the PWA/service worker path, while `pnpm typecheck` (vue-tsc) should stay green before merging.
+- Quran data tweaks must keep `tests/`, `playwright-report/`, and `public/data/` in sync to avoid visual and selector regressions.
+
+## Conventions & safety
+
+- Stick to alias imports (`@`, `~`, `@shared`) from `tsconfig.json`/`vite.config.ts` to avoid brittle relative paths.
+- Browser-only Pinia persistence needs guards (`typeof window !== 'undefined'`) to stay SSR-safe for Nitro reuse.
+- `.env` already exists with sensitive values; never print real secrets and document placeholders instead.
+- When adding routes, selectors, or locales, update both translation keys and Playwright tests in lockstep.

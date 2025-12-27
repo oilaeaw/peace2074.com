@@ -39,6 +39,7 @@
         "lead": "A calm place to read, reflect and remember.",
         "ctaReadQuran": "Read Quran",
         "ctaTasbeeh": "Tasbeeh",
+        "aiLabel": "Ask PEACE AI",
         "cardTitle": "Daily Reflection",
         "cardBody": "Short selected verses and reminders to help you focus."
       }
@@ -57,7 +58,19 @@
         "totverses": "number of verses",
         "bookmark": "bookmark"
       },
-      "holynames": "Holy Names"
+      "holynames": "Holy Names",
+      "modes": {
+        "reader": "Reader mode",
+        "mushaf": "Mushaf mode"
+      },
+      "bookmarks": {
+        "menu": "Bookmarks",
+        "empty": "No bookmarks yet",
+        "add": "Bookmark verse {verse}",
+        "saved": "Bookmark saved",
+        "error": "Could not save bookmark",
+        "current": "this sura"
+      }
     },
     "miracles": {
       "pageTitle": "Miracles Page"

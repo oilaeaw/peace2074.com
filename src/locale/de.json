@@ -39,6 +39,7 @@
         "lead": "Ein ruhiger Ort zum Lesen, Nachdenken und Erinnern.",
         "ctaReadQuran": "Koran lesen",
         "ctaTasbeeh": "Tasbeeh",
+        "aiLabel": "Frag PEACE AI",
         "cardTitle": "Tägliche Reflexion",
         "cardBody": "Kurze ausgewählte Verse und Erinnerungen, die dir helfen, fokussiert zu bleiben."
       }
@@ -57,7 +58,19 @@
         "totverses": "Anzahl der Verse",
         "bookmark": "Lesezeichen"
       },
-      "holynames": "Heilige Namen"
+      "holynames": "Heilige Namen",
+      "modes": {
+        "reader": "Lesemodus",
+        "mushaf": "Mushaf-Modus"
+      },
+      "bookmarks": {
+        "menu": "Lesezeichen",
+        "empty": "Noch keine Lesezeichen",
+        "add": "Vers {verse} speichern",
+        "saved": "Lesezeichen gespeichert",
+        "error": "Lesezeichen konnte nicht gespeichert werden",
+        "current": "diese Sure"
+      }
     },
     "miracles": {
       "pageTitle": "Wunderseite"

@@ -18,6 +18,7 @@ import {
   faCheck,
   faUser,
   faLocationDot,
+  faCopy,
 } from "@fortawesome/free-solid-svg-icons";
 import {
   faCalendarDays,
@@ -47,7 +48,8 @@ const initFaLibrary = () => {
     faEnvelope,
     faCheck,
     faUser,
-    faLocationDot
+    faLocationDot,
+    faCopy
   );
 };
 

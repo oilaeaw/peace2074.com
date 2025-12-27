@@ -3,11 +3,12 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "nitro dev -p 3334",
+        "dev": "nitro dev -p 3000",
         "build": "nitro build",
-        "preview": "nitro preview -p 3334"
+        "preview": "nitro preview -p 3000"
     },
     "dependencies": {
-        "nitropack": "^2.9.7"
+        "nitropack": "^2.9.7",
+        "openai": "^6.15.0"
     }
 }
