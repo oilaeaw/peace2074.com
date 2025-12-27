@@ -1,4 +1,4 @@
-import { useFetch } from '@vueuse/core';
+import { useFetch } from "@vueuse/core";
 
 export async function getHolyNames() {
   const url = "/api/holynames";
@@ -98,24 +98,33 @@ const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 
 function computeNitroBase() {
-  // Point directly to Nitro root (CORS-enabled) instead of nested /api/quran
-  const configured = env.VITE_NITRO_BASE || 'https://api.waelio.com'
-  if (configured) {
+  // Prefer explicit env override
+  const configured = env.VITE_NITRO_BASE
+  if (configured && typeof configured === 'string') {
     return configured.replace(/\/$/, '')
   }
+
   if (typeof window !== 'undefined') {
-    const protocol = window.location.protocol
-    const hostname = window.location.hostname
-    return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, '')
+    const { protocol, hostname } = window.location
+
+    // Local dev: hit local Nitro to avoid cross-domain CORS
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, '')
+    }
+
+    // Production: use same-origin (relative) to avoid CORS entirely
+    return ''
   }
+
+  // SSR/default fallback: none
   return ''
 }
 
-const NITRO_BASE = computeNitroBase()
+const NITRO_BASE = computeNitroBase();
 
-if (typeof window !== 'undefined') {
+if (typeof window !== "undefined") {
   if (NITRO_BASE) {
-    console.debug('[DeepSeek] targeting', NITRO_BASE)
+    console.debug("[DeepSeek] targeting", NITRO_BASE);
   } else {
     console.warn('[DeepSeek] NITRO_BASE missing; falling back to same-origin requests')
   }

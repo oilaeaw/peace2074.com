@@ -47,6 +47,16 @@
                 "aiLabel": "שאל את PEACE AI",
                 "cardTitle": "הרהור יומי",
                 "cardBody": "פסוקים ותזכורות קצרות שיעזרו לך להתמקד."
+            },
+            "ai": {
+                "title": "שאל את PEACE AI",
+                "subtitle": "קבל הנחיה על סורות, הרהורים או שימוש באפליקציה.",
+                "tryAnother": "נסה שאלה אחרת",
+                "placeholder": "שאל על סורה, נושא או פיצ׳ר",
+                "ask": "שאל",
+                "thinking": "חושב…",
+                "responseTitle": "תשובת AI",
+                "copied": "התשובה הועתקה"
             }
         },
         "holynames": "שמות הקודש",

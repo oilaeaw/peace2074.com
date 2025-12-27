@@ -52,6 +52,15 @@ try {
   /* noop */
 }
 
+function applyDirFromLocale(localeValue: string) {
+  if (typeof document === 'undefined') return
+  const rtl = ['ar', 'he'].includes((localeValue || '').split('-')[0].toLowerCase())
+  document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr')
+  document.body.setAttribute('dir', rtl ? 'rtl' : 'ltr')
+}
+
+applyDirFromLocale(targetLocale)
+
 app.component("FontAwesomeIcon", FontAwesomeIcon);
 
 // Dynamic document.title from route meta and i18n
@@ -83,6 +92,7 @@ try {
   if (localeRef && typeof localeRef === 'object' && 'value' in localeRef) {
     watch(localeRef, () => {
       updateTitleForRoute(router.currentRoute.value);
+      applyDirFromLocale(localeRef.value)
     });
   }
 } catch (e) {

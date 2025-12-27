@@ -13,11 +13,11 @@
       <q-card class="ai-card q-pa-md">
         <div class="ai-header">
           <div>
-            <p class="ai-title">Ask PEACE AI</p>
-            <small>Get guidance on chapters, reflections, or how to use the app.</small>
+            <p class="ai-title">{{ t('pages.home.ai.title') }}</p>
+            <small>{{ t('pages.home.ai.subtitle') }}</small>
           </div>
           <q-chip clickable color="primary" text-color="white" size="sm" @click="setNextPromptExample">
-            Try another prompt
+            {{ t('pages.home.ai.tryAnother') }}
           </q-chip>
         </div>
 
@@ -29,7 +29,7 @@
             outlined
             :disable="isLoading"
             :label="t('pages.home.hero.aiLabel')"
-            placeholder="Ask about a surah, theme, or feature"
+            :placeholder="t('pages.home.ai.placeholder')"
           />
           <q-btn
             type="submit"
@@ -37,7 +37,7 @@
             unelevated
             class="full-width"
             :disable="!canSubmit"
-            :label="isLoading ? 'Thinking…' : 'Ask'"
+            :label="isLoading ? t('pages.home.ai.thinking') : t('pages.home.ai.ask')"
           />
         </q-form>
 
@@ -47,20 +47,45 @@
 
         <q-card-section v-if="aiResponse" class="response q-mt-sm">
           <div class="response-header">
-            <div class="response-title">AI Response</div>
+            <div class="response-title">{{ t('pages.home.ai.responseTitle') }}</div>
             <q-btn flat round dense @click="copyResponse">
               <font-awesome-icon icon="fa-solid fa-copy" />
             </q-btn>
           </div>
           <pre class="response-content">{{ aiResponse }}</pre>
         </q-card-section>
+
+        <q-separator class="q-my-sm" />
+
+        <div class="history">
+          <div class="history-header">
+            <div class="text-subtitle2">{{ t('pages.home.ai.historyTitle') }}</div>
+            <q-btn v-if="history.length" flat size="sm" color="negative" @click="clearHistory">
+              {{ t('pages.home.ai.clearHistory') }}
+            </q-btn>
+          </div>
+          <div v-if="!history.length" class="text-grey-6 text-caption q-mt-xs">
+            {{ t('pages.home.ai.historyEmpty') }}
+          </div>
+          <q-list v-else separator class="q-mt-xs">
+            <q-item v-for="item in history" :key="item.id" clickable @click="reusePrompt(item)">
+              <q-item-section>
+                <div class="text-weight-medium ellipsis">{{ item.prompt }}</div>
+                <div class="text-caption text-grey-6 ellipsis">{{ item.response }}</div>
+              </q-item-section>
+              <q-item-section side>
+                <q-btn flat round dense icon="refresh" @click.stop="reusePrompt(item)" :title="t('pages.home.ai.reuse')" />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </div>
       </q-card>
     </div>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
@@ -73,6 +98,8 @@ const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)
 const errorMessage = ref<string | null>(null)
 const isLoading = ref(false)
+const history = ref<{ id: string; prompt: string; response: string; ts: number }[]>([])
+const HISTORY_KEY = 'peace-ai-history'
 
 const { copy } = useClipboard({ source: aiResponse })
 
@@ -115,12 +142,53 @@ async function askPeaceAI() {
       ],
     })
     aiResponse.value = res?.message?.content ?? 'No response received.'
+    if (aiResponse.value) {
+      addToHistory(userPrompt.value.trim(), aiResponse.value)
+    }
   } catch (error: any) {
     errorMessage.value = error?.data?.message || error?.message || 'DeepSeek request failed. Please try again.'
   } finally {
     isLoading.value = false
   }
 }
+
+function addToHistory(prompt: string, response: string) {
+  const entry = { id: crypto.randomUUID?.() || String(Date.now()), prompt, response, ts: Date.now() }
+  history.value = [entry, ...history.value].slice(0, 20)
+  try {
+    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value))
+  } catch {}
+}
+
+function loadHistory() {
+  if (typeof localStorage === 'undefined') return
+  try {
+    const raw = localStorage.getItem(HISTORY_KEY)
+    if (raw) {
+      const parsed = JSON.parse(raw)
+      if (Array.isArray(parsed)) {
+        history.value = parsed
+      }
+    }
+  } catch {}
+}
+
+function reusePrompt(entry: { prompt: string }) {
+  userPrompt.value = entry.prompt
+  errorMessage.value = null
+  aiResponse.value = null
+}
+
+function clearHistory() {
+  history.value = []
+  try {
+    localStorage.removeItem(HISTORY_KEY)
+  } catch {}
+}
+
+onMounted(() => {
+  loadHistory()
+})
 
 function setNextPromptExample() {
   if (isLoading.value) return
