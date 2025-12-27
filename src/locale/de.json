@@ -100,6 +100,25 @@
     },
     "miracles": {
       "pageTitle": "Wunderseite"
+    },
+    "chat": {
+      "title": "Community-Chat",
+      "subtitle": "Tritt mit anderen in Kontakt, stelle Fragen und teile Reflexionen.",
+      "banner": "Demnächst: Eingebetteter Live-Chat mit waelio-messaging.",
+      "communityTitle": "Öffentliche Räume",
+      "communityBody": "Tritt offenen Räumen bei, um über Suren, Reflexionen und App-Tipps zu sprechen.",
+      "devTitle": "Entwickler",
+      "devBody": "Möchtest du beitragen? Melde dich und arbeite mit uns an offenen Issues.",
+      "todoTitle": "Roadmap",
+      "todoBody": "Wir fügen bald Live-Chat, Räume und Verlauf mit waelio-messaging hinzu."
+    },
+    "support": {
+      "title": "Support",
+      "subtitle": "Brauchst du Hilfe? Wir hören zu und unterstützen.",
+      "helpTitle": "Anleitungen & FAQ",
+      "helpBody": "Sieh dir zuerst die Hilfedokus und häufigen Fragen an.",
+      "contactTitle": "Kontaktiere uns",
+      "contactBody": "Wenn du feststeckst, schick uns Details und wir melden uns so schnell wie möglich."
     }
   },
   "general": {

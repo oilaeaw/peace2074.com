@@ -30,6 +30,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/chat': RouteRecordInfo<
+      '/chat',
+      '/chat',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/contact': RouteRecordInfo<
       '/contact',
       '/contact',
@@ -86,6 +93,13 @@ declare module 'vue-router/auto-routes' {
       { lok: ParamValue<false> },
       | never
     >,
+    '/support': RouteRecordInfo<
+      '/support',
+      '/support',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/tasbeeh': RouteRecordInfo<
       '/tasbeeh',
       '/tasbeeh',
@@ -116,6 +130,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/index.vue': {
       routes:
         | '/'
+      views:
+        | never
+    }
+    'src/views/chat.vue': {
+      routes:
+        | '/chat'
       views:
         | never
     }
@@ -164,6 +184,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/quran/[...lok].vue': {
       routes:
         | '/quran/[...lok]'
+      views:
+        | never
+    }
+    'src/views/support.vue': {
+      routes:
+        | '/support'
       views:
         | never
     }

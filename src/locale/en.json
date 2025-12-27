@@ -100,6 +100,25 @@
     },
     "miracles": {
       "pageTitle": "Miracles Page"
+    },
+    "chat": {
+      "title": "Community Chat",
+      "subtitle": "Connect with others, ask questions, and share reflections.",
+      "banner": "Coming soon: embedded real-time chat powered by waelio-messaging.",
+      "communityTitle": "Public rooms",
+      "communityBody": "Join open rooms to discuss surahs, reflections, and app tips.",
+      "devTitle": "Developers",
+      "devBody": "Want to contribute? Reach out and pair with us on open issues.",
+      "todoTitle": "Roadmap",
+      "todoBody": "We are adding live chat, rooms, and history with waelio-messaging."
+    },
+    "support": {
+      "title": "Support",
+      "subtitle": "Need help? We’re here to listen and assist.",
+      "helpTitle": "Guides & FAQ",
+      "helpBody": "Check our help docs and common issues first.",
+      "contactTitle": "Contact us",
+      "contactBody": "If you’re stuck, send details and we’ll reply as soon as possible."
     }
   },
   "general": {
