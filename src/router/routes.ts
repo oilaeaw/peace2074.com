@@ -81,4 +81,22 @@ export const routes: Array<RouteRecordRaw> = [
       titleKey: 'contact.help',
     },
   },
+  {
+    path: '/blog',
+    name: 'BlogList',
+    component: () => import('@/views/blog/index.vue'),
+    meta: {
+      title: 'Blog',
+      titleKey: 'pages.blog.title',
+    },
+  },
+  {
+    path: '/blog/:slug',
+    name: 'BlogDetail',
+    component: () => import('@/views/blog/[slug].vue'),
+    meta: {
+      title: 'Blog',
+      titleKey: 'pages.blog.title',
+    },
+  },
 ];

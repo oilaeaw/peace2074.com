@@ -1,0 +1,27 @@
+[
+    {
+        "id": "getting-started",
+        "slug": "getting-started",
+        "title": "Welcome to the PEACE2074 Blog",
+        "excerpt": "What to expect: app tips, Quran reflections, and feature updates.",
+        "content": "We are launching a simple blog to share release highlights, learning resources, and reflections. Stay tuned for regular updates.",
+        "date": "2025-12-20",
+        "tags": [
+            "release",
+            "product"
+        ]
+    },
+    {
+        "id": "deepseek-integration",
+        "slug": "deepseek-integration",
+        "title": "DeepSeek Assistant for Support",
+        "excerpt": "A quick overview of how we wired DeepSeek to help with support questions.",
+        "content": "The Support page now includes a DeepSeek-powered assistant. It reuses our Nitro /deepseek endpoint, keeps data on-platform, and avoids new dependencies.",
+        "date": "2025-12-27",
+        "tags": [
+            "ai",
+            "support",
+            "how-to"
+        ]
+    }
+]

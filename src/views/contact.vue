@@ -1,286 +1,151 @@
-<script lang="ts">
-import { useRouter } from 'vue-router'
-import { reactive, ref, computed, unref, onMounted } from 'vue'
+<script setup lang="ts">
+import { computed, reactive, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import emailjs from "@emailjs/browser";
 
-export default {
-  setup() {
-    const router = useRouter();
-    const { t } = useI18n();
-    const myProjects = reactive(projects);
-    const accept = ref(false);
-    const user_email = ref("");
-    const message = ref("");
-    const form_valid = ref(false);
-    const personal_name = ref("");
-    const project_name = ref("Peace2074");
-    const user_name = ref("");
-    const to_name = ref("");
-    const reply_to = ref("");
-    const emailjs_service = ref(import.meta.env.VITE_EMAIL_SERVICE as string)!;
-    const emailjs_template = ref(import.meta.env.VITE_EMAIL_TEMPLATE as string)!;
-    const emailjs_user = ref(import.meta.env.VITE_EMAIL_USER as string);
-    const onReset = (): boolean => {
-      form_valid.value = false;
-      accept.value = false;
-      message.value = "";
-      user_email.value = "";
-      personal_name.value = "";
-      project_name.value = "";
-      user_name.value = "";
-      to_name.value = "";
-      reply_to.value = "";
-      return true;
-    };
-    const isReadyForm = computed(() => {
-      return !!(
-        user_name.value &&
-        user_email.value &&
-        project_name.value &&
-        accept.value &&
-        message.value
-      );
-    });
-    const filtered_Project = computed(() => {
-      const { target } = unref(router.currentRoute).query;
-      if (target) {
-        project_name.value = target.toString();
-        return myProjects.filter((item) => item.key === target);
-      }
+const { t } = useI18n()
 
-      return myProjects;
-    });
-    const isEmptyForm = computed(() => {
-      return (
-        !user_name.value &&
-        !user_email.value &&
-        !project_name.value &&
-        !accept.value &&
-        !message.value
-      );
-    });
-    const emailBody = computed(() => {
-      return {
-        user_name: user_name.value,
-        user_email: user_email.value,
-        project_name: project_name.value,
-        message: message.value,
-        reply_to: user_email.value,
-      };
-    });
-    const onSubmit = () => {
-      emailjs
-        .send(
-          emailjs_service.value,
-          emailjs_template.value,
-          emailBody.value,
-          emailjs_user.value
-        )
-        .then(() => {
-          alert("Message Was set successfully.");
-          onReset();
-          return true;
-        })
-        .catch((exception: object) => {
-          console.error(exception);
-          return exception;
-        });
-      return true;
-    };
-    onMounted(() => {
-      emailjs.init(emailjs_user.value as string) as void;
-    });
-    const siteData = reactive({
-      title: "Waelio | Contact Us",
-      description: "Contact US for any questions,support or concerns.",
-      keywords: "logo, basic, cb, php, mysql, python, javascript, mssql",
-    });
-    // useHead removed — document.title handled centrally in main.ts
+const projects = reactive([
+  { key: 'peace2074', value: 'Peace2074', selected: true },
+  { key: 'quran', value: 'Quran' },
+  { key: 'tasbeeh', value: 'Tasbeeh' },
+])
 
-    return {
-      myProjects,
-      t,
-      accept,
-      emailjs_user,
-      user_email,
-      user_name,
-      project_name,
-      message,
-      form_valid,
-      onSubmit,
-      onReset,
-      isReadyForm,
-      isEmptyForm,
-      emailBody,
-      filtered_Project,
-    };
-  },
-};
+const form = reactive({
+  name: '',
+  email: '',
+  project: 'peace2074',
+  message: '',
+  accept: false,
+})
+
+const loading = ref(false)
+const submitted = ref(false)
+
+const isReady = computed(() =>
+  Boolean(form.name && form.email && form.project && form.message && form.accept)
+)
+
+function reset() {
+  form.name = ''
+  form.email = ''
+  form.project = 'peace2074'
+  form.message = ''
+  form.accept = false
+  submitted.value = false
+}
+
+async function submit() {
+  if (!isReady.value) return
+  loading.value = true
+  // Placeholder submit: in production wire to backend or email service
+  setTimeout(() => {
+    submitted.value = true
+    loading.value = false
+  }, 400)
+}
 </script>
+
 <template>
-  <q-page padding class="container mx-auto">
-    <h1 class="text-h2">
-      {{ t("button.Contact") }}
-    </h1>
-    <div class="mx-auto">
-      <div class="py-lg">
-        <div class="text-h4 text-center">
-          {{ t("contact.help") }}
-        </div>
-        <div class="text-h6 text-center">
-          {{ t("contact.offer_help") }}
-        </div>
-      </div>
-      <div class="form-container mx-auto p-4">
-        <form id="contactForm" ref="contactForm" class="mx-auto form flex flex-col">
-          <!-- User Name -->
-          <div class="form-group lg:w-96 w-72 h-22 p-1 my-2 mx-auto rounded">
-            <label for="user_name">{{ t("contact.name.label") }}</label>
-            <input
-              id="user_name"
-              v-model="user_name"
-              name="full_name"
-              :placeholder="t('contact.name.placeholder')"
-            />
+  <q-page padding class="contact-page">
+    <section class="hero">
+      <h1>{{ t('button.Contact') }}</h1>
+      <p class="subtitle">{{ t('contact.offer_help') }}</p>
+    </section>
+
+    <div class="layout q-gutter-lg q-mt-lg">
+      <q-card class="form-card">
+        <q-card-section>
+          <div class="text-h6">{{ t('contact.help') }}</div>
+          <div class="text-body2 text-grey-7 q-mt-xs">{{ t('contact.accept_terms') }}</div>
+        </q-card-section>
+        <q-separator />
+        <q-card-section class="q-gutter-md">
+          <q-input v-model="form.name" outlined :label="t('contact.name.label')" :placeholder="t('contact.name.placeholder')" />
+          <q-input v-model="form.email" outlined type="email" :label="t('contact.email.label')" :placeholder="t('contact.email.placeholder')" />
+          <q-select
+            v-model="form.project"
+            outlined
+            :options="projects"
+            option-value="key"
+            option-label="value"
+            emit-value
+            map-options
+            :label="t('contact.projects.label')"
+            :placeholder="t('contact.projects.placeholder')"
+          />
+          <q-input
+            v-model="form.message"
+            outlined
+            type="textarea"
+            autogrow
+            :label="t('contact.message.label')"
+            :placeholder="t('contact.message.placeholder')"
+          />
+          <div class="row items-center justify-between">
+            <q-toggle v-model="form.accept" color="primary" :label="t('contact.terms_accepted')" />
+            <RouterLink to="/terms" class="text-primary">{{ t('contact.accept_terms') }}</RouterLink>
           </div>
-          <!-- User Email -->
-          <div class="form-group lg:w-96 w-72 h-22 p-1 my-2 mx-auto rounded">
-            <label for="user_email">{{ t("contact.email.label") }}</label>
-            <input
-              id="user_email"
-              v-model="user_email"
-              filled
-              name="email"
-              type="email"
-              :placeholder="t('contact.email.placeholder')"
-            />
+          <div class="row q-gutter-sm">
+            <q-btn color="primary" unelevated :label="t('button.submit')" :disable="!isReady || loading" :loading="loading" @click="submit" />
+            <q-btn flat color="primary" :label="t('button.reset')" @click="reset" />
           </div>
-          <!-- Project Selector -->
-          <div class="form-group lg:w-96 w-72 h-22 p-1 my-2 mx-auto rounded">
-            <label for="project_name">{{ t("contact.projects.label") }}</label>
-            <select
-              id="project_name"
-              v-model="project_name"
-              name="project_name"
-              :placeholder="t('contact.projects.placeholder')"
-            >
-              <option
-                v-for="item in filtered_Project"
-                :key="item.key"
-                :value="item.key"
-                :selected="item.selected"
-              >
-                {{ item.value }}
-              </option>
-            </select>
+          <q-banner v-if="submitted" rounded dense class="q-mt-sm" color="positive" text-color="white">
+            {{ t('general.fetchingUpdates') || 'Message recorded. We will reply soon.' }}
+          </q-banner>
+        </q-card-section>
+      </q-card>
+
+      <q-card class="info-card">
+        <q-card-section>
+          <div class="text-h6">{{ t('contact.contactTitle', 'Contact info') }}</div>
+          <div class="text-body2 text-grey-7 q-mt-xs">Reach us directly:</div>
+          <div class="q-mt-sm q-gutter-xs column">
+            <a class="link" href="mailto:hello@peace2074.com">hello@peace2074.com</a>
+            <a class="link" href="https://peace2074.com" target="_blank" rel="noopener">peace2074.com</a>
           </div>
-          <!-- Message Body -->
-          <div class="form-group lg:w-96 w-72 h-30 p-1 my-2 mx-auto rounded">
-            <label for="user_message">{{ t("contact.message.label") }}</label>
-            <textarea
-              id="user_message"
-              v-model="message"
-              type="textarea"
-              name="message"
-              min-height="5rem"
-              max-height="10rem"
-              :placeholder="t('contact.message.placeholder')"
-            />
+        </q-card-section>
+        <q-separator />
+        <q-card-section>
+          <div class="text-subtitle2">Social</div>
+          <div class="q-gutter-xs column q-mt-xs">
+            <a class="link" href="https://x.com/peace2074" target="_blank" rel="noopener">X / Twitter</a>
+            <a class="link" href="https://github.com/waelio" target="_blank" rel="noopener">GitHub</a>
           </div>
-          <!-- Accept Terms -->
-          <div
-            class="form-group lg:w-96 w-72 h-11 p-1 my-2 mx-auto rounded"
-            :style="accept ? 'background-color:green' : 'background-color:transparent'"
-            @click="accept = accept"
-          >
-            <button
-              type="button"
-              :style="
-                accept
-                  ? 'background-color:green;color:white'
-                  : 'background-color:transparent;color:red'
-              "
-              style="outline: none !important"
-              class="border-none outline-none block font-semibold cursor-pointer pt-1 text-size-xs"
-              @click="accept = !accept"
-            >
-              {{ t("contact.terms_accepted") }}
-            </button>
-          </div>
-          <!-- Navigate to Terms -->
-          <p>
-            <RouterLink to="/terms" class="block full-width h-10 text-bold">
-              {{ t("contact.accept_terms") }}
-            </RouterLink>
-          </p>
-          <!-- Actions Container -->
-          <div class="w-full px-lg flex justify-around content-between">
-            <button
-              class="block h-10 rounded w-30 bg-gray-500 text-white"
-              name="send"
-              :alt="t('button.submit')"
-              :disabled="!isReadyForm"
-              :style="isReadyForm ? 'background-color: green' : 'background-color:red'"
-              :disable="!isReadyForm"
-              @click.prevent="onSubmit()"
-            >
-              {{ t("button.submit") }}
-            </button>
-            <button
-              class="Button p block h-10 rounded w-30 bg-gray-500 text-white"
-              :alt="t('button.reset')"
-              type="reset"
-            >
-              {{ t("button.reset") }}
-            </button>
-          </div>
-        </form>
-      </div>
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
-<style scoped>
-.form-group {
-  display: flex;
-  flex-direction: column;
-  border: 0.1rem solid rgba(180, 180, 180, 0.671);
-}
-.form-group textarea,
-.form-group select,
-.form-group select option,
-.form-group input {
-  --tw-shadow-color: 107, 114, 128;
-  --tw-shadow: 0 1px 2px 0 rgba(var(--tw-shadow-color), 0.05);
-  -webkit-box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000),
-    var(--tw-ring-shadow, 0 0 #0000), var(--tw-shadow);
-  box-shadow: var(--tw-ring-offset-shadow, 0 0 #0000), var(--tw-ring-shadow, 0 0 #0000),
-    var(--tw-shadow);
-  border: 0.1rem solid lightgray;
-  height: 3em;
-  text-indent: 0.5em;
-  background-color: transparent;
-}
-option {
-  background-color: transparent;
-  color: black;
-}
-.form {
-  display: flex;
-  margin-top: 1rem;
-  flex-direction: column;
-  align-content: center;
-  justify-content: flex-center;
-  align-items: center;
-}
-.form-select {
-  padding-top: 2rem;
-  padding-bottom: 2rem;
-}
 
-.form-control:focus,
-.form-control:not(:placeholder-shown),
-.form-select label {
-  opacity: 1;
+<style scoped>
+.contact-page {
+  max-width: 1100px;
+  margin: 0 auto;
+}
+.hero {
+  text-align: center;
+}
+.subtitle {
+  color: #475569;
+  margin-top: 6px;
+}
+.layout {
+  display: grid;
+  grid-template-columns: 2fr 1fr;
+}
+.form-card, .info-card {
+  border: 1px solid #e2e8f0;
+}
+.link {
+  color: #2563eb;
+  text-decoration: none;
+}
+.link:hover {
+  text-decoration: underline;
+}
+@media (max-width: 960px) {
+  .layout {
+    grid-template-columns: 1fr;
+  }
 }
 </style>

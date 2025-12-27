@@ -35,6 +35,7 @@
       "tasbeeh": "Tasbeeh",
       "chat": "Chat",
       "support": "Support",
+      "blog": "Blog",
       "contact": "Kontakt"
     }
   },
@@ -125,6 +126,12 @@
       "helpBody": "Sieh dir zuerst die Hilfedokus und häufigen Fragen an.",
       "contactTitle": "Kontaktiere uns",
       "contactBody": "Wenn du feststeckst, schick uns Details und wir melden uns so schnell wie möglich."
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Updates, Tipps und Gedanken.",
+      "empty": "Noch keine Beiträge.",
+      "notFound": "Beitrag nicht gefunden"
     }
   },
   "general": {
