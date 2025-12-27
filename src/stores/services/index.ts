@@ -98,7 +98,8 @@ const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 
 function computeNitroBase() {
-  const configured = 'https://api.waelio.com/api/quran'
+  // Point directly to Nitro root (CORS-enabled) instead of nested /api/quran
+  const configured = env.VITE_NITRO_BASE || 'https://api.waelio.com'
   if (configured) {
     return configured.replace(/\/$/, '')
   }
@@ -116,7 +117,7 @@ if (typeof window !== 'undefined') {
   if (NITRO_BASE) {
     console.debug('[DeepSeek] targeting', NITRO_BASE)
   } else {
-    console.warn('[DeepSeek] https://api.waelio.com/api/quran missing; falling back to same-origin requests')
+    console.warn('[DeepSeek] NITRO_BASE missing; falling back to same-origin requests')
   }
 }
 
