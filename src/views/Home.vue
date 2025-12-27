@@ -103,13 +103,12 @@ const HISTORY_KEY = 'peace-ai-history'
 
 const { copy } = useClipboard({ source: aiResponse })
 
-const promptExamples = [
-  'Highlight two key lessons from Surah Maryam and where to read it here.',
-  'What is the main theme of Surah Al-Fatiha?',
-  'Can you give me a short reflection on patience from the Quran?',
-  'Where can I find the story of Prophet Yusuf?',
-  'Explain the significance of Laylat al-Qadr.',
-]
+const promptExamples = computed<string[]>(() => {
+  const raw = t('pages.home.ai.examples', [], { returnObjects: true }) as unknown
+  if (Array.isArray(raw)) return raw as string[]
+  if (typeof raw === 'string') return [raw]
+  return []
+})
 const currentPromptIndex = ref(0)
 
 const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`
@@ -192,8 +191,10 @@ onMounted(() => {
 
 function setNextPromptExample() {
   if (isLoading.value) return
-  currentPromptIndex.value = (currentPromptIndex.value + 1) % promptExamples.length
-  userPrompt.value = promptExamples[currentPromptIndex.value]
+  const examples = promptExamples.value
+  if (!examples.length) return
+  currentPromptIndex.value = (currentPromptIndex.value + 1) % examples.length
+  userPrompt.value = examples[currentPromptIndex.value]
   errorMessage.value = null
   aiResponse.value = null
 }

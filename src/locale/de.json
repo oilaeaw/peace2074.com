@@ -52,6 +52,13 @@
         "title": "Frag PEACE AI",
         "subtitle": "Erhalte Hinweise zu Suren, Reflexionen oder zur Nutzung der App.",
         "tryAnother": "Anderen Prompt versuchen",
+        "examples": [
+          "Heb zwei Schlüssellektionen aus Sure Maryam hervor und wo man sie hier lesen kann.",
+          "Was ist das Hauptthema der Sure Al-Fatiha?",
+          "Gib mir eine kurze Reflexion über Geduld aus dem Koran.",
+          "Wo finde ich die Geschichte von Prophet Yusuf?",
+          "Erkläre die Bedeutung der Nacht von Al-Qadr."
+        ],
         "placeholder": "Frag nach einer Sure, einem Thema oder Feature",
         "ask": "Fragen",
         "thinking": "Denkt nach…",
@@ -127,6 +134,16 @@
       "label": "Ihr Name *",
       "hint": "Vor- und Nachname",
       "placeholder": "Wie heißen Sie?"
+    },
+    "email1": {
+      "label": "Ihre E-Mail *",
+      "hint": "Ihre E-Mail",
+      "placeholder": "Damit wir Ihnen antworten können."
+    },
+    "message1": {
+      "label": "Ihre Nachricht *",
+      "hint": "Geben Sie Ihre Nachricht ein",
+      "placeholder": "Sagen Sie uns, wie wir helfen können"
     },
     "email": {
       "label": "Ihre E-Mail *",

@@ -46,20 +46,28 @@
         "ctaTasbeeh": "Tasbeeh",
         "aiLabel": "Ask PEACE AI",
         "cardTitle": "Daily Reflection",
-        "ai": {
-          "title": "Ask PEACE AI",
-          "subtitle": "Get guidance on chapters, reflections, or how to use the app.",
-          "tryAnother": "Try another prompt",
-          "placeholder": "Ask about a surah, theme, or feature",
-          "ask": "Ask",
-          "thinking": "Thinking…",
-          "responseTitle": "AI Response",
-          "copied": "Response copied to clipboard!""historyTitle": "History",
-          "historyEmpty": "No previous questions yet.",
-          "reuse": "Reuse",
-          "clearHistory": "Clear history"
-        },
         "cardBody": "Short selected verses and reminders to help you focus."
+      },
+      "ai": {
+        "title": "Ask PEACE AI",
+        "subtitle": "Get guidance on chapters, reflections, or how to use the app.",
+        "tryAnother": "Try another prompt",
+        "examples": [
+          "Highlight two key lessons from Surah Maryam and where to read it here.",
+          "What is the main theme of Surah Al-Fatiha?",
+          "Can you give me a short reflection on patience from the Quran?",
+          "Where can I find the story of Prophet Yusuf?",
+          "Explain the significance of Laylat al-Qadr."
+        ],
+        "placeholder": "Ask about a surah, theme, or feature",
+        "ask": "Ask",
+        "thinking": "Thinking…",
+        "responseTitle": "AI Response",
+        "copied": "Response copied to clipboard!",
+        "historyTitle": "History",
+        "historyEmpty": "No previous questions yet.",
+        "reuse": "Reuse",
+        "clearHistory": "Clear history"
       }
     },
     "holynames": "God's Glory Names",
@@ -110,7 +118,8 @@
     "auto": "auto",
     "lightMode": "Change Light Mode",
     "open": "open",
-    "close": "close"
+    "close": "close",
+    "holdState": "Always open"
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."

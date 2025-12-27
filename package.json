@@ -15,7 +15,8 @@
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",
-    "prepare": "husky"
+    "prepare": "husky",
+    "check:locales": "node --experimental-strip-types scripts/check-locales.ts"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

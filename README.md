@@ -14,6 +14,15 @@ This template should help get you started developing with Vue 3 and TypeScript i
 
 - [VS Code](https://code.visualstudio.com/) + [Volar](https://marketplace.visualstudio.com/items?itemName=Vue.volar) (and disable Vetur) + [TypeScript Vue Plugin (Volar)](https://marketplace.visualstudio.com/items?itemName=Vue.vscode-typescript-vue-plugin).
 
+## Common scripts
+
+- `pnpm dev` — front-end + Nitro API together
+- `pnpm --filter nitro-api dev` — API only
+- `pnpm build` / `pnpm preview`
+- `pnpm lint`
+- `pnpm typecheck`
+- `pnpm check:locales` — ensures all locale files stay in sync
+
 ## DeepSeek integration
 
 The Nitro API now exposes `POST /deepseek`, which proxies chat-completion requests to DeepSeek via the OpenAI SDK.
