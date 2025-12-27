@@ -33,6 +33,8 @@
       "home": "Home",
       "quran": "Quran",
       "tasbeeh": "Tasbeeh",
+      "chat": "Chat",
+      "support": "Support",
       "contact": "Contact"
     }
   },
@@ -105,6 +107,8 @@
       "title": "Community Chat",
       "subtitle": "Connect with others, ask questions, and share reflections.",
       "banner": "Coming soon: embedded real-time chat powered by waelio-messaging.",
+      "ctaChat": "Open chat",
+      "ctaSupport": "Get support",
       "communityTitle": "Public rooms",
       "communityBody": "Join open rooms to discuss surahs, reflections, and app tips.",
       "devTitle": "Developers",
@@ -115,6 +119,8 @@
     "support": {
       "title": "Support",
       "subtitle": "Need help? We’re here to listen and assist.",
+      "ctaChat": "Visit chat",
+      "ctaContact": "Contact us",
       "helpTitle": "Guides & FAQ",
       "helpBody": "Check our help docs and common issues first.",
       "contactTitle": "Contact us",

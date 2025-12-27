@@ -33,6 +33,8 @@
       "home": "Startseite",
       "quran": "Koran",
       "tasbeeh": "Tasbeeh",
+      "chat": "Chat",
+      "support": "Support",
       "contact": "Kontakt"
     }
   },
@@ -105,6 +107,8 @@
       "title": "Community-Chat",
       "subtitle": "Tritt mit anderen in Kontakt, stelle Fragen und teile Reflexionen.",
       "banner": "Demnächst: Eingebetteter Live-Chat mit waelio-messaging.",
+      "ctaChat": "Chat öffnen",
+      "ctaSupport": "Support erhalten",
       "communityTitle": "Öffentliche Räume",
       "communityBody": "Tritt offenen Räumen bei, um über Suren, Reflexionen und App-Tipps zu sprechen.",
       "devTitle": "Entwickler",
@@ -115,6 +119,8 @@
     "support": {
       "title": "Support",
       "subtitle": "Brauchst du Hilfe? Wir hören zu und unterstützen.",
+      "ctaChat": "Zum Chat",
+      "ctaContact": "Kontaktiere uns",
       "helpTitle": "Anleitungen & FAQ",
       "helpBody": "Sieh dir zuerst die Hilfedokus und häufigen Fragen an.",
       "contactTitle": "Kontaktiere uns",

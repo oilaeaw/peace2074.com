@@ -118,6 +118,12 @@
         <q-item clickable v-ripple to="/tasbeeh">
           <q-item-section>{{ t('appShell.nav.tasbeeh') }}</q-item-section>
         </q-item>
+        <q-item clickable v-ripple to="/chat">
+          <q-item-section>{{ t('appShell.nav.chat') }}</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/support">
+          <q-item-section>{{ t('appShell.nav.support') }}</q-item-section>
+        </q-item>
         <q-separator />
         <q-item clickable v-ripple to="/contact">
           <q-item-section>{{ t('appShell.nav.contact') }}</q-item-section>

@@ -3,6 +3,21 @@
     <section class="hero">
       <h1>{{ t("pages.support.title") }}</h1>
       <p class="subtitle">{{ t("pages.support.subtitle") }}</p>
+      <div class="hero-actions q-mt-md">
+        <q-btn
+          color="primary"
+          unelevated
+          :label="t('pages.support.ctaChat')"
+          to="/chat"
+        />
+        <q-btn
+          flat
+          color="primary"
+          :label="t('pages.support.ctaContact')"
+          to="/contact"
+          class="q-ml-sm"
+        />
+      </div>
     </section>
 
     <div class="q-gutter-md q-mt-lg">
@@ -40,5 +55,19 @@ const { t } = useI18n();
 .subtitle {
   color: #475569;
   margin-top: 6px;
+}
+.hero-actions {
+  display: flex;
+  justify-content: center;
+  gap: 8px;
+}
+@media (max-width: 640px) {
+  .hero-actions {
+    flex-direction: column;
+    align-items: center;
+  }
+  .hero-actions .q-btn {
+    width: 100%;
+  }
 }
 </style>
