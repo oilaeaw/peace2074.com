@@ -5,7 +5,9 @@ import path from "node:path";
 const chapterFiles: Record<string, string> = {
     en: "en.json",
     ru: "ru.json",
-    // Fallback for other locales (de/he/ar) will use English set which already contains Arabic names
+    ar: "ar.json",
+    de: "en.json",
+    he: "en.json",
 };
 
 const chapterCache = new Map<string, any[]>();
