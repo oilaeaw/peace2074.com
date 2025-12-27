@@ -10,8 +10,8 @@ export default defineNitroConfig({
         host: process.env.HOST || '0.0.0.0',
     },
     runtimeConfig: {
-        deepseekApiKey: '', // Populated by process.env.NITRO_DEEPSEEK_API_KEY at runtime
-        deepseekBaseUrl: '', // Populated by process.env.NITRO_DEEPSEEK_BASE_URL at runtime
+        deepseekApiKey: process.env.DEEPSEEK_API_KEY,
+        deepseekBaseUrl: process.env.DEEPSEEK_BASE_URL,
     },
     // No SSR renderer needed; pure API
 })
