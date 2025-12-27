@@ -1,10 +1,13 @@
 # Vue 3 + TypeScript + Vite
 
-## ⚠️ Secrets policy
+## ⚠️ Secrets & environment
 
-- Never commit `.env` or real credentials. Use `.env.example` as the template and keep real values in local/CI env vars.
-- If you touch new config, add placeholder keys to `.env.example` (prefix frontend vars with `VITE_`).
-- Before pushing, run `git status` to ensure no `.env*` or secrets-containing files are staged.
+- Never commit real credentials. Use `.env.example` as the template; keep actual values in local env files and CI/hosting secrets.
+- Front-end env vars must be prefixed `VITE_`. Key values for this app:
+  - `DEEPSEEK_API_KEY` (or `NITRO_DEEPSEEK_API_KEY`) and optional `DEEPSEEK_BASE_URL`
+  - `VITE_QURAN_API_BASE` (defaults to `http://localhost:3000` for the Nitro API)
+- Client-side storage (local/session/config) is not secure—don’t store real secrets there, even if “encrypted.”
+- Before pushing, verify `git status` shows no `.env` or secrets-containing files staged.
 
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
@@ -18,7 +21,7 @@ The Nitro API now exposes `POST /deepseek`, which proxies chat-completion reques
 
 1. Add `DEEPSEEK_API_KEY=<your key>` (and optionally `DEEPSEEK_BASE_URL`). CamelCase keys (`deepSeekApi`, `deepSeekBaseUrl`) still work for backward compatibility.
 2. Start the backend: `pnpm --filter nitro-api dev` (defaults to `http://localhost:3000`).
-3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper automatically targets the Nitro base defined via `VITE_QURAN_API_BASE`.
+3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from `VITE_QURAN_API_BASE` (falls back to same-origin `:3000` in dev).
 
 Example payload:
 

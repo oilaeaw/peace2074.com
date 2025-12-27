@@ -619,8 +619,8 @@ const _inlineRuntimeConfig = {
   "nitro": {
     "routeRules": {}
   },
-  "deepseekApiKey": "sk-89ea9adf9e5f490bb068d824ce31da04",
-  "deepseekBaseUrl": "https://api.deepseek.com"
+  "deepseekApiKey": "",
+  "deepseekBaseUrl": ""
 };
 const envOptions = {
   prefix: "NITRO_",
@@ -1301,15 +1301,17 @@ const DEFAULT_BASE_URL = "https://api.deepseek.com";
 const deepseek_post = defineEventHandler(async (event) => {
   var _a, _b, _c, _d, _e;
   const config = useRuntimeConfig();
-  if (!config.deepseekApiKey) {
+  const apiKey = config.deepseekApiKey || config.deepSeekApi || process.env.DEEPSEEK_API_KEY || process.env.NITRO_DEEPSEEK_API_KEY || process.env.deepSeekApi;
+  if (!apiKey || String(apiKey).trim() === "") {
     throw createError({
       statusCode: 500,
-      statusMessage: "DeepSeek API key missing. Set DEEPSEEK_API_KEY in the environment."
+      statusMessage: "DeepSeek API key missing. Set DEEPSEEK_API_KEY (or NITRO_DEEPSEEK_API_KEY) in the environment."
     });
   }
+  const baseURL = config.deepseekBaseUrl || config.deepSeekBaseUrl || process.env.DEEPSEEK_BASE_URL || process.env.NITRO_DEEPSEEK_BASE_URL || process.env.deepSeekBaseUrl || DEFAULT_BASE_URL;
   const client = new OpenAI({
-    apiKey: config.deepseekApiKey,
-    baseURL: config.deepseekBaseUrl || DEFAULT_BASE_URL
+    apiKey: String(apiKey).trim(),
+    baseURL: baseURL
   });
   const body = await readBody(event) || {};
   if (!Array.isArray(body.messages) || body.messages.length === 0) {

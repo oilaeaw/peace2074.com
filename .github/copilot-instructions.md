@@ -22,7 +22,7 @@
 
 - Nitro routes: `/health`, `/quran` (list), `/quran/:id` (detail), `/deepseek` (chat proxy). See `apps/nitro-api/server/routes/*`.
 - Runtime config expects `DEEPSEEK_API_KEY` (or `NITRO_DEEPSEEK_API_KEY`), optional `DEEPSEEK_BASE_URL`; errors if missing.
-- Front-end helper `sendDeepSeekChat` in `src/stores/services/index.ts` targets Nitro using `VITE_QURAN_API_BASE` (or same-origin fallback). Keep payload validation.
+- Front-end helper `sendDeepSeekChat` in `src/stores/services/index.ts` targets Nitro using `https://api.waelio.com/api/quran` (or same-origin fallback). Keep payload validation.
 
 ## UI, styling & assets
 

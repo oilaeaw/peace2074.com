@@ -8,8 +8,8 @@ type Sura = { id: number; name: string; e_name?: string; total_verses?: number; 
 const quranData = ref<Sura[]>([])
 const currentIndex = ref<number>(1)
 const currentLang = ref<string>('en')
-const API_BASE = (import.meta as any).env?.VITE_QURAN_API_BASE?.replace(/\/$/, '') ||
-    (typeof window !== 'undefined' ? window.location.origin.replace(/\/$/, '') : '')
+const API_BASE = ((import.meta as any).env?.VITE_QURAN_API_BASE || (import.meta as any).env?.viteQuranApiBase ||
+    (typeof window !== 'undefined' ? window.location.origin : '')).replace(/\/$/, '')
 
 async function fetchJsonSequential(urls: string[]): Promise<any> {
     for (const url of urls) {

@@ -19,16 +19,30 @@ const DEFAULT_BASE_URL = 'https://api.deepseek.com'
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
 
-    if (!config.deepseekApiKey) {
+    const apiKey = (config as any).deepseekApiKey
+        || (config as any).deepSeekApi
+        || process.env.DEEPSEEK_API_KEY
+        || process.env.NITRO_DEEPSEEK_API_KEY
+        || process.env.deepSeekApi
+
+    if (!apiKey || String(apiKey).trim() === '') {
         throw createError({
             statusCode: 500,
-            statusMessage: 'DeepSeek API key missing. Set DEEPSEEK_API_KEY in the environment.',
+            statusMessage: 'DeepSeek API key missing. Set DEEPSEEK_API_KEY (or NITRO_DEEPSEEK_API_KEY) in the environment.',
         })
     }
 
+    const baseURL =
+        (config as any).deepseekBaseUrl ||
+        (config as any).deepSeekBaseUrl ||
+        process.env.DEEPSEEK_BASE_URL ||
+        process.env.NITRO_DEEPSEEK_BASE_URL ||
+        process.env.deepSeekBaseUrl ||
+        DEFAULT_BASE_URL
+
     const client = new OpenAI({
-        apiKey: config.deepseekApiKey,
-        baseURL: config.deepseekBaseUrl || DEFAULT_BASE_URL,
+        apiKey: String(apiKey).trim(),
+        baseURL: baseURL || DEFAULT_BASE_URL,
     })
 
     const body = (await readBody<DeepSeekRequestBody>(event)) || {}

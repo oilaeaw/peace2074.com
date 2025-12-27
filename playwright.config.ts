@@ -10,7 +10,8 @@ export default defineConfig({
         headless: true,
         viewport: { width: 1280, height: 720 },
         actionTimeout: 10_000,
-        baseURL: 'http://localhost:3000',
+        // Frontend runs on 4000 in dev; Nitro API on 3000. Point Playwright at the UI.
+        baseURL: 'http://localhost:4000',
         ignoreHTTPSErrors: true,
     },
     projects: [
@@ -18,8 +19,8 @@ export default defineConfig({
     ],
     webServer: {
         command: 'pnpm run dev',
-        url: 'http://localhost:3000',
+        url: 'http://localhost:4000',
         reuseExistingServer: true,
-        timeout: 120_000,
+        timeout: 180_000,
     },
 });

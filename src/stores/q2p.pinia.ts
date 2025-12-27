@@ -157,7 +157,8 @@ export const useQ2P = defineStore('q2p', {
       // Attempt to fetch a single sura from server API and update Book/Sura
       try {
         const id = Number(suraId) || 1
-        const runtimeBase = (import.meta as any).env?.VITE_QURAN_API_BASE?.replace(/\/$/, '') || ((typeof window !== 'undefined' && window.location) ? `${window.location.origin}`.replace(/\/$/, '') : '')
+        const runtimeBase = ((import.meta as any).env?.VITE_QURAN_API_BASE || (import.meta as any).env?.viteQuranApiBase ||
+          ((typeof window !== 'undefined' && window.location) ? `${window.location.origin}` : '')).replace(/\/$/, '')
         const urls = [
           // Prefer local Nitro API: /quran/:id
           `${runtimeBase}/quran/${id}`,
