@@ -1,0 +1,111 @@
+import { defineEventHandler, getQuery } from "h3";
+import { readFile } from "node:fs/promises";
+import path from "node:path";
+
+const chapterFiles: Record<string, string> = {
+    en: "en.json",
+    ru: "ru.json",
+    // Fallback for other locales (de/he/ar) will use English set which already contains Arabic names
+};
+
+const chapterCache = new Map<string, any[]>();
+let quranCache: Record<string, any[]> | null = null;
+
+async function loadJSON<T = any>(p: string): Promise<T> {
+    const buf = await readFile(p, "utf-8");
+    return JSON.parse(buf);
+}
+
+function normalizeLang(lang?: string) {
+    if (!lang) return "en";
+    const short = String(lang).toLowerCase().split("-")[0];
+    if (chapterFiles[short]) return short;
+    return "en";
+}
+
+async function ensureQuran() {
+    if (quranCache) return;
+    const root = path.resolve(process.cwd(), "..", "..");
+    const quranPath = path.join(root, "src", "shared", "data", "quran.json");
+    quranCache = await loadJSON<Record<string, any[]>>(quranPath);
+}
+
+async function ensureChapters(lang: string) {
+    const loc = normalizeLang(lang);
+    if (chapterCache.has(loc)) return;
+
+    const root = path.resolve(process.cwd(), "..", "..");
+    const file = chapterFiles[loc] || chapterFiles.en;
+    const chaptersPath = path.join(root, "src", "shared", "data", "chapters", file);
+
+    try {
+        const data = await loadJSON<any[]>(chaptersPath);
+        chapterCache.set(loc, data);
+    } catch (e) {
+        // Fallback to English if load fails
+        if (!chapterCache.has("en")) {
+            const fallback = path.join(root, "src", "shared", "data", "chapters", "en.json");
+            chapterCache.set("en", await loadJSON<any[]>(fallback));
+        }
+        if (loc !== "en") {
+            chapterCache.set(loc, chapterCache.get("en") || []);
+        }
+    }
+}
+
+export default defineEventHandler(async (event) => {
+    const { q = "", limit = "20", lang = "en" } = getQuery(event);
+    const query = String(q || "")
+        .trim()
+        .toLowerCase();
+    const max = Math.min(50, Math.max(1, Number(limit) || 20));
+
+    if (!query) return { results: [] };
+
+    const loc = normalizeLang(String(lang));
+    await Promise.all([ensureChapters(loc), ensureQuran()]);
+
+    const chapters = chapterCache.get(loc) || chapterCache.get("en") || [];
+    const quran = quranCache || {};
+
+    const results: any[] = [];
+
+    // Match surah names/translations
+    for (const c of chapters) {
+        const name = String(c.name || "");
+        const transliteration = String(c.transliteration || "");
+        const translation = String(c.translation || "");
+        const hay = `${name} ${transliteration} ${translation}`.toLowerCase();
+        if (hay.includes(query)) {
+            results.push({
+                type: "sura",
+                id: c.id,
+                title: `${c.id}. ${transliteration || translation || name}`.trim(),
+                subtitle: translation || name,
+                path: `/quran/${c.id}`,
+            });
+        }
+        if (results.length >= max) break;
+    }
+
+    // Match verses (light scan; stop at limit)
+    outer: for (const [suraId, verses] of Object.entries(quran)) {
+        for (const verse of verses || []) {
+            const text = String(verse.text || "");
+            const hay = text.toLowerCase();
+            if (hay.includes(query)) {
+                const id = `${suraId}:${verse.verse || ""}`;
+                results.push({
+                    type: "verse",
+                    id,
+                    title: `Ayah ${id}`,
+                    subtitle: text.slice(0, 140),
+                    path: `/quran/${suraId}#verse-${verse.verse || ""}`,
+                });
+                if (results.length >= max) break outer;
+            }
+        }
+    }
+
+    return { results: results.slice(0, max) };
+});

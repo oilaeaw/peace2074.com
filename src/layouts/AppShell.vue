@@ -18,15 +18,52 @@
           <RouterLink to="/" class="brand-link">{{ t('general.SiteTitle') }}</RouterLink>
         </q-toolbar-title>
 
-        <q-input
-          dense
-          round
-          dark
-          :placeholder="t('appShell.searchPlaceholder')"
-          class="search glassy-field"
-          v-model="search"
-          debounce="300"
-        />
+        <div class="search-wrapper" ref="searchRef">
+          <q-input
+            dense
+            round
+            dark
+            :placeholder="t('appShell.searchPlaceholder')"
+            class="search glassy-field"
+            v-model="search"
+            debounce="300"
+            clearable
+            @clear="clearSearch"
+            @focus="menuOpen = true"
+            @keyup.esc="clearSearch"
+          />
+          <q-menu
+            v-model="menuOpen"
+            :fit="true"
+            anchor="bottom left"
+            self="top left"
+            transition-show="jump-down"
+            transition-hide="jump-up"
+            :offset="[0, 6]"
+            persistent
+          >
+            <q-list style="min-width: 320px; max-height: 320px" class="search-results">
+              <q-item
+                v-for="item in searchResults"
+                :key="item.id"
+                clickable
+                v-ripple
+                @click="goToResult(item)"
+              >
+                <q-item-section>
+                  <div class="text-weight-medium">{{ item.title }}</div>
+                  <div class="text-caption text-grey-5">{{ item.subtitle }}</div>
+                </q-item-section>
+                <q-item-section side>
+                  <q-badge color="primary" outline>{{ item.type === 'sura' ? 'Quran' : 'Page' }}</q-badge>
+                </q-item-section>
+              </q-item>
+              <q-item v-if="!searchResults.length">
+                <q-item-section>{{ t('notfound') }}</q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </div>
 
         <q-btn
           dense
@@ -98,13 +135,16 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
+import { useSiteSearch } from '@/composables/useSiteSearch'
 
 const leftDrawer = ref(false)
 const search = ref('')
 const LOCALE_STORAGE_KEY = 'app-locale'
 const { locale, t } = useI18n({ useScope: 'global' })
 const localeValue = ref(locale.value)
+const router = useRouter()
 const langs = [
   { label: 'English', value: 'en' },
   { label: 'العربية', value: 'ar' },
@@ -112,6 +152,15 @@ const langs = [
   { label: 'Русский', value: 'ru' },
   { label: 'עברית', value: 'he' },
 ]
+
+const menuOpen = ref(false)
+const searchRef = ref(null)
+const { results: searchResults, search: runSearch } = useSiteSearch(locale)
+
+watch(search, (q) => {
+  runSearch(q)
+  menuOpen.value = !!q && (!!searchResults.value.length || q.length > 0)
+})
 
 watch(localeValue, (v) => {
   if (!v || locale.value === v) return
@@ -130,6 +179,17 @@ watch(locale, (v) => {
 
 // Global Athan player - accessible from every page via header button
 const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer()
+
+function goToResult(item: any) {
+  router.push(item.path)
+  clearSearch()
+}
+
+function clearSearch() {
+  search.value = ''
+  runSearch('')
+  menuOpen.value = false
+}
 </script>
 
 <style scoped>
@@ -166,6 +226,8 @@ const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useA
 }
 
 .search { max-width: 360px; margin-left: 12px; }
+
+.search-wrapper { position: relative; }
 
 .glassy-field :deep(.q-field__control) {
   background: rgba(255, 255, 255, 0.08);
