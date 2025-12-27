@@ -32,10 +32,20 @@
           dense
           round
           color="primary"
-          icon="volume_up"
+          :icon="isAthanPlaying ? 'pause' : 'volume_up'"
           class="q-ml-md"
-          @click="playAthan"
-          :aria-label="t('appShell.playAthan')"
+          @click="toggleAthan"
+          :aria-label="isAthanPlaying ? t('appShell.pauseAthan') || t('appShell.playAthan') : t('appShell.playAthan')"
+        />
+        <q-btn
+          v-if="isAthanPlaying"
+          dense
+          round
+          color="negative"
+          icon="stop"
+          class="q-ml-sm"
+          @click="stopAthan"
+          :aria-label="t('appShell.stopAthan') || 'Stop Athan'"
         />
 
         <q-select
@@ -88,7 +98,7 @@
 <script setup lang="ts">
 import { ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
-import athanSrc from '@/assets/audio/Athan.mp3'
+import { useAthanPlayer } from '@/composables/useAthanPlayer'
 
 const leftDrawer = ref(false)
 const search = ref('')
@@ -119,15 +129,7 @@ watch(locale, (v) => {
 })
 
 // Global Athan player - accessible from every page via header button
-const athanAudio = typeof Audio !== 'undefined' ? new Audio(athanSrc) : null
-
-function playAthan () {
-  if (!athanAudio) return
-  try {
-    athanAudio.currentTime = 0
-    void athanAudio.play().catch(() => {})
-  } catch {}
-}
+const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer()
 </script>
 
 <style scoped>

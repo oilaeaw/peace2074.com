@@ -3,22 +3,14 @@ import { ref, computed, watch, onMounted } from "vue";
 import { useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
-import athanSrc from "@/assets/audio/Athan.mp3";
+import { useAthanPlayer } from "@/composables/useAthanPlayer";
 import useCore from "~/composables/useCore";
 const { t } = useI18n();
 const router = useRouter();
 const $q = useQuasar();
 
-// Athan audio: manual play only, not tied to tasbeeh logic
-const athanAudio = typeof Audio !== "undefined" ? new Audio(athanSrc) : null;
-
-function playAthan() {
-  if (!athanAudio) return;
-  try {
-    athanAudio.currentTime = 0;
-    void athanAudio.play().catch(() => {});
-  } catch {}
-}
+// Athan audio controls (shared across app)
+const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer();
 
 // Reactive state
 const currentCount = ref(0);
@@ -293,9 +285,18 @@ watch(
           <q-btn
             flat
             color="primary"
-            icon="volume_up"
-            :label="t('athan.play') || 'Play Athan'"
-            @click="playAthan"
+            :icon="isAthanPlaying ? 'pause' : 'volume_up'"
+            :label="isAthanPlaying ? (t('athan.pause') || 'Pause Athan') : (t('athan.play') || 'Play Athan')"
+            @click="toggleAthan"
+          />
+          <q-btn
+            v-if="isAthanPlaying"
+            flat
+            color="negative"
+            icon="stop"
+            :label="t('athan.stop') || 'Stop Athan'"
+            class="q-ml-sm"
+            @click="stopAthan"
           />
         </div>
       </div>

@@ -21,6 +21,11 @@
     "new_content": "Neue Inhalte verfügbar, Seite neu laden, um zu aktualisieren.",
     "offline_ready": "App ist bereit für die Offline-Nutzung"
   },
+  "athan": {
+    "play": "Adhan abspielen",
+    "pause": "Adhan pausieren",
+    "stop": "Adhan stoppen"
+  },
   "appShell": {
     "searchPlaceholder": "Suchen…",
     "playAthan": "Adhan abspielen",
@@ -110,7 +115,7 @@
       "placeholder": "Wie heißen Sie?"
     },
     "email": {
-      "label": "Ihre E-Mail-Adresse *",
+      "label": "Ihre E-Mail *",
       "hint": "Ihre E-Mail",
       "placeholder": "Damit wir Ihnen antworten können."
     },

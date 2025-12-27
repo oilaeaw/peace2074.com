@@ -21,6 +21,11 @@
         "new_content": "תוכן חדש זמין, רענן כדי לעדכן.",
         "offline_ready": "האפליקציה מוכנה לעבודה לא מקוונת"
     },
+    "athan": {
+        "play": "נגן אזהאן",
+        "pause": "הפסק אזהאן",
+        "stop": "עצור אזהאן"
+    },
     "appShell": {
         "searchPlaceholder": "חיפוש…",
         "playAthan": "נגן אזהאן",

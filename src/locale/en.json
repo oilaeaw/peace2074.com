@@ -21,6 +21,11 @@
     "new_content": "New content available, reload to update.",
     "offline_ready": "App ready to work offline"
   },
+  "athan": {
+    "play": "Play Athan",
+    "pause": "Pause Athan",
+    "stop": "Stop Athan"
+  },
   "appShell": {
     "searchPlaceholder": "Search…",
     "playAthan": "Play Athan",
@@ -109,7 +114,7 @@
       "placeholder": "What is your name"
     },
     "email1": {
-      "label": "Your email address *",
+      "label": "Your email *",
       "hint": "Your email",
       "placeholder": "In order to get back to you. "
     },
