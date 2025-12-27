@@ -10,7 +10,7 @@ const currentIndex = ref<number>(1)
 const currentLang = ref<string>('en')
 const API_BASE = (typeof window !== 'undefined'
     ? window.location.origin
-    : 'http://localhost:3000').replace(/\/$/, '')
+    : 'http://127.0.0.1:3000').replace(/\/$/, '')
 
 async function fetchJsonSequential(urls: string[]): Promise<any> {
     for (const url of urls) {

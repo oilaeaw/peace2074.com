@@ -14,7 +14,6 @@ type DeepSeekRequestBody = {
 }
 
 const DEFAULT_MODEL = 'deepseek-chat'
-const DEFAULT_BASE_URL = 'https://api.deepseek.com'
 
 export default defineEventHandler(async (event) => {
     const config = useRuntimeConfig()
@@ -37,8 +36,14 @@ export default defineEventHandler(async (event) => {
         (config as any).deepSeekBaseUrl ||
         process.env.DEEPSEEK_BASE_URL ||
         process.env.NITRO_DEEPSEEK_BASE_URL ||
-        process.env.deepSeekBaseUrl ||
-        DEFAULT_BASE_URL
+        process.env.deepSeekBaseUrl
+
+    if (!baseURL) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'DeepSeek base URL missing. Set DEEPSEEK_BASE_URL (or NITRO_DEEPSEEK_BASE_URL) in the environment.',
+        })
+    }
 
     const client = new OpenAI({
         apiKey: String(apiKey).trim(),

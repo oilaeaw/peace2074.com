@@ -5,7 +5,6 @@
 - Never commit real credentials. Use `.env.example` as the template; keep actual values in local env files and CI/hosting secrets.
 - Front-end env vars must be prefixed `VITE_`. Key values for this app:
   - `DEEPSEEK_API_KEY` (or `NITRO_DEEPSEEK_API_KEY`) and optional `DEEPSEEK_BASE_URL`
-  - `VITE_QURAN_API_BASE` (defaults to `http://localhost:3000` for the Nitro API)
 - Client-side storage (local/session/config) is not secure—don’t store real secrets there, even if “encrypted.”
 - Before pushing, verify `git status` shows no `.env` or secrets-containing files staged.
 
@@ -20,8 +19,8 @@ This template should help get you started developing with Vue 3 and TypeScript i
 The Nitro API now exposes `POST /deepseek`, which proxies chat-completion requests to DeepSeek via the OpenAI SDK.
 
 1. Add `DEEPSEEK_API_KEY=<your key>` (and optionally `DEEPSEEK_BASE_URL`). CamelCase keys (`deepSeekApi`, `deepSeekBaseUrl`) still work for backward compatibility.
-2. Start the backend: `pnpm --filter nitro-api dev` (defaults to `http://localhost:3000`).
-3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from same-origin (dev: http://localhost:3000) without needing a `VITE_` env.
+2. Start the backend: `pnpm --filter nitro-api dev` (defaults to `http://127.0.0.1:3000`).
+3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from same-origin (dev: http://127.0.0.1:3000) without needing a `VITE_` env.
 
 Example payload:
 

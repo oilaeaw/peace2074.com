@@ -159,7 +159,7 @@ export const useQ2P = defineStore('q2p', {
         const id = Number(suraId) || 1
         const runtimeBase = (((typeof window !== 'undefined' && window.location)
           ? `${window.location.origin}`
-          : 'http://localhost:3000')).replace(/\/$/, '')
+          : 'http://127.0.0.1:3000')).replace(/\/$/, '')
         const urls = [
           // Prefer local Nitro API: /quran/:id
           `${runtimeBase}/quran/${id}`,
