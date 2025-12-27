@@ -53,11 +53,11 @@
         "subtitle": "Erhalte Hinweise zu Suren, Reflexionen oder zur Nutzung der App.",
         "tryAnother": "Anderen Prompt versuchen",
         "examples": [
-          "Heb zwei Schlüssellektionen aus Sure Maryam hervor und wo man sie hier lesen kann.",
+          "Hebe zwei zentrale Lehren aus Sure Maryam hervor und wo man sie hier lesen kann.",
           "Was ist das Hauptthema der Sure Al-Fatiha?",
           "Gib mir eine kurze Reflexion über Geduld aus dem Koran.",
-          "Wo finde ich die Geschichte von Prophet Yusuf?",
-          "Erkläre die Bedeutung der Nacht von Al-Qadr."
+          "Wo finde ich die Geschichte des Propheten Yusuf?",
+          "Erkläre die Bedeutung der Nacht der Bestimmung (Laylat al-Qadr)."
         ],
         "placeholder": "Frag nach einer Sure, einem Thema oder Feature",
         "ask": "Fragen",

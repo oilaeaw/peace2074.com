@@ -104,7 +104,7 @@ const HISTORY_KEY = 'peace-ai-history'
 const { copy } = useClipboard({ source: aiResponse })
 
 const promptExamples = computed<string[]>(() => {
-  const raw = t('pages.home.ai.examples', [], { returnObjects: true }) as unknown
+  const raw = t('pages.home.ai.examples', { returnObjects: true }) as unknown
   if (Array.isArray(raw)) return raw as string[]
   if (typeof raw === 'string') return [raw]
   return []
