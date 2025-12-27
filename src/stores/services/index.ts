@@ -1,8 +1,5 @@
 import { useFetch } from '@vueuse/core';
 
-import et from '~/.env'
-type ENV = typeof et
-
 export async function getHolyNames() {
   const url = "/api/holynames";
   try {
