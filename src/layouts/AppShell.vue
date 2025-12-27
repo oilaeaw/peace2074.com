@@ -43,6 +43,12 @@
             persistent
           >
             <q-list style="min-width: 320px; max-height: 320px" class="search-results">
+              <q-item v-if="searchLoading">
+                <q-item-section avatar>
+                  <q-spinner color="primary" size="24px" />
+                </q-item-section>
+                <q-item-section>{{ t('general.fetchingUpdates') || 'Searching…' }}</q-item-section>
+              </q-item>
               <q-item
                 v-for="item in searchResults"
                 :key="item.id"
@@ -59,7 +65,7 @@
                 </q-item-section>
               </q-item>
               <q-item v-if="!searchResults.length">
-                <q-item-section>{{ t('notfound') }}</q-item-section>
+                <q-item-section>{{ search ? t('notfound') : t('appShell.searchPlaceholder') }}</q-item-section>
               </q-item>
             </q-list>
           </q-menu>
@@ -155,7 +161,7 @@ const langs = [
 
 const menuOpen = ref(false)
 const searchRef = ref(null)
-const { results: searchResults, search: runSearch } = useSiteSearch(locale)
+const { results: searchResults, loading: searchLoading, search: runSearch } = useSiteSearch(locale)
 
 watch(search, (q) => {
   runSearch(q)

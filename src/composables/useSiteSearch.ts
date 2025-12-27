@@ -77,6 +77,7 @@ function buildItems(locale: string): SearchResult[] {
 export function useSiteSearch(localeRef: { value: string }) {
     const cache = new Map<string, SearchResult[]>();
     const results = ref<SearchResult[]>([]);
+    const loading = ref(false);
     let controller: AbortController | null = null;
 
     const items = computed(() => {
@@ -103,6 +104,7 @@ export function useSiteSearch(localeRef: { value: string }) {
         if (!q.trim()) return;
         controller?.abort();
         controller = new AbortController();
+        loading.value = true;
         try {
             const lang = normalizeLocale(localeRef.value);
             const res = await fetch(`/api/search?q=${encodeURIComponent(q)}&limit=20&lang=${lang}`, {
@@ -115,6 +117,8 @@ export function useSiteSearch(localeRef: { value: string }) {
             results.value = combined;
         } catch (e: any) {
             if (e?.name === "AbortError") return;
+        } finally {
+            loading.value = false;
         }
     }
 
@@ -141,6 +145,7 @@ export function useSiteSearch(localeRef: { value: string }) {
 
     return {
         results,
+        loading,
         search,
     };
 }
