@@ -359,6 +359,7 @@ function onAyaDblClick(e: Event) {
         <q-btn
           flat
           round
+          color="primary"
           icon="arrow_back"
           @click="router.push('/quran')"
           aria-label="Back to Quran index"
@@ -367,7 +368,7 @@ function onAyaDblClick(e: Event) {
           <h1 class="sura-name-en">{{ sura?.e_name }}</h1>
           <h2 class="sura-name-ar">{{ sura?.name }}</h2>
         </div>
-        <q-btn flat round icon="bookmark" aria-label="View Bookmarks">
+        <q-btn flat round color="primary" icon="bookmark" aria-label="View Bookmarks">
           <q-menu auto-close>
             <q-list dense style="min-width: 220px">
               <q-item v-if="!bookmarksStore.bookmarks.length">
