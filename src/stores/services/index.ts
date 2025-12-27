@@ -98,7 +98,7 @@ const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 
 function computeNitroBase() {
-  const configured = env.VITE_QURAN_API_BASE || env.viteQuranApiBase
+  const configured = 'https://api.waelio.com/api/quran'
   if (configured) {
     return configured.replace(/\/$/, '')
   }
@@ -116,7 +116,7 @@ if (typeof window !== 'undefined') {
   if (NITRO_BASE) {
     console.debug('[DeepSeek] targeting', NITRO_BASE)
   } else {
-    console.warn('[DeepSeek] VITE_QURAN_API_BASE missing; falling back to same-origin requests')
+    console.warn('[DeepSeek] https://api.waelio.com/api/quran missing; falling back to same-origin requests')
   }
 }
 
