@@ -91,7 +91,7 @@ import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { sendDeepSeekChat } from '@/stores/services'
 
-const { t } = useI18n()
+const { t, tm } = useI18n()
 const $q = useQuasar()
 
 const userPrompt = ref('')
@@ -104,7 +104,7 @@ const HISTORY_KEY = 'peace-ai-history'
 const { copy } = useClipboard({ source: aiResponse })
 
 const promptExamples = computed<string[]>(() => {
-  const raw = t('pages.home.ai.examples', { returnObjects: true }) as unknown
+  const raw = tm('pages.home.ai.examples') as unknown
   if (Array.isArray(raw)) return raw as string[]
   if (typeof raw === 'string') return [raw]
   return []
@@ -203,17 +203,49 @@ function setNextPromptExample() {
 <style scoped>
 .hero-content { display:flex; gap:24px; align-items:stretch; justify-content:space-between; flex-wrap:wrap; }
 .left { max-width: 640px; flex:1 1 360px }
-.title { font-size: 2.4rem; margin: 0; color: #fff }
-.lead { color: rgba(255, 255, 255, 0.78); margin-top: 8px }
-.actions { margin-top: 16px }
-.ai-card { width: 320px; max-width: 100%; backdrop-filter: blur(6px); }
+.title {
+  font-size: 2.4rem;
+  margin: 0 0 4px;
+  color: #0f172a;
+}
+.lead {
+  color: #334155;
+  margin: 0 0 6px;
+}
+.actions { margin-top: 12px }
+.ai-card { width: min(420px, 100%); backdrop-filter: blur(6px); }
 .ai-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
 .ai-title { font-weight:600; margin-bottom:4px; }
 .ai-form { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
 .response { background:#f8fafc; border-radius:12px; position: relative; }
 .response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
 .response-title { font-weight:600; }
-.response-content { white-space: pre-wrap; font-family: inherit; margin: 0; }
+.response-content {
+  white-space: pre-wrap;
+  font-family: inherit;
+  margin: 0;
+  max-height: clamp(180px, 40vh, 340px);
+  overflow: auto;
+  word-break: break-word;
+  overscroll-behavior: contain;
+  padding-right: 4px;
+}
 .full-width { width:100%; }
-@media (max-width: 720px) { .hero-content { flex-direction: column; } .ai-card { width:100%; } }
+@media (max-width: 720px) {
+  .home-hero { padding-top: 12px; }
+  .hero-content { flex-direction: column; }
+  .left { width: 100%; text-align: center; }
+  .title { font-size: clamp(1.6rem, 6vw, 2.1rem); margin-bottom: 4px; }
+  .lead { margin-bottom: 8px; }
+  .actions { justify-content: center; margin-top: 10px; }
+  .ai-card { width: 100%; align-self: stretch; }
+  .ai-header { align-items: center; }
+  .response-content {
+    max-height: 240px;
+  }
+  .history {
+    max-height: 260px;
+    overflow: auto;
+  }
+}
 </style>
