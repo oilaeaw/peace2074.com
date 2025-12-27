@@ -1,5 +1,11 @@
 # Vue 3 + TypeScript + Vite
 
+## ⚠️ Secrets policy
+
+- Never commit `.env` or real credentials. Use `.env.example` as the template and keep real values in local/CI env vars.
+- If you touch new config, add placeholder keys to `.env.example` (prefix frontend vars with `VITE_`).
+- Before pushing, run `git status` to ensure no `.env*` or secrets-containing files are staged.
+
 This template should help get you started developing with Vue 3 and TypeScript in Vite. The template uses Vue 3 `<script setup>` SFCs, check out the [script setup docs](https://v3.vuejs.org/api/sfc-script-setup.html#sfc-script-setup) to learn more.
 
 ## Recommended IDE Setup
