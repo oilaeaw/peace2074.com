@@ -141,7 +141,7 @@
     <q-footer class="text-center q-pa-sm">
       <div class="footer">
         <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-        <span>© 2025 {{ t('general.SiteTitle') }}</span>
+        <span>© 2025 {{ t('general.SiteTitle') }} · v{{ appVersion }}</span>
       </div>
     </q-footer>
   </q-layout>
@@ -153,6 +153,8 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
 import { useSiteSearch } from '@/composables/useSiteSearch'
+
+declare const __APP_VERSION__: string
 
 const leftDrawer = ref(false)
 const search = ref('')
@@ -194,6 +196,8 @@ watch(locale, (v) => {
 
 // Global Athan player - accessible from every page via header button
 const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer()
+
+const appVersion = __APP_VERSION__ || '0.0.0'
 
 function goToResult(item: any) {
   router.push(item.path)

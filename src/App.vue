@@ -1,13 +1,14 @@
 <script setup lang="ts">
+import AppShell from '@/layouts/AppShell.vue'
+import ThreeBackground from '@/components/common/ThreeBackground.vue'
 </script>
 
 <template>
-  <AppShell />
+  <div class="app-container">
+    <ThreeBackground />
+    <AppShell />
+  </div>
 </template>
-
-<script setup lang="ts">
-import AppShell from '@/layouts/AppShell.vue'
-</script>
 
 <style lang="scss">
 /* Basic app styles; remove dependency on undefined layout components */
@@ -18,5 +19,9 @@ body {
 #app {
   height: 100%;
   width: 100%;
+}
+.app-container {
+  position: relative;
+  min-height: 100%;
 }
 </style>

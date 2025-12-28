@@ -7,10 +7,18 @@ import AutoImport from "unplugin-auto-import/vite";
 import { VitePWA } from "vite-plugin-pwa";
 import VueRouter from "unplugin-vue-router/vite";
 import { fileURLToPath, URL } from "node:url";
+import fs from "node:fs";
+
+const pkg = JSON.parse(
+  fs.readFileSync(new URL("./package.json", import.meta.url), "utf-8")
+);
 
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
+  define: {
+    __APP_VERSION__: JSON.stringify(pkg.version),
+  },
   plugins: [
     // https://github.com/posva/unplugin-vue-router
     VueRouter({
