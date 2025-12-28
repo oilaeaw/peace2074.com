@@ -37,6 +37,7 @@
       "support": "Support",
       "settings": "Settings",
       "preferences": "Preferences",
+      "login": "Login",
       "blog": "Blog",
       "contact": "Contact"
     }
@@ -152,6 +153,10 @@
         "desc": "Control athan and playback defaults.",
         "autoPlay": "Autoplay athan",
         "autoPlayHint": "Start athan playback automatically when available."
+      },
+      "refresh": {
+        "title": "Refresh app",
+        "desc": "Force an update and reload to get the latest version."
       }
     },
     "preferences": {
