@@ -10,6 +10,13 @@ const canvasRef = ref<HTMLCanvasElement | null>(null);
 let renderer: THREE.WebGLRenderer | null = null;
 let animationFrameId: number;
 let removePointerListener: (() => void) | null = null;
+let removeDoubleClickListener: (() => void) | null = null;
+
+// Raycaster for moon hit testing
+const raycaster = new THREE.Raycaster();
+const pointer = new THREE.Vector2();
+const MOON_HIDE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
+let moonHideUntil = 0;
 
 const meteorDirection = new THREE.Vector3(1, -0.35, 0);
 const meteorDirectionTarget = meteorDirection.clone();
@@ -336,6 +343,25 @@ onMounted(() => {
   moonGlow.position.copy(moon.position);
   scene.add(moonGlow);
 
+  // Double-click directly on the moon to toggle visibility
+  const handleDoubleClick = (event: MouseEvent) => {
+    if (!canvasRef.value) return;
+    const rect = canvasRef.value.getBoundingClientRect();
+    pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
+    pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
+
+    raycaster.setFromCamera(pointer, camera);
+    const intersects = raycaster.intersectObject(moon, true);
+    if (intersects.length) {
+      const now = Date.now();
+      moonHideUntil = now + MOON_HIDE_DURATION_MS;
+      moon.visible = false;
+      moonGlow.visible = false;
+    }
+  };
+  canvasRef.value.addEventListener("dblclick", handleDoubleClick);
+  removeDoubleClickListener = () => canvasRef.value?.removeEventListener("dblclick", handleDoubleClick);
+
   // Pointer-driven moon parallax
   const moonTarget = moonBasePosition.clone();
   const updateMoonTargetFromPointer = (event: PointerEvent) => {
@@ -442,6 +468,11 @@ onMounted(() => {
       }
       meteorShowerTimer = 12 + Math.random() * 14;
     }
+  
+      if (!moon.visible && Date.now() >= moonHideUntil) {
+        moon.visible = true;
+        moonGlow.visible = true;
+      }
 
     for (let i = shootingStars.length - 1; i >= 0; i -= 1) {
       const star = shootingStars[i];
@@ -475,6 +506,7 @@ onMounted(() => {
   onUnmounted(() => {
     window.removeEventListener("resize", handleResize);
     removePointerListener?.();
+    removeDoubleClickListener?.();
     window.cancelAnimationFrame(animationFrameId);
     renderer?.dispose();
   });

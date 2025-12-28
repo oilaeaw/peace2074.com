@@ -1,14 +1,30 @@
 <template>
-  <div class="support-ai-widget">
-    <q-btn
-      v-if="!open"
-      class="ai-fab"
-      color="primary"
-      icon="smart_toy"
-      :label="t('pages.support.aiTitle', 'Ask support AI')"
-      unelevated
-      @click="open = true"
-    />
+  <div v-if="!hidden" class="support-ai-widget">
+    <div v-if="!open" class="ai-fab-row">
+      <q-btn
+        class="ai-fab ai-fab--visible"
+        color="primary"
+        text-color="white"
+        icon="smart_toy"
+        :label="t('pages.support.aiTitle', 'Ask support AI')"
+        unelevated
+        @click="open = true"
+      />
+      <q-btn
+        class="ai-hide-btn"
+        flat
+        round
+        dense
+        icon="close"
+        color="grey-7"
+        @click.stop="hideForSession"
+        :aria-label="t('general.close', 'Hide AI widget')"
+      >
+        <q-tooltip class="text-caption">{{
+          t('general.close', 'Hide AI widget')
+        }}</q-tooltip>
+      </q-btn>
+    </div>
 
     <transition name="fade">
       <q-card v-if="open" class="ai-card glassy" bordered>
@@ -37,6 +53,19 @@
             >
               <q-tooltip class="text-caption">{{
                 t("general.reload", "Reset conversation")
+              }}</q-tooltip>
+            </q-btn>
+            <q-btn
+              flat
+              round
+              dense
+              icon="visibility_off"
+              color="grey-7"
+              @click="hideForSession"
+              :aria-label="t('general.close', 'Hide AI widget')"
+            >
+              <q-tooltip class="text-caption">{{
+                t('general.close', 'Hide AI widget')
               }}</q-tooltip>
             </q-btn>
             <q-btn
@@ -108,13 +137,19 @@ import { useClipboard } from "@vueuse/core";
 import { sendDeepSeekChat } from "@/stores/services";
 
 const { t } = useI18n();
+const HIDE_STORAGE_KEY = "support-ai-hidden";
 const prompt = ref("");
 const answer = ref("");
 const error = ref<string | null>(null);
 const loading = ref(false);
 const open = ref(false);
+const hidden = ref(false);
 
 const { copy: copyToClipboard } = useClipboard({ source: answer });
+
+if (typeof window !== "undefined") {
+  hidden.value = window.sessionStorage.getItem(HIDE_STORAGE_KEY) === "1";
+}
 
 async function ask() {
   const content = prompt.value.trim();
@@ -146,17 +181,41 @@ function reset() {
 function close() {
   open.value = false;
 }
+
+function hideForSession() {
+  hidden.value = true;
+  open.value = false;
+  if (typeof window !== "undefined") {
+    window.sessionStorage.setItem(HIDE_STORAGE_KEY, "1");
+  }
+}
 </script>
 
 <style scoped>
 .support-ai-widget {
   position: fixed;
-  right: 16px;
-  bottom: 16px;
+  right: 32px;
+  bottom: calc(64px + env(safe-area-inset-bottom));
   z-index: 1400;
+}
+.ai-fab-row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 .ai-fab {
   box-shadow: 0 12px 30px rgba(0, 0, 0, 0.25);
+}
+.ai-fab--visible {
+  background: linear-gradient(135deg, #2563eb, #06b6d4);
+  border: 1px solid rgba(255, 255, 255, 0.6);
+  color: #fff;
+  font-weight: 600;
+  letter-spacing: 0.01em;
+}
+.ai-hide-btn {
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.15);
+  background: rgba(255, 255, 255, 0.85);
 }
 .ai-card {
   position: fixed;
@@ -194,8 +253,8 @@ function close() {
 }
 @media (max-width: 640px) {
   .support-ai-widget {
-    right: 12px;
-    bottom: 12px;
+    right: 28px;
+    bottom: calc(120px + env(safe-area-inset-bottom));
   }
   .ai-card {
     right: 12px;
