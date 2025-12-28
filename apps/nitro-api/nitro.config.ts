@@ -18,6 +18,8 @@ export default defineNitroConfig({
         deepseekBaseUrl: "z     ",
         contactFrom: "",
         contactTo: "",
+        netlifyWebhookSecret: "",
+        slackWebhookUrl: "",
     },
     // No SSR renderer needed; pure API
 });
