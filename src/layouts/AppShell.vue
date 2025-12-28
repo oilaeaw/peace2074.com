@@ -160,6 +160,7 @@
     </q-page-container>
 
     <SupportAIWidget />
+      <ConsentBanner />
 
     <q-footer class="text-center q-pa-sm">
       <div class="footer">
@@ -177,6 +178,7 @@ import { useRouter } from "vue-router";
 import { useAthanPlayer } from "@/composables/useAthanPlayer";
 import { useSiteSearch } from "@/composables/useSiteSearch";
 import SupportAIWidget from "@/components/common/SupportAIWidget.vue";
+import ConsentBanner from "@/components/common/ConsentBanner.vue";
 
 declare const __APP_VERSION__: string;
 
