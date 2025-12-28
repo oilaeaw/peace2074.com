@@ -35,6 +35,8 @@
       "tasbeeh": "Tasbeeh",
       "chat": "Chat",
       "support": "Support",
+      "settings": "Einstellungen",
+      "preferences": "Benutzereinstellungen",
       "blog": "Blog",
       "contact": "Kontakt"
     }
@@ -88,7 +90,48 @@
         "bookmark": "Lesezeichen"
       },
       "holynames": "Heilige Namen",
-      "modes": {
+      "modes": {},
+      "settings": {
+        "title": "Einstellungen",
+        "subtitle": "Steuere, wie die App aussieht und funktioniert.",
+        "display": {
+          "title": "Anzeige",
+          "desc": "Passe Dichte und Bewegungen an.",
+          "compact": "Kompaktes Layout",
+          "compactHint": "Engerer Abstand für dichte Bildschirme.",
+          "motion": "Bewegung reduzieren",
+          "motionHint": "Animationen abschwächen für mehr Ruhe."
+        },
+        "notifications": {
+          "title": "Benachrichtigungen",
+          "desc": "Bleibe informiert, wenn neue Inhalte erscheinen.",
+          "enable": "Benachrichtigungen aktivieren",
+          "enableHint": "Wir fragen vorher um Erlaubnis.",
+          "comingSoon": "Push-Benachrichtigungen kommen bald."
+        },
+        "audio": {
+          "title": "Audio",
+          "desc": "Steuere Athan- und Wiedergabe-Standards.",
+          "autoPlay": "Athan automatisch abspielen",
+          "autoPlayHint": "Athan automatisch starten, wenn verfügbar."
+        }
+      },
+      "preferences": {
+        "title": "Benutzereinstellungen",
+        "subtitle": "Speichere persönliche Standardwerte für Lesen und Updates.",
+        "profile": {
+          "title": "Profil",
+          "displayName": "Anzeigename",
+          "emailUpdates": "E-Mail-Updates erhalten",
+          "hint": "Einstellungen gelten aktuell nur auf diesem Gerät."
+        },
+        "quran": {
+          "title": "Quran-Lesen",
+          "reciter": "Standard-Rezitator",
+          "transliteration": "Transliteration anzeigen",
+          "remember": "Letzte gelesene Seite merken",
+          "hint": "Lesewahlen gelten für Quran-Seiten auf diesem Gerät."
+        }
         "reader": "Lesemodus",
         "mushaf": "Mushaf-Modus"
       },

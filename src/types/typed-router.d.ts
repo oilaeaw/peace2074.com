@@ -86,6 +86,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/preferences': RouteRecordInfo<
+      '/preferences',
+      '/preferences',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/privacy': RouteRecordInfo<
       '/privacy',
       '/privacy',
@@ -105,6 +112,13 @@ declare module 'vue-router/auto-routes' {
       '/quran/:lok(.*)',
       { lok: ParamValue<true> },
       { lok: ParamValue<false> },
+      | never
+    >,
+    '/settings': RouteRecordInfo<
+      '/settings',
+      '/settings',
+      Record<never, never>,
+      Record<never, never>,
       | never
     >,
     '/support': RouteRecordInfo<
@@ -195,6 +209,12 @@ declare module 'vue-router/auto-routes' {
       views:
         | never
     }
+    'src/views/preferences.vue': {
+      routes:
+        | '/preferences'
+      views:
+        | never
+    }
     'src/views/privacy.vue': {
       routes:
         | '/privacy'
@@ -210,6 +230,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/quran/[...lok].vue': {
       routes:
         | '/quran/[...lok]'
+      views:
+        | never
+    }
+    'src/views/settings.vue': {
+      routes:
+        | '/settings'
       views:
         | never
     }

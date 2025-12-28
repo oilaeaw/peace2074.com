@@ -124,6 +124,12 @@
         <q-item clickable v-ripple to="/support">
           <q-item-section>{{ t('appShell.nav.support') }}</q-item-section>
         </q-item>
+        <q-item clickable v-ripple to="/settings">
+          <q-item-section>{{ t('appShell.nav.settings') }}</q-item-section>
+        </q-item>
+        <q-item clickable v-ripple to="/preferences">
+          <q-item-section>{{ t('appShell.nav.preferences') }}</q-item-section>
+        </q-item>
         <q-item clickable v-ripple to="/blog">
           <q-item-section>{{ t('appShell.nav.blog') }}</q-item-section>
         </q-item>

@@ -73,6 +73,24 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/settings',
+    name: 'Settings',
+    component: () => import('@/views/settings.vue'),
+    meta: {
+      title: 'Settings',
+      titleKey: 'pages.settings.title',
+    },
+  },
+  {
+    path: '/preferences',
+    name: 'Preferences',
+    component: () => import('@/views/preferences.vue'),
+    meta: {
+      title: 'Preferences',
+      titleKey: 'pages.preferences.title',
+    },
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: () => import('@/views/contact.vue'),

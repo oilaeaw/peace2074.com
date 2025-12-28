@@ -35,6 +35,8 @@
       "tasbeeh": "Tasbeeh",
       "chat": "Chat",
       "support": "Support",
+      "settings": "Settings",
+      "preferences": "Preferences",
       "blog": "Blog",
       "contact": "Contact"
     }
@@ -126,6 +128,48 @@
       "helpBody": "Check our help docs and common issues first.",
       "contactTitle": "Contact us",
       "contactBody": "If you’re stuck, send details and we’ll reply as soon as possible."
+    },
+    "settings": {
+      "title": "Settings",
+      "subtitle": "Control how the app looks and behaves.",
+      "display": {
+        "title": "Display",
+        "desc": "Tune layout density and motion preferences.",
+        "compact": "Compact layout",
+        "compactHint": "Use tighter spacing for dense screens.",
+        "motion": "Reduce motion",
+        "motionHint": "Soften animations for calmer interaction."
+      },
+      "notifications": {
+        "title": "Notifications",
+        "desc": "Stay informed when new content arrives.",
+        "enable": "Enable notifications",
+        "enableHint": "We’ll ask permission before sending anything.",
+        "comingSoon": "Push notifications are coming soon."
+      },
+      "audio": {
+        "title": "Audio",
+        "desc": "Control athan and playback defaults.",
+        "autoPlay": "Autoplay athan",
+        "autoPlayHint": "Start athan playback automatically when available."
+      }
+    },
+    "preferences": {
+      "title": "User preferences",
+      "subtitle": "Save personal defaults for reading and updates.",
+      "profile": {
+        "title": "Profile",
+        "displayName": "Display name",
+        "emailUpdates": "Email me occasional updates",
+        "hint": "Preferences are local to this device for now."
+      },
+      "quran": {
+        "title": "Quran reading",
+        "reciter": "Default reciter",
+        "transliteration": "Show transliteration",
+        "remember": "Remember last read page",
+        "hint": "Reading choices apply across Quran pages on this device."
+      }
     },
     "blog": {
       "title": "Blog",
