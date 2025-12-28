@@ -4,10 +4,11 @@ test('home -> quran list -> sura detail loads', async ({ page }) => {
     // Home
     await page.goto('/')
     await expect(page).toHaveURL(/\/?$/)
-    await expect(page.locator('text=Read Quran').first()).toBeVisible()
+    const readQuranLink = page.getByRole('link', { name: /quran/i })
+    await expect(readQuranLink).toBeVisible()
 
     // Go to Quran list
-    await page.click('text=Read Quran')
+    await readQuranLink.click()
     await page.waitForURL(/\/quran/)
     // Expect at least one surah tile or list (sura cards are divs)
     const list = page.locator('.sura-card')

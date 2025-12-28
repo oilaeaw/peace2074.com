@@ -138,6 +138,8 @@
       <RouterView />
     </q-page-container>
 
+    <SupportAIWidget />
+
     <q-footer class="text-center q-pa-sm">
       <div class="footer">
         <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
@@ -153,6 +155,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
 import { useSiteSearch } from '@/composables/useSiteSearch'
+import SupportAIWidget from '@/components/common/SupportAIWidget.vue'
 
 declare const __APP_VERSION__: string
 
