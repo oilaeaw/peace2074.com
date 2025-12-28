@@ -19,7 +19,8 @@ export default defineNitroConfig({
         contactFrom: "",
         contactTo: "",
         netlifyWebhookSecret: "",
-        slackWebhookUrl: "",
+        authPasscode: "",
+        authSecret: "",
     },
     // No SSR renderer needed; pure API
 });
