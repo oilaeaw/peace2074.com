@@ -141,12 +141,23 @@
         "motion": "Reduce motion",
         "motionHint": "Soften animations for calmer interaction."
       },
+      "navigation": {
+        "title": "Navigation",
+        "desc": "Control drawer ordering and visibility.",
+        "enableOrdering": "Enable drag ordering",
+        "enableOrderingHint": "Allow reordering and pinning items in the drawer.",
+        "drawerDefault": "Open drawer on start",
+        "drawerDefaultHint": "Enable to start with the drawer open; disable to keep it hidden until toggled."
+      },
       "notifications": {
         "title": "Notifications",
         "desc": "Stay informed when new content arrives.",
         "enable": "Enable notifications",
         "enableHint": "We’ll ask permission before sending anything.",
-        "comingSoon": "Push notifications are coming soon."
+        "comingSoon": "Push notifications are coming soon.",
+        "unavailable": "Notifications are not supported on this device/browser.",
+        "denied": "Notifications are blocked. Please allow them in your browser settings.",
+        "error": "Could not enable notifications right now."
       },
       "audio": {
         "title": "Audio",

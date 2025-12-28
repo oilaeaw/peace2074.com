@@ -11,6 +11,14 @@
     "Privacy_Short": "Datenschutz",
     "Terms": "Unsere Allgemeinen Geschäftsbedingungen",
     "Terms_Short": "Bedingungen",
+    "navigation": {
+      "title": "Navigation",
+      "desc": "Steuere Reihenfolge und Sichtbarkeit der Seitenleiste.",
+      "enableOrdering": "Drag-&-Drop erlauben",
+      "enableOrderingHint": "Erlaube das Umordnen und Anheften von Einträgen im Drawer.",
+      "drawerDefault": "Drawer beim Start öffnen",
+      "drawerDefaultHint": "Aktiviert: Drawer startet geöffnet. Deaktiviert: Drawer bleibt verborgen, bis du ihn öffnest."
+    },
     "Contact": "Kontakt",
     "TimeLine": "Zeitachse",
     "Utils": "Werkzeuge",

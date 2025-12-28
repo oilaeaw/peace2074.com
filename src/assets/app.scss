@@ -1,11 +1,11 @@
 @supports (-webkit-touch-callout: none) {
-    /* CSS specific to iOS devices */
+  /* CSS specific to iOS devices */
 }
 
 @supports not (-webkit-touch-callout: none) {
-    /* CSS for other than iOS devices */
+  /* CSS for other than iOS devices */
 }
-@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+@import url("https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap");
 
 /* Utility: prefer high-quality Arabic types for Quran pages */
 .arabic-font,
@@ -13,69 +13,72 @@
 .sura-name,
 .bismillah,
 .allah {
-    font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif !important;
+  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif !important;
 }
-.text-whit{
-    color: white!important;
+.text-whit {
+  color: white !important;
 }
-.text-dark{
-    color: var(--q-dark)!important;
+.text-dark {
+  color: var(--q-dark) !important;
 }
-body.body--light{
-    color: var(--q-dark);
-    background-color: white;
-    background-image: var(--background-pattern);
-    background-size: 600px 600px; /* constrain pattern repeat size */
-    background-repeat: repeat;
-    background-attachment: fixed;
-    overflow-x: hidden; /* prevent horizontal growth from pattern positioning */
+body.body--light {
+  color: var(--q-dark);
+  background-color: white;
+  background-image: var(--background-pattern);
+  background-size: 600px 600px; /* constrain pattern repeat size */
+  background-repeat: repeat;
+  background-attachment: fixed;
+  overflow-x: hidden; /* prevent horizontal growth from pattern positioning */
 }
-body.body--dark{
-    color: white;
-    background-color: var(--q-dark);
-    background-image: var(--background-pattern);
-    background-size: 600px 600px;
-    background-repeat: repeat;
-    background-attachment: fixed;
-    overflow-x: hidden;
+body.body--dark {
+  color: white;
+  background-color: var(--q-dark);
+  background-image: var(--background-pattern);
+  background-size: 600px 600px;
+  background-repeat: repeat;
+  background-attachment: fixed;
+  overflow-x: hidden;
 }
-.vue-scroll-picker-layer-top{
-    background-color: green !important;
-    height: .7 var(--vh);
+.vue-scroll-picker-layer-top {
+  background-color: green !important;
+  height: 0.7 var(--vh);
 }
-.vue-scroll-picker-layer-bottom{
-    background-color: greenyellow !important;
+.vue-scroll-picker-layer-bottom {
+  background-color: greenyellow !important;
 }
-.holynames-page{
-    height: max-content;
-    width: max-content;
-    display: flex;
-    flex-wrap: wrap;
-    align-content: center;
-    justify-content: space-evenly;
-    align-items: stretch;
-    background-color: white;
+.holynames-page {
+  height: max-content;
+  width: max-content;
+  display: flex;
+  flex-wrap: wrap;
+  align-content: center;
+  justify-content: space-evenly;
+  align-items: stretch;
+  background-color: white;
 }
 @font-face {
-  font-family: 'DM Sans';
-  src: url('/assets/fonts/dmsans-2fb93aaf.woff2') format('woff2'),
-       url('/assets/fonts/dmsans-dbe1f17c.woff2') format('woff2');
+  font-family: "DM Sans";
+  src:
+    url("/assets/fonts/dmsans-2fb93aaf.woff2") format("woff2"),
+    url("/assets/fonts/dmsans-dbe1f17c.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'DM Serif Display';
-  src: url('/assets/fonts/dmserifdisplay-aca0e217.woff2') format('woff2'),
-       url('/assets/fonts/dmserifdisplay-cbc631ca.woff2') format('woff2');
+  font-family: "DM Serif Display";
+  src:
+    url("/assets/fonts/dmserifdisplay-aca0e217.woff2") format("woff2"),
+    url("/assets/fonts/dmserifdisplay-cbc631ca.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: 'DM Mono';
-  src: url('/assets/fonts/dmmono-612bc94f.woff2') format('woff2'),
-       url('/assets/fonts/dmmono-cbe07c46.woff2') format('woff2');
+  font-family: "DM Mono";
+  src:
+    url("/assets/fonts/dmmono-612bc94f.woff2") format("woff2"),
+    url("/assets/fonts/dmmono-cbe07c46.woff2") format("woff2");
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -84,37 +87,71 @@ body.body--dark{
 /* Global theme variables for Islamic design pages.
      These ensure consistent colors and background pattern across pages. */
 :root {
-    --background-pattern: url('~/assets/patterns/islamic-pattern-light.svg');
-    --text-color: #173a2e;
-    --title-color: #14492e;
-    --subtitle-color: #6c757d;
-    --card-bg: #fbfbf8;
-    --page-max-width: 1200px;
+  --background-pattern: url("~/assets/patterns/islamic-pattern-light.svg");
+  --text-color: #173a2e;
+  --title-color: #14492e;
+  --subtitle-color: #6c757d;
+  --card-bg: #fbfbf8;
+  --page-max-width: 1200px;
 }
 
 @media (prefers-color-scheme: dark) {
-    :root {
-        --background-pattern: url('~/assets/patterns/islamic-pattern-dark.svg');
-        --text-color: #e0e0e0;
-        --title-color: #e0e0e0;
-        --subtitle-color: #b0b0b0;
-        --card-bg: #333;
-                --page-max-width: 1200px;
-    }
+  :root {
+    --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
+    --text-color: #e0e0e0;
+    --title-color: #e0e0e0;
+    --subtitle-color: #b0b0b0;
+    --card-bg: #333;
+    --page-max-width: 1200px;
+  }
 }
 
 /* Constrain root layout width and ensure centered without stray overflow */
-html, body {
-    max-width: 100vw;
-    width: 100%;
+html,
+body {
+  max-width: 100vw;
+  width: 100%;
 }
 
-.layout-width, .page-width {
-    width: 100%;
-    max-width: var(--page-max-width);
-    margin-left: auto;
-    margin-right: auto;
-    box-sizing: border-box;
-    padding-left: 1rem;
-    padding-right: 1rem;
+/* Compact layout: tighter paddings and gaps when enabled via body.is-compact */
+body.is-compact {
+  --compact-card-padding: 12px;
+  --compact-page-padding: 12px;
+  --compact-gap: 10px;
+}
+
+body.is-compact .q-page {
+  padding: var(--compact-page-padding) !important;
+}
+
+body.is-compact .q-card__section {
+  padding: var(--compact-card-padding) !important;
+}
+
+body.is-compact .q-gutter-sm > * {
+  margin: calc(var(--compact-gap) / 2) !important;
+}
+
+body.is-compact .grid {
+  gap: var(--compact-gap) !important;
+}
+
+/* Reduce motion: shorten or remove transitions/animations when enabled */
+body.reduce-motion *,
+body.reduce-motion *::before,
+body.reduce-motion *::after {
+  transition-duration: 0ms !important;
+  animation-duration: 0ms !important;
+  scroll-behavior: auto !important;
+}
+
+.layout-width,
+.page-width {
+  width: 100%;
+  max-width: var(--page-max-width);
+  margin-left: auto;
+  margin-right: auto;
+  box-sizing: border-box;
+  padding-left: 1rem;
+  padding-right: 1rem;
 }

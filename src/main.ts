@@ -6,6 +6,7 @@ import pinia from "@/plugins/pinia";
 import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
+import '@/assets/app.scss'
 
 const app = createApp(App);
 
