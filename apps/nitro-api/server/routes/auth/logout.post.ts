@@ -1,7 +1,7 @@
 import { defineEventHandler } from 'h3'
-import { clearSession } from '../../utils/auth'
+import { clearSessionCookie } from '../../utils/auth'
 
 export default defineEventHandler((event) => {
-    clearSession(event)
+    clearSessionCookie(event)
     return { ok: true }
 })

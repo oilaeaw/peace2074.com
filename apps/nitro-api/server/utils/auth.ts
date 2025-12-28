@@ -60,7 +60,7 @@ export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp
     return token
 }
 
-export function clearSession(event: H3Event) {
+export function clearSessionCookie(event: H3Event) {
     deleteCookie(event, COOKIE_NAME, { path: '/' })
 }
 
