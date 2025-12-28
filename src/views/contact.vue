@@ -20,6 +20,16 @@ const form = reactive({
 
 const loading = ref(false)
 const submitted = ref(false)
+const error = ref<string | null>(null)
+const formEl = ref<HTMLFormElement | null>(null)
+
+const formName = 'contact'
+
+function encode(data: Record<string, string>) {
+  return Object.keys(data)
+    .map((key) => `${encodeURIComponent(key)}=${encodeURIComponent(data[key])}`)
+    .join('&')
+}
 
 const isReady = computed(() =>
   Boolean(form.name && form.email && form.project && form.message && form.accept)
@@ -32,16 +42,39 @@ function reset() {
   form.message = ''
   form.accept = false
   submitted.value = false
+  error.value = null
 }
 
 async function submit() {
   if (!isReady.value) return
   loading.value = true
-  // Placeholder submit: in production wire to backend or email service
-  setTimeout(() => {
+  error.value = null
+  submitted.value = false
+  try {
+    const payload = {
+      'form-name': formName,
+      name: form.name,
+      email: form.email,
+      project: form.project,
+      message: form.message,
+    }
+
+    const res = await fetch('/', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+      body: encode(payload),
+    })
+
+    if (!res.ok) throw new Error(`Request failed (${res.status})`)
+
     submitted.value = true
+    // Optionally clear message only
+    form.message = ''
+  } catch (e: any) {
+    error.value = e?.message || 'Request failed'
+  } finally {
     loading.value = false
-  }, 400)
+  }
 }
 </script>
 
@@ -60,38 +93,73 @@ async function submit() {
         </q-card-section>
         <q-separator />
         <q-card-section class="q-gutter-md">
-          <q-input v-model="form.name" outlined :label="t('contact.name.label')" :placeholder="t('contact.name.placeholder')" />
-          <q-input v-model="form.email" outlined type="email" :label="t('contact.email.label')" :placeholder="t('contact.email.placeholder')" />
-          <q-select
-            v-model="form.project"
-            outlined
-            :options="projects"
-            option-value="key"
-            option-label="value"
-            emit-value
-            map-options
-            :label="t('contact.projects.label')"
-            :placeholder="t('contact.projects.placeholder')"
-          />
-          <q-input
-            v-model="form.message"
-            outlined
-            type="textarea"
-            autogrow
-            :label="t('contact.message.label')"
-            :placeholder="t('contact.message.placeholder')"
-          />
-          <div class="row items-center justify-between">
-            <q-toggle v-model="form.accept" color="primary" :label="t('contact.terms_accepted')" />
-            <RouterLink to="/terms" class="text-primary">{{ t('contact.accept_terms') }}</RouterLink>
-          </div>
-          <div class="row q-gutter-sm">
-            <q-btn color="primary" unelevated :label="t('button.submit')" :disable="!isReady || loading" :loading="loading" @click="submit" />
-            <q-btn flat color="primary" :label="t('button.reset')" @click="reset" />
-          </div>
-          <q-banner v-if="submitted" rounded dense class="q-mt-sm" color="positive" text-color="white">
-            {{ t('general.fetchingUpdates') || 'Message recorded. We will reply soon.' }}
-          </q-banner>
+          <form
+            ref="formEl"
+            name="contact"
+            method="POST"
+            data-netlify="true"
+            data-netlify-honeypot="bot-field"
+            autocomplete="on"
+            @submit.prevent="submit"
+            class="q-gutter-md"
+          >
+            <input type="hidden" name="form-name" :value="formName" />
+            <input type="hidden" name="bot-field" />
+
+            <q-input
+              v-model="form.name"
+              name="name"
+              autocomplete="name"
+              outlined
+              :label="t('contact.name.label')"
+              :placeholder="t('contact.name.placeholder')"
+            />
+            <q-input
+              v-model="form.email"
+              name="email"
+              autocomplete="email"
+              outlined
+              type="email"
+              :label="t('contact.email.label')"
+              :placeholder="t('contact.email.placeholder')"
+            />
+            <q-select
+              v-model="form.project"
+              name="project"
+              outlined
+              :options="projects"
+              option-value="key"
+              option-label="value"
+              emit-value
+              map-options
+              :label="t('contact.projects.label')"
+              :placeholder="t('contact.projects.placeholder')"
+            />
+            <q-input
+              v-model="form.message"
+              name="message"
+              autocomplete="on"
+              outlined
+              type="textarea"
+              autogrow
+              :label="t('contact.message.label')"
+              :placeholder="t('contact.message.placeholder')"
+            />
+            <div class="row items-center justify-between">
+              <q-toggle v-model="form.accept" color="primary" :label="t('contact.terms_accepted')" />
+              <RouterLink to="/terms" class="text-primary">{{ t('contact.accept_terms') }}</RouterLink>
+            </div>
+            <div class="row q-gutter-sm">
+              <q-btn type="submit" color="primary" unelevated :label="t('button.submit')" :disable="!isReady || loading" :loading="loading" />
+              <q-btn flat color="primary" :label="t('button.reset')" @click="reset" />
+            </div>
+            <q-banner v-if="submitted" rounded dense class="q-mt-sm" color="positive" text-color="white">
+              {{ t('general.fetchingUpdates') || 'Message recorded. We will reply soon.' }}
+            </q-banner>
+            <q-banner v-if="error" rounded dense class="q-mt-sm" color="negative" text-color="white">
+              {{ error }}
+            </q-banner>
+          </form>
         </q-card-section>
       </q-card>
 

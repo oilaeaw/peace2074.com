@@ -94,6 +94,13 @@ type DeepSeekPayload = {
   max_tokens?: number;
 };
 
+type ContactPayload = {
+  name: string;
+  email: string;
+  project: string;
+  message: string;
+};
+
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 
@@ -154,4 +161,30 @@ export async function sendDeepSeekChat(payload: DeepSeekPayload) {
     console.warn("DeepSeek request failed", e);
     throw e;
   }
+}
+
+export async function sendContactMessage(payload: ContactPayload) {
+  const trimmed = {
+    name: payload?.name?.trim() || "",
+    email: payload?.email?.trim() || "",
+    project: payload?.project?.trim() || "General",
+    message: payload?.message?.trim() || "",
+  };
+
+  if (!trimmed.name || !trimmed.email || !trimmed.message) {
+    throw new Error("Contact form is missing required fields");
+  }
+
+  const res = await fetch(resolveNitroUrl("/contact"), {
+    method: "POST",
+    headers: { "Content-Type": "application/json" },
+    body: JSON.stringify(trimmed),
+  });
+
+  if (!res.ok) {
+    const data = await res.json().catch(() => ({}));
+    throw new Error(data?.statusMessage || data?.error || `Contact failed (${res.status})`);
+  }
+
+  return res.json();
 }
