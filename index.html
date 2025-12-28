@@ -22,6 +22,17 @@
   </head>
   <body>
     <div id="app"></div>
+    <!-- Hidden Netlify form for build-time detection -->
+    <form name="contact" netlify netlify-honeypot="bot-field" hidden>
+      <input type="hidden" name="form-name" value="contact" />
+      <p hidden>
+        <label>Don’t fill this out: <input name="bot-field" /></label>
+      </p>
+      <input type="text" name="name" />
+      <input type="email" name="email" />
+      <input type="text" name="project" />
+      <textarea name="message"></textarea>
+    </form>
     <script type="module" src="/src/main.ts"></script>
   </body>
 </html>
