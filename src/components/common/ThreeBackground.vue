@@ -12,11 +12,12 @@ let animationFrameId: number;
 let removePointerListener: (() => void) | null = null;
 let removeDoubleClickListener: (() => void) | null = null;
 
+const ENABLE_MOON = false;
 // Raycaster for moon hit testing
 const raycaster = new THREE.Raycaster();
 const pointer = new THREE.Vector2();
-const MOON_HIDE_DURATION_MS = 10 * 60 * 1000; // 10 minutes
-let moonHideUntil = 0;
+const MOON_HIDDEN_KEY = "moon-hidden";
+let moonHidden = false;
 
 const meteorDirection = new THREE.Vector3(1, -0.35, 0);
 const meteorDirectionTarget = meteorDirection.clone();
@@ -300,7 +301,9 @@ onMounted(() => {
   moonMaterial.needsUpdate = true;
   const moon = new THREE.Mesh(moonGeometry, moonMaterial);
   moon.position.copy(moonBasePosition);
-  scene.add(moon);
+  if (ENABLE_MOON) {
+    scene.add(moon);
+  }
 
   // Luna glow (soft halo around the moon)
   const createGlowTexture = (): THREE.CanvasTexture => {
@@ -341,11 +344,29 @@ onMounted(() => {
   );
   moonGlow.scale.set(5, 5, 1);
   moonGlow.position.copy(moon.position);
-  scene.add(moonGlow);
+  if (ENABLE_MOON) {
+    scene.add(moonGlow);
+  }
 
-  // Double-click directly on the moon to toggle visibility
+  // Helpers to apply and persist moon visibility
+  const applyMoonVisibility = () => {
+    const hidden = !ENABLE_MOON || moonHidden;
+    moon.material.transparent = true;
+    (moon.material as THREE.MeshStandardMaterial).opacity = hidden ? 0 : 1;
+    moon.visible = !hidden;
+    moonGlow.visible = !hidden;
+  };
+
+  if (typeof window !== "undefined") {
+    moonHidden = window.localStorage.getItem(MOON_HIDDEN_KEY) === "1";
+    applyMoonVisibility();
+  } else {
+    applyMoonVisibility();
+  }
+
+  // Double-click directly on the moon to toggle persistent visibility
   const handleDoubleClick = (event: MouseEvent) => {
-    if (!canvasRef.value) return;
+    if (!canvasRef.value || !ENABLE_MOON) return;
     const rect = canvasRef.value.getBoundingClientRect();
     pointer.x = ((event.clientX - rect.left) / rect.width) * 2 - 1;
     pointer.y = -((event.clientY - rect.top) / rect.height) * 2 + 1;
@@ -353,10 +374,12 @@ onMounted(() => {
     raycaster.setFromCamera(pointer, camera);
     const intersects = raycaster.intersectObject(moon, true);
     if (intersects.length) {
-      const now = Date.now();
-      moonHideUntil = now + MOON_HIDE_DURATION_MS;
-      moon.visible = false;
-      moonGlow.visible = false;
+      moonHidden = !moonHidden;
+      applyMoonVisibility();
+      if (typeof window !== "undefined") {
+        if (moonHidden) window.localStorage.setItem(MOON_HIDDEN_KEY, "1");
+        else window.localStorage.removeItem(MOON_HIDDEN_KEY);
+      }
     }
   };
   canvasRef.value.addEventListener("dblclick", handleDoubleClick);
@@ -444,12 +467,14 @@ onMounted(() => {
     const elapsedTime = clock.elapsedTime;
 
     starField.rotation.y = elapsedTime / 10;
-    moon.position.lerp(moonTarget, 0.08);
-    moonGlow.position.copy(moon.position);
-    moon.rotation.y += 0.0008;
-    moon.rotation.x = Math.sin(elapsedTime * 0.08) * 0.02;
-    const baseGlow = sky.glowOpacity;
-    moonGlow.material.opacity = baseGlow + Math.sin(elapsedTime * 0.35) * 0.05;
+    if (ENABLE_MOON) {
+      moon.position.lerp(moonTarget, 0.08);
+      moonGlow.position.copy(moon.position);
+      moon.rotation.y += 0.0008;
+      moon.rotation.x = Math.sin(elapsedTime * 0.08) * 0.02;
+      const baseGlow = sky.glowOpacity;
+      moonGlow.material.opacity = baseGlow + Math.sin(elapsedTime * 0.35) * 0.05;
+    }
 
     meteorDirection.lerp(meteorDirectionTarget, 0.08);
 
@@ -468,11 +493,6 @@ onMounted(() => {
       }
       meteorShowerTimer = 12 + Math.random() * 14;
     }
-  
-      if (!moon.visible && Date.now() >= moonHideUntil) {
-        moon.visible = true;
-        moonGlow.visible = true;
-      }
 
     for (let i = shootingStars.length - 1; i >= 0; i -= 1) {
       const star = shootingStars[i];
