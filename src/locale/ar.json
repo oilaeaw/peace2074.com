@@ -51,6 +51,9 @@
       "contact": "اتصل بنا"
     }
   },
+  "navigation": {
+    "Login": "تسجيل الدخول"
+  },
   "pages": {
     "home": {
       "title": "الرئيسية",

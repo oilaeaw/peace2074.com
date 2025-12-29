@@ -43,6 +43,9 @@
       "contact": "Contact"
     }
   },
+  "navigation": {
+    "Login": "Login"
+  },
   "pages": {
     "home": {
       "title": "Home",

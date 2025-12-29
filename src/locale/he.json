@@ -51,6 +51,9 @@
             "contact": "צור קשר"
         }
     },
+    "navigation": {
+        "Login": "התחברות"
+    },
     "pages": {
         "home": {
             "title": "בית",

@@ -51,6 +51,9 @@
       "contact": "Контакты"
     }
   },
+  "navigation": {
+    "Login": "Войти"
+  },
   "pages": {
     "home": {
       "title": "Главная",
