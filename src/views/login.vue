@@ -108,8 +108,9 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
         const snippet = text.slice(0, 120).replace(/\s+/g, " ");
         throw new Error(`Expected JSON from ${url} but got: ${snippet}`);
       }
-    } catch (e) {
-      lastErr = e;
+    } catch (e: any) {
+      const message = e?.message || String(e);
+      lastErr = new Error(`Failed to reach ${url}: ${message}`);
       // try next candidate
     }
   }
