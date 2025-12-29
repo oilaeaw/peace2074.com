@@ -103,11 +103,17 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
         throw new Error(`Request failed (${res.status}); response: ${snippet}`);
       }
 
-      if (contentType.includes("application/json")) {
-        return res.json();
-      }
-
       const text = await res.text();
+      if (!text) {
+        return {};
+      }
+      if (contentType.includes("application/json")) {
+        try {
+          return JSON.parse(text);
+        } catch {
+          // fall through to generic handling
+        }
+      }
       try {
         return JSON.parse(text);
       } catch {
