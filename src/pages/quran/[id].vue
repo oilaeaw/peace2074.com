@@ -34,6 +34,9 @@ const audioList = ref<string[]>([])
 const audioEl = ref<HTMLAudioElement | null>(null)
 const isPlayingAudio = ref(false)
 const currentAyahIndex = ref<number>(-1)
+const currentWordIndex = ref<number>(-1)
+const playbackRate = ref<number>(1)
+const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
 
 if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
   const storedMode = window.localStorage.getItem(LAYOUT_STORAGE_KEY)
@@ -146,6 +149,7 @@ async function loadSuraById(id: number) {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
     await loadAudioList(id)
+    await loadWordTimings(id)
     await nextTick()
     await scrollToHash(route.hash)
   } catch (e: any) {
@@ -153,6 +157,30 @@ async function loadSuraById(id: number) {
     $q.notify({ type: 'negative', message: error.value })
   } finally {
     loading.value = false
+  }
+}
+
+async function loadWordTimings(id: number) {
+  wordTimings.value = {}
+  try {
+    const res = await fetch(`https://api.quran.com/api/v4/recitations/7/by_chapter/${id}?segments=true`)
+    if (!res.ok) return
+    const json = await res.json()
+    const files = json?.audio_files || []
+    files.forEach((file: any) => {
+      const verseKey: string = file?.verse_key || ''
+      const segments: number[][] = file?.segments || []
+      const [suraId, ayahId] = verseKey.split(':').map((n: string) => Number(n))
+      if (!suraId || !ayahId) return
+      const timings = segments.map((seg) => {
+        const start = (seg?.[1] ?? 0) / 1000
+        const end = (seg?.[2] ?? 0) / 1000
+        return { start, end }
+      })
+      if (!wordTimings.value[ayahId - 1]) wordTimings.value[ayahId - 1] = timings
+    })
+  } catch {
+    // silent fallback
   }
 }
 
@@ -179,9 +207,12 @@ function playAyah(index: number) {
     audioEl.value?.pause()
     const src = audioList.value[index]
     const el = new Audio(src)
+    el.playbackRate = playbackRate.value
     audioEl.value = el
     currentAyahIndex.value = index
     isPlayingAudio.value = true
+    currentWordIndex.value = -1
+    el.ontimeupdate = () => updateCurrentWord(el.currentTime)
     el.onended = () => playAyah(index + 1)
     el.onerror = () => playAyah(index + 1)
     void el.play().catch(() => {
@@ -207,6 +238,16 @@ function stopAudio() {
   }
   isPlayingAudio.value = false
   currentAyahIndex.value = -1
+  currentWordIndex.value = -1
+}
+
+function updateCurrentWord(time: number) {
+  const idx = currentAyahIndex.value
+  if (idx < 0) return
+  const timings = wordTimings.value[idx] || []
+  if (!timings.length) return
+  const found = timings.findIndex((seg) => time >= seg.start && time <= seg.end)
+  currentWordIndex.value = found
 }
 
 onMounted(async () => {
@@ -265,6 +306,22 @@ watch(layoutMode, (mode) => {
             @click="stopAudio"
             :disable="!isPlayingAudio"
             :label="t('appShell.stopAthan') || 'Stop'"
+          />
+          <q-select
+            dense
+            outlined
+            hide-dropdown-icon
+            v-model="playbackRate"
+            :options="[
+              { label: '0.75x', value: 0.75 },
+              { label: '1x', value: 1 },
+              { label: '1.25x', value: 1.25 },
+              { label: '1.5x', value: 1.5 },
+            ]"
+            emit-value
+            map-options
+            style="width: 90px"
+            @update:model-value="(v) => { if (audioEl) audioEl.playbackRate = v; }"
           />
           <div class="view-toggle">
             <q-btn-toggle
@@ -336,7 +393,18 @@ watch(layoutMode, (mode) => {
               <div class="verse-meta-bar">
                 <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
                 <div class="verse-actions">
-                  <button
+                    <template v-if="wordTimings[a.verse - 1]?.length">
+                      <span
+                        v-for="(word, wIdx) in a.text.split(' ')"
+                        :key="`${a.verse}-${wIdx}`"
+                        :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }"
+                      >
+                        {{ word }}
+                      </span>
+                    </template>
+                    <template v-else>
+                      {{ a.text }}
+                    </template>
                     type="button"
                     class="bookmark-trigger"
                     :class="{ 'is-active': isVerseBookmarked(a.verse) }"
@@ -639,6 +707,12 @@ watch(layoutMode, (mode) => {
   display: flex;
   align-items: center;
   gap: 8px;
+}
+
+.is-current-word {
+  background: rgba(185, 138, 54, 0.25);
+  padding: 0 4px;
+  border-radius: 6px;
 }
 
 .ayah-number {
