@@ -1,5 +1,6 @@
 import { createError, defineEventHandler, readBody, setResponseStatus } from 'h3'
 import OpenAI from 'openai'
+import { applyCors } from '../utils/cors'
 
 type ChatMessage = {
     role: 'system' | 'user' | 'assistant'
@@ -14,8 +15,10 @@ type DeepSeekRequestBody = {
 }
 
 const DEFAULT_MODEL = 'deepseek-chat'
+const DEFAULT_BASE_URL = 'https://api.deepseek.com'
 
 export default defineEventHandler(async (event) => {
+    applyCors(event)
     const config = useRuntimeConfig()
 
     const apiKey = (config as any).deepseekApiKey
