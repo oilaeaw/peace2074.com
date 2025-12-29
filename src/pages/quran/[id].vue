@@ -37,6 +37,7 @@ const currentAyahIndex = ref<number>(-1)
 const currentWordIndex = ref<number>(-1)
 const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
+const stopRequested = ref(false)
 
 if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
   const storedMode = window.localStorage.getItem(LAYOUT_STORAGE_KEY)
@@ -199,6 +200,10 @@ async function loadAudioList(id: number) {
 }
 
 function playAyah(index: number) {
+  if (stopRequested.value) {
+    isPlayingAudio.value = false
+    return
+  }
   if (!audioList.value.length || index < 0 || index >= audioList.value.length) {
     stopAudio()
     return
@@ -213,8 +218,20 @@ function playAyah(index: number) {
     isPlayingAudio.value = true
     currentWordIndex.value = -1
     el.ontimeupdate = () => updateCurrentWord(el.currentTime)
-    el.onended = () => playAyah(index + 1)
-    el.onerror = () => playAyah(index + 1)
+    el.onended = () => {
+      if (stopRequested.value) {
+        stopAudio()
+      } else {
+        playAyah(index + 1)
+      }
+    }
+    el.onerror = () => {
+      if (stopRequested.value) {
+        stopAudio()
+      } else {
+        playAyah(index + 1)
+      }
+    }
     void el.play().catch(() => {
       playAyah(index + 1)
     })
@@ -224,6 +241,7 @@ function playAyah(index: number) {
 }
 
 function startSuraAudio() {
+  stopRequested.value = false
   if (!audioList.value.length) {
     $q.notify({ type: 'warning', message: t('general.fetchingUpdates') || 'Loading audio…' })
     return
@@ -232,7 +250,11 @@ function startSuraAudio() {
 }
 
 function stopAudio() {
+  stopRequested.value = true
   if (audioEl.value) {
+    audioEl.value.onended = null
+    audioEl.value.onerror = null
+    audioEl.value.ontimeupdate = null
     audioEl.value.pause()
     audioEl.value = null
   }

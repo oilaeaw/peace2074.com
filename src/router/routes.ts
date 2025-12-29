@@ -91,6 +91,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/login',
+    name: 'Login',
+    component: () => import('@/views/login.vue'),
+    meta: {
+      title: 'Login',
+      titleKey: 'navigation.Login',
+    },
+  },
+  {
     path: '/contact',
     name: 'Contact',
     component: () => import('@/views/contact.vue'),
