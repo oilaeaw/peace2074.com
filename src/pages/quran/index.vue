@@ -16,7 +16,7 @@ const surahs = computed(() => store.GetQ)
 onMounted(async () => {
   try {
     // Populate store from bundled data; API fetch (if any) can be done in detail page
-    store.init(1)
+    await store.init(1)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load chapters'
     $q.notify({ type: 'negative', message: error.value })

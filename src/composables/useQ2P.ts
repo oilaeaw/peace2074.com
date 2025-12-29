@@ -1,6 +1,6 @@
 import { ref, computed } from 'vue'
-import hdetails from '@/shared/data/chapters/en.json'
-import hbook from '@/shared/data/quran.json'
+let localChapters: any[] | null = null
+let localBook: Record<string, any[]> | null = null
 
 type Aya = { verse: number; text: string; translation?: string }
 type Sura = { id: number; name: string; e_name?: string; total_verses?: number; type?: string; ayat?: Aya[] }
@@ -27,31 +27,59 @@ async function fetchJsonSequential(urls: string[]): Promise<any> {
     throw new Error('All API endpoints failed')
 }
 
-export default function useQ2P() {
-    // Build local fallback data structure from imported JSON
-    function buildLocalData() {
-        const ready: Sura[] = []
-        const chapters = Array.isArray(hdetails) ? hdetails : []
+async function loadLocalData() {
+    if (localChapters && localBook) return { chapters: localChapters, book: localBook }
 
-        chapters.forEach((chapter: any) => {
-            const chapterId = chapter.id || chapter.number
-            const versesForChapter = (hbook as any)[String(chapterId)] || []
+    const base = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
+    const chaptersUrl = `${base}/data/chapters/en.json`
+    const quranUrl = `${base}/data/quran.json`
 
-            ready.push({
-                id: chapterId,
-                name: chapter.name || '',
-                e_name: chapter.translation || chapter.transliteration || '',
-                type: chapter.type || '',
-                total_verses: versesForChapter.length,
-                ayat: versesForChapter.map((v: any) => ({
-                    verse: v.verse,
-                    text: v.text,
-                    translation: v.translation,
-                })),
-            })
-        })
-        return ready
+    // Prefer fetch (client); fall back to dynamic import when not available (SSR)
+    const fetchJson = async (url: string) => {
+        if (typeof fetch === 'undefined') {
+            const mod = await import(/* @vite-ignore */ url)
+            return mod.default || mod
+        }
+        const res = await fetch(url)
+        if (!res.ok) throw new Error(`Failed to load ${url}`)
+        return res.json()
     }
+
+    const [chapters, book] = await Promise.all([
+        fetchJson(chaptersUrl),
+        fetchJson(quranUrl),
+    ])
+
+    localChapters = Array.isArray(chapters) ? chapters : []
+    localBook = book && typeof book === 'object' ? book : {}
+    return { chapters: localChapters, book: localBook }
+}
+
+async function buildLocalData() {
+    const { chapters, book } = await loadLocalData()
+    const ready: Sura[] = []
+
+    chapters.forEach((chapter: any) => {
+        const chapterId = chapter.id || chapter.number
+        const versesForChapter = (book as any)[String(chapterId)] || []
+
+        ready.push({
+            id: chapterId,
+            name: chapter.name || '',
+            e_name: chapter.translation || chapter.transliteration || '',
+            type: chapter.type || '',
+            total_verses: versesForChapter.length,
+            ayat: versesForChapter.map((v: any) => ({
+                verse: v.verse,
+                text: v.text,
+                translation: v.translation,
+            })),
+        })
+    })
+    return ready
+}
+
+export default function useQ2P() {
 
     async function init(index = 1, lang = 'en') {
         currentLang.value = lang
@@ -90,9 +118,9 @@ export default function useQ2P() {
                 else throw new Error('API returned non-array data')
             }
         } catch (e) {
-            // Fallback to local bundled data
+            // Fallback to local bundled data (lazy-loaded to keep bundle light)
             console.warn('API load failed, falling back to local data', e)
-            quranData.value = buildLocalData()
+            quranData.value = await buildLocalData()
         }
         setIndex(index)
     }

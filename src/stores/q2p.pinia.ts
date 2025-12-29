@@ -1,7 +1,7 @@
 import type { QuranI, SuraI } from '@shared/types'
-import hdetails from '@shared/data/chapters/en.json'
-import hbook from '@shared/data/quran.json'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+
+let readyCache: any[] | null = null
 
 interface QSDT {
   chapter: number
@@ -35,31 +35,54 @@ interface State {
     container: Style
   }
 }
-const ready: any[] = []
+const basePath = (import.meta.env.BASE_URL || '/').replace(/\/$/, '')
 
-// Normalize chapters structure: `hdetails` may be an array (compiled JSON) or an object.
-const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
-chapters.forEach((metaSample: any) => {
-  const id = Number(metaSample?.id || metaSample?.number || 0)
-  if (!id) return
-  const qr = ((hbook as any)[String(id)] || []) as QSDT[]
-  if (Array.isArray(qr)) {
-    ready.push({
-      id,
-      name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
-      e_name: String(metaSample?.translation || metaSample?.suraName || ''),
-      type: String(metaSample?.type || ''),
-      total_verses: qr.length,
-      ayat: qr,
-    })
+async function fetchLocalJSON<T = any>(path: string): Promise<T> {
+  const url = `${basePath}/${path.replace(/^\//, '')}`
+  if (typeof fetch === 'undefined') {
+    const mod = await import(/* @vite-ignore */ url)
+    return (mod as any).default || (mod as any)
   }
-})
+  const res = await fetch(url)
+  if (!res.ok) throw new Error(`Failed to load ${url}`)
+  return res.json()
+}
+
+async function buildReady(): Promise<any[]> {
+  if (readyCache) return readyCache
+  const [chapters, book] = await Promise.all([
+    fetchLocalJSON<any[]>('data/chapters/en.json'),
+    fetchLocalJSON<Record<string, QSDT[]>>('data/quran.json'),
+  ])
+
+  const ready: any[] = []
+  const chapterList = Array.isArray(chapters) ? chapters : Object.values(chapters || {})
+
+  chapterList.forEach((metaSample: any) => {
+    const id = Number(metaSample?.id || metaSample?.number || 0)
+    if (!id) return
+    const qr = ((book as any)[String(id)] || []) as QSDT[]
+    if (Array.isArray(qr)) {
+      ready.push({
+        id,
+        name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
+        e_name: String(metaSample?.translation || metaSample?.suraName || ''),
+        type: String(metaSample?.type || ''),
+        total_verses: qr.length,
+        ayat: qr,
+      })
+    }
+  })
+
+  readyCache = ready
+  return ready
+}
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
     // Use a deep-cloned plain object for Book to avoid prototype/serialization issues
     // (some JSON imports or transforms may produce objects that trip devalue/pinia during SSR).
-    Book: JSON.parse(JSON.stringify(ready)) as any[],
+    Book: [] as any[],
     Sura: {} as SuraI,
     Index: 0,
     LLegend: [
@@ -140,11 +163,11 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   actions: {
-    init(index?: number): any[] {
+    async init(index?: number): Promise<any[]> {
       // Ensure Book is populated — persisted state may have an empty or
-      // malformed Book array. Fall back to the compiled `ready` data.
+      // malformed Book array. Fall back to the lazily loaded data to keep bundles lean.
       if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
-        this.Book = ready as any[]
+        this.Book = await buildReady()
       }
 
       this.setIndex(index || 1)
