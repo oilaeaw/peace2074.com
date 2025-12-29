@@ -1,11 +1,13 @@
 import { defineEventHandler, readBody } from 'h3'
 import { randomBytes } from 'node:crypto'
 import { requireSecrets } from '../../utils/auth'
+import { applyCors } from '../../utils/cors'
 import { pendingLinks } from './magic.store'
 
 const LINK_TTL_MS = 10 * 60 * 1000 // 10 minutes
 
 export default defineEventHandler(async (event) => {
+  applyCors(event)
   const body = (await readBody<{ email?: string }>(event)) || {}
   const email = (body.email || '').trim().toLowerCase()
 

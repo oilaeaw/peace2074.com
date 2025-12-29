@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from "h3";
 import { randomInt } from "node:crypto";
 import { createSession, requireSecrets } from "../../utils/auth";
+import { applyCors } from "../../utils/cors";
 
 export const otpStore = new Map<string, { code: string; exp: number }>();
 const OTP_TTL_MS = 10 * 60 * 1000; // 10 minutes
@@ -13,6 +14,7 @@ function cleanExpired() {
 }
 
 export default defineEventHandler(async (event) => {
+  applyCors(event);
   const body = (await readBody<{ email?: string }>(event)) || {};
   const email = (body.email || "").trim().toLowerCase();
 

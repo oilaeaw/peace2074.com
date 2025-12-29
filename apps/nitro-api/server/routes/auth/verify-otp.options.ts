@@ -1,9 +1,8 @@
 import { defineEventHandler } from 'h3'
-import { clearSessionCookie } from '../../utils/auth'
 import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler((event) => {
-    applyCors(event)
-    clearSessionCookie(event)
-    return { ok: true }
+  applyCors(event)
+  event.node.res.statusCode = 204
+  event.node.res.end()
 })

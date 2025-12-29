@@ -1,8 +1,10 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { createSession, requireSecrets } from '../../utils/auth'
+import { applyCors } from '../../utils/cors'
 import { otpStore } from './request-otp.post'
 
 export default defineEventHandler(async (event) => {
+  applyCors(event)
   const body = (await readBody<{ email?: string; code?: string }>(event)) || {}
   const email = (body.email || '').trim().toLowerCase()
   const code = (body.code || '').trim()

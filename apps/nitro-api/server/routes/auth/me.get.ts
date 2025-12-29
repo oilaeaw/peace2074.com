@@ -1,7 +1,9 @@
 import { createError, defineEventHandler } from 'h3'
 import { readSession, requireSecrets } from '../../utils/auth'
+import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler((event) => {
+    applyCors(event)
     // Ensure config exists
     requireSecrets()
 

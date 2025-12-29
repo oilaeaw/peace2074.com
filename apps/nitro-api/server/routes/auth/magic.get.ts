@@ -1,8 +1,10 @@
 import { createError, defineEventHandler, getQuery, sendRedirect } from 'h3'
 import { createSession, requireSecrets } from '../../utils/auth'
+import { applyCors } from '../../utils/cors'
 import { cleanExpiredLinks, pendingLinks } from './magic.store'
 
 export default defineEventHandler(async (event) => {
+  applyCors(event)
   const { token = '' } = getQuery(event)
   const t = String(token || '')
 
