@@ -15,7 +15,6 @@ type DeepSeekRequestBody = {
 }
 
 const DEFAULT_MODEL = 'deepseek-chat'
-const DEFAULT_BASE_URL = 'https://api.deepseek.com'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
@@ -50,7 +49,7 @@ export default defineEventHandler(async (event) => {
 
     const client = new OpenAI({
         apiKey: String(apiKey).trim(),
-        baseURL: baseURL || DEFAULT_BASE_URL,
+        baseURL: String(baseURL).trim(),
     })
 
     const body = (await readBody<DeepSeekRequestBody>(event)) || {}
