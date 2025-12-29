@@ -11,21 +11,37 @@ const me = ref<any>(null);
 const debugCode = ref("");
 const debugLink = ref("");
 
-async function callApi(path: string, options: RequestInit = {}) {
-  const res = await fetch(path, {
-    credentials: "include",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.headers || {}),
-    },
-    ...options,
-  });
+const runtimeBase = (typeof window !== "undefined" && window.location?.origin)
+  ? window.location.origin.replace(/\/$/, "")
+  : "http://localhost:3000";
 
-  if (!res.ok) {
-    const data = await res.json().catch(() => ({}));
-    throw new Error(data?.statusMessage || data?.error || `HTTP ${res.status}`);
+async function callApi(paths: string | string[], options: RequestInit = {}) {
+  const candidates = Array.isArray(paths) ? paths : [paths];
+  let lastErr: unknown = null;
+
+  for (const path of candidates) {
+    try {
+      const res = await fetch(path, {
+        credentials: "include",
+        headers: {
+          "Content-Type": "application/json",
+          ...(options.headers || {}),
+        },
+        ...options,
+      });
+
+      if (!res.ok) {
+        const data = await res.json().catch(() => ({}));
+        throw new Error(data?.statusMessage || data?.error || `HTTP ${res.status}`);
+      }
+      return res.json();
+    } catch (e) {
+      lastErr = e;
+      // try next candidate
+    }
   }
-  return res.json();
+
+  throw lastErr || new Error("All endpoints failed");
 }
 
 function resetMessages() {
@@ -40,7 +56,12 @@ async function sendOtp() {
   loading.value = true;
   resetMessages();
   try {
-    const data = await callApi("/api/auth/request-otp", {
+    const data = await callApi([
+      `/auth/request-otp`,
+      `/api/auth/request-otp`,
+      `${runtimeBase}/auth/request-otp`,
+      `${runtimeBase}/api/auth/request-otp`,
+    ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
     });
@@ -62,7 +83,12 @@ async function verifyOtp() {
   loading.value = true;
   resetMessages();
   try {
-    const data = await callApi("/api/auth/verify-otp", {
+    const data = await callApi([
+      `/auth/verify-otp`,
+      `/api/auth/verify-otp`,
+      `${runtimeBase}/auth/verify-otp`,
+      `${runtimeBase}/api/auth/verify-otp`,
+    ], {
       method: "POST",
       body: JSON.stringify({ email: email.value, code: code.value }),
     });
@@ -80,7 +106,12 @@ async function sendMagicLink() {
   loading.value = true;
   resetMessages();
   try {
-    const data = await callApi("/api/auth/request-magic-link", {
+    const data = await callApi([
+      `/auth/request-magic-link`,
+      `/api/auth/request-magic-link`,
+      `${runtimeBase}/auth/request-magic-link`,
+      `${runtimeBase}/api/auth/request-magic-link`,
+    ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
     });
@@ -100,7 +131,12 @@ async function fetchMe() {
   loading.value = true;
   resetMessages();
   try {
-    const data = await callApi("/api/auth/me");
+    const data = await callApi([
+      `/auth/me`,
+      `/api/auth/me`,
+      `${runtimeBase}/auth/me`,
+      `${runtimeBase}/api/auth/me`,
+    ]);
     status.value = "Session valid";
     me.value = data?.user || null;
   } catch (e: any) {
@@ -115,7 +151,12 @@ async function logout() {
   loading.value = true;
   resetMessages();
   try {
-    await callApi("/api/auth/logout", { method: "POST" });
+    await callApi([
+      `/auth/logout`,
+      `/api/auth/logout`,
+      `${runtimeBase}/auth/logout`,
+      `${runtimeBase}/api/auth/logout`,
+    ], { method: "POST" });
     status.value = "Logged out";
     me.value = null;
   } catch (e: any) {
