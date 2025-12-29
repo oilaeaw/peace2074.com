@@ -83,6 +83,8 @@
       "title": "Quran",
       "detail": "Quran Detail",
       "backToList": "Back to list",
+      "playRecitation": "Play recitation",
+      "stopRecitation": "Stop recitation",
       "pageTitle": "The Holy Quran",
       "sura": {
         "name": "sura's Name",

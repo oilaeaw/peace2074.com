@@ -96,6 +96,8 @@
         "name": "Name der Sure",
         "id": "Sura-Nummer",
         "location": "Ort der Sure",
+        "playRecitation": "Rezitation abspielen",
+        "stopRecitation": "Rezitation stoppen",
         "totverses": "Anzahl der Verse",
         "bookmark": "Lesezeichen"
       },

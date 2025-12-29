@@ -91,6 +91,8 @@
       "title": "القرآن الكريم",
       "detail": "تفاصيل السورة",
       "backToList": "العودة إلى القائمة",
+      "playRecitation": "تشغيل التلاوة",
+      "stopRecitation": "إيقاف التلاوة",
       "pageTitle": "القرآن الكريم",
       "holynames": "الأسماء الحسنى",
       "modes": {

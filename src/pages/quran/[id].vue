@@ -296,7 +296,7 @@ watch(layoutMode, (mode) => {
             dense
             @click="startSuraAudio"
             :disable="!audioList.length"
-            :label="isPlayingAudio ? t('general.pause') || 'Playing' : t('appShell.playAthan') || 'Play'"
+            :label="isPlayingAudio ? t('general.pause') || 'Pause' : t('pages.quran.playRecitation') || 'Play recitation'"
           />
           <q-btn
             icon="stop"
@@ -305,7 +305,7 @@ watch(layoutMode, (mode) => {
             dense
             @click="stopAudio"
             :disable="!isPlayingAudio"
-            :label="t('appShell.stopAthan') || 'Stop'"
+            :label="t('pages.quran.stopRecitation') || 'Stop recitation'"
           />
           <q-select
             dense

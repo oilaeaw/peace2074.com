@@ -96,6 +96,8 @@
                 "name": "שם הסורה",
                 "id": "מספר הסורה",
                 "location": "מיקום הסורה",
+                "playRecitation": "נגן את הקריאה",
+                "stopRecitation": "עצור את הקריאה",
                 "totverses": "מספר הפסוקים",
                 "bookmark": "סימנייה"
             },
