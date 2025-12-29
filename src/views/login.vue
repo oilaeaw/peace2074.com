@@ -54,8 +54,9 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
   for (const p of inputPaths) {
     const resolved = resolveUrl(p);
     if (!candidates.includes(resolved)) candidates.push(resolved);
-    if (resolved !== p && !p.startsWith("http") && !candidates.includes(p)) {
-      // also try the raw relative path as a fallback (for same-origin prod)
+
+    // Only add same-origin raw fallback if no explicit Nitro base is set
+    if (!NITRO_BASE && resolved !== p && !p.startsWith("http") && !candidates.includes(p)) {
       candidates.push(p);
     }
   }
