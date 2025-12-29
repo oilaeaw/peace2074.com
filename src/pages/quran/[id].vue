@@ -388,23 +388,25 @@ watch(layoutMode, (mode) => {
             class="verse-row q-mb-md"
             :class="{ 'is-selected': isVerseSelected(a.verse) }"
           >
-            <div class="arabic-text">{{ a.text }}</div>
+            <div class="arabic-text">
+              <template v-if="wordTimings[a.verse - 1]?.length">
+                <span
+                  v-for="(word, wIdx) in a.text.split(' ')"
+                  :key="`${a.verse}-${wIdx}`"
+                  :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }"
+                >
+                  {{ word }}
+                </span>
+              </template>
+              <template v-else>
+                {{ a.text }}
+              </template>
+            </div>
             <div class="verse-meta">
               <div class="verse-meta-bar">
                 <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
                 <div class="verse-actions">
-                    <template v-if="wordTimings[a.verse - 1]?.length">
-                      <span
-                        v-for="(word, wIdx) in a.text.split(' ')"
-                        :key="`${a.verse}-${wIdx}`"
-                        :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }"
-                      >
-                        {{ word }}
-                      </span>
-                    </template>
-                    <template v-else>
-                      {{ a.text }}
-                    </template>
+                  <button
                     type="button"
                     class="bookmark-trigger"
                     :class="{ 'is-active': isVerseBookmarked(a.verse) }"
