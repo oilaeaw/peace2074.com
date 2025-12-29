@@ -4640,6 +4640,18 @@ const _7w7Lp0 = defineEventHandler((event) => {
   }
 });
 
+const _tLuoVe = defineEventHandler((event) => {
+  if (event.node.req.method !== "OPTIONS") return;
+  const origin = event.node.req.headers.origin || "*";
+  setHeader(event, "Access-Control-Allow-Origin", origin);
+  setHeader(event, "Access-Control-Allow-Credentials", "true");
+  setHeader(event, "Access-Control-Allow-Methods", "GET,POST,PUT,PATCH,DELETE,OPTIONS");
+  setHeader(event, "Access-Control-Allow-Headers", "Content-Type,Authorization,Accept,Origin");
+  setHeader(event, "Vary", "Origin");
+  event.node.res.statusCode = 204;
+  event.node.res.end();
+});
+
 const _lazy_1pCI3T = () => import('../routes/auth/login.post.mjs');
 const _lazy_Lsj2Pf = () => import('../routes/auth/logout.options.mjs');
 const _lazy_1Vi1kz = () => import('../routes/auth/logout.post.mjs');
@@ -4665,6 +4677,7 @@ const _lazy_TUa9lo = () => import('../routes/webhooks/netlify-form.post.mjs');
 
 const handlers = [
   { route: '', handler: _7w7Lp0, lazy: false, middleware: true, method: undefined },
+  { route: '', handler: _tLuoVe, lazy: false, middleware: true, method: undefined },
   { route: '/auth/login', handler: _lazy_1pCI3T, lazy: true, middleware: false, method: "post" },
   { route: '/auth/logout', handler: _lazy_Lsj2Pf, lazy: true, middleware: false, method: "options" },
   { route: '/auth/logout', handler: _lazy_1Vi1kz, lazy: true, middleware: false, method: "post" },
