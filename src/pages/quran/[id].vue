@@ -30,6 +30,11 @@ const selectedBookmark = ref('')
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutMode = ref<'reader' | 'mushaf'>('reader')
 
+const audioList = ref<string[]>([])
+const audioEl = ref<HTMLAudioElement | null>(null)
+const isPlayingAudio = ref(false)
+const currentAyahIndex = ref<number>(-1)
+
 if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
   const storedMode = window.localStorage.getItem(LAYOUT_STORAGE_KEY)
   if (storedMode === 'reader' || storedMode === 'mushaf') {
@@ -136,9 +141,11 @@ async function loadSuraById(id: number) {
   loading.value = true
   error.value = ''
   selectedBookmark.value = ''
+  stopAudio()
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
+    await loadAudioList(id)
     await nextTick()
     await scrollToHash(route.hash)
   } catch (e: any) {
@@ -147,6 +154,59 @@ async function loadSuraById(id: number) {
   } finally {
     loading.value = false
   }
+}
+
+async function loadAudioList(id: number) {
+  audioList.value = []
+  currentAyahIndex.value = -1
+  try {
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
+    if (!res.ok) return
+    const json = await res.json()
+    const ayahs = json?.data?.ayahs || []
+    audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
+  } catch {
+    // silent fallback; list stays empty
+  }
+}
+
+function playAyah(index: number) {
+  if (!audioList.value.length || index < 0 || index >= audioList.value.length) {
+    stopAudio()
+    return
+  }
+  try {
+    audioEl.value?.pause()
+    const src = audioList.value[index]
+    const el = new Audio(src)
+    audioEl.value = el
+    currentAyahIndex.value = index
+    isPlayingAudio.value = true
+    el.onended = () => playAyah(index + 1)
+    el.onerror = () => playAyah(index + 1)
+    void el.play().catch(() => {
+      playAyah(index + 1)
+    })
+  } catch {
+    playAyah(index + 1)
+  }
+}
+
+function startSuraAudio() {
+  if (!audioList.value.length) {
+    $q.notify({ type: 'warning', message: t('general.fetchingUpdates') || 'Loading audio…' })
+    return
+  }
+  playAyah(0)
+}
+
+function stopAudio() {
+  if (audioEl.value) {
+    audioEl.value.pause()
+    audioEl.value = null
+  }
+  isPlayingAudio.value = false
+  currentAyahIndex.value = -1
 }
 
 onMounted(async () => {
@@ -188,6 +248,24 @@ watch(layoutMode, (mode) => {
           </div>
         </div>
         <div class="heading-actions">
+          <q-btn
+            icon="play_arrow"
+            color="primary"
+            flat
+            dense
+            @click="startSuraAudio"
+            :disable="!audioList.length"
+            :label="isPlayingAudio ? t('general.pause') || 'Playing' : t('appShell.playAthan') || 'Play'"
+          />
+          <q-btn
+            icon="stop"
+            color="negative"
+            flat
+            dense
+            @click="stopAudio"
+            :disable="!isPlayingAudio"
+            :label="t('appShell.stopAthan') || 'Stop'"
+          />
           <div class="view-toggle">
             <q-btn-toggle
               v-model="layoutMode"
@@ -555,6 +633,12 @@ watch(layoutMode, (mode) => {
   display: flex;
   align-items: center;
   gap: 6px;
+}
+
+.heading-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
 }
 
 .ayah-number {
