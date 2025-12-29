@@ -37,6 +37,7 @@
   "appShell": {
     "searchPlaceholder": "Поиск…",
     "playAthan": "Воспроизвести азан",
+    "stopAthan": "Остановить азан",
     "nav": {
       "home": "Главная",
       "quran": "Коран",

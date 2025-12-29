@@ -37,6 +37,7 @@
   "appShell": {
     "searchPlaceholder": "Suchen…",
     "playAthan": "Adhan abspielen",
+    "stopAthan": "Adhan stoppen",
     "nav": {
       "home": "Startseite",
       "quran": "Koran",

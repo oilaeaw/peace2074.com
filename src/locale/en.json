@@ -29,6 +29,7 @@
   "appShell": {
     "searchPlaceholder": "Search…",
     "playAthan": "Play Athan",
+    "stopAthan": "Stop Athan",
     "nav": {
       "home": "Home",
       "quran": "Quran",

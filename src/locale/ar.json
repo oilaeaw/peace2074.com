@@ -37,6 +37,7 @@
   "appShell": {
     "searchPlaceholder": "ابحث…",
     "playAthan": "تشغيل الأذان",
+    "stopAthan": "إيقاف الأذان",
     "nav": {
       "home": "الرئيسية",
       "quran": "القرآن",

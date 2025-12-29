@@ -37,6 +37,7 @@
     "appShell": {
         "searchPlaceholder": "חפש…",
         "playAthan": "נגן אזהאן",
+        "stopAthan": "עצור את האזאן",
         "nav": {
             "home": "בית",
             "quran": "הקוראן",
