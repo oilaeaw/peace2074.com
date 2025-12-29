@@ -5,6 +5,7 @@ const DEFAULT_PORT = 3000;
 export default defineNitroConfig({
     compatibilityDate: "2024-10-01",
     srcDir: "server",
+    preset: "netlify",
     devServer: {
         port: DEFAULT_PORT,
         host: "0.0.0.0",
