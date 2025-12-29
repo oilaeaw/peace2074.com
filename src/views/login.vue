@@ -3,6 +3,7 @@ import { ref } from "vue";
 
 const env = (import.meta as any)?.env || {};
 const DEFAULT_NITRO_PORT = 3000;
+const PROD_FALLBACK = "https://api.waelio.com";
 const DEV_FALLBACKS = [
   `http://localhost:${DEFAULT_NITRO_PORT}`,
   `http://127.0.0.1:${DEFAULT_NITRO_PORT}`,
@@ -16,10 +17,12 @@ function computeNitroBase() {
 
   if (typeof window !== "undefined") {
     const { protocol, hostname } = window.location;
-    if (hostname === "localhost" || hostname === "127.0.0.1") {
+    const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
+    if (isLocal) {
       return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, "");
     }
-    return ""; // same-origin in prod
+    // In production, default to the public API host if not provided explicitly
+    return PROD_FALLBACK;
   }
 
   return "";
@@ -58,7 +61,7 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
   }
 
   // Dev safety net: if no explicit Nitro base is set, also try localhost dev ports
-  if (!NITRO_BASE) {
+  if (!NITRO_BASE && (typeof window === "undefined" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
     for (const base of DEV_FALLBACKS) {
       for (const p of inputPaths) {
         if (p.startsWith("http")) continue;
