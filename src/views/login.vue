@@ -1,6 +1,28 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
+const env = (import.meta as any)?.env || {};
+const DEFAULT_NITRO_PORT = 3000;
+
+function computeNitroBase() {
+  const configured = env.VITE_NITRO_BASE;
+  if (configured && typeof configured === "string") {
+    return configured.replace(/\/$/, "");
+  }
+
+  if (typeof window !== "undefined") {
+    const { protocol, hostname } = window.location;
+    if (hostname === "localhost" || hostname === "127.0.0.1") {
+      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, "");
+    }
+    return ""; // same-origin in prod
+  }
+
+  return "";
+}
+
+const NITRO_BASE = computeNitroBase();
+
 const mode = ref<'otp' | 'magic'>("otp");
 const email = ref("");
 const code = ref("");
@@ -11,17 +33,31 @@ const me = ref<any>(null);
 const debugCode = ref("");
 const debugLink = ref("");
 
-const runtimeBase = (typeof window !== "undefined" && window.location?.origin)
-  ? window.location.origin.replace(/\/$/, "")
-  : "http://localhost:3000";
+function resolveUrl(path: string) {
+  if (path.startsWith("http")) return path;
+  const normalized = path.startsWith("/") ? path : `/${path}`;
+  if (NITRO_BASE) return `${NITRO_BASE}${normalized}`;
+  return normalized;
+}
 
 async function callApi(paths: string | string[], options: RequestInit = {}) {
-  const candidates = Array.isArray(paths) ? paths : [paths];
+  const inputPaths = Array.isArray(paths) ? paths : [paths];
+  const candidates: string[] = [];
+
+  for (const p of inputPaths) {
+    const resolved = resolveUrl(p);
+    if (!candidates.includes(resolved)) candidates.push(resolved);
+    if (resolved !== p && !p.startsWith("http") && !candidates.includes(p)) {
+      // also try the raw relative path as a fallback (for same-origin prod)
+      candidates.push(p);
+    }
+  }
+
   let lastErr: unknown = null;
 
-  for (const path of candidates) {
+  for (const url of candidates) {
     try {
-      const res = await fetch(path, {
+      const res = await fetch(url, {
         credentials: "include",
         headers: {
           "Content-Type": "application/json",
@@ -30,11 +66,32 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
         ...options,
       });
 
+      const contentType = res.headers.get("content-type") || "";
+
       if (!res.ok) {
-        const data = await res.json().catch(() => ({}));
-        throw new Error(data?.statusMessage || data?.error || `HTTP ${res.status}`);
+        if (contentType.includes("application/json")) {
+          const data = await res.json().catch(() => ({}));
+          throw new Error(data?.statusMessage || data?.error || `HTTP ${res.status}`);
+        }
+        const text = await res.text();
+        const snippet = text.slice(0, 120).replace(/\s+/g, " ");
+        if (snippet.toLowerCase().startsWith("<!doctype")) {
+          throw new Error(`Received HTML from ${url} — is the Nitro API running on ${NITRO_BASE || 'your API host'}?`);
+        }
+        throw new Error(`Request failed (${res.status}); response: ${snippet}`);
       }
-      return res.json();
+
+      if (contentType.includes("application/json")) {
+        return res.json();
+      }
+
+      const text = await res.text();
+      try {
+        return JSON.parse(text);
+      } catch {
+        const snippet = text.slice(0, 120).replace(/\s+/g, " ");
+        throw new Error(`Expected JSON from ${url} but got: ${snippet}`);
+      }
     } catch (e) {
       lastErr = e;
       // try next candidate
@@ -59,8 +116,6 @@ async function sendOtp() {
     const data = await callApi([
       `/auth/request-otp`,
       `/api/auth/request-otp`,
-      `${runtimeBase}/auth/request-otp`,
-      `${runtimeBase}/api/auth/request-otp`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
@@ -86,8 +141,6 @@ async function verifyOtp() {
     const data = await callApi([
       `/auth/verify-otp`,
       `/api/auth/verify-otp`,
-      `${runtimeBase}/auth/verify-otp`,
-      `${runtimeBase}/api/auth/verify-otp`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value, code: code.value }),
@@ -109,8 +162,6 @@ async function sendMagicLink() {
     const data = await callApi([
       `/auth/request-magic-link`,
       `/api/auth/request-magic-link`,
-      `${runtimeBase}/auth/request-magic-link`,
-      `${runtimeBase}/api/auth/request-magic-link`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
@@ -134,8 +185,6 @@ async function fetchMe() {
     const data = await callApi([
       `/auth/me`,
       `/api/auth/me`,
-      `${runtimeBase}/auth/me`,
-      `${runtimeBase}/api/auth/me`,
     ]);
     status.value = "Session valid";
     me.value = data?.user || null;
@@ -154,8 +203,6 @@ async function logout() {
     await callApi([
       `/auth/logout`,
       `/api/auth/logout`,
-      `${runtimeBase}/auth/logout`,
-      `${runtimeBase}/api/auth/logout`,
     ], { method: "POST" });
     status.value = "Logged out";
     me.value = null;
