@@ -4,6 +4,7 @@ import { ref } from "vue";
 const env = (import.meta as any)?.env || {};
 const DEFAULT_NITRO_PORT = 3000;
 const PROD_FALLBACK = "https://api.waelio.com";
+const NITRO_PREFIX = (env.VITE_NITRO_PREFIX || "").replace(/\/+$/, "");
 const DEV_FALLBACKS = [
   `http://localhost:${DEFAULT_NITRO_PORT}`,
   `http://127.0.0.1:${DEFAULT_NITRO_PORT}`,
@@ -43,8 +44,9 @@ const debugLink = ref("");
 function resolveUrl(path: string) {
   if (path.startsWith("http")) return path;
   const normalized = path.startsWith("/") ? path : `/${path}`;
-  if (NITRO_BASE) return `${NITRO_BASE}${normalized}`;
-  return normalized;
+  const withPrefix = NITRO_PREFIX ? `${NITRO_PREFIX}${normalized}` : normalized;
+  if (NITRO_BASE) return `${NITRO_BASE}${withPrefix}`;
+  return withPrefix;
 }
 
 async function callApi(paths: string | string[], options: RequestInit = {}) {
@@ -136,7 +138,6 @@ async function sendOtp() {
   try {
     const data = await callApi([
       `/auth/request-otp`,
-      `/api/auth/request-otp`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
@@ -161,7 +162,6 @@ async function verifyOtp() {
   try {
     const data = await callApi([
       `/auth/verify-otp`,
-      `/api/auth/verify-otp`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value, code: code.value }),
@@ -182,7 +182,6 @@ async function sendMagicLink() {
   try {
     const data = await callApi([
       `/auth/request-magic-link`,
-      `/api/auth/request-magic-link`,
     ], {
       method: "POST",
       body: JSON.stringify({ email: email.value }),
@@ -205,7 +204,6 @@ async function fetchMe() {
   try {
     const data = await callApi([
       `/auth/me`,
-      `/api/auth/me`,
     ]);
     status.value = "Session valid";
     me.value = data?.user || null;
@@ -223,7 +221,6 @@ async function logout() {
   try {
     await callApi([
       `/auth/logout`,
-      `/api/auth/logout`,
     ], { method: "POST" });
     status.value = "Logged out";
     me.value = null;
