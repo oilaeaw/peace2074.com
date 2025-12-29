@@ -3,6 +3,10 @@ import { ref } from "vue";
 
 const env = (import.meta as any)?.env || {};
 const DEFAULT_NITRO_PORT = 3000;
+const DEV_FALLBACKS = [
+  `http://localhost:${DEFAULT_NITRO_PORT}`,
+  `http://127.0.0.1:${DEFAULT_NITRO_PORT}`,
+];
 
 function computeNitroBase() {
   const configured = env.VITE_NITRO_BASE;
@@ -50,6 +54,18 @@ async function callApi(paths: string | string[], options: RequestInit = {}) {
     if (resolved !== p && !p.startsWith("http") && !candidates.includes(p)) {
       // also try the raw relative path as a fallback (for same-origin prod)
       candidates.push(p);
+    }
+  }
+
+  // Dev safety net: if no explicit Nitro base is set, also try localhost dev ports
+  if (!NITRO_BASE) {
+    for (const base of DEV_FALLBACKS) {
+      for (const p of inputPaths) {
+        if (p.startsWith("http")) continue;
+        const normalized = p.startsWith("/") ? p : `/${p}`;
+        const candidate = `${base}${normalized}`;
+        if (!candidates.includes(candidate)) candidates.push(candidate);
+      }
     }
   }
 
