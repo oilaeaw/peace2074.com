@@ -1,0 +1,10 @@
+{
+  "name": "nitro-api-prod",
+  "version": "0.0.0",
+  "type": "module",
+  "private": true,
+  "dependencies": {
+    "nodemailer": "6.10.1",
+    "openai": "6.15.0"
+  }
+}
