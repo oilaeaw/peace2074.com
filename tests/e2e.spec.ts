@@ -21,3 +21,24 @@ test('home -> quran list -> sura detail loads', async ({ page }) => {
     // Expect Arabic content or verse markers
     await expect(page.locator('.arabic-text').first()).toBeVisible()
 })
+
+test('locale switch updates UI and persists', async ({ page }) => {
+    await page.goto('/')
+
+    // Default locale shows English search placeholder
+    const searchInput = page.locator('.search input').first()
+    await expect(searchInput).toHaveAttribute('placeholder', /Search/)
+
+    // Open locale selector and choose Arabic
+    const localeSelect = page.locator('.q-select').first()
+    await localeSelect.click()
+    await page.getByText('العربية', { exact: true }).click()
+
+    // Arabic placeholder should now appear and document direction set to RTL
+    await expect(searchInput).toHaveAttribute('placeholder', /ابحث/)
+    await expect(page.locator('html')).toHaveAttribute('dir', 'rtl')
+
+    // Ensure persistence in storage
+    const stored = await page.evaluate(() => localStorage.getItem('app-locale'))
+    expect(stored).toBe('ar')
+})
