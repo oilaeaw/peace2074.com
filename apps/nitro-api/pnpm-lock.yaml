@@ -8,6 +8,9 @@ dependencies:
   nitropack:
     specifier: ^2.9.7
     version: 2.12.9
+  nodemailer:
+    specifier: ^6.9.15
+    version: 6.10.1
   openai:
     specifier: ^6.15.0
     version: 6.15.0
@@ -2094,6 +2097,11 @@ packages:
 
   /node-mock-http@1.0.4:
     resolution: {integrity: sha512-8DY+kFsDkNXy1sJglUfuODx1/opAGJGyrTuFqEoN90oRc2Vk0ZbD4K2qmKXBBEhZQzdKHIVfEJpDU8Ak2NJEvQ==}
+    dev: false
+
+  /nodemailer@6.10.1:
+    resolution: {integrity: sha512-Z+iLaBGVaSjbIzQ4pX6XV41HrooLsQ10ZWPUehGmuantvzWoDVBnmsdUcOIDM1t+yPor5pDhVlDESgOMEGxhHA==}
+    engines: {node: '>=6.0.0'}
     dev: false
 
   /nopt@8.1.0:
