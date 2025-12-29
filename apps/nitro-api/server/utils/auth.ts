@@ -38,16 +38,21 @@ function verify(token: string, secret: string): SessionPayload | null {
     }
 }
 
-export function requireSecrets() {
+export function requireSecrets(options: { needPasscode?: boolean } = {}) {
+    const { needPasscode = true } = options
     const { passcode, secret } = getSecrets()
-    if (!passcode || !secret) {
+
+    if (!secret) {
+        throw createError({ statusCode: 500, statusMessage: 'Auth not configured' })
+    }
+    if (needPasscode && !passcode) {
         throw createError({ statusCode: 500, statusMessage: 'Auth not configured' })
     }
     return { passcode, secret }
 }
 
 export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp'>) {
-    const { secret } = requireSecrets()
+    const { secret } = requireSecrets({ needPasscode: false })
     const exp = Date.now() + COOKIE_MAX_AGE * 1000
     const token = sign({ ...payload, exp }, secret)
     setCookie(event, COOKIE_NAME, token, {

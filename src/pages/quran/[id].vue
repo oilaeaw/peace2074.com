@@ -240,13 +240,21 @@ function playAyah(index: number) {
   }
 }
 
-function startSuraAudio() {
+async function startSuraAudio() {
   stopRequested.value = false
+  currentWordIndex.value = -1
+
   if (!audioList.value.length) {
     $q.notify({ type: 'warning', message: t('general.fetchingUpdates') || 'Loading audio…' })
     return
   }
-  playAyah(0)
+
+  // Ensure word timings are loaded before playback to allow highlighting
+  if (!Object.keys(wordTimings.value).length && currentSuraId.value) {
+    await loadWordTimings(Number(currentSuraId.value))
+  }
+
+  playAyah(currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
 }
 
 function stopAudio() {

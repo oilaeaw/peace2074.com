@@ -1,11 +1,15 @@
 <script setup lang="ts">
 import { ref } from "vue";
 
-const passcode = ref("");
+const mode = ref<'otp' | 'magic'>("otp");
+const email = ref("");
+const code = ref("");
 const status = ref("");
 const error = ref("");
 const loading = ref(false);
 const me = ref<any>(null);
+const debugCode = ref("");
+const debugLink = ref("");
 
 async function callApi(path: string, options: RequestInit = {}) {
   const res = await fetch(path, {
@@ -24,16 +28,43 @@ async function callApi(path: string, options: RequestInit = {}) {
   return res.json();
 }
 
-async function login() {
-  if (!passcode.value) return;
-  loading.value = true;
+function resetMessages() {
   status.value = "";
   error.value = "";
-  me.value = null;
+  debugCode.value = "";
+  debugLink.value = "";
+}
+
+async function sendOtp() {
+  if (!email.value) return;
+  loading.value = true;
+  resetMessages();
   try {
-    const data = await callApi("/api/auth/login", {
+    const data = await callApi("/api/auth/request-otp", {
       method: "POST",
-      body: JSON.stringify({ passcode: passcode.value }),
+      body: JSON.stringify({ email: email.value }),
+    });
+    if (data?.error) throw new Error(data.error);
+    status.value = "Code sent";
+    if (data?.debugCode) {
+      debugCode.value = data.debugCode;
+      code.value = data.debugCode;
+    }
+  } catch (e: any) {
+    error.value = e?.message || "Could not send code";
+  } finally {
+    loading.value = false;
+  }
+}
+
+async function verifyOtp() {
+  if (!email.value || !code.value) return;
+  loading.value = true;
+  resetMessages();
+  try {
+    const data = await callApi("/api/auth/verify-otp", {
+      method: "POST",
+      body: JSON.stringify({ email: email.value, code: code.value }),
     });
     status.value = "Logged in";
     me.value = data?.user || null;
@@ -44,10 +75,30 @@ async function login() {
   }
 }
 
+async function sendMagicLink() {
+  if (!email.value) return;
+  loading.value = true;
+  resetMessages();
+  try {
+    const data = await callApi("/api/auth/request-magic-link", {
+      method: "POST",
+      body: JSON.stringify({ email: email.value }),
+    });
+    if (data?.error) throw new Error(data.error);
+    status.value = "Magic link sent";
+    if (data?.debugLink) {
+      debugLink.value = data.debugLink;
+    }
+  } catch (e: any) {
+    error.value = e?.message || "Could not send link";
+  } finally {
+    loading.value = false;
+  }
+}
+
 async function fetchMe() {
   loading.value = true;
-  status.value = "";
-  error.value = "";
+  resetMessages();
   try {
     const data = await callApi("/api/auth/me");
     status.value = "Session valid";
@@ -62,8 +113,7 @@ async function fetchMe() {
 
 async function logout() {
   loading.value = true;
-  status.value = "";
-  error.value = "";
+  resetMessages();
   try {
     await callApi("/api/auth/logout", { method: "POST" });
     status.value = "Logged out";
@@ -79,32 +129,93 @@ async function logout() {
 <template>
   <q-page padding class="login-page">
     <q-card class="login-card q-pa-lg q-gutter-md">
-      <div class="text-h6">Passcode Login</div>
+      <div class="text-h6">Access</div>
+
+      <q-btn-toggle
+        v-model="mode"
+        :options="[
+          { label: 'One-time code', value: 'otp' },
+          { label: 'Magic link', value: 'magic' },
+        ]"
+        color="primary"
+        text-color="white"
+        rounded
+        unelevated
+        spread
+      />
+
       <q-input
-        v-model="passcode"
-        type="password"
-        label="Passcode"
-        autocomplete="current-password"
+        v-model="email"
+        type="email"
+        label="Email"
+        autocomplete="email"
         outlined
       />
-      <div class="row q-gutter-sm">
+
+      <template v-if="mode === 'otp'">
+        <div class="row q-gutter-sm">
+          <q-btn
+            color="primary"
+            unelevated
+            :loading="loading"
+            :disable="!email"
+            label="Send code"
+            @click="sendOtp"
+          />
+          <q-btn
+            flat
+            color="primary"
+            :loading="loading"
+            label="Check session"
+            @click="fetchMe"
+          />
+          <q-btn flat color="negative" :loading="loading" label="Logout" @click="logout" />
+        </div>
+        <q-input
+          v-model="code"
+          type="text"
+          label="Enter code"
+          outlined
+        />
         <q-btn
           color="primary"
           unelevated
           :loading="loading"
-          :disable="!passcode"
-          label="Login"
-          @click="login"
+          :disable="!email || !code"
+          label="Verify & login"
+          @click="verifyOtp"
         />
-        <q-btn
-          flat
-          color="primary"
-          :loading="loading"
-          label="Check session"
-          @click="fetchMe"
-        />
-        <q-btn flat color="negative" :loading="loading" label="Logout" @click="logout" />
-      </div>
+        <q-banner v-if="debugCode" class="bg-grey-2 text-body2" rounded dense>
+          Dev code: {{ debugCode }}
+        </q-banner>
+      </template>
+
+      <template v-else>
+        <div class="row q-gutter-sm">
+          <q-btn
+            color="primary"
+            unelevated
+            :loading="loading"
+            :disable="!email"
+            label="Send magic link"
+            @click="sendMagicLink"
+          />
+          <q-btn
+            flat
+            color="primary"
+            :loading="loading"
+            label="Check session"
+            @click="fetchMe"
+          />
+          <q-btn flat color="negative" :loading="loading" label="Logout" @click="logout" />
+        </div>
+        <q-banner v-if="debugLink" class="bg-grey-2 text-body2" rounded dense>
+          Dev link: <a :href="debugLink">{{ debugLink }}</a>
+        </q-banner>
+        <q-banner class="bg-grey-1 text-body2" rounded dense>
+          We sent a link to your email. If you can’t click it, copy the dev link above.
+        </q-banner>
+      </template>
 
       <q-banner v-if="status" class="bg-positive text-white" rounded dense>{{
         status
