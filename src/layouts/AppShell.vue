@@ -159,8 +159,8 @@
       <RouterView />
     </q-page-container>
 
-    <SupportAIWidget />
-      <ConsentBanner />
+    <SupportAIWidget v-if="showLazyWidgets" />
+    <ConsentBanner v-if="showLazyWidgets" />
 
     <q-footer class="text-center q-pa-sm">
       <div class="footer">
@@ -172,13 +172,13 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch } from "vue";
+import { computed, onBeforeUnmount, onMounted, ref, watch, defineAsyncComponent } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useAthanPlayer } from "@/composables/useAthanPlayer";
 import { useSiteSearch } from "@/composables/useSiteSearch";
-import SupportAIWidget from "@/components/common/SupportAIWidget.vue";
-import ConsentBanner from "@/components/common/ConsentBanner.vue";
+const SupportAIWidget = defineAsyncComponent(() => import("@/components/common/SupportAIWidget.vue"));
+const ConsentBanner = defineAsyncComponent(() => import("@/components/common/ConsentBanner.vue"));
 
 declare const __APP_VERSION__: string;
 
@@ -226,6 +226,7 @@ const autoPlayAthan = ref(readAutoplayPreference());
 
 const menuOpen = ref(false);
 const searchRef = ref(null);
+const showLazyWidgets = ref(false);
 const {
   results: searchResults,
   loading: searchLoading,
@@ -277,6 +278,11 @@ onMounted(() => {
   applyCompact(compactLayout.value);
   applyReduceMotion(reduceMotion.value);
   applyAutoplay(autoPlayAthan.value);
+
+  // Defer optional widgets until after first paint to shrink initial payload
+  requestAnimationFrame(() => {
+    showLazyWidgets.value = true;
+  });
 });
 
 onBeforeUnmount(() => {

@@ -1,6 +1,4 @@
 import { ref, computed } from 'vue'
-import hdetails from '@/shared/data/chapters/en.json'
-import hbook from '@/shared/data/quran.json'
 
 type Aya = { verse: number; text: string; translation?: string }
 type Sura = { id: number; name: string; e_name?: string; total_verses?: number; type?: string; ayat?: Aya[] }
@@ -11,6 +9,10 @@ const currentLang = ref<string>('en')
 const API_BASE = (typeof window !== 'undefined'
     ? window.location.origin
     : 'http://127.0.0.1:3000').replace(/\/$/, '')
+
+let chaptersCache: any[] | null = null
+let quranCache: Record<string, any[]> | null = null
+let localDataPromise: Promise<Sura[]> | null = null
 
 async function fetchJsonSequential(urls: string[]): Promise<any> {
     for (const url of urls) {
@@ -27,28 +29,41 @@ async function fetchJsonSequential(urls: string[]): Promise<any> {
     throw new Error('All API endpoints failed')
 }
 
-function buildLocalData() {
-    const ready: Sura[] = []
-    const chapters = Array.isArray(hdetails) ? hdetails : []
+async function buildLocalData() {
+    if (localDataPromise) return localDataPromise
 
-    chapters.forEach((chapter: any) => {
-        const chapterId = chapter.id || chapter.number
-        const versesForChapter = (hbook as any)[String(chapterId)] || []
+    localDataPromise = (async () => {
+        if (!chaptersCache) {
+            chaptersCache = await import('@/shared/data/chapters/en.json').then(m => m.default as any[])
+        }
+        if (!quranCache) {
+            quranCache = await import('@/shared/data/quran.json').then(m => m.default as Record<string, any[]>)
+        }
 
-        ready.push({
-            id: chapterId,
-            name: chapter.name || '',
-            e_name: chapter.translation || chapter.transliteration || '',
-            type: chapter.type || '',
-            total_verses: versesForChapter.length,
-            ayat: versesForChapter.map((v: any) => ({
-                verse: v.verse,
-                text: v.text,
-                translation: v.translation,
-            })),
+        const ready: Sura[] = []
+        const chapters = Array.isArray(chaptersCache) ? chaptersCache : []
+
+        chapters.forEach((chapter: any) => {
+            const chapterId = chapter.id || chapter.number
+            const versesForChapter = (quranCache as any)[String(chapterId)] || []
+
+            ready.push({
+                id: chapterId,
+                name: chapter.name || '',
+                e_name: chapter.translation || chapter.transliteration || '',
+                type: chapter.type || '',
+                total_verses: versesForChapter.length,
+                ayat: versesForChapter.map((v: any) => ({
+                    verse: v.verse,
+                    text: v.text,
+                    translation: v.translation,
+                })),
+            })
         })
-    })
-    return ready
+        return ready
+    })()
+
+    return localDataPromise
 }
 
 export default function useQ2P() {
@@ -92,7 +107,7 @@ export default function useQ2P() {
         } catch (e) {
             // Fallback to local bundled data
             console.warn('API load failed, falling back to local data', e)
-            quranData.value = buildLocalData()
+            quranData.value = await buildLocalData()
         }
         setIndex(index)
     }

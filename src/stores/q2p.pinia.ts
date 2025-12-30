@@ -1,6 +1,4 @@
 import type { QuranI, SuraI } from '@shared/types'
-import hdetails from '@shared/data/chapters/en.json'
-import hbook from '@shared/data/quran.json'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 interface QSDT {
@@ -35,31 +33,59 @@ interface State {
     container: Style
   }
 }
-const ready: any[] = []
+let readyCache: any[] | null = null
+let readyPromise: Promise<any[]> | null = null
 
-// Normalize chapters structure: `hdetails` may be an array (compiled JSON) or an object.
-const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
-chapters.forEach((metaSample: any) => {
-  const id = Number(metaSample?.id || metaSample?.number || 0)
-  if (!id) return
-  const qr = ((hbook as any)[String(id)] || []) as QSDT[]
-  if (Array.isArray(qr)) {
-    ready.push({
-      id,
-      name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
-      e_name: String(metaSample?.translation || metaSample?.suraName || ''),
-      type: String(metaSample?.type || ''),
-      total_verses: qr.length,
-      ayat: qr,
+async function loadLocalQuran(): Promise<any[]> {
+  if (readyCache) return readyCache
+  if (readyPromise) return readyPromise
+
+  readyPromise = (async () => {
+    const [hdetails, hbook] = await Promise.all([
+      import('@shared/data/chapters/en.json').then(m => m.default as any),
+      import('@shared/data/quran.json').then(m => m.default as any),
+    ])
+
+    const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
+    const assembled: any[] = []
+
+    chapters.forEach((metaSample: any) => {
+      const id = Number(metaSample?.id || metaSample?.number || 0)
+      if (!id) return
+      const qr = ((hbook as any)[String(id)] || []) as QSDT[]
+      if (Array.isArray(qr)) {
+        assembled.push({
+          id,
+          name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
+          e_name: String(metaSample?.translation || metaSample?.suraName || ''),
+          type: String(metaSample?.type || ''),
+          total_verses: qr.length,
+          ayat: qr,
+        })
+      }
     })
+
+    readyCache = assembled
+    return assembled
+  })()
+
+  return readyPromise
+}
+
+async function ensureBook(state: State, indexFallback = 1) {
+  if (state.Book && Array.isArray(state.Book) && state.Book.length) return
+  const ready = await loadLocalQuran()
+  state.Book = JSON.parse(JSON.stringify(ready)) as any[]
+  if (!state.Sura || !Object.keys(state.Sura).length) {
+    state.Index = indexFallback
+    state.Sura = state.Book[indexFallback - 1] || state.Book[0]
   }
-})
+}
 
 export const useQ2P = defineStore('q2p', {
   state: (): State => ({
-    // Use a deep-cloned plain object for Book to avoid prototype/serialization issues
-    // (some JSON imports or transforms may produce objects that trip devalue/pinia during SSR).
-    Book: JSON.parse(JSON.stringify(ready)) as any[],
+    // Lazily loaded to keep initial bundle light; populated via init/fetchSura
+    Book: [] as any[],
     Sura: {} as SuraI,
     Index: 0,
     LLegend: [
@@ -140,14 +166,10 @@ export const useQ2P = defineStore('q2p', {
     },
   },
   actions: {
-    init(index?: number): any[] {
-      // Ensure Book is populated — persisted state may have an empty or
-      // malformed Book array. Fall back to the compiled `ready` data.
-      if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
-        this.Book = ready as any[]
-      }
-
-      this.setIndex(index || 1)
+    async init(index?: number): Promise<any[]> {
+      const targetIndex = Number(index) || 1
+      await ensureBook(this, targetIndex)
+      this.setIndex(targetIndex)
       return this.Book
     },
     setSura(payload: SuraI): void {
@@ -157,6 +179,7 @@ export const useQ2P = defineStore('q2p', {
       // Attempt to fetch a single sura from server API and update Book/Sura
       try {
         const id = Number(suraId) || 1
+        await ensureBook(this, id)
         const runtimeBase = (((typeof window !== 'undefined' && window.location)
           ? `${window.location.origin}`
           : 'http://127.0.0.1:3000')).replace(/\/$/, '')
@@ -203,8 +226,12 @@ export const useQ2P = defineStore('q2p', {
     setIndex(payload: number) {
       // Defensive: coerce to number and ensure within bounds. Default to 1.
       let idx = Number(payload) || 1
-      if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0)
-        this.Book = ready as any[]
+      if (!this.Book || !Array.isArray(this.Book) || this.Book.length === 0) {
+        // Load asynchronously; once available, update index/sura.
+        ensureBook(this, idx).then(() => this.setIndex(idx)).catch(() => { })
+        return
+      }
+
       if (idx < 1 || idx > this.Book.length)
         idx = 1
 

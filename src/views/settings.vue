@@ -53,6 +53,18 @@ watch(enableNotifications, async (val) => {
       persistNotificationsPreference(false);
       return;
     }
+
+    // Attempt a service-worker-backed notification for mobile Safari/Android
+    const shown = await showTestNotification();
+    if (!shown) {
+      // Fall back to in-app toast so the user gets feedback
+      $q.notify?.({
+        type: "info",
+        message:
+          t("pages.settings.notifications.unavailable") ||
+          "Your browser does not support mobile push-style notifications; you'll still get in-app alerts.",
+      });
+    }
   }
   persistNotificationsPreference(val);
 });
@@ -183,6 +195,49 @@ async function ensureNotificationsPermission(): Promise<boolean> {
     });
     return false;
   }
+}
+
+async function showTestNotification(): Promise<boolean> {
+  if (typeof window === "undefined") return false;
+
+  try {
+    if ("serviceWorker" in navigator) {
+      const reg = await navigator.serviceWorker.ready;
+      if (reg?.showNotification) {
+        await reg.showNotification(
+          t("pages.settings.notifications.testTitle") || "Notifications enabled",
+          {
+            body:
+              t("pages.settings.notifications.testBody") ||
+              "We'll use your browser's notification system when available.",
+            icon: "/192x192.png",
+            tag: "peace2074-notification-test",
+          }
+        );
+        return true;
+      }
+    }
+
+    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+      // Fallback to immediate notification in supported desktop browsers
+      // eslint-disable-next-line no-new
+      new Notification(
+        t("pages.settings.notifications.testTitle") || "Notifications enabled",
+        {
+          body:
+            t("pages.settings.notifications.testBody") ||
+            "We'll use your browser's notification system when available.",
+          icon: "/192x192.png",
+          tag: "peace2074-notification-test",
+        }
+      );
+      return true;
+    }
+  } catch (err) {
+    console.warn("Notification test failed", err);
+  }
+
+  return false;
 }
 
 function readDrawerOpenPreference(): boolean {
