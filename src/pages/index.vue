@@ -99,7 +99,7 @@ function setPromptExample(example: string) {
         <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
 
         <div v-if="aiResponse" class="ai-response">
-          <p>{{ aiResponse }}</p>
+          <p class="ai-response-text">{{ aiResponse }}</p>
         </div>
       </section>
     </div>
@@ -218,6 +218,15 @@ function setPromptExample(example: string) {
   margin-top: 1.25rem;
   border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
+}
+.ai-response-text {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.6;
+  margin: 0;
 }
 .ai-response h3 {
   margin-bottom: 0.4rem;

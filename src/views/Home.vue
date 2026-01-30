@@ -70,8 +70,8 @@
           <q-list v-else separator class="q-mt-xs">
             <q-item v-for="item in history" :key="item.id" clickable @click="reusePrompt(item)">
               <q-item-section>
-                <div class="text-weight-medium ellipsis">{{ item.prompt }}</div>
-                <div class="text-caption text-grey-6 ellipsis">{{ item.response }}</div>
+                <div class="text-weight-medium">{{ item.prompt }}</div>
+                <div class="text-caption text-grey-6 history-response">{{ item.response }}</div>
               </q-item-section>
               <q-item-section side>
                 <q-btn flat round dense icon="refresh" @click.stop="reusePrompt(item)" :title="t('pages.home.ai.reuse')" />
@@ -229,6 +229,16 @@ function setNextPromptExample() {
   word-break: break-word;
   overscroll-behavior: contain;
   padding-right: 4px;
+}
+.history-response {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  word-break: break-word;
+  max-height: 2.8em;
+  line-height: 1.4;
 }
 .full-width { width:100%; }
 @media (max-width: 720px) {

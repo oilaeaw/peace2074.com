@@ -122,7 +122,7 @@
             {{ error }}
           </q-banner>
           <q-banner v-if="answer" rounded dense class="ai-answer">
-            <div class="text-body1">{{ answer }}</div>
+            <div class="text-body1 ai-response-text">{{ answer }}</div>
           </q-banner>
         </q-card-section>
       </q-card>
@@ -241,6 +241,14 @@ function hideForSession() {
 .ai-answer {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+}
+.ai-response-text {
+  max-height: 300px;
+  overflow-y: auto;
+  overflow-x: hidden;
+  word-break: break-word;
+  white-space: pre-wrap;
+  line-height: 1.5;
 }
 .fade-enter-active,
 .fade-leave-active {
