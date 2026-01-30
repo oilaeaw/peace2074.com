@@ -135,6 +135,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/tasbeeh': RouteRecordInfo<
+      '/tasbeeh',
+      '/tasbeeh',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/terms': RouteRecordInfo<
       '/terms',
       '/terms',
@@ -248,6 +255,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/support.vue': {
       routes:
         | '/support'
+      views:
+        | never
+    }
+    'src/views/tasbeeh.vue': {
+      routes:
+        | '/tasbeeh'
       views:
         | never
     }

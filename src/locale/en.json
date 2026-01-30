@@ -217,7 +217,8 @@
     "lightMode": "Change Light Mode",
     "open": "open",
     "close": "close",
-    "holdState": "Always open"
+    "holdState": "Always open",
+    "swipeToChange": "Swipe to change"
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."

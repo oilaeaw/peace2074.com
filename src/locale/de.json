@@ -11,14 +11,6 @@
     "Privacy_Short": "Datenschutz",
     "Terms": "Unsere Allgemeinen Geschäftsbedingungen",
     "Terms_Short": "Bedingungen",
-    "navigation": {
-      "title": "Navigation",
-      "desc": "Steuere Reihenfolge und Sichtbarkeit der Seitenleiste.",
-      "enableOrdering": "Drag-&-Drop erlauben",
-      "enableOrderingHint": "Erlaube das Umordnen und Anheften von Einträgen im Drawer.",
-      "drawerDefault": "Drawer beim Start öffnen",
-      "drawerDefaultHint": "Aktiviert: Drawer startet geöffnet. Deaktiviert: Drawer bleibt verborgen, bis du ihn öffnest."
-    },
     "Contact": "Kontakt",
     "TimeLine": "Zeitachse",
     "Utils": "Werkzeuge",
@@ -82,7 +74,7 @@
         "historyTitle": "Verlauf",
         "historyEmpty": "Noch keine früheren Fragen.",
         "reuse": "Wiederverwenden",
-        "Login": "Anmelden"
+        "clearHistory": "Verlauf löschen"
       }
     },
     "holynames": "Die Namen Gottes",
@@ -91,13 +83,13 @@
       "title": "Koran",
       "detail": "Koran-Details",
       "backToList": "Zurück zur Liste",
+      "playRecitation": "Rezitation abspielen",
+      "stopRecitation": "Rezitation stoppen",
       "pageTitle": "Der Heilige Koran",
       "sura": {
         "name": "Name der Sure",
         "id": "Sura-Nummer",
         "location": "Ort der Sure",
-        "playRecitation": "Rezitation abspielen",
-        "stopRecitation": "Rezitation stoppen",
         "totverses": "Anzahl der Verse",
         "bookmark": "Lesezeichen"
       },
@@ -126,12 +118,23 @@
         "motion": "Bewegung reduzieren",
         "motionHint": "Animationen abschwächen für mehr Ruhe."
       },
+      "navigation": {
+        "title": "Navigation",
+        "desc": "Steuere Reihenfolge und Sichtbarkeit der Seitenleiste.",
+        "enableOrdering": "Drag-&-Drop erlauben",
+        "enableOrderingHint": "Erlaube das Umordnen und Anheften von Einträgen im Drawer.",
+        "drawerDefault": "Drawer beim Start öffnen",
+        "drawerDefaultHint": "Aktiviert: Drawer startet geöffnet. Deaktiviert: Drawer bleibt verborgen, bis du ihn öffnest."
+      },
       "notifications": {
         "title": "Benachrichtigungen",
         "desc": "Bleibe informiert, wenn neue Inhalte erscheinen.",
         "enable": "Benachrichtigungen aktivieren",
         "enableHint": "Wir fragen vorher um Erlaubnis.",
-        "comingSoon": "Push-Benachrichtigungen kommen bald."
+        "comingSoon": "Push-Benachrichtigungen kommen bald.",
+        "unavailable": "Benachrichtigungen werden auf diesem Gerät/Browser nicht unterstützt.",
+        "denied": "Benachrichtigungen sind blockiert. Bitte erlaube sie in den Browsereinstellungen.",
+        "error": "Benachrichtigungen konnten momentan nicht aktiviert werden."
       },
       "audio": {
         "title": "Audio",
@@ -211,7 +214,8 @@
     "lightMode": "Lichtmodus ändern",
     "open": "öffnen",
     "close": "schließen",
-    "holdState": "Immer offen"
+    "holdState": "Immer geöffnet",
+    "swipeToChange": "Wischen zum ändern"
   },
   "intro": {
     "desc": "JavaScript-Enthusiast, Wolf-Pack-Bruder, Enten-Liebhaber — alles über Wiederverwendbarkeit und Verbesserungen."

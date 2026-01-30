@@ -11,14 +11,6 @@
         "Privacy_Short": "פרטיות",
         "Terms": "התנאים שלנו",
         "Terms_Short": "תנאים",
-        "navigation": {
-            "title": "ניווט",
-            "desc": "שליטה בסדר ובתצוגה של המגירה הצדדית.",
-            "enableOrdering": "אפשר גרירה לסידור",
-            "enableOrderingHint": "מאפשר לסדר מחדש ולנעוץ פריטים במגירה.",
-            "drawerDefault": "פתח מגירה בהפעלה",
-            "drawerDefaultHint": "מופעל – המגירה תיפתח עם התחלת האפליקציה. כבוי – המגירה נשארת מוסתרת עד שתפתח אותה."
-        },
         "Contact": "צרו קשר",
         "TimeLine": "ציר זמן",
         "Utils": "כלים",
@@ -94,13 +86,13 @@
             "title": "הקוראן",
             "detail": "פרטי סורה",
             "backToList": "חזרה לרשימה",
+            "playRecitation": "נגן קריאה",
+            "stopRecitation": "עצור קריאה",
             "pageTitle": "הקוראן הקדוש",
             "sura": {
                 "name": "שם הסורה",
                 "id": "מספר הסורה",
                 "location": "מיקום הסורה",
-                "playRecitation": "נגן את הקריאה",
-                "stopRecitation": "עצור את הקריאה",
                 "totverses": "מספר הפסוקים",
                 "bookmark": "סימנייה"
             },
@@ -155,12 +147,23 @@
                 "motion": "הפחת תנועה",
                 "motionHint": "ריכוך אנימציות לחוויית שימוש רגועה."
             },
+            "navigation": {
+                "title": "ניווט",
+                "desc": "שליטה בסדר ובתצוגה של המגירה הצדדית.",
+                "enableOrdering": "אפשר גרירה לסידור",
+                "enableOrderingHint": "מאפשר לסדר מחדש ולנעוץ פריטים במגירה.",
+                "drawerDefault": "פתח מגירה בהפעלה",
+                "drawerDefaultHint": "מופעל – המגירה תיפתח עם התחלת האפליקציה. כבוי – המגירה נשארת מוסתרת עד שתפתח אותה."
+            },
             "notifications": {
                 "title": "התראות",
                 "desc": "קבל עדכונים כשמגיע תוכן חדש.",
                 "enable": "הפעל התראות",
                 "enableHint": "נבקש רשות לפני שליחת משהו.",
-                "comingSoon": "התראות דחיפה יגיעו בקרוב."
+                "comingSoon": "התראות דחיפה יגיעו בקרוב.",
+                "unavailable": "התראות אינן נתמכות במכשיר/דפדפן זה.",
+                "denied": "התראות חסומות. אנא אפשר אותן בהגדרות הדפדפן.",
+                "error": "לא ניתן היה להפעיל התראות כעת."
             },
             "audio": {
                 "title": "אודיו",
@@ -214,7 +217,8 @@
         "lightMode": "שנה מצב תאורה",
         "open": "פתח",
         "close": "סגור",
-        "holdState": "תמיד פתוח"
+        "holdState": "תמיד פתוח",
+        "swipeToChange": "החלק לשינוי"
     },
     "intro": {
         "desc": "חובב JavaScript, אח בלהקת הזאבים, אוהב ברווזים ותמיד מחפש לשפר ולהשתמש מחדש."
@@ -388,15 +392,15 @@
         "autoNext": "מעבר אוטומטי לנוסח הבא"
     },
     "account": {
-        "title": "Account"
+        "title": "חשבון"
     },
     "meta": {
-        "home": "Peace2074 — Islamic resources, prayer tools, and thoughtful articles to support your spiritual journey.",
-        "holynames": "Explore the 99 Holy Names of Allah with meanings and audio recitations.",
-        "tasbeeh": "Digital Tasbeeh — a simple, beautiful counter for dhikr with session tracking and settings.",
-        "miracles": "Read inspiring stories and reflections on signs and miracles.",
-        "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout.",
-        "privacy": "Learn how we protect your data and privacy while using the site."
+        "home": "Peace2074 — משאבים אסלאמיים, כלי תפילה ומאמרים מעוררי מחשבה לתמיכה במסע הרוחני שלכם.",
+        "holynames": "גלו את 99 שמות אללה עם משמעויות והקלטות שמע.",
+        "tasbeeh": "תסביח דיגיטלי — מונה פשוט ויפה לדיכר עם מעקב אחר מפגשים והגדרות.",
+        "miracles": "קראו סיפורים מעוררי השראה והרהורים על אותות וניסים.",
+        "quran": "הקוראן הקדוש — קראו, נווטו וסמנו סורות עם טיפוגרפיה ערבית יפה ופריסה רספונסיבית.",
+        "privacy": "למדו כיצד אנו מגנים על הנתונים והפרטיות שלכם בזמן השימוש באתר."
     },
     "bookmarks": "סימנייה",
     "profile": {
