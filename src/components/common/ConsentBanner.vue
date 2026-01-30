@@ -21,6 +21,10 @@ function accept() {
   try {
     if (typeof window !== "undefined") {
       window.localStorage.setItem(CONSENT_KEY, "accepted");
+      // Grant Google Analytics consent
+      if (window.allConsentGranted) {
+        window.allConsentGranted();
+      }
     }
   } catch {}
   show.value = false;
