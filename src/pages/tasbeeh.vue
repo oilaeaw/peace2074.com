@@ -32,41 +32,41 @@ const targetOptions = [
 ];
 
 // Tasbeeh phrases
-const tasbeehList = [
+const tasbeehList = computed(() => [
   {
     arabic: "سُبْحَانَ اللّٰهِ",
     transliteration: "SubhanAllah",
-    translation: "Glory be to Allah",
+    translation: t('tasbeeh.phrases.subhanallah'),
   },
   {
     arabic: "الْحَمْدُ لِلّٰهِ",
     transliteration: "Alhamdulillah",
-    translation: "Praise be to Allah",
+    translation: t('tasbeeh.phrases.alhamdulillah'),
   },
   {
     arabic: "اللّٰهُ أَكْبَرُ",
     transliteration: "Allahu Akbar",
-    translation: "Allah is Greatest",
+    translation: t('tasbeeh.phrases.allahu_akbar'),
   },
   {
     arabic: "لَا إِلٰهَ إِلَّا اللّٰهُ",
     transliteration: "La ilaha illa Allah",
-    translation: "There is no god but Allah",
+    translation: t('tasbeeh.phrases.la_ilaha_illa_allah'),
   },
   {
     arabic: "أَسْتَغْفِرُ اللّٰهَ",
     transliteration: "Astaghfirullah",
-    translation: "I seek forgiveness from Allah",
+    translation: t('tasbeeh.phrases.astaghfirullah'),
   },
   {
     arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ",
     transliteration: "La hawla wa la quwwata illa billah",
-    translation: "There is no power except with Allah",
+    translation: t('tasbeeh.phrases.la_hawla'),
   },
-];
+]);
 
 // Computed properties
-const currentTasbeeh = computed(() => tasbeehList[selectedTasbeeh.value]);
+const currentTasbeeh = computed(() => tasbeehList.value[selectedTasbeeh.value]);
 const progressPercentage = computed(() => (currentCount.value / targetCount.value) * 100);
 
 // Today's statistics
@@ -156,7 +156,7 @@ function nextTasbeeh() {
   swipeTransition.value = 'slide-left';
   
   setTimeout(() => {
-    selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.length;
+    selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.value.length;
     resetCount();
     setTimeout(() => {
       swipeTransition.value = '';
@@ -171,7 +171,7 @@ function previousTasbeeh() {
   swipeTransition.value = 'slide-right';
   
   setTimeout(() => {
-    selectedTasbeeh.value = (selectedTasbeeh.value - 1 + tasbeehList.length) % tasbeehList.length;
+    selectedTasbeeh.value = (selectedTasbeeh.value - 1 + tasbeehList.value.length) % tasbeehList.value.length;
     resetCount();
     setTimeout(() => {
       swipeTransition.value = '';

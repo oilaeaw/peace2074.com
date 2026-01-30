@@ -386,7 +386,15 @@
     "continue": "Fortsetzen",
     "vibration": "Vibrationsfeedback",
     "sound": "Tonfeedback",
-    "autoNext": "Automatisch nächste Phrase"
+    "autoNext": "Automatisch nächste Phrase",
+    "phrases": {
+      "subhanallah": "Ehre sei Allah",
+      "alhamdulillah": "Lob sei Allah",
+      "allahu_akbar": "Allah ist der Größte",
+      "la_ilaha_illa_allah": "Es gibt keinen Gott außer Allah",
+      "astaghfirullah": "Ich suche Vergebung bei Allah",
+      "la_hawla": "Es gibt keine Macht außer bei Allah"
+    }
   },
   "account": {
     "title": "Konto"

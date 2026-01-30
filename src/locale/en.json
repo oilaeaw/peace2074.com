@@ -389,7 +389,15 @@
     "continue": "Continue",
     "vibration": "Vibration Feedback",
     "sound": "Sound Feedback",
-    "autoNext": "Auto Next Phrase"
+    "autoNext": "Auto Next Phrase",
+    "phrases": {
+      "subhanallah": "Glory be to Allah",
+      "alhamdulillah": "Praise be to Allah",
+      "allahu_akbar": "Allah is Greatest",
+      "la_ilaha_illa_allah": "There is no god but Allah",
+      "astaghfirullah": "I seek forgiveness from Allah",
+      "la_hawla": "There is no power except with Allah"
+    }
   },
   "account": {
     "title": "Account"

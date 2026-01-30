@@ -385,7 +385,15 @@
     "continue": "Продолжить",
     "vibration": "Вибрация",
     "sound": "Звук",
-    "autoNext": "Авто-переход"
+    "autoNext": "Авто-переход",
+    "phrases": {
+      "subhanallah": "Слава Аллаху",
+      "alhamdulillah": "Хвала Аллаху",
+      "allahu_akbar": "Аллах величайший",
+      "la_ilaha_illa_allah": "Нет бога кроме Аллаха",
+      "astaghfirullah": "Я прошу прощения у Аллаха",
+      "la_hawla": "Нет силы кроме как у Аллаха"
+    }
   },
   "account": {
     "title": "Аккаунт"

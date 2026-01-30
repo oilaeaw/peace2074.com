@@ -389,7 +389,15 @@
         "continue": "המשך",
         "vibration": "משוב רטט",
         "sound": "משוב צליל",
-        "autoNext": "מעבר אוטומטי לנוסח הבא"
+        "autoNext": "מעבר אוטומטי לנוסח הבא",
+        "phrases": {
+            "subhanallah": "תהילה לאללה",
+            "alhamdulillah": "שבח לאללה",
+            "allahu_akbar": "אללה הוא הגדול ביותר",
+            "la_ilaha_illa_allah": "אין אלוה מלבד אללה",
+            "astaghfirullah": "אני מבקש סליחה מאללה",
+            "la_hawla": "אין כוח אלא באללה"
+        }
     },
     "account": {
         "title": "חשבון"

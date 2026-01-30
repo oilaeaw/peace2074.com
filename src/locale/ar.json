@@ -389,7 +389,15 @@
     "continue": "متابعة",
     "vibration": "الاهتزاز",
     "sound": "الصوت",
-    "autoNext": "التالي تلقائياً"
+    "autoNext": "التالي تلقائياً",
+    "phrases": {
+      "subhanallah": "سبحان الله",
+      "alhamdulillah": "الحمد لله",
+      "allahu_akbar": "الله أكبر",
+      "la_ilaha_illa_allah": "لا إله إلا الله",
+      "astaghfirullah": "أستغفر الله",
+      "la_hawla": "لا حول ولا قوة إلا بالله"
+    }
   },
   "account": {
     "title": "مشترك"
