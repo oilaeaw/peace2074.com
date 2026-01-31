@@ -22,3 +22,6 @@ dist-ssr
 apps/nitro-api/.nitro/
 *.sw?
 /pnpm-lock.yaml.bak
+
+# Local Netlify folder
+.netlify
