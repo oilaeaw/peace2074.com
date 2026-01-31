@@ -12,9 +12,8 @@ Set these in Netlify Dashboard → Site Settings → Environment Variables
 ### DeepSeek AI
 
 - `DEEPSEEK_API_KEY` - Your DeepSeek API key (starts with sk-)
-- `DEEPSEEK_BASE_URL` - https://api.deepseek.com
 - `NITRO_DEEPSEEK_API_KEY` - Same as DEEPSEEK_API_KEY
-- `NITRO_DEEPSEEK_BASE_URL` - Same as DEEPSEEK_BASE_URL
+  - Note: Base URL defaults to api.deepseek.com (no env var needed)
 
 ### GitHub OAuth
 

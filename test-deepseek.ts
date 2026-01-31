@@ -30,8 +30,7 @@ interface DeepSeekResponse {
 
 const DEEPSEEK_API_KEY: string =
   process.env.DEEPSEEK_API_KEY || "sk-c9500709d5d6483689e12cd77f735222";
-const DEEPSEEK_BASE_URL: string =
-  process.env.DEEPSEEK_BASE_URL || "https://api.deepseek.com";
+const DEEPSEEK_BASE_URL: string = "https://api.deepseek.com"; // Public API endpoint
 
 console.log("🧪 Testing DeepSeek Integration...\n");
 console.log(`API Key: ${DEEPSEEK_API_KEY.substring(0, 15)}...`);
