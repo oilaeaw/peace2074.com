@@ -38,8 +38,14 @@ export default defineEventHandler(async (event) => {
         (config as any).deepSeekBaseUrl ||
         process.env.DEEPSEEK_BASE_URL ||
         process.env.NITRO_DEEPSEEK_BASE_URL ||
-        process.env.deepSeekBaseUrl ||
-        'https://api.deepseek.com' // Default public URL
+        process.env.deepSeekBaseUrl
+
+    if (!baseURL) {
+        throw createError({
+            statusCode: 500,
+            message: 'DEEPSEEK_BASE_URL environment variable is required',
+        })
+    }
 
     const client = new OpenAI({
         apiKey: String(apiKey).trim(),
