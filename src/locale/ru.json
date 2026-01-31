@@ -39,6 +39,7 @@
       "settings": "Настройки",
       "preferences": "Предпочтения",
       "login": "Вход",
+      "logout": "Выйти",
       "blog": "Блог",
       "contact": "Контакты"
     }
@@ -165,6 +166,23 @@
         "transliteration": "Показывать транслитерацию",
         "remember": "Запоминать последнюю страницу",
         "hint": "Выборы чтения применяются к страницам Корана на этом устройстве."
+      },
+      "security": {
+        "title": "Безопасность",
+        "currentPassword": "Текущий пароль",
+        "newPassword": "Новый пароль",
+        "confirmPassword": "Подтвердите новый пароль",
+        "changePasswordBtn": "Изменить пароль",
+        "generatePassword": "Создать надежный пароль",
+        "passwordChanged": "Пароль успешно изменен",
+        "passwordGenerated": "Надежный пароль создан и введен",
+        "hint": "Пароль должен содержать не менее 8 символов.",
+        "errors": {
+          "allFieldsRequired": "Все поля обязательны для заполнения",
+          "passwordMismatch": "Новые пароли не совпадают",
+          "passwordTooShort": "Пароль должен содержать не менее 8 символов",
+          "changeFailed": "Не удалось изменить пароль"
+        }
       }
     },
     "miracles": {
@@ -421,5 +439,38 @@
   "username_optional": "Имя пользователя (по желанию)",
   "email_required": "Email обязателен",
   "login": "Вход",
-  "signup": "Регистрация"
+  "signup": "Регистрация",
+  "auth": {
+    "username": "Имя пользователя",
+    "password": "Пароль",
+    "email": "Эл. почта",
+    "confirmPassword": "Подтвердите пароль",
+    "usernameRequired": "Требуется имя пользователя",
+    "passwordRequired": "Требуется пароль",
+    "enterUsername": "Введите имя пользователя",
+    "enterPassword": "Введите пароль",
+    "enterEmail": "Введите эл. почту",
+    "enterCredentials": "Пожалуйста, введите имя пользователя и пароль",
+    "signIn": "Войти",
+    "signUp": "Регистрация",
+    "rememberMe": "Запомнить меня",
+    "welcomeBack": "С возвращением",
+    "forgotPassword": "Забыли пароль?",
+    "resetPassword": "Сбросить пароль",
+    "resetInstructions": "Введите вашу эл. почту и мы отправим инструкции для сброса пароля.",
+    "sendResetLink": "Отправить ссылку",
+    "resetEmailSent": "Инструкции по сбросу отправлены на вашу почту",
+    "resetError": "Не удалось отправить письмо для сброса",
+    "loginError": "Ошибка входа. Попробуйте снова.",
+    "dontHaveAccount": "Нет аккаунта?",
+    "alreadyHaveAccount": "Уже есть аккаунт?",
+    "createAccount": "Создайте аккаунт",
+    "fillAllFields": "Пожалуйста, заполните все поля",
+    "passwordMismatch": "Пароли не совпадают",
+    "acceptTerms": "Пожалуйста, примите условия использования",
+    "iAccept": "Я принимаю",
+    "termsAndConditions": "условия использования",
+    "signupSuccess": "Аккаунт создан! Пожалуйста, войдите.",
+    "signupError": "Ошибка регистрации. Попробуйте снова."
+  }
 }

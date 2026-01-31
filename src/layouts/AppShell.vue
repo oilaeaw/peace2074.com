@@ -114,6 +114,48 @@
           class="glassy-field"
           style="max-width: 140px; margin-left: 12px"
         />
+
+        <!-- User Profile Button -->
+        <q-btn
+          dense
+          round
+          :color="isAuthenticated ? 'positive' : 'white'"
+          :icon="isAuthenticated ? 'account_circle' : 'login'"
+          class="q-ml-sm"
+        >
+          <q-menu>
+            <q-list style="min-width: 200px">
+              <q-item v-if="isAuthenticated">
+                <q-item-section avatar>
+                  <q-avatar color="primary" text-color="white" icon="person" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ authUser?.username || 'User' }}</q-item-label>
+                  <q-item-label caption>{{ authUser?.email }}</q-item-label>
+                </q-item-section>
+              </q-item>
+              <q-separator v-if="isAuthenticated" />
+              
+              <q-item clickable v-ripple @click="$router.push('/login')" v-if="!isAuthenticated">
+                <q-item-section avatar>
+                  <q-icon name="login" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ t('appShell.nav.login') || 'Sign In' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item clickable v-ripple @click="handleLogout" v-if="isAuthenticated">
+                <q-item-section avatar>
+                  <q-icon name="logout" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ t('appShell.nav.logout') || 'Sign Out' }}</q-item-label>
+                </q-item-section>
+              </q-item>
+            </q-list>
+          </q-menu>
+        </q-btn>
       </q-toolbar>
     </q-header>
 
@@ -177,6 +219,7 @@ import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useAthanPlayer } from "@/composables/useAthanPlayer";
 import { useSiteSearch } from "@/composables/useSiteSearch";
+import { useAuthStore } from "@/stores/auth.pinia";
 const SupportAIWidget = defineAsyncComponent(() => import("@/components/common/SupportAIWidget.vue"));
 const ConsentBanner = defineAsyncComponent(() => import("@/components/common/ConsentBanner.vue"));
 
@@ -195,6 +238,9 @@ const search = ref("");
 const { locale, t } = useI18n({ useScope: "global" });
 const localeValue = ref(locale.value);
 const router = useRouter();
+const authStore = useAuthStore();
+const isAuthenticated = computed(() => authStore.isAuthenticated);
+const authUser = computed(() => authStore._user);
 const langs = [
   { label: "English", value: "en" },
   { label: "العربية", value: "ar" },
@@ -324,6 +370,11 @@ function clearSearch() {
   search.value = "";
   runSearch("");
   menuOpen.value = false;
+}
+
+async function handleLogout() {
+  await authStore.logout();
+  router.push("/");
 }
 
 function togglePin(key: string) {
@@ -556,8 +607,16 @@ function saveNavState(items: NavItem[]) {
 }
 
 const orderedNavItems = computed(() => {
-  const pinned = navItems.value.filter((i) => i.pinned);
-  const rest = navItems.value.filter((i) => !i.pinned);
+  // Filter out login link when user is authenticated
+  const filteredItems = navItems.value.filter((item) => {
+    if (item.key === "login" && isAuthenticated.value) {
+      return false;
+    }
+    return true;
+  });
+  
+  const pinned = filteredItems.filter((i) => i.pinned);
+  const rest = filteredItems.filter((i) => !i.pinned);
   return [...pinned, ...rest];
 });
 </script>

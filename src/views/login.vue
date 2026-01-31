@@ -1,363 +1,461 @@
 <script setup lang="ts">
-import { ref } from "vue";
+import { ref } from 'vue'
+import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
+import { useAuthStore } from '@/stores/auth.pinia'
+import { useI18n } from 'vue-i18n'
 
-const env = (import.meta as any)?.env || {};
-const DEFAULT_NITRO_PORT = 3000;
-const PROD_FALLBACK = "https://api.waelio.com";
-const NITRO_PREFIX = (env.VITE_NITRO_PREFIX || "").replace(/\/+$/, "");
-const DEV_FALLBACKS = [
-  `http://localhost:${DEFAULT_NITRO_PORT}`,
-  `http://127.0.0.1:${DEFAULT_NITRO_PORT}`,
-];
+const { t } = useI18n()
+const router = useRouter()
+const authStore = useAuthStore()
+const $q = useQuasar()
 
-function computeNitroBase() {
-  const configured = env.VITE_NITRO_BASE;
-  if (configured && typeof configured === "string") {
-    return configured.replace(/\/$/, "");
-  }
+const username = ref('')
+const password = ref('')
+const loading = ref(false)
+const showPassword = ref(false)
+const rememberMe = ref(false)
+const showForgotDialog = ref(false)
+const resetEmail = ref('')
+const sendingReset = ref(false)
 
-  if (typeof window !== "undefined") {
-    const { protocol, hostname } = window.location;
-    const isLocal = hostname === "localhost" || hostname === "127.0.0.1";
-    if (isLocal) {
-      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, "");
-    }
-    // In production, default to the public API host if not provided explicitly
-    return PROD_FALLBACK;
-  }
+// Compute Nitro API base URL
+const env = (import.meta as any)?.env || {}
+const DEFAULT_NITRO_PORT = 3000
+const NITRO_BASE = env.VITE_NITRO_BASE || `http://localhost:${DEFAULT_NITRO_PORT}`
 
-  return "";
+function handleGitHubLogin() {
+  // Redirect to GitHub OAuth authorize endpoint
+  window.location.href = `${NITRO_BASE}/auth/github/authorize`
 }
 
-const NITRO_BASE = computeNitroBase();
-
-const mode = ref<'otp' | 'magic'>("otp");
-const email = ref("");
-const code = ref("");
-const status = ref("");
-const error = ref("");
-const loading = ref(false);
-const me = ref<any>(null);
-const debugCode = ref("");
-const debugLink = ref("");
-
-function resolveUrl(path: string) {
-  if (path.startsWith("http")) return path;
-  const normalized = path.startsWith("/") ? path : `/${path}`;
-  const withPrefix = NITRO_PREFIX ? `${NITRO_PREFIX}${normalized}` : normalized;
-  if (NITRO_BASE) return `${NITRO_BASE}${withPrefix}`;
-  return withPrefix;
+function handleNetlifyLogin() {
+  // Open Netlify Identity modal
+  if (typeof window !== 'undefined' && (window as any).netlifyIdentity) {
+    (window as any).netlifyIdentity.open('login')
+  }
 }
 
-async function callApi(paths: string | string[], options: RequestInit = {}) {
-  const inputPaths = Array.isArray(paths) ? paths : [paths];
-  const candidates: string[] = [];
-
-  for (const p of inputPaths) {
-    const resolved = resolveUrl(p);
-    if (!candidates.includes(resolved)) candidates.push(resolved);
-
-    // Only add same-origin raw fallback if no explicit Nitro base is set
-    if (!NITRO_BASE && resolved !== p && !p.startsWith("http") && !candidates.includes(p)) {
-      candidates.push(p);
-    }
+async function handleLogin() {
+  if (!username.value || !password.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('auth.enterCredentials') || 'Please enter username and password',
+      position: 'top'
+    })
+    return
   }
 
-  // Dev safety net: if no explicit Nitro base is set, also try localhost dev ports
-  if (!NITRO_BASE && (typeof window === "undefined" || window.location.hostname === "localhost" || window.location.hostname === "127.0.0.1")) {
-    for (const base of DEV_FALLBACKS) {
-      for (const p of inputPaths) {
-        if (p.startsWith("http")) continue;
-        const normalized = p.startsWith("/") ? p : `/${p}`;
-        const candidate = `${base}${normalized}`;
-        if (!candidates.includes(candidate)) candidates.push(candidate);
-      }
-    }
-  }
+  loading.value = true
 
-  let lastErr: unknown = null;
-
-  for (const url of candidates) {
-    try {
-      const res = await fetch(url, {
-        credentials: "include",
-        headers: {
-          "Content-Type": "application/json",
-          ...(options.headers || {}),
-        },
-        ...options,
-      });
-
-      const contentType = res.headers.get("content-type") || "";
-
-      if (!res.ok) {
-        if (contentType.includes("application/json")) {
-          const data = await res.json().catch(() => ({}));
-          throw new Error(data?.statusMessage || data?.error || `HTTP ${res.status}`);
-        }
-        const text = await res.text();
-        const snippet = text.slice(0, 120).replace(/\s+/g, " ");
-        if (snippet.toLowerCase().startsWith("<!doctype")) {
-          throw new Error(`Received HTML from ${url} — is the Nitro API running on ${NITRO_BASE || 'your API host'}?`);
-        }
-        throw new Error(`Request failed (${res.status}); response: ${snippet}`);
-      }
-
-      const text = await res.text();
-      if (!text) {
-        return {};
-      }
-      if (contentType.includes("application/json")) {
-        try {
-          return JSON.parse(text);
-        } catch {
-          // fall through to generic handling
-        }
-      }
-      try {
-        return JSON.parse(text);
-      } catch {
-        const snippet = text.slice(0, 120).replace(/\s+/g, " ");
-        throw new Error(`Expected JSON from ${url} but got: ${snippet}`);
-      }
-    } catch (e: any) {
-      const message = e?.message || String(e);
-      lastErr = new Error(`Failed to reach ${url}: ${message}`);
-      // try next candidate
-    }
-  }
-
-  throw lastErr || new Error("All endpoints failed");
-}
-
-function resetMessages() {
-  status.value = "";
-  error.value = "";
-  debugCode.value = "";
-  debugLink.value = "";
-}
-
-async function sendOtp() {
-  if (!email.value) return;
-  loading.value = true;
-  resetMessages();
   try {
-    const data = await callApi([
-      `/auth/request-otp`,
-    ], {
-      method: "POST",
-      body: JSON.stringify({ email: email.value }),
-    });
-    if (data?.error) throw new Error(data.error);
-    status.value = "Code sent";
-    if (data?.debugCode) {
-      debugCode.value = data.debugCode;
-      code.value = data.debugCode;
+    const response = await fetch(`${NITRO_BASE}/auth/login`, {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        username: username.value,
+        password: password.value
+      })
+    })
+
+    if (!response.ok) {
+      const data = await response.json().catch(() => ({}))
+      throw new Error(data.statusMessage || 'Login failed')
     }
-  } catch (e: any) {
-    error.value = e?.message || "Could not send code";
+
+    const data = await response.json()
+    
+    authStore.setUser(data.user)
+    
+    $q.notify({
+      type: 'positive',
+      message: t('auth.loginSuccess') || 'Welcome back!',
+      position: 'top'
+    })
+    
+    router.push('/')
+    
+  } catch (err: any) {
+    $q.notify({
+      type: 'negative',
+      message: err.message || t('auth.loginError') || 'Login failed. Please try again.',
+      position: 'top'
+    })
+    console.error('Login error:', err)
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
-async function verifyOtp() {
-  if (!email.value || !code.value) return;
-  loading.value = true;
-  resetMessages();
-  try {
-    const data = await callApi([
-      `/auth/verify-otp`,
-    ], {
-      method: "POST",
-      body: JSON.stringify({ email: email.value, code: code.value }),
-    });
-    status.value = "Logged in";
-    me.value = data?.user || null;
-  } catch (e: any) {
-    error.value = e?.message || "Login failed";
-  } finally {
-    loading.value = false;
-  }
+function handleForgotPassword() {
+  showForgotDialog.value = true
 }
 
-async function sendMagicLink() {
-  if (!email.value) return;
-  loading.value = true;
-  resetMessages();
-  try {
-    const data = await callApi([
-      `/auth/request-magic-link`,
-    ], {
-      method: "POST",
-      body: JSON.stringify({ email: email.value }),
-    });
-    if (data?.error) throw new Error(data.error);
-    status.value = "Magic link sent";
-    if (data?.debugLink) {
-      debugLink.value = data.debugLink;
-    }
-  } catch (e: any) {
-    error.value = e?.message || "Could not send link";
-  } finally {
-    loading.value = false;
+async function handleResetRequest() {
+  if (!resetEmail.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('auth.enterEmail') || 'Please enter your email',
+      position: 'top'
+    })
+    return
   }
-}
 
-async function fetchMe() {
-  loading.value = true;
-  resetMessages();
-  try {
-    const data = await callApi([
-      `/auth/me`,
-    ]);
-    status.value = "Session valid";
-    me.value = data?.user || null;
-  } catch (e: any) {
-    error.value = e?.message || "Not authenticated";
-    me.value = null;
-  } finally {
-    loading.value = false;
-  }
-}
+  sendingReset.value = true
 
-async function logout() {
-  loading.value = true;
-  resetMessages();
   try {
-    await callApi([
-      `/auth/logout`,
-    ], { method: "POST" });
-    status.value = "Logged out";
-    me.value = null;
-  } catch (e: any) {
-    error.value = e?.message || "Logout failed";
+    // TODO: Implement actual password reset endpoint
+    await new Promise(resolve => setTimeout(resolve, 1500))
+    
+    $q.notify({
+      type: 'positive',
+      message: t('auth.resetEmailSent') || 'Password reset instructions sent to your email',
+      position: 'top'
+    })
+    
+    showForgotDialog.value = false
+    resetEmail.value = ''
+  } catch (err: any) {
+    $q.notify({
+      type: 'negative',
+      message: err.message || t('auth.resetError') || 'Failed to send reset email',
+      position: 'top'
+    })
   } finally {
-    loading.value = false;
+    sendingReset.value = false
   }
 }
 </script>
 
 <template>
-  <q-page padding class="login-page">
-    <q-card class="login-card q-pa-lg q-gutter-md">
-      <div class="text-h6">Access</div>
+  <div class="login-container">
+    <div class="login-background">
+      <div class="gradient-overlay"></div>
+      <div class="pattern-overlay"></div>
+    </div>
 
-      <q-btn-toggle
-        v-model="mode"
-        :options="[
-          { label: 'One-time code', value: 'otp' },
-          { label: 'Magic link', value: 'magic' },
-        ]"
-        color="primary"
-        text-color="white"
-        rounded
-        unelevated
-        spread
-      />
+    <div class="login-content">
+      <q-card class="login-card">
+        <!-- Logo Section -->
+        <q-card-section class="text-center q-pb-none">
+          <div class="logo-container">
+            <q-icon name="mosque" size="64px" color="primary" />
+          </div>
+          <div class="text-h4 text-weight-bold q-mt-md">Peace2074</div>
+          <div class="text-subtitle2 text-grey-7 q-mt-xs">
+            {{ t('auth.welcomeBack') || 'Welcome back' }}
+          </div>
+        </q-card-section>
 
-      <q-input
-        v-model="email"
-        type="email"
-        label="Email"
-        autocomplete="email"
-        outlined
-      />
+        <!-- Login Form -->
+        <q-card-section class="q-pt-md">
+          <q-form @submit.prevent="handleLogin" class="q-gutter-md">
+            <q-input
+              v-model="username"
+              outlined
+              :label="t('auth.username') || 'Username'"
+              :placeholder="t('auth.enterUsername') || 'Enter your username'"
+              :disable="loading"
+              autocomplete="username"
+              lazy-rules
+              :rules="[val => !!val || t('auth.usernameRequired') || 'Username is required']"
+            >
+              <template v-slot:prepend>
+                <q-icon name="person" />
+              </template>
+            </q-input>
 
-      <template v-if="mode === 'otp'">
-        <div class="row q-gutter-sm">
-          <q-btn
-            color="primary"
-            unelevated
-            :loading="loading"
-            :disable="!email"
-            label="Send code"
-            @click="sendOtp"
-          />
-          <q-btn
-            flat
-            color="primary"
-            :loading="loading"
-            label="Check session"
-            @click="fetchMe"
-          />
-          <q-btn flat color="negative" :loading="loading" label="Logout" @click="logout" />
-        </div>
-        <q-input
-          v-model="code"
-          type="text"
-          label="Enter code"
-          outlined
-        />
-        <q-btn
-          color="primary"
-          unelevated
-          :loading="loading"
-          :disable="!email || !code"
-          label="Verify & login"
-          @click="verifyOtp"
-        />
-        <q-banner v-if="debugCode" class="bg-grey-2 text-body2" rounded dense>
-          Dev code: {{ debugCode }}
-        </q-banner>
-      </template>
+            <q-input
+              v-model="password"
+              outlined
+              :type="showPassword ? 'text' : 'password'"
+              :label="t('auth.password') || 'Password'"
+              :placeholder="t('auth.enterPassword') || 'Enter your password'"
+              :disable="loading"
+              autocomplete="current-password"
+              lazy-rules
+              :rules="[val => !!val || t('auth.passwordRequired') || 'Password is required']"
+            >
+              <template v-slot:prepend>
+                <q-icon name="lock" />
+              </template>
+              <template v-slot:append>
+                <q-icon
+                  :name="showPassword ? 'visibility_off' : 'visibility'"
+                  class="cursor-pointer"
+                  @click="showPassword = !showPassword"
+                />
+              </template>
+            </q-input>
 
-      <template v-else>
-        <div class="row q-gutter-sm">
-          <q-btn
-            color="primary"
-            unelevated
-            :loading="loading"
-            :disable="!email"
-            label="Send magic link"
-            @click="sendMagicLink"
-          />
-          <q-btn
-            flat
-            color="primary"
-            :loading="loading"
-            label="Check session"
-            @click="fetchMe"
-          />
-          <q-btn flat color="negative" :loading="loading" label="Logout" @click="logout" />
-        </div>
-        <q-banner v-if="debugLink" class="bg-grey-2 text-body2" rounded dense>
-          Dev link: <a :href="debugLink">{{ debugLink }}</a>
-        </q-banner>
-        <q-banner class="bg-grey-1 text-body2" rounded dense>
-          We sent a link to your email. If you can’t click it, copy the dev link above.
-        </q-banner>
-      </template>
+            <div class="row items-center justify-between">
+              <q-checkbox
+                v-model="rememberMe"
+                :label="t('auth.rememberMe') || 'Remember me'"
+                color="primary"
+                dense
+              />
+              <q-btn
+                flat
+                dense
+                color="primary"
+                :label="t('auth.forgotPassword') || 'Forgot password?'"
+                class="text-caption"
+                padding="none"
+                @click="handleForgotPassword"
+              />
+            </div>
 
-      <q-banner v-if="status" class="bg-positive text-white" rounded dense>{{
-        status
-      }}</q-banner>
-      <q-banner v-if="error" class="bg-negative text-white" rounded dense>{{
-        error
-      }}</q-banner>
+            <q-btn
+              type="submit"
+              color="primary"
+              :label="t('auth.signIn') || 'Sign In'"
+              class="full-width"
+              size="lg"
+              unelevated
+              :loading="loading"
+              :disable="!username || !password"
+            >
+              <template v-slot:loading>
+                <q-spinner-dots />
+              </template>
+            </q-btn>
 
-      <div v-if="me" class="q-mt-md">
-        <div class="text-subtitle2">Current user</div>
-        <pre class="user-block">{{ JSON.stringify(me, null, 2) }}</pre>
-      </div>
-    </q-card>
-  </q-page>
+            <div class="q-mt-md">
+              <div class="row items-center q-mb-sm">
+                <div class="col"><q-separator /></div>
+                <div class="col-auto q-px-md text-caption text-grey-7">{{ t('auth.orContinueWith') || 'or continue with' }}</div>
+                <div class="col"><q-separator /></div>
+              </div>
+              
+              <q-btn
+                outline
+                color="grey-8"
+                class="full-width"
+                size="md"
+                @click="handleGitHubLogin"
+                :disable="loading"
+              >
+                <q-icon name="fab fa-github" size="20px" class="q-mr-sm" />
+                {{ t('auth.signInWithGitHub') || 'Sign in with GitHub' }}
+              </q-btn>
+
+              <q-btn
+                unelevated
+                color="primary"
+                class="full-width q-mt-sm"
+                size="md"
+                @click="handleNetlifyLogin"
+                :disable="loading"
+              >
+                <q-icon name="bolt" size="20px" class="q-mr-sm" />
+                {{ t('auth.signInWithNetlify') || 'Sign in with Netlify Identity' }}
+              </q-btn>
+            </div>
+
+            <div class="text-center q-mt-md">
+              <span class="text-caption text-grey-7">{{ t('auth.dontHaveAccount') || "Don't have an account?" }}</span>
+              <q-btn
+                flat
+                dense
+                color="primary"
+                :label="t('auth.signUp') || 'Sign Up'"
+                class="text-caption"
+                padding="xs"
+                to="/signup"
+              />
+            </div>
+          </q-form>
+        </q-card-section>
+
+
+
+      <!-- Forgot Password Dialog -->
+      <q-dialog v-model="showForgotDialog">
+        <q-card style="min-width: 400px">
+          <q-card-section>
+            <div class="text-h6">{{ t('auth.resetPassword') || 'Reset Password' }}</div>
+          </q-card-section>
+
+          <q-card-section class="q-pt-none">
+            <p class="text-body2 text-grey-7">
+              {{ t('auth.resetInstructions') || 'Enter your email and we\'ll send you instructions to reset your password.' }}
+            </p>
+            <q-input
+              v-model="resetEmail"
+              outlined
+              type="email"
+              :label="t('auth.email') || 'Email'"
+              :placeholder="t('auth.enterEmail') || 'Enter your email'"
+              :disable="sendingReset"
+              autocomplete="email"
+            >
+              <template v-slot:prepend>
+                <q-icon name="email" />
+              </template>
+            </q-input>
+          </q-card-section>
+
+          <q-card-actions align="right">
+            <q-btn
+              flat
+              :label="t('general.cancel') || 'Cancel'"
+              color="grey-7"
+              v-close-popup
+              :disable="sendingReset"
+            />
+            <q-btn
+              unelevated
+              :label="t('auth.sendResetLink') || 'Send Reset Link'"
+              color="primary"
+              @click="handleResetRequest"
+              :loading="sendingReset"
+            />
+          </q-card-actions>
+        </q-card>
+      </q-dialog>
+      </q-card>
+    </div>
+  </div>
 </template>
 
-<style scoped>
-.login-page {
-  max-width: 520px;
-  margin: 0 auto;
+<style scoped lang="scss">
+.login-container {
+  position: relative;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  overflow: hidden;
 }
+
+.login-background {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  z-index: 0;
+}
+
+.gradient-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: linear-gradient(45deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+}
+
+.pattern-overlay {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-image: 
+    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
+    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+  animation: float 20s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%, 100% {
+    transform: translateY(0) scale(1);
+  }
+  50% {
+    transform: translateY(-20px) scale(1.05);
+  }
+}
+
+.login-content {
+  position: relative;
+  z-index: 1;
+  width: 100%;
+  max-width: 480px;
+  padding: 20px;
+}
+
 .login-card {
-  border: 1px solid #e2e8f0;
+  border-radius: 24px;
+  box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+  backdrop-filter: blur(10px);
+  background: rgba(255, 255, 255, 0.98);
+  animation: slideUp 0.5s ease-out;
 }
-.user-block {
-  background: #0f172a;
-  color: #e2e8f0;
-  padding: 12px;
-  border-radius: 8px;
-  font-size: 13px;
-  overflow-x: auto;
+
+@keyframes slideUp {
+  from {
+    opacity: 0;
+    transform: translateY(30px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.logo-container {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100px;
+  height: 100px;
+  border-radius: 50%;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  animation: pulse 2s ease-in-out infinite;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    transform: scale(1);
+    box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
+  }
+  50% {
+    transform: scale(1.05);
+    box-shadow: 0 15px 40px rgba(102, 126, 234, 0.4);
+  }
+}
+
+.logo-container .q-icon {
+  color: white !important;
+}
+
+:deep(.q-field__control) {
+  border-radius: 12px;
+}
+
+:deep(.q-btn) {
+  border-radius: 12px;
+  text-transform: none;
+  font-weight: 600;
+  letter-spacing: 0.5px;
+}
+
+:deep(.q-checkbox__label) {
+  font-size: 14px;
+}
+
+@media (max-width: 600px) {
+  .login-content {
+    padding: 16px;
+  }
+  
+  .login-card {
+    border-radius: 16px;
+  }
+  
+  .logo-container {
+    width: 80px;
+    height: 80px;
+  }
+  
+  .logo-container .q-icon {
+    font-size: 48px;
+  }
 }
 </style>

@@ -39,6 +39,7 @@
       "settings": "Einstellungen",
       "preferences": "Benutzereinstellungen",
       "login": "Login",
+      "logout": "Abmelden",
       "blog": "Blog",
       "contact": "Kontakt"
     }
@@ -162,6 +163,23 @@
         "transliteration": "Transliteration anzeigen",
         "remember": "Letzte gelesene Seite merken",
         "hint": "Lesewahlen gelten für Quran-Seiten auf diesem Gerät."
+      },
+      "security": {
+        "title": "Sicherheit",
+        "currentPassword": "Aktuelles Passwort",
+        "newPassword": "Neues Passwort",
+        "confirmPassword": "Neues Passwort bestätigen",
+        "changePasswordBtn": "Passwort ändern",
+        "generatePassword": "Starkes Passwort generieren",
+        "passwordChanged": "Passwort erfolgreich geändert",
+        "passwordGenerated": "Starkes Passwort generiert und eingefügt",
+        "hint": "Das Passwort muss mindestens 8 Zeichen lang sein.",
+        "errors": {
+          "allFieldsRequired": "Alle Felder sind erforderlich",
+          "passwordMismatch": "Neue Passwörter stimmen nicht überein",
+          "passwordTooShort": "Passwort muss mindestens 8 Zeichen lang sein",
+          "changeFailed": "Passwort konnte nicht geändert werden"
+        }
       }
     },
     "miracles": {
@@ -418,5 +436,38 @@
     "display": "Anzeigeeinstellungen",
     "language": "Spracheinstellung",
     "theme": "Design"
+  },
+  "auth": {
+    "username": "Benutzername",
+    "password": "Passwort",
+    "email": "E-Mail",
+    "confirmPassword": "Passwort bestätigen",
+    "usernameRequired": "Benutzername ist erforderlich",
+    "passwordRequired": "Passwort ist erforderlich",
+    "enterUsername": "Benutzername eingeben",
+    "enterPassword": "Passwort eingeben",
+    "enterEmail": "E-Mail eingeben",
+    "enterCredentials": "Bitte Benutzername und Passwort eingeben",
+    "signIn": "Anmelden",
+    "signUp": "Registrieren",
+    "rememberMe": "Angemeldet bleiben",
+    "welcomeBack": "Willkommen zurück",
+    "forgotPassword": "Passwort vergessen?",
+    "resetPassword": "Passwort zurücksetzen",
+    "resetInstructions": "Geben Sie Ihre E-Mail ein und wir senden Ihnen Anweisungen zum Zurücksetzen Ihres Passworts.",
+    "sendResetLink": "Zurücksetzen-Link senden",
+    "resetEmailSent": "Anweisungen zum Zurücksetzen wurden an Ihre E-Mail gesendet",
+    "resetError": "Fehler beim Senden der Zurücksetzen-E-Mail",
+    "loginError": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "dontHaveAccount": "Noch kein Konto?",
+    "alreadyHaveAccount": "Bereits ein Konto?",
+    "createAccount": "Konto erstellen",
+    "fillAllFields": "Bitte füllen Sie alle Felder aus",
+    "passwordMismatch": "Passwörter stimmen nicht überein",
+    "acceptTerms": "Bitte akzeptieren Sie die AGBs",
+    "iAccept": "Ich akzeptiere die",
+    "termsAndConditions": "Allgemeinen Geschäftsbedingungen",
+    "signupSuccess": "Konto erfolgreich erstellt! Bitte melden Sie sich an.",
+    "signupError": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
   }
 }

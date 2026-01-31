@@ -39,6 +39,7 @@
       "settings": "الإعدادات",
       "preferences": "تفضيلات المستخدم",
       "login": "تسجيل الدخول",
+      "logout": "تسجيل الخروج",
       "blog": "المدونة",
       "contact": "اتصل بنا"
     }
@@ -168,6 +169,23 @@
         "transliteration": "إظهار الترجمة الحرفية",
         "remember": "تذكر آخر صفحة مقروءة",
         "hint": "تطبق خيارات القراءة على صفحات القرآن على هذا الجهاز."
+      },
+      "security": {
+        "title": "الأمان",
+        "currentPassword": "كلمة المرور الحالية",
+        "newPassword": "كلمة المرور الجديدة",
+        "confirmPassword": "تأكيد كلمة المرور الجديدة",
+        "changePasswordBtn": "تغيير كلمة المرور",
+        "generatePassword": "إنشاء كلمة مرور قوية",
+        "passwordChanged": "تم تغيير كلمة المرور بنجاح",
+        "passwordGenerated": "تم إنشاء كلمة مرور قوية وإدخالها",
+        "hint": "يجب أن تكون كلمة المرور 8 أحرف على الأقل.",
+        "errors": {
+          "allFieldsRequired": "جميع الحقول مطلوبة",
+          "passwordMismatch": "كلمات المرور الجديدة غير متطابقة",
+          "passwordTooShort": "يجب أن تكون كلمة المرور 8 أحرف على الأقل",
+          "changeFailed": "فشل تغيير كلمة المرور"
+        }
       }
     },
     "chat": {
@@ -421,5 +439,38 @@
     "display": "إعدادات العرض",
     "language": "تفضيلات اللغة",
     "theme": "المظهر"
+  },
+  "auth": {
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "email": "البريد الإلكتروني",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "enterUsername": "أدخل اسم المستخدم",
+    "enterPassword": "أدخل كلمة المرور",
+    "enterEmail": "أدخل بريدك الإلكتروني",
+    "enterCredentials": "الرجاء إدخال اسم المستخدم وكلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "rememberMe": "تذكرني",
+    "welcomeBack": "مرحباً بعودتك",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "resetInstructions": "أدخل بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "resetEmailSent": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك",
+    "resetError": "فشل إرسال بريد إعادة التعيين",
+    "loginError": "فشل تسجيل الدخول. حاول مرة أخرى.",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "createAccount": "أنشئ حسابك",
+    "fillAllFields": "الرجاء ملء جميع الحقول",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "acceptTerms": "الرجاء قبول الشروط والأحكام",
+    "iAccept": "أوافق على",
+    "termsAndConditions": "الشروط والأحكام",
+    "signupSuccess": "تم إنشاء الحساب بنجاح! الرجاء تسجيل الدخول.",
+    "signupError": "فشل إنشاء الحساب. حاول مرة أخرى."
   }
 }

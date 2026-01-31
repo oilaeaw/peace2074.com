@@ -96,7 +96,16 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/login.vue'),
     meta: {
       title: 'Login',
-      titleKey: 'navigation.Login',
+      titleKey: 'appShell.nav.login',
+    },
+  },
+  {
+    path: '/signup',
+    name: 'Signup',
+    component: () => import('@/views/signup.vue'),
+    meta: {
+      title: 'Sign Up',
+      titleKey: 'auth.signUp',
     },
   },
   {

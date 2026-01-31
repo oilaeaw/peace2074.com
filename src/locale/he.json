@@ -39,6 +39,7 @@
             "settings": "הגדרות",
             "preferences": "העדפות",
             "login": "התחברות",
+            "logout": "התנתקות",
             "blog": "בלוג",
             "contact": "צור קשר"
         }
@@ -191,6 +192,23 @@
                 "transliteration": "הצג תעתיק",
                 "remember": "זכור את העמוד האחרון",
                 "hint": "בחירות הקריאה חלות על דפי הקוראן במכשיר זה."
+            },
+            "security": {
+                "title": "אבטחה",
+                "currentPassword": "סיסמה נוכחית",
+                "newPassword": "סיסמה חדשה",
+                "confirmPassword": "אשר סיסמה חדשה",
+                "changePasswordBtn": "שנה סיסמה",
+                "generatePassword": "צור סיסמה חזקה",
+                "passwordChanged": "הסיסמה שונתה בהצלחה",
+                "passwordGenerated": "סיסמה חזקה נוצרה והוכנסה",
+                "hint": "הסיסמה חייבת להכיל לפחות 8 תווים.",
+                "errors": {
+                    "allFieldsRequired": "כל השדות נדרשים",
+                    "passwordMismatch": "הסיסמאות החדשות אינן תואמות",
+                    "passwordTooShort": "הסיסמה חייבת להכיל לפחות 8 תווים",
+                    "changeFailed": "שינוי הסיסמה נכשל"
+                }
             }
         },
         "blog": {
@@ -421,5 +439,38 @@
         "display": "הגדרות תצוגה",
         "language": "העדפת שפה",
         "theme": "ערכת צבעים"
+    },
+    "auth": {
+        "username": "שם משתמש",
+        "password": "סיסמה",
+        "email": "דוא\"ל",
+        "confirmPassword": "אשר סיסמה",
+        "usernameRequired": "שם משתמש נדרש",
+        "passwordRequired": "סיסמה נדרשת",
+        "enterUsername": "הזן שם משתמש",
+        "enterPassword": "הזן סיסמה",
+        "enterEmail": "הזן דוא\"ל",
+        "enterCredentials": "אנא הזן שם משתמש וסיסמה",
+        "signIn": "התחבר",
+        "signUp": "הרשמה",
+        "rememberMe": "זכור אותי",
+        "welcomeBack": "ברוכים השבים",
+        "forgotPassword": "שכחת סיסמה?",
+        "resetPassword": "איפוס סיסמה",
+        "resetInstructions": "הזן את הדוא\"ל שלך ונשלח לך הוראות לאיפוס הסיסמה.",
+        "sendResetLink": "שלח קישור איפוס",
+        "resetEmailSent": "הוראות איפוס נשלחו לדוא\"ל שלך",
+        "resetError": "כשל בשליחת מייל איפוס",
+        "loginError": "התחברות נכשלה. נסה שוב.",
+        "dontHaveAccount": "אין לך חשבון?",
+        "alreadyHaveAccount": "כבר יש לך חשבון?",
+        "createAccount": "צור חשבון",
+        "fillAllFields": "אנא מלא את כל השדות",
+        "passwordMismatch": "הסיסמאות אינן תואמות",
+        "acceptTerms": "אנא קבל את התנאים וההגבלות",
+        "iAccept": "אני מקבל את",
+        "termsAndConditions": "התנאים וההגבלות",
+        "signupSuccess": "חשבון נוצר בהצלחה! אנא התחבר.",
+        "signupError": "ההרשמה נכשלה. נסה שוב."
     }
 }

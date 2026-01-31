@@ -2,6 +2,7 @@ import type { UserT } from '@shared/types'
 import { createMongoAbility } from '@casl/ability'
 import { CaslActionE, CaslSubjectE } from '@shared/types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
+import { useQuasar } from 'quasar'
 
 // Central CASL ability instance
 const ability = createMongoAbility()
@@ -62,7 +63,7 @@ export const useAuthStore = defineStore('auth', () => {
         _permissions.value.push({ action: CaslActionE.UPDATE, subject: CaslSubjectE.POST })
       }
     }
-    catch {}
+    catch { }
     SetAbilities()
   }
 
@@ -72,30 +73,30 @@ export const useAuthStore = defineStore('auth', () => {
       if (isClient)
         await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
     }
-    catch {}
+    catch { }
     _user.value = null
     try {
       $q.notify({ message: 'Logged out successfully', type: 'info' })
     }
-    catch {}
+    catch { }
     // Remove persisted user data from localStorage when running in browser
     if (isClient) {
       try {
         const core = (globalThis as any)?.$core || undefined
         if (core && typeof core.remove === 'function') {
-          try { void core.remove('user') } catch {}
-          try { void core.remove('pinia_user') } catch {}
-          try { void core.remove('pinia') } catch {}
+          try { void core.remove('user') } catch { }
+          try { void core.remove('pinia_user') } catch { }
+          try { void core.remove('pinia') } catch { }
           return
         }
       }
-      catch {}
+      catch { }
       try {
         localStorage.removeItem('user')
         localStorage.removeItem('pinia_user')
         localStorage.removeItem('pinia')
       }
-      catch {}
+      catch { }
     }
   }
 
@@ -103,26 +104,26 @@ export const useAuthStore = defineStore('auth', () => {
   async function login() {
     if (typeof navigator === 'undefined' || typeof navigator.credentials === 'undefined') {
       try { $q.notify({ message: 'WebAuthn not available in this environment', type: 'negative' }) }
-      catch {}
+      catch { }
       throw new Error('WebAuthn not available')
     }
 
     const pkco: any = (globalThis as any).publicKeyCredentialCreationOptions
     if (!pkco) {
       try { $q.notify({ message: 'No WebAuthn options available', type: 'negative' }) }
-      catch {}
+      catch { }
       throw new Error('No WebAuthn options available')
     }
 
     const credential = await navigator.credentials.create({ publicKey: pkco })
     if (!credential) {
       try { $q.notify({ message: 'No credential created', type: 'negative' }) }
-      catch {}
+      catch { }
       throw new Error('No credential created')
     }
     _user.value = credential
     try { $q.notify({ message: 'Login successful', type: 'positive' }) }
-    catch {}
+    catch { }
   }
 
   // Permission helpers

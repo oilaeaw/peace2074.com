@@ -6,7 +6,9 @@ import pinia from "@/plugins/pinia";
 import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
+import netlifyIdentity from 'netlify-identity-widget'
 import '@/assets/app.scss'
+import 'netlify-identity-widget/build/netlify-identity-widget.css'
 
 const app = createApp(App);
 
@@ -114,6 +116,52 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
       console.error('PWA service worker registration failed', error);
     },
   });
+}
+
+// Initialize Netlify Identity
+if (typeof window !== 'undefined') {
+  netlifyIdentity.init({
+    container: '#netlify-identity-root', // Modal will be injected here
+  })
+
+  // Sync auth state with Pinia store
+  netlifyIdentity.on('init', user => {
+    if (user) {
+      const authStore = (pinia as any)._s.get('auth')
+      if (authStore) {
+        authStore.setUser({
+          id: user.id,
+          email: user.email,
+          username: user.user_metadata?.full_name || user.email?.split('@')[0],
+          role: user.app_metadata?.roles?.[0] || 'user',
+          first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
+          last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
+        })
+      }
+    }
+  })
+
+  netlifyIdentity.on('login', user => {
+    const authStore = (pinia as any)._s.get('auth')
+    if (authStore && user) {
+      authStore.setUser({
+        id: user.id,
+        email: user.email,
+        username: user.user_metadata?.full_name || user.email?.split('@')[0],
+        role: user.app_metadata?.roles?.[0] || 'user',
+        first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
+        last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
+      })
+    }
+    netlifyIdentity.close()
+  })
+
+  netlifyIdentity.on('logout', () => {
+    const authStore = (pinia as any)._s.get('auth')
+    if (authStore) {
+      authStore.logout()
+    }
+  })
 }
 
 app.mount("#app");

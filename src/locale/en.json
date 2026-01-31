@@ -39,6 +39,7 @@
       "settings": "Settings",
       "preferences": "Preferences",
       "login": "Login",
+      "logout": "Sign Out",
       "blog": "Blog",
       "contact": "Contact"
     }
@@ -47,6 +48,9 @@
     "Login": "Login"
   },
   "pages": {
+    "support": {
+      "aiTitle": "AI Assistant"
+    },
     "home": {
       "title": "Home",
       "hero": {
@@ -191,6 +195,23 @@
         "transliteration": "Show transliteration",
         "remember": "Remember last read page",
         "hint": "Reading choices apply across Quran pages on this device."
+      },
+      "security": {
+        "title": "Security",
+        "currentPassword": "Current password",
+        "newPassword": "New password",
+        "confirmPassword": "Confirm new password",
+        "changePasswordBtn": "Change Password",
+        "generatePassword": "Generate Strong Password",
+        "passwordChanged": "Password changed successfully",
+        "passwordGenerated": "Strong password generated and filled in",
+        "hint": "Password must be at least 8 characters long.",
+        "errors": {
+          "allFieldsRequired": "All fields are required",
+          "passwordMismatch": "New passwords do not match",
+          "passwordTooShort": "Password must be at least 8 characters",
+          "changeFailed": "Failed to change password"
+        }
       }
     },
     "blog": {
@@ -421,5 +442,41 @@
     "display": "Display Settings",
     "language": "Language Preference",
     "theme": "Theme"
+  },
+  "auth": {
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "confirmPassword": "Confirm Password",
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "enterUsername": "Enter your username",
+    "enterPassword": "Enter your password",
+    "enterEmail": "Enter your email",
+    "enterCredentials": "Please enter username and password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "rememberMe": "Remember me",
+    "orContinueWith": "or continue with",
+    "signInWithGitHub": "Sign in with GitHub",
+    "signInWithNetlify": "Sign in with Netlify Identity",
+    "welcomeBack": "Welcome back",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "resetInstructions": "Enter your email and we'll send you instructions to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "resetEmailSent": "Password reset instructions sent to your email",
+    "resetError": "Failed to send reset email",
+    "loginError": "Login failed. Please try again.",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create your account",
+    "fillAllFields": "Please fill all fields",
+    "passwordMismatch": "Passwords do not match",
+    "acceptTerms": "Please accept the terms and conditions",
+    "iAccept": "I accept the",
+    "termsAndConditions": "terms and conditions",
+    "signupSuccess": "Account created successfully! Please login.",
+    "signupError": "Signup failed. Please try again."
   }
 }
