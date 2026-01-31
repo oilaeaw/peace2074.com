@@ -8,7 +8,6 @@ import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
 import netlifyIdentity from 'netlify-identity-widget'
 import '@/assets/app.scss'
-import 'netlify-identity-widget/build/netlify-identity-widget.css'
 
 const app = createApp(App);
 
