@@ -19,6 +19,19 @@ export default defineConfig({
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
+  build: {
+    rollupOptions: {
+      output: {
+        manualChunks: {
+          'vendor-vue': ['vue', 'vue-router', 'pinia'],
+          'vendor-quasar': ['quasar'],
+          'vendor-i18n': ['vue-i18n'],
+          'three': ['three'],
+        }
+      }
+    },
+    chunkSizeWarningLimit: 600,
+  },
   plugins: [
     // https://github.com/posva/unplugin-vue-router
     VueRouter({
