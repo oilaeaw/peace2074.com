@@ -27,38 +27,53 @@ onMounted(async () => {
 </script>
 
 <template>
-  <div class="q-pa-md">
-    <h1>{{ t('pages.quran.title') || 'Quran Surahs' }}</h1>
-    <div v-if="loading" class="status">Loading…</div>
+  <q-page class="q-pa-md">
+    <h1 class="text-h4 q-mb-md">{{ t('pages.quran.title') || 'Quran Surahs' }}</h1>
+    
+    <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
-    <div v-else class="q-gutter-md" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); gap: 1rem;">
+    
+    <div v-else class="surahs-grid">
       <RouterLink
         v-for="s in surahs"
         :key="s?.id"
         :to="`/quran/${s?.id}`"
         class="sura-card q-card q-pa-sm"
-        style="text-decoration: none; color: inherit;"
       >
         <div class="text-subtitle1">{{ s.id }}. {{ s.e_name || '' }}</div>
         <div class="text-body2">{{ s.name }}</div>
-        <div class="text-caption">{{ s.total_verses }} verses • {{ s.type }}</div>
+        <div class="text-caption">{{ s.total_verses }} {{ t('pages.quran.verses') }} • {{ s.type }}</div>
       </RouterLink>
     </div>
-    <footer class="hint">If content doesn't load, ensure the server API /api/quran is running.</footer>
-  </div>
+    
+    <footer class="hint q-mt-md text-caption text-grey-6">{{ t('pages.quran.apiHint') }}</footer>
+  </q-page>
 </template>
 
 <style scoped>
 .status {
-  margin: 1rem 0;
+  padding: 1rem 0;
 }
+
 .status.error {
-  color: #b00020;
+  color: var(--q-negative);
 }
-.hint {
-  opacity: 0.6;
-  font-size: 0.9rem;
-  padding-top: 1rem;
+
+.surahs-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 1rem;
+}
+
+.sura-card {
+  text-decoration: none;
+  color: inherit;
+  transition: transform 0.2s, box-shadow 0.2s;
+}
+
+.sura-card:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
 }
 </style>
 

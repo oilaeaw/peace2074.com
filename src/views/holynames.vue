@@ -115,22 +115,25 @@ const holynames: HolyNameI[] = [
 </script>
 
 <template>
-  <q-page padding class="holynames-page fit beautiful-bg column flex">
-    <div class="bismillah">
-      ﷽
-    </div>
-    <h1 class="page-title">
-      {{ $t("The 99 Holy Names of Allah") }}
-    </h1>
-    <div class="subtitle">
-      {{ $t("Asma' Allah Al-Husna") }}
-    </div>
-    <div class="names-grid">
-      <div v-for="one in holynames" :key="one.text" class="glory-card islamic-border">
-        <span class="arabic-name">{{ one.name }}</span>
-        <span v-if="locale !== 'ar'" class="latin-name">{{ one.text }}</span>
-        <span class="transliteration">{{ $t(one.transliterationKey) }}</span>
-        <span class="meaning">{{ $t(one.meaningKey) }}</span>
+  <q-page class="holynames-page">
+    <div class="page-content">
+      <div class="bismillah">﷽</div>
+      
+      <h1 class="page-title text-h3 q-mb-xs">
+        {{ $t("The 99 Holy Names of Allah") }}
+      </h1>
+      
+      <div class="subtitle text-subtitle1 q-mb-lg">
+        {{ $t("Asma' Allah Al-Husna") }}
+      </div>
+      
+      <div class="names-grid">
+        <div v-for="one in holynames" :key="one.text" class="glory-card islamic-border">
+          <span class="arabic-name">{{ one.name }}</span>
+          <span v-if="locale !== 'ar'" class="latin-name">{{ one.text }}</span>
+          <span class="transliteration">{{ $t(one.transliterationKey) }}</span>
+          <span class="meaning">{{ $t(one.meaningKey) }}</span>
+        </div>
       </div>
     </div>
   </q-page>
@@ -139,12 +142,15 @@ const holynames: HolyNameI[] = [
 <style lang="scss" scoped>
 @import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Naskh+Arabic:wght@700&display=swap');
 
-.beautiful-bg {
-  min-height: 100vh;
+.holynames-page {
   background: linear-gradient(135deg, #f9fafb 0%, #e8f0e8 100%);
-  position: relative;
-  padding-bottom: 40px;
-  overflow-x: hidden;
+  min-height: 100vh;
+}
+
+.page-content {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 2rem 1rem;
 }
 
 .bismillah {
@@ -152,19 +158,15 @@ const holynames: HolyNameI[] = [
   font-size: clamp(2rem, 6vw, 8rem);
   color: #bfa14a;
   text-align: center;
-  margin-top: 3rem;
   letter-spacing: 0.2em;
   text-shadow: 0 2px 8px #e0d7c6;
-  display: block;
-  clear: both;
+  margin-bottom: 2rem;
 }
 
 .page-title {
   text-align: center;
   font-family: 'Noto Naskh Arabic', 'Amiri', serif;
   color: #176a3a;
-  margin-bottom: 0.5rem;
-  font-size: 2.2rem;
   font-weight: bold;
   letter-spacing: 0.05em;
 }
@@ -173,19 +175,34 @@ const holynames: HolyNameI[] = [
   text-align: center;
   font-family: 'Amiri', serif;
   color: #bfa14a;
-  margin-bottom: 2rem;
-  font-size: 1.3rem;
   letter-spacing: 0.1em;
 }
 
 .names-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-  gap: 2rem;
+  column-count: 4;
+  column-gap: 2rem;
   margin: 0 auto;
-  max-width: 1100px;
+  max-width: 1200px;
   padding: 0 1rem;
   box-sizing: border-box;
+}
+
+@media (max-width: 1200px) {
+  .names-grid {
+    column-count: 3;
+  }
+}
+
+@media (max-width: 900px) {
+  .names-grid {
+    column-count: 2;
+  }
+}
+
+@media (max-width: 600px) {
+  .names-grid {
+    column-count: 1;
+  }
 }
 
 .glory-card {
@@ -208,6 +225,9 @@ const holynames: HolyNameI[] = [
   min-width: 0;
   word-break: break-word;
   box-sizing: border-box;
+  margin-bottom: 2rem;
+  break-inside: avoid;
+  page-break-inside: avoid;
 }
 
 .glory-card:hover {
@@ -257,14 +277,14 @@ const holynames: HolyNameI[] = [
 
 @media (max-width: 600px) {
   .names-grid {
-    grid-template-columns: 1fr;
-    gap: 1.2rem;
+    column-count: 1;
     padding: 0 0.3rem;
   }
 
   .glory-card {
     padding: 1rem 0.3rem;
     font-size: 1.1rem;
+    margin-bottom: 1.2rem;
   }
 
   .arabic-name {

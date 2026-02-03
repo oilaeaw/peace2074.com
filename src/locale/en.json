@@ -134,6 +134,9 @@
       "playRecitation": "Play recitation",
       "stopRecitation": "Stop recitation",
       "pageTitle": "The Holy Quran",
+      "loading": "Loading…",
+      "verses": "verses",
+      "apiHint": "If content doesn't load, ensure the server API /api/quran is running.",
       "sura": {
         "name": "sura's Name",
         "id": "sura number",
