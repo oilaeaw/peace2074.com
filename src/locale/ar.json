@@ -33,6 +33,7 @@
     "nav": {
       "home": "الرئيسية",
       "quran": "القرآن",
+      "holynames": "الأسماء الحسنى",
       "tasbeeh": "التسبيح",
       "chat": "الدردشة",
       "support": "الدعم",
@@ -45,7 +46,39 @@
     }
   },
   "navigation": {
-    "Login": "تسجيل الدخول"
+    "Profile": "ملفي",
+    "Favorites": "قوائم المفضلة",
+    "Messages": "رسائل",
+    "HomePageTitle": "الصفحة الرئيسية",
+    "HomePageCaption": "الصفحة الرئيسية",
+    "AuthPageTitle": "المصادقات",
+    "AuthPageCaption": "إنشاء اسم المستخدم / تسجيل الدخول",
+    "AboutPageTitle": "معلومات عنا",
+    "AboutPageCaption": "معلومات عنا",
+    "ContactPageTitle": "اتصل بنا",
+    "ContactPageCaption": "اتصل بنا",
+    "TermsPageTitle": "البنود و الظروف",
+    "TermsPageCaption": "الأحكام والشروط",
+    "BlogPageTitle": "مدونتنا",
+    "BlogPageCaption": "المشاركات والمقالات",
+    "ProductsPageTitle": "منتجات",
+    "ProductsPageCaption": "منتجاتنا",
+    "PrivacyPageTitle": "خصوصية",
+    "PrivacyPageCaption": "صفحة الخصوصية",
+    "ServicesPageTitle": "خدمات",
+    "ServicesPageCaption": "خدماتنا",
+    "SettingsPageTitle": "صفحة الإعدادات",
+    "SettingsPageCaption": "اعدادات العرض",
+    "TranslationPageTitle": "الترجمات",
+    "TranslationPageCaption": "إدارة ترجماتك",
+    "GlossaryPageTitle": "قائمة المصطلحات",
+    "GlossaryPageCaption": "صفحة المسرد الخاصة بنا",
+    "MediaPageTitle": "وسائط",
+    "MediaPageCaption": "صفحة الوسائط الخاصة بنا",
+    "Signin": "تسجيل الدخول",
+    "Signout": "خروج",
+    "Register": "تسجيل",
+    "AdminPage": "صفحة المشرف"
   },
   "pages": {
     "home": {
@@ -54,6 +87,7 @@
         "title": "Peace2074",
         "lead": "مكان هادئ للقراءة والتأمل والتذكر.",
         "ctaReadQuran": "قراءة القرآن",
+        "ctaHolyNames": "الأسماء الحسنى",
         "ctaTasbeeh": "المسبحة",
         "aiLabel": "اسأل PEACE AI",
         "cardTitle": "تأمل يومي",
@@ -277,41 +311,6 @@
       "placeholder": "ما هو المشروع الذي تشير إليه؟"
     }
   },
-  "navigation": {
-    "Profile": "ملفي",
-    "Favorites": "قوائم المفضلة",
-    "Messages": "رسائل",
-    "HomePageTitle": "الصفحة الرئيسية",
-    "HomePageCaption": "الصفحة الرئيسية",
-    "AuthPageTitle": "المصادقات",
-    "AuthPageCaption": "إنشاء اسم المستخدم / تسجيل الدخول",
-    "AboutPageTitle": "معلومات عنا",
-    "AboutPageCaption": "معلومات عنا",
-    "ContactPageTitle": "اتصل بنا",
-    "ContactPageCaption": "اتصل بنا",
-    "TermsPageTitle": "البنود و الظروف",
-    "TermsPageCaption": "الأحكام والشروط",
-    "BlogPageTitle": "مدونتنا",
-    "BlogPageCaption": "المشاركات والمقالات",
-    "ProductsPageTitle": "منتجات",
-    "ProductsPageCaption": "منتجاتنا",
-    "PrivacyPageTitle": "خصوصية",
-    "PrivacyPageCaption": "صفحة الخصوصية",
-    "ServicesPageTitle": "خدمات",
-    "ServicesPageCaption": "خدماتنا",
-    "SettingsPageTitle": "صفحة الإعدادات",
-    "SettingsPageCaption": "اعدادات العرض",
-    "TranslationPageTitle": "الترجمات",
-    "TranslationPageCaption": "إدارة ترجماتك",
-    "GlossaryPageTitle": "قائمة المصطلحات",
-    "GlossaryPageCaption": "صفحة المسرد الخاصة بنا",
-    "MediaPageTitle": "وسائط",
-    "MediaPageCaption": "صفحة الوسائط الخاصة بنا",
-    "Signin": "تسجيل الدخول",
-    "Signout": "خروج",
-    "Register": "تسجيل",
-    "AdminPage": "صفحة المشرف"
-  },
   "login": "تسجيل الدخول",
   "signup": "تسجيل حساب جديد",
   "username": "اسم المستخدم",
@@ -384,13 +383,45 @@
   "login_method": "طرق الدخول",
   "logout_success": "لقد قمت بتسجيل الخروج بنجاح",
   "back": "خلف",
-  "auth": "خدمات التسجيل",
+  "auth": {
+    "username": "اسم المستخدم",
+    "password": "كلمة المرور",
+    "email": "البريد الإلكتروني",
+    "confirmPassword": "تأكيد كلمة المرور",
+    "usernameRequired": "اسم المستخدم مطلوب",
+    "passwordRequired": "كلمة المرور مطلوبة",
+    "enterUsername": "أدخل اسم المستخدم",
+    "enterPassword": "أدخل كلمة المرور",
+    "enterEmail": "أدخل بريدك الإلكتروني",
+    "enterCredentials": "الرجاء إدخال اسم المستخدم وكلمة المرور",
+    "signIn": "تسجيل الدخول",
+    "signUp": "إنشاء حساب",
+    "rememberMe": "تذكرني",
+    "welcomeBack": "مرحباً بعودتك",
+    "forgotPassword": "نسيت كلمة المرور؟",
+    "resetPassword": "إعادة تعيين كلمة المرور",
+    "resetInstructions": "أدخل بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
+    "sendResetLink": "إرسال رابط إعادة التعيين",
+    "resetEmailSent": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك",
+    "resetError": "فشل إرسال بريد إعادة التعيين",
+    "loginError": "فشل تسجيل الدخول. حاول مرة أخرى.",
+    "dontHaveAccount": "ليس لديك حساب؟",
+    "alreadyHaveAccount": "لديك حساب بالفعل؟",
+    "createAccount": "أنشئ حسابك",
+    "fillAllFields": "الرجاء ملء جميع الحقول",
+    "passwordMismatch": "كلمتا المرور غير متطابقتين",
+    "acceptTerms": "الرجاء قبول الشروط والأحكام",
+    "iAccept": "أوافق على",
+    "termsAndConditions": "الشروط والأحكام",
+    "signupSuccess": "تم إنشاء الحساب بنجاح! الرجاء تسجيل الدخول.",
+    "signupError": "فشل إنشاء الحساب. حاول مرة أخرى."
+  },
   "password_required": "كلمة المرور مطلوبة",
   "resend_verification_email": "إعادة إرسال رسالة التحقق",
   "password_signup": "للاشترك",
   "first_name": "الاسم الشخصي",
   "last_name": "اسم العائله",
-  "The 99 Holy Names of Allah": "اسماء الله الحسنى",
+  "The 99 Holy Names of Allah": "أسماء الله الحسنى التسعة والتسعون",
   "welcome_back": "مرحبا بعودتك، {name}",
   "welcome_guest": "اهلا يا غريب",
   "tasbeeh": {
@@ -426,7 +457,13 @@
     "tasbeeh": "تسبيح إلكتروني — عداد بسيط وجميل للذكر مع تتبع الجلسات والإعدادات.",
     "miracles": "اطلع على قصص ملهمة وتأملات حول العلامات والمعجزات.",
     "quran": "القرآن الكريم — اقرأ وتصفح وحفظ السور مع خط عربي جميل وتصميم مستجيب.",
-    "privacy": "تعرف على كيفية حماية بياناتك وخصوصيتك أثناء استخدام الموقع."
+    "privacy": "تعرف على كيفية حماية بياناتك وخصوصيتك أثناء استخدام الموقع.",
+    "titles": {
+      "home": "الصفحة الرئيسية",
+      "quran": "القرآن",
+      "holynames": "الأسماء الحسنى",
+      "tasbeeh": "المسبحة"
+    }
   },
   "bookmarks": "علامة مرجعية",
   "profile": {
@@ -440,37 +477,403 @@
     "language": "تفضيلات اللغة",
     "theme": "المظهر"
   },
-  "auth": {
-    "username": "اسم المستخدم",
-    "password": "كلمة المرور",
-    "email": "البريد الإلكتروني",
-    "confirmPassword": "تأكيد كلمة المرور",
-    "usernameRequired": "اسم المستخدم مطلوب",
-    "passwordRequired": "كلمة المرور مطلوبة",
-    "enterUsername": "أدخل اسم المستخدم",
-    "enterPassword": "أدخل كلمة المرور",
-    "enterEmail": "أدخل بريدك الإلكتروني",
-    "enterCredentials": "الرجاء إدخال اسم المستخدم وكلمة المرور",
-    "signIn": "تسجيل الدخول",
-    "signUp": "إنشاء حساب",
-    "rememberMe": "تذكرني",
-    "welcomeBack": "مرحباً بعودتك",
-    "forgotPassword": "نسيت كلمة المرور؟",
-    "resetPassword": "إعادة تعيين كلمة المرور",
-    "resetInstructions": "أدخل بريدك الإلكتروني وسنرسل لك تعليمات إعادة تعيين كلمة المرور.",
-    "sendResetLink": "إرسال رابط إعادة التعيين",
-    "resetEmailSent": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك",
-    "resetError": "فشل إرسال بريد إعادة التعيين",
-    "loginError": "فشل تسجيل الدخول. حاول مرة أخرى.",
-    "dontHaveAccount": "ليس لديك حساب؟",
-    "alreadyHaveAccount": "لديك حساب بالفعل؟",
-    "createAccount": "أنشئ حسابك",
-    "fillAllFields": "الرجاء ملء جميع الحقول",
-    "passwordMismatch": "كلمتا المرور غير متطابقتين",
-    "acceptTerms": "الرجاء قبول الشروط والأحكام",
-    "iAccept": "أوافق على",
-    "termsAndConditions": "الشروط والأحكام",
-    "signupSuccess": "تم إنشاء الحساب بنجاح! الرجاء تسجيل الدخول.",
-    "signupError": "فشل إنشاء الحساب. حاول مرة أخرى."
-  }
+  "holyNames": {
+    "1": {
+      "transliteration": "الرحمن",
+      "meaning": "الرحيم بعباده في الدنيا والآخرة"
+    },
+    "2": {
+      "transliteration": "الرحيم",
+      "meaning": "الرحيم بالمؤمنين في الآخرة"
+    },
+    "3": {
+      "transliteration": "الملك",
+      "meaning": "المالك لجميع الأشياء"
+    },
+    "4": {
+      "transliteration": "القدوس",
+      "meaning": "المنزه عن كل نقص"
+    },
+    "5": {
+      "transliteration": "السلام",
+      "meaning": "السالم من كل عيب"
+    },
+    "6": {
+      "transliteration": "المؤمن",
+      "meaning": "المصدق لوعده"
+    },
+    "7": {
+      "transliteration": "المهيمن",
+      "meaning": "الشهيد المطلع على خلقه"
+    },
+    "8": {
+      "transliteration": "العزيز",
+      "meaning": "الغالب الذي لا يُغلب"
+    },
+    "9": {
+      "transliteration": "الجبار",
+      "meaning": "الذي يجبر الضعيف"
+    },
+    "10": {
+      "transliteration": "المتكبر",
+      "meaning": "المتعالي عن صفات الخلق"
+    },
+    "11": {
+      "transliteration": "الخالق",
+      "meaning": "الموجد للأشياء من العدم"
+    },
+    "12": {
+      "transliteration": "البارئ",
+      "meaning": "المصور للأشياء"
+    },
+    "13": {
+      "transliteration": "المصور",
+      "meaning": "الذي صور جميع المخلوقات"
+    },
+    "14": {
+      "transliteration": "الغفار",
+      "meaning": "الساتر لذنوب عباده"
+    },
+    "15": {
+      "transliteration": "القهار",
+      "meaning": "الغالب لكل شيء"
+    },
+    "16": {
+      "transliteration": "الوهاب",
+      "meaning": "المعطي بغير عوض"
+    },
+    "17": {
+      "transliteration": "الرزاق",
+      "meaning": "الذي يرزق جميع خلقه"
+    },
+    "18": {
+      "transliteration": "الفتاح",
+      "meaning": "الذي يفتح أبواب الرحمة"
+    },
+    "19": {
+      "transliteration": "العليم",
+      "meaning": "المحيط علمه بكل شيء"
+    },
+    "20": {
+      "transliteration": "القابض",
+      "meaning": "الذي يقبض الرزق"
+    },
+    "21": {
+      "transliteration": "الباسط",
+      "meaning": "الذي يبسط الرزق"
+    },
+    "22": {
+      "transliteration": "الخافض",
+      "meaning": "الذي يخفض الظالمين"
+    },
+    "23": {
+      "transliteration": "الرافع",
+      "meaning": "الذي يرفع المؤمنين"
+    },
+    "24": {
+      "transliteration": "المعز",
+      "meaning": "الذي يعز من يشاء"
+    },
+    "25": {
+      "transliteration": "المذل",
+      "meaning": "الذي يذل من يشاء"
+    },
+    "26": {
+      "transliteration": "السميع",
+      "meaning": "الذي يسمع كل شيء"
+    },
+    "27": {
+      "transliteration": "البصير",
+      "meaning": "الذي يبصر كل شيء"
+    },
+    "28": {
+      "transliteration": "الحكم",
+      "meaning": "الذي يحكم بين الخلق"
+    },
+    "29": {
+      "transliteration": "العدل",
+      "meaning": "الذي لا يجور في حكمه"
+    },
+    "30": {
+      "transliteration": "اللطيف",
+      "meaning": "الرفيق بعباده"
+    },
+    "31": {
+      "transliteration": "الخبير",
+      "meaning": "العالم بحقائق الأمور"
+    },
+    "32": {
+      "transliteration": "الحليم",
+      "meaning": "الصفوح عن الذنوب"
+    },
+    "33": {
+      "transliteration": "العظيم",
+      "meaning": "الذي لا يحيط به وصف"
+    },
+    "34": {
+      "transliteration": "الغفور",
+      "meaning": "الذي يغفر الذنوب"
+    },
+    "35": {
+      "transliteration": "الشكور",
+      "meaning": "الذي يشكر القليل من الطاعة"
+    },
+    "36": {
+      "transliteration": "العلي",
+      "meaning": "الرفيع القدر"
+    },
+    "37": {
+      "transliteration": "الكبير",
+      "meaning": "العظيم الشأن"
+    },
+    "38": {
+      "transliteration": "الحفيظ",
+      "meaning": "الحافظ لكل شيء"
+    },
+    "39": {
+      "transliteration": "المقيت",
+      "meaning": "القادر على كل شيء"
+    },
+    "40": {
+      "transliteration": "الحسيب",
+      "meaning": "الكافي لعباده"
+    },
+    "41": {
+      "transliteration": "الجليل",
+      "meaning": "العظيم القدر"
+    },
+    "42": {
+      "transliteration": "الكريم",
+      "meaning": "الجواد المعطي"
+    },
+    "43": {
+      "transliteration": "الرقيب",
+      "meaning": "المطلع على كل شيء"
+    },
+    "44": {
+      "transliteration": "المجيب",
+      "meaning": "الذي يجيب دعوة الداعي"
+    },
+    "45": {
+      "transliteration": "الواسع",
+      "meaning": "الذي وسع رحمته كل شيء"
+    },
+    "46": {
+      "transliteration": "الحكيم",
+      "meaning": "الذي يضع الأشياء في مواضعها"
+    },
+    "47": {
+      "transliteration": "الودود",
+      "meaning": "المحب لعباده"
+    },
+    "48": {
+      "transliteration": "المجيد",
+      "meaning": "العظيم الشريف"
+    },
+    "49": {
+      "transliteration": "الباعث",
+      "meaning": "الذي يبعث الموتى"
+    },
+    "50": {
+      "transliteration": "الشهيد",
+      "meaning": "الشاهد على كل شيء"
+    },
+    "51": {
+      "transliteration": "الحق",
+      "meaning": "الموجود حقيقة"
+    },
+    "52": {
+      "transliteration": "الوكيل",
+      "meaning": "الكافي عباده"
+    },
+    "53": {
+      "transliteration": "القوي",
+      "meaning": "صاحب القوة الكاملة"
+    },
+    "54": {
+      "transliteration": "المتين",
+      "meaning": "الشديد القوة"
+    },
+    "55": {
+      "transliteration": "الولي",
+      "meaning": "الناصر لعباده"
+    },
+    "56": {
+      "transliteration": "الحميد",
+      "meaning": "المستحق للحمد"
+    },
+    "57": {
+      "transliteration": "المحصي",
+      "meaning": "الذي أحصى كل شيء عدداً"
+    },
+    "58": {
+      "transliteration": "المبدئ",
+      "meaning": "الذي بدأ الخلق"
+    },
+    "59": {
+      "transliteration": "المعيد",
+      "meaning": "الذي يعيد الخلق بعد الموت"
+    },
+    "60": {
+      "transliteration": "المحيي",
+      "meaning": "الذي يحيي الموتى"
+    },
+    "61": {
+      "transliteration": "المميت",
+      "meaning": "الذي يميت الأحياء"
+    },
+    "62": {
+      "transliteration": "الحي",
+      "meaning": "الدائم الوجود"
+    },
+    "63": {
+      "transliteration": "القيوم",
+      "meaning": "القائم على كل شيء"
+    },
+    "64": {
+      "transliteration": "الواجد",
+      "meaning": "الذي لا يحتاج لشيء"
+    },
+    "65": {
+      "transliteration": "الماجد",
+      "meaning": "الكثير الخير"
+    },
+    "66": {
+      "transliteration": "الواحد",
+      "meaning": "الذي لا شريك له"
+    },
+    "67": {
+      "transliteration": "الأحد",
+      "meaning": "المتفرد في ذاته"
+    },
+    "68": {
+      "transliteration": "الصمد",
+      "meaning": "الذي يُقصد في الحوائج"
+    },
+    "69": {
+      "transliteration": "القادر",
+      "meaning": "الذي يقدر على كل شيء"
+    },
+    "70": {
+      "transliteration": "المقتدر",
+      "meaning": "التام القدرة"
+    },
+    "71": {
+      "transliteration": "المقدم",
+      "meaning": "الذي يقدم من يشاء"
+    },
+    "72": {
+      "transliteration": "المؤخر",
+      "meaning": "الذي يؤخر من يشاء"
+    },
+    "73": {
+      "transliteration": "الأول",
+      "meaning": "الذي لا بداية له"
+    },
+    "74": {
+      "transliteration": "الآخر",
+      "meaning": "الذي لا نهاية له"
+    },
+    "75": {
+      "transliteration": "الظاهر",
+      "meaning": "الظاهر وجوده بالأدلة"
+    },
+    "76": {
+      "transliteration": "الباطن",
+      "meaning": "العالم بالسرائر"
+    },
+    "77": {
+      "transliteration": "الوالي",
+      "meaning": "المتصرف في الكون"
+    },
+    "78": {
+      "transliteration": "المتعالي",
+      "meaning": "المنزه عن صفات الخلق"
+    },
+    "79": {
+      "transliteration": "البر",
+      "meaning": "المحسن إلى خلقه"
+    },
+    "80": {
+      "transliteration": "التواب",
+      "meaning": "الذي يقبل التوبة"
+    },
+    "81": {
+      "transliteration": "المنتقم",
+      "meaning": "الذي ينتقم من الظالمين"
+    },
+    "82": {
+      "transliteration": "العفو",
+      "meaning": "الذي يمحو الذنوب"
+    },
+    "83": {
+      "transliteration": "الرؤوف",
+      "meaning": "الرحيم بعباده"
+    },
+    "84": {
+      "transliteration": "مالك الملك",
+      "meaning": "المتصرف في ملكه كيف يشاء"
+    },
+    "85": {
+      "transliteration": "ذو الجلال والإكرام",
+      "meaning": "صاحب العظمة والكرم"
+    },
+    "86": {
+      "transliteration": "المقسط",
+      "meaning": "العادل في حكمه"
+    },
+    "87": {
+      "transliteration": "الجامع",
+      "meaning": "الذي يجمع الخلق ليوم القيامة"
+    },
+    "88": {
+      "transliteration": "الغني",
+      "meaning": "الذي لا يحتاج لشيء"
+    },
+    "89": {
+      "transliteration": "المغني",
+      "meaning": "الذي يغني من يشاء"
+    },
+    "90": {
+      "transliteration": "المانع",
+      "meaning": "الذي يمنع ما يشاء"
+    },
+    "91": {
+      "transliteration": "الضار",
+      "meaning": "الذي يقدر الضر"
+    },
+    "92": {
+      "transliteration": "النافع",
+      "meaning": "الذي يقدر النفع"
+    },
+    "93": {
+      "transliteration": "النور",
+      "meaning": "الهادي لعباده"
+    },
+    "94": {
+      "transliteration": "الهادي",
+      "meaning": "الدال على الخير"
+    },
+    "95": {
+      "transliteration": "البديع",
+      "meaning": "المبدع لخلقه"
+    },
+    "96": {
+      "transliteration": "الباقي",
+      "meaning": "الدائم الوجود"
+    },
+    "97": {
+      "transliteration": "الوارث",
+      "meaning": "الباقي بعد فناء خلقه"
+    },
+    "98": {
+      "transliteration": "الرشيد",
+      "meaning": "الذي يرشد خلقه"
+    },
+    "99": {
+      "transliteration": "الصبور",
+      "meaning": "الذي لا يعاجل بالعقوبة"
+    }
+  },
+  "Asma' Allah Al-Husna": "أسماء الله الحسنى"
 }

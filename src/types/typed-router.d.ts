@@ -58,6 +58,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/holynames': RouteRecordInfo<
+      '/holynames',
+      '/holynames',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/Home': RouteRecordInfo<
       '/Home',
       '/Home',
@@ -196,6 +203,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/contact.vue': {
       routes:
         | '/contact'
+      views:
+        | never
+    }
+    'src/views/holynames.vue': {
+      routes:
+        | '/holynames'
       views:
         | never
     }

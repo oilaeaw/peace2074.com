@@ -37,6 +37,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/holynames',
+    name: 'HolyNames',
+    component: () => import('@/views/holynames.vue'),
+    meta: {
+      title: 'Holy Names',
+      titleKey: 'pages.titles.holynames',
+    },
+  },
+  {
     path: '/quran',
     name: 'QuranList',
     component: () => import('@/pages/quran/index.vue'),

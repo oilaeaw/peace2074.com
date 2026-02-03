@@ -33,6 +33,7 @@
         "nav": {
             "home": "בית",
             "quran": "הקוראן",
+            "holynames": "שמות קדושים",
             "tasbeeh": "תסביח",
             "chat": "צ׳אט",
             "support": "תמיכה",
@@ -45,7 +46,39 @@
         }
     },
     "navigation": {
-        "Login": "התחברות"
+        "Profile": "הפרופיל שלי",
+        "Favorites": "המועדפים שלי",
+        "Messages": "הודעות",
+        "HomePageTitle": "דף הבית",
+        "HomePageCaption": "דף הבית",
+        "AuthPageTitle": "אימות",
+        "AuthPageCaption": "יצירת משתמש / התחברות",
+        "AboutPageTitle": "אודות",
+        "AboutPageCaption": "אודותינו",
+        "ContactPageTitle": "צור קשר",
+        "ContactPageCaption": "צור קשר",
+        "TermsPageTitle": "תנאים",
+        "TermsPageCaption": "תנאים והתניות",
+        "BlogPageTitle": "הבלוג שלנו",
+        "BlogPageCaption": "פוסטים ומאמרים",
+        "ProductsPageTitle": "מוצרים",
+        "ProductsPageCaption": "המוצרים שלנו",
+        "PrivacyPageTitle": "פרטיות",
+        "PrivacyPageCaption": "עמוד הפרטיות",
+        "ServicesPageTitle": "שירותים",
+        "ServicesPageCaption": "השירותים שלנו",
+        "SettingsPageTitle": "הגדרות",
+        "SettingsPageCaption": "הגדרות תצוגה",
+        "TranslationPageTitle": "תרגומים",
+        "TranslationPageCaption": "ניהול התרגומים שלך",
+        "GlossaryPageTitle": "מילון מונחים",
+        "GlossaryPageCaption": "עמוד המילון שלנו",
+        "MediaPageTitle": "מדיה",
+        "MediaPageCaption": "עמוד המדיה שלנו",
+        "Signin": "כניסה",
+        "Signout": "התנתקות",
+        "Register": "הרשמה",
+        "AdminPage": "עמוד מנהל"
     },
     "pages": {
         "home": {
@@ -54,6 +87,7 @@
                 "title": "Peace2074",
                 "lead": "מקום רגוע לקריאה, הרהור וזיכרון.",
                 "ctaReadQuran": "קרא קוראן",
+                "ctaHolyNames": "שמות קדושים",
                 "ctaTasbeeh": "תסביח",
                 "aiLabel": "שאל את PEACE AI",
                 "cardTitle": "הרהור יומי",
@@ -277,41 +311,6 @@
             "placeholder": "על איזה פרויקט אתה שואל?"
         }
     },
-    "navigation": {
-        "Profile": "הפרופיל שלי",
-        "Favorites": "המועדפים שלי",
-        "Messages": "הודעות",
-        "HomePageTitle": "דף הבית",
-        "HomePageCaption": "דף הבית",
-        "AuthPageTitle": "אימות",
-        "AuthPageCaption": "יצירת משתמש / התחברות",
-        "AboutPageTitle": "אודות",
-        "AboutPageCaption": "אודותינו",
-        "ContactPageTitle": "צור קשר",
-        "ContactPageCaption": "צור קשר",
-        "TermsPageTitle": "תנאים",
-        "TermsPageCaption": "תנאים והתניות",
-        "BlogPageTitle": "הבלוג שלנו",
-        "BlogPageCaption": "פוסטים ומאמרים",
-        "ProductsPageTitle": "מוצרים",
-        "ProductsPageCaption": "המוצרים שלנו",
-        "PrivacyPageTitle": "פרטיות",
-        "PrivacyPageCaption": "עמוד הפרטיות",
-        "ServicesPageTitle": "שירותים",
-        "ServicesPageCaption": "השירותים שלנו",
-        "SettingsPageTitle": "הגדרות",
-        "SettingsPageCaption": "הגדרות תצוגה",
-        "TranslationPageTitle": "תרגומים",
-        "TranslationPageCaption": "ניהול התרגומים שלך",
-        "GlossaryPageTitle": "מילון מונחים",
-        "GlossaryPageCaption": "עמוד המילון שלנו",
-        "MediaPageTitle": "מדיה",
-        "MediaPageCaption": "עמוד המדיה שלנו",
-        "Signin": "כניסה",
-        "Signout": "התנתקות",
-        "Register": "הרשמה",
-        "AdminPage": "עמוד מנהל"
-    },
     "about": {
         "title": "וואליו",
         "par10": "מנהיג רב-תחומי בעולם הדיגיטלי עם מעל לשני עשורים של הצלחה מקצועית."
@@ -349,7 +348,39 @@
     "limitation_of_liability_text": "איננו אחראים לנזקים הנגרמים עקב שימוש באתר.",
     "changes_to_terms": "שינויים בתנאים",
     "changes_to_terms_text": "ייתכן שנעדכן את התנאים בכל עת. שימוש מתמשך באתר מהווה הסכמה לתנאים המעודכנים.",
-    "auth": "אימות",
+    "auth": {
+        "username": "שם משתמש",
+        "password": "סיסמה",
+        "email": "דוא\"ל",
+        "confirmPassword": "אשר סיסמה",
+        "usernameRequired": "שם משתמש נדרש",
+        "passwordRequired": "סיסמה נדרשת",
+        "enterUsername": "הזן שם משתמש",
+        "enterPassword": "הזן סיסמה",
+        "enterEmail": "הזן דוא\"ל",
+        "enterCredentials": "אנא הזן שם משתמש וסיסמה",
+        "signIn": "התחבר",
+        "signUp": "הרשמה",
+        "rememberMe": "זכור אותי",
+        "welcomeBack": "ברוכים השבים",
+        "forgotPassword": "שכחת סיסמה?",
+        "resetPassword": "איפוס סיסמה",
+        "resetInstructions": "הזן את הדוא\"ל שלך ונשלח לך הוראות לאיפוס הסיסמה.",
+        "sendResetLink": "שלח קישור איפוס",
+        "resetEmailSent": "הוראות איפוס נשלחו לדוא\"ל שלך",
+        "resetError": "כשל בשליחת מייל איפוס",
+        "loginError": "התחברות נכשלה. נסה שוב.",
+        "dontHaveAccount": "אין לך חשבון?",
+        "alreadyHaveAccount": "כבר יש לך חשבון?",
+        "createAccount": "צור חשבון",
+        "fillAllFields": "אנא מלא את כל השדות",
+        "passwordMismatch": "הסיסמאות אינן תואמות",
+        "acceptTerms": "אנא קבל את התנאים וההגבלות",
+        "iAccept": "אני מקבל את",
+        "termsAndConditions": "התנאים וההגבלות",
+        "signupSuccess": "חשבון נוצר בהצלחה! אנא התחבר.",
+        "signupError": "ההרשמה נכשלה. נסה שוב."
+    },
     "login": "התחברות",
     "signup": "הרשמה",
     "user": "משתמש",
@@ -389,7 +420,7 @@
     "last_name": "שם משפחה",
     "username_hint": "שם משתמש",
     "email_required": "יש להזין אימייל",
-    "The 99 Holy Names of Allah": "99 שמותיו הקדושים של אללה",
+    "The 99 Holy Names of Allah": "The 99 Holy Names of Allah",
     "welcome_back": "ברוך שובך, {name}",
     "welcome_guest": "שלום אורח",
     "no_bookmarks": "אין סימניות שמורות",
@@ -426,7 +457,13 @@
         "tasbeeh": "תסביח דיגיטלי — מונה פשוט ויפה לדיכר עם מעקב אחר מפגשים והגדרות.",
         "miracles": "קראו סיפורים מעוררי השראה והרהורים על אותות וניסים.",
         "quran": "הקוראן הקדוש — קראו, נווטו וסמנו סורות עם טיפוגרפיה ערבית יפה ופריסה רספונסיבית.",
-        "privacy": "למדו כיצד אנו מגנים על הנתונים והפרטיות שלכם בזמן השימוש באתר."
+        "privacy": "למדו כיצד אנו מגנים על הנתונים והפרטיות שלכם בזמן השימוש באתר.",
+        "titles": {
+            "home": "בית",
+            "quran": "הקוראן",
+            "holynames": "שמות קדושים",
+            "tasbeeh": "תסביח"
+        }
     },
     "bookmarks": "סימנייה",
     "profile": {
@@ -440,37 +477,403 @@
         "language": "העדפת שפה",
         "theme": "ערכת צבעים"
     },
-    "auth": {
-        "username": "שם משתמש",
-        "password": "סיסמה",
-        "email": "דוא\"ל",
-        "confirmPassword": "אשר סיסמה",
-        "usernameRequired": "שם משתמש נדרש",
-        "passwordRequired": "סיסמה נדרשת",
-        "enterUsername": "הזן שם משתמש",
-        "enterPassword": "הזן סיסמה",
-        "enterEmail": "הזן דוא\"ל",
-        "enterCredentials": "אנא הזן שם משתמש וסיסמה",
-        "signIn": "התחבר",
-        "signUp": "הרשמה",
-        "rememberMe": "זכור אותי",
-        "welcomeBack": "ברוכים השבים",
-        "forgotPassword": "שכחת סיסמה?",
-        "resetPassword": "איפוס סיסמה",
-        "resetInstructions": "הזן את הדוא\"ל שלך ונשלח לך הוראות לאיפוס הסיסמה.",
-        "sendResetLink": "שלח קישור איפוס",
-        "resetEmailSent": "הוראות איפוס נשלחו לדוא\"ל שלך",
-        "resetError": "כשל בשליחת מייל איפוס",
-        "loginError": "התחברות נכשלה. נסה שוב.",
-        "dontHaveAccount": "אין לך חשבון?",
-        "alreadyHaveAccount": "כבר יש לך חשבון?",
-        "createAccount": "צור חשבון",
-        "fillAllFields": "אנא מלא את כל השדות",
-        "passwordMismatch": "הסיסמאות אינן תואמות",
-        "acceptTerms": "אנא קבל את התנאים וההגבלות",
-        "iAccept": "אני מקבל את",
-        "termsAndConditions": "התנאים וההגבלות",
-        "signupSuccess": "חשבון נוצר בהצלחה! אנא התחבר.",
-        "signupError": "ההרשמה נכשלה. נסה שוב."
-    }
+    "holyNames": {
+        "1": {
+            "transliteration": "The Most Merciful",
+            "meaning": "The Most Compassionate"
+        },
+        "2": {
+            "transliteration": "The Most Gracious",
+            "meaning": "The Bestower of Mercy"
+        },
+        "3": {
+            "transliteration": "The King",
+            "meaning": "The Sovereign Lord"
+        },
+        "4": {
+            "transliteration": "The Most Sacred",
+            "meaning": "The Pure One"
+        },
+        "5": {
+            "transliteration": "The Source of Peace",
+            "meaning": "The Flawless One"
+        },
+        "6": {
+            "transliteration": "The Inspirer of Faith",
+            "meaning": "The Infuser of Faith"
+        },
+        "7": {
+            "transliteration": "The Guardian",
+            "meaning": "The Preserver of Safety"
+        },
+        "8": {
+            "transliteration": "The Victorious",
+            "meaning": "The Mighty One"
+        },
+        "9": {
+            "transliteration": "The Compeller",
+            "meaning": "The Restorer"
+        },
+        "10": {
+            "transliteration": "The Supreme",
+            "meaning": "The Majestic One"
+        },
+        "11": {
+            "transliteration": "The Creator",
+            "meaning": "The Maker of All Things"
+        },
+        "12": {
+            "transliteration": "The Evolver",
+            "meaning": "The Fashioner"
+        },
+        "13": {
+            "transliteration": "The Fashioner",
+            "meaning": "The Shaper of Beauty"
+        },
+        "14": {
+            "transliteration": "The Forgiving",
+            "meaning": "The All-Forgiving"
+        },
+        "15": {
+            "transliteration": "The Subduer",
+            "meaning": "The All-Prevailing One"
+        },
+        "16": {
+            "transliteration": "The Bestower",
+            "meaning": "The Supreme Bestower"
+        },
+        "17": {
+            "transliteration": "The Provider",
+            "meaning": "The Sustainer"
+        },
+        "18": {
+            "transliteration": "The Opener",
+            "meaning": "The Supreme Solver"
+        },
+        "19": {
+            "transliteration": "The All-Knowing",
+            "meaning": "The Omniscient"
+        },
+        "20": {
+            "transliteration": "The Withholder",
+            "meaning": "The Restrainer"
+        },
+        "21": {
+            "transliteration": "The Extender",
+            "meaning": "The Enlarger"
+        },
+        "22": {
+            "transliteration": "The Reducer",
+            "meaning": "The Abaser"
+        },
+        "23": {
+            "transliteration": "The Exalter",
+            "meaning": "The Elevator"
+        },
+        "24": {
+            "transliteration": "The Honorer",
+            "meaning": "The Bestower of Honor"
+        },
+        "25": {
+            "transliteration": "The Humiliator",
+            "meaning": "The Dishonourer"
+        },
+        "26": {
+            "transliteration": "The All-Hearing",
+            "meaning": "The Hearer of All"
+        },
+        "27": {
+            "transliteration": "The All-Seeing",
+            "meaning": "The Seer of All"
+        },
+        "28": {
+            "transliteration": "The Judge",
+            "meaning": "The Impartial Judge"
+        },
+        "29": {
+            "transliteration": "The Just",
+            "meaning": "The Utterly Just"
+        },
+        "30": {
+            "transliteration": "The Subtle One",
+            "meaning": "The Most Gentle"
+        },
+        "31": {
+            "transliteration": "The Aware",
+            "meaning": "The All-Aware"
+        },
+        "32": {
+            "transliteration": "The Forbearing",
+            "meaning": "The Clement"
+        },
+        "33": {
+            "transliteration": "The Magnificent",
+            "meaning": "The Supreme"
+        },
+        "34": {
+            "transliteration": "The Forgiving",
+            "meaning": "The All-Forgiving"
+        },
+        "35": {
+            "transliteration": "The Appreciative",
+            "meaning": "The Most Grateful"
+        },
+        "36": {
+            "transliteration": "The Most High",
+            "meaning": "The Exalted"
+        },
+        "37": {
+            "transliteration": "The Most Great",
+            "meaning": "The Greatest"
+        },
+        "38": {
+            "transliteration": "The Preserver",
+            "meaning": "The Guardian"
+        },
+        "39": {
+            "transliteration": "The Sustainer",
+            "meaning": "The Nourisher"
+        },
+        "40": {
+            "transliteration": "The Reckoner",
+            "meaning": "The Sufficient"
+        },
+        "41": {
+            "transliteration": "The Majestic",
+            "meaning": "The Sublime One"
+        },
+        "42": {
+            "transliteration": "The Generous",
+            "meaning": "The Most Generous"
+        },
+        "43": {
+            "transliteration": "The Watchful",
+            "meaning": "The Ever-Watchful"
+        },
+        "44": {
+            "transliteration": "The Responsive",
+            "meaning": "The Answerer of Prayers"
+        },
+        "45": {
+            "transliteration": "The All-Encompassing",
+            "meaning": "The Boundless"
+        },
+        "46": {
+            "transliteration": "The Wise",
+            "meaning": "The All-Wise"
+        },
+        "47": {
+            "transliteration": "The Loving",
+            "meaning": "The Most Loving"
+        },
+        "48": {
+            "transliteration": "The Glorious",
+            "meaning": "The Most Glorious"
+        },
+        "49": {
+            "transliteration": "The Resurrector",
+            "meaning": "The Raiser of the Dead"
+        },
+        "50": {
+            "transliteration": "The Witness",
+            "meaning": "The All-Witnessing"
+        },
+        "51": {
+            "transliteration": "The Truth",
+            "meaning": "The Absolute Truth"
+        },
+        "52": {
+            "transliteration": "The Trustee",
+            "meaning": "The Disposer of Affairs"
+        },
+        "53": {
+            "transliteration": "The Strong",
+            "meaning": "The All-Strong"
+        },
+        "54": {
+            "transliteration": "The Firm",
+            "meaning": "The Steadfast"
+        },
+        "55": {
+            "transliteration": "The Friend",
+            "meaning": "The Protecting Friend"
+        },
+        "56": {
+            "transliteration": "The Praiseworthy",
+            "meaning": "The All-Praiseworthy"
+        },
+        "57": {
+            "transliteration": "The Reckoner",
+            "meaning": "The Accounter"
+        },
+        "58": {
+            "transliteration": "The Originator",
+            "meaning": "The Initiator"
+        },
+        "59": {
+            "transliteration": "The Restorer",
+            "meaning": "The Reinstater"
+        },
+        "60": {
+            "transliteration": "The Giver of Life",
+            "meaning": "The Bestower of Life"
+        },
+        "61": {
+            "transliteration": "The Destroyer",
+            "meaning": "The Bringer of Death"
+        },
+        "62": {
+            "transliteration": "The Ever-Living",
+            "meaning": "The Alive"
+        },
+        "63": {
+            "transliteration": "The Self-Subsisting",
+            "meaning": "The Sustainer of All"
+        },
+        "64": {
+            "transliteration": "The Finder",
+            "meaning": "The Perceiver"
+        },
+        "65": {
+            "transliteration": "The Noble",
+            "meaning": "The Illustrious"
+        },
+        "66": {
+            "transliteration": "The One",
+            "meaning": "The Unique"
+        },
+        "67": {
+            "transliteration": "The Indivisible",
+            "meaning": "The One and Only"
+        },
+        "68": {
+            "transliteration": "The Eternal",
+            "meaning": "The Absolute"
+        },
+        "69": {
+            "transliteration": "The Capable",
+            "meaning": "The All-Powerful"
+        },
+        "70": {
+            "transliteration": "The Omnipotent",
+            "meaning": "The Determiner"
+        },
+        "71": {
+            "transliteration": "The Expediter",
+            "meaning": "The Promoter"
+        },
+        "72": {
+            "transliteration": "The Delayer",
+            "meaning": "The Postponer"
+        },
+        "73": {
+            "transliteration": "The First",
+            "meaning": "The Beginning"
+        },
+        "74": {
+            "transliteration": "The Last",
+            "meaning": "The End"
+        },
+        "75": {
+            "transliteration": "The Manifest",
+            "meaning": "The Evident"
+        },
+        "76": {
+            "transliteration": "The Hidden",
+            "meaning": "The Concealed"
+        },
+        "77": {
+            "transliteration": "The Governor",
+            "meaning": "The Patron"
+        },
+        "78": {
+            "transliteration": "The Most Exalted",
+            "meaning": "The Supreme"
+        },
+        "79": {
+            "transliteration": "The Source of Goodness",
+            "meaning": "The Righteous"
+        },
+        "80": {
+            "transliteration": "The Acceptor of Repentance",
+            "meaning": "The Ever-Pardoning"
+        },
+        "81": {
+            "transliteration": "The Avenger",
+            "meaning": "The Retaliator"
+        },
+        "82": {
+            "transliteration": "The Pardoner",
+            "meaning": "The Supreme Pardoner"
+        },
+        "83": {
+            "transliteration": "The Compassionate",
+            "meaning": "The Most Kind"
+        },
+        "84": {
+            "transliteration": "Master of the Kingdom",
+            "meaning": "Owner of All Sovereignty"
+        },
+        "85": {
+            "transliteration": "Lord of Majesty and Generosity",
+            "meaning": "The Possessor of Glory and Honour"
+        },
+        "86": {
+            "transliteration": "The Equitable",
+            "meaning": "The Just One"
+        },
+        "87": {
+            "transliteration": "The Gatherer",
+            "meaning": "The Assembler"
+        },
+        "88": {
+            "transliteration": "The Self-Sufficient",
+            "meaning": "The Wealthy"
+        },
+        "89": {
+            "transliteration": "The Enricher",
+            "meaning": "The Bestower of Wealth"
+        },
+        "90": {
+            "transliteration": "The Preventer",
+            "meaning": "The Withholder"
+        },
+        "91": {
+            "transliteration": "The Distresser",
+            "meaning": "The Creator of Harm"
+        },
+        "92": {
+            "transliteration": "The Propitious",
+            "meaning": "The Creator of Good"
+        },
+        "93": {
+            "transliteration": "The Light",
+            "meaning": "The Illuminator"
+        },
+        "94": {
+            "transliteration": "The Guide",
+            "meaning": "The Provider of Guidance"
+        },
+        "95": {
+            "transliteration": "The Incomparable",
+            "meaning": "The Originator"
+        },
+        "96": {
+            "transliteration": "The Everlasting",
+            "meaning": "The Eternal"
+        },
+        "97": {
+            "transliteration": "The Inheritor",
+            "meaning": "The Supreme Inheritor"
+        },
+        "98": {
+            "transliteration": "The Guide",
+            "meaning": "The Righteous Teacher"
+        },
+        "99": {
+            "transliteration": "The Patient",
+            "meaning": "The Most Patient"
+        }
+    },
+    "Asma' Allah Al-Husna": "Asma' Allah Al-Husna"
 }

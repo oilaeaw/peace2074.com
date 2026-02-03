@@ -9,6 +9,7 @@ const COMPACT_KEY = "pref-compact-layout";
 const MOTION_KEY = "pref-reduce-motion";
 const AUTOPLAY_KEY = "pref-autoplay-athan";
 const NOTIFICATIONS_KEY = "pref-enable-notifications";
+const DARK_MODE_KEY = "pref-dark-mode";
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -19,6 +20,7 @@ const drawerOpenByDefault = ref(readDrawerOpenPreference());
 const compactLayout = ref(readCompactPreference());
 const reduceMotion = ref(readReduceMotionPreference());
 const autoPlayAthan = ref(readAutoplayAthanPreference());
+const darkMode = ref(readDarkModePreference());
 
 watch(navOrderingEnabled, (val) => {
   persistNavOrdering(val);
@@ -43,6 +45,11 @@ watch(reduceMotion, (val) => {
 watch(autoPlayAthan, (val) => {
   persistAutoplayPreference(val);
   broadcastAutoplayPreference(val);
+});
+
+watch(darkMode, (val) => {
+  $q.dark.set(val);
+  persistDarkModePreference(val);
 });
 
 watch(enableNotifications, async (val) => {
@@ -155,6 +162,18 @@ function readNotificationsPreference(): boolean {
 function persistNotificationsPreference(val: boolean) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(NOTIFICATIONS_KEY, String(val));
+}
+
+function readDarkModePreference(): boolean {
+  if (typeof window === "undefined") return false;
+  const stored = window.localStorage.getItem(DARK_MODE_KEY);
+  if (stored === null) return false;
+  return stored === "true";
+}
+
+function persistDarkModePreference(val: boolean) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(DARK_MODE_KEY, String(val));
 }
 
 async function ensureNotificationsPermission(): Promise<boolean> {
@@ -317,6 +336,20 @@ async function reloadApp() {
                 v-model="reduceMotion"
                 color="primary"
                 :aria-label="t('pages.settings.display.motion')"
+              />
+            </div>
+            <q-separator spaced />
+            <div class="setting-row">
+              <div>
+                <div class="text-subtitle1">{{ t("pages.settings.display.darkMode") }}</div>
+                <div class="text-caption text-grey-6">
+                  {{ t("pages.settings.display.darkModeHint") }}
+                </div>
+              </div>
+              <q-toggle
+                v-model="darkMode"
+                color="primary"
+                :aria-label="t('pages.settings.display.darkMode')"
               />
             </div>
           </q-card-section>

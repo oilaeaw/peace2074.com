@@ -1,16 +1,17 @@
 <template>
   <q-page class="home-hero q-pa-lg">
-    <div class="hero-content">
-      <div class="left">
+    <div class="hero-content-vertical">
+      <div class="top-section">
         <h1 class="title">{{ t('pages.home.hero.title') }}</h1>
         <p class="lead">{{ t('pages.home.hero.lead') }}</p>
         <div class="actions">
           <q-btn to="/quran" :label="t('pages.home.hero.ctaReadQuran')" color="primary" class="q-mr-sm" />
+          <q-btn to="/holynames" :label="t('pages.home.hero.ctaHolyNames')" color="primary" outline class="q-mr-sm" />
           <q-btn to="/tasbeeh" flat :label="t('pages.home.hero.ctaTasbeeh')" />
         </div>
       </div>
 
-      <q-card class="ai-card q-pa-md">
+      <q-card class="ai-card q-pa-md q-mt-lg">
         <div class="ai-header">
           <div>
             <p class="ai-title">{{ t('pages.home.ai.title') }}</p>
@@ -201,8 +202,16 @@ function setNextPromptExample() {
 </script>
 
 <style scoped>
-.hero-content { display:flex; gap:24px; align-items:stretch; justify-content:space-between; flex-wrap:wrap; }
-.left { max-width: 640px; flex:1 1 360px }
+.hero-content-vertical { 
+  display: flex; 
+  flex-direction: column; 
+  gap: 24px; 
+  max-width: 900px;
+  margin: 0 auto;
+}
+.top-section { 
+  text-align: center;
+}
 .title {
   font-size: 2.4rem;
   margin: 0 0 4px;

@@ -252,6 +252,7 @@ const langs = [
 const defaultNavItems = [
   { key: "home", labelKey: "appShell.nav.home", to: "/" },
   { key: "quran", labelKey: "appShell.nav.quran", to: "/quran" },
+  { key: "holynames", labelKey: "appShell.nav.holynames", to: "/holynames" },
   { key: "tasbeeh", labelKey: "appShell.nav.tasbeeh", to: "/tasbeeh" },
   { key: "chat", labelKey: "appShell.nav.chat", to: "/chat" },
   { key: "support", labelKey: "appShell.nav.support", to: "/support" },
@@ -285,12 +286,18 @@ watch(search, (q) => {
 });
 
 watch(localeValue, (v) => {
-  if (!v || locale.value === v) return;
-  locale.value = v;
+  if (!v) return;
+  
+  // Always persist to localStorage when locale changes
   if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
     try {
       window.localStorage.setItem(LOCALE_STORAGE_KEY, v);
     } catch {}
+  }
+  
+  // Update i18n locale if different
+  if (locale.value !== v) {
+    locale.value = v;
   }
 });
 

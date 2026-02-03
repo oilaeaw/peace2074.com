@@ -61,6 +61,12 @@ function setPromptExample(example: string) {
               <span class="tile-sub">Explore Surahs</span>
             </div>
           </RouterLink>
+          <RouterLink to="/holynames" class="tile">
+            <div class="tile-inner">
+              <span class="tile-title">Holy Names</span>
+              <span class="tile-sub">99 Names of Allah</span>
+            </div>
+          </RouterLink>
           <RouterLink to="/tasbeeh" class="tile">
             <div class="tile-inner">
               <span class="tile-title">Tasbeeh</span>

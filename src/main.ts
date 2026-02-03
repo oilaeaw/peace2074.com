@@ -1,4 +1,4 @@
-import { createApp, watch } from "vue";
+import { createApp, watch, nextTick } from "vue";
 import App from "./App.vue";
 import router from "@/router";
 import { initFaLibrary, FontAwesomeIcon } from "@/plugins/font-awesome";
@@ -7,7 +7,10 @@ import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
 import netlifyIdentity from 'netlify-identity-widget'
+import { useQuasar } from 'quasar'
 import '@/assets/app.scss'
+
+const isClient = typeof window !== 'undefined'
 
 const app = createApp(App);
 
@@ -17,10 +20,22 @@ app.use(pinia);
 app.use(router);
 app.use(i18n);
 
+// Register Quasar via centralized plugin
+registerQuasar(app as any);
+
+// Initialize dark mode from localStorage
+if (isClient) {
+  const $q = useQuasar()
+  const stored = window.localStorage.getItem('pref-dark-mode')
+  if (stored === 'true') {
+    $q.dark.set(true)
+  }
+}
+
 const LOCALE_STORAGE_KEY = 'app-locale'
 
 function resolveInitialLocale(): string {
-  if (typeof window === 'undefined') return 'en'
+  if (!isClient) return 'en'
   try {
     const availableLocales = Object.keys((i18n.global as any).messages || {})
     const persisted = window.localStorage?.getItem(LOCALE_STORAGE_KEY)
@@ -55,7 +70,7 @@ try {
 }
 
 function applyDirFromLocale(localeValue: string) {
-  if (typeof document === 'undefined') return
+  if (!isClient) return
   const rtl = ['ar', 'he'].includes((localeValue || '').split('-')[0].toLowerCase())
   document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr')
   document.body.setAttribute('dir', rtl ? 'rtl' : 'ltr')
@@ -101,11 +116,8 @@ try {
   /* noop */
 }
 
-// Register Quasar via centralized plugin
-registerQuasar(app as any);
-
 // Register PWA Service Worker and force-refresh clients when a new build is available
-if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
+if (isClient && 'serviceWorker' in navigator) {
   const updateSW = registerSW({
     immediate: true,
     onNeedRefresh() {
@@ -117,17 +129,32 @@ if (typeof window !== 'undefined' && 'serviceWorker' in navigator) {
   });
 }
 
-// Initialize Netlify Identity
-if (typeof window !== 'undefined') {
-  netlifyIdentity.init({
-    container: '#netlify-identity-root', // Modal will be injected here
-  })
+// Initialize Netlify Identity after DOM is ready
+if (isClient) {
+  const initNetlifyIdentity = () => {
+    netlifyIdentity.init()
+    // Modal will be injected into document.body by default
 
-  // Sync auth state with Pinia store
-  netlifyIdentity.on('init', user => {
-    if (user) {
+    // Sync auth state with Pinia store
+    netlifyIdentity.on('init', user => {
+      if (user) {
+        const authStore = (pinia as any)._s.get('auth')
+        if (authStore) {
+          authStore.setUser({
+            id: user.id,
+            email: user.email,
+            username: user.user_metadata?.full_name || user.email?.split('@')[0],
+            role: user.app_metadata?.roles?.[0] || 'user',
+            first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
+            last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
+          })
+        }
+      }
+    })
+
+    netlifyIdentity.on('login', user => {
       const authStore = (pinia as any)._s.get('auth')
-      if (authStore) {
+      if (authStore && user) {
         authStore.setUser({
           id: user.id,
           email: user.email,
@@ -137,30 +164,26 @@ if (typeof window !== 'undefined') {
           last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
         })
       }
-    }
-  })
+      netlifyIdentity.close()
+    })
 
-  netlifyIdentity.on('login', user => {
-    const authStore = (pinia as any)._s.get('auth')
-    if (authStore && user) {
-      authStore.setUser({
-        id: user.id,
-        email: user.email,
-        username: user.user_metadata?.full_name || user.email?.split('@')[0],
-        role: user.app_metadata?.roles?.[0] || 'user',
-        first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
-        last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
-      })
-    }
-    netlifyIdentity.close()
-  })
+    netlifyIdentity.on('logout', () => {
+      const authStore = (pinia as any)._s.get('auth')
+      if (authStore) {
+        authStore.logout()
+      }
+    })
+  }
 
-  netlifyIdentity.on('logout', () => {
-    const authStore = (pinia as any)._s.get('auth')
-    if (authStore) {
-      authStore.logout()
+  // Call after app mount to ensure DOM is ready
+  app.mount("#app")
+
+  // Wait for Vue to finish rendering before initializing Netlify Identity
+  nextTick(() => {
+    if (initNetlifyIdentity) {
+      initNetlifyIdentity()
     }
   })
+} else {
+  app.mount("#app")
 }
-
-app.mount("#app");
