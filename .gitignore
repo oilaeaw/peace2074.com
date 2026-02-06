@@ -20,6 +20,7 @@ dist-ssr
 *.njsproj
 *.sln
 apps/nitro-api/.nitro/
+apps/nitro-api/.output/
 *.sw?
 /pnpm-lock.yaml.bak
 
