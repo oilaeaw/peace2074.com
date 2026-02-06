@@ -52,6 +52,9 @@ npm run build     # Production build
 npm run generate  # Netlify-optimized build
 ```
 
+### Email Setup
+Setting up email for your custom domain? See our comprehensive [Email Setup Guide](./EMAIL_SETUP.md) for step-by-step instructions on configuring email with your peace2074.com domain.
+
 ## 🌟 Why No Vercel?
 Vercel pricing is extremely expensive for our needs. Netlify provides:
 - More generous free tier
