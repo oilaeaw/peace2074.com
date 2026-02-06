@@ -1,5 +1,6 @@
-import { d as defineEventHandler, u as useRuntimeConfig, c as createError, r as readBody, h as setResponseStatus } from '../nitro/nitro.mjs';
+import { d as defineEventHandler, c as createError, r as readBody, f as setResponseStatus, u as useRuntimeConfig } from '../nitro/nitro.mjs';
 import OpenAI from 'openai';
+import { a as applyCors } from '../_/cors.mjs';
 import 'node:http';
 import 'node:https';
 import 'node:events';
@@ -11,6 +12,7 @@ import 'node:crypto';
 const DEFAULT_MODEL = "deepseek-chat";
 const deepseek_post = defineEventHandler(async (event) => {
   var _a, _b, _c, _d, _e;
+  applyCors(event);
   const config = useRuntimeConfig();
   const apiKey = config.deepseekApiKey || config.deepSeekApi || process.env.DEEPSEEK_API_KEY || process.env.NITRO_DEEPSEEK_API_KEY || process.env.deepSeekApi;
   if (!apiKey || String(apiKey).trim() === "") {
@@ -23,12 +25,12 @@ const deepseek_post = defineEventHandler(async (event) => {
   if (!baseURL) {
     throw createError({
       statusCode: 500,
-      statusMessage: "DeepSeek base URL missing. Set DEEPSEEK_BASE_URL (or NITRO_DEEPSEEK_BASE_URL) in the environment."
+      message: "DEEPSEEK_BASE_URL environment variable is required"
     });
   }
   const client = new OpenAI({
     apiKey: String(apiKey).trim(),
-    baseURL: baseURL || DEFAULT_BASE_URL
+    baseURL: String(baseURL).trim()
   });
   const body = await readBody(event) || {};
   if (!Array.isArray(body.messages) || body.messages.length === 0) {

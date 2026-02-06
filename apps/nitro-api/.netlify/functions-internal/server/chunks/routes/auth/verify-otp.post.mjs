@@ -1,5 +1,5 @@
 import { d as defineEventHandler, r as readBody, c as createError } from '../../nitro/nitro.mjs';
-import { r as requireSecrets, c as createSession } from '../../_/auth.mjs';
+import { b as requireSecrets, c as createSession } from '../../_/auth.mjs';
 import { a as applyCors } from '../../_/cors.mjs';
 import { otpStore } from './request-otp.post.mjs';
 import 'node:http';

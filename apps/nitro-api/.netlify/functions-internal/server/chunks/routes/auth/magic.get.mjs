@@ -1,5 +1,5 @@
 import { d as defineEventHandler, g as getQuery, c as createError, s as sendRedirect } from '../../nitro/nitro.mjs';
-import { r as requireSecrets, c as createSession } from '../../_/auth.mjs';
+import { b as requireSecrets, c as createSession } from '../../_/auth.mjs';
 import { a as applyCors } from '../../_/cors.mjs';
 import { cleanExpiredLinks, pendingLinks } from './magic.store.mjs';
 import 'node:http';

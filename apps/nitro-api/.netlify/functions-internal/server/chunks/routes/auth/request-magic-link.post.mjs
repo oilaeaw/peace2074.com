@@ -1,6 +1,6 @@
 import { d as defineEventHandler, r as readBody } from '../../nitro/nitro.mjs';
 import { randomBytes } from 'node:crypto';
-import { r as requireSecrets } from '../../_/auth.mjs';
+import { b as requireSecrets } from '../../_/auth.mjs';
 import { a as applyCors } from '../../_/cors.mjs';
 import { pendingLinks } from './magic.store.mjs';
 import 'node:http';

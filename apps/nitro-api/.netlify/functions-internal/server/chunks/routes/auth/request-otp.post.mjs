@@ -1,7 +1,7 @@
 import { d as defineEventHandler, r as readBody } from '../../nitro/nitro.mjs';
 import { randomInt } from 'node:crypto';
 import nodemailer from 'nodemailer';
-import { r as requireSecrets } from '../../_/auth.mjs';
+import { b as requireSecrets } from '../../_/auth.mjs';
 import { a as applyCors } from '../../_/cors.mjs';
 import 'node:http';
 import 'node:https';

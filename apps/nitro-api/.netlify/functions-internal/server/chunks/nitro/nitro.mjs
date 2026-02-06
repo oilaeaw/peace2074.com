@@ -189,7 +189,10 @@ function withBase(input, base) {
   }
   const _base = withoutTrailingSlash(base);
   if (input.startsWith(_base)) {
-    return input;
+    const nextChar = input[_base.length];
+    if (!nextChar || nextChar === "/" || nextChar === "?") {
+      return input;
+    }
   }
   return joinURL(_base, input);
 }
@@ -199,6 +202,10 @@ function withoutBase(input, base) {
   }
   const _base = withoutTrailingSlash(base);
   if (!input.startsWith(_base)) {
+    return input;
+  }
+  const nextChar = input[_base.length];
+  if (nextChar && nextChar !== "/" && nextChar !== "?") {
     return input;
   }
   const trimmed = input.slice(_base.length);
@@ -1020,7 +1027,9 @@ function readRawBody(event, encoding = "utf8") {
     });
     return encoding ? promise2.then((buff) => buff.toString(encoding)) : promise2;
   }
-  if (!Number.parseInt(event.node.req.headers["content-length"] || "") && !String(event.node.req.headers["transfer-encoding"] ?? "").split(",").map((e) => e.trim()).filter(Boolean).includes("chunked")) {
+  if (!Number.parseInt(event.node.req.headers["content-length"] || "") && !/\bchunked\b/i.test(
+    String(event.node.req.headers["transfer-encoding"] ?? "")
+  )) {
     return Promise.resolve(void 0);
   }
   const promise = event.node.req[RawBodySymbol] = new Promise(
@@ -4609,7 +4618,7 @@ const plugins = [
   
 ];
 
-const _7w7Lp0 = defineEventHandler((event) => {
+const _NnoSNu = defineEventHandler((event) => {
   const allowedOrigins = [
     "http://localhost:4000",
     "http://127.0.0.1:4000",
@@ -4640,7 +4649,7 @@ const _7w7Lp0 = defineEventHandler((event) => {
   }
 });
 
-const _tLuoVe = defineEventHandler((event) => {
+const _XX2qga = defineEventHandler((event) => {
   if (event.node.req.method !== "OPTIONS") return;
   const origin = event.node.req.headers.origin || "*";
   setHeader(event, "Access-Control-Allow-Origin", origin);
@@ -4652,54 +4661,68 @@ const _tLuoVe = defineEventHandler((event) => {
   event.node.res.end();
 });
 
-const _lazy_1pCI3T = () => import('../routes/auth/login.post.mjs');
-const _lazy_Lsj2Pf = () => import('../routes/auth/logout.options.mjs');
-const _lazy_1Vi1kz = () => import('../routes/auth/logout.post.mjs');
-const _lazy_5RaenN = () => import('../routes/auth/magic.get.mjs');
-const _lazy_j2oYya = () => import('../routes/auth/magic.store.mjs');
-const _lazy_XUhNIs = () => import('../routes/auth/me.get.mjs');
-const _lazy_mnJXhP = () => import('../routes/auth/me.options.mjs');
-const _lazy_HBWfP0 = () => import('../routes/auth/request-magic-link.options.mjs');
-const _lazy_4SVtGL = () => import('../routes/auth/request-magic-link.post.mjs');
-const _lazy_7_nBye = () => import('../routes/auth/request-otp.options.mjs');
-const _lazy_3qhQBU = () => import('../routes/auth/request-otp.post.mjs');
-const _lazy__agzLO = () => import('../routes/auth/verify-otp.options.mjs');
-const _lazy_qtFEEw = () => import('../routes/auth/verify-otp.post.mjs');
-const _lazy_iTt1Jp = () => import('../routes/contact.post.mjs');
-const _lazy_AYuhth = () => import('../routes/deepseek.post.mjs');
-const _lazy_j3OHHf = () => import('../routes/health.mjs');
-const _lazy_fwjwYf = () => import('../routes/index.get.mjs');
-const _lazy_2gkxU4 = () => import('../routes/index.mjs');
-const _lazy_gRX9g3 = () => import('../routes/quran.mjs');
-const _lazy_FCksRZ = () => import('../routes/quran/_id_.mjs');
-const _lazy_f00WoM = () => import('../routes/search.get.mjs');
-const _lazy_TUa9lo = () => import('../routes/webhooks/netlify-form.post.mjs');
+const _lazy_xyy1Fe = () => import('../routes/auth/change-password.options.mjs');
+const _lazy_tlw11Y = () => import('../routes/auth/change-password.post.mjs');
+const _lazy_UK7UkA = () => import('../routes/auth/github/authorize.get.mjs');
+const _lazy_CcW4J3 = () => import('../routes/auth/github/callback.get.mjs');
+const _lazy_QJhLBC = () => import('../routes/auth/login.post.mjs');
+const _lazy_ayIasq = () => import('../routes/auth/logout.options.mjs');
+const _lazy_MYAVLA = () => import('../routes/auth/logout.post.mjs');
+const _lazy_4QOuJo = () => import('../routes/auth/magic.get.mjs');
+const _lazy_GLyZpA = () => import('../routes/auth/magic.store.mjs');
+const _lazy_FxsO0r = () => import('../routes/auth/me.get.mjs');
+const _lazy_kTJ30l = () => import('../routes/auth/me.options.mjs');
+const _lazy_2JxNXy = () => import('../routes/auth/request-magic-link.options.mjs');
+const _lazy_0UBHwY = () => import('../routes/auth/request-magic-link.post.mjs');
+const _lazy_Y6fAdX = () => import('../routes/auth/request-otp.options.mjs');
+const _lazy_8kPsJ8 = () => import('../routes/auth/request-otp.post.mjs');
+const _lazy_9SKvT2 = () => import('../routes/auth/signup.options.mjs');
+const _lazy_tXYzKk = () => import('../routes/auth/signup.post.mjs');
+const _lazy_MVZZBO = () => import('../routes/auth/verify-otp.options.mjs');
+const _lazy_ab2lj_ = () => import('../routes/auth/verify-otp.post.mjs');
+const _lazy_Dl_VqR = () => import('../routes/contact.post.mjs');
+const _lazy_tOmOc1 = () => import('../routes/deepseek.options.mjs');
+const _lazy_VwswHV = () => import('../routes/deepseek.post.mjs');
+const _lazy_KTV8Uc = () => import('../routes/health.mjs');
+const _lazy_44o8NO = () => import('../routes/index.get.mjs');
+const _lazy_ObQw3y = () => import('../routes/index.mjs');
+const _lazy_DmbzTE = () => import('../routes/quran.mjs');
+const _lazy_fGIZZj = () => import('../routes/quran/_id_.mjs');
+const _lazy_7ljqhy = () => import('../routes/search.get.mjs');
+const _lazy_ceyz_5 = () => import('../routes/webhooks/netlify-form.post.mjs');
 
 const handlers = [
-  { route: '', handler: _7w7Lp0, lazy: false, middleware: true, method: undefined },
-  { route: '', handler: _tLuoVe, lazy: false, middleware: true, method: undefined },
-  { route: '/auth/login', handler: _lazy_1pCI3T, lazy: true, middleware: false, method: "post" },
-  { route: '/auth/logout', handler: _lazy_Lsj2Pf, lazy: true, middleware: false, method: "options" },
-  { route: '/auth/logout', handler: _lazy_1Vi1kz, lazy: true, middleware: false, method: "post" },
-  { route: '/auth/magic', handler: _lazy_5RaenN, lazy: true, middleware: false, method: "get" },
-  { route: '/auth/magic.store', handler: _lazy_j2oYya, lazy: true, middleware: false, method: undefined },
-  { route: '/auth/me', handler: _lazy_XUhNIs, lazy: true, middleware: false, method: "get" },
-  { route: '/auth/me', handler: _lazy_mnJXhP, lazy: true, middleware: false, method: "options" },
-  { route: '/auth/request-magic-link', handler: _lazy_HBWfP0, lazy: true, middleware: false, method: "options" },
-  { route: '/auth/request-magic-link', handler: _lazy_4SVtGL, lazy: true, middleware: false, method: "post" },
-  { route: '/auth/request-otp', handler: _lazy_7_nBye, lazy: true, middleware: false, method: "options" },
-  { route: '/auth/request-otp', handler: _lazy_3qhQBU, lazy: true, middleware: false, method: "post" },
-  { route: '/auth/verify-otp', handler: _lazy__agzLO, lazy: true, middleware: false, method: "options" },
-  { route: '/auth/verify-otp', handler: _lazy_qtFEEw, lazy: true, middleware: false, method: "post" },
-  { route: '/contact', handler: _lazy_iTt1Jp, lazy: true, middleware: false, method: "post" },
-  { route: '/deepseek', handler: _lazy_AYuhth, lazy: true, middleware: false, method: "post" },
-  { route: '/health', handler: _lazy_j3OHHf, lazy: true, middleware: false, method: undefined },
-  { route: '/', handler: _lazy_fwjwYf, lazy: true, middleware: false, method: "get" },
-  { route: '/', handler: _lazy_2gkxU4, lazy: true, middleware: false, method: undefined },
-  { route: '/quran', handler: _lazy_gRX9g3, lazy: true, middleware: false, method: undefined },
-  { route: '/quran/:id', handler: _lazy_FCksRZ, lazy: true, middleware: false, method: undefined },
-  { route: '/search', handler: _lazy_f00WoM, lazy: true, middleware: false, method: "get" },
-  { route: '/webhooks/netlify-form', handler: _lazy_TUa9lo, lazy: true, middleware: false, method: "post" }
+  { route: '', handler: _NnoSNu, lazy: false, middleware: true, method: undefined },
+  { route: '', handler: _XX2qga, lazy: false, middleware: true, method: undefined },
+  { route: '/auth/change-password', handler: _lazy_xyy1Fe, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/change-password', handler: _lazy_tlw11Y, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/github/authorize', handler: _lazy_UK7UkA, lazy: true, middleware: false, method: "get" },
+  { route: '/auth/github/callback', handler: _lazy_CcW4J3, lazy: true, middleware: false, method: "get" },
+  { route: '/auth/login', handler: _lazy_QJhLBC, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/logout', handler: _lazy_ayIasq, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/logout', handler: _lazy_MYAVLA, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/magic', handler: _lazy_4QOuJo, lazy: true, middleware: false, method: "get" },
+  { route: '/auth/magic.store', handler: _lazy_GLyZpA, lazy: true, middleware: false, method: undefined },
+  { route: '/auth/me', handler: _lazy_FxsO0r, lazy: true, middleware: false, method: "get" },
+  { route: '/auth/me', handler: _lazy_kTJ30l, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/request-magic-link', handler: _lazy_2JxNXy, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/request-magic-link', handler: _lazy_0UBHwY, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/request-otp', handler: _lazy_Y6fAdX, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/request-otp', handler: _lazy_8kPsJ8, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/signup', handler: _lazy_9SKvT2, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/signup', handler: _lazy_tXYzKk, lazy: true, middleware: false, method: "post" },
+  { route: '/auth/verify-otp', handler: _lazy_MVZZBO, lazy: true, middleware: false, method: "options" },
+  { route: '/auth/verify-otp', handler: _lazy_ab2lj_, lazy: true, middleware: false, method: "post" },
+  { route: '/contact', handler: _lazy_Dl_VqR, lazy: true, middleware: false, method: "post" },
+  { route: '/deepseek', handler: _lazy_tOmOc1, lazy: true, middleware: false, method: "options" },
+  { route: '/deepseek', handler: _lazy_VwswHV, lazy: true, middleware: false, method: "post" },
+  { route: '/health', handler: _lazy_KTV8Uc, lazy: true, middleware: false, method: undefined },
+  { route: '/', handler: _lazy_44o8NO, lazy: true, middleware: false, method: "get" },
+  { route: '/', handler: _lazy_ObQw3y, lazy: true, middleware: false, method: undefined },
+  { route: '/quran', handler: _lazy_DmbzTE, lazy: true, middleware: false, method: undefined },
+  { route: '/quran/:id', handler: _lazy_fGIZZj, lazy: true, middleware: false, method: undefined },
+  { route: '/search', handler: _lazy_7ljqhy, lazy: true, middleware: false, method: "get" },
+  { route: '/webhooks/netlify-form', handler: _lazy_ceyz_5, lazy: true, middleware: false, method: "post" }
 ];
 
 function createNitroApp() {
@@ -4889,5 +4912,5 @@ function getCacheHeaders(url) {
   return {};
 }
 
-export { setCookie as a, deleteCookie as b, createError$1 as c, defineEventHandler as d, getCookie as e, setHeader as f, getQuery as g, setResponseStatus as h, getRouterParam as i, readRawBody as j, handler as k, readBody as r, sendRedirect as s, useRuntimeConfig as u };
+export { getCookie as a, setCookie as b, createError$1 as c, defineEventHandler as d, deleteCookie as e, setResponseStatus as f, getQuery as g, setHeader as h, getRouterParam as i, readRawBody as j, handler as k, readBody as r, sendRedirect as s, useRuntimeConfig as u };
 //# sourceMappingURL=nitro.mjs.map

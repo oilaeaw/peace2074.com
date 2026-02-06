@@ -1,4 +1,4 @@
-import { c as createError, a as setCookie, b as deleteCookie, e as getCookie, u as useRuntimeConfig } from '../nitro/nitro.mjs';
+import { a as getCookie, b as setCookie, e as deleteCookie, c as createError, u as useRuntimeConfig } from '../nitro/nitro.mjs';
 import crypto from 'node:crypto';
 
 const COOKIE_NAME = "waelio_session";
@@ -62,5 +62,5 @@ function readSession(event) {
   return verify(token, secret);
 }
 
-export { clearSessionCookie as a, readSession as b, createSession as c, requireSecrets as r };
+export { clearSessionCookie as a, requireSecrets as b, createSession as c, readSession as r };
 //# sourceMappingURL=auth.mjs.map

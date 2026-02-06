@@ -1,4 +1,4 @@
-import { f as setHeader } from '../nitro/nitro.mjs';
+import { h as setHeader } from '../nitro/nitro.mjs';
 
 function applyCors(event) {
   const origin = event.node.req.headers.origin || "*";
