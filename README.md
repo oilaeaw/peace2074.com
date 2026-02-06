@@ -23,6 +23,12 @@ This template should help get you started developing with Vue 3 and TypeScript i
 - `pnpm typecheck`
 - `pnpm check:locales` — ensures all locale files stay in sync
 
+## Deployment to Netlify
+
+This project is configured for deployment to Netlify. See:
+- [NETLIFY_ENV.md](./NETLIFY_ENV.md) for environment variable setup
+- [DISABLE_LEGACY_PRERENDERING.md](./DISABLE_LEGACY_PRERENDERING.md) for instructions on disabling legacy prerendering (required action)
+
 ## DeepSeek integration
 
 The Nitro API now exposes `POST /deepseek`, which proxies chat-completion requests to DeepSeek via the OpenAI SDK.
