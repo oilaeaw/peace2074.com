@@ -1,11 +1,16 @@
 import { defineNitroConfig } from "nitropack";
 
 const DEFAULT_PORT = 3000;
+// NETLIFY_BUILD is set during Netlify build command
+const isNetlifyBuild = process.env.NETLIFY_BUILD === 'true';
 
 export default defineNitroConfig({
     compatibilityDate: "2024-10-01",
     srcDir: "server",
     preset: "netlify",
+    // In production (Netlify), routes are prefixed with /api via redirects
+    // In dev, Vite proxy strips /api prefix before forwarding
+    baseURL: isNetlifyBuild ? '/api' : '/',
     devServer: {
         port: DEFAULT_PORT,
         host: "0.0.0.0",

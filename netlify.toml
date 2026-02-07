@@ -3,17 +3,17 @@
 # No prerendering or SSR required - pure client-side rendering
 
 [build]
-  command = "pnpm install -r && pnpm build && pnpm --filter nitro-api build && mkdir -p .netlify/functions && cp -r apps/nitro-api/.netlify/functions-internal/server .netlify/functions/"
+  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && mkdir -p .netlify && cp -r apps/nitro-api/.netlify/functions-internal .netlify/"
   publish = "dist"
 
 # Note: Legacy prerendering must be disabled in Netlify dashboard
 # See DISABLE_LEGACY_PRERENDERING.md for instructions
 
 # API routes should be handled by Nitro's "server" function
-# /api/auth/login -> function receives /auth/login
+# Nitro's baseURL config handles the /api prefix
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/server/:splat"
+  to = "/.netlify/functions/server"
   status = 200
   force = true
 
