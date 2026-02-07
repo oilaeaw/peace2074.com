@@ -263,7 +263,7 @@ async function loadSuraById(id: number) {
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
-    // Load both audio and word timings from single unified API
+    // Load audio from alquran.cloud (per-verse) and timings from qurancdn (word segments)
     await loadAudioAndTimings(id)
     await nextTick()
     await scrollToHash(route.hash)
@@ -276,83 +276,66 @@ async function loadSuraById(id: number) {
 }
 
 /**
- * Load audio URLs and word timings from a single unified API.
- * Uses qurancdn.com which provides synchronized Al-Afasy audio + word segments.
+ * Load audio URLs from alquran.cloud (per-verse Al-Afasy) 
+ * and word timings from qurancdn.com (synchronized with audio).
+ * Timings are adjusted to be relative to each verse's start time.
  */
 async function loadAudioAndTimings(id: number) {
   audioList.value = []
   wordTimings.value = {}
   currentAyahIndex.value = -1
   
-  const AUDIO_BASE_URL = 'https://verses.quran.com/'
-  
+  // Load per-verse audio from alquran.cloud (Al-Afasy recitation)
   try {
-    // Use qurancdn API which returns both audio URLs and word segments in sync
-    const res = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/7/audio_files?chapter=${id}&segments=true`)
-    if (!res.ok) {
-      // Fallback to old API if qurancdn fails
-      await loadAudioListFallback(id)
-      return
+    const audioRes = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
+    if (audioRes.ok) {
+      const audioJson = await audioRes.json()
+      const ayahs = audioJson?.data?.ayahs || []
+      audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
     }
-    
-    const json = await res.json()
-    const files = json?.audio_files || []
-    
-    // Sort by verse number to ensure correct order
-    files.sort((a: any, b: any) => {
-      const [, aVerse] = (a.verse_key || '').split(':').map(Number)
-      const [, bVerse] = (b.verse_key || '').split(':').map(Number)
-      return aVerse - bVerse
-    })
-    
-    files.forEach((file: any) => {
-      const verseKey: string = file?.verse_key || ''
-      const [suraId, ayahId] = verseKey.split(':').map((n: string) => Number(n))
-      if (!suraId || !ayahId) return
-      
-      // Build full audio URL from relative path
-      // The API returns paths like "Alafasy/mp3/001001.mp3"
-      const audioUrl = file.url ? `${AUDIO_BASE_URL}${file.url}` : null
-      if (audioUrl) {
-        audioList.value[ayahId - 1] = audioUrl
-      }
-      
-      // Extract word timings from segments
-      // Segments format: [[wordIndex, startMs, endMs], ...]
-      const segments: number[][] = file?.segments || []
-      if (segments.length > 0) {
-        const timings = segments.map((seg) => {
-          const start = (seg?.[1] ?? 0) / 1000
-          const end = (seg?.[2] ?? 0) / 1000
-          return { start, end }
-        })
-        wordTimings.value[ayahId - 1] = timings
-      }
-    })
-    
-    // Filter out any undefined entries
-    audioList.value = audioList.value.filter(Boolean)
-    
-    console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
   } catch (err) {
-    console.error('[Quran Audio] Failed to load from qurancdn, trying fallback:', err)
-    await loadAudioListFallback(id)
+    console.warn('[Quran Audio] Failed to load audio from alquran.cloud:', err)
   }
-}
-
-/**
- * Fallback audio loader using alquran.cloud API (no word timings)
- */
-async function loadAudioListFallback(id: number) {
+  
+  // Load word timings from qurancdn (has verse_timings with segments)
   try {
-    const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
-    if (!res.ok) return
-    const json = await res.json()
-    const ayahs = json?.data?.ayahs || []
-    audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
-  } catch {
-    // silent fallback; list stays empty
+    const timingRes = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/7/audio_files?chapter=${id}&segments=true`)
+    if (timingRes.ok) {
+      const timingJson = await timingRes.json()
+      const audioFile = timingJson?.audio_files?.[0]
+      const verseTimings = audioFile?.verse_timings || []
+      
+      verseTimings.forEach((verseTiming: any) => {
+        const verseKey: string = verseTiming?.verse_key || ''
+        const [, ayahId] = verseKey.split(':').map((n: string) => Number(n))
+        if (!ayahId) return
+        
+        // Get the verse's start time within the full chapter audio
+        const verseStartMs = verseTiming?.timestamp_from ?? 0
+        
+        // Extract word timings and adjust to be relative to verse start
+        // Segments format: [[wordIndex, startMs, endMs], ...]
+        const segments: number[][] = verseTiming?.segments || []
+        if (segments.length > 0) {
+          const timings = segments
+            .filter((seg: number[]) => seg.length >= 3) // Ensure valid segment
+            .map((seg: number[]) => {
+              // Subtract verse start time to make timing relative to per-verse audio
+              const start = Math.max(0, ((seg[1] ?? 0) - verseStartMs)) / 1000
+              const end = Math.max(0, ((seg[2] ?? 0) - verseStartMs)) / 1000
+              return { start, end }
+            })
+          if (timings.length > 0) {
+            wordTimings.value[ayahId - 1] = timings
+          }
+        }
+      })
+    }
+  } catch (err) {
+    console.warn('[Quran Audio] Failed to load word timings from qurancdn:', err)
   }
+  
+  console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
 }
 
 function preloadNextAyah(index: number) {
@@ -794,13 +777,9 @@ watch(layoutMode, (mode) => {
           >
             <div class="arabic-text">
               <template v-if="wordTimings[a.verse - 1]?.length">
-                <span
-                  v-for="(word, wIdx) in a.text.split(' ')"
-                  :key="`${a.verse}-${wIdx}`"
-                  :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }"
-                >
-                  {{ word }}
-                </span>
+                <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
+                  <span :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                </template>
               </template>
               <template v-else>
                 {{ a.text }}
