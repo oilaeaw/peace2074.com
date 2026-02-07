@@ -23,10 +23,8 @@ export default defineEventHandler(async (event) => {
     // For POST requests, store the data in user record
     if (event.method === 'POST') {
         if (!session) {
-            throw createError({
-                statusCode: 401,
-                statusMessage: 'Authentication required to sync tasbeeh data',
-            })
+            // Silently ignore unauthenticated POST - client should check auth first
+            return { ok: false, message: 'Not authenticated - data not saved' }
         }
 
         const body = await readBody(event)

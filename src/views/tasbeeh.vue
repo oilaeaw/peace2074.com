@@ -5,9 +5,11 @@ import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 import { useAthanPlayer } from "@/composables/useAthanPlayer";
 import useCore from "~/composables/useCore";
+import { useAuthStore } from "@/stores/auth.pinia";
 const { t } = useI18n();
 const router = useRouter();
 const $q = useQuasar();
+const authStore = useAuthStore();
 
 // Athan audio controls (shared across app)
 const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer();
@@ -182,6 +184,10 @@ function updateTodayStats() {
 }
 
 async function sendStatsToServer(payload: any) {
+  // Only sync to server if user is authenticated
+  if (!authStore.isAuthenticated) {
+    return;
+  }
   try {
     await fetch("/api/tasbeeh", {
       method: "POST",
