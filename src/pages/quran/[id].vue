@@ -263,8 +263,8 @@ async function loadSuraById(id: number) {
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
-    await loadAudioList(id)
-    await loadWordTimings(id)
+    // Load both audio and word timings from single unified API
+    await loadAudioAndTimings(id)
     await nextTick()
     await scrollToHash(route.hash)
   } catch (e: any) {
@@ -275,33 +275,75 @@ async function loadSuraById(id: number) {
   }
 }
 
-async function loadWordTimings(id: number) {
+/**
+ * Load audio URLs and word timings from a single unified API.
+ * Uses qurancdn.com which provides synchronized Al-Afasy audio + word segments.
+ */
+async function loadAudioAndTimings(id: number) {
+  audioList.value = []
   wordTimings.value = {}
+  currentAyahIndex.value = -1
+  
+  const AUDIO_BASE_URL = 'https://verses.quran.com/'
+  
   try {
-    const res = await fetch(`https://api.quran.com/api/v4/recitations/7/by_chapter/${id}?segments=true`)
-    if (!res.ok) return
+    // Use qurancdn API which returns both audio URLs and word segments in sync
+    const res = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/7/audio_files?chapter=${id}&segments=true`)
+    if (!res.ok) {
+      // Fallback to old API if qurancdn fails
+      await loadAudioListFallback(id)
+      return
+    }
+    
     const json = await res.json()
     const files = json?.audio_files || []
+    
+    // Sort by verse number to ensure correct order
+    files.sort((a: any, b: any) => {
+      const [, aVerse] = (a.verse_key || '').split(':').map(Number)
+      const [, bVerse] = (b.verse_key || '').split(':').map(Number)
+      return aVerse - bVerse
+    })
+    
     files.forEach((file: any) => {
       const verseKey: string = file?.verse_key || ''
-      const segments: number[][] = file?.segments || []
       const [suraId, ayahId] = verseKey.split(':').map((n: string) => Number(n))
       if (!suraId || !ayahId) return
-      const timings = segments.map((seg) => {
-        const start = (seg?.[1] ?? 0) / 1000
-        const end = (seg?.[2] ?? 0) / 1000
-        return { start, end }
-      })
-      if (!wordTimings.value[ayahId - 1]) wordTimings.value[ayahId - 1] = timings
+      
+      // Build full audio URL from relative path
+      // The API returns paths like "Alafasy/mp3/001001.mp3"
+      const audioUrl = file.url ? `${AUDIO_BASE_URL}${file.url}` : null
+      if (audioUrl) {
+        audioList.value[ayahId - 1] = audioUrl
+      }
+      
+      // Extract word timings from segments
+      // Segments format: [[wordIndex, startMs, endMs], ...]
+      const segments: number[][] = file?.segments || []
+      if (segments.length > 0) {
+        const timings = segments.map((seg) => {
+          const start = (seg?.[1] ?? 0) / 1000
+          const end = (seg?.[2] ?? 0) / 1000
+          return { start, end }
+        })
+        wordTimings.value[ayahId - 1] = timings
+      }
     })
-  } catch {
-    // silent fallback
+    
+    // Filter out any undefined entries
+    audioList.value = audioList.value.filter(Boolean)
+    
+    console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
+  } catch (err) {
+    console.error('[Quran Audio] Failed to load from qurancdn, trying fallback:', err)
+    await loadAudioListFallback(id)
   }
 }
 
-async function loadAudioList(id: number) {
-  audioList.value = []
-  currentAyahIndex.value = -1
+/**
+ * Fallback audio loader using alquran.cloud API (no word timings)
+ */
+async function loadAudioListFallback(id: number) {
   try {
     const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
     if (!res.ok) return
