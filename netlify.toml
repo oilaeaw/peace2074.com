@@ -3,13 +3,20 @@
 # No prerendering or SSR required - pure client-side rendering
 
 [build]
-  # Install Deno, ensure it's on PATH for the rest of the build, then run the Deno "build" task
-  command = "bash -lc 'curl -fsSL https://deno.land/install.sh | sh && export PATH=\"$HOME/.deno/bin:$PATH\" && deno --version && deno task build'"
+  command = "pnpm install && pnpm build && pnpm --filter nitro-api build"
   publish = "dist"
+  functions = "apps/nitro-api/.output/server"
 
 # Note: Legacy prerendering must be disabled in Netlify dashboard
 # See DISABLE_LEGACY_PRERENDERING.md for instructions
 
+# API routes should be handled by Nitro functions
+[[redirects]]
+  from = "/api/*"
+  to = "/.netlify/functions/:splat"
+  status = 200
+
+# SPA fallback for all other routes
 [[redirects]]
   from = "/*"
   to = "/index.html"

@@ -22,7 +22,25 @@ const sendingReset = ref(false)
 // Compute Nitro API base URL
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
-const NITRO_BASE = env.VITE_NITRO_BASE || `http://localhost:${DEFAULT_NITRO_PORT}`
+
+function computeNitroBase() {
+  const configured = env.VITE_NITRO_BASE
+  if (configured && typeof configured === 'string') {
+    return configured.replace(/\/$/, '')
+  }
+
+  if (typeof window !== 'undefined') {
+    const { protocol, hostname } = window.location
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`
+    }
+    // Production: use same-origin (relative) to avoid CORS
+    return ''
+  }
+  return ''
+}
+
+const NITRO_BASE = computeNitroBase()
 
 function handleGitHubLogin() {
   // Redirect to GitHub OAuth authorize endpoint
