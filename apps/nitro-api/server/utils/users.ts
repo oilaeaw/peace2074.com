@@ -7,6 +7,12 @@ export interface TasbeehRecord {
     sessions: number
 }
 
+export interface Bookmark {
+    _id: string
+    bookmark: string
+    createdAt: string
+}
+
 export interface User {
     id: string
     username: string
@@ -16,6 +22,7 @@ export interface User {
     first_name?: string
     last_name?: string
     tasbeeh?: TasbeehRecord[]
+    bookmarks?: Bookmark[]
 }
 
 export const MOCK_USERS: User[] = [
@@ -81,5 +88,54 @@ export function updateUserTasbeeh(userId: string, record: TasbeehRecord): boolea
         user.tasbeeh = user.tasbeeh.slice(-30)
     }
 
+    return true
+}
+
+// Bookmark functions
+export function getUserBookmarks(userId: string): Bookmark[] {
+    const user = findUserById(userId)
+    return user?.bookmarks || []
+}
+
+export function createUserBookmark(userId: string, bookmark: string): Bookmark | null {
+    const user = findUserById(userId)
+    if (!user) return null
+
+    if (!user.bookmarks) {
+        user.bookmarks = []
+    }
+
+    // Check if bookmark already exists
+    const existing = user.bookmarks.find(b => b.bookmark === bookmark)
+    if (existing) return existing
+
+    const newBookmark: Bookmark = {
+        _id: `bm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
+        bookmark,
+        createdAt: new Date().toISOString(),
+    }
+    user.bookmarks.push(newBookmark)
+    return newBookmark
+}
+
+export function updateUserBookmark(userId: string, bookmarkId: string, newBookmark: string): Bookmark | null {
+    const user = findUserById(userId)
+    if (!user || !user.bookmarks) return null
+
+    const bm = user.bookmarks.find(b => b._id === bookmarkId)
+    if (!bm) return null
+
+    bm.bookmark = newBookmark
+    return bm
+}
+
+export function deleteUserBookmark(userId: string, bookmarkId: string): boolean {
+    const user = findUserById(userId)
+    if (!user || !user.bookmarks) return false
+
+    const index = user.bookmarks.findIndex(b => b._id === bookmarkId || b.bookmark === bookmarkId)
+    if (index === -1) return false
+
+    user.bookmarks.splice(index, 1)
     return true
 }
