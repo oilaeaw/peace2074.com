@@ -19,7 +19,13 @@
   status = 200
   force = true
 
-# SPA fallback for all other routes
+# Serve static assets directly (don't apply SPA fallback to these)
+[[redirects]]
+  from = "/assets/*"
+  to = "/assets/:splat"
+  status = 200
+
+# SPA fallback for all other routes (must be last)
 [[redirects]]
   from = "/*"
   to = "/index.html"
