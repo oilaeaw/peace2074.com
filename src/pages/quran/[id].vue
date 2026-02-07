@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
+import { useQuranTree } from '@/composables/useQuranTree'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
@@ -29,6 +30,26 @@ const error = ref('')
 const selectedBookmark = ref('')
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutMode = ref<'reader' | 'mushaf'>('reader')
+
+// Quran verse tree for O(log n) verse lookup
+const quranTree = useQuranTree()
+
+// Quick access popular verses with unique IDs
+interface QuickAccessVerse {
+  id: string // Format: sura_verse (e.g., "2_255")
+  suraId: number
+  verse: number
+  nameKey: string // i18n key for the verse name
+  icon: string
+}
+
+const quickAccessVerses = ref<QuickAccessVerse[]>([
+  { id: '2_255', suraId: 2, verse: 255, nameKey: 'pages.quran.quickAccess.kursi', icon: 'star' },
+  { id: '1_1', suraId: 1, verse: 1, nameKey: 'pages.quran.quickAccess.fatiha', icon: 'menu_book' },
+  { id: '36_1', suraId: 36, verse: 1, nameKey: 'pages.quran.quickAccess.yasin', icon: 'favorite' },
+  { id: '67_1', suraId: 67, verse: 1, nameKey: 'pages.quran.quickAccess.mulk', icon: 'king_bed' },
+  { id: '112_1', suraId: 112, verse: 1, nameKey: 'pages.quran.quickAccess.ikhlas', icon: 'brightness_7' },
+])
 
 const audioList = ref<string[]>([])
 const audioEl = ref<HTMLAudioElement | null>(null)
@@ -149,6 +170,24 @@ async function handleBookmarkNavigate(entry: BookmarkEntry) {
   }
   if (entry.verse) {
     scrollToVerse(entry.verse)
+  }
+}
+
+/**
+ * Navigate to a quick access verse using the Red-Black Tree for O(log n) lookup
+ */
+async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
+  // Use tree for efficient lookup (preload context)
+  const verseData = await quranTree.getVerse(qaVerse.suraId, qaVerse.verse)
+  if (verseData) {
+    console.debug(`[QuranTree] Found verse ${verseData.id}: ${verseData.text.slice(0, 50)}...`)
+  }
+  
+  selectedBookmark.value = `id_${qaVerse.id}`
+  if (qaVerse.suraId !== currentSuraId.value) {
+    await router.push({ path: `/quran/${qaVerse.suraId}`, hash: `#${qaVerse.id}` })
+  } else {
+    scrollToVerse(qaVerse.verse)
   }
 }
 
@@ -581,6 +620,39 @@ watch(layoutMode, (mode) => {
               size="sm"
             />
           </div>
+          <!-- Quick Access for popular verses like Ayat al-Kursi -->
+          <q-btn
+            outline
+            icon="flash_on"
+            class="quick-access-btn q-mr-sm"
+            :label="t('pages.quran.quickAccess.menu')"
+          >
+            <q-menu auto-close anchor="bottom right" self="top right">
+              <q-list class="quick-access-list">
+                <q-item-label header>{{ t('pages.quran.quickAccess.title') }}</q-item-label>
+                <q-item
+                  v-for="qa in quickAccessVerses"
+                  :key="qa.id"
+                  clickable
+                  @click="navigateToQuickAccess(qa)"
+                >
+                  <q-item-section avatar>
+                    <q-icon :name="qa.icon" color="primary" />
+                  </q-item-section>
+                  <q-item-section>
+                    <q-item-label>{{ t(qa.nameKey) }}</q-item-label>
+                    <q-item-label caption>{{ qa.suraId }}:{{ qa.verse }}</q-item-label>
+                  </q-item-section>
+                  <q-item-section side>
+                    <q-icon 
+                      :name="qa.suraId === currentSuraId ? 'check_circle' : 'chevron_right'" 
+                      :color="qa.suraId === currentSuraId ? 'positive' : 'grey'"
+                    />
+                  </q-item-section>
+                </q-item>
+              </q-list>
+            </q-menu>
+          </q-btn>
           <q-btn
             outline
             icon="bookmark"

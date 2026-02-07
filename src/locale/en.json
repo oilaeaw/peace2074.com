@@ -164,6 +164,15 @@
         "saved": "Bookmark saved",
         "error": "Could not save bookmark",
         "current": "this sura"
+      },
+      "quickAccess": {
+        "menu": "Quick",
+        "title": "Quick Access Verses",
+        "kursi": "Ayat al-Kursi",
+        "fatiha": "Al-Fatiha",
+        "yasin": "Ya-Sin",
+        "mulk": "Al-Mulk",
+        "ikhlas": "Al-Ikhlas"
       }
     },
     "miracles": {

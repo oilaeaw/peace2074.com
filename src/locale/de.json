@@ -117,6 +117,15 @@
         "saved": "Lesezeichen gespeichert",
         "error": "Lesezeichen konnte nicht gespeichert werden",
         "current": "diese Sure"
+      },
+      "quickAccess": {
+        "menu": "Schnell",
+        "title": "Schnellzugriff Verse",
+        "kursi": "Ayat al-Kursi",
+        "fatiha": "Al-Fatiha",
+        "yasin": "Ya-Sin",
+        "mulk": "Al-Mulk",
+        "ikhlas": "Al-Ikhlas"
       }
     },
     "settings": {
