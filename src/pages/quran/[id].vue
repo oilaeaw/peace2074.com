@@ -187,25 +187,39 @@ async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
   selectedBookmark.value = `id_${qaVerse.id}`
   
   const playVerseAfterLoad = async () => {
-    // Wait for audio list to be loaded
-    await nextTick()
-    // Retry a few times if audio list isn't ready yet
-    let retries = 10
-    while (audioList.value.length === 0 && retries > 0) {
+    // Wait for sura to fully load (check loading state and correct sura)
+    let retries = 30 // 30 x 200ms = 6 seconds max wait
+    while (retries > 0) {
       await new Promise(resolve => setTimeout(resolve, 200))
+      // Check if we're on the correct sura and audio is loaded
+      if (!loading.value && 
+          currentSuraId.value === qaVerse.suraId && 
+          audioList.value.length >= qaVerse.verse) {
+        break
+      }
       retries--
     }
-    // Play the specific verse (array is 0-indexed, verse numbers are 1-indexed)
+    
+    // Verify we have the correct audio list before playing
     const verseIndex = qaVerse.verse - 1
-    if (audioList.value.length > verseIndex && verseIndex >= 0) {
+    if (currentSuraId.value === qaVerse.suraId && 
+        audioList.value.length > verseIndex && 
+        verseIndex >= 0) {
       stopRequested.value = false
+      // Scroll to verse first
+      await nextTick()
+      scrollToVerse(qaVerse.verse)
+      // Small delay to ensure scroll completes
+      await new Promise(resolve => setTimeout(resolve, 100))
       playAyah(verseIndex)
       $q.notify({ 
         type: 'positive', 
-        message: t(qaVerse.nameKey),
+        message: `${t(qaVerse.nameKey)} - Mishary Al-Afasy`,
         icon: 'play_arrow',
         timeout: 2000
       })
+    } else {
+      console.error(`[QuickAccess] Failed to play: sura=${currentSuraId.value}, expected=${qaVerse.suraId}, audioLen=${audioList.value.length}, verseIndex=${verseIndex}`)
     }
   }
   
@@ -213,7 +227,7 @@ async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
     // Navigate to different sura, then play after load
     await router.push({ path: `/quran/${qaVerse.suraId}`, hash: `#${qaVerse.id}` })
     // Wait for sura to load and then play
-    setTimeout(playVerseAfterLoad, 500)
+    await playVerseAfterLoad()
   } else {
     // Same sura - scroll and play immediately
     scrollToVerse(qaVerse.verse)
