@@ -32,6 +32,7 @@ const layoutMode = ref<'reader' | 'mushaf'>('reader')
 
 const audioList = ref<string[]>([])
 const audioEl = ref<HTMLAudioElement | null>(null)
+const nextAudioEl = ref<HTMLAudioElement | null>(null)
 const isPlayingAudio = ref(false)
 const currentAyahIndex = ref<number>(-1)
 const currentWordIndex = ref<number>(-1)
@@ -199,6 +200,18 @@ async function loadAudioList(id: number) {
   }
 }
 
+function preloadNextAyah(index: number) {
+  if (index < 0 || index >= audioList.value.length) {
+    nextAudioEl.value = null
+    return
+  }
+  const src = audioList.value[index]
+  const el = new Audio(src)
+  el.preload = 'auto'
+  el.playbackRate = playbackRate.value
+  nextAudioEl.value = el
+}
+
 function playAyah(index: number) {
   if (stopRequested.value) {
     isPlayingAudio.value = false
@@ -210,13 +223,26 @@ function playAyah(index: number) {
   }
   try {
     audioEl.value?.pause()
-    const src = audioList.value[index]
-    const el = new Audio(src)
+
+    // Use preloaded audio if available for this index
+    let el: HTMLAudioElement
+    const expectedSrc = audioList.value[index]
+    if (nextAudioEl.value && nextAudioEl.value.src === expectedSrc) {
+      el = nextAudioEl.value
+      nextAudioEl.value = null
+    } else {
+      el = new Audio(expectedSrc)
+    }
+
     el.playbackRate = playbackRate.value
     audioEl.value = el
     currentAyahIndex.value = index
     isPlayingAudio.value = true
     currentWordIndex.value = -1
+
+    // Preload next ayah for seamless playback
+    preloadNextAyah(index + 1)
+
     el.ontimeupdate = () => updateCurrentWord(el.currentTime)
     el.onended = () => {
       if (stopRequested.value) {
@@ -266,6 +292,8 @@ function stopAudio() {
     audioEl.value.pause()
     audioEl.value = null
   }
+  // Clear preloaded audio
+  nextAudioEl.value = null
   isPlayingAudio.value = false
   currentAyahIndex.value = -1
   currentWordIndex.value = -1
