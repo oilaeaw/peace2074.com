@@ -3,7 +3,7 @@
 # No prerendering or SSR required - pure client-side rendering
 
 [build]
-  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && mkdir -p .netlify && cp -r apps/nitro-api/.netlify/functions-internal .netlify/"
+  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build"
   publish = "dist"
 
 # Note: Legacy prerendering must be disabled in Netlify dashboard
