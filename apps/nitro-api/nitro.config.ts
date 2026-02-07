@@ -11,9 +11,10 @@ export default defineNitroConfig({
     // In production (Netlify), routes are prefixed with /api via redirects
     // In dev, Vite proxy strips /api prefix before forwarding
     baseURL: isNetlifyBuild ? '/api' : '/',
-    // Output to root .netlify/functions-internal directory for Netlify to pick up
+    // Output to root netlify/functions directory for Netlify to pick up
     output: {
-        dir: isNetlifyBuild ? '../../.netlify/functions-internal' : '.netlify/functions-internal',
+        dir: isNetlifyBuild ? '../../netlify/functions' : '.netlify/functions-internal',
+        serverDir: isNetlifyBuild ? '../../netlify/functions/server' : '.netlify/functions-internal/server',
     },
     devServer: {
         port: DEFAULT_PORT,
