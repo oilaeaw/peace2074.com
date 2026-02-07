@@ -40,7 +40,8 @@ class Core {
 
   private encryptValue(value: any) {
     if (!this.encryptionKey) {
-      if (!this.warnedMissingKey) {
+      // Only warn in development, not in production (guest IDs don't need encryption)
+      if (!this.warnedMissingKey && import.meta.env?.DEV) {
         this.warnedMissingKey = true
         console.warn('[core] CONF_ENCRYPTION_KEY missing; storing plaintext.')
       }
@@ -62,7 +63,8 @@ class Core {
     if (!hasPrefix) return raw
 
     if (!this.encryptionKey) {
-      if (!this.warnedMissingKey) {
+      // Only warn in development
+      if (!this.warnedMissingKey && import.meta.env?.DEV) {
         this.warnedMissingKey = true
         console.warn('[core] Encrypted value found but CONF_ENCRYPTION_KEY is missing; returning null.')
       }
