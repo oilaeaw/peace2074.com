@@ -275,7 +275,10 @@
     "open": "open",
     "close": "close",
     "holdState": "Always open",
-    "swipeToChange": "Swipe to change"
+    "swipeToChange": "Swipe to change",
+    "pause": "Pause",
+    "play": "Play",
+    "stop": "Stop"
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."

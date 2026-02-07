@@ -240,7 +240,10 @@
     "open": "öffnen",
     "close": "schließen",
     "holdState": "Immer geöffnet",
-    "swipeToChange": "Wischen zum ändern"
+    "swipeToChange": "Wischen zum ändern",
+    "pause": "Pause",
+    "play": "Abspielen",
+    "stop": "Stopp"
   },
   "intro": {
     "desc": "JavaScript-Enthusiast, Wolf-Pack-Bruder, Enten-Liebhaber — alles über Wiederverwendbarkeit und Verbesserungen."

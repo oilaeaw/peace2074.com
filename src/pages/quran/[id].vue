@@ -58,8 +58,15 @@ const bookmarkEntries = computed<BookmarkEntry[]>(() => {
   const rows = (bookmarksStore.bookmarks || []) as any[]
   return rows
     .map<BookmarkEntry | null>((bm: any, idx: number) => {
-      const rawString = typeof bm === 'string' ? bm : bm?.bookmark || ''
-      if (!rawString) return null
+      let rawString = ''
+      if (typeof bm === 'string') {
+        rawString = bm
+      } else if (bm && typeof bm.bookmark === 'string') {
+        rawString = bm.bookmark
+      } else if (bm && typeof bm === 'object') {
+        rawString = String(bm.bookmark || bm._id || '')
+      }
+      if (!rawString || typeof rawString !== 'string') return null
       const normalized = rawString.startsWith('id_') ? rawString.slice(3) : rawString
       const [suraPart, versePart] = normalized.split('_')
 
