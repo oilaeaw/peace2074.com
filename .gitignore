@@ -26,3 +26,4 @@ apps/nitro-api/.output/
 
 # Local Netlify folder
 .netlify
+netlify/

@@ -7,7 +7,7 @@ import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
 import netlifyIdentity from 'netlify-identity-widget'
-import { useQuasar } from 'quasar'
+import { Dark } from 'quasar'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
@@ -23,12 +23,11 @@ app.use(i18n);
 // Register Quasar via centralized plugin
 registerQuasar(app as any);
 
-// Initialize dark mode from localStorage
+// Initialize dark mode from localStorage (use Quasar's Dark singleton, not useQuasar hook)
 if (isClient) {
-  const $q = useQuasar()
   const stored = window.localStorage.getItem('pref-dark-mode')
   if (stored === 'true') {
-    $q.dark.set(true)
+    Dark.set(true)
   }
 }
 

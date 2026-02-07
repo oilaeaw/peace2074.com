@@ -375,6 +375,7 @@
     "resetEmailSent": "Anweisungen zum Zurücksetzen wurden an Ihre E-Mail gesendet",
     "resetError": "Fehler beim Senden der Zurücksetzen-E-Mail",
     "loginError": "Anmeldung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "loginSuccess": "Willkommen zurück!",
     "dontHaveAccount": "Noch kein Konto?",
     "alreadyHaveAccount": "Bereits ein Konto?",
     "createAccount": "Konto erstellen",

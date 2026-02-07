@@ -410,6 +410,7 @@
     "resetEmailSent": "تم إرسال تعليمات إعادة تعيين كلمة المرور إلى بريدك",
     "resetError": "فشل إرسال بريد إعادة التعيين",
     "loginError": "فشل تسجيل الدخول. حاول مرة أخرى.",
+    "loginSuccess": "مرحباً بعودتك!",
     "dontHaveAccount": "ليس لديك حساب؟",
     "alreadyHaveAccount": "لديك حساب بالفعل؟",
     "createAccount": "أنشئ حسابك",

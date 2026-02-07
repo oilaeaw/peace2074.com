@@ -378,6 +378,7 @@
     "resetEmailSent": "Password reset instructions sent to your email",
     "resetError": "Failed to send reset email",
     "loginError": "Login failed. Please try again.",
+    "loginSuccess": "Welcome back!",
     "dontHaveAccount": "Don't have an account?",
     "alreadyHaveAccount": "Already have an account?",
     "createAccount": "Create your account",

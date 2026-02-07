@@ -135,12 +135,9 @@ function onTargetReached() {
 
   // If authenticated, send session to server
   sendStatsToServer({
-    session: {
-      phraseIndex: selectedTasbeeh.value,
-      count: currentCount.value,
-      target: targetCount.value,
-    },
     date: new Date().toDateString(),
+    total: currentCount.value,
+    sessions: completedSets.value,
   });
 }
 

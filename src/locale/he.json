@@ -375,6 +375,7 @@
         "resetEmailSent": "הוראות איפוס נשלחו לדוא\"ל שלך",
         "resetError": "כשל בשליחת מייל איפוס",
         "loginError": "התחברות נכשלה. נסה שוב.",
+        "loginSuccess": "ברוך שובך!",
         "dontHaveAccount": "אין לך חשבון?",
         "alreadyHaveAccount": "כבר יש לך חשבון?",
         "createAccount": "צור חשבון",
