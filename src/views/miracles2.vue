@@ -2,6 +2,7 @@
 import { computed, ref, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import useQ2P from '@/composables/useQ2P'
+import MiraclesSwitcher from '@/components/common/MiraclesSwitcher.vue'
 // definePageMeta removed — title handled in main.ts
 
 const q2p = useQ2P();

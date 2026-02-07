@@ -199,7 +199,20 @@
       "pageTitle": "Wunderseite",
       "visualTab": "Visuelle Muster",
       "linguisticTab": "Sprachliche Analyse",
-      "linguisticPilotTitle": "Sprachlicher Pilot"
+      "linguisticPilotTitle": "Sprachlicher Pilot",
+      "title": "Quran-Buchstaben-Visualisierer",
+      "scope": "Bereich",
+      "wholeBook": "Ganzes Buch",
+      "singleSura": "Einzelne Sure",
+      "singleVerse": "Einzelner Vers",
+      "sura": "Sure",
+      "verse": "Vers",
+      "cellSize": "Zellgröße",
+      "gap": "Abstand",
+      "maxWidth": "Max. Breite",
+      "draw": "Zeichnen",
+      "downloadPng": "PNG herunterladen",
+      "legendInfo": "Legende zeigt {count} Buchstaben. Bei großen Texten werden Stichproben genommen, um riesige Bilder zu vermeiden."
     },
     "chat": {
       "title": "Community-Chat",
@@ -222,7 +235,9 @@
       "helpTitle": "Anleitungen & FAQ",
       "helpBody": "Sieh dir zuerst die Hilfedokus und häufigen Fragen an.",
       "contactTitle": "Kontaktiere uns",
-      "contactBody": "Wenn du feststeckst, schick uns Details und wir melden uns so schnell wie möglich."
+      "contactBody": "Wenn du feststeckst, schick uns Details und wir melden uns so schnell wie möglich.",
+      "aiTitle": "KI-Unterstützung",
+      "aiDesc": "Hilfe von unserem KI-Assistenten erhalten"
     },
     "blog": {
       "title": "Blog",

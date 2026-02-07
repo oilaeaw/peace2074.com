@@ -90,7 +90,9 @@
       "helpTitle": "Guides & FAQ",
       "helpBody": "Check our help docs and common issues first.",
       "contactTitle": "Contact us",
-      "contactBody": "If you’re stuck, send details and we’ll reply as soon as possible."
+      "contactBody": "If you're stuck, send details and we'll reply as soon as possible.",
+      "aiTitle": "AI Support",
+      "aiDesc": "Get help from our AI assistant"
     },
     "home": {
       "title": "Home",
@@ -168,7 +170,20 @@
       "pageTitle": "Miracles Page",
       "visualTab": "Visual Patterns",
       "linguisticTab": "Linguistic Analysis",
-      "linguisticPilotTitle": "Linguistic Pilot"
+      "linguisticPilotTitle": "Linguistic Pilot",
+      "title": "Quran Letter Visualiser",
+      "scope": "Scope",
+      "wholeBook": "Whole book",
+      "singleSura": "Single sura",
+      "singleVerse": "Single verse",
+      "sura": "Sura",
+      "verse": "Verse",
+      "cellSize": "Cell size",
+      "gap": "Gap",
+      "maxWidth": "Max width",
+      "draw": "Draw",
+      "downloadPng": "Download PNG",
+      "legendInfo": "Legend shows {count} letters. Canvas samples letters when the text is large to avoid huge images."
     },
     "chat": {
       "title": "Community Chat",

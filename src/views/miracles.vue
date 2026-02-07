@@ -1,8 +1,11 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import { useI18n } from 'vue-i18n'
 import useQ2P from '@/composables/useQ2P'
+import MiraclesSwitcher from '@/components/common/MiraclesSwitcher.vue'
 // definePageMeta removed — handled by main.ts titles
 
+const { t } = useI18n()
 const store = useQ2P()
 // ensure store has Book data available
 store.init()
@@ -168,38 +171,38 @@ watch([scope, suraIndex, verseIndex, cellSize, gap, maxWidth, () => store.Legend
 <template>
     <div class="q-pa-md">
       <MiraclesSwitcher />
-      <h3>Quran letter visualiser</h3>
+      <h3>{{ t('pages.miracles.title') }}</h3>
       <div style="display:flex;gap:12px;flex-wrap:wrap;align-items:center">
-        <label>Scope
+        <label>{{ t('pages.miracles.scope') }}
           <select v-model="scope">
-            <option value="book">Whole book</option>
-            <option value="sura">Single sura</option>
-            <option value="verse">Single verse</option>
+            <option value="book">{{ t('pages.miracles.wholeBook') }}</option>
+            <option value="sura">{{ t('pages.miracles.singleSura') }}</option>
+            <option value="verse">{{ t('pages.miracles.singleVerse') }}</option>
           </select>
         </label>
 
-        <label> Sura
+        <label> {{ t('pages.miracles.sura') }}
           <input type="number" v-model.number="suraIndex" min="1" style="width:80px" />
         </label>
 
-        <label> Verse
+        <label> {{ t('pages.miracles.verse') }}
           <input type="number" v-model.number="verseIndex" min="1" style="width:80px" />
         </label>
 
-        <label> Cell size
+        <label> {{ t('pages.miracles.cellSize') }}
           <input type="number" v-model.number="cellSize" min="2" max="64" style="width:80px" />
         </label>
 
-        <label> Gap
+        <label> {{ t('pages.miracles.gap') }}
           <input type="number" v-model.number="gap" min="0" max="8" style="width:60px" />
         </label>
 
-        <label> Max width
+        <label> {{ t('pages.miracles.maxWidth') }}
           <input type="number" v-model.number="maxWidth" min="200" max="3000" style="width:100px" />
         </label>
 
-        <button @click.prevent="draw">Draw</button>
-        <button @click.prevent="downloadPNG">Download PNG</button>
+        <button @click.prevent="draw">{{ t('pages.miracles.draw') }}</button>
+        <button @click.prevent="downloadPNG">{{ t('pages.miracles.downloadPng') }}</button>
       </div>
 
       <div style="margin-top:12px">
@@ -207,7 +210,7 @@ watch([scope, suraIndex, verseIndex, cellSize, gap, maxWidth, () => store.Legend
       </div>
 
       <div style="margin-top:12px;font-size:13px;color:#666">
-        Legend shows {{ store.Legend.length }} letters. Canvas samples letters when the text is large to avoid huge images.
+        {{ t('pages.miracles.legendInfo', { count: store.Legend?.length || 0 }) }}
       </div>
 </div>
 </template>

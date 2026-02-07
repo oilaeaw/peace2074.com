@@ -60,7 +60,7 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["vue", "vue-router", "pinia"],
+      imports: ["vue", "vue-router", "pinia", "vue-i18n"],
       dirs: [
         "src/modules/**/composables",
         "src/modules/**/store",
