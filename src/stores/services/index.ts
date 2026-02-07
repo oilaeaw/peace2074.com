@@ -105,26 +105,24 @@ const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 
 function computeNitroBase() {
-  // Prefer explicit env override
-  const configured = env.VITE_NITRO_BASE
-  if (configured && typeof configured === 'string') {
-    return configured.replace(/\/$/, '')
-  }
-
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location
 
-    // Local dev: hit local Nitro to avoid cross-domain CORS
+    // Local dev: check for override, otherwise use local Nitro
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      const configured = env.VITE_NITRO_BASE
+      if (configured && typeof configured === 'string') {
+        return configured.replace(/\/$/, '')
+      }
       return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, '')
     }
 
-    // Production: use same-origin (relative) to avoid CORS entirely
-    return ''
+    // Production: always use /api prefix for Netlify Functions routing
+    return '/api'
   }
 
-  // SSR/default fallback: none
-  return ''
+  // SSR/default fallback: /api
+  return '/api'
 }
 
 const NITRO_BASE = computeNitroBase();

@@ -24,11 +24,10 @@ const showNewPassword = ref(false);
 const showConfirmPassword = ref(false);
 const isChangingPassword = ref(false);
 
-const NITRO_BASE = import.meta.env.VITE_NITRO_BASE 
-  ? import.meta.env.VITE_NITRO_BASE 
-  : import.meta.env.DEV
-    ? "http://localhost:3000"
-    : "";
+// Production always uses /api, dev can use local Nitro
+const NITRO_BASE = import.meta.env.DEV
+  ? (import.meta.env.VITE_NITRO_BASE || "http://localhost:3000")
+  : "/api";
 
 function generateStrongPassword() {
   const length = 16;
