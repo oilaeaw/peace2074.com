@@ -35,6 +35,7 @@
       "quran": "Коран",
       "holynames": "Святые имена",
       "tasbeeh": "Тасбих",
+      "miracles": "Чудеса",
       "chat": "Чат",
       "support": "Поддержка",
       "settings": "Настройки",
@@ -123,6 +124,11 @@
       "backToList": "Назад к списку",
       "playRecitation": "Воспроизвести чтение",
       "stopRecitation": "Остановить чтение",
+      "audioRecitation": "Аудио чтение",
+      "nativeReader": "Встроенный чтец (TTS)",
+      "ttsNotSupported": "Синтез речи не поддерживается в этом браузере",
+      "ttsSpeed": "Скорость",
+      "ttsVoice": "Голос",
       "pageTitle": "Священный Коран",
       "loading": "Загрузка…",
       "verses": "аяты",
@@ -225,7 +231,10 @@
       }
     },
     "miracles": {
-      "pageTitle": "Страница чудес"
+      "pageTitle": "Страница чудес",
+      "visualTab": "Визуальные узоры",
+      "linguisticTab": "Лингвистический анализ",
+      "linguisticPilotTitle": "Лингвистический пилот"
     },
     "chat": {
       "title": "Чат сообщества",

@@ -254,6 +254,7 @@ const defaultNavItems = [
   { key: "quran", labelKey: "appShell.nav.quran", to: "/quran" },
   { key: "holynames", labelKey: "appShell.nav.holynames", to: "/holynames" },
   { key: "tasbeeh", labelKey: "appShell.nav.tasbeeh", to: "/tasbeeh" },
+  { key: "miracles", labelKey: "appShell.nav.miracles", to: "/miracles" },
   { key: "chat", labelKey: "appShell.nav.chat", to: "/chat" },
   { key: "support", labelKey: "appShell.nav.support", to: "/support" },
   { key: "settings", labelKey: "appShell.nav.settings", to: "/settings" },

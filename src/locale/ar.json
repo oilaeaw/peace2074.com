@@ -35,6 +35,7 @@
       "quran": "القرآن",
       "holynames": "الأسماء الحسنى",
       "tasbeeh": "التسبيح",
+      "miracles": "المعجزات",
       "chat": "الدردشة",
       "support": "الدعم",
       "settings": "الإعدادات",
@@ -123,6 +124,11 @@
       "backToList": "العودة إلى القائمة",
       "playRecitation": "تشغيل التلاوة",
       "stopRecitation": "إيقاف التلاوة",
+      "audioRecitation": "التلاوة الصوتية",
+      "nativeReader": "القارئ الأصلي (TTS)",
+      "ttsNotSupported": "تحويل النص إلى كلام غير مدعوم في هذا المتصفح",
+      "ttsSpeed": "السرعة",
+      "ttsVoice": "الصوت",
       "pageTitle": "القرآن الكريم",
       "loading": "جارٍ التحميل…",
       "verses": "آيات",
@@ -149,7 +155,10 @@
       }
     },
     "miracles": {
-      "pageTitle": "صفحة المعجزات"
+      "pageTitle": "صفحة المعجزات",
+      "visualTab": "الأنماط البصرية",
+      "linguisticTab": "التحليل اللغوي",
+      "linguisticPilotTitle": "التحليل اللغوي التجريبي"
     },
     "settings": {
       "title": "الإعدادات",

@@ -40,6 +40,29 @@ const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
 const stopRequested = ref(false)
 
+// TTS (Text-to-Speech) state
+const READER_MODE_KEY = 'quran-reader-mode'
+const readerMode = ref<'audio' | 'tts'>('audio')
+const isTTSPlaying = ref(false)
+const ttsVoice = ref<SpeechSynthesisVoice | null>(null)
+const availableVoices = ref<SpeechSynthesisVoice[]>([])
+const ttsRate = ref<number>(0.8)
+
+// Load saved reader mode preference
+if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
+  const storedReaderMode = window.localStorage.getItem(READER_MODE_KEY)
+  if (storedReaderMode === 'audio' || storedReaderMode === 'tts') {
+    readerMode.value = storedReaderMode
+  }
+}
+
+// Watch and persist reader mode
+watch(readerMode, (mode) => {
+  if (typeof window !== 'undefined') {
+    window.localStorage.setItem(READER_MODE_KEY, mode)
+  }
+})
+
 if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
   const storedMode = window.localStorage.getItem(LAYOUT_STORAGE_KEY)
   if (storedMode === 'reader' || storedMode === 'mushaf') {
@@ -306,6 +329,113 @@ function stopAudio() {
   currentWordIndex.value = -1
 }
 
+// TTS (Text-to-Speech) Functions
+function loadVoices() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) return
+  const voices = window.speechSynthesis.getVoices()
+  // Prefer Arabic voices, fallback to any available
+  const arabicVoices = voices.filter(v => v.lang.startsWith('ar'))
+  availableVoices.value = arabicVoices.length ? arabicVoices : voices
+  // Auto-select first Arabic voice if available
+  if (!ttsVoice.value && availableVoices.value.length) {
+    ttsVoice.value = availableVoices.value[0]
+  }
+}
+
+function speakAyah(index: number) {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    $q.notify({ type: 'warning', message: t('pages.quran.ttsNotSupported') || 'Text-to-speech not supported in this browser' })
+    return
+  }
+  
+  if (stopRequested.value) {
+    isTTSPlaying.value = false
+    return
+  }
+  
+  const ayat = sura.value?.ayat || []
+  if (index < 0 || index >= ayat.length) {
+    stopTTS()
+    return
+  }
+  
+  const ayah = ayat[index]
+  const text = typeof ayah === 'string' ? ayah : (ayah?.text || '')
+  if (!text) {
+    speakAyah(index + 1)
+    return
+  }
+  
+  window.speechSynthesis.cancel()
+  
+  const utterance = new SpeechSynthesisUtterance(text)
+  utterance.rate = ttsRate.value
+  utterance.lang = 'ar'
+  if (ttsVoice.value) {
+    utterance.voice = ttsVoice.value
+  }
+  
+  currentAyahIndex.value = index
+  isTTSPlaying.value = true
+  
+  utterance.onend = () => {
+    if (!stopRequested.value) {
+      speakAyah(index + 1)
+    }
+  }
+  
+  utterance.onerror = () => {
+    if (!stopRequested.value) {
+      speakAyah(index + 1)
+    }
+  }
+  
+  window.speechSynthesis.speak(utterance)
+}
+
+function startTTS() {
+  if (typeof window === 'undefined' || !window.speechSynthesis) {
+    $q.notify({ type: 'warning', message: t('pages.quran.ttsNotSupported') || 'Text-to-speech not supported' })
+    return
+  }
+  
+  stopRequested.value = false
+  loadVoices()
+  speakAyah(currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
+}
+
+function stopTTS() {
+  stopRequested.value = true
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    window.speechSynthesis.cancel()
+  }
+  isTTSPlaying.value = false
+  currentAyahIndex.value = -1
+}
+
+function startReading() {
+  if (readerMode.value === 'tts') {
+    startTTS()
+  } else {
+    startSuraAudio()
+  }
+}
+
+function stopReading() {
+  if (readerMode.value === 'tts') {
+    stopTTS()
+  } else {
+    stopAudio()
+  }
+}
+
+const isReading = computed(() => readerMode.value === 'tts' ? isTTSPlaying.value : isPlayingAudio.value)
+
+const readerModeOptions = computed(() => [
+  { label: t('pages.quran.audioRecitation') || 'Audio Recitation', value: 'audio' },
+  { label: t('pages.quran.nativeReader') || 'Native Reader (TTS)', value: 'tts' },
+])
+
 function updateCurrentWord(time: number) {
   const idx = currentAyahIndex.value
   if (idx < 0) return
@@ -320,6 +450,13 @@ onMounted(async () => {
   try {
     await bookmarksStore.init()
   } catch {}
+  
+  // Load TTS voices
+  if (typeof window !== 'undefined' && window.speechSynthesis) {
+    loadVoices()
+    // Chrome loads voices async
+    window.speechSynthesis.onvoiceschanged = loadVoices
+  }
 })
 
 watch(() => route.params.id, (newId) => {
@@ -354,25 +491,40 @@ watch(layoutMode, (mode) => {
           </div>
         </div>
         <div class="heading-actions">
+          <!-- Reader Mode Toggle -->
+          <q-btn-toggle
+            v-model="readerMode"
+            :options="readerModeOptions"
+            rounded
+            dense
+            toggle-color="secondary"
+            color="white"
+            unelevated
+            size="sm"
+            class="q-mr-sm"
+            @update:model-value="stopReading"
+          />
           <q-btn
             icon="play_arrow"
             color="primary"
             flat
             dense
-            @click="startSuraAudio"
-            :disable="!audioList.length"
-            :label="isPlayingAudio ? t('general.pause') || 'Pause' : t('pages.quran.playRecitation') || 'Play recitation'"
+            @click="startReading"
+            :disable="readerMode === 'audio' && !audioList.length"
+            :label="isReading ? t('general.pause') || 'Pause' : t('pages.quran.playRecitation') || 'Play'"
           />
           <q-btn
             icon="stop"
             color="negative"
             flat
             dense
-            @click="stopAudio"
-            :disable="!isPlayingAudio"
-            :label="t('pages.quran.stopRecitation') || 'Stop recitation'"
+            @click="stopReading"
+            :disable="!isReading"
+            :label="t('pages.quran.stopRecitation') || 'Stop'"
           />
+          <!-- Audio playback rate (audio mode) -->
           <q-select
+            v-if="readerMode === 'audio'"
             dense
             outlined
             hide-dropdown-icon
@@ -387,6 +539,35 @@ watch(layoutMode, (mode) => {
             map-options
             style="width: 90px"
             @update:model-value="(v) => { if (audioEl) audioEl.playbackRate = v; }"
+          />
+          <!-- TTS rate (TTS mode) -->
+          <q-select
+            v-if="readerMode === 'tts'"
+            dense
+            outlined
+            hide-dropdown-icon
+            v-model="ttsRate"
+            :options="[
+              { label: '0.5x', value: 0.5 },
+              { label: '0.8x', value: 0.8 },
+              { label: '1x', value: 1 },
+              { label: '1.2x', value: 1.2 },
+            ]"
+            emit-value
+            map-options
+            style="width: 90px"
+            :label="t('pages.quran.ttsSpeed') || 'Speed'"
+          />
+          <!-- TTS Voice selector -->
+          <q-select
+            v-if="readerMode === 'tts' && availableVoices.length > 1"
+            dense
+            outlined
+            v-model="ttsVoice"
+            :options="availableVoices"
+            :option-label="(v) => v?.name || 'Default'"
+            style="width: 150px"
+            :label="t('pages.quran.ttsVoice') || 'Voice'"
           />
           <div class="view-toggle">
             <q-btn-toggle

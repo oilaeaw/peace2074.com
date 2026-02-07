@@ -35,6 +35,7 @@
       "quran": "Quran",
       "holynames": "Holy Names",
       "tasbeeh": "Tasbeeh",
+      "miracles": "Miracles",
       "chat": "Chat",
       "support": "Support",
       "settings": "Settings",
@@ -133,6 +134,11 @@
       "backToList": "Back to list",
       "playRecitation": "Play recitation",
       "stopRecitation": "Stop recitation",
+      "audioRecitation": "Audio Recitation",
+      "nativeReader": "Native Reader (TTS)",
+      "ttsNotSupported": "Text-to-speech not supported in this browser",
+      "ttsSpeed": "Speed",
+      "ttsVoice": "Voice",
       "pageTitle": "The Holy Quran",
       "loading": "Loading…",
       "verses": "verses",
@@ -159,7 +165,10 @@
       }
     },
     "miracles": {
-      "pageTitle": "Miracles Page"
+      "pageTitle": "Miracles Page",
+      "visualTab": "Visual Patterns",
+      "linguisticTab": "Linguistic Analysis",
+      "linguisticPilotTitle": "Linguistic Pilot"
     },
     "chat": {
       "title": "Community Chat",

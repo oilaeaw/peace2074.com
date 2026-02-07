@@ -1,5 +1,7 @@
 <script lang="ts" setup>
 import { computed, ref, onMounted, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import useQ2P from '@/composables/useQ2P'
 // definePageMeta removed — title handled in main.ts
 
 const q2p = useQ2P();

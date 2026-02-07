@@ -35,6 +35,7 @@
             "quran": "הקוראן",
             "holynames": "שמות קדושים",
             "tasbeeh": "תסביח",
+            "miracles": "נסים",
             "chat": "צ׳אט",
             "support": "תמיכה",
             "settings": "הגדרות",
@@ -123,6 +124,11 @@
             "backToList": "חזרה לרשימה",
             "playRecitation": "נגן קריאה",
             "stopRecitation": "עצור קריאה",
+            "audioRecitation": "קריאה שמעית",
+            "nativeReader": "קורא מקומי (TTS)",
+            "ttsNotSupported": "המרת טקסט לדיבור אינה נתמכת בדפדפן זה",
+            "ttsSpeed": "מהירות",
+            "ttsVoice": "קול",
             "pageTitle": "הקוראן הקדוש",
             "loading": "טוען…",
             "verses": "פסוקים",
@@ -149,7 +155,10 @@
             }
         },
         "miracles": {
-            "pageTitle": "עמוד הניסים"
+            "pageTitle": "עמוד הניסים",
+            "visualTab": "דפוסים חזותיים",
+            "linguisticTab": "ניתוח לשוני",
+            "linguisticPilotTitle": "פילוט לשוני"
         },
         "chat": {
             "title": "צ׳אט הקהילה",

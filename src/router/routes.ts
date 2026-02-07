@@ -144,4 +144,40 @@ export const routes: Array<RouteRecordRaw> = [
       titleKey: 'pages.blog.title',
     },
   },
+  {
+    path: '/miracles',
+    name: 'Miracles',
+    component: () => import('@/views/miracles.vue'),
+    meta: {
+      title: 'Miracles',
+      titleKey: 'pages.miracles.pageTitle',
+    },
+  },
+  {
+    path: '/miracles/patterns',
+    name: 'MiraclesPatterns',
+    component: () => import('@/views/miracles2.vue'),
+    meta: {
+      title: 'Linguistic Patterns',
+      titleKey: 'pages.miracles.linguisticPilotTitle',
+    },
+  },
+  {
+    path: '/privacy',
+    name: 'Privacy',
+    component: () => import('@/views/privacy.vue'),
+    meta: {
+      title: 'Privacy',
+      titleKey: 'navigation.PrivacyPageTitle',
+    },
+  },
+  {
+    path: '/terms',
+    name: 'Terms',
+    component: () => import('@/views/terms.vue'),
+    meta: {
+      title: 'Terms',
+      titleKey: 'navigation.TermsPageTitle',
+    },
+  },
 ];

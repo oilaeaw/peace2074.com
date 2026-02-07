@@ -1,5 +1,6 @@
 <script lang="ts" setup>
 import { ref, computed, onMounted, watch, nextTick } from 'vue'
+import useQ2P from '@/composables/useQ2P'
 // definePageMeta removed — handled by main.ts titles
 
 const store = useQ2P()
