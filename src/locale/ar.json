@@ -124,6 +124,9 @@
       "playRecitation": "تشغيل التلاوة",
       "stopRecitation": "إيقاف التلاوة",
       "pageTitle": "القرآن الكريم",
+      "loading": "جارٍ التحميل…",
+      "verses": "آيات",
+      "apiHint": "إذا لم يتم تحميل المحتوى، تأكد من تشغيل الخادم /api/quran.",
       "holynames": "الأسماء الحسنى",
       "modes": {
         "reader": "وضع القراءة",
@@ -157,7 +160,9 @@
         "compact": "تخطيط مضغوط",
         "compactHint": "استخدم تباعدًا أقرب للشاشات الكثيفة.",
         "motion": "تقليل الحركة",
-        "motionHint": "تخفيف الحركات لتجربة أكثر هدوءًا."
+        "motionHint": "تخفيف الحركات لتجربة أكثر هدوءًا.",
+        "darkMode": "الوضع الداكن",
+        "darkModeHint": "التبديل بين المظهر الفاتح والداكن."
       },
       "navigation": {
         "title": "التنقل",
@@ -414,7 +419,10 @@
     "iAccept": "أوافق على",
     "termsAndConditions": "الشروط والأحكام",
     "signupSuccess": "تم إنشاء الحساب بنجاح! الرجاء تسجيل الدخول.",
-    "signupError": "فشل إنشاء الحساب. حاول مرة أخرى."
+    "signupError": "فشل إنشاء الحساب. حاول مرة أخرى.",
+    "orContinueWith": "أو تابع باستخدام",
+    "signInWithGitHub": "تسجيل الدخول عبر GitHub",
+    "signInWithNetlify": "تسجيل الدخول عبر Netlify Identity"
   },
   "password_required": "كلمة المرور مطلوبة",
   "resend_verification_email": "إعادة إرسال رسالة التحقق",

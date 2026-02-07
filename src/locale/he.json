@@ -183,7 +183,9 @@
                 "compact": "פריסה קומפקטית",
                 "compactHint": "רווחים קטנים יותר למסכים צפופים.",
                 "motion": "הפחת תנועה",
-                "motionHint": "ריכוך אנימציות לחוויית שימוש רגועה."
+                "motionHint": "ריכוך אנימציות לחוויית שימוש רגועה.",
+                "darkMode": "מצב כהה",
+                "darkModeHint": "מעבר בין ערכת נושא בהירה לכהה."
             },
             "navigation": {
                 "title": "ניווט",
@@ -382,7 +384,10 @@
         "iAccept": "אני מקבל את",
         "termsAndConditions": "התנאים וההגבלות",
         "signupSuccess": "חשבון נוצר בהצלחה! אנא התחבר.",
-        "signupError": "ההרשמה נכשלה. נסה שוב."
+        "signupError": "ההרשמה נכשלה. נסה שוב.",
+        "orContinueWith": "או המשך עם",
+        "signInWithGitHub": "התחבר עם GitHub",
+        "signInWithNetlify": "התחבר עם Netlify Identity"
     },
     "login": "התחברות",
     "signup": "הרשמה",

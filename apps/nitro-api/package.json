@@ -3,9 +3,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "nitro dev -p 3000",
-        "build": "nitro build",
-        "preview": "nitro preview -p 3000"
+        "dev": "pnpm exec nitro dev -p 3000",
+        "build": "pnpm exec nitro build",
+        "preview": "pnpm exec nitro preview -p 3000"
     },
     "dependencies": {
         "nitropack": "^2.9.7",

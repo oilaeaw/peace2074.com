@@ -33,6 +33,7 @@
     "nav": {
       "home": "Startseite",
       "quran": "Koran",
+      "holynames": "Heilige Namen",
       "tasbeeh": "Tasbeeh",
       "chat": "Chat",
       "support": "Support",
@@ -51,6 +52,7 @@
         "title": "Peace2074",
         "lead": "Ein ruhiger Ort zum Lesen, Nachdenken und Erinnern.",
         "ctaReadQuran": "Koran lesen",
+        "ctaHolyNames": "Heilige Namen",
         "ctaTasbeeh": "Tasbeeh",
         "aiLabel": "Frag PEACE AI",
         "cardTitle": "Tägliche Reflexion",
@@ -87,6 +89,9 @@
       "playRecitation": "Rezitation abspielen",
       "stopRecitation": "Rezitation stoppen",
       "pageTitle": "Der Heilige Koran",
+      "loading": "Laden…",
+      "verses": "Verse",
+      "apiHint": "Wenn der Inhalt nicht geladen wird, vergewissern Sie sich, dass die Server-API /api/quran läuft.",
       "sura": {
         "name": "Name der Sure",
         "id": "Sura-Nummer",
@@ -117,7 +122,9 @@
         "compact": "Kompaktes Layout",
         "compactHint": "Engerer Abstand für dichte Bildschirme.",
         "motion": "Bewegung reduzieren",
-        "motionHint": "Animationen abschwächen für mehr Ruhe."
+        "motionHint": "Animationen abschwächen für mehr Ruhe.",
+        "darkMode": "Dunkler Modus",
+        "darkModeHint": "Wechsel zwischen hellem und dunklem Design."
       },
       "navigation": {
         "title": "Navigation",
@@ -377,7 +384,10 @@
     "iAccept": "Ich akzeptiere die",
     "termsAndConditions": "Allgemeinen Geschäftsbedingungen",
     "signupSuccess": "Konto erfolgreich erstellt! Bitte melden Sie sich an.",
-    "signupError": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut."
+    "signupError": "Registrierung fehlgeschlagen. Bitte versuchen Sie es erneut.",
+    "orContinueWith": "oder fortfahren mit",
+    "signInWithGitHub": "Mit GitHub anmelden",
+    "signInWithNetlify": "Mit Netlify Identity anmelden"
   },
   "login": "Anmelden",
   "signup": "Registrieren",
@@ -455,7 +465,13 @@
     "tasbeeh": "Digitales Tasbeeh — ein schöner Zähler für Dhikr mit Sitzungsverfolgung und Einstellungen.",
     "miracles": "Lesen Sie inspirierende Geschichten und Reflexionen über Zeichen und Wunder.",
     "quran": "Der Heilige Koran — lesen, navigieren und Suren mit schöner arabischer Typographie und responsive Layouts markieren.",
-    "privacy": "Erfahren Sie, wie wir Ihre Daten schützen und Ihre Privatsphäre beim Besuch der Seite wahren."
+    "privacy": "Erfahren Sie, wie wir Ihre Daten schützen und Ihre Privatsphäre beim Besuch der Seite wahren.",
+    "titles": {
+      "home": "Startseite",
+      "quran": "Koran",
+      "holynames": "Heilige Namen",
+      "tasbeeh": "Tasbeeh"
+    }
   },
   "bookmarks": "Lesezeichen",
   "profile": {
