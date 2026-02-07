@@ -1,20 +1,12 @@
 import { defineEventHandler, getRouterParam } from 'h3'
-import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-
-async function loadJSON<T = any>(p: string): Promise<T> {
-    const buf = await readFile(p, 'utf-8')
-    return JSON.parse(buf)
-}
+import { useStorage } from '#imports'
 
 export default defineEventHandler(async (event) => {
     const id = Number(getRouterParam(event, 'id') || 1)
-    const root = path.resolve(process.cwd(), '..', '..')
-    const chaptersPath = path.join(root, 'src', 'shared', 'data', 'chapters', 'en.json')
-    const quranPath = path.join(root, 'src', 'shared', 'data', 'quran.json')
+    const storage = useStorage('assets:quran')
 
-    const chapters = await loadJSON<any[]>(chaptersPath)
-    const book: Record<string, any[]> = await loadJSON(quranPath)
+    const chapters = await storage.getItem<any[]>('chapters/en.json') || []
+    const book = await storage.getItem<Record<string, any[]>>('quran.json') || {}
 
     const meta = (chapters || []).find((c: any) => Number(c?.id || c?.number) === id)
     const verses = Array.isArray(book[String(id)]) ? book[String(id)] : []

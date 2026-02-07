@@ -1,6 +1,5 @@
 import { defineEventHandler, getQuery } from "h3";
-import { readFile } from "node:fs/promises";
-import path from "node:path";
+import { useStorage } from "#imports";
 
 const chapterFiles: Record<string, string> = {
     en: "en.json",
@@ -12,11 +11,6 @@ const chapterFiles: Record<string, string> = {
 
 const chapterCache = new Map<string, any[]>();
 let quranCache: Record<string, any[]> | null = null;
-
-async function loadJSON<T = any>(p: string): Promise<T> {
-    const buf = await readFile(p, "utf-8");
-    return JSON.parse(buf);
-}
 
 function normalizeText(str: string) {
     const noHarakat = str
@@ -38,27 +32,25 @@ function normalizeLang(lang?: string) {
 
 async function ensureQuran() {
     if (quranCache) return;
-    const root = path.resolve(process.cwd(), "..", "..");
-    const quranPath = path.join(root, "src", "shared", "data", "quran.json");
-    quranCache = await loadJSON<Record<string, any[]>>(quranPath);
+    const storage = useStorage("assets:quran");
+    quranCache = await storage.getItem<Record<string, any[]>>("quran.json") || {};
 }
 
 async function ensureChapters(lang: string) {
     const loc = normalizeLang(lang);
     if (chapterCache.has(loc)) return;
 
-    const root = path.resolve(process.cwd(), "..", "..");
+    const storage = useStorage("assets:quran");
     const file = chapterFiles[loc] || chapterFiles.en;
-    const chaptersPath = path.join(root, "src", "shared", "data", "chapters", file);
 
     try {
-        const data = await loadJSON<any[]>(chaptersPath);
+        const data = await storage.getItem<any[]>(`chapters/${file}`) || [];
         chapterCache.set(loc, data);
     } catch (e) {
         // Fallback to English if load fails
         if (!chapterCache.has("en")) {
-            const fallback = path.join(root, "src", "shared", "data", "chapters", "en.json");
-            chapterCache.set("en", await loadJSON<any[]>(fallback));
+            const fallback = await storage.getItem<any[]>("chapters/en.json") || [];
+            chapterCache.set("en", fallback);
         }
         if (loc !== "en") {
             chapterCache.set(loc, chapterCache.get("en") || []);

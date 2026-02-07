@@ -1,19 +1,11 @@
 import { defineEventHandler } from 'h3'
-import { readFile } from 'node:fs/promises'
-import path from 'node:path'
-
-async function loadJSON<T = any>(p: string): Promise<T> {
-    const buf = await readFile(p, 'utf-8')
-    return JSON.parse(buf)
-}
+import { useStorage } from '#imports'
 
 export default defineEventHandler(async () => {
-    const root = path.resolve(process.cwd(), '..', '..')
-    const chaptersPath = path.join(root, 'src', 'shared', 'data', 'chapters', 'en.json')
-    const quranPath = path.join(root, 'src', 'shared', 'data', 'quran.json')
+    const storage = useStorage('assets:quran')
 
-    const chapters = await loadJSON<any[]>(chaptersPath)
-    const book: Record<string, any[]> = await loadJSON(quranPath)
+    const chapters = await storage.getItem<any[]>('chapters/en.json') || []
+    const book = await storage.getItem<Record<string, any[]>>('quran.json') || {}
 
     const list = (chapters || []).map((meta: any) => {
         const id = Number(meta?.id || meta?.number)
