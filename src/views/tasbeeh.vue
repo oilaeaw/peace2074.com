@@ -101,9 +101,11 @@ function incrementCount() {
     });
   }
 
-  // Check if target reached
+  // Check if target reached - reset count after triggering completion
   if (currentCount.value >= targetCount.value && targetCount.value !== 999999) {
     onTargetReached();
+    // Auto-reset after reaching target
+    currentCount.value = 0;
   }
 
   // Update today's stats
