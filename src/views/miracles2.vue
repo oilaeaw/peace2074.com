@@ -65,27 +65,26 @@ watch(arabicText, (val) => {
     <Suspense>
       <q-page padding>
         <MiraclesSwitcher />
-        <!-- Realtime demo removed for this deployment platform -->
 
         <!-- Pilot card 1: linguistic metrics for a single verse -->
         <q-card class="q-pa-md q-mx-auto q-mt-md" style="max-width: 820px">
           <q-card-section>
             <h3 class="text-h6">
-              {{ t("pages.miracles.linguisticPilotTitle") || "Linguistic pilot" }}
+              {{ t("pages.miracles.linguisticPilotTitle") }}
             </h3>
             <div dir="rtl" lang="ar" class="q-mb-md">{{ arabicText }}</div>
             <div class="text-caption">{{ translation }}</div>
             <div class="row q-mt-md">
               <div class="col">
-                <div>Chars: {{ metrics.chars }}</div>
-                <div>Words: {{ metrics.words }}</div>
-                <div>Unique: {{ metrics.unique }}</div>
+                <div>{{ t("pages.miracles.chars") }}: {{ metrics.chars }}</div>
+                <div>{{ t("pages.miracles.words") }}: {{ metrics.words }}</div>
+                <div>{{ t("pages.miracles.unique") }}: {{ metrics.unique }}</div>
               </div>
             </div>
           </q-card-section>
           <q-separator />
           <q-card-actions align="right">
-            <q-btn flat label="Change verse" @click="nextVerse" />
+            <q-btn flat :label="t('pages.miracles.changeVerse')" @click="nextVerse" />
           </q-card-actions>
         </q-card>
 
@@ -93,39 +92,25 @@ watch(arabicText, (val) => {
         <q-card class="q-pa-md q-mx-auto q-mt-md" style="max-width: 820px">
           <q-card-section>
             <h3 class="text-h6">
-              {{
-                t("pages.miracles.numericExamplesTitle") ||
-                "Examples of numerical miracles in the Qur’an"
-              }}
+              {{ t("pages.miracles.numericExamplesTitle") }}
             </h3>
             <div class="q-mt-sm">
               <ul class="q-pl-lg">
                 <li class="q-mb-sm">
-                  <strong>Repetition of opposite words:</strong>
-                  The numbers of some opposite words are equal, such as “the world” and
-                  “the hereafter” (115 times each), “angels” and “devils” (88 times each),
-                  and “light” and “darkness” (24 times each).
+                  <strong>{{ t("pages.miracles.oppositeWords") }}:</strong>
+                  {{ t("pages.miracles.oppositeWordsDesc") }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong>
-                    Relationships between the numbers of words, letters, verses, and
-                    surahs:
-                  </strong>
-                  The focus is on numbers, such as the number of chapters in the Qur’an
-                  being 114.
+                  <strong>{{ t("pages.miracles.wordRelations") }}:</strong>
+                  {{ t("pages.miracles.wordRelationsDesc") }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong>Relationships between words and concepts:</strong>
-                  Relating the number of times certain words are repeated to other
-                  numbers, such as the word “month” being repeated 12 times (the number of
-                  months in a year).
+                  <strong>{{ t("pages.miracles.conceptRelations") }}:</strong>
+                  {{ t("pages.miracles.conceptRelationsDesc") }}
                 </li>
                 <li class="q-mb-sm">
-                  <strong>Number of letters in the verses:</strong>
-                  It is worth noting that the number of letters in some verses corresponds
-                  to a specific number, such as the number of letters from the beginning
-                  of a particular verse to its end being the same number mentioned in the
-                  verse itself.
+                  <strong>{{ t("pages.miracles.letterCounts") }}:</strong>
+                  {{ t("pages.miracles.letterCountsDesc") }}
                 </li>
               </ul>
             </div>
@@ -134,3 +119,4 @@ watch(arabicText, (val) => {
       </q-page>
     </Suspense>
 </template>
+
