@@ -22,6 +22,7 @@
 - **Auto-imports**: `unplugin-auto-import` covers Vue, VueRouter, Pinia APIs—no manual imports needed. `unplugin-vue-components` with `QuasarResolver` auto-imports Quasar components. Additional directories: `src/core/components`, `src/modules/**/components` (see `vite.config.ts`).
 - **Routing**: `unplugin-vue-router` scans `src/views` for file-based routes, generates types in `src/types/typed-router.d.ts`. Manual route table in `src/router/routes.ts` for explicit control. Add new pages under `src/views/` or extend `routes.ts`.
 - **Quran data flow**: `src/stores/q2p.pinia.ts` lazy-loads chapters from bundled JSON (`src/shared/data/chapters/en.json` + `src/shared/data/quran.json`), persists to `localStorage` key `q2p-store`. `fetchSura()` tries: Nitro `/quran/:id` → fallback Waelio API → bundled data. Composable `src/composables/useQ2P.ts` mirrors this chain for non-store usage.
+- **Storage management**: All client-side storage uses `@waelio/ustore` via `src/composables/useUStore.ts`. Provides unified API for localStorage, sessionStorage, memoryStorage with optional encryption, namespacing, and Vue 3 reactivity. Pinia stores support auto-persistence via `persist` option (see `src/plugins/pinia/ustore-plugin.ts`). Never use native `localStorage` directly—use `useUStore()` composable or Pinia persistence. See `docs/USTORE_IMPLEMENTATION.md` for complete guide.
 
 ## API surface (apps/nitro-api)
 

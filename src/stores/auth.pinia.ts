@@ -75,29 +75,18 @@ export const useAuthStore = defineStore('auth', () => {
     }
     catch { }
     _user.value = null
+    _permissions.value = [
+      { action: CaslActionE.READ, subject: CaslSubjectE.CATEGORY },
+      { action: CaslActionE.READ, subject: CaslSubjectE.POST },
+      { action: CaslActionE.CREATE, subject: CaslSubjectE.USER },
+      { action: CaslActionE.READ, subject: CaslSubjectE.USER },
+      { action: CaslActionE.UPDATE, subject: CaslSubjectE.USER },
+      { action: CaslActionE.MANAGE, subject: CaslSubjectE.ADMIN },
+    ]
     try {
       $q.notify({ message: 'Logged out successfully', type: 'info' })
     }
     catch { }
-    // Remove persisted user data from localStorage when running in browser
-    if (isClient) {
-      try {
-        const core = (globalThis as any)?.$core || undefined
-        if (core && typeof core.remove === 'function') {
-          try { void core.remove('user') } catch { }
-          try { void core.remove('pinia_user') } catch { }
-          try { void core.remove('pinia') } catch { }
-          return
-        }
-      }
-      catch { }
-      try {
-        localStorage.removeItem('user')
-        localStorage.removeItem('pinia_user')
-        localStorage.removeItem('pinia')
-      }
-      catch { }
-    }
   }
 
   // WebAuthn login (guarded)
@@ -161,6 +150,14 @@ export const useAuthStore = defineStore('auth', () => {
     SetAbilities,
     // expose ability for advanced callers
     ability,
+  }
+}, {
+  // Auto-persist user and permissions to localStorage via uStore
+  persist: {
+    key: 'auth-store',
+    paths: ['_user', '_permissions'],
+    storage: 'local',
+    encrypt: false // Could enable with: encrypt: true, salt: import.meta.env.VITE_AUTH_SALT
   }
 })
 
