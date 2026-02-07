@@ -215,13 +215,23 @@ export function useStorageRef<T>(
     // Auto-sync on storage events (cross-tab sync for localStorage)
     if (storage === 'local' && typeof window !== 'undefined') {
         window.addEventListener('storage', (e: StorageEvent) => {
-
-            return {
-                value,
-                set: setValue,
-                remove: removeValue,
-                has: () => storageAPI.has(key, options.namespace)
+            const fullKey = options.namespace ? `${options.namespace}:${key}` : key
+            if (e.key === fullKey && e.newValue !== null) {
+                try {
+                    value.value = JSON.parse(e.newValue) as T
+                } catch {
+                    value.value = e.newValue as unknown as T
+                }
             }
-        }
+        })
+    }
+
+    return {
+        value,
+        set: setValue,
+        remove: removeValue,
+        has: () => storageAPI.has(key, options.namespace)
+    }
+}
 
 export default useUStore
