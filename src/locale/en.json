@@ -183,7 +183,20 @@
       "maxWidth": "Max width",
       "draw": "Draw",
       "downloadPng": "Download PNG",
-      "legendInfo": "Legend shows {count} letters. Canvas samples letters when the text is large to avoid huge images."
+      "legendInfo": "Legend shows {count} letters. Canvas samples letters when the text is large to avoid huge images.",
+      "chars": "Chars",
+      "words": "Words",
+      "unique": "Unique",
+      "changeVerse": "Change verse",
+      "numericExamplesTitle": "Examples of numerical miracles in the Qur'an",
+      "oppositeWords": "Repetition of opposite words",
+      "oppositeWordsDesc": "The numbers of some opposite words are equal, such as \"the world\" and \"the hereafter\" (115 times each), \"angels\" and \"devils\" (88 times each), and \"light\" and \"darkness\" (24 times each).",
+      "wordRelations": "Relationships between the numbers of words, letters, verses, and surahs",
+      "wordRelationsDesc": "The focus is on numbers, such as the number of chapters in the Qur'an being 114.",
+      "conceptRelations": "Relationships between words and concepts",
+      "conceptRelationsDesc": "Relating the number of times certain words are repeated to other numbers, such as the word \"month\" being repeated 12 times (the number of months in a year).",
+      "letterCounts": "Number of letters in the verses",
+      "letterCountsDesc": "It is worth noting that the number of letters in some verses corresponds to a specific number, such as the number of letters from the beginning of a particular verse to its end being the same number mentioned in the verse itself."
     },
     "chat": {
       "title": "Community Chat",

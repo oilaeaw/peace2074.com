@@ -212,7 +212,20 @@
       "maxWidth": "Max. Breite",
       "draw": "Zeichnen",
       "downloadPng": "PNG herunterladen",
-      "legendInfo": "Legende zeigt {count} Buchstaben. Bei großen Texten werden Stichproben genommen, um riesige Bilder zu vermeiden."
+      "legendInfo": "Legende zeigt {count} Buchstaben. Bei großen Texten werden Stichproben genommen, um riesige Bilder zu vermeiden.",
+      "chars": "Zeichen",
+      "words": "Wörter",
+      "unique": "Einzigartig",
+      "changeVerse": "Vers ändern",
+      "numericExamplesTitle": "Beispiele für numerische Wunder im Koran",
+      "oppositeWords": "Wiederholung von Gegenwörtern",
+      "oppositeWordsDesc": "Die Anzahl einiger Gegenwörter ist gleich, wie \"die Welt\" und \"das Jenseits\" (je 115 Mal), \"Engel\" und \"Teufel\" (je 88 Mal) und \"Licht\" und \"Dunkelheit\" (je 24 Mal).",
+      "wordRelations": "Beziehungen zwischen Wörtern, Buchstaben, Versen und Suren",
+      "wordRelationsDesc": "Der Fokus liegt auf Zahlen, wie die Anzahl der Kapitel im Koran mit 114.",
+      "conceptRelations": "Beziehungen zwischen Wörtern und Konzepten",
+      "conceptRelationsDesc": "Die Häufigkeit bestimmter Wörter wird mit anderen Zahlen in Beziehung gesetzt, wie das Wort \"Monat\", das 12 Mal wiederholt wird (die Anzahl der Monate im Jahr).",
+      "letterCounts": "Anzahl der Buchstaben in den Versen",
+      "letterCountsDesc": "Es ist bemerkenswert, dass die Anzahl der Buchstaben in einigen Versen einer bestimmten Zahl entspricht, wie die Anzahl der Buchstaben vom Anfang eines bestimmten Verses bis zu seinem Ende dieselbe Zahl ist, die im Vers selbst erwähnt wird."
     },
     "chat": {
       "title": "Community-Chat",
