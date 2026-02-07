@@ -2,124 +2,185 @@
 
 ## Architecture Overview
 
-This is a **pure Nitro + Deno project** (NOT Nuxt), serving HTML routes and APIs. Key distinction: file-based Nitro routing without Vue/Nuxt components.
+**Hybrid Application**: Vue 3 SPA (frontend) + Nitro API (backend)
 
 ```
-server/
-├── routes/        # HTML handlers (/, /about, /contact) - return HTML strings
-├── api/           # API endpoints (/api/*, /api/health)
-└── public/        # Static assets (robots.txt, manifests, icons)
+src/                          # Vue 3 + TypeScript frontend
+├── views/                    # File-based routing (unplugin-vue-router)
+│   ├── quran/[...lok].vue   # Quran reader with verse navigation
+│   ├── tasbeeh.vue          # Islamic counter with haptic feedback
+│   ├── holynames.vue        # 99 Names of Allah (multi-language)
+│   └── chat.vue             # AI chat (DeepSeek integration)
+├── stores/                   # Pinia state management
+│   ├── q2p.pinia.ts        # Quran data loader (lazy JSON imports)
+│   ├── auth.pinia.ts       # Netlify Identity authentication
+│   └── bookmarks.pinia.ts  # User bookmark persistence
+├── layouts/AppShell.vue     # Main app layout (nav, footer, theme toggle)
+├── composables/             # Vue composables (useAthanPlayer, useQ2P)
+├── locale/                  # i18n translations (ar, en, he, ru, de, fr)
+└── plugins/                 # Quasar UI, Font Awesome, Pinia
+
+apps/nitro-api/              # Nitro backend (separate workspace)
+└── server/routes/           # API endpoints (/deepseek, /quran, /auth)
+
+dist/                        # Built SPA output (committed to git)
 ```
 
-**Critical**: The Express router exists but is mounted ONLY at `/_express`. Never overlap with file-based Nitro routes. Prefer Nitro's file-based approach for all new endpoints.
+**Key Technologies**:
+- **Vite** - Build tool with PWA plugin, auto-imports, chunking
+- **Vue Router** - File-based routes from `src/views/`
+- **Pinia** - State stores with HMR
+- **Quasar** - UI framework (dark mode, RTL support)
+- **PWA** - Service worker via vite-plugin-pwa (workbox)
+- **i18n** - Vue I18n with RTL detection (Arabic, Hebrew)
+- **Three.js** - 3D background effects (ThreeBackground.vue)
 
 ## Development Workflow
 
 **Setup & Run**:
 ```bash
-pnpm install              # Always use pnpm (v10.24.0+)
-pnpm dev                  # Starts Nitro dev server with Deno preset
+pnpm install              # Always use pnpm (Node 22.12+ required)
+pnpm dev                  # Runs Vite (port 5173) + Nitro API (port 3000) concurrently
+pnpm dev:vite             # Frontend only
+pnpm dev:nitro            # Backend only
 ```
 
-**Quality Gates** (must pass before PR):
+**Build & Deploy**:
 ```bash
-pnpm lint                 # ESLint with @antfu config
-pnpm typecheck            # TypeScript validation
-pnpm build                # Verify production build
-pnpm test                 # Vitest unit tests (Node env)
-pnpm run test:e2e         # Deno E2E tests (auto-starts server)
+pnpm build                # Vite build → dist/
+pnpm lint                 # ESLint + Prettier (auto-fixes)
+pnpm typecheck            # Vue TSC type checking
+pnpm check:locales        # Validate i18n files are in sync
 ```
 
-**Testing Strategy**:
-- Unit tests in `test/**/*.spec.ts` use Vitest in Node environment
-- E2E tests in `e2e/tests/*.test.ts` use Deno's native test runner with `@std/assert`
-- E2E uses custom bash script (`run-e2e-tests.sh`) that auto-starts dev server and extracts port dynamically
-- Health check pattern: `/api/health` returns `{ status: 'ok', timestamp: ISO_STRING }`
+**Build Optimizations**:
+- Manual chunks: `vendor-vue`, `vendor-quasar`, `vendor-i18n`, `three`
+- Chunk size limit: 600KB (vite.config.ts)
+- Lazy-loaded Quran data (31MB JSON split by edition)
 
 ## Code Patterns & Conventions
 
-**Route Handlers** (server/routes/*.ts):
+**Pinia Stores** (stores/*.pinia.ts):
 ```typescript
-export default defineEventHandler(() => {
-  return `<!DOCTYPE html>...`  // Return HTML string directly
+import { defineStore, acceptHMRUpdate } from 'pinia'
+
+export const useQ2P = defineStore('q2p', {
+  state: () => ({
+    Book: [] as any[],  // Lazy-loaded via loadLocalQuran()
+    Sura: {} as SuraI,
+    Index: 1,
+  }),
+  actions: {
+    async init() {
+      await ensureBook(this.$state, 1)  // Load JSON on demand
+    }
+  }
 })
+
+// Enable HMR
+if (import.meta.hot) {
+  import.meta.hot.accept(acceptHMRUpdate(useQ2P, import.meta.hot))
+}
 ```
 
-**API Endpoints** (server/api/*.ts):
-```typescript
-export default defineEventHandler(() => ({
-  status: 'ok',
-  timestamp: new Date().toISOString(),
-}))
+**File-Based Routes** (src/views/*.vue):
+```vue
+<script setup lang="ts">
+// Auto-imported: ref, computed, onMounted, useRouter, etc.
+const route = useRoute()
+const q2p = useQ2P()
+
+onMounted(() => q2p.init())
+</script>
+
+<template>
+  <q-page><!-- Quasar components auto-resolved --></q-page>
+</template>
 ```
 
-**E2E Test Pattern**:
+**i18n Usage**:
+```vue
+<script setup>
+const { t, locale } = useI18n()  // Auto-imported
+</script>
+<template>
+  <h1>{{ t('quran.title') }}</h1>
+</template>
+```
+
+**API Integration** (apps/nitro-api):
 ```typescript
-// Use Deno assertions, not Jest/Vitest
-import { assertEquals, assertStringIncludes } from "@std/assert";
-
-// Extract BASE_URL from args (injected by run-e2e-tests.sh)
-const BASE_URL = Deno.args.find(arg => arg.startsWith('--base-url='))
-  ?.split('=')[1] || 'http://localhost:3000';
-
-Deno.test("Feature X works", async () => {
-  const response = await fetch(`${BASE_URL}/path`);
-  assertEquals(response.status, 200);
-});
+// apps/nitro-api/server/routes/quran.ts
+export default defineEventHandler(async (event) => {
+  const query = getQuery(event)
+  return { chapters: await getQuranData() }
+})
 ```
 
 ## Deployment & Configuration
 
-**Platform**: Netlify ONLY (strong preference, documented in README)
-- Build command: `npm run build` (Netlify uses npm wrapper)
-- Publish dir: `.output/public`
-- Redirects all routes to `/.netlify/functions/server`
-- **Never suggest Vercel** - project explicitly avoids Vercel due to pricing
+**Platform**: Netlify (committed `dist/` folder)
+- Build: `vite build` → `dist/`
+- PWA assets: manifest.webmanifest, sw.js, icons (Android, iOS, Windows)
+- No SSR - pure SPA with client-side routing
 
-**Environment Variables** (`.env.example` template):
+**Environment Variables** (Vite requires `VITE_` prefix):
 ```bash
-# Core
-SITE_BASE_URL=http://localhost:3000        # Public app URL
-MONGODB_URI=mongodb://...                  # MongoDB Atlas connection (planned)
-JWT_SECRET=...                             # Session secret (≥32 chars)
+# Frontend (prefix with VITE_)
+VITE_QURAN_API_BASE=http://localhost:3000
+VITE_DEEPSEEK_API_KEY=sk-...  # For chat feature
 
-# OAuth (documented for future use)
-GOOGLE_CLIENT_ID / GOOGLE_CLIENT_SECRET
-GITHUB_CLIENT_ID / GITHUB_CLIENT_SECRET
+# Backend (Nitro API in apps/nitro-api)
+DEEPSEEK_API_KEY=sk-...
+MONGODB_URI=mongodb+srv://...
 ```
 
-**Config files**:
-- `nitro.config.ts` - Nitro with `preset: 'deno-server'`
-- `netlify.toml` - Deployment config
-- `vitest.config.ts` - Unit test config (Node environment)
-- `eslint.config.mjs` - ESLint with @antfu preset, ignores `.output/`, `types/`
-- `.env.example` - Environment variable template; copy to `.env` for local dev
+**Config Files**:
+- `vite.config.ts` - Plugins (PWA, auto-import, Quasar, unplugin-vue-router)
+- `apps/nitro-api/nitro.config.ts` - Backend server config
+- `src/locale/*.json` - i18n translation files (must stay in sync)
+- `uno.config.ts` - UnoCSS utility classes (if used)
 
-**Note**: OAuth (Google/GitHub) and MongoDB integration are documented in `DEPLOY.md` but not yet implemented in source code. Environment variables are defined in `.env.example` for future use.
+## Data Architecture
+
+**Quran Data Strategy**:
+- **Lazy Loading**: JSON imports delayed until user navigates to Quran
+- **Storage**: `src/shared/data/editions/*.json` (31MB total, split by language)
+- **Caching**: HMR-safe readyCache in q2p.pinia.ts
+- **Pattern**:
+  ```typescript
+  await import('@shared/data/quran.json').then(m => m.default)
+  await import('@shared/data/chapters/en.json').then(m => m.default)
+  ```
+
+**Bookmarks**: Pinia store + localStorage (unstorage driver)
+**Auth**: Netlify Identity widget + JWT validation
+**Analytics**: Google Analytics with consent management (ConsentBanner.vue)
 
 ## PR & Change Requirements
 
 Per `CONTRIBUTING.md`:
 1. Never push directly to `one` (default branch)
 2. PRs must include:
-   - Description of problem, solution, affected files/routes
-   - Test plan (manual steps or automated tests)
-   - Passing CI checks (lint, typecheck, build, tests)
+   - Description of changes with affected components/routes
+   - Test plan (manual or automated)
+   - Passing lint, typecheck, build
 3. Use conventional commits: `feat:`, `fix:`, `docs:`, `chore:`
-4. For breaking changes: include `BREAKING CHANGE:` in commit body
+4. Locale changes require running `pnpm check:locales`
 5. Get CODEOWNER approval before merge
-
-**Debug Endpoints**: Add temporary debug routes under `server/api/dev/*` and return 404 in production.
 
 ## Common Pitfalls
 
-❌ Don't assume this is Nuxt (no `definePageMeta`, no auto-imported components)
-❌ Don't use Vercel preset or config (project explicitly avoids Vercel)
-❌ Don't overlap Express routes (mounted at `/_express`) with file-based routes
-❌ Don't use Jest syntax in E2E tests (use Deno's `@std/assert`)
-❌ Don't forget to run E2E tests - they validate critical flows
+❌ **Don't** use `VITE_` prefix for backend env vars (they're exposed to client)
+❌ **Don't** import all Quran data upfront (lazy-load per src/stores/q2p.pinia.ts)
+❌ **Don't** break RTL layout (test with Arabic/Hebrew locales)
+❌ **Don't** forget dark mode compatibility (Quasar's `$q.dark`)
+❌ **Don't** add heavy deps without checking bundle size
 
-✅ Do use Nitro's `defineEventHandler` for all routes and APIs
-✅ Do follow semantic versioning and conventional commits
-✅ Do run full quality gate suite before requesting review
-✅ Do keep PRs small and focused on single concerns
+✅ **Do** use auto-imports (Vue, Router, Pinia already configured)
+✅ **Do** add new routes as `src/views/*.vue` (auto-detected)
+✅ **Do** test PWA offline behavior (service worker caching)
+✅ **Do** use Quasar components (no manual imports needed)
+✅ **Do** validate i18n completeness with `check:locales` script
+
+**Node Version**: Requires Node 22.12+ (enforced in predev script)
