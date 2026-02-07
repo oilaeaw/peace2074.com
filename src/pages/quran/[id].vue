@@ -17,7 +17,7 @@ type BookmarkEntry = {
 }
 
 const { locale, t } = useI18n()
-const route = useRoute('/quran/[id]')
+const route = useRoute()
 const router = useRouter()
 const q2p = useQ2P()
 const $q = useQuasar()
