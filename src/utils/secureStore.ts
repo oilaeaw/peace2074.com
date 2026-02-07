@@ -1,4 +1,5 @@
-import { configStorage, memoryStorage } from "@waelio/ustore";
+// Use local storage shim to avoid GunDB auto-initialization from @waelio/ustore
+import { configStorage, memoryStorage } from "@/utils/storage-shim";
 import { _encrypt, _decrypt } from "waelio-utils";
 
 // Minimal secure wrapper for @waelio/ustore.
