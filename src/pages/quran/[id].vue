@@ -175,6 +175,7 @@ async function handleBookmarkNavigate(entry: BookmarkEntry) {
 
 /**
  * Navigate to a quick access verse using the Red-Black Tree for O(log n) lookup
+ * After navigation, automatically plays the ayah audio
  */
 async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
   // Use tree for efficient lookup (preload context)
@@ -184,10 +185,39 @@ async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
   }
   
   selectedBookmark.value = `id_${qaVerse.id}`
+  
+  const playVerseAfterLoad = async () => {
+    // Wait for audio list to be loaded
+    await nextTick()
+    // Retry a few times if audio list isn't ready yet
+    let retries = 10
+    while (audioList.value.length === 0 && retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, 200))
+      retries--
+    }
+    // Play the specific verse (array is 0-indexed, verse numbers are 1-indexed)
+    const verseIndex = qaVerse.verse - 1
+    if (audioList.value.length > verseIndex && verseIndex >= 0) {
+      stopRequested.value = false
+      playAyah(verseIndex)
+      $q.notify({ 
+        type: 'positive', 
+        message: t(qaVerse.nameKey),
+        icon: 'play_arrow',
+        timeout: 2000
+      })
+    }
+  }
+  
   if (qaVerse.suraId !== currentSuraId.value) {
+    // Navigate to different sura, then play after load
     await router.push({ path: `/quran/${qaVerse.suraId}`, hash: `#${qaVerse.id}` })
+    // Wait for sura to load and then play
+    setTimeout(playVerseAfterLoad, 500)
   } else {
+    // Same sura - scroll and play immediately
     scrollToVerse(qaVerse.verse)
+    await playVerseAfterLoad()
   }
 }
 
