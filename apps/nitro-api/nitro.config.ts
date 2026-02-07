@@ -16,7 +16,7 @@ export default defineNitroConfig({
         // Secrets are automatically read from corresponding
         // environment variables e.g. NITRO_DEEPSEEK_API_KEY
         deepseekApiKey: "",
-        deepseekBaseUrl: "z     ",
+        deepseekBaseUrl: "",
         contactFrom: "",
         contactTo: "",
         netlifyWebhookSecret: "",

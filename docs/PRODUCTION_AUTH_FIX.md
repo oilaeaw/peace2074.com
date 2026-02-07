@@ -50,7 +50,7 @@ NITRO_AUTH_SECRET=${AUTH_SECRET}
 # DeepSeek (if using AI features)
 DEEPSEEK_API_KEY=sk-your-key
 NITRO_DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-DEEPSEEK_BASE_URL=https://api.deepseek.com/v1
+DEEPSEEK_BASE_URL=<your-deepseek-base-url>
 
 # SMTP (for contact form)
 SMTP_HOST=smtp.gmail.com
