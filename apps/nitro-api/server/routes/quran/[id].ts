@@ -1,12 +1,11 @@
 import { defineEventHandler, getRouterParam } from 'h3'
-import { useStorage } from '#imports'
+import chaptersEn from '../../../../../src/shared/data/chapters/en.json'
+import quranData from '../../../../../src/shared/data/quran.json'
 
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     const id = Number(getRouterParam(event, 'id') || 1)
-    const storage = useStorage('assets:quran')
-
-    const chapters = await storage.getItem<any[]>('chapters/en.json') || []
-    const book = await storage.getItem<Record<string, any[]>>('quran.json') || {}
+    const chapters = chaptersEn as any[]
+    const book = quranData as Record<string, any[]>
 
     const meta = (chapters || []).find((c: any) => Number(c?.id || c?.number) === id)
     const verses = Array.isArray(book[String(id)]) ? book[String(id)] : []

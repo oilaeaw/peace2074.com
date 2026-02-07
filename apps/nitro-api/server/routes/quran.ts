@@ -1,11 +1,10 @@
 import { defineEventHandler } from 'h3'
-import { useStorage } from '#imports'
+import chaptersEn from '../../../../src/shared/data/chapters/en.json'
+import quranData from '../../../../src/shared/data/quran.json'
 
-export default defineEventHandler(async () => {
-    const storage = useStorage('assets:quran')
-
-    const chapters = await storage.getItem<any[]>('chapters/en.json') || []
-    const book = await storage.getItem<Record<string, any[]>>('quran.json') || {}
+export default defineEventHandler(() => {
+    const chapters = chaptersEn as any[]
+    const book = quranData as Record<string, any[]>
 
     const list = (chapters || []).map((meta: any) => {
         const id = Number(meta?.id || meta?.number)

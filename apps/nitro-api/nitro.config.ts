@@ -16,20 +16,6 @@ export default defineNitroConfig({
         dir: isNetlifyBuild ? '../../netlify/functions' : '.netlify/functions-internal',
         serverDir: isNetlifyBuild ? '../../netlify/functions/server' : '.netlify/functions-internal/server',
     },
-    // Bundle JSON data files for serverless access
-    serverAssets: [
-        {
-            baseName: 'quran',
-            dir: '../../src/shared/data',
-        },
-    ],
-    // Dev storage driver for serverAssets (production uses bundled assets)
-    devStorage: {
-        'assets:quran': {
-            driver: 'fs',
-            base: '../../src/shared/data',
-        },
-    },
     devServer: {
         port: DEFAULT_PORT,
         host: "0.0.0.0",

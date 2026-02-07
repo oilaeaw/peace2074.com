@@ -1,16 +1,18 @@
 import { defineEventHandler, getQuery } from "h3";
-import { useStorage } from "#imports";
+import chaptersEn from '../../../../src/shared/data/chapters/en.json';
+import chaptersRu from '../../../../src/shared/data/chapters/ru.json';
+import quranData from '../../../../src/shared/data/quran.json';
 
-const chapterFiles: Record<string, string> = {
-    en: "en.json",
-    ru: "ru.json",
-    ar: "ar.json",
-    de: "en.json",
-    he: "en.json",
+// Pre-loaded chapters by locale (Arabic, German, Hebrew fall back to English)
+const chaptersMap: Record<string, any[]> = {
+    en: chaptersEn as any[],
+    ru: chaptersRu as any[],
+    ar: chaptersEn as any[], // Arabic falls back to English
+    de: chaptersEn as any[], // German falls back to English
+    he: chaptersEn as any[], // Hebrew falls back to English
 };
 
-const chapterCache = new Map<string, any[]>();
-let quranCache: Record<string, any[]> | null = null;
+const quranCache = quranData as Record<string, any[]>;
 
 function normalizeText(str: string) {
     const noHarakat = str
@@ -26,39 +28,15 @@ function normalizeText(str: string) {
 function normalizeLang(lang?: string) {
     if (!lang) return "en";
     const short = String(lang).toLowerCase().split("-")[0];
-    if (chapterFiles[short]) return short;
+    if (chaptersMap[short]) return short;
     return "en";
 }
 
-async function ensureQuran() {
-    if (quranCache) return;
-    const storage = useStorage("assets:quran");
-    quranCache = await storage.getItem<Record<string, any[]>>("quran.json") || {};
+function getChapters(lang: string): any[] {
+    return chaptersMap[normalizeLang(lang)] || chaptersMap.en;
 }
 
-async function ensureChapters(lang: string) {
-    const loc = normalizeLang(lang);
-    if (chapterCache.has(loc)) return;
-
-    const storage = useStorage("assets:quran");
-    const file = chapterFiles[loc] || chapterFiles.en;
-
-    try {
-        const data = await storage.getItem<any[]>(`chapters/${file}`) || [];
-        chapterCache.set(loc, data);
-    } catch (e) {
-        // Fallback to English if load fails
-        if (!chapterCache.has("en")) {
-            const fallback = await storage.getItem<any[]>("chapters/en.json") || [];
-            chapterCache.set("en", fallback);
-        }
-        if (loc !== "en") {
-            chapterCache.set(loc, chapterCache.get("en") || []);
-        }
-    }
-}
-
-export default defineEventHandler(async (event) => {
+export default defineEventHandler((event) => {
     const { q = "", limit = "20", lang = "en" } = getQuery(event);
     const rawQuery = String(q || "");
     const query = rawQuery.trim().toLowerCase();
@@ -68,10 +46,8 @@ export default defineEventHandler(async (event) => {
     if (!query) return { results: [] };
 
     const loc = normalizeLang(String(lang));
-    await Promise.all([ensureChapters(loc), ensureQuran()]);
-
-    const chapters = chapterCache.get(loc) || chapterCache.get("en") || [];
-    const quran = quranCache || {};
+    const chapters = getChapters(loc);
+    const quran = quranCache;
 
     const results: any[] = [];
 
