@@ -61,6 +61,12 @@ const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
 const stopRequested = ref(false)
 
+// Hover widget state
+const hoverWidgetVisible = ref(false)
+const hoverWidgetVerse = ref<number | null>(null)
+const hoverTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
+const hoverWidgetPosition = ref({ top: 0, left: 0 })
+
 // TTS (Text-to-Speech) state
 const READER_MODE_KEY = 'quran-reader-mode'
 const readerMode = ref<'audio' | 'tts'>('audio')
@@ -276,66 +282,77 @@ async function loadSuraById(id: number) {
 }
 
 /**
- * Load audio URLs from alquran.cloud (per-verse Al-Afasy) 
- * and word timings from qurancdn.com (synchronized with audio).
- * Timings are adjusted to be relative to each verse's start time.
+ * Load audio URLs and word timings from quran.com API.
+ * Uses per-verse audio with synchronized word segments.
  */
 async function loadAudioAndTimings(id: number) {
   audioList.value = []
   wordTimings.value = {}
   currentAyahIndex.value = -1
   
-  // Load per-verse audio from alquran.cloud (Al-Afasy recitation)
-  try {
-    const audioRes = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
-    if (audioRes.ok) {
-      const audioJson = await audioRes.json()
-      const ayahs = audioJson?.data?.ayahs || []
-      audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
-    }
-  } catch (err) {
-    console.warn('[Quran Audio] Failed to load audio from alquran.cloud:', err)
-  }
+  const AUDIO_BASE_URL = 'https://verses.quran.com/'
   
-  // Load word timings from qurancdn (has verse_timings with segments)
   try {
-    const timingRes = await fetch(`https://api.qurancdn.com/api/qdc/audio/reciters/7/audio_files?chapter=${id}&segments=true`)
-    if (timingRes.ok) {
-      const timingJson = await timingRes.json()
-      const audioFile = timingJson?.audio_files?.[0]
-      const verseTimings = audioFile?.verse_timings || []
+    // Fetch verses with audio segments for reciter 7 (Al-Afasy)
+    const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&per_page=300`)
+    if (!res.ok) {
+      console.warn('[Quran Audio] Failed to load from quran.com, falling back to alquran.cloud')
+      await loadAudioListFallback(id)
+      return
+    }
+    
+    const json = await res.json()
+    const verses = json?.verses || []
+    
+    verses.forEach((verse: any) => {
+      const verseNum = verse?.verse_number
+      if (!verseNum) return
       
-      verseTimings.forEach((verseTiming: any) => {
-        const verseKey: string = verseTiming?.verse_key || ''
-        const [, ayahId] = verseKey.split(':').map((n: string) => Number(n))
-        if (!ayahId) return
-        
-        // Get the verse's start time within the full chapter audio
-        const verseStartMs = verseTiming?.timestamp_from ?? 0
-        
-        // Extract word timings and adjust to be relative to verse start
-        // Segments format: [[wordIndex, startMs, endMs], ...]
-        const segments: number[][] = verseTiming?.segments || []
-        if (segments.length > 0) {
-          const timings = segments
-            .filter((seg: number[]) => seg.length >= 3) // Ensure valid segment
-            .map((seg: number[]) => {
-              // Subtract verse start time to make timing relative to per-verse audio
-              const start = Math.max(0, ((seg[1] ?? 0) - verseStartMs)) / 1000
-              const end = Math.max(0, ((seg[2] ?? 0) - verseStartMs)) / 1000
-              return { start, end }
-            })
-          if (timings.length > 0) {
-            wordTimings.value[ayahId - 1] = timings
-          }
+      // Build full audio URL
+      const audioPath = verse?.audio?.url
+      if (audioPath) {
+        audioList.value[verseNum - 1] = `${AUDIO_BASE_URL}${audioPath}`
+      }
+      
+      // Extract word timings from segments
+      // Segment format: [char_start, char_end, start_ms, end_ms]
+      const segments: number[][] = verse?.audio?.segments || []
+      if (segments.length > 0) {
+        const timings = segments
+          .filter((seg: number[]) => seg.length >= 4)
+          .map((seg: number[]) => ({
+            start: (seg[2] ?? 0) / 1000,
+            end: (seg[3] ?? 0) / 1000
+          }))
+        if (timings.length > 0) {
+          wordTimings.value[verseNum - 1] = timings
         }
-      })
-    }
+      }
+    })
+    
+    // Filter out any undefined entries
+    audioList.value = audioList.value.filter(Boolean)
+    
+    console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
   } catch (err) {
-    console.warn('[Quran Audio] Failed to load word timings from qurancdn:', err)
+    console.error('[Quran Audio] Failed to load from quran.com:', err)
+    await loadAudioListFallback(id)
   }
-  
-  console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
+}
+
+/**
+ * Fallback audio loader using alquran.cloud API (no word timings)
+ */
+async function loadAudioListFallback(id: number) {
+  try {
+    const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
+    if (!res.ok) return
+    const json = await res.json()
+    const ayahs = json?.data?.ayahs || []
+    audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
+  } catch {
+    // silent fallback; list stays empty
+  }
 }
 
 function preloadNextAyah(index: number) {
@@ -413,9 +430,9 @@ async function startSuraAudio() {
     return
   }
 
-  // Ensure word timings are loaded before playback to allow highlighting
+  // Reload audio and timings if word timings are missing
   if (!Object.keys(wordTimings.value).length && currentSuraId.value) {
-    await loadWordTimings(Number(currentSuraId.value))
+    await loadAudioAndTimings(Number(currentSuraId.value))
   }
 
   playAyah(currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
@@ -435,6 +452,68 @@ function stopAudio() {
   isPlayingAudio.value = false
   currentAyahIndex.value = -1
   currentWordIndex.value = -1
+}
+
+function togglePauseResume() {
+  if (!audioEl.value) return
+  if (audioEl.value.paused) {
+    audioEl.value.play()
+    isPlayingAudio.value = true
+  } else {
+    audioEl.value.pause()
+    isPlayingAudio.value = false
+  }
+}
+
+// Hover widget functions
+function onVerseMouseEnter(event: MouseEvent, verse: number) {
+  if (hoverTimeout.value) clearTimeout(hoverTimeout.value)
+  hoverTimeout.value = setTimeout(() => {
+    const target = event.currentTarget as HTMLElement
+    if (target) {
+      const rect = target.getBoundingClientRect()
+      hoverWidgetPosition.value = {
+        top: rect.top + window.scrollY + rect.height / 2,
+        left: rect.left + window.scrollX + rect.width / 2
+      }
+    }
+    hoverWidgetVerse.value = verse
+    hoverWidgetVisible.value = true
+  }, 800) // 800ms long hover
+}
+
+function onVerseMouseLeave() {
+  if (hoverTimeout.value) {
+    clearTimeout(hoverTimeout.value)
+    hoverTimeout.value = null
+  }
+}
+
+function hideHoverWidget() {
+  hoverWidgetVisible.value = false
+  hoverWidgetVerse.value = null
+}
+
+function restartFromVerse(verse: number) {
+  hideHoverWidget()
+  stopAudio()
+  nextTick(() => {
+    playAyah(verse - 1)
+  })
+}
+
+function restartSura() {
+  hideHoverWidget()
+  stopAudio()
+  nextTick(() => {
+    playAyah(0)
+  })
+}
+
+function goHome() {
+  hideHoverWidget()
+  stopAudio()
+  router.push('/')
 }
 
 // TTS (Text-to-Speech) Functions
@@ -550,7 +629,21 @@ function updateCurrentWord(time: number) {
   const timings = wordTimings.value[idx] || []
   if (!timings.length) return
   const found = timings.findIndex((seg) => time >= seg.start && time <= seg.end)
-  currentWordIndex.value = found
+  if (found !== currentWordIndex.value && found >= 0) {
+    currentWordIndex.value = found
+    // Scroll to the current word
+    scrollToCurrentWord(idx, found)
+  } else if (found < 0 && currentWordIndex.value >= 0) {
+    currentWordIndex.value = found
+  }
+}
+
+function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
+  const wordId = `word-${ayahIndex + 1}-${wordIndex}`
+  const el = document.getElementById(wordId)
+  if (el) {
+    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+  }
 }
 
 onMounted(async () => {
@@ -774,11 +867,14 @@ watch(layoutMode, (mode) => {
             :id="getVerseElementId(a.verse)"
             class="verse-row q-mb-md"
             :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            @dblclick="togglePauseResume"
+            @mouseenter="onVerseMouseEnter($event, a.verse)"
+            @mouseleave="onVerseMouseLeave"
           >
             <div class="arabic-text">
               <template v-if="wordTimings[a.verse - 1]?.length">
                 <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
-                  <span :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                  <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
                 </template>
               </template>
               <template v-else>
@@ -843,6 +939,61 @@ watch(layoutMode, (mode) => {
           </div>
         </div>
       </div>
+
+      <!-- Audio Control Hover Widget -->
+      <Teleport to="body">
+        <Transition name="fade">
+          <div
+            v-if="hoverWidgetVisible && audioEl && currentAyahIndex >= 0"
+            class="audio-hover-widget"
+            :style="{ top: hoverWidgetPosition.top + 'px', left: hoverWidgetPosition.left + 'px' }"
+            @mouseleave="hideHoverWidget"
+          >
+            <div class="hover-widget-content">
+              <q-btn
+                round
+                dense
+                :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
+                color="primary"
+                @click="togglePauseResume"
+                :title="isPlayingAudio ? t('pages.quran.pause') : t('pages.quran.play')"
+              />
+              <q-btn
+                round
+                dense
+                icon="replay"
+                color="secondary"
+                @click="restartFromVerse(hoverWidgetVerse!)"
+                :title="t('pages.quran.restart') || 'Restart verse'"
+              />
+              <q-btn
+                round
+                dense
+                icon="first_page"
+                color="accent"
+                @click="restartSura"
+                :title="t('pages.quran.restartSura') || 'Restart sura'"
+              />
+              <q-btn
+                round
+                dense
+                icon="home"
+                color="grey"
+                @click="goHome"
+                :title="t('nav.home') || 'Home'"
+              />
+              <q-btn
+                round
+                dense
+                flat
+                icon="close"
+                size="sm"
+                @click="hideHoverWidget"
+              />
+            </div>
+          </div>
+        </Transition>
+      </Teleport>
     </q-card>
   </div>
 </template>
@@ -1095,9 +1246,38 @@ watch(layoutMode, (mode) => {
 }
 
 .is-current-word {
-  background: rgba(185, 138, 54, 0.25);
-  padding: 0 4px;
+  background: #f59e0b;
+  color: #1a1a1a;
+  padding: 2px 6px;
   border-radius: 6px;
+  transition: background 0.15s ease;
+}
+
+.audio-hover-widget {
+  position: absolute;
+  z-index: 9999;
+  transform: translate(-50%, -50%);
+  background: rgba(255, 255, 255, 0.98);
+  border-radius: 12px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+  padding: 12px 16px;
+  backdrop-filter: blur(8px);
+}
+
+.hover-widget-content {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.fade-enter-active,
+.fade-leave-active {
+  transition: opacity 0.2s ease;
+}
+
+.fade-enter-from,
+.fade-leave-to {
+  opacity: 0;
 }
 
 .ayah-number {
