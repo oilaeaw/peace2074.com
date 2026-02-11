@@ -154,15 +154,6 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/miracles/patterns',
-    name: 'MiraclesPatterns',
-    component: () => import('@/views/miracles2.vue'),
-    meta: {
-      title: 'Linguistic Patterns',
-      titleKey: 'pages.miracles.linguisticPilotTitle',
-    },
-  },
-  {
     path: '/privacy',
     name: 'Privacy',
     component: () => import('@/views/privacy.vue'),

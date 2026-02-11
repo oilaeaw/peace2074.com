@@ -3,7 +3,7 @@
     <q-header elevated>
       <q-toolbar>
         <q-avatar square size="32px" class="q-mr-sm">
-          <img src="/logo.svg" alt="PEACE2074" />
+          <img src="/logo.svg" alt="PEACE2074" class="app-logo" />
         </q-avatar>
         <q-toolbar-title>
           <RouterLink

@@ -704,18 +704,16 @@ watch(
   min-width: 300px;
 }
 
-// Dark mode
-@media (prefers-color-scheme: dark) {
-  .tasbeeh-card,
-  .tasbeeh-item,
-  .stat-item {
-    background: #333;
-    color: #e0e0e0;
-  }
+// Dark mode (Quasar Dark)
+:global(body.body--dark) .tasbeeh-page .tasbeeh-card,
+:global(body.body--dark) .tasbeeh-page .tasbeeh-item,
+:global(body.body--dark) .tasbeeh-page .stat-item {
+  background: #333;
+  color: #e0e0e0;
+}
 
-  .tasbeeh-item.active {
-    background: #444;
-  }
+:global(body.body--dark) .tasbeeh-page .tasbeeh-item.active {
+  background: #444;
 }
 
 // Mobile responsiveness

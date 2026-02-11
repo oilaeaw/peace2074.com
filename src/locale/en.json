@@ -282,6 +282,15 @@
         "remember": "Remember last read page",
         "hint": "Reading choices apply across Quran pages on this device."
       },
+      "appearance": {
+        "title": "Appearance",
+        "hint": "Follow the system theme or force light/dark.",
+        "themeOptions": {
+          "system": "System",
+          "light": "Light",
+          "dark": "Dark"
+        }
+      },
       "security": {
         "title": "Security",
         "currentPassword": "Current password",

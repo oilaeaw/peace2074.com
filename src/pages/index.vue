@@ -51,7 +51,7 @@ function setPromptExample(example: string) {
   <q-page padding>
     <div class="hero-grid">
       <div class="hero">
-        <img class="logo" src="/logo.svg" alt="PEACE2074" />
+        <img class="logo app-logo" src="/logo.svg" alt="PEACE2074" />
         <h1 class="title">Welcome to PEACE2074</h1>
         <p class="subtitle">Choose a section to get started</p>
         <div class="grid">

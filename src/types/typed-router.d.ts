@@ -93,13 +93,6 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
-    '/miracles2': RouteRecordInfo<
-      '/miracles2',
-      '/miracles2',
-      Record<never, never>,
-      Record<never, never>,
-      | never
-    >,
     '/preferences': RouteRecordInfo<
       '/preferences',
       '/preferences',
@@ -233,12 +226,6 @@ declare module 'vue-router/auto-routes' {
     'src/views/miracles.vue': {
       routes:
         | '/miracles'
-      views:
-        | never
-    }
-    'src/views/miracles2.vue': {
-      routes:
-        | '/miracles2'
       views:
         | never
     }

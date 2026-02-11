@@ -206,7 +206,7 @@ function showTranslation(sura: any) {
   z-index: 2;
 }
 
-:root {
+.islamic-design {
   --background-pattern: #f3f6f3;
   --text-color: #111;
   --title-color: #155724;
@@ -218,18 +218,16 @@ function showTranslation(sura: any) {
   --chip-text-color: #111;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-pattern: #23272e;
-    --text-color: #fff;
-    --title-color: #fff;
-    --subtitle-color: #b0b0b0;
-    --card-border: var(--text-color);
-    --card-bg: #23272e;
-    --card-bg-hover: #2c313a;
-    --chip-bg: #006400;
-    --chip-text-color: #fff;
-  }
+:global(body.body--dark) .islamic-design {
+  --background-pattern: #23272e;
+  --text-color: #fff;
+  --title-color: #fff;
+  --subtitle-color: #b0b0b0;
+  --card-border: var(--text-color);
+  --card-bg: #23272e;
+  --card-bg-hover: #2c313a;
+  --chip-bg: #006400;
+  --chip-text-color: #fff;
 }
 
 @media (max-width: 900px) {

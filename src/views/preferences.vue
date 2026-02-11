@@ -1,12 +1,25 @@
 <script setup lang="ts">
-import { ref, computed } from "vue";
+import { ref, computed, watch, onMounted, onBeforeUnmount } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 import { useAuthStore } from "@/stores/auth.pinia";
+import { useStorageRef } from "@/composables/useUStore";
 
 const { t } = useI18n();
 const $q = useQuasar();
 const authStore = useAuthStore();
+
+const THEME_MODE_KEY = "pref-theme-mode";
+const DARK_MODE_KEY = "pref-dark-mode";
+type ThemeMode = "system" | "light" | "dark";
+
+const themeModeStore = useStorageRef<ThemeMode>(THEME_MODE_KEY, "system");
+const themeMode = computed<ThemeMode>({
+  get: () => themeModeStore.value.value,
+  set: (mode) => themeModeStore.set(mode),
+});
+const darkModeStore = useStorageRef<boolean>(DARK_MODE_KEY, false);
+const themeMediaQuery = ref<MediaQueryList | null>(null);
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 
@@ -28,6 +41,49 @@ const isChangingPassword = ref(false);
 const NITRO_BASE = import.meta.env.DEV
   ? (import.meta.env.VITE_NITRO_BASE || "http://localhost:3000")
   : "/api";
+
+const themeModeOptions = computed(() => [
+  { label: t("pages.preferences.appearance.themeOptions.system"), value: "system" },
+  { label: t("pages.preferences.appearance.themeOptions.light"), value: "light" },
+  { label: t("pages.preferences.appearance.themeOptions.dark"), value: "dark" },
+]);
+
+function applyThemeMode(mode: ThemeMode) {
+  if (mode === "system") {
+    const prefersDark = themeMediaQuery.value?.matches ?? false;
+    $q.dark.set(prefersDark);
+    return;
+  }
+  const isDark = mode === "dark";
+  $q.dark.set(isDark);
+  darkModeStore.set(isDark);
+}
+
+function handleSystemThemeChange(event: MediaQueryListEvent) {
+  if (themeMode.value !== "system") return;
+  $q.dark.set(event.matches);
+}
+
+onMounted(() => {
+  if (typeof window !== "undefined" && "matchMedia" in window) {
+    themeMediaQuery.value = window.matchMedia("(prefers-color-scheme: dark)");
+    themeMediaQuery.value.addEventListener("change", handleSystemThemeChange);
+  }
+  applyThemeMode(themeMode.value);
+});
+
+onBeforeUnmount(() => {
+  if (themeMediaQuery.value) {
+    themeMediaQuery.value.removeEventListener("change", handleSystemThemeChange);
+  }
+});
+
+watch(themeMode, (mode) => {
+  applyThemeMode(mode);
+  if (typeof window !== "undefined") {
+    window.dispatchEvent(new CustomEvent("theme-mode-changed", { detail: { mode } }));
+  }
+});
 
 function generateStrongPassword() {
   const length = 16;
@@ -185,6 +241,23 @@ async function handleChangePassword() {
           />
           <q-banner dense rounded class="q-mt-sm" color="grey-3" text-color="grey-8">
             {{ t("pages.preferences.quran.hint") }}
+          </q-banner>
+        </q-card-section>
+      </q-card>
+
+      <q-card class="glassy-card">
+        <q-card-section class="q-gutter-md">
+          <div class="text-h6">{{ t("pages.preferences.appearance.title") }}</div>
+          <q-btn-toggle
+            v-model="themeMode"
+            :options="themeModeOptions"
+            color="primary"
+            toggle-color="primary"
+            unelevated
+            outline
+          />
+          <q-banner dense rounded class="q-mt-sm" color="grey-3" text-color="grey-8">
+            {{ t("pages.preferences.appearance.hint") }}
           </q-banner>
         </q-card-section>
       </q-card>

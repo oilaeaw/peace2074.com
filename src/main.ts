@@ -8,9 +8,15 @@ import registerQuasar from '@/plugins/quasar'
 import { registerSW } from "virtual:pwa-register";
 import netlifyIdentity from 'netlify-identity-widget'
 import { Dark } from 'quasar'
+import { useLocalStorage } from '@/composables/useUStore'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
+const localStore = useLocalStorage()
+const THEME_MODE_KEY = 'pref-theme-mode'
+const DARK_MODE_KEY = 'pref-dark-mode'
+type ThemeMode = 'system' | 'light' | 'dark'
+let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App);
 
@@ -23,12 +29,38 @@ app.use(i18n);
 // Register Quasar via centralized plugin
 registerQuasar(app as any);
 
-// Initialize dark mode from localStorage (use Quasar's Dark singleton, not useQuasar hook)
-if (isClient) {
-  const stored = window.localStorage.getItem('pref-dark-mode')
-  if (stored === 'true') {
-    Dark.set(true)
+function applyThemeMode(mode: ThemeMode) {
+  if (!isClient) return
+  if (mode === 'system') {
+    if (!themeMediaQuery && 'matchMedia' in window) {
+      themeMediaQuery = window.matchMedia('(prefers-color-scheme: dark)')
+      themeMediaQuery.addEventListener('change', (event) => {
+        const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'system')
+        if (storedMode === 'system') {
+          Dark.set(event.matches)
+        }
+      })
+    }
+    Dark.set(themeMediaQuery?.matches ?? false)
+    return
   }
+  Dark.set(mode === 'dark')
+}
+
+// Initialize theme mode (system/light/dark) with fallback to legacy dark toggle
+if (isClient) {
+  const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'system')
+  if (storedMode && storedMode !== 'system') {
+    applyThemeMode(storedMode)
+  } else {
+    const legacyDark = localStore.get<boolean>(DARK_MODE_KEY, false)
+    Dark.set(Boolean(legacyDark))
+  }
+  window.addEventListener('theme-mode-changed', ((event: Event) => {
+    const detail = (event as CustomEvent).detail || {}
+    const mode = (detail.mode as ThemeMode) || 'system'
+    applyThemeMode(mode)
+  }) as EventListener)
 }
 
 const LOCALE_STORAGE_KEY = 'app-locale'

@@ -29,6 +29,7 @@ body.body--light {
   background-repeat: repeat;
   background-attachment: fixed;
   overflow-x: hidden; /* prevent horizontal growth from pattern positioning */
+  --logo-filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 body.body--dark {
   color: white;
@@ -38,6 +39,7 @@ body.body--dark {
   background-repeat: repeat;
   background-attachment: fixed;
   overflow-x: hidden;
+  --logo-filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 .vue-scroll-picker-layer-top {
   background-color: green !important;
@@ -95,15 +97,13 @@ body.body--dark {
   --page-max-width: 1200px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
-    --text-color: #e0e0e0;
-    --title-color: #e0e0e0;
-    --subtitle-color: #b0b0b0;
-    --card-bg: #333;
-    --page-max-width: 1200px;
-  }
+body.body--dark {
+  --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
+  --text-color: #e0e0e0;
+  --title-color: #e0e0e0;
+  --subtitle-color: #b0b0b0;
+  --card-bg: #333;
+  --page-max-width: 1200px;
 }
 
 /* Constrain root layout width and ensure centered without stray overflow */
@@ -154,4 +154,9 @@ body.reduce-motion *::after {
   box-sizing: border-box;
   padding-left: 1rem;
   padding-right: 1rem;
+}
+
+.app-logo {
+  filter: var(--logo-filter);
+  transition: filter 0.2s ease;
 }

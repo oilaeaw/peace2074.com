@@ -190,6 +190,15 @@
         "remember": "Letzte gelesene Seite merken",
         "hint": "Lesewahlen gelten für Quran-Seiten auf diesem Gerät."
       },
+      "appearance": {
+        "title": "Darstellung",
+        "hint": "Systemeinstellung verwenden oder hell/dunkel erzwingen.",
+        "themeOptions": {
+          "system": "System",
+          "light": "Hell",
+          "dark": "Dunkel"
+        }
+      },
       "security": {
         "title": "Sicherheit",
         "currentPassword": "Aktuelles Passwort",

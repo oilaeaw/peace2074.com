@@ -6,6 +6,7 @@ import { useI18n } from 'vue-i18n'
 import { ref, onMounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
+import { useStorageRef } from '@/composables/useUStore'
 
 type BookmarkEntry = {
   key: string
@@ -29,7 +30,11 @@ const loading = ref(true)
 const error = ref('')
 const selectedBookmark = ref('')
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
-const layoutMode = ref<'reader' | 'mushaf'>('reader')
+const layoutModeStore = useStorageRef<'reader' | 'mushaf'>(LAYOUT_STORAGE_KEY, 'reader')
+const layoutMode = computed<'reader' | 'mushaf'>({
+  get: () => layoutModeStore.value.value,
+  set: (mode) => layoutModeStore.set(mode),
+})
 
 // Quran verse tree for O(log n) verse lookup
 const quranTree = useQuranTree()
@@ -69,33 +74,15 @@ const hoverWidgetPosition = ref({ top: 0, left: 0 })
 
 // TTS (Text-to-Speech) state
 const READER_MODE_KEY = 'quran-reader-mode'
-const readerMode = ref<'audio' | 'tts'>('audio')
+const readerModeStore = useStorageRef<'audio' | 'tts'>(READER_MODE_KEY, 'audio')
+const readerMode = computed<'audio' | 'tts'>({
+  get: () => readerModeStore.value.value,
+  set: (mode) => readerModeStore.set(mode),
+})
 const isTTSPlaying = ref(false)
 const ttsVoice = ref<SpeechSynthesisVoice | null>(null)
 const availableVoices = ref<SpeechSynthesisVoice[]>([])
 const ttsRate = ref<number>(0.8)
-
-// Load saved reader mode preference
-if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-  const storedReaderMode = window.localStorage.getItem(READER_MODE_KEY)
-  if (storedReaderMode === 'audio' || storedReaderMode === 'tts') {
-    readerMode.value = storedReaderMode
-  }
-}
-
-// Watch and persist reader mode
-watch(readerMode, (mode) => {
-  if (typeof window !== 'undefined') {
-    window.localStorage.setItem(READER_MODE_KEY, mode)
-  }
-})
-
-if (typeof window !== 'undefined' && typeof window.localStorage !== 'undefined') {
-  const storedMode = window.localStorage.getItem(LAYOUT_STORAGE_KEY)
-  if (storedMode === 'reader' || storedMode === 'mushaf') {
-    layoutMode.value = storedMode
-  }
-}
 
 const currentSuraId = computed(() => Number(sura.value?.id || route.params.id || 0))
 
@@ -670,12 +657,6 @@ watch(() => route.hash, (hash) => {
   scrollToHash(hash)
 })
 
-watch(layoutMode, (mode) => {
-  if (typeof window === 'undefined' || typeof window.localStorage === 'undefined') return
-  try {
-    window.localStorage.setItem(LAYOUT_STORAGE_KEY, mode)
-  } catch {}
-})
 </script>
 
 <template>

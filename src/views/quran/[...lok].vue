@@ -817,7 +817,7 @@ function onAyaDblClick(e: Event) {
   margin-bottom: -12px;
 }
 
-:root {
+.mushaf-view {
   --background-pattern: url("~/assets/patterns/islamic-pattern-light.svg");
   --text-color: #155724;
   --title-color: #155724;
@@ -830,20 +830,19 @@ function onAyaDblClick(e: Event) {
   --medal-border: rgba(150, 100, 22, 0.9);
   --medal-color: #2b1606;
 }
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
-    --text-color: #e0e0e0;
-    --title-color: #e0e0e0;
-    --subtitle-color: #b0b0b0;
-    --card-bg: #333;
-    /* dark-mode medallion adjustments: keep medallion light so the
-       numeric text can be dark and readable even in dark theme */
-    --medal-bg-1: #fffaf0;
-    --medal-bg-2: #f7e5b8;
-    --medal-bg-3: #e0b84a;
-    --medal-border: rgba(150, 100, 22, 0.9);
-    --medal-color: #2b1606;
-  }
+
+:global(body.body--dark) .mushaf-view {
+  --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
+  --text-color: #e0e0e0;
+  --title-color: #e0e0e0;
+  --subtitle-color: #b0b0b0;
+  --card-bg: #333;
+  /* dark-mode medallion adjustments: keep medallion light so the
+     numeric text can be dark and readable even in dark theme */
+  --medal-bg-1: #fffaf0;
+  --medal-bg-2: #f7e5b8;
+  --medal-bg-3: #e0b84a;
+  --medal-border: rgba(150, 100, 22, 0.9);
+  --medal-color: #2b1606;
 }
 </style>

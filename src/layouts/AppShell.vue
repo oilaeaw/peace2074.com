@@ -12,7 +12,7 @@
           aria-label="Toggle menu"
         />
         <q-avatar square size="36px" class="q-ml-sm brand-logo">
-          <img src="/logo.svg" alt="PEACE2074" />
+          <img src="/logo.svg" alt="PEACE2074" class="app-logo" />
         </q-avatar>
         <q-toolbar-title>
           <RouterLink to="/" class="brand-link">{{ t("general.SiteTitle") }}</RouterLink>
@@ -652,7 +652,6 @@ const orderedNavItems = computed(() => {
   width: 100%;
   height: 100%;
   object-fit: contain;
-  filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 
 .brand-link {

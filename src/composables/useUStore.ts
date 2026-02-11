@@ -185,7 +185,7 @@ export function useUStore() {
         local: useLocalStorage(),
         session: useSessionStorage(),
         memory: useMemoryStorage(),
-        raw: uStore, // Direct access to uStore if needed
+        raw: null, // Direct access disabled (avoids @waelio/ustore side effects)
     }
 }
 
