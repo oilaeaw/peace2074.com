@@ -11,7 +11,11 @@ export {}
 /* prettier-ignore */
 declare module 'vue' {
   export interface GlobalComponents {
+    ConsentBanner: typeof import('./../components/common/ConsentBanner.vue')['default']
+    MiraclesSwitcher: typeof import('./../components/common/MiraclesSwitcher.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    SupportAIWidget: typeof import('./../components/common/SupportAIWidget.vue')['default']
+    ThreeBackground: typeof import('./../components/common/ThreeBackground.vue')['default']
   }
 }

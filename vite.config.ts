@@ -13,6 +13,8 @@ const pkg = JSON.parse(
   fs.readFileSync(new URL("./package.json", import.meta.url), "utf-8")
 );
 
+const DEV = process.env.NODE_ENV === 'development';
+
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
@@ -31,6 +33,7 @@ export default defineConfig({
       }
     },
     chunkSizeWarningLimit: 600,
+    minify: 'esbuild',
   },
   plugins: [
     // https://github.com/posva/unplugin-vue-router
@@ -52,7 +55,7 @@ export default defineConfig({
     // https://github.com/antfu/unplugin-vue-components
     Components({
       extensions: ["vue"],
-      dirs: ["src/core/components", "src/modules/**/components"],
+      dirs: ["src/components"],
       include: [/\.vue$/, /\.vue\?vue/],
       dts: "src/types/components.d.ts",
       resolvers: [QuasarResolver()],
@@ -60,23 +63,29 @@ export default defineConfig({
 
     // https://github.com/antfu/unplugin-auto-import
     AutoImport({
-      imports: ["vue", "vue-router", "pinia", "vue-i18n"],
-      dirs: [
-        "src/modules/**/composables",
-        "src/modules/**/store",
-        // Avoid duplicate auto-imports between re-exports and source files
-        "src/core/composables/useLayout.ts",
+      imports: [
+        "vue",
+        "vue-router",
+        "pinia",
+        "vue-i18n",
         {
-          glob: "src/modules/**/store",
-          types: true,
+          from: 'src/stores',
+          imports: ['useAuthStore', 'useBookmarksStore', 'useLangsStore', 'useMessagingStore', 'useQ2P'],
         },
+      ],
+      dirs: [
+        "src/composables",
       ],
       dts: "src/types/auto-imports.d.ts",
       vueTemplate: true,
+      ignore: [
+        'useQ2P', // use useQ2P from stores/q2p.pinia.ts instead
+        'useBookmarksStore', // use useBookmarksStore from stores/bookmarks.pinia.ts instead
+      ],
     }),
 
-    // PWA configuration
-    VitePWA({
+    // PWA configuration (disabled in dev for faster startup)
+    ...(DEV ? [] : [VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       manifest: {
@@ -152,7 +161,7 @@ export default defineConfig({
           },
         ],
       },
-    }),
+    })]),
   ],
 
   resolve: {
@@ -170,8 +179,19 @@ export default defineConfig({
     devSourcemap: true,
   },
 
+  optimizeDeps: {
+    include: ['vue', 'vue-router', 'pinia', 'quasar', 'vue-i18n'],
+    exclude: ['three'],
+    esbuildOptions: {
+      target: 'esnext',
+    },
+    entries: ['src/main.ts'],
+    holdersOnly: true,
+  },
+
   server: {
     port: 4000,
+    middlewareMode: false,
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
@@ -179,6 +199,9 @@ export default defineConfig({
         secure: false,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
+    },
+    headers: {
+      'Cache-Control': 'public, max-age=3600',
     },
   },
 });
