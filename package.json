@@ -16,7 +16,10 @@
     "lint": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",
     "prepare": "husky",
-    "check:locales": "node --experimental-strip-types scripts/check-locales.ts"
+    "check:locales": "node --experimental-strip-types scripts/check-locales.ts",
+    "mobile:sync": "pnpm build && pnpm exec cap sync",
+    "mobile:android": "pnpm build && pnpm exec cap sync android && pnpm exec cap open android",
+    "mobile:ios": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
@@ -26,6 +29,7 @@
     "@quasar/vite-plugin": "^1.0.0",
     "@types/node": "^24.6.2",
     "@vitejs/plugin-vue": "^6.0.1",
+    "@capacitor/cli": "^7.4.2",
     "concurrently": "^9.2.1",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.37.0",
@@ -52,6 +56,9 @@
     "src/**/*.{ts,js,vue}": "eslint --fix"
   },
   "dependencies": {
+    "@capacitor/android": "^7.4.2",
+    "@capacitor/core": "^7.4.2",
+    "@capacitor/ios": "^7.4.2",
     "@casl/ability": "^6.7.3",
     "@emailjs/browser": "^4.4.1",
     "@fortawesome/fontawesome-svg-core": "^7.1.0",

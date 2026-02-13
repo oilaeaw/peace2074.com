@@ -22,10 +22,27 @@ This template should help get you started developing with Vue 3 and TypeScript i
 - `pnpm lint`
 - `pnpm typecheck`
 - `pnpm check:locales` — ensures all locale files stay in sync
+- `pnpm mobile:sync` — build web app + sync Capacitor native projects
+- `pnpm mobile:android` — build, sync, and open Android Studio project
+- `pnpm mobile:ios` — build, sync, and open Xcode project
+
+## Mobile app (Capacitor)
+
+This repository can run as a native mobile app without rewriting the Vue + Quasar UI.
+
+1. Ensure `.env` contains `VITE_NITRO_BASE=https://peace2074.com/api` (or your own API base).
+2. Run `pnpm mobile:sync`.
+3. Run `pnpm mobile:android` or `pnpm mobile:ios`.
+
+Notes:
+
+- Capacitor config is in `capacitor.config.ts`.
+- In mobile runtime (`capacitor:`), API calls use `VITE_NITRO_BASE` (or fallback to `https://peace2074.com/api`).
 
 ## Deployment to Netlify
 
 This project is configured for deployment to Netlify. See:
+
 - [NETLIFY_ENV.md](./NETLIFY_ENV.md) for environment variable setup
 - [DISABLE_LEGACY_PRERENDERING.md](./DISABLE_LEGACY_PRERENDERING.md) for instructions on disabling legacy prerendering (required action)
 

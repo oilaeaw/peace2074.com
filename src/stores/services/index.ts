@@ -103,17 +103,25 @@ type ContactPayload = {
 
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
+const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location
+    const configured = env.VITE_NITRO_BASE
+
+    // Explicit override always wins (useful for mobile builds)
+    if (configured && typeof configured === 'string') {
+      return configured.replace(/\/$/, '')
+    }
+
+    // Capacitor/Ionic runtime is not same-origin with Netlify functions
+    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+      return DEFAULT_MOBILE_API_BASE
+    }
 
     // Local dev: check for override, otherwise use local Nitro
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      const configured = env.VITE_NITRO_BASE
-      if (configured && typeof configured === 'string') {
-        return configured.replace(/\/$/, '')
-      }
       return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, '')
     }
 
