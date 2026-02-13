@@ -68,20 +68,12 @@ export default defineConfig({
         "vue-router",
         "pinia",
         "vue-i18n",
-        {
-          from: 'src/stores',
-          imports: ['useAuthStore', 'useBookmarksStore', 'useLangsStore', 'useMessagingStore', 'useQ2P'],
-        },
       ],
       dirs: [
         "src/composables",
       ],
       dts: "src/types/auto-imports.d.ts",
       vueTemplate: true,
-      ignore: [
-        'useQ2P', // use useQ2P from stores/q2p.pinia.ts instead
-        'useBookmarksStore', // use useBookmarksStore from stores/bookmarks.pinia.ts instead
-      ],
     }),
 
     // PWA configuration (disabled in dev for faster startup)

@@ -149,7 +149,7 @@ declare global {
   const useArrayUnique: typeof import('@vueuse/core')['useArrayUnique']
   const useAsyncQueue: typeof import('@vueuse/core')['useAsyncQueue']
   const useAsyncState: typeof import('@vueuse/core')['useAsyncState']
-  const useAthanPlayer: typeof import('../composables/useAthanPlayer').useAthanPlayer
+  const useAthanPlayer: typeof import('../composables/useAthanPlayer').default
   const useAttrs: typeof import('vue').useAttrs
   const useAuthStore: typeof import('src/stores').useAuthStore
   const useBase64: typeof import('@vueuse/core')['useBase64']
@@ -267,7 +267,7 @@ declare global {
   const useScrollLock: typeof import('@vueuse/core')['useScrollLock']
   const useSessionStorage: typeof import('../composables/useUStore').useSessionStorage
   const useShare: typeof import('@vueuse/core')['useShare']
-  const useSiteSearch: typeof import('../composables/useSiteSearch').useSiteSearch
+  const useSiteSearch: typeof import('../composables/useSiteSearch').default
   const useSlots: typeof import('vue').useSlots
   const useSorted: typeof import('@vueuse/core')['useSorted']
   const useSpeechRecognition: typeof import('@vueuse/core')['useSpeechRecognition']
@@ -297,7 +297,7 @@ declare global {
   const useToString: typeof import('@vueuse/core')['useToString']
   const useToggle: typeof import('@vueuse/core')['useToggle']
   const useTransition: typeof import('@vueuse/core')['useTransition']
-  const useUStore: typeof import('../composables/useUStore').useUStore
+  const useUStore: typeof import('../composables/useUStore').default
   const useUrlSearchParams: typeof import('@vueuse/core')['useUrlSearchParams']
   const useUserMedia: typeof import('@vueuse/core')['useUserMedia']
   const useVModel: typeof import('@vueuse/core')['useVModel']
@@ -357,15 +357,6 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
-    readonly exampleAuthTokens: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleAuthTokens']>
-    readonly exampleBasicUsage: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleBasicUsage']>
-    readonly exampleCrossTabSync: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleCrossTabSync']>
-    readonly exampleEncryptedStorage: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleEncryptedStorage']>
-    readonly exampleMigrateFromOldStorage: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleMigrateFromOldStorage']>
-    readonly exampleNamespacedStorage: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleNamespacedStorage']>
-    readonly examplePiniaIntegration: UnwrapRef<typeof import('../composables/useUStore.examples')['examplePiniaIntegration']>
-    readonly exampleReactiveStorage: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleReactiveStorage']>
-    readonly exampleUserPreferences: UnwrapRef<typeof import('../composables/useUStore.examples')['exampleUserPreferences']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
     readonly getCurrentScope: UnwrapRef<typeof import('vue')['getCurrentScope']>
@@ -418,29 +409,26 @@ declare module 'vue' {
     readonly triggerRef: UnwrapRef<typeof import('vue')['triggerRef']>
     readonly unref: UnwrapRef<typeof import('vue')['unref']>
     readonly useAthanPlayer: UnwrapRef<typeof import('../composables/useAthanPlayer')['default']>
-    readonly useAthanPlayer: UnwrapRef<typeof import('../composables/useAthanPlayer')['useAthanPlayer']>
     readonly useAttrs: UnwrapRef<typeof import('vue')['useAttrs']>
-    readonly useAuthStore: UnwrapRef<typeof import('src/stores')['useAuthStore']>
     readonly useCore: UnwrapRef<typeof import('../composables/useCore')['default']>
     readonly useCssModule: UnwrapRef<typeof import('vue')['useCssModule']>
     readonly useCssVars: UnwrapRef<typeof import('vue')['useCssVars']>
     readonly useI18n: UnwrapRef<typeof import('vue-i18n')['useI18n']>
     readonly useId: UnwrapRef<typeof import('vue')['useId']>
-    readonly useLangsStore: UnwrapRef<typeof import('src/stores')['useLangsStore']>
     readonly useLink: UnwrapRef<typeof import('vue-router')['useLink']>
     readonly useLocalStorage: UnwrapRef<typeof import('../composables/useUStore')['useLocalStorage']>
     readonly useMemoryStorage: UnwrapRef<typeof import('../composables/useUStore')['useMemoryStorage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useQ2P: UnwrapRef<typeof import('../composables/useQ2P')['default']>
+    readonly useQuranTree: UnwrapRef<typeof import('../composables/useQuranTree')['useQuranTree']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
     readonly useSessionStorage: UnwrapRef<typeof import('../composables/useUStore')['useSessionStorage']>
     readonly useSiteSearch: UnwrapRef<typeof import('../composables/useSiteSearch')['default']>
-    readonly useSiteSearch: UnwrapRef<typeof import('../composables/useSiteSearch')['useSiteSearch']>
     readonly useSlots: UnwrapRef<typeof import('vue')['useSlots']>
     readonly useStorageRef: UnwrapRef<typeof import('../composables/useUStore')['useStorageRef']>
     readonly useTemplateRef: UnwrapRef<typeof import('vue')['useTemplateRef']>
     readonly useUStore: UnwrapRef<typeof import('../composables/useUStore')['default']>
-    readonly useUStore: UnwrapRef<typeof import('../composables/useUStore')['useUStore']>
     readonly watch: UnwrapRef<typeof import('vue')['watch']>
     readonly watchEffect: UnwrapRef<typeof import('vue')['watchEffect']>
     readonly watchPostEffect: UnwrapRef<typeof import('vue')['watchPostEffect']>
