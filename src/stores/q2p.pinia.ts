@@ -184,11 +184,11 @@ export const useQ2P = defineStore('q2p', {
           ? `${window.location.origin}`
           : 'http://127.0.0.1:3000')).replace(/\/$/, '')
         const urls = [
-          // Prefer local Nitro API: /quran/:id
-          `${runtimeBase}/quran/${id}`,
+          // Prefer local Nitro API via Vite proxy
+          `${runtimeBase}/api/quran/${id}`,
+          `/api/quran/${id}`,
           // Fallback to Waelio-style query endpoint
           `${runtimeBase}/api/quran?s=${id}`,
-          `${runtimeBase}/quran?s=${id}`,
           `/api/quran?s=${id}`,
         ]
         let sura: any = null
@@ -200,6 +200,9 @@ export const useQ2P = defineStore('q2p', {
             if (!ct.includes('application/json')) continue
             const json = await res.json()
             sura = json?.sura || json
+            if (Array.isArray(sura)) {
+              sura = sura.find((entry: any) => Number(entry?.id || entry?.chapter || entry?.number) === id) || null
+            }
             if (sura) break
           } catch {
             // try next

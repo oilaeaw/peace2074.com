@@ -91,7 +91,7 @@ export default defineConfig({
         start_url: "/",
         icons: [
           {
-            src: "/192x192.png",
+            src: "/android-chrome-192x192.png",
             sizes: "192x192",
             type: "image/png",
             purpose: "any",
@@ -117,7 +117,7 @@ export default defineConfig({
             form_factor: "wide",
           },
           {
-            src: "/192x192.png",
+            src: "/android-chrome-192x192.png",
             sizes: "192x192",
             type: "image/png",
             form_factor: "narrow",

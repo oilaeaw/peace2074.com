@@ -229,7 +229,7 @@ async function showTestNotification(): Promise<boolean> {
             body:
               t("pages.settings.notifications.testBody") ||
               "We'll use your browser's notification system when available.",
-            icon: "/192x192.png",
+            icon: "/android-chrome-192x192.png",
             tag: "peace2074-notification-test",
           }
         );
@@ -246,7 +246,7 @@ async function showTestNotification(): Promise<boolean> {
           body:
             t("pages.settings.notifications.testBody") ||
             "We'll use your browser's notification system when available.",
-          icon: "/192x192.png",
+          icon: "/android-chrome-192x192.png",
           tag: "peace2074-notification-test",
         }
       );

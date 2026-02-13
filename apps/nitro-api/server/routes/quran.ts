@@ -1,10 +1,29 @@
-import { defineEventHandler } from 'h3'
+import { defineEventHandler, getQuery } from 'h3'
 import chaptersEn from '../../../../src/shared/data/chapters/en.json'
 import quranData from '../../../../src/shared/data/quran.json'
 
-export default defineEventHandler(() => {
+export default defineEventHandler((event) => {
     const chapters = chaptersEn as any[]
     const book = quranData as Record<string, any[]>
+
+    const query = getQuery(event)
+    const requestedId = Number(query?.s || query?.id || 0)
+
+    if (requestedId > 0) {
+        const meta = (chapters || []).find((c: any) => Number(c?.id || c?.number) === requestedId)
+        const verses = Array.isArray(book[String(requestedId)]) ? book[String(requestedId)] : []
+
+        return {
+            sura: {
+                id: requestedId,
+                name: String(meta?.name || meta?.suraName || meta?.transliteration || ''),
+                e_name: String(meta?.translation || meta?.suraName || ''),
+                type: String(meta?.type || ''),
+                total_verses: verses.length,
+                ayat: verses.map((v: any) => ({ verse: v.verse, text: v.text, translation: v.translation })),
+            }
+        }
+    }
 
     const list = (chapters || []).map((meta: any) => {
         const id = Number(meta?.id || meta?.number)

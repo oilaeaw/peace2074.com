@@ -75,14 +75,17 @@ export default function useQ2P() {
             if (!Number.isNaN(Number(index)) && Number(index) > 0) {
                 const id = Number(index)
                 const payload = await fetchJsonSequential([
-                    // Local Nitro API
-                    `${API_BASE}/quran/${id}`,
-                    // Remote Waelio-style API
+                    // Local Nitro API through Vite proxy
+                    `${API_BASE}/api/quran/${id}`,
+                    `/api/quran/${id}`,
+                    // Waelio-style API fallback
                     `${API_BASE}/api/quran?s=${id}`,
-                    `${API_BASE}/quran?s=${id}`,
                     `/api/quran?s=${id}`,
                 ])
-                const sura = (payload && (payload.sura || payload)) || null
+                let sura = (payload && (payload.sura || payload)) || null
+                if (Array.isArray(sura)) {
+                    sura = sura.find((entry: any) => Number(entry?.id || entry?.chapter || entry?.number) === id) || null
+                }
                 if (sura && (sura.id || sura.chapter || sura.number)) {
                     // normalize id field
                     const sid = Number(sura.id || sura.chapter || sura.number || id)
