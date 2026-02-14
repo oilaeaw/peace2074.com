@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
         }
 
         // Find or create user
-        let user = findUserByUsername(githubUser.login)
+        let user = await findUserByUsername(githubUser.login)
 
         if (!user) {
             // Create new user from GitHub profile
@@ -85,7 +85,7 @@ export default defineEventHandler(async (event) => {
                 avatar_url: githubUser.avatar_url,
                 github_id: githubUser.id
             }
-            addUser(user)
+            await addUser(user)
         }
 
         // Create session

@@ -127,6 +127,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/admin',
+    name: 'Admin',
+    component: () => import('@/views/admin.vue'),
+    meta: {
+      title: 'Admin Panel',
+    },
+  },
+  {
     path: '/blog',
     name: 'BlogList',
     component: () => import('@/views/blog/index.vue'),

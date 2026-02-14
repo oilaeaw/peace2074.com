@@ -45,7 +45,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Find user
-    const user = findUserById(session.id)
+    const user = await findUserById(session.id)
     if (!user) {
         throw createError({
             statusCode: 404,
@@ -62,7 +62,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Update password
-    updateUserPassword(user.id, newPassword)
+    await updateUserPassword(user.id, newPassword)
 
     return {
         ok: true,

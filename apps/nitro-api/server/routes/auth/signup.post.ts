@@ -1,5 +1,5 @@
 import { createError, defineEventHandler, readBody } from 'h3'
-import { MOCK_USERS, addUser } from '../../utils/users'
+import { addUser, findUserByEmail, findUserByUsername } from '../../utils/users'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{
@@ -28,7 +28,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Check if username already exists
-    if (MOCK_USERS.find(u => u.username === username)) {
+    if (await findUserByUsername(username)) {
         throw createError({
             statusCode: 409,
             statusMessage: 'Username already taken'
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Check if email already exists
-    if (MOCK_USERS.find(u => u.email === email)) {
+    if (await findUserByEmail(email)) {
         throw createError({
             statusCode: 409,
             statusMessage: 'Email already registered'
@@ -54,7 +54,7 @@ export default defineEventHandler(async (event) => {
         last_name: ''
     }
 
-    addUser(newUser)
+    await addUser(newUser)
     return {
         ok: true,
         message: 'Account created successfully'

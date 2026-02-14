@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
             return { bookmarks: [] }
         }
 
-        const bookmarks = getUserBookmarks(session.id)
+        const bookmarks = await getUserBookmarks(session.id)
         return { bookmarks }
     }
 
@@ -37,7 +37,7 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const created = createUserBookmark(session.id, bookmark)
+        const created = await createUserBookmark(session.id, bookmark)
         if (!created) {
             throw createError({
                 statusCode: 404,

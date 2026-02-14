@@ -1,5 +1,5 @@
-// Shared in-memory user storage for local development
-// In production, you'd use a real database
+// Persistent user storage via Nitro data storage.
+// Keeps auth/tasbeeh/bookmarks in sync across server restarts.
 
 export interface TasbeehRecord {
     date: string
@@ -23,9 +23,11 @@ export interface User {
     last_name?: string
     tasbeeh?: TasbeehRecord[]
     bookmarks?: Bookmark[]
+    avatar_url?: string
+    github_id?: string
 }
 
-export const MOCK_USERS: User[] = [
+const DEFAULT_USERS: User[] = [
     {
         id: 'waelio',
         username: 'waelio',
@@ -38,75 +40,103 @@ export const MOCK_USERS: User[] = [
     }
 ]
 
-export function findUserByUsername(username: string) {
-    return MOCK_USERS.find(u => u.username === username)
-}
+const USERS_KEY = 'db:users'
 
-export function findUserById(id: string) {
-    return MOCK_USERS.find(u => u.id === id)
-}
-
-export function updateUserPassword(userId: string, newPassword: string) {
-    const user = MOCK_USERS.find(u => u.id === userId)
-    if (user) {
-        user.password = newPassword
-        return true
+async function loadUsers(): Promise<User[]> {
+    const storage = useStorage('data')
+    const existing = await storage.getItem<User[]>(USERS_KEY)
+    if (Array.isArray(existing) && existing.length > 0) {
+        return existing
     }
-    return false
+
+    await storage.setItem(USERS_KEY, DEFAULT_USERS)
+    return [...DEFAULT_USERS]
 }
 
-export function addUser(user: User) {
-    if (!user.tasbeeh) {
-        user.tasbeeh = []
-    }
-    MOCK_USERS.push(user)
+async function saveUsers(users: User[]) {
+    const storage = useStorage('data')
+    await storage.setItem(USERS_KEY, users)
 }
 
-export function getUserTasbeeh(userId: string): TasbeehRecord[] {
-    const user = findUserById(userId)
+export async function findUserByUsername(username: string) {
+    const users = await loadUsers()
+    return users.find((u) => u.username === username)
+}
+
+export async function findUserByEmail(email: string) {
+    const users = await loadUsers()
+    return users.find((u) => u.email === email)
+}
+
+export async function findUserById(id: string) {
+    const users = await loadUsers()
+    return users.find((u) => u.id === id)
+}
+
+export async function updateUserPassword(userId: string, newPassword: string) {
+    const users = await loadUsers()
+    const user = users.find((u) => u.id === userId)
+    if (!user) return false
+
+    user.password = newPassword
+    await saveUsers(users)
+    return true
+}
+
+export async function addUser(user: User) {
+    const users = await loadUsers()
+    users.push({
+        ...user,
+        tasbeeh: user.tasbeeh || [],
+        bookmarks: user.bookmarks || [],
+    })
+    await saveUsers(users)
+}
+
+export async function getUserTasbeeh(userId: string): Promise<TasbeehRecord[]> {
+    const user = await findUserById(userId)
     return user?.tasbeeh || []
 }
 
-export function updateUserTasbeeh(userId: string, record: TasbeehRecord): boolean {
-    const user = findUserById(userId)
+export async function updateUserTasbeeh(userId: string, record: TasbeehRecord): Promise<boolean> {
+    const users = await loadUsers()
+    const user = users.find((u) => u.id === userId)
     if (!user) return false
 
     if (!user.tasbeeh) {
         user.tasbeeh = []
     }
 
-    // Update or add the daily record
-    const existingIndex = user.tasbeeh.findIndex(d => d.date === record.date)
+    const existingIndex = user.tasbeeh.findIndex((d) => d.date === record.date)
     if (existingIndex >= 0) {
         user.tasbeeh[existingIndex] = record
     } else {
         user.tasbeeh.push(record)
     }
 
-    // Keep only last 30 days
     if (user.tasbeeh.length > 30) {
         user.tasbeeh = user.tasbeeh.slice(-30)
     }
 
+    await saveUsers(users)
     return true
 }
 
-// Bookmark functions
-export function getUserBookmarks(userId: string): Bookmark[] {
-    const user = findUserById(userId)
+export async function getUserBookmarks(userId: string): Promise<Bookmark[]> {
+    const user = await findUserById(userId)
     return user?.bookmarks || []
 }
 
-export function createUserBookmark(userId: string, bookmark: string): Bookmark | null {
-    const user = findUserById(userId)
+export async function createUserBookmark(userId: string, bookmark: string): Promise<Bookmark | null> {
+    const users = await loadUsers()
+    const user = users.find((u) => u.id === userId)
     if (!user) return null
 
     if (!user.bookmarks) {
         user.bookmarks = []
     }
 
-    // Check if bookmark already exists
-    const existing = user.bookmarks.find(b => b.bookmark === bookmark)
+    const existing = user.bookmarks.find((b) => b.bookmark === bookmark)
     if (existing) return existing
 
     const newBookmark: Bookmark = {
@@ -115,27 +145,32 @@ export function createUserBookmark(userId: string, bookmark: string): Bookmark |
         createdAt: new Date().toISOString(),
     }
     user.bookmarks.push(newBookmark)
+    await saveUsers(users)
     return newBookmark
 }
 
-export function updateUserBookmark(userId: string, bookmarkId: string, newBookmark: string): Bookmark | null {
-    const user = findUserById(userId)
+export async function updateUserBookmark(userId: string, bookmarkId: string, newBookmark: string): Promise<Bookmark | null> {
+    const users = await loadUsers()
+    const user = users.find((u) => u.id === userId)
     if (!user || !user.bookmarks) return null
 
-    const bm = user.bookmarks.find(b => b._id === bookmarkId)
+    const bm = user.bookmarks.find((b) => b._id === bookmarkId)
     if (!bm) return null
 
     bm.bookmark = newBookmark
+    await saveUsers(users)
     return bm
 }
 
-export function deleteUserBookmark(userId: string, bookmarkId: string): boolean {
-    const user = findUserById(userId)
+export async function deleteUserBookmark(userId: string, bookmarkId: string): Promise<boolean> {
+    const users = await loadUsers()
+    const user = users.find((u) => u.id === userId)
     if (!user || !user.bookmarks) return false
 
-    const index = user.bookmarks.findIndex(b => b._id === bookmarkId || b.bookmark === bookmarkId)
+    const index = user.bookmarks.findIndex((b) => b._id === bookmarkId || b.bookmark === bookmarkId)
     if (index === -1) return false
 
     user.bookmarks.splice(index, 1)
+    await saveUsers(users)
     return true
 }

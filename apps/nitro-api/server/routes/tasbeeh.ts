@@ -16,7 +16,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const userId = session.id
-        const tasbeehData = getUserTasbeeh(userId)
+        const tasbeehData = await getUserTasbeeh(userId)
         return { data: { daily: tasbeehData } }
     }
 
@@ -38,7 +38,7 @@ export default defineEventHandler(async (event) => {
         }
 
         const userId = session.id
-        const success = updateUserTasbeeh(userId, { date, total, sessions })
+        const success = await updateUserTasbeeh(userId, { date, total, sessions })
 
         if (!success) {
             throw createError({

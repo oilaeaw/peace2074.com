@@ -259,6 +259,7 @@ const defaultNavItems = [
   { key: "support", labelKey: "appShell.nav.support", to: "/support" },
   { key: "settings", labelKey: "appShell.nav.settings", to: "/settings" },
   { key: "preferences", labelKey: "appShell.nav.preferences", to: "/preferences" },
+  { key: "admin", labelKey: "navigation.AdminPage", to: "/admin" },
   { key: "login", labelKey: "appShell.nav.login", to: "/login" },
   { key: "blog", labelKey: "appShell.nav.blog", to: "/blog" },
   { key: "contact", labelKey: "appShell.nav.contact", to: "/contact" },

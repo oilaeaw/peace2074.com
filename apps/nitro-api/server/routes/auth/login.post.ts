@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     }
 
     // Find user
-    const user = findUserByUsername(username)
+    const user = await findUserByUsername(username)
     if (!user || user.password !== password) {
         throw createError({
             statusCode: 401,

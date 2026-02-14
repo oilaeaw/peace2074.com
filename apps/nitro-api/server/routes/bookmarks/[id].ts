@@ -34,7 +34,7 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const updated = updateUserBookmark(session.id, bookmarkId, bookmark)
+        const updated = await updateUserBookmark(session.id, bookmarkId, bookmark)
         if (!updated) {
             throw createError({
                 statusCode: 404,
@@ -47,7 +47,7 @@ export default defineEventHandler(async (event) => {
 
     // DELETE - Delete a bookmark
     if (event.method === 'DELETE') {
-        const deleted = deleteUserBookmark(session.id, bookmarkId)
+        const deleted = await deleteUserBookmark(session.id, bookmarkId)
         if (!deleted) {
             throw createError({
                 statusCode: 404,
