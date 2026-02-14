@@ -140,6 +140,7 @@
       "pause": "Pause",
       "restart": "Restart verse",
       "restartSura": "Restart from beginning",
+      "scrollToTop": "Scroll to top",
       "audioRecitation": "Audio Recitation",
       "nativeReader": "Native Reader (TTS)",
       "ttsNotSupported": "Text-to-speech not supported in this browser",
@@ -159,13 +160,15 @@
       "holynames": "Holy Names",
       "modes": {
         "reader": "Reader mode",
-        "mushaf": "Mushaf mode"
+        "mushaf": "Mushaf mode",
+        "native": "Native mode"
       },
       "bookmarks": {
         "menu": "Bookmarks",
         "empty": "No bookmarks yet",
         "add": "Bookmark verse {verse}",
         "saved": "Bookmark saved",
+        "alreadySaved": "Already bookmarked",
         "error": "Could not save bookmark",
         "current": "this sura"
       },
@@ -264,7 +267,8 @@
       "refresh": {
         "title": "Refresh app",
         "desc": "Force an update and reload to get the latest version."
-      }
+      },
+      "clearingCache": "Clearing cache and reloading..."
     },
     "preferences": {
       "title": "User preferences",

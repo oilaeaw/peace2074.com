@@ -40,7 +40,8 @@ function applyThemeMode(mode: ThemeMode) {
         }
       })
     }
-    Dark.set(themeMediaQuery?.matches ?? false)
+    // Default to light mode instead of system preference
+    Dark.set(false)
     return
   }
   Dark.set(mode === 'dark')
@@ -48,12 +49,12 @@ function applyThemeMode(mode: ThemeMode) {
 
 // Initialize theme mode (system/light/dark) with fallback to legacy dark toggle
 if (isClient) {
-  const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'system')
+  const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'light')
   if (storedMode && storedMode !== 'system') {
     applyThemeMode(storedMode)
   } else {
-    const legacyDark = localStore.get<boolean>(DARK_MODE_KEY, false)
-    Dark.set(Boolean(legacyDark))
+    // Always default to light mode
+    Dark.set(false)
   }
   window.addEventListener('theme-mode-changed', ((event: Event) => {
     const detail = (event as CustomEvent).detail || {}

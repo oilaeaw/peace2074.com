@@ -43,6 +43,45 @@ const basePages = [
     },
 ];
 
+// Quick access popular verses (searchable)
+const quickAccessVerses = [
+    {
+        id: "2_255",
+        suraId: 2,
+        verse: 255,
+        titleKey: "pages.quran.quickAccess.kursi",
+        searchTerms: ["kursi", "throne", "ayat al-kursi", "الكرسي"],
+    },
+    {
+        id: "1_1",
+        suraId: 1,
+        verse: 1,
+        titleKey: "pages.quran.quickAccess.fatiha",
+        searchTerms: ["fatiha", "opening", "al-fatiha", "الفاتحة"],
+    },
+    {
+        id: "36_1",
+        suraId: 36,
+        verse: 1,
+        titleKey: "pages.quran.quickAccess.yasin",
+        searchTerms: ["yasin", "ya-sin", "yaseen", "يس"],
+    },
+    {
+        id: "67_1",
+        suraId: 67,
+        verse: 1,
+        titleKey: "pages.quran.quickAccess.mulk",
+        searchTerms: ["mulk", "sovereignty", "al-mulk", "الملك"],
+    },
+    {
+        id: "112_1",
+        suraId: 112,
+        verse: 1,
+        titleKey: "pages.quran.quickAccess.ikhlas",
+        searchTerms: ["ikhlas", "sincerity", "al-ikhlas", "الإخلاص"],
+    },
+];
+
 function normalizeLocale(locale?: string) {
     if (!locale) return "en";
     const short = locale.split("-")[0];
@@ -71,7 +110,18 @@ function buildItems(locale: string): SearchResult[] {
         type: "sura",
     }));
 
-    return [...pages, ...suras];
+    // Add quick access verses to search
+    const verses: SearchResult[] = quickAccessVerses.map((v) => ({
+        id: v.id,
+        title: t(v.titleKey) as string,
+        subtitle: `${v.suraId}:${v.verse}`,
+        path: `/quran/${v.suraId}#${v.id}`,
+        type: "verse",
+        // Store search terms for better matching
+        searchTerms: v.searchTerms,
+    } as SearchResult & { searchTerms: string[] }));
+
+    return [...pages, ...verses, ...suras];
 }
 
 export function useSiteSearch(localeRef: { value: string }) {
@@ -93,8 +143,13 @@ export function useSiteSearch(localeRef: { value: string }) {
         if (!query) return [];
         return (items.value || [])
             .filter((item) => {
-                const hay = `${item.title} ${item.subtitle || ""}`.toLowerCase();
-                return hay.includes(query);
+                const haystack = `${item.title} ${item.subtitle || ""}`.toLowerCase();
+                // Check if item has additional search terms
+                const extraTerms = (item as any).searchTerms
+                    ? (item as any).searchTerms.join(" ").toLowerCase()
+                    : "";
+                const fullHaystack = `${haystack} ${extraTerms}`;
+                return fullHaystack.includes(query);
             })
             .slice(0, 10);
     }

@@ -32,8 +32,10 @@ export const useBookmarksStore = defineStore('bookBook', {
         const res = await getBookmarks()
         // normalize possible ref or array of bookmark documents to proper format
         const raw = (res && (res.value !== undefined)) ? res.value : res
-        if (Array.isArray(raw)) {
-          this.bookmarks = raw // Keep full bookmark objects for authenticated users
+        // API returns { bookmarks: [] } format
+        const bookmarksList = raw?.bookmarks || raw
+        if (Array.isArray(bookmarksList)) {
+          this.bookmarks = bookmarksList // Keep full bookmark objects for authenticated users
         }
         else {
           this.bookmarks = []
@@ -58,8 +60,10 @@ export const useBookmarksStore = defineStore('bookBook', {
       if (userId) {
         const res = await getBookmarks()
         const raw = (res && (res.value !== undefined)) ? res.value : res
-        if (Array.isArray(raw)) {
-          this.bookmarks = raw // Keep full bookmark objects for authenticated users
+        // API returns { bookmarks: [] } format
+        const bookmarksList = raw?.bookmarks || raw
+        if (Array.isArray(bookmarksList)) {
+          this.bookmarks = bookmarksList // Keep full bookmark objects for authenticated users
         }
         else {
           this.bookmarks = []
@@ -119,28 +123,26 @@ export const useBookmarksStore = defineStore('bookBook', {
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
       if (userId) {
         try {
-          const created = await createBookmarkService({ bookmark: bm })
+          const response = await createBookmarkService({ bookmark: bm })
+          // API returns { ok: true, bookmark: {...} } format
+          const created = response?.bookmark || response
           // created may be a ref or raw object; normalize
           const saved = created && (created.value !== undefined) ? created.value : created
           if (!saved) {
-            try { const $q = useQuasar(); $q.notify({ message: 'Server did not return a bookmark', type: 'negative' }) }
-            catch {}
-            console.error('createBookmark: empty response', created)
+            console.error('createBookmark: empty response', response)
             return
           }
           // push the saved bookmark object (includes _id for future operations)
           this.bookmarks.push(saved)
-          try { const $q = useQuasar(); $q.notify({ message: 'Bookmark saved to server', type: 'positive' }) }
-          catch {}
+          console.log('[Bookmark] Saved to server:', saved)
           // refresh to ensure server-side ids are in sync
           try { await this.fetchBookmarks() }
           catch {}
         }
-        catch {
+        catch (err) {
+          console.error('[Bookmark] Server save failed:', err)
           // fallback to local push if server fails
           this.bookmarks.push(bm)
-          try { const $q = useQuasar(); $q.notify({ message: 'Saved locally (server unavailable)', type: 'warning' }) }
-          catch {}
         }
       }
       else {

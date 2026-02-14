@@ -294,8 +294,7 @@ function handleAyaDblClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;
   if (!aya) return;
-  const id =
-    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  const id = aya.getAttribute("id") || "";
   if (id) {
     _saveBookmark(id);
     navigateToHash(id); // Center the card after bookmarking
@@ -348,8 +347,7 @@ function onAyaDblClick(e: Event) {
   const target = e.target as HTMLElement;
   const aya = target.closest(".aya-inline") as HTMLElement | null;
   if (!aya) return;
-  const id =
-    aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
+  const id = aya.getAttribute("id") || "";
   if (id) {
     _saveBookmark(id);
     navigateToHash(id); // Center the card after bookmarking

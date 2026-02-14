@@ -112,14 +112,14 @@
       "holynames": "Heilige Namen",
       "modes": {
         "reader": "Lesemodus",
-        "mushaf": "Mushaf-Modus"
+        "mushaf": "Mushaf-Modus",
+        "native": "Nativer Modus"
       },
       "bookmarks": {
         "menu": "Lesezeichen",
         "empty": "Noch keine Lesezeichen",
         "add": "Vers {verse} speichern",
-        "saved": "Lesezeichen gespeichert",
-        "error": "Lesezeichen konnte nicht gespeichert werden",
+        "saved": "Lesezeichen gespeichert",        "alreadySaved": "Bereits als Lesezeichen gesetzt",        "error": "Lesezeichen konnte nicht gespeichert werden",
         "current": "diese Sure"
       },
       "quickAccess": {
@@ -172,7 +172,8 @@
       "refresh": {
         "title": "App aktualisieren",
         "desc": "Update erzwingen und neu laden, um die neueste Version zu erhalten."
-      }
+      },
+      "clearingCache": "Cache wird geleert und neu geladen..."
     },
     "preferences": {
       "title": "Benutzereinstellungen",

@@ -30,8 +30,8 @@ const loading = ref(true)
 const error = ref('')
 const selectedBookmark = ref('')
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
-const layoutModeStore = useStorageRef<'reader' | 'mushaf'>(LAYOUT_STORAGE_KEY, 'reader')
-const layoutMode = computed<'reader' | 'mushaf'>({
+const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'reader')
+const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
   set: (mode) => layoutModeStore.set(mode),
 })
@@ -86,9 +86,15 @@ const ttsRate = ref<number>(0.8)
 
 const currentSuraId = computed(() => Number(sura.value?.id || route.params.id || 0))
 
+// Swipe detection state
+const touchStartX = ref(0)
+const touchEndX = ref(0)
+const MIN_SWIPE_DISTANCE = 50
+
 const viewModeOptions = computed(() => ([
   { label: t('pages.quran.modes.reader'), value: 'reader' },
   { label: t('pages.quran.modes.mushaf'), value: 'mushaf' },
+  { label: t('pages.quran.modes.native') || 'Native', value: 'native' },
 ]))
 
 const bookmarkEntries = computed<BookmarkEntry[]>(() => {
@@ -138,12 +144,33 @@ const bookmarkActionLabel = (verse: number | string) => t('pages.quran.bookmarks
 async function bookmarkVerse(verse: number | string) {
   if (!sura.value) return
   const normalized = `${sura.value.id}_${verse}`
+  
+  // Check if already bookmarked
+  if (isVerseBookmarked(verse)) {
+    $q.notify({ type: 'info', message: t('pages.quran.bookmarks.alreadySaved') || 'Already bookmarked' })
+    return
+  }
+  
   try {
     await bookmarksStore.createBookmark(normalized)
     selectedBookmark.value = `id_${normalized}`
-    $q.notify({ type: 'positive', message: t('pages.quran.bookmarks.saved') })
+    
+    // Force refresh bookmarks from store/server
+    await bookmarksStore.fetchBookmarks()
+    
+    $q.notify({ 
+      type: 'positive', 
+      message: t('pages.quran.bookmarks.saved'),
+      position: 'top',
+      timeout: 1500
+    })
   } catch (err: any) {
-    $q.notify({ type: 'negative', message: err?.message || t('pages.quran.bookmarks.error') })
+    console.error('[Bookmark] Failed to save:', err)
+    $q.notify({ 
+      type: 'negative', 
+      message: err?.message || t('pages.quran.bookmarks.error'),
+      position: 'top'
+    })
   }
 }
 
@@ -151,18 +178,62 @@ function removeBookmark(entry: BookmarkEntry) {
   const identifier = typeof entry.raw === 'string'
     ? entry.raw
     : entry.raw?._id || entry.raw?.bookmark || entry.normalized
+  
   bookmarksStore.deleteBookmark(identifier)
+  
+  // Force refresh after deletion
+  nextTick(() => {
+    bookmarksStore.fetchBookmarks()
+  })
 }
 
 async function handleBookmarkNavigate(entry: BookmarkEntry) {
   if (!entry) return
   selectedBookmark.value = `id_${entry.normalized}`
+  
+  const playVerseAfterLoad = async () => {
+    // Wait for sura to fully load (check loading state and correct sura)
+    let retries = 30 // 30 x 200ms = 6 seconds max wait
+    while (retries > 0) {
+      await new Promise(resolve => setTimeout(resolve, 200))
+      // Check if we're on the correct sura and audio is loaded
+      if (!loading.value && 
+          currentSuraId.value === entry.suraId && 
+          audioList.value.length >= (entry.verse || 0)) {
+        break
+      }
+      retries--
+    }
+    
+    // Verify we have the correct audio list before playing
+    const verseIndex = (entry.verse || 1) - 1
+    if (currentSuraId.value === entry.suraId && 
+        audioList.value.length > verseIndex && 
+        verseIndex >= 0) {
+      stopRequested.value = false
+      // Scroll to verse first
+      await nextTick()
+      scrollToVerse(entry.verse)
+      // Small delay to ensure scroll completes
+      await new Promise(resolve => setTimeout(resolve, 100))
+      playAyah(verseIndex)
+      $q.notify({ 
+        type: 'positive', 
+        message: `${entry.label} - Mishary Al-Afasy`,
+        icon: 'play_arrow',
+        timeout: 2000
+      })
+    }
+  }
+  
   if (entry.suraId && entry.suraId !== currentSuraId.value) {
     await router.push({ path: `/quran/${entry.suraId}`, hash: `#${entry.normalized}` })
-    return
-  }
-  if (entry.verse) {
+    // Wait for sura to load and then play
+    await playVerseAfterLoad()
+  } else {
+    // Same sura - scroll and play immediately
     scrollToVerse(entry.verse)
+    await playVerseAfterLoad()
   }
 }
 
@@ -456,13 +527,10 @@ function togglePauseResume() {
 function onVerseMouseEnter(event: MouseEvent, verse: number) {
   if (hoverTimeout.value) clearTimeout(hoverTimeout.value)
   hoverTimeout.value = setTimeout(() => {
-    const target = event.currentTarget as HTMLElement
-    if (target) {
-      const rect = target.getBoundingClientRect()
-      hoverWidgetPosition.value = {
-        top: rect.top + window.scrollY + rect.height / 2,
-        left: rect.left + window.scrollX + rect.width / 2
-      }
+    // Position widget near the cursor location
+    hoverWidgetPosition.value = {
+      top: event.clientY,
+      left: event.clientX
     }
     hoverWidgetVerse.value = verse
     hoverWidgetVisible.value = true
@@ -501,6 +569,68 @@ function goHome() {
   hideHoverWidget()
   stopAudio()
   router.push('/')
+}
+
+function scrollToTop() {
+  window.scrollTo({ top: 0, behavior: 'smooth' })
+}
+
+function handleVerseDoubleClick(event: MouseEvent, verse: number) {
+  stopRequested.value = false
+  
+  // Show hover widget at double-click location
+  hoverWidgetPosition.value = {
+    top: event.clientY,
+    left: event.clientX
+  }
+  hoverWidgetVerse.value = verse
+  hoverWidgetVisible.value = true
+  
+  // Play the specific verse
+  const verseIndex = verse - 1
+  if (verseIndex >= 0 && verseIndex < audioList.value.length) {
+    playAyah(verseIndex)
+    $q.notify({
+      type: 'positive',
+      message: `Playing verse ${verse}`,
+      icon: 'play_arrow',
+      timeout: 1500,
+      position: 'top'
+    })
+  }
+}
+
+// Swipe handlers for sura navigation
+function handleTouchStart(e: TouchEvent) {
+  touchStartX.value = e.touches[0].clientX
+}
+
+function handleTouchMove(e: TouchEvent) {
+  touchEndX.value = e.touches[0].clientX
+}
+
+function handleTouchEnd() {
+  const swipeDistance = touchEndX.value - touchStartX.value
+  
+  if (Math.abs(swipeDistance) < MIN_SWIPE_DISTANCE) {
+    // Not a significant swipe
+    return
+  }
+  
+  const nextId = swipeDistance < 0 
+    ? currentSuraId.value + 1  // Swipe left = next sura
+    : currentSuraId.value - 1  // Swipe right = previous sura
+  
+  // Validate sura ID range (1-114)
+  if (nextId >= 1 && nextId <= 114) {
+    router.push(`/quran/${nextId}`)
+    $q.notify({
+      type: 'info',
+      message: swipeDistance < 0 ? '→ Next Sura' : '← Previous Sura',
+      timeout: 1000,
+      position: 'top'
+    })
+  }
 }
 
 // TTS (Text-to-Speech) Functions
@@ -626,10 +756,57 @@ function updateCurrentWord(time: number) {
 }
 
 function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
-  const wordId = `word-${ayahIndex + 1}-${wordIndex}`
+  // Try to find the word element based on current layout mode
+  const verseNum = ayahIndex + 1
+  let wordId: string
+  
+  if (layoutMode.value === 'mushaf') {
+    wordId = `word-mushaf-${verseNum}-${wordIndex}`
+  } else if (layoutMode.value === 'native') {
+    wordId = `word-native-${verseNum}-${wordIndex}`
+  } else {
+    wordId = `word-${verseNum}-${wordIndex}` // reader mode
+  }
+  
   const el = document.getElementById(wordId)
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+  }
+}
+
+function getHoverWidgetStyle() {
+  const WIDGET_WIDTH = 260
+  const WIDGET_HEIGHT = 50
+  const PADDING = 12
+  const OFFSET = 12 // Distance from cursor
+  
+  let top = hoverWidgetPosition.value.top + OFFSET
+  let left = hoverWidgetPosition.value.left + OFFSET
+  
+  // Adjust for viewport boundaries
+  if (typeof window !== 'undefined') {
+    const viewportHeight = window.innerHeight
+    const viewportWidth = window.innerWidth
+    
+    // Keep widget within viewport - move above cursor if too close to bottom
+    if (top + WIDGET_HEIGHT > viewportHeight - PADDING) {
+      top = hoverWidgetPosition.value.top - WIDGET_HEIGHT - OFFSET
+    }
+    
+    // Move left if too close to right edge
+    if (left + WIDGET_WIDTH > viewportWidth - PADDING) {
+      left = hoverWidgetPosition.value.left - WIDGET_WIDTH - OFFSET
+    }
+    
+    // Ensure minimum distances from viewport edges
+    top = Math.max(PADDING, Math.min(top, viewportHeight - WIDGET_HEIGHT - PADDING))
+    left = Math.max(PADDING, Math.min(left, viewportWidth - WIDGET_WIDTH - PADDING))
+  }
+  
+  return {
+    top: `${top}px`,
+    left: `${left}px`,
+    transform: 'translate(0, 0)'
   }
 }
 
@@ -667,7 +844,14 @@ watch(() => route.hash, (hash) => {
     <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
       <div class="sura-heading">
         <div>
-          <div class="text-h5">{{ sura?.e_name }} — {{ sura?.name }}</div>
+          <div 
+            class="text-h5 sura-title-swipeable"
+            @touchstart="handleTouchStart"
+            @touchmove="handleTouchMove"
+            @touchend="handleTouchEnd"
+          >
+            {{ sura?.e_name }} — {{ sura?.name }}
+          </div>
           <div class="text-caption q-mt-xs">
             ID: {{ sura?.id }} • {{ sura?.type }} • {{ sura?.total_verses }} ayat
           </div>
@@ -759,8 +943,10 @@ watch(() => route.hash, (hash) => {
               glossy
               toggle-color="primary"
               color="white"
+              text-color="grey-8"
               unelevated
               size="sm"
+              class="mode-toggle-buttons"
             />
           </div>
           <!-- Quick Access for popular verses like Ayat al-Kursi -->
@@ -848,7 +1034,7 @@ watch(() => route.hash, (hash) => {
             :id="getVerseElementId(a.verse)"
             class="verse-row q-mb-md"
             :class="{ 'is-selected': isVerseSelected(a.verse) }"
-            @dblclick="togglePauseResume"
+            @dblclick="handleVerseDoubleClick($event, a.verse)"
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
           >
@@ -873,7 +1059,7 @@ watch(() => route.hash, (hash) => {
                     @click.stop="bookmarkVerse(a.verse)"
                     :aria-label="bookmarkActionLabel(a.verse)"
                   >
-                    <q-icon :name="isVerseBookmarked(a.verse) ? 'bookmark' : 'bookmark_add'" size="16px" />
+                    <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
                   </button>
                 </div>
               </div>
@@ -885,7 +1071,7 @@ watch(() => route.hash, (hash) => {
         </div>
       </div>
 
-      <div v-else class="mushaf-layout q-mt-lg">
+      <div v-else-if="layoutMode === 'mushaf'" class="mushaf-layout q-mt-lg">
         <div class="mushaf-page">
           <div class="page-border">
             <div class="mushaf-header">
@@ -901,8 +1087,20 @@ watch(() => route.hash, (hash) => {
                 :id="getVerseElementId(a.verse)"
                 class="mushaf-ayah"
                 :class="{ 'is-selected': isVerseSelected(a.verse) }"
+                @dblclick="handleVerseDoubleClick($event, a.verse)"
+                @mouseenter="onVerseMouseEnter($event, a.verse)"
+                @mouseleave="onVerseMouseLeave"
               >
-                <span class="ayah-text">{{ a.text }}</span>
+                <span class="ayah-text">
+                  <template v-if="wordTimings[a.verse - 1]?.length">
+                    <template v-for="(word, wIdx) in a.text.split(' ')" :key="`m-${a.verse}-${wIdx}`">
+                      <span :id="`word-mushaf-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                    </template>
+                  </template>
+                  <template v-else>
+                    {{ a.text }}
+                  </template>
+                </span>
                 <div class="ayah-controls">
                   <span class="ayah-number" @click="scrollToVerse(a.verse)">۝ {{ a.verse }}</span>
                   <button
@@ -912,7 +1110,7 @@ watch(() => route.hash, (hash) => {
                     @click.stop="bookmarkVerse(a.verse)"
                     :aria-label="bookmarkActionLabel(a.verse)"
                   >
-                    <q-icon :name="isVerseBookmarked(a.verse) ? 'bookmark' : 'bookmark_add'" size="16px" />
+                    <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
                   </button>
                 </div>
               </div>
@@ -921,13 +1119,41 @@ watch(() => route.hash, (hash) => {
         </div>
       </div>
 
+      <div v-else-if="layoutMode === 'native'" class="native-layout q-mt-lg">
+        <article class="native-content">
+          <p
+            v-for="a in sura?.ayat || []"
+            :key="`n-${a.verse}`"
+            :id="getVerseElementId(a.verse)"
+            class="verse-paragraph"
+            :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            @dblclick="handleVerseDoubleClick($event, a.verse)"
+            @mouseenter="onVerseMouseEnter($event, a.verse)"
+            @mouseleave="onVerseMouseLeave"
+          >
+            <span class="verse-marker">[{{ a.verse }}]</span>
+            <span class="verse-text-arabic">
+              <template v-if="wordTimings[a.verse - 1]?.length">
+                <template v-for="(word, wIdx) in a.text.split(' ')" :key="`n-${a.verse}-${wIdx}`">
+                  <span :id="`word-native-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                </template>
+              </template>
+              <template v-else>
+                {{ a.text }}
+              </template>
+            </span>
+            <span v-if="a.translation" class="verse-translation-native">{{ a.translation }}</span>
+          </p>
+        </article>
+      </div>
+
       <!-- Audio Control Hover Widget -->
       <Teleport to="body">
         <Transition name="fade">
           <div
             v-if="hoverWidgetVisible && audioEl && currentAyahIndex >= 0"
             class="audio-hover-widget"
-            :style="{ top: hoverWidgetPosition.top + 'px', left: hoverWidgetPosition.left + 'px' }"
+            :style="getHoverWidgetStyle()"
             @mouseleave="hideHoverWidget"
           >
             <div class="hover-widget-content">
@@ -954,6 +1180,14 @@ watch(() => route.hash, (hash) => {
                 color="accent"
                 @click="restartSura"
                 :title="t('pages.quran.restartSura') || 'Restart sura'"
+              />
+              <q-btn
+                round
+                dense
+                icon="arrow_upward"
+                color="info"
+                @click="scrollToTop"
+                :title="t('pages.quran.scrollToTop') || 'Scroll to top'"
               />
               <q-btn
                 round
@@ -997,6 +1231,20 @@ watch(() => route.hash, (hash) => {
   flex-wrap: wrap;
 }
 
+.sura-title-swipeable {
+  user-select: none;
+  touch-action: pan-y;
+  cursor: grab;
+  position: relative;
+  padding: 8px 0;
+  transition: transform 0.2s ease;
+}
+
+.sura-title-swipeable:active {
+  cursor: grabbing;
+  transform: scale(0.98);
+}
+
 .heading-actions {
   display: flex;
   align-items: center;
@@ -1009,6 +1257,31 @@ watch(() => route.hash, (hash) => {
   display: flex;
   align-items: center;
   justify-content: flex-end;
+}
+
+.mode-toggle-buttons :deep(.q-btn-group) {
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+}
+
+.mode-toggle-buttons :deep(.q-btn:nth-child(1)) {
+  background: linear-gradient(135deg, #757575, #616161) !important;
+  color: white !important;
+}
+
+.mode-toggle-buttons :deep(.q-btn:nth-child(2)) {
+  background: linear-gradient(135deg, #ffd54f, #ffb300) !important;
+  color: #5d4037 !important;
+}
+
+.mode-toggle-buttons :deep(.q-btn:nth-child(3)) {
+  background: linear-gradient(135deg, #66bb6a, #4caf50) !important;
+  color: white !important;
+}
+
+.mode-toggle-buttons :deep(.q-btn.q-btn--active) {
+  transform: scale(1.05);
+  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+  font-weight: 600;
 }
 
 .bookmark-menu-btn {
@@ -1049,11 +1322,23 @@ watch(() => route.hash, (hash) => {
   line-height: 2.2rem;
   direction: rtl;
   text-align: justify;
+  background: #ffffff;
+  padding: 24px;
+  border-radius: 16px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
 }
 
 .verse-row {
   padding-bottom: 8px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.verse-row:hover {
+  background: rgba(0, 0, 0, 0.02);
+  border-radius: 12px;
+  padding: 8px;
 }
 
 .verse-row:last-child {
@@ -1061,9 +1346,11 @@ watch(() => route.hash, (hash) => {
 }
 
 .verse-row.is-selected {
-  background: rgba(243, 223, 184, 0.25);
+  background: rgba(255, 193, 7, 0.08);
   border-radius: 16px;
   padding: 12px;
+  border: 2px solid #ffc107;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
 }
 
 .arabic-text {
@@ -1093,8 +1380,20 @@ watch(() => route.hash, (hash) => {
   width: 28px;
   height: 28px;
   font-size: 12px;
-  background: #f3dfb8;
-  border: 1px solid #caa14b;
+  background: #f5f5f5;
+  color: #424242;
+  border: 2px solid #e0e0e0;
+  font-weight: 600;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.verse-num:hover {
+  background: #ffc107;
+  color: white;
+  border-color: #ffb300;
+  transform: scale(1.1);
 }
 
 .verse-translation {
@@ -1112,7 +1411,7 @@ watch(() => route.hash, (hash) => {
 .bookmark-trigger {
   border: none;
   background: transparent;
-  color: #b98a36;
+  color: #9e9e9e;
   cursor: pointer;
   display: inline-flex;
   align-items: center;
@@ -1120,20 +1419,33 @@ watch(() => route.hash, (hash) => {
   width: 32px;
   height: 32px;
   border-radius: 50%;
-  transition: background 0.2s ease, color 0.2s ease;
+  transition: all 0.2s ease;
 }
 
 .bookmark-trigger:hover {
-  background: rgba(185, 138, 54, 0.18);
+  background: rgba(255, 193, 7, 0.15);
+  color: #ffa726;
+  transform: scale(1.1);
 }
 
 .bookmark-trigger.is-active {
-  color: #7c4a00;
+  color: #ffc107;
+  background: rgba(255, 193, 7, 0.2);
 }
 
-.verse-row.is-selected .arabic-text,
+.bookmark-trigger.is-active:hover {
+  color: #ffb300;
+  transform: scale(1.15);
+}
+
+.verse-row.is-selected .arabic-text {
+  color: #000000;
+  font-weight: 500;
+}
+
 .mushaf-ayah.is-selected .ayah-text {
-  color: #704012;
+  color: #b8860b;
+  font-weight: 500;
 }
 
 .mushaf-layout {
@@ -1198,12 +1510,22 @@ watch(() => route.hash, (hash) => {
   text-align: justify;
   position: relative;
   padding-inline-start: 32px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.mushaf-ayah:hover {
+  background: rgba(214, 185, 128, 0.15);
+  border-radius: 12px;
+  padding: 12px 12px 12px 44px;
 }
 
 .mushaf-ayah.is-selected {
-  background: rgba(243, 223, 184, 0.35);
+  background: linear-gradient(135deg, rgba(243, 223, 184, 0.5), rgba(214, 185, 128, 0.4));
   border-radius: 14px;
   padding: 18px 18px 18px 48px;
+  border: 2px solid #d4af37;
+  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
 }
 
 .ayah-text {
@@ -1227,22 +1549,23 @@ watch(() => route.hash, (hash) => {
 }
 
 .is-current-word {
-  background: #f59e0b;
-  color: #1a1a1a;
+  background: #ffc107;
+  color: #000000;
   padding: 2px 6px;
   border-radius: 6px;
   transition: background 0.15s ease;
+  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.4);
 }
 
 .audio-hover-widget {
-  position: absolute;
+  position: fixed;
   z-index: 9999;
-  transform: translate(-50%, -50%);
   background: rgba(255, 255, 255, 0.98);
   border-radius: 12px;
   box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
   padding: 12px 16px;
   backdrop-filter: blur(8px);
+  pointer-events: auto;
 }
 
 .hover-widget-content {
@@ -1263,12 +1586,87 @@ watch(() => route.hash, (hash) => {
 
 .ayah-number {
   font-size: 0.95rem;
-  color: #7c6142;
+  color: #d4af37;
   cursor: pointer;
+  font-weight: 600;
+  transition: color 0.2s ease;
+}
+
+.ayah-number:hover {
+  color: #b8860b;
 }
 
 .mushaf-trigger {
   width: 28px;
   height: 28px;
+}
+
+.native-layout {
+  background: linear-gradient(135deg, #e8f5e9 0%, #f1f8f4 100%);
+  padding: 24px;
+  border-radius: 16px;
+  border: 2px solid #81c784;
+}
+
+.native-content {
+  max-width: 900px;
+  margin: 0 auto;
+  line-height: 2;
+}
+
+.verse-paragraph {
+  margin: 16px 0;
+  padding: 12px;
+  border-left: 4px solid #4caf50;
+  padding-left: 16px;
+  font-size: 1.05rem;
+  background: rgba(255, 255, 255, 0.7);
+  border-radius: 8px;
+  transition: all 0.2s ease;
+  cursor: pointer;
+}
+
+.verse-paragraph:hover {
+  background: rgba(255, 255, 255, 0.95);
+  box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
+  transform: translateX(-4px);
+}
+
+.verse-paragraph.is-selected {
+  background: rgba(255, 193, 7, 0.08);
+  border-left-color: #ffc107;
+  border-left-width: 6px;
+  box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
+  transform: translateX(-4px);
+}
+
+.verse-marker {
+  display: inline-block;
+  font-weight: bold;
+  color: white;
+  background: linear-gradient(135deg, #66bb6a, #4caf50);
+  margin-right: 8px;
+  font-size: 0.85rem;
+  padding: 4px 8px;
+  border-radius: 12px;
+  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.verse-text-arabic {
+  font-family: "Noto Naskh Arabic", serif;
+  direction: rtl;
+  unicode-bidi: embed;
+  display: block;
+  margin: 8px 0;
+  font-size: 1.25rem;
+  line-height: 1.8;
+}
+
+.verse-translation-native {
+  display: block;
+  margin-top: 8px;
+  color: #555;
+  font-style: italic;
+  font-size: 0.95rem;
 }
 </style>

@@ -284,12 +284,69 @@ function onPullRefresh(done?: () => void) {
 }
 
 async function reloadApp() {
+  $q.notify({
+    type: 'info',
+    message: t('pages.settings.clearingCache') || 'Clearing cache...',
+    timeout: 2000,
+    position: 'top'
+  });
+
   try {
+    // Clear all caches
+    if ('caches' in window) {
+      const cacheNames = await caches.keys();
+      await Promise.all(cacheNames.map(name => caches.delete(name)));
+      console.log(`[Settings] Cleared ${cacheNames.length} cache(s)`);
+    }
+
+    // Clear localStorage (except critical settings)
+    if (typeof window !== 'undefined' && window.localStorage) {
+      // Save critical keys before clearing
+      const criticalKeys = [
+        'app-locale',
+        'theme-mode',
+        NAV_ORDERING_KEY,
+        DRAWER_OPEN_KEY,
+        COMPACT_KEY,
+        MOTION_KEY,
+        AUTOPLAY_KEY,
+        NOTIFICATIONS_KEY,
+        DARK_MODE_KEY
+      ];
+      const savedValues: Record<string, string> = {};
+      criticalKeys.forEach(key => {
+        const val = window.localStorage.getItem(key);
+        if (val !== null) savedValues[key] = val;
+      });
+
+      // Clear all
+      window.localStorage.clear();
+
+      // Restore critical settings
+      Object.entries(savedValues).forEach(([key, val]) => {
+        window.localStorage.setItem(key, val);
+      });
+      
+      console.log('[Settings] Cleared localStorage (kept critical settings)');
+    }
+
+    // Clear sessionStorage
+    if (typeof window !== 'undefined' && window.sessionStorage) {
+      window.sessionStorage.clear();
+      console.log('[Settings] Cleared sessionStorage');
+    }
+
+    // Update service workers
     if ("serviceWorker" in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations();
-      regs.forEach((r) => r.update().catch(() => {}));
+      await Promise.all(regs.map(r => r.update().catch(() => {})));
+      console.log('[Settings] Updated service workers');
     }
-  } catch {}
+  } catch (err) {
+    console.error('[Settings] Error clearing cache:', err);
+  }
+
+  // Hard reload with cache bypass
   window.location.reload();
 }
 </script>
