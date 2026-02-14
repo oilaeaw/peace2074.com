@@ -296,7 +296,10 @@ function handleAyaDblClick(e: Event) {
   if (!aya) return;
   const id =
     aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
-  if (id) _saveBookmark(id);
+  if (id) {
+    _saveBookmark(id);
+    navigateToHash(id); // Center the card after bookmarking
+  }
 }
 
 function navigateToHash(hash: string) {
@@ -347,7 +350,10 @@ function onAyaDblClick(e: Event) {
   if (!aya) return;
   const id =
     aya.getAttribute("id") || aya.querySelector(".verse-medallion")?.textContent || "";
-  if (id) _saveBookmark(id);
+  if (id) {
+    _saveBookmark(id);
+    navigateToHash(id); // Center the card after bookmarking
+  }
 }
 </script>
 

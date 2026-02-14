@@ -5,7 +5,6 @@ import { initFaLibrary, FontAwesomeIcon } from "@/plugins/font-awesome";
 import pinia from "@/plugins/pinia";
 import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
-import { registerSW } from "virtual:pwa-register";
 import netlifyIdentity from 'netlify-identity-widget'
 import { Dark } from 'quasar'
 import { useLocalStorage } from '@/composables/useUStore'
@@ -148,15 +147,19 @@ try {
 }
 
 // Register PWA Service Worker and force-refresh clients when a new build is available
-if (isClient && 'serviceWorker' in navigator) {
-  const updateSW = registerSW({
-    immediate: true,
-    onNeedRefresh() {
-      updateSW(true);
-    },
-    onRegisterError(error) {
-      console.error('PWA service worker registration failed', error);
-    },
+if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
+  import('virtual:pwa-register').then(({ registerSW }) => {
+    const updateSW = registerSW({
+      immediate: true,
+      onNeedRefresh() {
+        updateSW(true);
+      },
+      onRegisterError(error) {
+        console.error('PWA service worker registration failed', error);
+      },
+    });
+  }).catch(e => {
+    console.warn('PWA registration skipped', e);
   });
 }
 

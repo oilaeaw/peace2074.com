@@ -961,7 +961,7 @@ watch(() => route.hash, (hash) => {
                 icon="home"
                 color="grey"
                 @click="goHome"
-                :title="t('nav.home') || 'Home'"
+                :title="t('appShell.nav.home') || 'Home'"
               />
               <q-btn
                 round

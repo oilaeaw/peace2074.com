@@ -33,5 +33,10 @@ export default defineNitroConfig({
         authPasscode: "",
         authSecret: "",
     },
+    // Cache headers for static assets and API responses
+    headers: {
+        'Cache-Control': 'public, max-age=3600, stale-while-revalidate=86400',
+        'X-Content-Type-Options': 'nosniff',
+    },
     // No SSR renderer needed; pure API
 });

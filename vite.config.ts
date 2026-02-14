@@ -29,11 +29,16 @@ export default defineConfig({
           'vendor-quasar': ['quasar'],
           'vendor-i18n': ['vue-i18n'],
           'three': ['three'],
-        }
+        },
+        entryFileNames: 'assets/[name].[hash].js',
+        chunkFileNames: 'assets/[name].[hash].js',
+        assetFileNames: 'assets/[name].[hash][extname]',
       }
     },
     chunkSizeWarningLimit: 600,
     minify: 'esbuild',
+    sourcemap: false,
+    reportCompressedSize: false,
   },
   plugins: [
     // https://github.com/posva/unplugin-vue-router
@@ -76,8 +81,8 @@ export default defineConfig({
       vueTemplate: true,
     }),
 
-    // PWA configuration (disabled in dev for faster startup)
-    ...(DEV ? [] : [VitePWA({
+    // PWA configuration
+    VitePWA({
       registerType: "autoUpdate",
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       manifest: {
@@ -128,32 +133,77 @@ export default defineConfig({
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
         navigateFallbackDenylist: [/^\/auth\//, /^\/api\//],
+        cleanupOutdatedCaches: true,
+        clientsClaim: true,
+        skipWaiting: true,
         runtimeCaching: [
+          // API requests - Network first with cache fallback
           {
-            urlPattern: /^https:\/\/api\.example\.com\/.*/i,
+            urlPattern: /^http:\/\/localhost:3000|^https:\/\/peace2074\.com\/api\/.*/i,
             handler: "NetworkFirst",
             options: {
-              cacheName: "api-cache",
+              cacheName: "api-cache-v1",
+              networkTimeoutSeconds: 5,
               expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 24 * 60 * 60, // 1 day
+                maxEntries: 100,
+                maxAgeSeconds: 12 * 60 * 60, // 12 hours
+              },
+              cacheableResponse: {
+                statuses: [0, 200],
               },
             },
           },
+          // Quran data - Cache first (static)
+          {
+            urlPattern: /quran|\/data\/.*/i,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "quran-data-v1",
+              expiration: {
+                maxEntries: 500,
+                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
+              },
+            },
+          },
+          // Images - Cache first with long expiration
           {
             urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp|ico)$/,
             handler: "CacheFirst",
             options: {
-              cacheName: "image-cache",
+              cacheName: "image-cache-v1",
               expiration: {
                 maxEntries: 200,
+                maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
+              },
+            },
+          },
+          // Fonts - Cache first with long expiration
+          {
+            urlPattern: /\.(?:woff|woff2|ttf|otf|eot)$/,
+            handler: "CacheFirst",
+            options: {
+              cacheName: "font-cache-v1",
+              expiration: {
+                maxEntries: 50,
+                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
+              },
+            },
+          },
+          // CSS and JS bundles - Stale while revalidate
+          {
+            urlPattern: /\.(?:js|css)$/,
+            handler: "StaleWhileRevalidate",
+            options: {
+              cacheName: "bundle-cache-v1",
+              expiration: {
+                maxEntries: 100,
                 maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
               },
             },
           },
         ],
       },
-    })]),
+    }),
   ],
 
   resolve: {
@@ -184,6 +234,11 @@ export default defineConfig({
   server: {
     port: 4000,
     middlewareMode: false,
+    hmr: {
+      host: 'localhost',
+      port: 4000,
+      protocol: 'ws',
+    },
     proxy: {
       '/api': {
         target: 'http://localhost:3000',
@@ -193,7 +248,9 @@ export default defineConfig({
       },
     },
     headers: {
-      'Cache-Control': 'public, max-age=3600',
+      'Cache-Control': 'public, max-age=3600, s-maxage=3600',
+      'ETag': 'disable',
+      'Last-Modified': 'disable',
     },
   },
 });

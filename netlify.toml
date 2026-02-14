@@ -8,6 +8,11 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# Edge caching for better performance
+[functions]
+  directory = "netlify/functions"
+  node_bundler = "esbuild"
+
 # Note: Legacy prerendering must be disabled in Netlify dashboard
 # See DISABLE_LEGACY_PRERENDERING.md for instructions
 
@@ -30,3 +35,9 @@
   from = "/*"
   to = "/index.html"
   status = 200
+
+[context.production]
+  # Increase function timeout and memory in production
+  [context.production.functions."*"]
+    timeout = 30
+    memory = 1024
