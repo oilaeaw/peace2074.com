@@ -19,7 +19,7 @@ jobs:
   release:
     runs-on: ubuntu-latest
     # Skip if the commit is from github-actions bot to prevent infinite loops
-    if: "!contains(github.event.head_commit.message, 'chore(release):')"
+    if: "github.event_name != 'push' || !contains(github.event.head_commit.message, 'chore(release):')"
     permissions:
       contents: write
       issues: write
@@ -51,15 +51,23 @@ jobs:
           git config user.name "github-actions[bot]"
           git config user.email "github-actions[bot]@users.noreply.github.com"
 
-      - name: Bump version (manual)
-        if: github.event_name == 'workflow_dispatch'
+      - name: Bump versions (root + nitro-api)
         run: |
-          pnpm version ${{ github.event.inputs.release-type }} -m "chore(release): %s"
+          if [ "${{ github.event_name }}" = "workflow_dispatch" ]; then
+            RELEASE_TYPE="${{ github.event.inputs.release-type }}"
+          else
+            RELEASE_TYPE="patch"
+          fi
 
-      - name: Bump version (automatic)
-        if: github.event_name == 'push'
-        run: |
-          pnpm version patch -m "chore(release): %s"
+          pnpm version "$RELEASE_TYPE" --no-git-tag-version
+
+          VERSION=$(node -e "const fs=require('fs');const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));process.stdout.write(pkg.version)")
+
+          node -e "const fs=require('fs');const p='apps/nitro-api/package.json';const pkg=JSON.parse(fs.readFileSync(p,'utf8'));pkg.version='${VERSION}';fs.writeFileSync(p, JSON.stringify(pkg, null, 2)+'\\n');"
+
+          git add package.json apps/nitro-api/package.json
+          git commit -m "chore(release): v${VERSION}"
+          git tag "v${VERSION}"
 
       - name: Push changes
         run: |
