@@ -253,10 +253,13 @@
         "desc": "Stay informed when new content arrives.",
         "enable": "Enable notifications",
         "enableHint": "We’ll ask permission before sending anything.",
+        "enabled": "Push notifications enabled!",
         "comingSoon": "Push notifications are coming soon.",
         "unavailable": "Notifications are not supported on this device/browser.",
         "denied": "Notifications are blocked. Please allow them in your browser settings.",
-        "error": "Could not enable notifications right now."
+        "error": "Could not enable notifications right now.",
+        "testTitle": "Notifications Enabled",
+        "testBody": "You'll now receive updates from Peace2074"
       },
       "audio": {
         "title": "Audio",
@@ -317,7 +320,37 @@
       "title": "Blog",
       "subtitle": "Updates, tips, and reflections.",
       "empty": "No posts yet.",
-      "notFound": "Post not found"
+      "notFound": "Post not found",
+      "newPost": "New Post",
+      "editor": {
+        "title": "Blog Editor",
+        "newPost": "New Post",
+        "editPost": "Edit Post",
+        "authRequired": "You must be logged in to create or edit blog posts.",
+        "title": "Title",
+        "titleRequired": "Title is required",
+        "slug": "Slug",
+        "slugHint": "URL-friendly identifier (e.g., my-post-title)",
+        "slugRequired": "Slug is required",
+        "excerpt": "Excerpt",
+        "content": "Content",
+        "contentRequired": "Content is required",
+        "tags": "Tags",
+        "tagsHint": "Comma-separated tags",
+        "publish": "Publish",
+        "update": "Update",
+        "delete": "Delete",
+        "confirmDelete": "Delete Post?",
+        "confirmDeleteMessage": "This action cannot be undone.",
+        "publishSuccess": "Post published successfully!",
+        "updateSuccess": "Post updated successfully!",
+        "deleteSuccess": "Post deleted successfully!",
+        "saveError": "Failed to save post",
+        "deleteError": "Failed to delete post",
+        "loadError": "Failed to load post",
+        "postNotFound": "Post not found",
+        "fillRequired": "Please fill in all required fields"
+      }
     }
   },
   "general": {
@@ -470,6 +503,7 @@
   "passwords_do_not_match": "Passwords do not match",
   "confirm_password": "Confirm password",
   "cancel": "Cancel",
+  "edit": "Edit",
   "login_success": "Logged in successfully",
   "please_accept_terms": "Accept our terms and conditions.",
   "email": "Email",

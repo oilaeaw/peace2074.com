@@ -44,6 +44,13 @@ declare module 'vue-router/auto-routes' {
       { slug: ParamValue<false> },
       | never
     >,
+    '/blog/editor': RouteRecordInfo<
+      '/blog/editor',
+      '/blog/editor',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/chat': RouteRecordInfo<
       '/chat',
       '/chat',
@@ -184,6 +191,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/blog/[slug].vue': {
       routes:
         | '/blog/[slug]'
+      views:
+        | never
+    }
+    'src/views/blog/editor.vue': {
+      routes:
+        | '/blog/editor'
       views:
         | never
     }

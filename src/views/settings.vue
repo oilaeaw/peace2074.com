@@ -61,17 +61,32 @@ watch(enableNotifications, async (val) => {
       return;
     }
 
-    // Attempt a service-worker-backed notification for mobile Safari/Android
-    const shown = await showTestNotification();
-    if (!shown) {
-      // Fall back to in-app toast so the user gets feedback
+    // Subscribe to push notifications
+    const subscribed = await subscribeToPushNotifications();
+    if (!subscribed) {
+      enableNotifications.value = false;
+      persistNotificationsPreference(false);
       $q.notify?.({
-        type: "info",
+        type: "negative",
         message:
-          t("pages.settings.notifications.unavailable") ||
-          "Your browser does not support mobile push-style notifications; you'll still get in-app alerts.",
+          t("pages.settings.notifications.error") ||
+          "Could not enable push notifications.",
       });
+      return;
     }
+
+    // Show test notification
+    await showTestNotification();
+    
+    $q.notify?.({
+      type: "positive",
+      message:
+        t("pages.settings.notifications.enabled") ||
+        "Push notifications enabled! You'll receive updates on your device.",
+    });
+  } else {
+    // Unsubscribe from push notifications
+    await unsubscribeFromPushNotifications();
   }
   persistNotificationsPreference(val);
 });
@@ -257,6 +272,107 @@ async function showTestNotification(): Promise<boolean> {
   }
 
   return false;
+}
+
+async function subscribeToPushNotifications(): Promise<boolean> {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+    console.warn("[Push] Service Worker not supported");
+    return false;
+  }
+
+  try {
+    // Register service worker if not already registered
+    let registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) {
+      registration = await navigator.serviceWorker.register("/sw.js");
+      await navigator.serviceWorker.ready;
+    }
+
+    // Get VAPID public key from server
+    const keyRes = await fetch("/api/push/public-key", {
+      credentials: "include",
+    });
+    const keyData = await keyRes.json();
+    
+    if (!keyData.ok || !keyData.publicKey) {
+      console.error("[Push] Failed to get VAPID public key");
+      return false;
+    }
+
+    // Convert base64 VAPID key to Uint8Array
+    const applicationServerKey = urlBase64ToUint8Array(keyData.publicKey);
+
+    // Subscribe to push notifications
+    const subscription = await registration.pushManager.subscribe({
+      userVisibleOnly: true,
+      applicationServerKey,
+    });
+
+    // Send subscription to server
+    const subRes = await fetch("/api/push/subscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ subscription }),
+    });
+
+    const subData = await subRes.json();
+    
+    if (!subData.ok) {
+      console.error("[Push] Failed to save subscription:", subData.error);
+      return false;
+    }
+
+    console.log("[Push] Successfully subscribed to push notifications");
+    return true;
+  } catch (err) {
+    console.error("[Push] Subscription error:", err);
+    return false;
+  }
+}
+
+async function unsubscribeFromPushNotifications(): Promise<boolean> {
+  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
+    return true;
+  }
+
+  try {
+    const registration = await navigator.serviceWorker.getRegistration();
+    if (!registration) return true;
+
+    const subscription = await registration.pushManager.getSubscription();
+    if (!subscription) return true;
+
+    // Unsubscribe from push
+    await subscription.unsubscribe();
+
+    // Remove from server
+    await fetch("/api/push/unsubscribe", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      credentials: "include",
+      body: JSON.stringify({ endpoint: subscription.endpoint }),
+    });
+
+    console.log("[Push] Unsubscribed from push notifications");
+    return true;
+  } catch (err) {
+    console.error("[Push] Unsubscribe error:", err);
+    return false;
+  }
+}
+
+function urlBase64ToUint8Array(base64String: string): Uint8Array {
+  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
+  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+
+  const rawData = window.atob(base64);
+  const outputArray = new Uint8Array(rawData.length);
+
+  for (let i = 0; i < rawData.length; ++i) {
+    outputArray[i] = rawData.charCodeAt(i);
+  }
+  return outputArray;
 }
 
 function readDrawerOpenPreference(): boolean {

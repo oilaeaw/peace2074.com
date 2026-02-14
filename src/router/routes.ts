@@ -145,6 +145,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/blog-editor',
+    name: 'BlogEditor',
+    component: () => import('@/views/blog/editor.vue'),
+    meta: {
+      title: 'Blog Editor',
+      titleKey: 'pages.blog.editor.title',
+    },
+  },
+  {
     path: '/miracles',
     name: 'Miracles',
     component: () => import('@/views/miracles.vue'),

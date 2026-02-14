@@ -42,6 +42,25 @@ Set these in Netlify Dashboard → Site Settings → Environment Variables
 
 - `GOOGLE_ANALYTICS_ID` - Your GA4 measurement ID (G-XXXXXXXXXX)
 
+### Web Push Notifications (FREE)
+
+- `VAPID_PUBLIC_KEY` - VAPID public key (generate with: `node scripts/generate-vapid-keys.mjs`)
+- `VAPID_PRIVATE_KEY` - VAPID private key (keep secret!)
+- `VAPID_SUBJECT` - Contact email (e.g., `mailto:admin@peace2074.com`)
+- `NITRO_VAPID_PUBLIC_KEY` - Same as VAPID_PUBLIC_KEY
+- `NITRO_VAPID_PRIVATE_KEY` - Same as VAPID_PRIVATE_KEY
+- `NITRO_VAPID_SUBJECT` - Same as VAPID_SUBJECT
+- `ENABLE_BLOG_NOTIFICATIONS` - Set to `true` to auto-notify users of new blog posts (optional)
+
+**How to generate VAPID keys:**
+```bash
+node scripts/generate-vapid-keys.mjs
+```
+
+Copy the output and set as environment variables in Netlify.
+
+**Note:** Web Push is 100% free - no paid services required! Works on iPhone, Android, and desktop.
+
 ## Security Notes
 
 - Never commit `.env` file to git (already in .gitignore)

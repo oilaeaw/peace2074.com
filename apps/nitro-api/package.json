@@ -10,6 +10,7 @@
     "dependencies": {
         "nitropack": "^2.9.7",
         "nodemailer": "^6.9.15",
-        "openai": "^6.15.0"
+        "openai": "^6.15.0",
+        "web-push": "^3.6.7"
     }
 }
