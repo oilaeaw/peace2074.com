@@ -103,6 +103,7 @@ try {
 function applyDirFromLocale(localeValue: string) {
   if (!isClient) return
   const rtl = ['ar', 'he'].includes((localeValue || '').split('-')[0].toLowerCase())
+  document.documentElement.setAttribute('lang', (localeValue || 'en').split('-')[0].toLowerCase())
   document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr')
   document.body.setAttribute('dir', rtl ? 'rtl' : 'ltr')
 }
@@ -132,7 +133,69 @@ function updateTitleForRoute(to: any) {
   document.title = title;
 }
 
-router.afterEach((to) => updateTitleForRoute(to));
+const SEO_BASE_URL = 'https://peace2074.com'
+const DEFAULT_DESCRIPTION = 'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more'
+
+function upsertMetaTag(attr: 'name' | 'property', key: string, content: string) {
+  if (!isClient || !content) return
+  const selector = `meta[${attr}="${key}"]`
+  let tag = document.head.querySelector(selector) as HTMLMetaElement | null
+  if (!tag) {
+    tag = document.createElement('meta')
+    tag.setAttribute(attr, key)
+    document.head.appendChild(tag)
+  }
+  tag.setAttribute('content', content)
+}
+
+function upsertCanonical(href: string) {
+  if (!isClient || !href) return
+  let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!link) {
+    link = document.createElement('link')
+    link.setAttribute('rel', 'canonical')
+    document.head.appendChild(link)
+  }
+  link.setAttribute('href', href)
+}
+
+function resolveCanonical(to: any): string {
+  const path = (to.fullPath || to.path || '/').split('#')[0].split('?')[0]
+  const normalizedPath = path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+  return `${SEO_BASE_URL}${normalizedPath || '/'}`
+}
+
+function updateSeoMetaForRoute(to: any) {
+  const currentTitle = document.title || 'PEACE2074'
+  const canonical = resolveCanonical(to)
+  const section = currentTitle.replace(/\s*\|\s*PEACE2074\s*$/i, '').trim()
+  const description = section && section !== 'PEACE2074'
+    ? `${section} on PEACE2074 — ${DEFAULT_DESCRIPTION}`
+    : DEFAULT_DESCRIPTION
+
+  upsertMetaTag('name', 'description', description)
+  upsertMetaTag('name', 'robots', 'index,follow,max-image-preview:large')
+  upsertMetaTag('property', 'og:type', 'website')
+  upsertMetaTag('property', 'og:site_name', 'PEACE2074')
+  upsertMetaTag('property', 'og:title', currentTitle)
+  upsertMetaTag('property', 'og:description', description)
+  upsertMetaTag('property', 'og:url', canonical)
+  upsertMetaTag('property', 'og:image', `${SEO_BASE_URL}/android-chrome-512x512.png`)
+  upsertMetaTag('property', 'og:image:alt', 'PEACE2074 logo')
+  upsertMetaTag('name', 'twitter:card', 'summary_large_image')
+  upsertMetaTag('name', 'twitter:title', currentTitle)
+  upsertMetaTag('name', 'twitter:description', description)
+  upsertMetaTag('name', 'twitter:image', `${SEO_BASE_URL}/android-chrome-512x512.png`)
+  upsertCanonical(canonical)
+}
+
+router.afterEach((to) => {
+  updateTitleForRoute(to)
+  updateSeoMetaForRoute(to)
+});
+
+updateTitleForRoute(router.currentRoute.value)
+updateSeoMetaForRoute(router.currentRoute.value)
 
 // Update title immediately on locale change
 try {
@@ -140,6 +203,7 @@ try {
   if (localeRef && typeof localeRef === 'object' && 'value' in localeRef) {
     watch(localeRef, () => {
       updateTitleForRoute(router.currentRoute.value);
+      updateSeoMetaForRoute(router.currentRoute.value)
       applyDirFromLocale(localeRef.value)
     });
   }

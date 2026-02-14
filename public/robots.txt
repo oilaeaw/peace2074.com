@@ -1,2 +1,5 @@
 User-agent: *
 Allow: /
+
+Sitemap: https://peace2074.com/sitemap.xml
+Host: peace2074.com
