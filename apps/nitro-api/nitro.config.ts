@@ -27,6 +27,9 @@ export default defineNitroConfig({
         // environment variables e.g. NITRO_DEEPSEEK_API_KEY
         deepseekApiKey: "",
         deepseekBaseUrl: "",
+        vapidPublicKey: "",
+        vapidPrivateKey: "",
+        vapidSubject: "",
         contactFrom: "",
         contactTo: "",
         netlifyWebhookSecret: "",

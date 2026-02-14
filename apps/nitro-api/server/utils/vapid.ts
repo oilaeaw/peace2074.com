@@ -9,9 +9,23 @@ type VapidConfig = {
 let cachedDevVapid: VapidConfig | null = null
 
 export function getVapidConfig(): VapidConfig | null {
-    const publicKey = process.env.VAPID_PUBLIC_KEY || process.env.NITRO_VAPID_PUBLIC_KEY
-    const privateKey = process.env.VAPID_PRIVATE_KEY || process.env.NITRO_VAPID_PRIVATE_KEY
-    const subject = process.env.VAPID_SUBJECT || process.env.NITRO_VAPID_SUBJECT || 'mailto:admin@peace2074.com'
+    const config = useRuntimeConfig()
+
+    const publicKey =
+        (config as any).vapidPublicKey
+        || process.env.NITRO_VAPID_PUBLIC_KEY
+        || process.env.VAPID_PUBLIC_KEY
+
+    const privateKey =
+        (config as any).vapidPrivateKey
+        || process.env.NITRO_VAPID_PRIVATE_KEY
+        || process.env.VAPID_PRIVATE_KEY
+
+    const subject =
+        (config as any).vapidSubject
+        || process.env.NITRO_VAPID_SUBJECT
+        || process.env.VAPID_SUBJECT
+        || 'mailto:admin@peace2074.com'
 
     if (publicKey && privateKey) {
         return { publicKey, privateKey, subject }
