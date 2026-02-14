@@ -2,18 +2,18 @@ name: Release
 
 on:
   push:
-    branches: [ main, master ]
+    branches: [main, master]
     paths-ignore:
-      - '**.md'
-      - 'docs/**'
-      - '.github/**'
-      - '!.github/workflows/release.yml'
+      - "**.md"
+      - "docs/**"
+      - ".github/**"
+      - "!.github/workflows/release.yml"
   workflow_dispatch:
     inputs:
       release-type:
-        description: 'Release type (one of): patch, minor, major'
+        description: "Release type (one of): patch, minor, major"
         required: true
-        default: 'patch'
+        default: "patch"
 
 jobs:
   release:
@@ -24,7 +24,7 @@ jobs:
       contents: write
       issues: write
       pull-requests: write
-    
+
     steps:
       - name: Checkout
         uses: actions/checkout@v4
@@ -54,12 +54,12 @@ jobs:
       - name: Bump version (manual)
         if: github.event_name == 'workflow_dispatch'
         run: |
-          pnpm run release:${{ github.event.inputs.release-type }}
+          pnpm version ${{ github.event.inputs.release-type }} -m "chore(release): %s"
 
       - name: Bump version (automatic)
         if: github.event_name == 'push'
         run: |
-          pnpm run release
+          pnpm version patch -m "chore(release): %s"
 
       - name: Push changes
         run: |
