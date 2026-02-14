@@ -62,13 +62,13 @@ watch(enableNotifications, async (val) => {
     }
 
     // Subscribe to push notifications
-    const subscribed = await subscribeToPushNotifications();
-    if (!subscribed) {
+    const subscriptionResult = await subscribeToPushNotifications();
+    if (!subscriptionResult.ok) {
       enableNotifications.value = false;
       persistNotificationsPreference(false);
       $q.notify?.({
         type: "negative",
-        message:
+        message: subscriptionResult.error ||
           t("pages.settings.notifications.error") ||
           "Could not enable push notifications.",
       });
@@ -274,10 +274,38 @@ async function showTestNotification(): Promise<boolean> {
   return false;
 }
 
-async function subscribeToPushNotifications(): Promise<boolean> {
+type PushSubscriptionResult = {
+  ok: boolean;
+  error?: string;
+}
+
+async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
   if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
     console.warn("[Push] Service Worker not supported");
-    return false;
+    return {
+      ok: false,
+      error:
+        t("pages.settings.notifications.unavailable") ||
+        "Notifications are not supported on this device/browser.",
+    };
+  }
+
+  if (!("PushManager" in window)) {
+    return {
+      ok: false,
+      error:
+        t("pages.settings.notifications.unavailable") ||
+        "Notifications are not supported on this device/browser.",
+    };
+  }
+
+  if (!window.isSecureContext) {
+    return {
+      ok: false,
+      error:
+        t("pages.settings.notifications.unavailable") ||
+        "Notifications are not supported on this device/browser.",
+    };
   }
 
   try {
@@ -292,21 +320,29 @@ async function subscribeToPushNotifications(): Promise<boolean> {
     const keyRes = await fetch("/api/push/public-key", {
       credentials: "include",
     });
-    const keyData = await keyRes.json();
-    
-    if (!keyData.ok || !keyData.publicKey) {
-      console.error("[Push] Failed to get VAPID public key");
-      return false;
+    const keyData = await keyRes.json().catch(() => ({}));
+
+    if (!keyRes.ok || !keyData?.ok || !keyData?.publicKey) {
+      const errorMessage =
+        keyData?.error ||
+        `Failed to load push public key (${keyRes.status})`;
+      console.error("[Push]", errorMessage);
+      return { ok: false, error: errorMessage };
     }
 
     // Convert base64 VAPID key to Uint8Array
     const applicationServerKey = urlBase64ToUint8Array(keyData.publicKey);
 
+    // Reuse existing subscription if present
+    let subscription = await registration.pushManager.getSubscription();
+
     // Subscribe to push notifications
-    const subscription = await registration.pushManager.subscribe({
-      userVisibleOnly: true,
-      applicationServerKey,
-    });
+    if (!subscription) {
+      subscription = await registration.pushManager.subscribe({
+        userVisibleOnly: true,
+        applicationServerKey,
+      });
+    }
 
     // Send subscription to server
     const subRes = await fetch("/api/push/subscribe", {
@@ -316,18 +352,27 @@ async function subscribeToPushNotifications(): Promise<boolean> {
       body: JSON.stringify({ subscription }),
     });
 
-    const subData = await subRes.json();
-    
-    if (!subData.ok) {
-      console.error("[Push] Failed to save subscription:", subData.error);
-      return false;
+    const subData = await subRes.json().catch(() => ({}));
+
+    if (!subRes.ok || !subData?.ok) {
+      const errorMessage =
+        subData?.error ||
+        `Failed to save subscription (${subRes.status})`;
+      console.error("[Push]", errorMessage);
+      return { ok: false, error: errorMessage };
     }
 
     console.log("[Push] Successfully subscribed to push notifications");
-    return true;
+    return { ok: true };
   } catch (err) {
     console.error("[Push] Subscription error:", err);
-    return false;
+
+    const message =
+      err instanceof Error
+        ? err.message
+        : "Could not enable notifications right now.";
+
+    return { ok: false, error: message };
   }
 }
 
