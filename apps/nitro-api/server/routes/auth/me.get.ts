@@ -5,7 +5,7 @@ import { applyCors } from '../../utils/cors'
 export default defineEventHandler((event) => {
     applyCors(event)
     // Ensure config exists
-    requireSecrets()
+    requireSecrets({ needPasscode: false })
 
     const session = readSession(event)
     if (!session) {

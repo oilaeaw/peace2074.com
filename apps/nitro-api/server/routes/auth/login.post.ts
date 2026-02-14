@@ -1,5 +1,5 @@
 import { createError, defineEventHandler, readBody } from 'h3'
-import { createSession, requireSecrets } from '../../utils/auth'
+import { createSession } from '../../utils/auth'
 import { findUserByUsername } from '../../utils/users'
 
 export default defineEventHandler(async (event) => {

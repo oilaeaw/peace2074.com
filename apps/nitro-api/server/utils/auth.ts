@@ -13,8 +13,16 @@ type SessionPayload = {
 
 function getSecrets() {
     const config = useRuntimeConfig()
-    const passcode = (config as any).authPasscode || process.env.AUTH_PASSCODE || ''
-    const secret = (config as any).authSecret || process.env.AUTH_SECRET || ''
+    const passcode =
+        (config as any).authPasscode
+        || process.env.NITRO_AUTH_PASSCODE
+        || process.env.AUTH_PASSCODE
+        || ''
+    const secret =
+        (config as any).authSecret
+        || process.env.NITRO_AUTH_SECRET
+        || process.env.AUTH_SECRET
+        || ''
     return { passcode, secret }
 }
 
@@ -43,10 +51,10 @@ export function requireSecrets(options: { needPasscode?: boolean } = {}) {
     const { passcode, secret } = getSecrets()
 
     if (!secret) {
-        throw createError({ statusCode: 500, statusMessage: 'Auth not configured' })
+        throw createError({ statusCode: 500, statusMessage: 'Auth secret missing (set NITRO_AUTH_SECRET or AUTH_SECRET)' })
     }
     if (needPasscode && !passcode) {
-        throw createError({ statusCode: 500, statusMessage: 'Auth not configured' })
+        throw createError({ statusCode: 500, statusMessage: 'Auth passcode missing (set NITRO_AUTH_PASSCODE or AUTH_PASSCODE)' })
     }
     return { passcode, secret }
 }
