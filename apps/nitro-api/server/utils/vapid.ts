@@ -6,9 +6,15 @@ type VapidConfig = {
     subject: string
 }
 
+export type VapidStatus = {
+    hasPublicKey: boolean
+    hasPrivateKey: boolean
+    hasSubject: boolean
+}
+
 let cachedDevVapid: VapidConfig | null = null
 
-export function getVapidConfig(): VapidConfig | null {
+function resolveVapidInputs() {
     const config = useRuntimeConfig()
 
     const publicKey =
@@ -26,6 +32,21 @@ export function getVapidConfig(): VapidConfig | null {
         || process.env.NITRO_VAPID_SUBJECT
         || process.env.VAPID_SUBJECT
         || 'mailto:admin@peace2074.com'
+
+    return { publicKey, privateKey, subject }
+}
+
+export function getVapidStatus(): VapidStatus {
+    const { publicKey, privateKey, subject } = resolveVapidInputs()
+    return {
+        hasPublicKey: Boolean(publicKey),
+        hasPrivateKey: Boolean(privateKey),
+        hasSubject: Boolean(subject),
+    }
+}
+
+export function getVapidConfig(): VapidConfig | null {
+    const { publicKey, privateKey, subject } = resolveVapidInputs()
 
     if (publicKey && privateKey) {
         return { publicKey, privateKey, subject }
