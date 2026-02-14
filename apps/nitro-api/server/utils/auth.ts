@@ -76,3 +76,11 @@ export function readSession(event: H3Event): SessionPayload | null {
     if (!token) return null
     return verify(token, secret)
 }
+
+export function requireAuth(event: H3Event): SessionPayload {
+    const session = readSession(event)
+    if (!session) {
+        throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
+    }
+    return session
+}
