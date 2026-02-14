@@ -41,21 +41,44 @@ const DEFAULT_USERS: User[] = [
 ]
 
 const USERS_KEY = 'db:users'
+let memoryUsers: User[] | null = null
 
 async function loadUsers(): Promise<User[]> {
-    const storage = useStorage('data')
-    const existing = await storage.getItem<User[]>(USERS_KEY)
-    if (Array.isArray(existing) && existing.length > 0) {
-        return existing
+    if (memoryUsers && memoryUsers.length > 0) {
+        return memoryUsers
     }
 
-    await storage.setItem(USERS_KEY, DEFAULT_USERS)
-    return [...DEFAULT_USERS]
+    try {
+        const storage = useStorage('data')
+        const existing = await storage.getItem<User[]>(USERS_KEY)
+        if (Array.isArray(existing) && existing.length > 0) {
+            memoryUsers = existing
+            return existing
+        }
+
+        // Seed defaults best-effort; if storage is read-only (common in serverless),
+        // we still keep an in-memory fallback to avoid runtime 500s.
+        memoryUsers = [...DEFAULT_USERS]
+        try {
+            await storage.setItem(USERS_KEY, memoryUsers)
+        } catch {
+            /* noop - in-memory fallback only */
+        }
+        return memoryUsers
+    } catch {
+        memoryUsers = [...DEFAULT_USERS]
+        return memoryUsers
+    }
 }
 
 async function saveUsers(users: User[]) {
-    const storage = useStorage('data')
-    await storage.setItem(USERS_KEY, users)
+    memoryUsers = users
+    try {
+        const storage = useStorage('data')
+        await storage.setItem(USERS_KEY, users)
+    } catch {
+        /* noop - in-memory fallback only */
+    }
 }
 
 export async function findUserByUsername(username: string) {
