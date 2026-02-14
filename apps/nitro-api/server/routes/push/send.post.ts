@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import webpush from 'web-push'
 import { requireAuth } from '../../utils/auth'
+import { getCollection } from '../../utils/kv-db'
 
 /**
  * POST /api/push/send
@@ -33,12 +34,7 @@ export default defineEventHandler(async (event) => {
 
         webpush.setVapidDetails(subject, publicKey, privateKey)
 
-        const db = event.context.db
-        if (!db) {
-            return { ok: false, error: 'Database not available' }
-        }
-
-        const Subscriptions = db.collection('push_subscriptions')
+        const Subscriptions = await getCollection('push_subscriptions')
 
         // Build query - send to specific user or all
         const query: any = {}
