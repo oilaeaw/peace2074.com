@@ -177,6 +177,9 @@ importers:
 
   apps/nitro-api:
     dependencies:
+      '@playwright/test':
+        specifier: 1.44.0
+        version: 1.44.0
       nitropack:
         specifier: ^2.9.7
         version: 2.13.1
@@ -2717,7 +2720,6 @@ packages:
     hasBin: true
     dependencies:
       playwright: 1.44.0
-    dev: true
 
   /@poppinss/colors@4.1.6:
     resolution: {integrity: sha512-H9xkIdFswbS8n1d6vmRd8+c10t2Qe+rZITbbDHHkQixH5+2x1FDGmi/0K+WgWiqQFKPSlIYB7jlH6Kpfn6Fleg==}
@@ -5978,7 +5980,6 @@ packages:
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
     os: [darwin]
     requiresBuild: true
-    dev: true
     optional: true
 
   /fsevents@2.3.3:
@@ -8162,7 +8163,6 @@ packages:
     resolution: {integrity: sha512-ZTbkNpFfYcGWohvTTl+xewITm7EOuqIqex0c7dNZ+aXsbrLj0qI8XlGKfPpipjm0Wny/4Lt4CJsWJk1stVS5qQ==}
     engines: {node: '>=16'}
     hasBin: true
-    dev: true
 
   /playwright@1.44.0:
     resolution: {integrity: sha512-F9b3GUCLQ3Nffrfb6dunPOkE5Mh68tR7zN32L4jCk4FjQamgesGay7/dAAe1WaMEGV04DkdJfcJzjoCKygUaRQ==}
@@ -8172,7 +8172,6 @@ packages:
       playwright-core: 1.44.0
     optionalDependencies:
       fsevents: 2.3.2
-    dev: true
 
   /plist@3.1.0:
     resolution: {integrity: sha512-uysumyrvkUX0rX/dEVqt8gC3sTBzd4zoWfLeS29nb53imdaXVvLINYXTI2GNqzaMuvacNx4uJQ8+b3zXR0pkgQ==}
