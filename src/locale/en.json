@@ -254,7 +254,6 @@
         "enable": "Enable notifications",
         "enableHint": "We’ll ask permission before sending anything.",
         "enabled": "Push notifications enabled!",
-        "comingSoon": "Push notifications are coming soon.",
         "unavailable": "Notifications are not supported on this device/browser.",
         "denied": "Notifications are blocked. Please allow them in your browser settings.",
         "error": "Could not enable notifications right now.",

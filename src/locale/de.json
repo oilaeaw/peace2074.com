@@ -119,7 +119,9 @@
         "menu": "Lesezeichen",
         "empty": "Noch keine Lesezeichen",
         "add": "Vers {verse} speichern",
-        "saved": "Lesezeichen gespeichert",        "alreadySaved": "Bereits als Lesezeichen gesetzt",        "error": "Lesezeichen konnte nicht gespeichert werden",
+        "saved": "Lesezeichen gespeichert",
+        "alreadySaved": "Bereits als Lesezeichen gesetzt",
+        "error": "Lesezeichen konnte nicht gespeichert werden",
         "current": "diese Sure"
       },
       "quickAccess": {
@@ -158,7 +160,6 @@
         "desc": "Bleibe informiert, wenn neue Inhalte erscheinen.",
         "enable": "Benachrichtigungen aktivieren",
         "enableHint": "Wir fragen vorher um Erlaubnis.",
-        "comingSoon": "Push-Benachrichtigungen kommen bald.",
         "unavailable": "Benachrichtigungen werden auf diesem Gerät/Browser nicht unterstützt.",
         "denied": "Benachrichtigungen sind blockiert. Bitte erlaube sie in den Browsereinstellungen.",
         "error": "Benachrichtigungen konnten momentan nicht aktiviert werden."

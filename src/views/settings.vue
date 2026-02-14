@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref, watch } from "vue";
+import { onMounted, ref, watch } from "vue";
 import { useI18n } from "vue-i18n";
 import { useQuasar } from "quasar";
 
@@ -54,42 +54,55 @@ watch(darkMode, (val) => {
 
 watch(enableNotifications, async (val) => {
   if (val) {
-    const granted = await ensureNotificationsPermission();
-    if (!granted) {
+    const ok = await activateNotifications();
+    persistNotificationsPreference(ok);
+    if (!ok) {
       enableNotifications.value = false;
-      persistNotificationsPreference(false);
-      return;
     }
-
-    // Subscribe to push notifications
-    const subscriptionResult = await subscribeToPushNotifications();
-    if (!subscriptionResult.ok) {
-      enableNotifications.value = false;
-      persistNotificationsPreference(false);
-      $q.notify?.({
-        type: "negative",
-        message: subscriptionResult.error ||
-          t("pages.settings.notifications.error") ||
-          "Could not enable push notifications.",
-      });
-      return;
-    }
-
-    // Show test notification
-    await showTestNotification();
-    
-    $q.notify?.({
-      type: "positive",
-      message:
-        t("pages.settings.notifications.enabled") ||
-        "Push notifications enabled! You'll receive updates on your device.",
-    });
-  } else {
-    // Unsubscribe from push notifications
-    await unsubscribeFromPushNotifications();
+    return;
   }
-  persistNotificationsPreference(val);
+
+  // Unsubscribe from push notifications
+  await unsubscribeFromPushNotifications();
+  persistNotificationsPreference(false);
 });
+
+onMounted(async () => {
+  if (!enableNotifications.value) return;
+  const ok = await activateNotifications();
+  persistNotificationsPreference(ok);
+  if (!ok) {
+    enableNotifications.value = false;
+  }
+});
+
+async function activateNotifications(): Promise<boolean> {
+  const granted = await ensureNotificationsPermission();
+  if (!granted) {
+    return false;
+  }
+
+  const subscriptionResult = await subscribeToPushNotifications();
+  if (!subscriptionResult.ok) {
+    $q.notify?.({
+      type: "negative",
+      message: subscriptionResult.error ||
+        t("pages.settings.notifications.error") ||
+        "Could not enable push notifications.",
+    });
+    return false;
+  }
+
+  await showTestNotification();
+  $q.notify?.({
+    type: "positive",
+    message:
+      t("pages.settings.notifications.enabled") ||
+      "Push notifications enabled! You'll receive updates on your device.",
+  });
+
+  return true;
+}
 
 function readNavOrderingEnabled(): boolean {
   if (typeof window === "undefined") return true;
@@ -636,8 +649,12 @@ async function reloadApp() {
                 :aria-label="t('pages.settings.notifications.enable')"
               />
             </div>
-            <q-banner dense rounded class="q-mt-md" color="grey-3" text-color="grey-8">
-              {{ t("pages.settings.notifications.comingSoon") }}
+            <q-banner dense rounded class="q-mt-md" color="green-1" text-color="positive">
+              {{
+                enableNotifications
+                  ? (t("pages.settings.notifications.enabled") || "Push notifications are active.")
+                  : (t("pages.settings.notifications.enableHint") || "Enable push notifications to receive updates.")
+              }}
             </q-banner>
           </q-card-section>
         </q-card>
