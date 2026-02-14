@@ -1,6 +1,11 @@
 #!/bin/bash
 # Script to set Netlify environment variables
 # Run with: netlify env:set VARIABLE_NAME "value"
+#
+# IMPORTANT: Before running this script:
+# 1. Generate VAPID keys: node scripts/generate-vapid-keys.mjs
+# 2. Replace YOUR_VAPID_PUBLIC_KEY_HERE and YOUR_VAPID_PRIVATE_KEY_HERE with actual values
+# 3. Update other secrets with your production values
 
 echo "Setting Netlify environment variables..."
 
