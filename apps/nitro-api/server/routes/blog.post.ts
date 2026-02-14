@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
 import { getCollection } from '../utils/kv-db'
+import { getVapidConfig } from '../utils/vapid'
 
 /**
  * POST /api/blog
@@ -48,12 +49,10 @@ export default defineEventHandler(async (event) => {
         if (process.env.ENABLE_BLOG_NOTIFICATIONS === 'true') {
             try {
                 const webpush = await import('web-push')
-                const publicKey = process.env.VAPID_PUBLIC_KEY || process.env.NITRO_VAPID_PUBLIC_KEY
-                const privateKey = process.env.VAPID_PRIVATE_KEY || process.env.NITRO_VAPID_PRIVATE_KEY
-                const subject = process.env.VAPID_SUBJECT || 'mailto:admin@peace2074.com'
+                const vapid = getVapidConfig()
 
-                if (publicKey && privateKey) {
-                    webpush.default.setVapidDetails(subject, publicKey, privateKey)
+                if (vapid) {
+                    webpush.default.setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey)
 
                     const Subscriptions = await getCollection('push_subscriptions')
                     const subscriptions = await Subscriptions.find({}).toArray()

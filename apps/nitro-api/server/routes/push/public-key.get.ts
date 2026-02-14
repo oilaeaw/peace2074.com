@@ -1,16 +1,17 @@
 import { defineEventHandler } from 'h3'
+import { getVapidConfig } from '../../utils/vapid'
 
 /**
  * GET /api/push/public-key
  * Returns the VAPID public key for push subscriptions
  */
 export default defineEventHandler(() => {
-  const publicKey = process.env.VAPID_PUBLIC_KEY || process.env.NITRO_VAPID_PUBLIC_KEY
+    const vapid = getVapidConfig()
 
-  if (!publicKey) {
-    console.error('[Push] VAPID_PUBLIC_KEY not configured')
-    return { ok: false, error: 'Push notifications not configured' }
-  }
+    if (!vapid) {
+        console.error('[Push] VAPID_PUBLIC_KEY not configured')
+        return { ok: false, error: 'Push notifications not configured' }
+    }
 
-  return { ok: true, publicKey }
+    return { ok: true, publicKey: vapid.publicKey }
 })

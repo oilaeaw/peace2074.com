@@ -2,6 +2,7 @@ import { defineEventHandler, readBody } from 'h3'
 import webpush from 'web-push'
 import { requireAuth } from '../../utils/auth'
 import { getCollection } from '../../utils/kv-db'
+import { getVapidConfig } from '../../utils/vapid'
 
 /**
  * POST /api/push/send
@@ -24,15 +25,13 @@ export default defineEventHandler(async (event) => {
         }
 
         // Configure web-push
-        const publicKey = process.env.VAPID_PUBLIC_KEY || process.env.NITRO_VAPID_PUBLIC_KEY
-        const privateKey = process.env.VAPID_PRIVATE_KEY || process.env.NITRO_VAPID_PRIVATE_KEY
-        const subject = process.env.VAPID_SUBJECT || 'mailto:admin@peace2074.com'
+        const vapid = getVapidConfig()
 
-        if (!publicKey || !privateKey) {
+        if (!vapid) {
             return { ok: false, error: 'VAPID keys not configured' }
         }
 
-        webpush.setVapidDetails(subject, publicKey, privateKey)
+        webpush.setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey)
 
         const Subscriptions = await getCollection('push_subscriptions')
 
