@@ -87,7 +87,12 @@ export default defineConfig({
       srcDir: 'public',
       filename: 'sw.js',
       registerType: "autoUpdate",
+      injectRegister: 'auto',
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
+      injectManifest: {
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+      },
       manifest: {
         name: "Peace2074 - Islamic Knowledge Platform",
         short_name: "Peace2074",
