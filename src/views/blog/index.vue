@@ -5,13 +5,29 @@
       <p class="subtitle">{{ t("pages.blog.subtitle") }}</p>
     </section>
 
-    <div class="actions-bar q-mt-md q-mb-md" v-if="isAuthenticated">
+    <div class="actions-bar q-mt-md q-mb-md">
       <q-btn
+        v-if="isAuthenticated"
         color="primary"
         icon="add"
         :label="t('pages.blog.newPost')"
         @click="$router.push('/blog-editor')"
       />
+      <q-banner v-else rounded class="auth-banner" dense>
+        <template v-slot:avatar>
+          <q-icon name="lock" />
+        </template>
+        {{ t('pages.blog.editor.authRequired') }}
+        <template v-slot:action>
+          <q-btn
+            flat
+            color="primary"
+            icon="login"
+            :label="t('auth.login')"
+            @click="$router.push('/login')"
+          />
+        </template>
+      </q-banner>
     </div>
 
     <div v-if="loading" class="text-center q-pa-lg">
@@ -135,5 +151,9 @@ onMounted(() => {
 .actions-bar {
   display: flex;
   justify-content: flex-end;
+}
+
+.auth-banner {
+  width: 100%;
 }
 </style>

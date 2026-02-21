@@ -55,7 +55,32 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/quran/:id',
+    path: '/quran/:ref(\\d+:\\d+)',
+    name: 'QuranVerseShare',
+    beforeEnter: (to) => {
+      const ref = String(to.params.ref || '')
+      const [suraRaw, verseRaw] = ref.split(':')
+      const sura = Number.parseInt(suraRaw, 10)
+      const verse = Number.parseInt(verseRaw, 10)
+
+      if (!Number.isInteger(sura) || sura < 1 || sura > 114 || !Number.isInteger(verse) || verse < 1) {
+        return { path: '/quran', query: { invalidSura: '1' }, replace: true }
+      }
+
+      return {
+        path: `/quran/${sura}`,
+        hash: `#${sura}_${verse}`,
+        replace: true,
+      }
+    },
+    component: () => import('@/pages/quran/[id].vue'),
+    meta: {
+      title: 'Quran',
+      titleKey: 'pages.quran.detail',
+    },
+  },
+  {
+    path: '/quran/:id(\\d+)',
     name: 'QuranDetail',
     component: () => import('@/pages/quran/[id].vue'),
     beforeEnter: (to) => {

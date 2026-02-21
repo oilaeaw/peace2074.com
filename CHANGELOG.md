@@ -8,10 +8,14 @@ All notable changes to this project will be documented in this file. See [standa
 
 - add Turkish (`tr`) locale as a first-class language with UI selector support
 - add complete `src/locale/tr.json` translations and register locale across i18n wiring
+- add Quran verse deep-link route support in `/quran/{sura}:{ayah}` format (example: `/quran/2:255`)
+- add bookmark share/copy action for Quran verse links
+- add Bismillah intro clip before user-initiated Quran recitation starts (same reciter source)
 
 ### Bug Fixes
 
 - sync missing locale keys in `ar`, `de`, `ru`, and `he` so `pnpm check:locales` passes
+- improve bookmark durability by syncing guest bookmarks into authenticated bookmark collections (deduplicated)
 
 ### Chores
 

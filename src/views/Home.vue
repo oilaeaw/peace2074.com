@@ -81,6 +81,39 @@
           </q-list>
         </div>
       </q-card>
+
+      <q-card class="blog-card q-pa-md">
+        <div class="blog-header">
+          <div>
+            <p class="blog-title">{{ t('pages.blog.title') }}</p>
+            <small>{{ t('pages.blog.subtitle') }}</small>
+          </div>
+          <q-btn flat color="primary" to="/blog" :label="t('appShell.nav.blog')" />
+        </div>
+
+        <div v-if="blogLoading" class="text-center q-py-md">
+          <q-spinner color="primary" size="28px" />
+        </div>
+
+        <q-list v-else-if="recentPosts.length" separator class="q-mt-sm">
+          <q-item
+            v-for="post in recentPosts"
+            :key="post.slug"
+            clickable
+            @click="goToBlogPost(post.slug)"
+          >
+            <q-item-section>
+              <div class="text-weight-medium">{{ post.title }}</div>
+              <div class="text-caption text-grey-6">{{ formatBlogDate(post.date) }}</div>
+              <div class="text-body2 blog-excerpt">{{ post.excerpt }}</div>
+            </q-item-section>
+          </q-item>
+        </q-list>
+
+        <div v-else class="text-grey-6 text-caption q-mt-sm">
+          {{ t('pages.blog.empty') }}
+        </div>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -90,16 +123,20 @@ import { computed, ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
+import { useRouter } from 'vue-router'
 import { sendDeepSeekChat } from '@/stores/services'
 
 const { t, tm } = useI18n()
 const $q = useQuasar()
+const router = useRouter()
 
 const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)
 const errorMessage = ref<string | null>(null)
 const isLoading = ref(false)
 const history = ref<{ id: string; prompt: string; response: string; ts: number }[]>([])
+const recentPosts = ref<{ slug: string; title: string; excerpt: string; date: string }[]>([])
+const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
 
 const { copy } = useClipboard({ source: aiResponse })
@@ -186,8 +223,44 @@ function clearHistory() {
   } catch {}
 }
 
+async function loadRecentPosts() {
+  blogLoading.value = true
+  try {
+    const res = await fetch('/api/blog', { credentials: 'include' })
+    const data = await res.json().catch(() => ({}))
+    if (data?.ok && Array.isArray(data.posts)) {
+      recentPosts.value = data.posts.slice(0, 3).map((post: any) => ({
+        slug: String(post?.slug || ''),
+        title: String(post?.title || ''),
+        excerpt: String(post?.excerpt || ''),
+        date: String(post?.date || ''),
+      })).filter((post: any) => post.slug && post.title)
+      return
+    }
+    recentPosts.value = []
+  } catch {
+    recentPosts.value = []
+  } finally {
+    blogLoading.value = false
+  }
+}
+
+function goToBlogPost(slug: string) {
+  if (!slug) return
+  router.push(`/blog/${slug}`)
+}
+
+function formatBlogDate(date: string) {
+  try {
+    return new Date(date).toLocaleDateString()
+  } catch {
+    return date
+  }
+}
+
 onMounted(() => {
   loadHistory()
+  void loadRecentPosts()
 })
 
 function setNextPromptExample() {
@@ -250,6 +323,17 @@ function setNextPromptExample() {
   line-height: 1.4;
 }
 .full-width { width:100%; }
+.blog-card { width: min(680px, 100%); }
+.blog-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
+.blog-title { font-weight:600; margin-bottom:4px; }
+.blog-excerpt {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  margin-top: 2px;
+}
 @media (max-width: 720px) {
   .home-hero { padding-top: 12px; }
   .hero-content { flex-direction: column; }
@@ -266,5 +350,6 @@ function setNextPromptExample() {
     max-height: 260px;
     overflow: auto;
   }
+  .blog-card { width: 100%; }
 }
 </style>

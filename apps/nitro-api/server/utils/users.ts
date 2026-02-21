@@ -43,8 +43,30 @@ const DEFAULT_USERS: User[] = [
 const USERS_KEY = 'db:users'
 let memoryUsers: User[] | null = null
 
+function repairUsers(users: User[]) {
+    if (!Array.isArray(users) || !users.length) return { users, changed: false }
+
+    const defaultsById = new Map(DEFAULT_USERS.map((u) => [u.id, u]))
+    let changed = false
+
+    const repaired = users.map((user) => {
+        const fallback = defaultsById.get(user.id)
+        if (!user.password && fallback?.password) {
+            changed = true
+            return { ...user, password: fallback.password }
+        }
+        return user
+    })
+
+    return { users: repaired, changed }
+}
+
 async function loadUsers(): Promise<User[]> {
     if (memoryUsers && memoryUsers.length > 0) {
+        const repaired = repairUsers(memoryUsers)
+        if (repaired.changed) {
+            memoryUsers = repaired.users
+        }
         return memoryUsers
     }
 
@@ -52,8 +74,16 @@ async function loadUsers(): Promise<User[]> {
         const storage = useStorage('data')
         const existing = await storage.getItem<User[]>(USERS_KEY)
         if (Array.isArray(existing) && existing.length > 0) {
-            memoryUsers = existing
-            return existing
+            const repaired = repairUsers(existing)
+            memoryUsers = repaired.users
+            if (repaired.changed) {
+                try {
+                    await storage.setItem(USERS_KEY, memoryUsers)
+                } catch {
+                    /* noop - in-memory fallback only */
+                }
+            }
+            return memoryUsers
         }
 
         // Seed defaults best-effort; if storage is read-only (common in serverless),

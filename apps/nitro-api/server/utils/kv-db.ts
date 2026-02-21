@@ -1,20 +1,48 @@
 import { randomUUID } from 'node:crypto'
 
 type JsonObject = Record<string, any>
+const memoryCollections = new Map<string, JsonObject[]>()
+
+function getMemoryCollection(key: string) {
+    if (!memoryCollections.has(key)) {
+        memoryCollections.set(key, [])
+    }
+    return memoryCollections.get(key) as JsonObject[]
+}
 
 function matchesFilter(doc: JsonObject, filter: JsonObject = {}) {
     return Object.entries(filter).every(([key, value]) => doc?.[key] === value)
 }
 
 async function readCollection(name: string) {
-    const storage = useStorage('data')
     const key = `db:${name}`
-    const items = (await storage.getItem<JsonObject[]>(key)) || []
-    return { storage, key, items }
+    let storage: Storage | null = null
+
+    try {
+        storage = useStorage('data')
+        const items = (await storage.getItem<JsonObject[]>(key)) || []
+        return { storage, key, items }
+    } catch {
+        // In serverless/read-only environments (e.g., Netlify), file-backed
+        // storage may throw ENOENT. Fallback to process memory to avoid 500s.
+        const items = getMemoryCollection(key)
+        return { storage, key, items }
+    }
 }
 
-async function writeCollection(storage: Storage, key: string, items: JsonObject[]) {
-    await storage.setItem(key, items)
+async function writeCollection(storage: Storage | null, key: string, items: JsonObject[]) {
+    if (!storage) {
+        memoryCollections.set(key, [...items])
+        return
+    }
+
+    try {
+        await storage.setItem(key, items)
+        memoryCollections.set(key, [...items])
+    } catch {
+        // If persistence fails, keep data available for current runtime.
+        memoryCollections.set(key, [...items])
+    }
 }
 
 export async function getCollection(name: string) {

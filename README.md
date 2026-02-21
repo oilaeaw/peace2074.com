@@ -64,3 +64,14 @@ await sendDeepSeekChat({
   ],
 });
 ```
+
+## Quran links, recitation, and bookmarks
+
+- Verse deep links are supported in colon format:
+  - `/quran/2:255` (example: Ayat al-Kursi)
+  - The app normalizes this to the Quran detail view and jumps to the correct ayah.
+- Bookmark menu items now support share/copy behavior for verse links in the same format.
+- Audio recitation uses an intro flow that plays a Bismillah clip (same reciter source) before manual recitation starts (play, bookmark jump, quick access, and restart actions).
+- Bookmark persistence behavior:
+  - Guest bookmarks are saved locally.
+  - When authenticated session-backed bookmarks are available, guest bookmarks are automatically synced to the account set (deduplicated).

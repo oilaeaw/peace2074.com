@@ -245,6 +245,45 @@ function removeBookmark(entry: BookmarkEntry) {
   })
 }
 
+function buildVerseShareUrl(entry: BookmarkEntry) {
+  const suraId = Number(entry.suraId || currentSuraId.value)
+  const verse = Number(entry.verse || 1)
+  if (!suraId || !verse) return ''
+  const path = `/quran/${suraId}:${verse}`
+  if (typeof window === 'undefined') return path
+  return `${window.location.origin}${path}`
+}
+
+async function shareBookmark(entry: BookmarkEntry) {
+  const url = buildVerseShareUrl(entry)
+  if (!url) return
+
+  try {
+    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+      await navigator.share({
+        title: `Quran ${entry.label}`,
+        text: `Quran ${entry.label}`,
+        url,
+      })
+      return
+    }
+  } catch {
+    // If native share is canceled/unsupported, fallback to clipboard.
+  }
+
+  try {
+    if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
+      await navigator.clipboard.writeText(url)
+      $q.notify({ type: 'positive', message: `Link copied: ${entry.label}` })
+      return
+    }
+  } catch {
+    // ignore and fallback notify
+  }
+
+  $q.notify({ type: 'info', message: url })
+}
+
 async function handleBookmarkNavigate(entry: BookmarkEntry) {
   if (!entry) return
   selectedBookmark.value = `id_${entry.normalized}`
@@ -274,7 +313,7 @@ async function handleBookmarkNavigate(entry: BookmarkEntry) {
       scrollToVerse(entry.verse)
       // Small delay to ensure scroll completes
       await new Promise(resolve => setTimeout(resolve, 100))
-      playAyah(verseIndex)
+      await startAudioRecitation(verseIndex, { withIntro: true })
       $q.notify({ 
         type: 'positive', 
         message: `${entry.label} - Mishary Al-Afasy`,
@@ -333,7 +372,7 @@ async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
       scrollToVerse(qaVerse.verse)
       // Small delay to ensure scroll completes
       await new Promise(resolve => setTimeout(resolve, 100))
-      playAyah(verseIndex)
+      await startAudioRecitation(verseIndex, { withIntro: true })
       $q.notify({ 
         type: 'positive', 
         message: `${t(qaVerse.nameKey)} - Mishary Al-Afasy`,
@@ -497,6 +536,25 @@ async function playBismillahIntro(): Promise<void> {
   })
 }
 
+async function startAudioRecitation(index: number, opts: { withIntro?: boolean } = {}) {
+  const withIntro = opts.withIntro !== false
+  const startIndex = Math.max(0, index)
+
+  if (!audioList.value.length || startIndex >= audioList.value.length) return
+
+  stopAudio()
+  stopRequested.value = false
+  currentWordIndex.value = -1
+
+  if (withIntro) {
+    await playBismillahIntro()
+  }
+
+  if (!stopRequested.value) {
+    playAyah(startIndex)
+  }
+}
+
 /**
  * Fallback audio loader using alquran.cloud API (no word timings)
  */
@@ -597,11 +655,7 @@ async function startSuraAudio() {
   }
 
   const startIndex = currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0
-  await playBismillahIntro()
-
-  if (!stopRequested.value) {
-    playAyah(startIndex)
-  }
+  await startAudioRecitation(startIndex, { withIntro: true })
 }
 
 function stopAudio() {
@@ -657,20 +711,16 @@ function hideHoverWidget() {
   hoverWidgetVerse.value = null
 }
 
-function restartFromVerse(verse: number) {
+async function restartFromVerse(verse: number) {
   hideHoverWidget()
-  stopAudio()
-  nextTick(() => {
-    playAyah(verse - 1)
-  })
+  await nextTick()
+  await startAudioRecitation(verse - 1, { withIntro: true })
 }
 
-function restartSura() {
+async function restartSura() {
   hideHoverWidget()
-  stopAudio()
-  nextTick(() => {
-    playAyah(0)
-  })
+  await nextTick()
+  await startAudioRecitation(0, { withIntro: true })
 }
 
 function goHome() {
@@ -683,7 +733,7 @@ function scrollToTop() {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
-function handleVerseDoubleClick(event: MouseEvent, verse: number) {
+async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   stopRequested.value = false
   
   // Show hover widget at double-click location
@@ -697,7 +747,7 @@ function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   // Play the specific verse
   const verseIndex = verse - 1
   if (verseIndex >= 0 && verseIndex < audioList.value.length) {
-    playAyah(verseIndex)
+    await startAudioRecitation(verseIndex, { withIntro: true })
     $q.notify({
       type: 'positive',
       message: `Playing verse ${verse}`,
@@ -1128,6 +1178,13 @@ watch(locale, () => {
                       round
                       dense
                       flat
+                      icon="share"
+                      @click.stop="shareBookmark(entry)"
+                    />
+                    <q-btn
+                      round
+                      dense
+                      flat
                       icon="delete"
                       @click.stop="removeBookmark(entry)"
                     />
@@ -1151,31 +1208,31 @@ watch(locale, () => {
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
           >
-            <div class="arabic-text">
-              <template v-if="wordTimings[a.verse - 1]?.length">
-                <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
-                  <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+            <div class="verse-main-row">
+              <div class="arabic-text">
+                <template v-if="wordTimings[a.verse - 1]?.length">
+                  <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
+                    <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                  </template>
                 </template>
-              </template>
-              <template v-else>
-                {{ a.text }}
-              </template>
+                <template v-else>
+                  {{ a.text }}
+                </template>
+              </div>
+              <div class="verse-inline-actions">
+                <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
+                <button
+                  type="button"
+                  class="bookmark-trigger inline-trigger"
+                  :class="{ 'is-active': isVerseBookmarked(a.verse) }"
+                  @click.stop="bookmarkVerse(a.verse)"
+                  :aria-label="bookmarkActionLabel(a.verse)"
+                >
+                  <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
+                </button>
+              </div>
             </div>
             <div class="verse-meta">
-              <div class="verse-meta-bar">
-                <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
-                <div class="verse-actions">
-                  <button
-                    type="button"
-                    class="bookmark-trigger"
-                    :class="{ 'is-active': isVerseBookmarked(a.verse) }"
-                    @click.stop="bookmarkVerse(a.verse)"
-                    :aria-label="bookmarkActionLabel(a.verse)"
-                  >
-                    <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
-                  </button>
-                </div>
-              </div>
               <div class="verse-translation" v-if="a.translation">
                 {{ a.translation }}
               </div>
@@ -1245,6 +1302,17 @@ watch(locale, () => {
             @mouseleave="onVerseMouseLeave"
           >
             <span class="verse-marker">[{{ a.verse }}]</span>
+            <span class="native-inline-actions">
+              <button
+                type="button"
+                class="bookmark-trigger native-trigger"
+                :class="{ 'is-active': isVerseBookmarked(a.verse) }"
+                @click.stop="bookmarkVerse(a.verse)"
+                :aria-label="bookmarkActionLabel(a.verse)"
+              >
+                <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
+              </button>
+            </span>
             <span class="verse-text-arabic">
               <template v-if="wordTimings[a.verse - 1]?.length">
                 <template v-for="(word, wIdx) in a.text.split(' ')" :key="`n-${a.verse}-${wIdx}`">
@@ -1470,6 +1538,26 @@ watch(locale, () => {
   font-feature-settings: "rlig" 1, "liga" 1;
 }
 
+.verse-main-row {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.verse-main-row .arabic-text {
+  flex: 1;
+  min-width: 0;
+}
+
+.verse-inline-actions {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+  direction: ltr;
+  margin-top: 2px;
+}
+
 .verse-meta {
   display: flex;
   flex-direction: column;
@@ -1533,6 +1621,12 @@ watch(locale, () => {
   height: 32px;
   border-radius: 50%;
   transition: all 0.2s ease;
+}
+
+.inline-trigger,
+.native-trigger {
+  width: 28px;
+  height: 28px;
 }
 
 .bookmark-trigger:hover {
@@ -1763,6 +1857,13 @@ watch(locale, () => {
   padding: 4px 8px;
   border-radius: 12px;
   box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+}
+
+.native-inline-actions {
+  display: inline-flex;
+  vertical-align: middle;
+  margin-inline: 6px 8px;
+  direction: ltr;
 }
 
 .verse-text-arabic {
