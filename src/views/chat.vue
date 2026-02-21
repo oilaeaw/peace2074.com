@@ -14,10 +14,10 @@
 
     <q-card class="q-mt-xl live-chat">
       <q-card-section class="row items-center justify-between no-wrap">
-        <div class="text-h6">Live Chat</div>
+        <div class="text-h6">{{ t('pages.chat.live.title') }}</div>
         <div class="row items-center q-gutter-sm">
           <q-badge :color="statusColor" outline>{{ statusLabel }}</q-badge>
-          <q-btn dense flat icon="refresh" @click="refresh" :disable="messaging.connecting" :aria-label="'Reconnect'" />
+          <q-btn dense flat icon="refresh" @click="refresh" :disable="messaging.connecting" :aria-label="t('pages.chat.live.reconnect')" />
         </div>
       </q-card-section>
       <q-separator />
@@ -29,7 +29,7 @@
               <q-item v-for="msg in messages" :key="msg.id">
                 <q-item-section avatar>
                   <q-chip dense :color="msg.type === 'direct' ? 'secondary' : 'primary'" text-color="white">
-                    {{ msg.from || 'anon' }}
+                    {{ msg.from || t('pages.chat.live.anon') }}
                   </q-chip>
                 </q-item-section>
                 <q-item-section>
@@ -49,19 +49,19 @@
         </div>
 
         <div class="col-12 col-md-4 chat-users">
-          <div class="text-subtitle2 q-mb-sm">Users</div>
+          <div class="text-subtitle2 q-mb-sm">{{ t('pages.chat.live.users') }}</div>
           <q-list bordered class="rounded-borders">
             <q-item v-for="user in messaging.users" :key="user" clickable v-ripple @click="toggleUser(user)" :active="selectedUser === user">
               <q-item-section>{{ user }}</q-item-section>
               <q-item-section side v-if="me === user">
-                <q-badge color="positive" outline>you</q-badge>
+                <q-badge color="positive" outline>{{ t('pages.chat.live.you') }}</q-badge>
               </q-item-section>
               <q-item-section side v-else-if="selectedUser === user">
                 <q-icon name="check" color="primary" />
               </q-item-section>
             </q-item>
             <q-item v-if="!messaging.users.length">
-              <q-item-section class="text-grey-6">No users yet</q-item-section>
+              <q-item-section class="text-grey-6">{{ t('pages.chat.live.noUsers') }}</q-item-section>
             </q-item>
           </q-list>
         </div>
@@ -70,9 +70,9 @@
       <q-separator />
       <q-card-actions align="between" class="row no-wrap q-gutter-sm">
         <div class="col">
-          <q-input v-model="draft" dense outlined :label="selectedUser ? 'Direct message' : 'Broadcast message'" @keyup.enter="send" />
+          <q-input v-model="draft" dense outlined :label="selectedUser ? t('pages.chat.live.directMessage') : t('pages.chat.live.broadcastMessage')" @keyup.enter="send" />
         </div>
-        <q-btn color="primary" unelevated :label="selectedUser ? 'Send direct' : 'Send'" @click="send" :disable="!messaging.connected" />
+        <q-btn color="primary" unelevated :label="selectedUser ? t('pages.chat.live.sendDirect') : t('pages.chat.live.send')" @click="send" :disable="!messaging.connected" />
       </q-card-actions>
       <q-banner v-if="messaging.error" class="q-mt-sm" rounded dense color="negative" text-color="white">
         {{ messaging.error }}
@@ -118,9 +118,9 @@ const messages = computed(() => messaging.messages);
 const me = computed(() => messaging.me);
 
 const statusLabel = computed(() => {
-  if (messaging.connected) return "Connected";
-  if (messaging.connecting) return "Connecting";
-  return "Disconnected";
+  if (messaging.connected) return t('pages.chat.live.connected');
+  if (messaging.connecting) return t('pages.chat.live.connecting');
+  return t('pages.chat.live.disconnected');
 });
 
 const statusColor = computed(() => {

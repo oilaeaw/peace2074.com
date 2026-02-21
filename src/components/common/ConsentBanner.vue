@@ -1,8 +1,10 @@
 <script setup lang="ts">
 import { ref, onMounted } from "vue";
+import { useI18n } from "vue-i18n";
 
 const CONSENT_KEY = "consent-banner-v1";
 const show = ref(false);
+const { t } = useI18n();
 
 onMounted(() => {
   try {
@@ -45,14 +47,14 @@ function decline() {
     <div v-if="show" class="consent-banner">
       <q-banner dense class="consent-card" inline-actions>
         <div>
-          <div class="text-body1">We use cookies to improve your experience.</div>
+          <div class="text-body1">{{ t("consent.message") }}</div>
           <div class="text-caption text-grey-7">
-            You can review details in our Privacy page.
+            {{ t("consent.details") }}
           </div>
         </div>
         <template #action>
-          <q-btn flat color="primary" label="Accept" @click="accept" />
-          <q-btn flat color="grey-7" label="Decline" @click="decline" />
+          <q-btn flat color="primary" :label="t('consent.accept')" @click="accept" />
+          <q-btn flat color="grey-7" :label="t('consent.decline')" @click="decline" />
         </template>
       </q-banner>
     </div>

@@ -1,9 +1,9 @@
 <template>
   <q-page padding class="admin-page">
     <section class="header q-mb-md">
-      <h1 class="text-h4 q-mb-xs">Admin Panel</h1>
+      <h1 class="text-h4 q-mb-xs">{{ t('pages.admin.title') }}</h1>
       <p class="text-subtitle2 text-grey-7 q-mb-none">
-        Version monitor for releases. Toggle to show only even patch versions.
+        {{ t('pages.admin.subtitle') }}
       </p>
     </section>
 
@@ -11,14 +11,14 @@
       <q-card-section class="row items-center q-col-gutter-md">
         <div class="col-12 col-md-auto">
           <q-badge color="primary" outline>
-            Current app version: {{ appVersion }}
+            {{ t('pages.admin.currentVersion') }}: {{ appVersion }}
           </q-badge>
         </div>
         <div class="col-12 col-md-auto">
           <q-toggle
             v-model="evenOnly"
             color="primary"
-            label="Show only even patch versions"
+            :label="t('pages.admin.onlyEven')"
           />
         </div>
         <div class="col-12 col-md-auto">
@@ -26,7 +26,7 @@
             color="primary"
             outline
             icon="refresh"
-            label="Refresh"
+            :label="t('pages.admin.refresh')"
             :loading="loading"
             @click="loadReleases"
           />
@@ -49,11 +49,11 @@
                   v-if="isEvenPatch(release.tagName)"
                   color="positive"
                   class="q-ml-sm"
-                  label="even"
+                  :label="t('pages.admin.even')"
                 />
               </q-item-label>
               <q-item-label caption>
-                {{ release.name || "No title" }}
+                {{ release.name || t('pages.admin.noTitle') }}
               </q-item-label>
             </q-item-section>
             <q-item-section side>
@@ -63,7 +63,7 @@
 
           <q-item v-if="!loading && !filteredReleases.length">
             <q-item-section>
-              <q-item-label>No versions found for current filter.</q-item-label>
+              <q-item-label>{{ t('pages.admin.noVersions') }}</q-item-label>
             </q-item-section>
           </q-item>
 
@@ -72,7 +72,7 @@
               <q-spinner color="primary" size="20px" />
             </q-item-section>
             <q-item-section>
-              <q-item-label>Loading releases…</q-item-label>
+              <q-item-label>{{ t('pages.admin.loading') }}</q-item-label>
             </q-item-section>
           </q-item>
         </q-list>
@@ -83,10 +83,12 @@
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 
 declare const __APP_VERSION__: string
 
 const appVersion = __APP_VERSION__ || '0.0.0'
+const { t } = useI18n()
 const evenOnly = ref(true)
 const loading = ref(false)
 const error = ref('')
@@ -121,9 +123,9 @@ const filteredReleases = computed(() => {
 })
 
 function formatDate(dateStr: string): string {
-  if (!dateStr) return 'Unknown date'
+  if (!dateStr) return t('pages.admin.unknownDate')
   const d = new Date(dateStr)
-  if (Number.isNaN(d.getTime())) return 'Unknown date'
+  if (Number.isNaN(d.getTime())) return t('pages.admin.unknownDate')
   return d.toLocaleDateString()
 }
 
@@ -146,7 +148,7 @@ async function loadReleases() {
       }))
       .filter((r) => !!r.tagName)
   } catch (e: any) {
-    error.value = e?.message || 'Failed to load versions from GitHub releases.'
+    error.value = e?.message || t('pages.admin.loadFailed')
     releases.value = []
   } finally {
     loading.value = false

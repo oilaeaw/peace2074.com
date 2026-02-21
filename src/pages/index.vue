@@ -6,8 +6,10 @@
 
 <script setup lang="ts">
 import { computed, ref } from 'vue'
+import { useI18n } from 'vue-i18n'
 import { sendDeepSeekChat } from '@/stores/services'
 
+const { t, tm } = useI18n()
 const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)
 const isLoading = ref(false)
@@ -16,6 +18,12 @@ const errorMessage = ref<string | null>(null)
 const systemPrompt = `You are the PEACE2074 AI assistant. Use the Quran corpus available in the app (chapters, ayat, metadata) and guide users to relevant sections such as /quran or specific surah cards. Keep replies concise (<= 120 words).`
 
 const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value)
+const promptExamples = computed<string[]>(() => {
+  const raw = tm('pages.home.ai.examples') as unknown
+  if (Array.isArray(raw)) return raw as string[]
+  if (typeof raw === 'string') return [raw]
+  return []
+})
 
 async function askPeaceAI() {
     if (!canSubmit.value) return
@@ -31,16 +39,18 @@ async function askPeaceAI() {
             ],
         })
 
-        aiResponse.value = response?.message?.content ?? 'The assistant did not send a reply.'
+        aiResponse.value = response?.message?.content ?? t('pages.home.ai.noReply')
     } catch (error: any) {
-        errorMessage.value = error?.message || 'DeepSeek request failed. Please try again.'
+        errorMessage.value = error?.message || t('pages.home.ai.requestFailed')
     } finally {
         isLoading.value = false
     }
 }
 
-function setPromptExample(example: string) {
+function setPromptExample() {
     if (isLoading.value) return
+  const example = promptExamples.value[0]
+  if (!example) return
     userPrompt.value = example
     aiResponse.value = null
     errorMessage.value = null
@@ -52,25 +62,25 @@ function setPromptExample(example: string) {
     <div class="hero-grid">
       <div class="hero">
         <img class="logo app-logo" src="/logo.svg" alt="PEACE2074" />
-        <h1 class="title">Welcome to PEACE2074</h1>
-        <p class="subtitle">Choose a section to get started</p>
+        <h1 class="title">{{ t('welcome') }} {{ t('general.SiteTitle') }}</h1>
+        <p class="subtitle">{{ t('pages.home.hero.lead') }}</p>
         <div class="grid">
           <RouterLink to="/quran" class="tile">
             <div class="tile-inner">
-              <span class="tile-title">Quran</span>
-              <span class="tile-sub">Explore Surahs</span>
+              <span class="tile-title">{{ t('appShell.nav.quran') }}</span>
+              <span class="tile-sub">{{ t('pages.quran.title') }}</span>
             </div>
           </RouterLink>
           <RouterLink to="/holynames" class="tile">
             <div class="tile-inner">
-              <span class="tile-title">Holy Names</span>
-              <span class="tile-sub">99 Names of Allah</span>
+              <span class="tile-title">{{ t('appShell.nav.holynames') }}</span>
+              <span class="tile-sub">{{ t('The 99 Holy Names of Allah') }}</span>
             </div>
           </RouterLink>
           <RouterLink to="/tasbeeh" class="tile">
             <div class="tile-inner">
-              <span class="tile-title">Tasbeeh</span>
-              <span class="tile-sub">Count and reflect</span>
+              <span class="tile-title">{{ t('appShell.nav.tasbeeh') }}</span>
+              <span class="tile-sub">{{ t('pages.tasbeeh') }}</span>
             </div>
           </RouterLink>
         </div>
@@ -79,26 +89,26 @@ function setPromptExample(example: string) {
       <section class="ai-card">
         <div class="ai-header">
           <div>
-            <p class="ai-title">Ask PEACE AI</p>
-            <small>Get a quick answer about surahs or how to navigate the app.</small>
+            <p class="ai-title">{{ t('pages.home.ai.title') }}</p>
+            <small>{{ t('pages.home.ai.subtitle') }}</small>
           </div>
-          <button type="button" class="chip mini" @click="setPromptExample('Show me where to read Surah Maryam and what it focuses on.')">
-            Try prompt
+          <button type="button" class="chip mini" @click="setPromptExample">
+            {{ t('pages.home.ai.tryAnother') }}
           </button>
         </div>
 
         <form class="ai-form" @submit.prevent="askPeaceAI">
-          <label class="sr-only" for="peace-ai-input">Ask PEACE AI</label>
+          <label class="sr-only" for="peace-ai-input">{{ t('pages.home.ai.title') }}</label>
           <textarea
             id="peace-ai-input"
             v-model="userPrompt"
             class="ai-textarea"
             rows="3"
-            placeholder="Ask about a chapter, theme, or app feature"
+            :placeholder="t('pages.home.ai.placeholder')"
           />
           <button type="submit" class="ask-btn" :disabled="!canSubmit">
-            <span v-if="!isLoading">Ask</span>
-            <span v-else>Thinking…</span>
+            <span v-if="!isLoading">{{ t('pages.home.ai.ask') }}</span>
+            <span v-else>{{ t('pages.home.ai.thinking') }}</span>
           </button>
         </form>
 
