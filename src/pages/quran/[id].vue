@@ -108,6 +108,7 @@ const quickAccessVerses = ref<QuickAccessVerse[]>([
 ])
 
 const audioList = ref<string[]>([])
+const bismillahIntroUrl = ref<string | null>(null)
 const audioEl = ref<HTMLAudioElement | null>(null)
 const nextAudioEl = ref<HTMLAudioElement | null>(null)
 const isPlayingAudio = ref(false)
@@ -203,11 +204,17 @@ async function bookmarkVerse(verse: number | string) {
   }
   
   try {
-    await bookmarksStore.createBookmark(normalized)
+    const saved = await bookmarksStore.createBookmark(normalized)
+    if (!saved?.ok) {
+      throw new Error(t('pages.quran.bookmarks.error'))
+    }
+
     selectedBookmark.value = `id_${normalized}`
-    
-    // Force refresh bookmarks from store/server
-    await bookmarksStore.fetchBookmarks()
+
+    // Refresh from server only when actually stored there
+    if (saved.source === 'server') {
+      await bookmarksStore.fetchBookmarks()
+    }
     
     $q.notify({ 
       type: 'positive', 
@@ -452,6 +459,44 @@ async function loadAudioAndTimings(id: number) {
   }
 }
 
+async function ensureBismillahIntroUrl() {
+  if (bismillahIntroUrl.value) return bismillahIntroUrl.value
+
+  try {
+    const sourceUrl = 'https://api.quran.com/api/v4/verses/by_key/1:1?audio=7'
+    const res = await fetch(sourceUrl)
+    if (!res.ok) {
+      trackApi5xx('quran_com_bismillah_intro', res.status, sourceUrl)
+      return null
+    }
+
+    const json = await res.json()
+    const audioPath = json?.verse?.audio?.url
+    if (audioPath) {
+      bismillahIntroUrl.value = `https://verses.quran.com/${audioPath}`
+      return bismillahIntroUrl.value
+    }
+  } catch {
+    // silent; intro is optional
+  }
+
+  return null
+}
+
+async function playBismillahIntro(): Promise<void> {
+  const introUrl = await ensureBismillahIntroUrl()
+  if (!introUrl || stopRequested.value) return
+
+  await new Promise<void>((resolve) => {
+    const intro = new Audio(introUrl)
+    intro.preload = 'auto'
+    intro.playbackRate = playbackRate.value
+    intro.onended = () => resolve()
+    intro.onerror = () => resolve()
+    void intro.play().catch(() => resolve())
+  })
+}
+
 /**
  * Fallback audio loader using alquran.cloud API (no word timings)
  */
@@ -551,7 +596,12 @@ async function startSuraAudio() {
     await loadAudioAndTimings(Number(currentSuraId.value))
   }
 
-  playAyah(currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
+  const startIndex = currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0
+  await playBismillahIntro()
+
+  if (!stopRequested.value) {
+    playAyah(startIndex)
+  }
 }
 
 function stopAudio() {

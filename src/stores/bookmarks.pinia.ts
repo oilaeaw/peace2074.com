@@ -24,8 +24,63 @@ export const useBookmarksStore = defineStore('bookBook', {
     ),
   },
   actions: {
+    _normalizeBookmarkStrings(list: any[]): string[] {
+      return (list || [])
+        .map((bm: any) => (typeof bm === 'string' ? bm : bm?.bookmark))
+        .filter((bm: any): bm is string => typeof bm === 'string' && !!bm)
+    },
+
+    async _loadGuestBookmarks() {
+      const guestId = await this._getOrCreateGuestId()
+      const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
+      try {
+        const raw = await core.get(key)
+        return raw ? (Array.isArray(raw) ? raw : JSON.parse(String(raw))) : []
+      }
+      catch {
+        return []
+      }
+    },
+
+    async _syncGuestBookmarksToServer() {
+      const guestBookmarks = await this._loadGuestBookmarks()
+      const guestStrings = this._normalizeBookmarkStrings(guestBookmarks)
+      if (!guestStrings.length)
+        return
+
+      const serverStrings = new Set(this._normalizeBookmarkStrings(this.bookmarks))
+      const missing = guestStrings.filter(bm => !serverStrings.has(bm))
+      if (!missing.length)
+        return
+
+      let syncedAny = false
+      for (const bm of missing) {
+        try {
+          const response = await createBookmarkService({ bookmark: bm })
+          const created = response?.bookmark || response
+          const saved = created && (created.value !== undefined) ? created.value : created
+          if (saved)
+            syncedAny = true
+        }
+        catch {
+          // Keep guest data intact if sync fails
+        }
+      }
+
+      if (syncedAny) {
+        try {
+          await this._saveGuestBookmarks([])
+        }
+        catch { }
+        try {
+          await this.fetchBookmarks()
+        }
+        catch { }
+      }
+    },
+
     // Initialize bookmarks: if user logged in, load from server. Otherwise load guest local bookmarks.
-  async init() {
+    async init() {
       const auth = useAuthStore()
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
       if (userId) {
@@ -36,21 +91,15 @@ export const useBookmarksStore = defineStore('bookBook', {
         const bookmarksList = raw?.bookmarks || raw
         if (Array.isArray(bookmarksList)) {
           this.bookmarks = bookmarksList // Keep full bookmark objects for authenticated users
+          await this._syncGuestBookmarksToServer()
         }
         else {
-          this.bookmarks = []
+          // Server session may be missing while client auth exists; fallback to guest/local bookmarks
+          this.bookmarks = await this._loadGuestBookmarks()
         }
       }
       else {
-        const guestId = await this._getOrCreateGuestId()
-        const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
-        try {
-          const raw = await core.get(key)
-          this.bookmarks = raw ? (Array.isArray(raw) ? raw : JSON.parse(String(raw))) : []
-        }
-        catch {
-          this.bookmarks = []
-        }
+        this.bookmarks = await this._loadGuestBookmarks()
       }
     },
 
@@ -64,21 +113,16 @@ export const useBookmarksStore = defineStore('bookBook', {
         const bookmarksList = raw?.bookmarks || raw
         if (Array.isArray(bookmarksList)) {
           this.bookmarks = bookmarksList // Keep full bookmark objects for authenticated users
+          await this._syncGuestBookmarksToServer()
         }
         else {
-          this.bookmarks = []
+          // Keep existing local state if API is unreachable/unauthorized
+          if (!this.bookmarks.length)
+            this.bookmarks = await this._loadGuestBookmarks()
         }
       }
       else {
-        const guestId = await this._getOrCreateGuestId()
-        const key = `${GUEST_BOOKMARKS_KEY_PREFIX}${guestId}`
-        try {
-          const raw = await core.get(key)
-          this.bookmarks = raw ? (Array.isArray(raw) ? raw : JSON.parse(String(raw))) : []
-        }
-        catch {
-          this.bookmarks = []
-        }
+        this.bookmarks = await this._loadGuestBookmarks()
       }
     },
 
@@ -87,11 +131,11 @@ export const useBookmarksStore = defineStore('bookBook', {
         let id = await core.get(GUEST_ID_KEY)
         if (!id) {
           id = genGuestId()
-          try { await core.set(GUEST_ID_KEY, id) } catch {}
+          try { await core.set(GUEST_ID_KEY, id) } catch { }
         }
         return String(id || '')
       }
-      catch {}
+      catch { }
       // If core is unavailable we fallback to generating a guest id but do not attempt
       // to write to localStorage (avoid SSR/local env issues).
       return genGuestId()
@@ -106,18 +150,18 @@ export const useBookmarksStore = defineStore('bookBook', {
         await core.set(key, bookmarks)
         return
       }
-      catch {}
+      catch { }
     },
 
     async createBookmark(bm: string) {
       if (!bm)
-        return
+        return { ok: false, source: 'none' as const }
       // Check if bookmark already exists
       const existingBookmark = this.bookmarks.find((bookmark: any) =>
         typeof bookmark === 'string' ? bookmark === bm : bookmark?.bookmark === bm,
       )
       if (existingBookmark)
-        return
+        return { ok: true, source: 'existing' as const }
 
       const auth = useAuthStore()
       const userId = auth.user?.id || auth.user?._id || auth.user?.value?.id || auth.user?.value?._id
@@ -129,26 +173,32 @@ export const useBookmarksStore = defineStore('bookBook', {
           // created may be a ref or raw object; normalize
           const saved = created && (created.value !== undefined) ? created.value : created
           if (!saved) {
-            console.error('createBookmark: empty response', response)
-            return
+            // If server write fails (e.g. missing cookie session), keep local fallback
+            this.bookmarks.push(bm)
+            this._saveGuestBookmarks(this.bookmarks.map((b: any) => typeof b === 'string' ? b : b?.bookmark).filter(Boolean))
+            return { ok: true, source: 'local-fallback' as const }
           }
           // push the saved bookmark object (includes _id for future operations)
           this.bookmarks.push(saved)
           console.log('[Bookmark] Saved to server:', saved)
           // refresh to ensure server-side ids are in sync
           try { await this.fetchBookmarks() }
-          catch {}
+          catch { }
+          return { ok: true, source: 'server' as const }
         }
         catch (err) {
           console.error('[Bookmark] Server save failed:', err)
           // fallback to local push if server fails
           this.bookmarks.push(bm)
+          this._saveGuestBookmarks(this.bookmarks.map((b: any) => typeof b === 'string' ? b : b?.bookmark).filter(Boolean))
+          return { ok: true, source: 'local-fallback' as const }
         }
       }
       else {
         // Guest: store locally under guest id
         this.bookmarks.push(bm)
         this._saveGuestBookmarks(this.bookmarks.map((b: any) => typeof b === 'string' ? b : b?.bookmark).filter(Boolean))
+        return { ok: true, source: 'guest' as const }
       }
     },
 
@@ -182,7 +232,7 @@ export const useBookmarksStore = defineStore('bookBook', {
 
           if (!bookmarkToDelete) {
             try { const $q = useQuasar(); $q.notify({ message: 'Bookmark not found', type: 'negative' }) }
-            catch {}
+            catch { }
             return
           }
 
@@ -203,11 +253,11 @@ export const useBookmarksStore = defineStore('bookBook', {
           }
 
           try { const $q = useQuasar(); $q.notify({ message: 'Bookmark removed', type: 'info' }) }
-          catch {}
+          catch { }
         }
         catch {
           try { const $q = useQuasar(); $q.notify({ message: 'Failed to remove bookmark', type: 'negative' }) }
-          catch {}
+          catch { }
         }
       }
       else {
