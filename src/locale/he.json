@@ -27,9 +27,16 @@
         "stop": "עצור אזהאן"
     },
     "appShell": {
+        "toggleMenu": "החלפת תפריט",
         "searchPlaceholder": "חפש…",
         "playAthan": "נגן אזהאן",
         "stopAthan": "עצור את האזאן",
+        "pin": "נעץ",
+        "unpin": "בטל נעיצה",
+        "resultType": {
+            "sura": "קוראן",
+            "page": "עמוד"
+        },
         "nav": {
             "home": "בית",
             "quran": "הקוראן",
@@ -110,6 +117,8 @@
                 "thinking": "חושב…",
                 "responseTitle": "תשובת AI",
                 "copied": "התשובה הועתקה",
+                "noReply": "לא התקבלה תשובה.",
+                "requestFailed": "בקשת DeepSeek נכשלה. נסה שוב.",
                 "historyTitle": "היסטוריה",
                 "historyEmpty": "אין עדיין שאלות קודמות.",
                 "reuse": "השתמש שוב",
@@ -362,7 +371,16 @@
         "CheckUpdates": "בדוק עדכונים",
         "Services": "שירותים",
         "fetchingUpdates": "מתעדכן",
+        "searching": "מחפש…",
         "languages": "שפות",
+        "languageNames": {
+            "en": "אנגלית",
+            "ar": "ערבית",
+            "de": "גרמנית",
+            "ru": "רוסית",
+            "he": "עברית",
+            "tr": "טורקית"
+        },
         "dark": "כהה",
         "light": "בהיר",
         "auto": "אוטומטי",

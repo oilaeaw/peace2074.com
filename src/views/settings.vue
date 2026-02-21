@@ -86,9 +86,7 @@ async function activateNotifications(): Promise<boolean> {
   if (!subscriptionResult.ok) {
     $q.notify?.({
       type: "negative",
-      message: subscriptionResult.error ||
-        t("pages.settings.notifications.error") ||
-        "Could not enable push notifications.",
+      message: subscriptionResult.error || t("pages.settings.notifications.error"),
     });
     return false;
   }
@@ -96,9 +94,7 @@ async function activateNotifications(): Promise<boolean> {
   await showTestNotification();
   $q.notify?.({
     type: "positive",
-    message:
-      t("pages.settings.notifications.enabled") ||
-      "Push notifications enabled! You'll receive updates on your device.",
+    message: t("pages.settings.notifications.enabled"),
   });
 
   return true;
@@ -208,8 +204,7 @@ async function ensureNotificationsPermission(): Promise<boolean> {
   if (typeof window === "undefined" || typeof Notification === "undefined") {
     $q.notify?.({
       type: "warning",
-      message:
-        t("pages.settings.notifications.unavailable") || "Notifications not supported.",
+      message: t("pages.settings.notifications.unavailable"),
     });
     return false;
   }
@@ -218,9 +213,7 @@ async function ensureNotificationsPermission(): Promise<boolean> {
   if (current === "denied") {
     $q.notify?.({
       type: "negative",
-      message:
-        t("pages.settings.notifications.denied") ||
-        "Notifications are blocked in your browser settings.",
+      message: t("pages.settings.notifications.denied"),
     });
     return false;
   }
@@ -229,16 +222,13 @@ async function ensureNotificationsPermission(): Promise<boolean> {
     if (result === "granted") return true;
     $q.notify?.({
       type: "warning",
-      message:
-        t("pages.settings.notifications.denied") ||
-        "Notifications permission was not granted.",
+      message: t("pages.settings.notifications.denied"),
     });
     return false;
   } catch (e) {
     $q.notify?.({
       type: "negative",
-      message:
-        t("pages.settings.notifications.error") || "Could not enable notifications.",
+      message: t("pages.settings.notifications.error"),
     });
     return false;
   }
@@ -252,11 +242,9 @@ async function showTestNotification(): Promise<boolean> {
       const reg = await navigator.serviceWorker.ready;
       if (reg?.showNotification) {
         await reg.showNotification(
-          t("pages.settings.notifications.testTitle") || "Notifications enabled",
+          t("pages.settings.notifications.testTitle"),
           {
-            body:
-              t("pages.settings.notifications.testBody") ||
-              "We'll use your browser's notification system when available.",
+            body: t("pages.settings.notifications.testBody"),
             icon: "/android-chrome-192x192.png",
             tag: "peace2074-notification-test",
           }
@@ -269,11 +257,9 @@ async function showTestNotification(): Promise<boolean> {
       // Fallback to immediate notification in supported desktop browsers
       // eslint-disable-next-line no-new
       new Notification(
-        t("pages.settings.notifications.testTitle") || "Notifications enabled",
+        t("pages.settings.notifications.testTitle"),
         {
-          body:
-            t("pages.settings.notifications.testBody") ||
-            "We'll use your browser's notification system when available.",
+          body: t("pages.settings.notifications.testBody"),
           icon: "/android-chrome-192x192.png",
           tag: "peace2074-notification-test",
         }
@@ -298,8 +284,7 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
     return {
       ok: false,
       error:
-        t("pages.settings.notifications.unavailable") ||
-        "Notifications are not supported on this device/browser.",
+        t("pages.settings.notifications.unavailable"),
     };
   }
 
@@ -307,8 +292,7 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
     return {
       ok: false,
       error:
-        t("pages.settings.notifications.unavailable") ||
-        "Notifications are not supported on this device/browser.",
+        t("pages.settings.notifications.unavailable"),
     };
   }
 
@@ -316,8 +300,7 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
     return {
       ok: false,
       error:
-        t("pages.settings.notifications.unavailable") ||
-        "Notifications are not supported on this device/browser.",
+        t("pages.settings.notifications.unavailable"),
     };
   }
 
@@ -383,7 +366,7 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
     const message =
       err instanceof Error
         ? err.message
-        : "Could not enable notifications right now.";
+        : t("pages.settings.notifications.error");
 
     return { ok: false, error: message };
   }
@@ -460,7 +443,7 @@ function onPullRefresh(done?: () => void) {
 async function reloadApp() {
   $q.notify({
     type: 'info',
-    message: t('pages.settings.clearingCache') || 'Clearing cache...',
+    message: t('pages.settings.clearingCache'),
     timeout: 2000,
     position: 'top'
   });
@@ -652,8 +635,8 @@ async function reloadApp() {
             <q-banner dense rounded class="q-mt-md" color="green-1" text-color="positive">
               {{
                 enableNotifications
-                  ? (t("pages.settings.notifications.enabled") || "Push notifications are active.")
-                  : (t("pages.settings.notifications.enableHint") || "Enable push notifications to receive updates.")
+                  ? t("pages.settings.notifications.enabled")
+                  : t("pages.settings.notifications.enableHint")
               }}
             </q-banner>
           </q-card-section>

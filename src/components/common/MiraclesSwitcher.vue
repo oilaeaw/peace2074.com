@@ -7,12 +7,12 @@ const route = useRoute()
 const tabs = computed(() => [
   {
     name: 'visual',
-    label: t('pages.miracles.visualTab') || 'Visual Patterns',
+    label: t('pages.miracles.visualTab'),
     to: '/miracles',
   },
   {
     name: 'linguistic',
-    label: t('pages.miracles.linguisticTab') || 'Linguistic Analysis',
+    label: t('pages.miracles.linguisticTab'),
     to: '/miracles/patterns',
   },
 ])

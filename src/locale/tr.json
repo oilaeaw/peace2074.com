@@ -27,9 +27,16 @@
         "stop": "Ezanı Durdur"
     },
     "appShell": {
+        "toggleMenu": "Menüyü aç/kapat",
         "searchPlaceholder": "Ara…",
         "playAthan": "Ezanı Oynat",
         "stopAthan": "Ezanı Durdur",
+        "pin": "Sabitle",
+        "unpin": "Sabitlemeyi kaldır",
+        "resultType": {
+            "sura": "Kur'an",
+            "page": "Sayfa"
+        },
         "nav": {
             "home": "Ana Sayfa",
             "quran": "Kur'an",
@@ -122,6 +129,8 @@
                 "thinking": "Düşünüyor…",
                 "responseTitle": "AI Yanıtı",
                 "copied": "Yanıt panoya kopyalandı!",
+                "noReply": "Yanıt alınamadı.",
+                "requestFailed": "DeepSeek isteği başarısız oldu. Lütfen tekrar deneyin.",
                 "historyTitle": "Geçmiş",
                 "historyEmpty": "Henüz önceki soru yok.",
                 "reuse": "Yeniden kullan",
@@ -362,7 +371,16 @@
         "CheckUpdates": "Güncellemeleri getir",
         "Services": "Hizmetler",
         "fetchingUpdates": "Güncellemeler alınıyor",
+        "searching": "Aranıyor…",
         "languages": "Diller",
+        "languageNames": {
+            "en": "İngilizce",
+            "ar": "Arapça",
+            "de": "Almanca",
+            "ru": "Rusça",
+            "he": "İbranice",
+            "tr": "Türkçe"
+        },
         "dark": "koyu",
         "light": "açık",
         "auto": "otomatik",

@@ -11,25 +11,21 @@
             class="link"
             style="color: inherit; text-decoration: none; font-weight: 700"
           >
-            PEACE2074
+            {{ t('general.SiteTitle') }}
           </RouterLink>
         </q-toolbar-title>
         <q-space />
         <nav class="nav">
           <RouterLink to="/" class="link">
-            <span>Home</span>
+            <span>{{ t('appShell.nav.home') }}</span>
           </RouterLink>
           <RouterLink to="/quran" class="link">
-            <span>Quran</span>
+            <span>{{ t('appShell.nav.quran') }}</span>
           </RouterLink>
           <div class="lang">
-            <label for="lang" class="q-mr-xs">Lang:</label>
+            <label for="lang" class="q-mr-xs">{{ t('general.languages') }}:</label>
             <select id="lang" @change="onLangChange($event)" :value="locale">
-              <option value="en">English</option>
-              <option value="ar">العربية</option>
-              <option value="de">Deutsch</option>
-              <option value="ru">Русский</option>
-              <option value="tr">Türkçe</option>
+              <option v-for="l in langs" :key="l.value" :value="l.value">{{ l.label }}</option>
             </select>
           </div>
         </nav>
@@ -50,8 +46,19 @@
 </template>
 
 <script setup lang="ts">
+import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-const { locale } = useI18n();
+const { locale, t } = useI18n();
+
+const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+const langs = computed(() => {
+  locale.value;
+  return languageCodes.map((code) => ({
+    value: code,
+    label: t(`general.languageNames.${code}`),
+  }));
+});
+
 function onLangChange(e: Event) {
   const val = (e.target as HTMLSelectElement).value;
   locale.value = val;

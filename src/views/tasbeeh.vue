@@ -114,13 +114,13 @@ function onTargetReached() {
   completedSets.value++;
 
   $q.notify({
-    message: t("tasbeeh.completed") || "Set completed! ماشاء الله",
+    message: t("tasbeeh.completed"),
     type: "positive",
     position: "center",
     timeout: 2000,
     actions: [
       {
-        label: t("tasbeeh.continue") || "Continue",
+        label: t("tasbeeh.continue"),
         color: "white",
         handler: () => resetCount(),
       },
@@ -279,17 +279,17 @@ watch(
           {{ t("back") }}
         </q-btn>
         <h1 class="page-title">
-          {{ t("tasbeeh.title") || "تسبيح" }}
+          {{ t("tasbeeh.title") }}
         </h1>
         <p class="page-subtitle">
-          {{ t("tasbeeh.subtitle") || "Digital Prayer Beads" }}
+          {{ t("tasbeeh.subtitle") }}
         </p>
         <div class="athan-controls">
           <q-btn
             flat
             color="primary"
             :icon="isAthanPlaying ? 'pause' : 'volume_up'"
-            :label="isAthanPlaying ? (t('athan.pause') || 'Pause Athan') : (t('athan.play') || 'Play Athan')"
+            :label="isAthanPlaying ? t('athan.pause') : t('athan.play')"
             @click="toggleAthan"
           />
           <q-btn
@@ -297,7 +297,7 @@ watch(
             flat
             color="negative"
             icon="stop"
-            :label="t('athan.stop') || 'Stop Athan'"
+            :label="t('athan.stop')"
             class="q-ml-sm"
             @click="stopAthan"
           />
@@ -351,7 +351,7 @@ watch(
           <q-icon name="touch_app" size="48px" />
         </q-btn>
         <p class="tap-instruction">
-          {{ t("tasbeeh.tapToCount") || "Tap to Count" }}
+          {{ t("tasbeeh.tapToCount") }}
         </p>
       </div>
 
@@ -361,13 +361,13 @@ watch(
           <q-btn
             flat
             icon="refresh"
-            :label="t('tasbeeh.reset') || 'Reset'"
+            :label="t('tasbeeh.reset')"
             @click="resetCount"
           />
           <q-btn
             flat
             icon="settings"
-            :label="t('tasbeeh.settings') || 'Settings'"
+            :label="t('tasbeeh.settings')"
             @click="showSettings = true"
           />
         </div>
@@ -386,7 +386,7 @@ watch(
 
       <!-- Tasbeeh Selection -->
       <div class="tasbeeh-selection">
-        <h3>{{ t("tasbeeh.selectPhrase") || "Select Phrase" }}</h3>
+        <h3>{{ t("tasbeeh.selectPhrase") }}</h3>
         <div class="tasbeeh-grid">
           <div
             v-for="(item, index) in tasbeehList"
@@ -407,14 +407,14 @@ watch(
 
       <!-- Statistics -->
       <div class="stats-section">
-        <h3>{{ t("tasbeeh.todayStats") || "Today's Count" }}</h3>
+        <h3>{{ t("tasbeeh.todayStats") }}</h3>
         <div class="stats-grid">
           <div class="stat-item">
             <div class="stat-number">
               {{ todayStats.total }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.total") || "Total" }}
+              {{ t("tasbeeh.total") }}
             </div>
           </div>
           <div class="stat-item">
@@ -422,7 +422,7 @@ watch(
               {{ todayStats.sessions }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.sessions") || "Sessions" }}
+              {{ t("tasbeeh.sessions") }}
             </div>
           </div>
           <div class="stat-item">
@@ -430,7 +430,7 @@ watch(
               {{ completedSets }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.completed") || "Completed Sets" }}
+              {{ t("tasbeeh.completed") }}
             </div>
           </div>
         </div>
@@ -442,30 +442,30 @@ watch(
       <q-card class="settings-card">
         <q-card-section>
           <div class="text-h6">
-            {{ t("tasbeeh.settings") || "Tasbeeh Settings" }}
+            {{ t("tasbeeh.settings") }}
           </div>
         </q-card-section>
 
         <q-card-section>
           <q-toggle
             v-model="settings.vibration"
-            :label="t('tasbeeh.vibration') || 'Vibration'"
+            :label="t('tasbeeh.vibration')"
             color="primary"
           />
           <q-toggle
             v-model="settings.sound"
-            :label="t('tasbeeh.sound') || 'Sound'"
+            :label="t('tasbeeh.sound')"
             color="primary"
           />
           <q-toggle
             v-model="settings.autoNext"
-            :label="t('tasbeeh.autoNext') || 'Auto Next Phrase'"
+            :label="t('tasbeeh.autoNext')"
             color="primary"
           />
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn v-close-popup flat :label="t('close') || 'Close'" color="primary" />
+          <q-btn v-close-popup flat :label="t('general.close')" color="primary" />
         </q-card-actions>
       </q-card>
     </q-dialog>

@@ -27,9 +27,16 @@
     "stop": "إيقاف الأذان"
   },
   "appShell": {
+    "toggleMenu": "فتح/إغلاق القائمة",
     "searchPlaceholder": "ابحث…",
     "playAthan": "تشغيل الأذان",
     "stopAthan": "إيقاف الأذان",
+    "pin": "تثبيت",
+    "unpin": "إلغاء التثبيت",
+    "resultType": {
+      "sura": "القرآن",
+      "page": "صفحة"
+    },
     "nav": {
       "home": "الرئيسية",
       "quran": "القرآن",
@@ -110,6 +117,8 @@
         "thinking": "جارٍ التفكير…",
         "responseTitle": "رد الذكاء الاصطناعي",
         "copied": "تم نسخ الرد",
+        "noReply": "لم يتم استلام رد.",
+        "requestFailed": "فشل طلب DeepSeek. حاول مرة أخرى.",
         "historyTitle": "السجل",
         "historyEmpty": "لا توجد أسئلة سابقة.",
         "reuse": "إعادة استخدام",
@@ -362,7 +371,16 @@
     "CheckUpdates": "جلب التحديثات",
     "Services": "خدمات",
     "fetchingUpdates": "احصل على التحديثات",
+    "searching": "جارٍ البحث…",
     "languages": "اللغات",
+    "languageNames": {
+      "en": "الإنجليزية",
+      "ar": "العربية",
+      "de": "الألمانية",
+      "ru": "الروسية",
+      "he": "العبرية",
+      "tr": "التركية"
+    },
     "dark": "مظلم",
     "light": "ضوء",
     "auto": "آلي",

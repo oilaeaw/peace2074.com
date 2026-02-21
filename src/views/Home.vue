@@ -120,7 +120,7 @@ function copyResponse() {
   if (!aiResponse.value) return
   copy(aiResponse.value)
   $q.notify({
-    message: 'Response copied to clipboard!',
+    message: t('pages.home.ai.copied'),
     color: 'positive',
     position: 'top',
     timeout: 2000,
@@ -141,12 +141,12 @@ async function askPeaceAI() {
         { role: 'user', content: userPrompt.value.trim() },
       ],
     })
-    aiResponse.value = res?.message?.content ?? 'No response received.'
+    aiResponse.value = res?.message?.content ?? t('pages.home.ai.noReply')
     if (aiResponse.value) {
       addToHistory(userPrompt.value.trim(), aiResponse.value)
     }
   } catch (error: any) {
-    errorMessage.value = error?.data?.message || error?.message || 'DeepSeek request failed. Please try again.'
+    errorMessage.value = error?.data?.message || error?.message || t('pages.home.ai.requestFailed')
   } finally {
     isLoading.value = false
   }

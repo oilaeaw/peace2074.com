@@ -145,7 +145,7 @@ const MIN_SWIPE_DISTANCE = 50
 const viewModeOptions = computed(() => ([
   { label: t('pages.quran.modes.reader'), value: 'reader' },
   { label: t('pages.quran.modes.mushaf'), value: 'mushaf' },
-  { label: t('pages.quran.modes.native') || 'Native', value: 'native' },
+  { label: t('pages.quran.modes.native'), value: 'native' },
 ]))
 
 const bookmarkEntries = computed<BookmarkEntry[]>(() => {
@@ -794,8 +794,8 @@ function stopReading() {
 const isReading = computed(() => readerMode.value === 'tts' ? isTTSPlaying.value : isPlayingAudio.value)
 
 const readerModeOptions = computed(() => [
-  { label: t('pages.quran.audioRecitation') || 'Audio Recitation', value: 'audio' },
-  { label: t('pages.quran.nativeReader') || 'Native Reader (TTS)', value: 'tts' },
+  { label: t('pages.quran.audioRecitation'), value: 'audio' },
+  { label: t('pages.quran.nativeReader'), value: 'tts' },
 ])
 
 function updateCurrentWord(time: number) {
@@ -940,7 +940,7 @@ watch(locale, () => {
             dense
             @click="startReading"
             :disable="readerMode === 'audio' && !audioList.length"
-            :label="isReading ? t('general.pause') || 'Pause' : t('pages.quran.playRecitation') || 'Play'"
+            :label="isReading ? t('general.pause') : t('pages.quran.playRecitation')"
           />
           <q-btn
             icon="stop"
@@ -949,7 +949,7 @@ watch(locale, () => {
             dense
             @click="stopReading"
             :disable="!isReading"
-            :label="t('pages.quran.stopRecitation') || 'Stop'"
+            :label="t('pages.quran.stopRecitation')"
           />
           <!-- Audio playback rate (audio mode) -->
           <q-select
@@ -985,7 +985,7 @@ watch(locale, () => {
             emit-value
             map-options
             style="width: 90px"
-            :label="t('pages.quran.ttsSpeed') || 'Speed'"
+            :label="t('pages.quran.ttsSpeed')"
           />
           <!-- TTS Voice selector -->
           <q-select
@@ -996,7 +996,7 @@ watch(locale, () => {
             :options="availableVoices"
             :option-label="(v) => v?.name || 'Default'"
             style="width: 150px"
-            :label="t('pages.quran.ttsVoice') || 'Voice'"
+            :label="t('pages.quran.ttsVoice')"
           />
           <div class="view-toggle">
             <q-btn-toggle

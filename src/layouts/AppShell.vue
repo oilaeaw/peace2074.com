@@ -9,7 +9,7 @@
           icon="menu"
           color="white"
           @click="leftDrawer = !leftDrawer"
-          aria-label="Toggle menu"
+          :aria-label="t('appShell.toggleMenu')"
         />
         <q-avatar square size="36px" class="q-ml-sm brand-logo">
           <img src="/logo.svg" alt="PEACE2074" class="app-logo" />
@@ -48,7 +48,7 @@
                   <q-spinner color="primary" size="24px" />
                 </q-item-section>
                 <q-item-section>{{
-                  t("general.fetchingUpdates") || "Searching…"
+                  t("general.searching")
                 }}</q-item-section>
               </q-item>
               <q-item
@@ -64,7 +64,7 @@
                 </q-item-section>
                 <q-item-section side>
                   <q-badge color="primary" outline>{{
-                    item.type === "sura" ? "Quran" : "Page"
+                    item.type === "sura" ? t("appShell.resultType.sura") : t("appShell.resultType.page")
                   }}</q-badge>
                 </q-item-section>
               </q-item>
@@ -98,10 +98,11 @@
           icon="stop"
           class="q-ml-sm"
           @click="stopAthan"
-          :aria-label="t('appShell.stopAthan') || 'Stop Athan'"
+          :aria-label="t('appShell.stopAthan')"
         />
 
         <q-select
+          :key="`lang-select-${locale}`"
           dense
           outlined
           dark
@@ -130,7 +131,7 @@
                   <q-avatar color="primary" text-color="white" icon="person" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ authUser?.username || 'User' }}</q-item-label>
+                  <q-item-label>{{ authUser?.username || t('user') }}</q-item-label>
                   <q-item-label caption>{{ authUser?.email }}</q-item-label>
                 </q-item-section>
               </q-item>
@@ -141,7 +142,7 @@
                   <q-icon name="login" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ t('appShell.nav.login') || 'Sign In' }}</q-item-label>
+                  <q-item-label>{{ t('appShell.nav.login') }}</q-item-label>
                 </q-item-section>
               </q-item>
 
@@ -150,7 +151,7 @@
                   <q-icon name="logout" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ t('appShell.nav.logout') || 'Sign Out' }}</q-item-label>
+                  <q-item-label>{{ t('appShell.nav.logout') }}</q-item-label>
                 </q-item-section>
               </q-item>
             </q-list>
@@ -190,7 +191,7 @@
               :color="item.pinned ? 'amber' : 'grey-6'"
               :disable="!navOrderingEnabled"
               @click.stop="togglePin(item.key)"
-              :aria-label="item.pinned ? 'Unpin' : 'Pin'"
+              :aria-label="item.pinned ? t('appShell.unpin') : t('appShell.pin')"
             />
           </q-item-section>
         </q-item>
@@ -241,14 +242,15 @@ const router = useRouter();
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const authUser = computed(() => authStore._user);
-const langs = [
-  { label: "English", value: "en" },
-  { label: "العربية", value: "ar" },
-  { label: "Deutsch", value: "de" },
-  { label: "Русский", value: "ru" },
-  { label: "עברית", value: "he" },
-  { label: "Türkçe", value: "tr" },
-];
+const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+
+const langs = computed(() => {
+  locale.value;
+  return languageCodes.map((code) => ({
+    value: code,
+    label: t(`general.languageNames.${code}`),
+  }));
+});
 
 const defaultNavItems = [
   { key: "home", labelKey: "appShell.nav.home", to: "/" },

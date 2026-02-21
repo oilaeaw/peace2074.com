@@ -27,9 +27,16 @@
     "stop": "Adhan stoppen"
   },
   "appShell": {
+    "toggleMenu": "Menü umschalten",
     "searchPlaceholder": "Suchen…",
     "playAthan": "Adhan abspielen",
     "stopAthan": "Adhan stoppen",
+    "pin": "Anheften",
+    "unpin": "Lösen",
+    "resultType": {
+      "sura": "Koran",
+      "page": "Seite"
+    },
     "nav": {
       "home": "Startseite",
       "quran": "Koran",
@@ -75,6 +82,8 @@
         "thinking": "Denkt nach…",
         "responseTitle": "KI-Antwort",
         "copied": "Antwort kopiert",
+        "noReply": "Keine Antwort erhalten.",
+        "requestFailed": "DeepSeek-Anfrage fehlgeschlagen. Bitte erneut versuchen.",
         "historyTitle": "Verlauf",
         "historyEmpty": "Noch keine früheren Fragen.",
         "reuse": "Wiederverwenden",
@@ -327,7 +336,16 @@
     "CheckUpdates": "Updates abrufen",
     "Services": "Dienste",
     "fetchingUpdates": "Updates werden abgerufen",
+    "searching": "Suche…",
     "languages": "Sprachen",
+    "languageNames": {
+      "en": "Englisch",
+      "ar": "Arabisch",
+      "de": "Deutsch",
+      "ru": "Russisch",
+      "he": "Hebräisch",
+      "tr": "Türkisch"
+    },
     "dark": "dunkel",
     "light": "hell",
     "auto": "automatisch",

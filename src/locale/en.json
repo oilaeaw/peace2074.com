@@ -27,9 +27,16 @@
     "stop": "Stop Athan"
   },
   "appShell": {
+    "toggleMenu": "Toggle menu",
     "searchPlaceholder": "Search…",
     "playAthan": "Play Athan",
     "stopAthan": "Stop Athan",
+    "pin": "Pin",
+    "unpin": "Unpin",
+    "resultType": {
+      "sura": "Quran",
+      "page": "Page"
+    },
     "nav": {
       "home": "Home",
       "quran": "Quran",
@@ -122,6 +129,8 @@
         "thinking": "Thinking…",
         "responseTitle": "AI Response",
         "copied": "Response copied to clipboard!",
+        "noReply": "No response received.",
+        "requestFailed": "DeepSeek request failed. Please try again.",
         "historyTitle": "History",
         "historyEmpty": "No previous questions yet.",
         "reuse": "Reuse",
@@ -363,7 +372,16 @@
     "CheckUpdates": "Fetch Updates",
     "Services": "Services",
     "fetchingUpdates": "Get Updates",
+    "searching": "Searching…",
     "languages": "Languages",
+    "languageNames": {
+      "en": "English",
+      "ar": "Arabic",
+      "de": "German",
+      "ru": "Russian",
+      "he": "Hebrew",
+      "tr": "Turkish"
+    },
     "dark": "dark",
     "light": "light",
     "auto": "auto",

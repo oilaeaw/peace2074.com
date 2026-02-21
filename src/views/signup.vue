@@ -43,7 +43,7 @@ async function handleSignup() {
   if (!username.value || !email.value || !password.value || !confirmPassword.value) {
     $q.notify({
       type: 'warning',
-      message: t('auth.fillAllFields') || 'Please fill all fields',
+      message: t('auth.fillAllFields'),
       position: 'top'
     })
     return
@@ -52,7 +52,7 @@ async function handleSignup() {
   if (password.value !== confirmPassword.value) {
     $q.notify({
       type: 'negative',
-      message: t('auth.passwordMismatch') || 'Passwords do not match',
+      message: t('auth.passwordMismatch'),
       position: 'top'
     })
     return
@@ -61,7 +61,7 @@ async function handleSignup() {
   if (password.value.length < 8) {
     $q.notify({
       type: 'negative',
-      message: t('pages.preferences.security.errors.passwordTooShort') || 'Password must be at least 8 characters',
+      message: t('pages.preferences.security.errors.passwordTooShort'),
       position: 'top'
     })
     return
@@ -70,7 +70,7 @@ async function handleSignup() {
   if (!acceptTerms.value) {
     $q.notify({
       type: 'warning',
-      message: t('auth.acceptTerms') || 'Please accept the terms and conditions',
+      message: t('auth.acceptTerms'),
       position: 'top'
     })
     return
@@ -92,12 +92,12 @@ async function handleSignup() {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.statusMessage || 'Signup failed')
+      throw new Error(data.statusMessage || t('auth.signupError'))
     }
 
     $q.notify({
       type: 'positive',
-      message: t('auth.signupSuccess') || 'Account created successfully! Please login.',
+      message: t('auth.signupSuccess'),
       position: 'top'
     })
     
@@ -106,7 +106,7 @@ async function handleSignup() {
   } catch (err: any) {
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.signupError') || 'Signup failed. Please try again.',
+      message: err.message || t('auth.signupError'),
       position: 'top'
     })
     console.error('Signup error:', err)
@@ -131,7 +131,7 @@ async function handleSignup() {
           </div>
           <div class="text-h4 text-weight-bold q-mt-md">Peace2074</div>
           <div class="text-subtitle2 text-grey-7 q-mt-xs">
-            {{ t('auth.createAccount') || 'Create your account' }}
+            {{ t('auth.createAccount') }}
           </div>
         </q-card-section>
 
@@ -140,12 +140,12 @@ async function handleSignup() {
             <q-input
               v-model="username"
               outlined
-              :label="t('auth.username') || 'Username'"
-              :placeholder="t('auth.enterUsername') || 'Choose a username'"
+              :label="t('auth.username')"
+              :placeholder="t('auth.enterUsername')"
               :disable="loading"
               autocomplete="username"
               lazy-rules
-              :rules="[val => !!val || 'Username is required']"
+              :rules="[val => !!val || t('auth.usernameRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="person" />
@@ -156,12 +156,12 @@ async function handleSignup() {
               v-model="email"
               outlined
               type="email"
-              :label="t('auth.email') || 'Email'"
-              :placeholder="t('auth.enterEmail') || 'Enter your email'"
+              :label="t('auth.email')"
+              :placeholder="t('auth.enterEmail')"
               :disable="loading"
               autocomplete="email"
               lazy-rules
-              :rules="[val => !!val || 'Email is required']"
+              :rules="[val => !!val || t('email_required')]"
             >
               <template v-slot:prepend>
                 <q-icon name="email" />
@@ -172,12 +172,12 @@ async function handleSignup() {
               v-model="password"
               outlined
               :type="showPassword ? 'text' : 'password'"
-              :label="t('auth.password') || 'Password'"
-              :placeholder="t('auth.enterPassword') || 'Choose a password'"
+              :label="t('auth.password')"
+              :placeholder="t('auth.enterPassword')"
               :disable="loading"
               autocomplete="new-password"
               lazy-rules
-              :rules="[val => !!val || 'Password is required', val => val.length >= 8 || 'Minimum 8 characters']"
+              :rules="[val => !!val || t('auth.passwordRequired'), val => val.length >= 8 || t('pages.preferences.security.errors.passwordTooShort')]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -195,12 +195,12 @@ async function handleSignup() {
               v-model="confirmPassword"
               outlined
               :type="showConfirmPassword ? 'text' : 'password'"
-              :label="t('auth.confirmPassword') || 'Confirm Password'"
-              :placeholder="t('auth.confirmPassword') || 'Re-enter password'"
+              :label="t('auth.confirmPassword')"
+              :placeholder="t('confirm_password')"
               :disable="loading"
               autocomplete="new-password"
               lazy-rules
-              :rules="[val => !!val || 'Please confirm password', val => val === password || 'Passwords must match']"
+              :rules="[val => !!val || t('confirm_password'), val => val === password || t('auth.passwordMismatch')]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -221,8 +221,8 @@ async function handleSignup() {
             >
               <template v-slot:default>
                 <span class="text-caption">
-                  {{ t('auth.iAccept') || 'I accept the' }}
-                  <router-link to="/terms" class="text-primary">{{ t('auth.termsAndConditions') || 'terms and conditions' }}</router-link>
+                  {{ t('auth.iAccept') }}
+                  <router-link to="/terms" class="text-primary">{{ t('auth.termsAndConditions') }}</router-link>
                 </span>
               </template>
             </q-checkbox>
@@ -230,7 +230,7 @@ async function handleSignup() {
             <q-btn
               type="submit"
               color="primary"
-              :label="t('auth.signUp') || 'Sign Up'"
+              :label="t('auth.signUp')"
               class="full-width"
               size="lg"
               unelevated
@@ -243,12 +243,12 @@ async function handleSignup() {
             </q-btn>
 
             <div class="text-center q-mt-md">
-              <span class="text-caption text-grey-7">{{ t('auth.alreadyHaveAccount') || 'Already have an account?' }}</span>
+              <span class="text-caption text-grey-7">{{ t('auth.alreadyHaveAccount') }}</span>
               <q-btn
                 flat
                 dense
                 color="primary"
-                :label="t('auth.signIn') || 'Sign In'"
+                :label="t('auth.signIn')"
                 class="text-caption"
                 padding="xs"
                 to="/login"

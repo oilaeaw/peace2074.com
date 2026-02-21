@@ -58,7 +58,7 @@ async function handleLogin() {
   if (!username.value || !password.value) {
     $q.notify({
       type: 'warning',
-      message: t('auth.enterCredentials') || 'Please enter username and password',
+      message: t('auth.enterCredentials'),
       position: 'top'
     })
     return
@@ -79,7 +79,7 @@ async function handleLogin() {
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
-      throw new Error(data.statusMessage || 'Login failed')
+      throw new Error(data.statusMessage || t('auth.loginError'))
     }
 
     const data = await response.json()
@@ -88,7 +88,7 @@ async function handleLogin() {
     
     $q.notify({
       type: 'positive',
-      message: t('auth.loginSuccess') || 'Welcome back!',
+      message: t('auth.loginSuccess'),
       position: 'top'
     })
     
@@ -97,7 +97,7 @@ async function handleLogin() {
   } catch (err: any) {
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.loginError') || 'Login failed. Please try again.',
+      message: err.message || t('auth.loginError'),
       position: 'top'
     })
     console.error('Login error:', err)
@@ -114,7 +114,7 @@ async function handleResetRequest() {
   if (!resetEmail.value) {
     $q.notify({
       type: 'warning',
-      message: t('auth.enterEmail') || 'Please enter your email',
+      message: t('auth.enterEmail'),
       position: 'top'
     })
     return
@@ -128,7 +128,7 @@ async function handleResetRequest() {
     
     $q.notify({
       type: 'positive',
-      message: t('auth.resetEmailSent') || 'Password reset instructions sent to your email',
+      message: t('auth.resetEmailSent'),
       position: 'top'
     })
     
@@ -137,7 +137,7 @@ async function handleResetRequest() {
   } catch (err: any) {
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.resetError') || 'Failed to send reset email',
+      message: err.message || t('auth.resetError'),
       position: 'top'
     })
   } finally {
@@ -162,7 +162,7 @@ async function handleResetRequest() {
           </div>
           <div class="text-h4 text-weight-bold q-mt-md">Peace2074</div>
           <div class="text-subtitle2 text-grey-7 q-mt-xs">
-            {{ t('auth.welcomeBack') || 'Welcome back' }}
+            {{ t('auth.welcomeBack') }}
           </div>
         </q-card-section>
 
@@ -172,12 +172,12 @@ async function handleResetRequest() {
             <q-input
               v-model="username"
               outlined
-              :label="t('auth.username') || 'Username'"
-              :placeholder="t('auth.enterUsername') || 'Enter your username'"
+              :label="t('auth.username')"
+              :placeholder="t('auth.enterUsername')"
               :disable="loading"
               autocomplete="username"
               lazy-rules
-              :rules="[val => !!val || t('auth.usernameRequired') || 'Username is required']"
+              :rules="[val => !!val || t('auth.usernameRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="person" />
@@ -188,12 +188,12 @@ async function handleResetRequest() {
               v-model="password"
               outlined
               :type="showPassword ? 'text' : 'password'"
-              :label="t('auth.password') || 'Password'"
-              :placeholder="t('auth.enterPassword') || 'Enter your password'"
+              :label="t('auth.password')"
+              :placeholder="t('auth.enterPassword')"
               :disable="loading"
               autocomplete="current-password"
               lazy-rules
-              :rules="[val => !!val || t('auth.passwordRequired') || 'Password is required']"
+              :rules="[val => !!val || t('auth.passwordRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -210,7 +210,7 @@ async function handleResetRequest() {
             <div class="row items-center justify-between">
               <q-checkbox
                 v-model="rememberMe"
-                :label="t('auth.rememberMe') || 'Remember me'"
+                :label="t('auth.rememberMe')"
                 color="primary"
                 dense
               />
@@ -218,7 +218,7 @@ async function handleResetRequest() {
                 flat
                 dense
                 color="primary"
-                :label="t('auth.forgotPassword') || 'Forgot password?'"
+                :label="t('auth.forgotPassword')"
                 class="text-caption"
                 padding="none"
                 @click="handleForgotPassword"
@@ -228,7 +228,7 @@ async function handleResetRequest() {
             <q-btn
               type="submit"
               color="primary"
-              :label="t('auth.signIn') || 'Sign In'"
+              :label="t('auth.signIn')"
               class="full-width"
               size="lg"
               unelevated
@@ -243,7 +243,7 @@ async function handleResetRequest() {
             <div class="q-mt-md">
               <div class="row items-center q-mb-sm">
                 <div class="col"><q-separator /></div>
-                <div class="col-auto q-px-md text-caption text-grey-7">{{ t('auth.orContinueWith') || 'or continue with' }}</div>
+                <div class="col-auto q-px-md text-caption text-grey-7">{{ t('auth.orContinueWith') }}</div>
                 <div class="col"><q-separator /></div>
               </div>
               
@@ -256,7 +256,7 @@ async function handleResetRequest() {
                 :disable="loading"
               >
                 <q-icon name="fab fa-github" size="20px" class="q-mr-sm" />
-                {{ t('auth.signInWithGitHub') || 'Sign in with GitHub' }}
+                {{ t('auth.signInWithGitHub') }}
               </q-btn>
 
               <q-btn
@@ -268,17 +268,17 @@ async function handleResetRequest() {
                 :disable="loading"
               >
                 <q-icon name="bolt" size="20px" class="q-mr-sm" />
-                {{ t('auth.signInWithNetlify') || 'Sign in with Netlify Identity' }}
+                {{ t('auth.signInWithNetlify') }}
               </q-btn>
             </div>
 
             <div class="text-center q-mt-md">
-              <span class="text-caption text-grey-7">{{ t('auth.dontHaveAccount') || "Don't have an account?" }}</span>
+              <span class="text-caption text-grey-7">{{ t('auth.dontHaveAccount') }}</span>
               <q-btn
                 flat
                 dense
                 color="primary"
-                :label="t('auth.signUp') || 'Sign Up'"
+                :label="t('auth.signUp')"
                 class="text-caption"
                 padding="xs"
                 to="/signup"
@@ -293,19 +293,19 @@ async function handleResetRequest() {
       <q-dialog v-model="showForgotDialog">
         <q-card style="min-width: 400px">
           <q-card-section>
-            <div class="text-h6">{{ t('auth.resetPassword') || 'Reset Password' }}</div>
+            <div class="text-h6">{{ t('auth.resetPassword') }}</div>
           </q-card-section>
 
           <q-card-section class="q-pt-none">
             <p class="text-body2 text-grey-7">
-              {{ t('auth.resetInstructions') || 'Enter your email and we\'ll send you instructions to reset your password.' }}
+              {{ t('auth.resetInstructions') }}
             </p>
             <q-input
               v-model="resetEmail"
               outlined
               type="email"
-              :label="t('auth.email') || 'Email'"
-              :placeholder="t('auth.enterEmail') || 'Enter your email'"
+              :label="t('auth.email')"
+              :placeholder="t('auth.enterEmail')"
               :disable="sendingReset"
               autocomplete="email"
             >
@@ -318,14 +318,14 @@ async function handleResetRequest() {
           <q-card-actions align="right">
             <q-btn
               flat
-              :label="t('general.cancel') || 'Cancel'"
+              :label="t('cancel')"
               color="grey-7"
               v-close-popup
               :disable="sendingReset"
             />
             <q-btn
               unelevated
-              :label="t('auth.sendResetLink') || 'Send Reset Link'"
+              :label="t('auth.sendResetLink')"
               color="primary"
               @click="handleResetRequest"
               :loading="sendingReset"

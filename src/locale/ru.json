@@ -27,9 +27,16 @@
     "stop": "Остановить азан"
   },
   "appShell": {
+    "toggleMenu": "Переключить меню",
     "searchPlaceholder": "Поиск…",
     "playAthan": "Воспроизвести азан",
     "stopAthan": "Остановить азан",
+    "pin": "Закрепить",
+    "unpin": "Открепить",
+    "resultType": {
+      "sura": "Коран",
+      "page": "Страница"
+    },
     "nav": {
       "home": "Главная",
       "quran": "Коран",
@@ -110,6 +117,8 @@
         "thinking": "Думает…",
         "responseTitle": "Ответ ИИ",
         "copied": "Ответ скопирован",
+        "noReply": "Ответ не получен.",
+        "requestFailed": "Ошибка запроса DeepSeek. Попробуйте снова.",
         "historyTitle": "История",
         "historyEmpty": "Пока нет предыдущих вопросов.",
         "reuse": "Повторить",
@@ -362,7 +371,16 @@
     "CheckUpdates": "Проверить обновления",
     "Services": "Сервисы",
     "fetchingUpdates": "Получение обновлений",
+    "searching": "Поиск…",
     "languages": "Языки",
+    "languageNames": {
+      "en": "Английский",
+      "ar": "Арабский",
+      "de": "Немецкий",
+      "ru": "Русский",
+      "he": "Иврит",
+      "tr": "Турецкий"
+    },
     "dark": "тёмно",
     "light": "светло",
     "auto": "авто",
