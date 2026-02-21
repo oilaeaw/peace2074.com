@@ -68,10 +68,23 @@ const DEFAULT_LOCALE = 'en'
 
 function getAvailableLocales(): string[] {
   try {
-    return Object.keys((i18n.global as any).messages || {})
+    const globalI18n: any = i18n.global as any
+
+    if (Array.isArray(globalI18n?.availableLocales) && globalI18n.availableLocales.length) {
+      return globalI18n.availableLocales.map((locale: string) => String(locale).toLowerCase())
+    }
+
+    const messages = globalI18n?.messages
+    if (messages && typeof messages === 'object') {
+      const keys = Object.keys(messages)
+      if (keys.length) {
+        return keys.map((locale: string) => String(locale).toLowerCase())
+      }
+    }
   } catch {
-    return [DEFAULT_LOCALE]
+    /* noop */
   }
+  return [DEFAULT_LOCALE]
 }
 
 function normalizeLocale(localeValue: string | null | undefined, availableLocales: string[]): string | null {

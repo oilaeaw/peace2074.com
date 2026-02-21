@@ -111,7 +111,7 @@
           option-value="value"
           emit-value
           map-options
-          v-model="localeValue"
+          v-model="localeModel"
           class="glassy-field"
           style="max-width: 140px; margin-left: 12px"
         />
@@ -237,12 +237,26 @@ const AUTOPLAY_KEY = "pref-autoplay-athan";
 const leftDrawer = ref(readDrawerPreference());
 const search = ref("");
 const { locale, t } = useI18n({ useScope: "global" });
-const localeValue = ref(locale.value);
 const router = useRouter();
 const authStore = useAuthStore();
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const authUser = computed(() => authStore._user);
 const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+
+const localeModel = computed({
+  get: () => locale.value,
+  set: (value: string) => {
+    if (!value) return;
+    const normalized = String(value).trim().toLowerCase().split('-')[0];
+    if (!languageCodes.includes(normalized as (typeof languageCodes)[number])) return;
+    locale.value = normalized;
+    if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
+      try {
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, normalized);
+      } catch {}
+    }
+  },
+});
 
 const langs = computed(() => {
   locale.value;
@@ -288,27 +302,6 @@ const {
 watch(search, (q) => {
   runSearch(q);
   menuOpen.value = !!q && (!!searchResults.value.length || q.length > 0);
-});
-
-watch(localeValue, (v) => {
-  if (!v) return;
-  
-  // Always persist to localStorage when locale changes
-  if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
-    try {
-      window.localStorage.setItem(LOCALE_STORAGE_KEY, v);
-    } catch {}
-  }
-  
-  // Update i18n locale if different
-  if (locale.value !== v) {
-    locale.value = v;
-  }
-});
-
-watch(locale, (v) => {
-  if (!v || localeValue.value === v) return;
-  localeValue.value = v;
 });
 
 watch(

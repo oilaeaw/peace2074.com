@@ -48,7 +48,7 @@
 <script setup lang="ts">
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
-const { locale, t } = useI18n();
+const { locale, t } = useI18n({ useScope: "global" });
 
 const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
 const langs = computed(() => {
@@ -62,6 +62,11 @@ const langs = computed(() => {
 function onLangChange(e: Event) {
   const val = (e.target as HTMLSelectElement).value;
   locale.value = val;
+  if (typeof window !== 'undefined' && window.localStorage) {
+    try {
+      window.localStorage.setItem('app-locale', val)
+    } catch {}
+  }
 }
 </script>
 
