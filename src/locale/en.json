@@ -325,6 +325,19 @@
         }
       }
     },
+    "admin": {
+      "title": "Admin",
+      "subtitle": "Manage releases and version control",
+      "currentVersion": "Current Version",
+      "onlyEven": "Show stable versions only",
+      "refresh": "Refresh",
+      "even": "Stable",
+      "noTitle": "No title",
+      "noVersions": "No versions available",
+      "loading": "Loading versions...",
+      "unknownDate": "Unknown date",
+      "loadFailed": "Failed to load releases"
+    },
     "blog": {
       "title": "Blog",
       "subtitle": "Updates, tips, and reflections.",
@@ -332,7 +345,6 @@
       "notFound": "Post not found",
       "newPost": "New Post",
       "editor": {
-        "title": "Blog Editor",
         "newPost": "New Post",
         "editPost": "Edit Post",
         "authRequired": "You must be logged in to create or edit blog posts.",

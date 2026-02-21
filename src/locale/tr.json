@@ -325,6 +325,19 @@
                 }
             }
         },
+        "admin": {
+            "title": "Yönetim",
+            "subtitle": "Sürümleri ve versiyon kontrolünü yönetin",
+            "currentVersion": "Mevcut Sürüm",
+            "onlyEven": "Sadece kararlı sürümleri göster",
+            "refresh": "Yenile",
+            "even": "Kararlı",
+            "noTitle": "Başlık yok",
+            "noVersions": "Kullanılabilir sürüm yok",
+            "loading": "Sürümler yükleniyor...",
+            "unknownDate": "Bilinmeyen tarih",
+            "loadFailed": "Sürümler yüklenemedi"
+        },
         "blog": {
             "title": "Blog",
             "subtitle": "Güncellemeler, ipuçları ve tefekkürler.",

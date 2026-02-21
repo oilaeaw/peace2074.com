@@ -325,6 +325,19 @@
                 }
             }
         },
+        "admin": {
+            "title": "ניהול",
+            "subtitle": "ניהול גרסאות ובקרת גרסאות",
+            "currentVersion": "גרסה נוכחית",
+            "onlyEven": "הצג רק גרסאות יציבות",
+            "refresh": "רענן",
+            "even": "יציב",
+            "noTitle": "ללא כותרת",
+            "noVersions": "אין גרסאות זמינות",
+            "loading": "טוען גרסאות...",
+            "unknownDate": "תאריך לא ידוע",
+            "loadFailed": "טעינת הגרסאות נכשלה"
+        },
         "blog": {
             "title": "בלוג",
             "subtitle": "עדכונים, טיפים והרהורים.",
@@ -332,10 +345,10 @@
             "notFound": "הפוסט לא נמצא",
             "newPost": "פוסט חדש",
             "editor": {
-                "title": "כותרת",
                 "newPost": "פוסט חדש",
                 "editPost": "עריכת פוסט",
                 "authRequired": "יש להתחבר כדי ליצור או לערוך פוסטים בבלוג.",
+                "title": "כותרת",
                 "titleRequired": "נדרשת כותרת",
                 "slug": "Slug",
                 "slugHint": "מזהה ידידותי ל-URL (למשל: my-post-title)",

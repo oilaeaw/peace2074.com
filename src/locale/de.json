@@ -290,6 +290,19 @@
       "aiTitle": "KI-Unterstützung",
       "aiDesc": "Hilfe von unserem KI-Assistenten erhalten"
     },
+    "admin": {
+      "title": "Administration",
+      "subtitle": "Releases und Versionskontrolle verwalten",
+      "currentVersion": "Aktuelle Version",
+      "onlyEven": "Nur stabile Versionen anzeigen",
+      "refresh": "Aktualisieren",
+      "even": "Stabil",
+      "noTitle": "Kein Titel",
+      "noVersions": "Keine Versionen verfügbar",
+      "loading": "Versionen werden geladen...",
+      "unknownDate": "Unbekanntes Datum",
+      "loadFailed": "Releases konnten nicht geladen werden"
+    },
     "blog": {
       "title": "Blog",
       "subtitle": "Updates, Tipps und Gedanken.",
@@ -297,10 +310,10 @@
       "notFound": "Beitrag nicht gefunden",
       "newPost": "Neuer Beitrag",
       "editor": {
-        "title": "Titel",
         "newPost": "Neuer Beitrag",
         "editPost": "Beitrag bearbeiten",
         "authRequired": "Du musst angemeldet sein, um Blogbeiträge zu erstellen oder zu bearbeiten.",
+        "title": "Titel",
         "titleRequired": "Titel ist erforderlich",
         "slug": "Slug",
         "slugHint": "URL-freundlicher Bezeichner (z. B. mein-beitrag)",
