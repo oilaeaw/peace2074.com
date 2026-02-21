@@ -1,4 +1,6 @@
-import { PrismaClient } from '@prisma/client'
+import prismaPkg from '@prisma/client'
+
+const { PrismaClient } = prismaPkg
 
 type PrismaGlobal = typeof globalThis & {
     __peace2074Prisma?: PrismaClient
