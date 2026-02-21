@@ -1,6 +1,7 @@
-import prismaPkg from '@prisma/client'
+import { createRequire } from 'node:module'
 
-const { PrismaClient } = prismaPkg
+const require = createRequire(import.meta.url)
+const { PrismaClient } = require('@prisma/client') as typeof import('@prisma/client')
 
 type PrismaGlobal = typeof globalThis & {
     __peace2074Prisma?: PrismaClient
