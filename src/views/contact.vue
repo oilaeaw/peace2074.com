@@ -71,7 +71,7 @@ async function submit() {
     // Optionally clear message only
     form.message = ''
   } catch (e: any) {
-    error.value = e?.message || 'Request failed'
+    error.value = e?.message || t('contact.error')
   } finally {
     loading.value = false
   }
@@ -154,7 +154,7 @@ async function submit() {
               <q-btn flat color="primary" :label="t('button.reset')" @click="reset" />
             </div>
             <q-banner v-if="submitted" rounded dense class="q-mt-sm" color="positive" text-color="white">
-              {{ t('general.fetchingUpdates') || 'Message recorded. We will reply soon.' }}
+              {{ t('contact.success') }}
             </q-banner>
             <q-banner v-if="error" rounded dense class="q-mt-sm" color="negative" text-color="white">
               {{ error }}

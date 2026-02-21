@@ -443,7 +443,10 @@
         "projects": {
             "label": "Proje Adı *",
             "placeholder": "Hangi projeden bahsediyorsunuz?"
-        }
+        },
+        "success": "Mesaj kaydedildi. Yakında cevap vereceğiz.",
+        "error": "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
+        "contactTitle": "İletişim Bilgileri"
     },
     "about": {
         "title": "Waelio",

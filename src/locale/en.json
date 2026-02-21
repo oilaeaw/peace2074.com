@@ -443,7 +443,10 @@
     "projects": {
       "label": "Project Name *",
       "placeholder": "What project are you referencing?"
-    }
+    },
+    "success": "Message recorded. We will reply soon.",
+    "error": "Failed to send message. Please try again.",
+    "contactTitle": "Contact Info"
   },
   "about": {
     "title": "Waelio",

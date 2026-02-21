@@ -408,7 +408,10 @@
     "projects": {
       "label": "Projektname *",
       "placeholder": "Auf welches Projekt beziehen Sie sich?"
-    }
+    },
+    "success": "Nachricht aufgezeichnet. Wir antworten bald.",
+    "error": "Nachricht konnte nicht gesendet werden. Bitte versuche es erneut.",
+    "contactTitle": "Kontaktinformationen"
   },
   "navigation": {
     "Profile": "Mein Profil",
