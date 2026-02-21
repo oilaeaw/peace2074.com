@@ -11,7 +11,7 @@
 # Edge caching for better performance
 [functions]
   directory = "netlify/functions"
-  node_bundler = "esbuild"
+  node_bundler = "none"
 
 # Note: Legacy prerendering must be disabled in Netlify dashboard
 # See DISABLE_LEGACY_PRERENDERING.md for instructions
