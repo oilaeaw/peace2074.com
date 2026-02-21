@@ -25,6 +25,10 @@
 # API routes - network first with 12 hour cache
 /api/*
   Cache-Control: public, max-age=43200, stale-while-revalidate=604800
+  X-Robots-Tag: noindex, nofollow, noarchive
+
+/.netlify/*
+  X-Robots-Tag: noindex, nofollow, noarchive
 
 # === ASSET TYPES ===
 

@@ -1,5 +1,13 @@
 User-agent: *
 Allow: /
+Disallow: /api/
+Disallow: /.netlify/
+Disallow: /admin
+Disallow: /blog-editor
+Disallow: /settings
+Disallow: /preferences
+Disallow: /login
+Disallow: /signup
 
 Sitemap: https://peace2074.com/sitemap.xml
 
