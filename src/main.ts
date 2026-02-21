@@ -64,28 +64,67 @@ if (isClient) {
 }
 
 const LOCALE_STORAGE_KEY = 'app-locale'
+const DEFAULT_LOCALE = 'en'
+
+function getAvailableLocales(): string[] {
+  try {
+    return Object.keys((i18n.global as any).messages || {})
+  } catch {
+    return [DEFAULT_LOCALE]
+  }
+}
+
+function normalizeLocale(localeValue: string | null | undefined, availableLocales: string[]): string | null {
+  if (!localeValue) return null
+
+  const normalized = String(localeValue).trim().toLowerCase().replace('_', '-')
+  if (!normalized) return null
+
+  // Legacy language codes used by some browsers
+  const legacyMap: Record<string, string> = {
+    iw: 'he',
+    in: 'id',
+    ji: 'yi',
+  }
+
+  const normalizedBase = normalized.split('-')[0]
+  const mapped = legacyMap[normalizedBase] || normalizedBase
+  return availableLocales.includes(mapped) ? mapped : null
+}
+
+function persistLocale(localeValue: string) {
+  if (!isClient || !localeValue) return
+  try {
+    window.localStorage?.setItem(LOCALE_STORAGE_KEY, localeValue)
+  } catch {
+    /* noop */
+  }
+}
 
 function resolveInitialLocale(): string {
-  if (!isClient) return 'en'
+  if (!isClient) return DEFAULT_LOCALE
   try {
-    const availableLocales = Object.keys((i18n.global as any).messages || {})
+    const availableLocales = getAvailableLocales()
     const persisted = window.localStorage?.getItem(LOCALE_STORAGE_KEY)
-    if (persisted && availableLocales.includes(persisted)) {
-      return persisted
+    const normalizedPersisted = normalizeLocale(persisted, availableLocales)
+    if (normalizedPersisted) {
+      return normalizedPersisted
     }
+
     const preferredList = Array.isArray(window.navigator.languages) && window.navigator.languages.length
       ? window.navigator.languages
       : [window.navigator.language]
+
     for (const lang of preferredList) {
-      const normalized = lang?.toLowerCase()?.split('-')[0]
-      if (normalized && availableLocales.includes(normalized)) {
+      const normalized = normalizeLocale(lang, availableLocales)
+      if (normalized) {
         return normalized
       }
     }
   } catch (e) {
     /* noop */
   }
-  return 'en'
+  return DEFAULT_LOCALE
 }
 
 const targetLocale = resolveInitialLocale()
@@ -99,11 +138,13 @@ try {
 } catch {
   /* noop */
 }
+persistLocale(targetLocale)
 
 function applyDirFromLocale(localeValue: string) {
   if (!isClient) return
-  const rtl = ['ar', 'he'].includes((localeValue || '').split('-')[0].toLowerCase())
-  document.documentElement.setAttribute('lang', (localeValue || 'en').split('-')[0].toLowerCase())
+  const normalizedLocale = (localeValue || DEFAULT_LOCALE).split('-')[0].toLowerCase()
+  const rtl = ['ar', 'he'].includes(normalizedLocale)
+  document.documentElement.setAttribute('lang', normalizedLocale)
   document.documentElement.setAttribute('dir', rtl ? 'rtl' : 'ltr')
   document.body.setAttribute('dir', rtl ? 'rtl' : 'ltr')
 }
@@ -175,6 +216,8 @@ function updateSeoMetaForRoute(to: any) {
 
   upsertMetaTag('name', 'description', description)
   upsertMetaTag('name', 'robots', 'index,follow,max-image-preview:large')
+  upsertMetaTag('name', 'googlebot', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1')
+  upsertMetaTag('name', 'bingbot', 'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1')
   upsertMetaTag('property', 'og:type', 'website')
   upsertMetaTag('property', 'og:site_name', 'PEACE2074')
   upsertMetaTag('property', 'og:title', currentTitle)
@@ -194,17 +237,24 @@ router.afterEach((to) => {
   updateSeoMetaForRoute(to)
 });
 
-updateTitleForRoute(router.currentRoute.value)
-updateSeoMetaForRoute(router.currentRoute.value)
+router.isReady().then(() => {
+  updateTitleForRoute(router.currentRoute.value)
+  updateSeoMetaForRoute(router.currentRoute.value)
+})
 
 // Update title immediately on locale change
 try {
   const localeRef: any = (i18n.global as any).locale;
   if (localeRef && typeof localeRef === 'object' && 'value' in localeRef) {
     watch(localeRef, () => {
+      const normalized = normalizeLocale(localeRef.value, getAvailableLocales()) || DEFAULT_LOCALE
+      if (normalized !== localeRef.value) {
+        localeRef.value = normalized
+      }
+      persistLocale(normalized)
       updateTitleForRoute(router.currentRoute.value);
       updateSeoMetaForRoute(router.currentRoute.value)
-      applyDirFromLocale(localeRef.value)
+      applyDirFromLocale(normalized)
     });
   }
 } catch (e) {

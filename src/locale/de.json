@@ -101,6 +101,7 @@
       "pageTitle": "Der Heilige Koran",
       "loading": "Laden…",
       "verses": "Verse",
+      "invalidSuraRange": "Ungültige Suren-Nummer. Bitte wähle eine Sure zwischen 1 und 114.",
       "apiHint": "Wenn der Inhalt nicht geladen wird, vergewissern Sie sich, dass die Server-API /api/quran läuft.",
       "sura": {
         "name": "Name der Sure",

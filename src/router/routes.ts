@@ -58,6 +58,13 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/quran/:id',
     name: 'QuranDetail',
     component: () => import('@/pages/quran/[id].vue'),
+    beforeEnter: (to) => {
+      const id = Number.parseInt(String(to.params.id), 10)
+      if (!Number.isInteger(id) || id < 1 || id > 114) {
+        return { path: '/quran', query: { invalidSura: '1' }, replace: true }
+      }
+      return true
+    },
     meta: {
       title: 'Quran',
       titleKey: 'pages.quran.detail',

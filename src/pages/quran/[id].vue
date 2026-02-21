@@ -39,6 +39,57 @@ const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
 // Quran verse tree for O(log n) verse lookup
 const quranTree = useQuranTree()
 
+function trackPageView(pageTitle: string) {
+  if (typeof window === 'undefined') return
+  const gtag = (window as any)?.gtag
+  if (typeof gtag !== 'function') return
+  gtag('event', 'page_view', {
+    page_title: pageTitle,
+    page_location: window.location.href,
+    page_path: `${window.location.pathname}${window.location.search}`,
+    content_group: 'quran',
+    sura_id: Number(sura.value?.id || route.params.id || 0),
+    sura_name_en: String(sura.value?.e_name || ''),
+  })
+}
+
+function trackApi5xx(source: string, status: number, url: string) {
+  if (status < 500) return
+  if (typeof window === 'undefined') return
+  const gtag = (window as any)?.gtag
+  if (typeof gtag !== 'function') return
+  gtag('event', 'api_5xx', {
+    source,
+    status,
+    endpoint: url,
+    sura_id: Number(route.params.id || 0),
+    page_path: `${window.location.pathname}${window.location.search}`,
+  })
+}
+
+function buildQuranDetailTitle() {
+  const id = Number(sura.value?.id || route.params.id || 0)
+  const enName = String(sura.value?.e_name || '')
+  const arName = String(sura.value?.name || '')
+  const quranLabel = String(t('pages.quran.title') || 'Quran')
+
+  if (!id || (!enName && !arName)) {
+    return `${String(t('pages.quran.detail') || 'Quran Detail')} | PEACE2074`
+  }
+
+  const names = [enName, arName].filter(Boolean).join(' — ')
+  return `${quranLabel} ${id}: ${names} | PEACE2074`
+}
+
+function applyQuranDetailTitle(sendPageView = false) {
+  if (typeof document === 'undefined') return
+  const title = buildQuranDetailTitle()
+  document.title = title
+  if (sendPageView) {
+    trackPageView(title)
+  }
+}
+
 // Quick access popular verses with unique IDs
 interface QuickAccessVerse {
   id: string // Format: sura_verse (e.g., "2_255")
@@ -331,6 +382,7 @@ async function loadSuraById(id: number) {
     await loadAudioAndTimings(id)
     await nextTick()
     await scrollToHash(route.hash)
+    applyQuranDetailTitle(true)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
     $q.notify({ type: 'negative', message: error.value })
@@ -352,8 +404,10 @@ async function loadAudioAndTimings(id: number) {
   
   try {
     // Fetch verses with audio segments for reciter 7 (Al-Afasy)
-    const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&per_page=300`)
+    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&per_page=300`
+    const res = await fetch(sourceUrl)
     if (!res.ok) {
+      trackApi5xx('quran_com_verses', res.status, sourceUrl)
       console.warn('[Quran Audio] Failed to load from quran.com, falling back to alquran.cloud')
       await loadAudioListFallback(id)
       return
@@ -403,8 +457,12 @@ async function loadAudioAndTimings(id: number) {
  */
 async function loadAudioListFallback(id: number) {
   try {
-    const res = await fetch(`https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`)
-    if (!res.ok) return
+    const sourceUrl = `https://api.alquran.cloud/v1/surah/${id}/ar.alafasy`
+    const res = await fetch(sourceUrl)
+    if (!res.ok) {
+      trackApi5xx('alquran_cloud_fallback', res.status, sourceUrl)
+      return
+    }
     const json = await res.json()
     const ayahs = json?.data?.ayahs || []
     audioList.value = ayahs.map((a: any) => a?.audio).filter(Boolean)
@@ -832,6 +890,11 @@ watch(() => route.params.id, (newId) => {
 watch(() => route.hash, (hash) => {
   if (!hash) return
   scrollToHash(hash)
+})
+
+watch(locale, () => {
+  if (!sura.value) return
+  applyQuranDetailTitle(false)
 })
 
 </script>

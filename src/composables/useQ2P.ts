@@ -14,10 +14,27 @@ let chaptersCache: any[] | null = null
 let quranCache: Record<string, any[]> | null = null
 let localDataPromise: Promise<Sura[]> | null = null
 
+function trackApi5xx(url: string, status: number) {
+    if (status < 500) return
+    if (typeof window === 'undefined') return
+    const gtag = (window as any)?.gtag
+    if (typeof gtag !== 'function') return
+
+    gtag('event', 'api_5xx', {
+        source: 'quran_api',
+        status,
+        endpoint: url,
+        page_path: `${window.location.pathname}${window.location.search}`,
+    })
+}
+
 async function fetchJsonSequential(urls: string[]): Promise<any> {
     for (const url of urls) {
         try {
             const res = await fetch(url)
+            if (!res.ok) {
+                trackApi5xx(url, res.status)
+            }
             if (!res.ok) continue
             const ct = String(res.headers.get('content-type') || '')
             if (!ct.includes('application/json')) continue

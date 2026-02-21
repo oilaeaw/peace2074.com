@@ -149,6 +149,7 @@
       "pageTitle": "The Holy Quran",
       "loading": "Loading…",
       "verses": "verses",
+      "invalidSuraRange": "Invalid surah number. Please choose a surah between 1 and 114.",
       "apiHint": "If content doesn't load, ensure the server API /api/quran is running.",
       "sura": {
         "name": "sura's Name",

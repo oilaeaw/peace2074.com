@@ -2,18 +2,33 @@
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
+import { useRoute, useRouter } from 'vue-router'
 import { useQ2P as useQ2PStore } from '@/stores/q2p.pinia'
 
 const { t } = useI18n()
 const $q = useQuasar()
+const route = useRoute()
+const router = useRouter()
 const store = useQ2PStore()
 const loading = ref(true)
 const error = ref('')
+const invalidSuraNotice = ref(false)
 
 // Reactive list from Pinia store so DevTools shows populated state
 const surahs = computed(() => store.GetQ)
 
 onMounted(async () => {
+  if (route.query.invalidSura === '1') {
+    invalidSuraNotice.value = true
+    $q.notify({
+      type: 'warning',
+      message: t('pages.quran.invalidSuraRange'),
+      timeout: 5000,
+    })
+    const { invalidSura, ...cleanQuery } = route.query
+    await router.replace({ path: route.path, query: cleanQuery })
+  }
+
   try {
     // Populate store from bundled data; API fetch (if any) can be done in detail page
     await store.init(1)
@@ -29,6 +44,18 @@ onMounted(async () => {
 <template>
   <q-page class="q-pa-md">
     <h1 class="text-h4 q-mb-md">{{ t('pages.quran.title') || 'Quran Surahs' }}</h1>
+
+    <q-banner
+      v-if="invalidSuraNotice"
+      inline-actions
+      rounded
+      class="bg-warning text-black q-mb-md"
+    >
+      {{ t('pages.quran.invalidSuraRange') }}
+      <template #action>
+        <q-btn flat dense color="black" :label="t('button.close')" @click="invalidSuraNotice = false" />
+      </template>
+    </q-banner>
     
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>

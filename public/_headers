@@ -13,7 +13,7 @@
   Cache-Control: public, max-age=3600, stale-while-revalidate=86400
 
 # Manifest and metadata
-/manifest.webmanifest /robots.txt /sitemap.xml
+/manifest.webmanifest /robots.txt /sitemap.xml /llms.txt
   Cache-Control: public, max-age=86400
 
 # === API CACHING ===
