@@ -481,3 +481,27 @@ export async function deleteUserBookmark(userId: string, bookmarkId: string): Pr
     await saveFallbackUsers(users)
     return true
 }
+
+export async function getUserStorageDiagnostics(): Promise<{
+    source: 'prisma' | 'fallback'
+    usersCount: number
+    prismaReachable: boolean
+}> {
+    const prismaReachable = await isPrismaReady()
+
+    if (prismaReachable) {
+        const usersCount = await prisma.user.count()
+        return {
+            source: 'prisma',
+            usersCount,
+            prismaReachable: true,
+        }
+    }
+
+    const users = await loadFallbackUsers()
+    return {
+        source: 'fallback',
+        usersCount: users.length,
+        prismaReachable: false,
+    }
+}
