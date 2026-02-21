@@ -4,14 +4,16 @@
 
 [build]
   # Build frontend, then Nitro API, then rename entry point for Netlify detection
-  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && cp netlify/functions/server/main.mjs netlify/functions/server/server.mjs"
+  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && bash scripts/netlify-prisma-setup.sh && cp netlify/functions/server/main.mjs netlify/functions/server/server.mjs"
   publish = "dist"
   functions = "netlify/functions"
 
 # Edge caching for better performance
 [functions]
   directory = "netlify/functions"
-  node_bundler = "none"
+  node_bundler = "esbuild"
+  # external_node_modules is respected by esbuild bundler
+  external_node_modules = ["@prisma/client", ".prisma/client"]
 
 # Note: Legacy prerendering must be disabled in Netlify dashboard
 # See DISABLE_LEGACY_PRERENDERING.md for instructions
