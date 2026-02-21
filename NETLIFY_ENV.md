@@ -4,6 +4,10 @@ Set these in Netlify Dashboard → Site Settings → Environment Variables
 
 ## Required for Production
 
+### Database (Prisma)
+
+- `DATABASE_URL` - MongoDB connection string used by Prisma (e.g. `mongodb+srv://...`)
+
 ### Authentication
 
 - `AUTH_SECRET` - Random secret (32+ chars). Generate: `openssl rand -base64 32`
@@ -53,6 +57,7 @@ Set these in Netlify Dashboard → Site Settings → Environment Variables
 - `ENABLE_BLOG_NOTIFICATIONS` - Set to `true` to auto-notify users of new blog posts (optional)
 
 **How to generate VAPID keys:**
+
 ```bash
 node scripts/generate-vapid-keys.mjs
 ```

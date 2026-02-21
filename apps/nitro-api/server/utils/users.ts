@@ -44,6 +44,9 @@ const DEFAULT_USERS: User[] = [
 
 const USERS_KEY = 'db:users'
 let initPromise: Promise<void> | null = null
+let memoryUsers: User[] | null = null
+let prismaMode: 'unknown' | 'on' | 'off' = 'unknown'
+let prismaFailureLogged = false
 
 function repairUsers(users: User[]) {
     if (!Array.isArray(users) || !users.length) return { users, changed: false }
@@ -61,6 +64,54 @@ function repairUsers(users: User[]) {
     })
 
     return { users: repaired, changed }
+}
+
+async function loadFallbackUsers(): Promise<User[]> {
+    if (memoryUsers && memoryUsers.length > 0) {
+        const repaired = repairUsers(memoryUsers)
+        if (repaired.changed) {
+            memoryUsers = repaired.users
+        }
+        return memoryUsers
+    }
+
+    try {
+        const storage = useStorage('data')
+        const existing = await storage.getItem<User[]>(USERS_KEY)
+        if (Array.isArray(existing) && existing.length > 0) {
+            const repaired = repairUsers(existing.map(normalizeUser))
+            memoryUsers = repaired.users
+            if (repaired.changed) {
+                try {
+                    await storage.setItem(USERS_KEY, memoryUsers)
+                } catch {
+                    /* noop - in-memory fallback only */
+                }
+            }
+            return memoryUsers
+        }
+
+        memoryUsers = [...DEFAULT_USERS]
+        try {
+            await storage.setItem(USERS_KEY, memoryUsers)
+        } catch {
+            /* noop - in-memory fallback only */
+        }
+        return memoryUsers
+    } catch {
+        memoryUsers = [...DEFAULT_USERS]
+        return memoryUsers
+    }
+}
+
+async function saveFallbackUsers(users: User[]) {
+    memoryUsers = users
+    try {
+        const storage = useStorage('data')
+        await storage.setItem(USERS_KEY, users)
+    } catch {
+        /* noop - in-memory fallback only */
+    }
 }
 
 function toAppUser(user: any): User {
@@ -176,77 +227,130 @@ async function ensureInitialized() {
     if (initPromise) return initPromise
 
     initPromise = (async () => {
-        const count = await prisma.user.count()
-        if (count > 0) {
-            await repairExistingPasswords()
-            return
-        }
-
-        const legacyUsers = await readLegacyUsers()
-        const merged = repairUsers([...legacyUsers, ...DEFAULT_USERS]).users
-
-        const deduped = new Map<string, User>()
-        for (const user of merged) {
-            const normalized = normalizeUser(user)
-            if (!normalized.id || !normalized.username || !normalized.email) continue
-            if (!deduped.has(normalized.id)) {
-                deduped.set(normalized.id, normalized)
+        try {
+            const count = await prisma.user.count()
+            if (count > 0) {
+                await repairExistingPasswords()
+                return
             }
-        }
 
-        for (const user of deduped.values()) {
-            await upsertByIdentity(user)
+            const legacyUsers = await readLegacyUsers()
+            const merged = repairUsers([...legacyUsers, ...DEFAULT_USERS]).users
+
+            const deduped = new Map<string, User>()
+            for (const user of merged) {
+                const normalized = normalizeUser(user)
+                if (!normalized.id || !normalized.username || !normalized.email) continue
+                if (!deduped.has(normalized.id)) {
+                    deduped.set(normalized.id, normalized)
+                }
+            }
+
+            for (const user of deduped.values()) {
+                await upsertByIdentity(user)
+            }
+        } catch (error) {
+            initPromise = null
+            throw error
         }
     })()
 
     return initPromise
 }
 
+async function isPrismaReady() {
+    if (prismaMode === 'off') return false
+    if (prismaMode === 'on') return true
+
+    try {
+        await ensureInitialized()
+        prismaMode = 'on'
+        return true
+    } catch (error) {
+        prismaMode = 'off'
+        if (!prismaFailureLogged) {
+            prismaFailureLogged = true
+            console.warn('[users] Prisma unavailable, falling back to Nitro storage:', error)
+        }
+        return false
+    }
+}
+
 export async function findUserByUsername(username: string) {
-    await ensureInitialized()
-    const user = await prisma.user.findUnique({ where: { username } })
-    return user ? toAppUser(user) : undefined
+    if (await isPrismaReady()) {
+        const user = await prisma.user.findUnique({ where: { username } })
+        return user ? toAppUser(user) : undefined
+    }
+
+    const users = await loadFallbackUsers()
+    return users.find((u) => u.username === username)
 }
 
 export async function findUserByEmail(email: string) {
-    await ensureInitialized()
-    const user = await prisma.user.findUnique({ where: { email } })
-    return user ? toAppUser(user) : undefined
+    if (await isPrismaReady()) {
+        const user = await prisma.user.findUnique({ where: { email } })
+        return user ? toAppUser(user) : undefined
+    }
+
+    const users = await loadFallbackUsers()
+    return users.find((u) => u.email === email)
 }
 
 export async function findUserById(id: string) {
-    await ensureInitialized()
-    const user = await prisma.user.findUnique({ where: { id } })
-    return user ? toAppUser(user) : undefined
+    if (await isPrismaReady()) {
+        const user = await prisma.user.findUnique({ where: { id } })
+        return user ? toAppUser(user) : undefined
+    }
+
+    const users = await loadFallbackUsers()
+    return users.find((u) => u.id === id)
 }
 
 export async function updateUserPassword(userId: string, newPassword: string) {
-    await ensureInitialized()
-    const user = await prisma.user.findUnique({ where: { id: userId } })
+    if (await isPrismaReady()) {
+        const user = await prisma.user.findUnique({ where: { id: userId } })
+        if (!user) return false
+        await prisma.user.update({ where: { id: userId }, data: { password: newPassword } })
+        return true
+    }
+
+    const users = await loadFallbackUsers()
+    const user = users.find((u) => u.id === userId)
     if (!user) return false
-    await prisma.user.update({ where: { id: userId }, data: { password: newPassword } })
+    user.password = newPassword
+    await saveFallbackUsers(users)
     return true
 }
 
 export async function addUser(user: User) {
-    await ensureInitialized()
     const normalized = normalizeUser(user)
 
-    await prisma.user.create({
-        data: {
-            id: normalized.id,
-            username: normalized.username,
-            password: normalized.password,
-            email: normalized.email,
-            role: normalized.role,
-            first_name: normalized.first_name || null,
-            last_name: normalized.last_name || null,
-            tasbeeh: normalized.tasbeeh || [],
-            bookmarks: normalized.bookmarks || [],
-            avatar_url: normalized.avatar_url || null,
-            github_id: normalized.github_id || null,
-        },
+    if (await isPrismaReady()) {
+        await prisma.user.create({
+            data: {
+                id: normalized.id,
+                username: normalized.username,
+                password: normalized.password,
+                email: normalized.email,
+                role: normalized.role,
+                first_name: normalized.first_name || null,
+                last_name: normalized.last_name || null,
+                tasbeeh: normalized.tasbeeh || [],
+                bookmarks: normalized.bookmarks || [],
+                avatar_url: normalized.avatar_url || null,
+                github_id: normalized.github_id || null,
+            },
+        })
+        return
+    }
+
+    const users = await loadFallbackUsers()
+    users.push({
+        ...normalized,
+        tasbeeh: normalized.tasbeeh || [],
+        bookmarks: normalized.bookmarks || [],
     })
+    await saveFallbackUsers(users)
 }
 
 export async function getUserTasbeeh(userId: string): Promise<TasbeehRecord[]> {
@@ -255,7 +359,6 @@ export async function getUserTasbeeh(userId: string): Promise<TasbeehRecord[]> {
 }
 
 export async function updateUserTasbeeh(userId: string, record: TasbeehRecord): Promise<boolean> {
-    await ensureInitialized()
     const user = await findUserById(userId)
     if (!user) {
         return false
@@ -274,10 +377,19 @@ export async function updateUserTasbeeh(userId: string, record: TasbeehRecord): 
         tasbeeh.splice(0, tasbeeh.length - 30)
     }
 
-    await prisma.user.update({
-        where: { id: userId },
-        data: { tasbeeh },
-    })
+    if (await isPrismaReady()) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { tasbeeh },
+        })
+        return true
+    }
+
+    const users = await loadFallbackUsers()
+    const fallbackUser = users.find((u) => u.id === userId)
+    if (!fallbackUser) return false
+    fallbackUser.tasbeeh = tasbeeh
+    await saveFallbackUsers(users)
     return true
 }
 
@@ -287,7 +399,6 @@ export async function getUserBookmarks(userId: string): Promise<Bookmark[]> {
 }
 
 export async function createUserBookmark(userId: string, bookmark: string): Promise<Bookmark | null> {
-    await ensureInitialized()
     const user = await findUserById(userId)
     if (!user) return null
 
@@ -302,15 +413,24 @@ export async function createUserBookmark(userId: string, bookmark: string): Prom
         createdAt: new Date().toISOString(),
     }
     bookmarks.push(newBookmark)
-    await prisma.user.update({
-        where: { id: userId },
-        data: { bookmarks },
-    })
+
+    if (await isPrismaReady()) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { bookmarks },
+        })
+        return newBookmark
+    }
+
+    const users = await loadFallbackUsers()
+    const fallbackUser = users.find((u) => u.id === userId)
+    if (!fallbackUser) return null
+    fallbackUser.bookmarks = bookmarks
+    await saveFallbackUsers(users)
     return newBookmark
 }
 
 export async function updateUserBookmark(userId: string, bookmarkId: string, newBookmark: string): Promise<Bookmark | null> {
-    await ensureInitialized()
     const user = await findUserById(userId)
     if (!user || !user.bookmarks) return null
 
@@ -319,15 +439,24 @@ export async function updateUserBookmark(userId: string, bookmarkId: string, new
     if (!bm) return null
 
     bm.bookmark = newBookmark
-    await prisma.user.update({
-        where: { id: userId },
-        data: { bookmarks },
-    })
+
+    if (await isPrismaReady()) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { bookmarks },
+        })
+        return bm
+    }
+
+    const users = await loadFallbackUsers()
+    const fallbackUser = users.find((u) => u.id === userId)
+    if (!fallbackUser) return null
+    fallbackUser.bookmarks = bookmarks
+    await saveFallbackUsers(users)
     return bm
 }
 
 export async function deleteUserBookmark(userId: string, bookmarkId: string): Promise<boolean> {
-    await ensureInitialized()
     const user = await findUserById(userId)
     if (!user || !user.bookmarks) return false
 
@@ -336,9 +465,19 @@ export async function deleteUserBookmark(userId: string, bookmarkId: string): Pr
     if (index === -1) return false
 
     bookmarks.splice(index, 1)
-    await prisma.user.update({
-        where: { id: userId },
-        data: { bookmarks },
-    })
+
+    if (await isPrismaReady()) {
+        await prisma.user.update({
+            where: { id: userId },
+            data: { bookmarks },
+        })
+        return true
+    }
+
+    const users = await loadFallbackUsers()
+    const fallbackUser = users.find((u) => u.id === userId)
+    if (!fallbackUser) return false
+    fallbackUser.bookmarks = bookmarks
+    await saveFallbackUsers(users)
     return true
 }
