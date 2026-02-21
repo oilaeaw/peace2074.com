@@ -4,7 +4,7 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "pnpm exec nitro dev -p 3000",
+        "dev": "pnpm exec dotenv -e ../../.env -- pnpm exec nitro dev -p 3000",
         "build": "pnpm exec nitro build",
         "preview": "pnpm exec nitro preview -p 3000",
         "postinstall": "pnpm exec prisma generate --schema ./prisma/schema.prisma",
