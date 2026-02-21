@@ -11,6 +11,8 @@ export default defineEventHandler((event) => {
         "http://127.0.0.1:3000",
         "https://peace2074.com",
         "https://www.peace2074.com",
+        "https://waelio.com",
+        "https://www.waelio.com",
     ];
 
     const origin = event.node.req.headers.origin;
