@@ -1,7 +1,7 @@
 import fs from 'node:fs';
 import path from 'node:path';
 
-const LOCALES = ['en', 'ar', 'de', 'ru', 'he'] as const;
+const LOCALES = ['en', 'ar', 'de', 'ru', 'he', 'tr'] as const;
 type Locale = (typeof LOCALES)[number];
 const BASE: Locale = 'en';
 const LOCALE_DIR = path.join('src', 'locale');

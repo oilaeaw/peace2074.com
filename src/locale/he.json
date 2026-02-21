@@ -254,9 +254,12 @@
                 "desc": "קבל עדכונים כשמגיע תוכן חדש.",
                 "enable": "הפעל התראות",
                 "enableHint": "נבקש רשות לפני שליחת משהו.",
+                "enabled": "התראות Push הופעלו!",
                 "unavailable": "התראות אינן נתמכות במכשיר/דפדפן זה.",
                 "denied": "התראות חסומות. אנא אפשר אותן בהגדרות הדפדפן.",
-                "error": "לא ניתן היה להפעיל התראות כעת."
+                "error": "לא ניתן היה להפעיל התראות כעת.",
+                "testTitle": "התראות הופעלו",
+                "testBody": "מעכשיו תקבל עדכונים מ-Peace2074"
             },
             "audio": {
                 "title": "אודיו",
@@ -317,7 +320,36 @@
             "title": "בלוג",
             "subtitle": "עדכונים, טיפים והרהורים.",
             "empty": "עדיין אין פוסטים.",
-            "notFound": "הפוסט לא נמצא"
+            "notFound": "הפוסט לא נמצא",
+            "newPost": "פוסט חדש",
+            "editor": {
+                "title": "כותרת",
+                "newPost": "פוסט חדש",
+                "editPost": "עריכת פוסט",
+                "authRequired": "יש להתחבר כדי ליצור או לערוך פוסטים בבלוג.",
+                "titleRequired": "נדרשת כותרת",
+                "slug": "Slug",
+                "slugHint": "מזהה ידידותי ל-URL (למשל: my-post-title)",
+                "slugRequired": "נדרש Slug",
+                "excerpt": "תקציר",
+                "content": "תוכן",
+                "contentRequired": "נדרש תוכן",
+                "tags": "תגיות",
+                "tagsHint": "תגיות מופרדות בפסיקים",
+                "publish": "פרסום",
+                "update": "עדכון",
+                "delete": "מחיקה",
+                "confirmDelete": "למחוק את הפוסט?",
+                "confirmDeleteMessage": "לא ניתן לבטל פעולה זו.",
+                "publishSuccess": "הפוסט פורסם בהצלחה!",
+                "updateSuccess": "הפוסט עודכן בהצלחה!",
+                "deleteSuccess": "הפוסט נמחק בהצלחה!",
+                "saveError": "שמירת הפוסט נכשלה",
+                "deleteError": "מחיקת הפוסט נכשלה",
+                "loadError": "טעינת הפוסט נכשלה",
+                "postNotFound": "הפוסט לא נמצא",
+                "fillRequired": "נא למלא את כל השדות הנדרשים"
+            }
         }
     },
     "general": {
@@ -470,6 +502,7 @@
     "passwords_do_not_match": "הסיסמאות אינן תואמות",
     "confirm_password": "אישור סיסמה",
     "cancel": "ביטול",
+    "edit": "עריכה",
     "login_success": "התחברת בהצלחה",
     "please_accept_terms": "יש לאשר את התנאים וההתניות שלנו.",
     "email": "אימייל",

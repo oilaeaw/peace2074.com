@@ -29,6 +29,7 @@
               <option value="ar">العربية</option>
               <option value="de">Deutsch</option>
               <option value="ru">Русский</option>
+              <option value="tr">Türkçe</option>
             </select>
           </div>
         </nav>

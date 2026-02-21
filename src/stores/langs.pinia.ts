@@ -20,6 +20,10 @@ export const useMyLangsStore = defineStore({
         code: 'ru',
         name: 'Русский',
       },
+      {
+        code: 'tr',
+        name: 'Türkçe',
+      },
     ],
     locale: '',
   }),

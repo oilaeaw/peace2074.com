@@ -247,6 +247,7 @@ const langs = [
   { label: "Deutsch", value: "de" },
   { label: "Русский", value: "ru" },
   { label: "עברית", value: "he" },
+  { label: "Türkçe", value: "tr" },
 ];
 
 const defaultNavItems = [

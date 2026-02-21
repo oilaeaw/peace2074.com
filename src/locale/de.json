@@ -93,6 +93,7 @@
       "pause": "Pause",
       "restart": "Vers neu starten",
       "restartSura": "Von Anfang neu starten",
+      "scrollToTop": "Nach oben scrollen",
       "audioRecitation": "Audio-Rezitation",
       "nativeReader": "Nativer Leser (TTS)",
       "ttsNotSupported": "Text-zu-Sprache wird in diesem Browser nicht unterstützt",
@@ -161,9 +162,12 @@
         "desc": "Bleibe informiert, wenn neue Inhalte erscheinen.",
         "enable": "Benachrichtigungen aktivieren",
         "enableHint": "Wir fragen vorher um Erlaubnis.",
+        "enabled": "Push-Benachrichtigungen aktiviert!",
         "unavailable": "Benachrichtigungen werden auf diesem Gerät/Browser nicht unterstützt.",
         "denied": "Benachrichtigungen sind blockiert. Bitte erlaube sie in den Browsereinstellungen.",
-        "error": "Benachrichtigungen konnten momentan nicht aktiviert werden."
+        "error": "Benachrichtigungen konnten momentan nicht aktiviert werden.",
+        "testTitle": "Benachrichtigungen aktiviert",
+        "testBody": "Du erhältst jetzt Updates von Peace2074"
       },
       "audio": {
         "title": "Audio",
@@ -281,7 +285,36 @@
       "title": "Blog",
       "subtitle": "Updates, Tipps und Gedanken.",
       "empty": "Noch keine Beiträge.",
-      "notFound": "Beitrag nicht gefunden"
+      "notFound": "Beitrag nicht gefunden",
+      "newPost": "Neuer Beitrag",
+      "editor": {
+        "title": "Titel",
+        "newPost": "Neuer Beitrag",
+        "editPost": "Beitrag bearbeiten",
+        "authRequired": "Du musst angemeldet sein, um Blogbeiträge zu erstellen oder zu bearbeiten.",
+        "titleRequired": "Titel ist erforderlich",
+        "slug": "Slug",
+        "slugHint": "URL-freundlicher Bezeichner (z. B. mein-beitrag)",
+        "slugRequired": "Slug ist erforderlich",
+        "excerpt": "Auszug",
+        "content": "Inhalt",
+        "contentRequired": "Inhalt ist erforderlich",
+        "tags": "Tags",
+        "tagsHint": "Kommagetrennte Tags",
+        "publish": "Veröffentlichen",
+        "update": "Aktualisieren",
+        "delete": "Löschen",
+        "confirmDelete": "Beitrag löschen?",
+        "confirmDeleteMessage": "Diese Aktion kann nicht rückgängig gemacht werden.",
+        "publishSuccess": "Beitrag erfolgreich veröffentlicht!",
+        "updateSuccess": "Beitrag erfolgreich aktualisiert!",
+        "deleteSuccess": "Beitrag erfolgreich gelöscht!",
+        "saveError": "Beitrag konnte nicht gespeichert werden",
+        "deleteError": "Beitrag konnte nicht gelöscht werden",
+        "loadError": "Beitrag konnte nicht geladen werden",
+        "postNotFound": "Beitrag nicht gefunden",
+        "fillRequired": "Bitte fülle alle Pflichtfelder aus"
+      }
     }
   },
   "general": {
@@ -469,6 +502,7 @@
   "passwords_do_not_match": "Passwörter stimmen nicht überein",
   "confirm_password": "Passwort bestätigen",
   "cancel": "Abbrechen",
+  "edit": "Bearbeiten",
   "login_success": "Erfolgreich angemeldet",
   "please_accept_terms": "Akzeptieren Sie unsere Allgemeinen Geschäftsbedingungen.",
   "email": "E-Mail",
