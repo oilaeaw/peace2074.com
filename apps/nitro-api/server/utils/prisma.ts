@@ -2,6 +2,11 @@ let _prisma: any = undefined
 let _prismaAttempted = false
 
 export async function getPrisma() {
+    // Skip Prisma entirely in Netlify Functions runtime
+    if (process.env.NETLIFY || process.env.NETLIFY_BUILD) {
+        return null
+    }
+
     if (_prismaAttempted) {
         return _prisma
     }
