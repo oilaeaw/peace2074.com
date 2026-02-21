@@ -1,6 +1,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { createSession, requireSecrets } from '../../utils/auth'
-import { findUserByUsername } from '../../utils/users'
+import { findUserByUsername, updateUserPassword } from '../../utils/users'
+import { verifyPassword, hashPassword, isPasswordHashed } from '../../utils/password'
 
 export default defineEventHandler(async (event) => {
     try {
@@ -19,11 +20,27 @@ export default defineEventHandler(async (event) => {
         requireSecrets({ needPasscode: false })
 
         const user = await findUserByUsername(username)
-        if (!user || user.password !== password) {
+        if (!user) {
             throw createError({
                 statusCode: 401,
                 statusMessage: 'Invalid username or password'
             })
+        }
+
+        // Verify password using secure comparison
+        const isValid = await verifyPassword(password, user.password)
+        if (!isValid) {
+            throw createError({
+                statusCode: 401,
+                statusMessage: 'Invalid username or password'
+            })
+        }
+
+        // Auto-migrate plain text passwords to hashed on successful login
+        if (!isPasswordHashed(user.password)) {
+            const hashedPassword = await hashPassword(password)
+            await updateUserPassword(user.id, hashedPassword)
+            console.log(`[auth/login] Migrated password to hashed format for user: ${username}`)
         }
 
         const sessionUser = {

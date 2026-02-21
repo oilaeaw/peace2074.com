@@ -284,6 +284,15 @@ async function isPrismaReady() {
     }
 }
 
+export async function getAllUsers(): Promise<User[]> {
+    if (await isPrismaReady()) {
+        const users = await prisma.user.findMany()
+        return users.map(toAppUser)
+    }
+
+    return await loadFallbackUsers()
+}
+
 export async function findUserByUsername(username: string) {
     if (await isPrismaReady()) {
         const user = await prisma.user.findUnique({ where: { username } })

@@ -1,6 +1,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { readSession } from '../../utils/auth'
 import { findUserById, updateUserPassword } from '../../utils/users'
+import { verifyPassword, hashPassword } from '../../utils/password'
 
 export default defineEventHandler(async (event) => {
     // Check if user is authenticated
@@ -53,16 +54,20 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // Verify current password
-    if (currentPassword !== user.password) {
+    // Verify current password using secure comparison
+    const isValid = await verifyPassword(currentPassword, user.password)
+    if (!isValid) {
         throw createError({
             statusCode: 401,
             statusMessage: 'Current password is incorrect'
         })
     }
 
+    // Hash new password
+    const hashedPassword = await hashPassword(newPassword)
+
     // Update password
-    await updateUserPassword(user.id, newPassword)
+    await updateUserPassword(user.id, hashedPassword)
 
     return {
         ok: true,

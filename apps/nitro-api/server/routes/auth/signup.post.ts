@@ -1,5 +1,6 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { addUser, findUserByEmail, findUserByUsername } from '../../utils/users'
+import { hashPassword } from '../../utils/password'
 
 export default defineEventHandler(async (event) => {
     const body = await readBody<{
@@ -43,12 +44,15 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    // Hash password securely
+    const hashedPassword = await hashPassword(password)
+
     // Create new user
     const newUser = {
         id: `user_${Date.now()}`,
         username,
         email,
-        password, // In production: await bcrypt.hash(password, 10)
+        password: hashedPassword,
         role: 'user',
         first_name: username,
         last_name: ''

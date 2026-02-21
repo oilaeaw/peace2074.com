@@ -21,4 +21,6 @@ model User {
   github_id  String?
   createdAt  DateTime @default(now())
   updatedAt  DateTime @updatedAt
+
+  @@map("User")
 }
