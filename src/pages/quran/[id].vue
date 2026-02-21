@@ -248,21 +248,28 @@ function removeBookmark(entry: BookmarkEntry) {
 function buildVerseShareUrl(entry: BookmarkEntry) {
   const suraId = Number(entry.suraId || currentSuraId.value)
   const verse = Number(entry.verse || 1)
-  if (!suraId || !verse) return ''
-  const path = `/quran/${suraId}:${verse}`
-  if (typeof window === 'undefined') return path
-  return `${window.location.origin}${path}`
+  return buildVerseShareUrlFromParts(suraId, verse)
 }
 
-async function shareBookmark(entry: BookmarkEntry) {
-  const url = buildVerseShareUrl(entry)
+function buildVerseShareUrlFromParts(suraId: number, verse: number) {
+  if (!suraId || !verse) return ''
+  const path = `/quran/${suraId}:${verse}`
+  const env = (import.meta as any)?.env || {}
+  const configuredSite = String(env.VITE_SITE_URL || '').trim()
+  const i18nSite = String(t('general.SiteDomain') || '').trim()
+  const base = (configuredSite || i18nSite || 'https://peace2074.com').replace(/\/$/, '')
+  return `${base}${path}`
+}
+
+async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:${verse}`) {
+  const url = buildVerseShareUrlFromParts(suraId, verse)
   if (!url) return
 
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       await navigator.share({
-        title: `Quran ${entry.label}`,
-        text: `Quran ${entry.label}`,
+        title: `Quran ${label}`,
+        text: `Quran ${label}`,
         url,
       })
       return
@@ -274,7 +281,7 @@ async function shareBookmark(entry: BookmarkEntry) {
   try {
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(url)
-      $q.notify({ type: 'positive', message: `Link copied: ${entry.label}` })
+      $q.notify({ type: 'positive', message: `Link copied: ${label}` })
       return
     }
   } catch {
@@ -282,6 +289,19 @@ async function shareBookmark(entry: BookmarkEntry) {
   }
 
   $q.notify({ type: 'info', message: url })
+}
+
+async function shareBookmark(entry: BookmarkEntry) {
+  const suraId = Number(entry.suraId || currentSuraId.value)
+  const verse = Number(entry.verse || 1)
+  await shareVerseLink(suraId, verse, entry.label)
+}
+
+async function shareHoverVerse() {
+  const verse = Number(hoverWidgetVerse.value || 0)
+  const suraId = Number(currentSuraId.value || 0)
+  if (!suraId || !verse) return
+  await shareVerseLink(suraId, verse, `${suraId}:${verse}`)
 }
 
 async function handleBookmarkNavigate(entry: BookmarkEntry) {
@@ -1361,6 +1381,14 @@ watch(locale, () => {
                 color="accent"
                 @click="restartSura"
                 :title="t('pages.quran.restartSura') || 'Restart sura'"
+              />
+              <q-btn
+                round
+                dense
+                icon="share"
+                color="teal"
+                @click="shareHoverVerse"
+                :title="`Share ${currentSuraId}:${hoverWidgetVerse}`"
               />
               <q-btn
                 round

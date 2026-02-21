@@ -1,12 +1,1 @@
-[
-    {
-        "id": "waelio",
-        "username": "waelio",
-        "password": "123456789",
-        "email": "wael@peace2074.com",
-        "role": "admin",
-        "first_name": "Wael",
-        "last_name": "Admin",
-        "tasbeeh": []
-    }
-]
+[{"id":"waelio","username":"waelio","password":"123456789","email":"wael@peace2074.com","role":"admin","first_name":"Wael","last_name":"Admin","tasbeeh":[],"bookmarks":[{"_id":"bm_1771678652922_pxnapp","bookmark":"67_28","createdAt":"2026-02-21T12:57:32.922Z"},{"_id":"bm_1771678652931_nlzudn","bookmark":"14_8","createdAt":"2026-02-21T12:57:32.931Z"}]}]
