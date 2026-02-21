@@ -1,7 +1,10 @@
 // Prisma-backed user storage.
 // Performs one-time sync from legacy Nitro KV storage (db:users) when DB is empty.
 
-import { prisma } from './prisma'
+import { getPrisma } from './prisma'
+
+// Cached Prisma client after successful initialization
+let prisma: any = null
 
 export interface TasbeehRecord {
     date: string
@@ -260,14 +263,19 @@ async function ensureInitialized() {
 
 async function isPrismaReady() {
     if (prismaMode === 'off') return false
-    if (prismaMode === 'on') return true
+    if (prismaMode === 'on' && prisma) return true
 
     try {
+        prisma = await getPrisma()
+        if (!prisma) {
+            throw new Error('Prisma client not available')
+        }
         await ensureInitialized()
         prismaMode = 'on'
         return true
     } catch (error) {
         prismaMode = 'off'
+        prisma = null
         if (!prismaFailureLogged) {
             prismaFailureLogged = true
             console.warn('[users] Prisma unavailable, falling back to Nitro storage:', error)
