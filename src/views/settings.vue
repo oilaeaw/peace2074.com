@@ -10,6 +10,8 @@ const MOTION_KEY = "pref-reduce-motion";
 const AUTOPLAY_KEY = "pref-autoplay-athan";
 const NOTIFICATIONS_KEY = "pref-enable-notifications";
 const DARK_MODE_KEY = "pref-dark-mode";
+const FONT_SIZE_KEY = "pref-font-size";
+const HIGH_CONTRAST_KEY = "pref-high-contrast";
 
 const { t } = useI18n();
 const $q = useQuasar();
@@ -21,6 +23,8 @@ const compactLayout = ref(readCompactPreference());
 const reduceMotion = ref(readReduceMotionPreference());
 const autoPlayAthan = ref(readAutoplayAthanPreference());
 const darkMode = ref(readDarkModePreference());
+const fontSize = ref(readFontSizePreference());
+const highContrast = ref(readHighContrastPreference());
 
 watch(navOrderingEnabled, (val) => {
   persistNavOrdering(val);
@@ -52,6 +56,16 @@ watch(darkMode, (val) => {
   persistDarkModePreference(val);
 });
 
+watch(fontSize, (val) => {
+  persistFontSizePreference(val);
+  applyFontSize(val);
+});
+
+watch(highContrast, (val) => {
+  persistHighContrastPreference(val);
+  applyHighContrast(val);
+});
+
 watch(enableNotifications, async (val) => {
   if (val) {
     const ok = await activateNotifications();
@@ -68,6 +82,9 @@ watch(enableNotifications, async (val) => {
 });
 
 onMounted(async () => {
+  applyFontSize(fontSize.value);
+  applyHighContrast(highContrast.value);
+  
   if (!enableNotifications.value) return;
   const ok = await activateNotifications();
   persistNotificationsPreference(ok);
@@ -198,6 +215,46 @@ function readDarkModePreference(): boolean {
 function persistDarkModePreference(val: boolean) {
   if (typeof window === "undefined") return;
   window.localStorage.setItem(DARK_MODE_KEY, String(val));
+}
+
+function readFontSizePreference(): number {
+  if (typeof window === "undefined") return 1;
+  const stored = window.localStorage.getItem(FONT_SIZE_KEY);
+  return stored ? parseInt(stored, 10) : 1;
+}
+
+function persistFontSizePreference(val: number) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(FONT_SIZE_KEY, String(val));
+}
+
+function applyFontSize(size: number) {
+  if (typeof document === "undefined") return;
+  const sizes = ["small", "medium", "large", "xlarge"];
+  const root = document.documentElement;
+  root.classList.remove("font-small", "font-medium", "font-large", "font-xlarge");
+  root.classList.add(`font-${sizes[size]}`)
+}
+
+function readHighContrastPreference(): boolean {
+  if (typeof window === "undefined") return false;
+  const stored = window.localStorage.getItem(HIGH_CONTRAST_KEY);
+  return stored === "true";
+}
+
+function persistHighContrastPreference(val: boolean) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(HIGH_CONTRAST_KEY, String(val));
+}
+
+function applyHighContrast(enabled: boolean) {
+  if (typeof document === "undefined") return;
+  const root = document.documentElement;
+  if (enabled) {
+    root.classList.add("high-contrast");
+  } else {
+    root.classList.remove("high-contrast");
+  }
 }
 
 async function ensureNotificationsPermission(): Promise<boolean> {
@@ -564,6 +621,53 @@ async function reloadApp() {
                 v-model="darkMode"
                 color="primary"
                 :aria-label="t('pages.settings.display.darkMode')"
+              />
+            </div>
+          </q-card-section>
+        </q-card>
+
+        <q-card class="glassy-card">
+          <q-card-section>
+            <div class="text-h6 q-mb-sm">{{ t("pages.settings.accessibility.title") }}</div>
+            <div class="text-body2 text-grey-7 q-mb-md">
+              {{ t("pages.settings.accessibility.desc") }}
+            </div>
+            <div class="setting-row">
+              <div class="q-mb-sm" style="flex: 1">
+                <div class="text-subtitle1">
+                  {{ t("pages.settings.accessibility.fontSize") }}
+                </div>
+                <div class="text-caption text-grey-6">
+                  {{ t("pages.settings.accessibility.fontSizeHint") }}
+                </div>
+              </div>
+            </div>
+            <q-slider
+              v-model="fontSize"
+              :min="0"
+              :max="3"
+              :step="1"
+              snap
+              markers
+              label
+              color="primary"
+              :label-value="t(`pages.settings.accessibility.fontSizes.${fontSize}`)"
+              class="q-mb-md"
+            />
+            <q-separator spaced />
+            <div class="setting-row">
+              <div>
+                <div class="text-subtitle1">
+                  {{ t("pages.settings.accessibility.highContrast") }}
+                </div>
+                <div class="text-caption text-grey-6">
+                  {{ t("pages.settings.accessibility.highContrastHint") }}
+                </div>
+              </div>
+              <q-toggle
+                v-model="highContrast"
+                color="primary"
+                :aria-label="t('pages.settings.accessibility.highContrast')"
               />
             </div>
           </q-card-section>

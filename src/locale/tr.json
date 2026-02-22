@@ -265,6 +265,20 @@
                 "darkMode": "Karanlık mod",
                 "darkModeHint": "Açık ve koyu tema arasında geçiş yapın."
             },
+            "accessibility": {
+                "title": "Erişilebilirlik",
+                "desc": "Daha kolay okuma için metin boyutunu ve kontrastı ayarlayın.",
+                "fontSize": "Metin boyutu",
+                "fontSizeHint": "Tüm metni büyük veya küçük yapar.",
+                "fontSizes": {
+                    "0": "Küçük",
+                    "1": "Orta",
+                    "2": "Büyük",
+                    "3": "Çok Büyük"
+                },
+                "highContrast": "Yüksek kontrast",
+                "highContrastHint": "Daha iyi görünürlük için kontrastı artırın."
+            },
             "navigation": {
                 "title": "Gezinme",
                 "desc": "Çekmece sıralamasını ve görünürlüğünü kontrol edin.",

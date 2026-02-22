@@ -265,6 +265,20 @@
         "darkMode": "Dark mode",
         "darkModeHint": "Switch between light and dark theme."
       },
+      "accessibility": {
+        "title": "Accessibility",
+        "desc": "Adjust text size and contrast for easier reading.",
+        "fontSize": "Text size",
+        "fontSizeHint": "Makes all text larger or smaller.",
+        "fontSizes": {
+          "0": "Small",
+          "1": "Medium",
+          "2": "Large",
+          "3": "Extra Large"
+        },
+        "highContrast": "High contrast",
+        "highContrastHint": "Increase contrast for better visibility."
+      },
       "navigation": {
         "title": "Navigation",
         "desc": "Control drawer ordering and visibility.",

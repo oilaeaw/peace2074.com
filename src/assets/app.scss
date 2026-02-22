@@ -160,3 +160,56 @@ body.reduce-motion *::after {
   filter: var(--logo-filter);
   transition: filter 0.2s ease;
 }
+
+/* Accessibility: Font Size Controls */
+:root.font-small {
+  font-size: 14px;
+}
+
+:root.font-medium {
+  font-size: 16px; /* default */
+}
+
+:root.font-large {
+  font-size: 18px;
+}
+
+:root.font-xlarge {
+  font-size: 22px;
+}
+
+/* Accessibility: High Contrast Mode */
+:root.high-contrast {
+  --q-color-primary: #0066cc;
+  --q-color-secondary: #ff6600;
+
+  .q-card {
+    border: 2px solid currentColor !important;
+  }
+
+  .text-grey-6,
+  .text-grey-7 {
+    color: inherit !important;
+    opacity: 0.9;
+  }
+
+  a {
+    text-decoration: underline;
+    font-weight: 600;
+  }
+
+  button,
+  .q-btn {
+    border: 2px solid currentColor !important;
+  }
+}
+
+:root.high-contrast.body--light {
+  color: #000 !important;
+  background-color: #fff !important;
+}
+
+:root.high-contrast.body--dark {
+  color: #fff !important;
+  background-color: #000 !important;
+}

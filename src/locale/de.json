@@ -158,6 +158,20 @@
         "darkMode": "Dunkler Modus",
         "darkModeHint": "Wechsel zwischen hellem und dunklem Design."
       },
+      "accessibility": {
+        "title": "Barrierefreiheit",
+        "desc": "Passen Sie Textgröße und Kontrast für einfacheres Lesen an.",
+        "fontSize": "Textgröße",
+        "fontSizeHint": "Macht den gesamten Text größer oder kleiner.",
+        "fontSizes": {
+          "0": "Klein",
+          "1": "Mittel",
+          "2": "Groß",
+          "3": "Sehr groß"
+        },
+        "highContrast": "Hoher Kontrast",
+        "highContrastHint": "Erhöht den Kontrast für bessere Sichtbarkeit."
+      },
       "navigation": {
         "title": "Navigation",
         "desc": "Steuere Reihenfolge und Sichtbarkeit der Seitenleiste.",
