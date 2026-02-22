@@ -630,6 +630,7 @@ const orderedNavItems = computed(() => {
 .app-header {
   background: radial-gradient(circle at top, #1f2937, #0b1120 60%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
+  padding-top: env(safe-area-inset-top);
 }
 
 .app-toolbar {
@@ -689,6 +690,7 @@ const orderedNavItems = computed(() => {
   align-items: center;
   justify-content: center;
   gap: 8px;
+  padding-bottom: env(safe-area-inset-bottom);
 }
 .decor {
   height: 16px;

@@ -1,5 +1,20 @@
 @supports (-webkit-touch-callout: none) {
   /* CSS specific to iOS devices */
+  body {
+    padding-left: env(safe-area-inset-left);
+    padding-right: env(safe-area-inset-right);
+  }
+
+  /* Ensure page container respects safe areas */
+  .q-page-container {
+    padding-bottom: env(safe-area-inset-bottom);
+  }
+
+  /* Drawer safe areas */
+  .q-drawer {
+    padding-top: env(safe-area-inset-top);
+    padding-bottom: env(safe-area-inset-bottom);
+  }
 }
 
 @supports not (-webkit-touch-callout: none) {
@@ -104,13 +119,13 @@ body.body--dark {
   --subtitle-color: #b0b0b0;
   --card-bg: #333;
   --page-max-width: 1200px;
-  
+
   /* Fix grey text visibility in dark mode */
   .text-grey-6,
   .text-grey-7 {
     color: #b0b0b0 !important;
   }
-  
+
   .text-subtitle2,
   .text-caption {
     color: #b0b0b0 !important;
