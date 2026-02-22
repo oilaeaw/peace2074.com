@@ -1991,4 +1991,86 @@ watch(locale, () => {
   font-style: italic;
   font-size: 0.95rem;
 }
-</style>
+
+/* Dark mode overrides */
+body.body--dark .sura-card {
+  background: #1e1e1e;
+  color: #e0e0e0;
+}
+
+body.body--dark .reader-layout .arabic-block {
+  background: #2a2a2a;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.body--dark .verse-row {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+}
+
+body.body--dark .verse-row:hover {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+body.body--dark .verse-translation {
+  color: #b0b0b0;
+}
+
+body.body--dark .verse-num {
+  background: #3a3a3a;
+  color: #e0e0e0;
+  border-color: #555;
+}
+
+body.body--dark .bookmark-empty {
+  color: #b0b0b0;
+}
+
+body.body--dark .bookmark-chip {
+  background: rgba(255, 193, 7, 0.2);
+  color: #ffd54f;
+}
+
+body.body--dark .mushaf-layout {
+  background: linear-gradient(135deg, #2a2520 0%, #1e1e1e 100%);
+}
+
+body.body--dark .mushaf-page {
+  background: #2a2a2a;
+  box-shadow: inset 0 0 0 2px rgba(255, 193, 7, 0.15);
+}
+
+body.body--dark .page-border {
+  border-color: rgba(255, 193, 7, 0.25);
+  background-image: radial-gradient(
+    circle at top,
+    rgba(255, 193, 7, 0.1),
+    transparent 50%
+  );
+}
+
+body.body--dark .mushaf-meta {
+  color: #b0b0b0;
+}
+
+body.body--dark .mushaf-ayah.is-selected {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(212, 175, 55, 0.15));
+  border-color: #ffc107;
+}
+
+body.body--dark .native-layout {
+  background: linear-gradient(135deg, #1a2e1f 0%, #1e1e1e 100%);
+  border-color: #4caf50;
+}
+
+body.body--dark .verse-paragraph {
+  background: rgba(42, 42, 42, 0.7);
+  color: #e0e0e0;
+}
+
+body.body--dark .verse-paragraph:hover {
+  background: rgba(42, 42, 42, 0.95);
+}
+
+body.body--dark .verse-translation-native {
+  color: #b0b0b0;
+}
