@@ -104,6 +104,17 @@ body.body--dark {
   --subtitle-color: #b0b0b0;
   --card-bg: #333;
   --page-max-width: 1200px;
+  
+  /* Fix grey text visibility in dark mode */
+  .text-grey-6,
+  .text-grey-7 {
+    color: #b0b0b0 !important;
+  }
+  
+  .text-subtitle2,
+  .text-caption {
+    color: #b0b0b0 !important;
+  }
 }
 
 /* Constrain root layout width and ensure centered without stray overflow */
