@@ -433,7 +433,10 @@
     "swipeToChange": "Swipe to change",
     "pause": "Pause",
     "play": "Play",
-    "stop": "Stop"
+    "stop": "Stop",
+    "updateAvailable": "A new version is available!",
+    "update": "Update Now",
+    "later": "Later"
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."

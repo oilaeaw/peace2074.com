@@ -274,13 +274,36 @@ try {
   /* noop */
 }
 
-// Register PWA Service Worker and force-refresh clients when a new build is available
+// Register PWA Service Worker and prompt user to refresh when update is available
 if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
   import('virtual:pwa-register').then(({ registerSW }) => {
     const updateSW = registerSW({
       immediate: true,
       onNeedRefresh() {
-        updateSW(true);
+        // Notify user that an update is available
+        import('quasar').then(({ Notify }) => {
+          Notify.create({
+            message: i18n.global.t('general.updateAvailable'),
+            color: 'primary',
+            icon: 'refresh',
+            timeout: 0, // Don't auto-dismiss
+            position: 'top',
+            actions: [
+              {
+                label: i18n.global.t('general.update'),
+                color: 'white',
+                handler: () => {
+                  updateSW(true); // Reload and activate new service worker
+                }
+              },
+              {
+                label: i18n.global.t('general.later'),
+                color: 'white',
+                flat: true
+              }
+            ]
+          });
+        });
       },
       onRegisterError(error) {
         console.error('PWA service worker registration failed', error);

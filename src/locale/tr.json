@@ -433,7 +433,10 @@
         "swipeToChange": "Değiştirmek için kaydır",
         "pause": "Duraklat",
         "play": "Oynat",
-        "stop": "Durdur"
+        "stop": "Durdur",
+        "updateAvailable": "Yeni bir sürüm mevcut!",
+        "update": "Şimdi Güncelle",
+        "later": "Sonra"
     },
     "intro": {
         "desc": "JavaScript meraklısı, Wolf Pack kardeşi, Ducks tutkunu; yeniden kullanılabilirlik ve iyileştirmeler odaklı."

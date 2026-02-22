@@ -398,7 +398,10 @@
     "swipeToChange": "Wischen zum ändern",
     "pause": "Pause",
     "play": "Abspielen",
-    "stop": "Stopp"
+    "stop": "Stopp",
+    "updateAvailable": "Eine neue Version ist verfügbar!",
+    "update": "Jetzt aktualisieren",
+    "later": "Später"
   },
   "intro": {
     "desc": "JavaScript-Enthusiast, Wolf-Pack-Bruder, Enten-Liebhaber — alles über Wiederverwendbarkeit und Verbesserungen."
