@@ -269,26 +269,47 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       await navigator.share({
         title: `Quran ${label}`,
-        text: `Quran ${label}`,
+        text: `Read Quran ${label}`,
         url,
+      })
+      $q.notify({ 
+        type: 'positive', 
+        message: `Shared ${label}`,
+        icon: 'share',
+        position: 'top',
+        timeout: 2000
       })
       return
     }
-  } catch {
-    // If native share is canceled/unsupported, fallback to clipboard.
+  } catch (err: any) {
+    // If native share is canceled by user, don't show error
+    if (err?.name === 'AbortError') return
   }
 
   try {
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(url)
-      $q.notify({ type: 'positive', message: `Link copied: ${label}` })
+      $q.notify({ 
+        type: 'positive', 
+        message: `Link copied: ${label}`,
+        icon: 'content_copy',
+        position: 'top',
+        timeout: 2500,
+        caption: url
+      })
       return
     }
   } catch {
     // ignore and fallback notify
   }
 
-  $q.notify({ type: 'info', message: url })
+  $q.notify({ 
+    type: 'info', 
+    message: url,
+    icon: 'link',
+    position: 'top',
+    timeout: 3000
+  })
 }
 
 async function shareBookmark(entry: BookmarkEntry) {
@@ -1250,6 +1271,15 @@ watch(locale, () => {
                 >
                   <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
                 </button>
+                <button
+                  type="button"
+                  class="share-trigger inline-trigger"
+                  @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
+                  :aria-label="`Share verse ${currentSuraId}:${a.verse}`"
+                  :title="`Share ${currentSuraId}:${a.verse}`"
+                >
+                  <q-icon name="share" size="18px" />
+                </button>
               </div>
             </div>
             <div class="verse-meta">
@@ -1302,6 +1332,15 @@ watch(locale, () => {
                   >
                     <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
                   </button>
+                  <button
+                    type="button"
+                    class="share-trigger mushaf-trigger"
+                    @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
+                    :aria-label="`Share verse ${currentSuraId}:${a.verse}`"
+                    :title="`Share ${currentSuraId}:${a.verse}`"
+                  >
+                    <q-icon name="share" size="18px" />
+                  </button>
                 </div>
               </div>
             </div>
@@ -1331,6 +1370,15 @@ watch(locale, () => {
                 :aria-label="bookmarkActionLabel(a.verse)"
               >
                 <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
+              </button>
+              <button
+                type="button"
+                class="share-trigger native-trigger"
+                @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
+                :aria-label="`Share ${currentSuraId}:${a.verse}`"
+                :title="`Share ${currentSuraId}:${a.verse}`"
+              >
+                <q-icon name="share" size="18px" />
               </button>
             </span>
             <span class="verse-text-arabic">
@@ -1671,6 +1719,38 @@ watch(locale, () => {
 .bookmark-trigger.is-active:hover {
   color: #ffb300;
   transform: scale(1.15);
+}
+
+.share-trigger {
+  border: none;
+  background: transparent;
+  color: #00796b;
+  cursor: pointer;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: 50%;
+  transition: all 0.2s ease;
+}
+
+.share-trigger.inline-trigger,
+.share-trigger.native-trigger,
+.share-trigger.mushaf-trigger {
+  width: 28px;
+  height: 28px;
+}
+
+.share-trigger:hover {
+  background: rgba(0, 150, 136, 0.15);
+  color: #00897b;
+  transform: scale(1.1);
+}
+
+.share-trigger:active {
+  background: rgba(0, 150, 136, 0.3);
+  transform: scale(1.05);
 }
 
 .verse-row.is-selected .arabic-text {
