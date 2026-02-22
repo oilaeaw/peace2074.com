@@ -235,7 +235,22 @@
             "devTitle": "Geliştiriciler",
             "devBody": "Katkı yapmak ister misiniz? Açık konularda bizimle iletişime geçin.",
             "todoTitle": "Yol haritası",
-            "todoBody": "waelio-messaging ile canlı sohbet, odalar ve geçmiş ekliyoruz."
+            "todoBody": "waelio-messaging ile canlı sohbet, odalar ve geçmiş ekliyoruz.",
+            "live": {
+                "title": "Canlı Sohbet",
+                "reconnect": "Yeniden bağlan",
+                "anon": "Anonim",
+                "users": "Çevrimiçi kullanıcılar",
+                "you": "Sen",
+                "noUsers": "Başka çevrimiçi kullanıcı yok",
+                "connected": "Bağlandı",
+                "connecting": "Bağlanıyor...",
+                "disconnected": "Bağlantı kesildi",
+                "directMessage": "Doğrudan mesaj",
+                "broadcastMessage": "Herkese mesaj",
+                "sendDirect": "Kullanıcıya gönder",
+                "send": "Gönder"
+            }
         },
         "settings": {
             "title": "Ayarlar",

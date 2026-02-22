@@ -276,7 +276,22 @@
       "devTitle": "Entwickler",
       "devBody": "Möchtest du beitragen? Melde dich und arbeite mit uns an offenen Issues.",
       "todoTitle": "Roadmap",
-      "todoBody": "Wir fügen bald Live-Chat, Räume und Verlauf mit waelio-messaging hinzu."
+      "todoBody": "Wir fügen bald Live-Chat, Räume und Verlauf mit waelio-messaging hinzu.",
+      "live": {
+        "title": "Live-Chat",
+        "reconnect": "Neu verbinden",
+        "anon": "Anonym",
+        "users": "Online-Benutzer",
+        "you": "Du",
+        "noUsers": "Keine anderen Benutzer online",
+        "connected": "Verbunden",
+        "connecting": "Verbinde...",
+        "disconnected": "Getrennt",
+        "directMessage": "Direktnachricht",
+        "broadcastMessage": "Nachricht an alle",
+        "sendDirect": "An Benutzer senden",
+        "send": "Senden"
+      }
     },
     "support": {
       "title": "Support",

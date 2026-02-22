@@ -223,7 +223,22 @@
             "devTitle": "למפתחים",
             "devBody": "רוצים לתרום? צרו קשר ונעבוד יחד על משימות פתוחות.",
             "todoTitle": "מפת דרכים",
-            "todoBody": "אנחנו מוסיפים בקרוב צ׳אט חי, חדרים והיסטוריה עם waelio-messaging."
+            "todoBody": "אנחנו מוסיפים בקרוב צ׳אט חי, חדרים והיסטוריה עם waelio-messaging.",
+            "live": {
+                "title": "צ׳אט חי",
+                "reconnect": "התחבר מחדש",
+                "anon": "אנונימי",
+                "users": "משתמשים מחוברים",
+                "you": "אתה",
+                "noUsers": "אין משתמשים אחרים מחוברים",
+                "connected": "מחובר",
+                "connecting": "מתחבר...",
+                "disconnected": "מנותק",
+                "directMessage": "הודעה ישירה",
+                "broadcastMessage": "הודעה לכולם",
+                "sendDirect": "שלח למשתמש",
+                "send": "שלח"
+            }
         },
         "support": {
             "title": "תמיכה",

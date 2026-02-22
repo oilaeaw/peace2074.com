@@ -235,7 +235,22 @@
       "devTitle": "Developers",
       "devBody": "Want to contribute? Reach out and pair with us on open issues.",
       "todoTitle": "Roadmap",
-      "todoBody": "We are adding live chat, rooms, and history with waelio-messaging."
+      "todoBody": "We are adding live chat, rooms, and history with waelio-messaging.",
+      "live": {
+        "title": "Live Chat",
+        "reconnect": "Reconnect",
+        "anon": "Anonymous",
+        "users": "Online users",
+        "you": "You",
+        "noUsers": "No other users online",
+        "connected": "Connected",
+        "connecting": "Connecting...",
+        "disconnected": "Disconnected",
+        "directMessage": "Direct message",
+        "broadcastMessage": "Message to all",
+        "sendDirect": "Send to user",
+        "send": "Send"
+      }
     },
     "settings": {
       "title": "Settings",
