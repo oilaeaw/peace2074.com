@@ -1998,9 +1998,17 @@ body.body--dark .sura-card {
   color: #e0e0e0;
 }
 
+body.body--dark .sura-title-swipeable {
+  color: #e0e0e0;
+}
+
 body.body--dark .reader-layout .arabic-block {
   background: #2a2a2a;
   border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.body--dark .arabic-text {
+  color: #e0e0e0;
 }
 
 body.body--dark .verse-row {
@@ -2048,8 +2056,20 @@ body.body--dark .page-border {
   );
 }
 
+body.body--dark .mushaf-title {
+  color: #ffd54f;
+}
+
 body.body--dark .mushaf-meta {
   color: #b0b0b0;
+}
+
+body.body--dark .mushaf-ayah {
+  color: #e0e0e0;
+}
+
+body.body--dark .ayah-text {
+  color: #e0e0e0;
 }
 
 body.body--dark .mushaf-ayah.is-selected {
@@ -2069,6 +2089,10 @@ body.body--dark .verse-paragraph {
 
 body.body--dark .verse-paragraph:hover {
   background: rgba(42, 42, 42, 0.95);
+}
+
+body.body--dark .verse-text-arabic {
+  color: #e0e0e0;
 }
 
 body.body--dark .verse-translation-native {
