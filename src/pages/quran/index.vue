@@ -88,16 +88,38 @@ onMounted(async () => {
 
 .surahs-grid {
   display: grid;
-  grid-template-columns: 1fr;
-  gap: 1rem;
-  max-width: 1200px;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 0.75rem;
+  max-width: 1400px;
   margin: 0 auto;
 }
 
-/* 2-column layout for tablets and up */
-@media (min-width: 600px) {
+/* Phones: compact 2-column layout */
+@media (max-width: 600px) {
   .surahs-grid {
-    grid-template-columns: repeat(2, 1fr);
+    gap: 0.5rem;
+  }
+  
+  .sura-card {
+    padding: 0.5rem !important;
+  }
+  
+  .sura-card .text-subtitle1 {
+    font-size: 0.85rem;
+  }
+  
+  .sura-card .text-body2 {
+    font-size: 0.9rem;
+  }
+  
+  .sura-card .text-caption {
+    font-size: 0.65rem;
+  }
+}
+
+/* Tablets and desktop: more spacing */
+@media (min-width: 601px) {
+  .surahs-grid {
     gap: 1.5rem;
   }
 }
