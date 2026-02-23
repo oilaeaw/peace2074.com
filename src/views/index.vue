@@ -6,12 +6,8 @@ import { useI18n } from "vue-i18n";
 
 const { t } = useI18n();
 
-// const q2p = useQ2P()
 const router = useRouter();
 const suras = computed(() => useQ2P().GetQ);
-
-const surasLeft = computed(() => suras.value.filter((_, i) => i % 2 === 0));
-const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1));
 
 function navToSura(id: number) {
   router.push(`/quran/${id}`);
@@ -26,68 +22,34 @@ function showTranslation(sura: any) {
 <template>
   <q-page padding class="islamic-design rtl-quran">
     <div class="mushaf-columns">
-      <div class="mushaf-column">
-        <div
-          v-for="sura in surasLeft"
-          :key="sura.id"
-          class="sura-card islamic-card sura-hover"
-          tabindex="0"
-          role="button"
-          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${
-            sura.total_verses
-          } ${t('pages.quran.sura.totverses')}`"
-          @click="navToSura(sura.id)"
-          @keyup.enter="navToSura(sura.id)"
-        >
-          <div class="sura-header">
-            <span class="sura-id">{{ sura.id }}</span>
-            <span class="sura-name">{{ sura.name }}</span>
-          </div>
-          <div class="sura-info details-on-hover">
-            <span
-              v-if="showTranslation(sura)"
-              class="sura-translation"
-              :title="sura.e_name"
-            >
-              {{ sura.e_name }}
-            </span>
-            <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total">
-              {{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}
-            </span>
-          </div>
+      <div
+        v-for="sura in suras"
+        :key="sura.id"
+        class="sura-card islamic-card sura-hover"
+        tabindex="0"
+        role="button"
+        :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${
+          sura.total_verses
+        } ${t('pages.quran.sura.totverses')}`"
+        @click="navToSura(sura.id)"
+        @keyup.enter="navToSura(sura.id)"
+      >
+        <div class="sura-header">
+          <span class="sura-id">{{ sura.id }}</span>
+          <span class="sura-name">{{ sura.name }}</span>
         </div>
-      </div>
-      <div class="mushaf-column">
-        <div
-          v-for="sura in surasRight"
-          :key="sura.id"
-          class="sura-card islamic-card sura-hover"
-          tabindex="0"
-          role="button"
-          :aria-label="`${sura.name}, ${sura.e_name || ''}, ${sura.type}, ${
-            sura.total_verses
-          } ${t('pages.quran.sura.totverses')}`"
-          @click="navToSura(sura.id)"
-          @keyup.enter="navToSura(sura.id)"
-        >
-          <div class="sura-header">
-            <span class="sura-id">{{ sura.id }}</span>
-            <span class="sura-name">{{ sura.name }}</span>
-          </div>
-          <div class="sura-info details-on-hover">
-            <span
-              v-if="showTranslation(sura)"
-              class="sura-translation"
-              :title="sura.e_name"
-            >
-              {{ sura.e_name }}
-            </span>
-            <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total">
-              {{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}
-            </span>
-          </div>
+        <div class="sura-info">
+          <span
+            v-if="showTranslation(sura)"
+            class="sura-translation"
+            :title="sura.e_name"
+          >
+            {{ sura.e_name }}
+          </span>
+          <span class="sura-type">{{ sura.type }}</span>
+          <span class="sura-total">
+            {{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}
+          </span>
         </div>
       </div>
     </div>
@@ -103,26 +65,19 @@ function showTranslation(sura: any) {
   direction: rtl;
 }
 .mushaf-columns {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  justify-content: center;
-  align-items: flex-start;
-  width: 100%;
-  max-width: 100vw;
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
+  padding: 0 1rem;
   box-sizing: border-box;
 }
-.mushaf-column {
-  flex: 1 1 0;
-  display: flex;
-  flex-direction: column;
-  gap: 0.7rem;
-  min-width: 0;
-}
+
 .sura-card {
   background: var(--card-bg);
-  border: 2px solid currentColor;
-  border-radius: 1.2rem;
+  border: 2px solid var(--card-border);
+  border-radius: 1rem;
   color: var(--text-color);
   display: flex;
   flex-direction: column;
@@ -130,22 +85,21 @@ function showTranslation(sura: any) {
   text-align: center;
   font-family: "Amiri", serif;
   font-size: 1.45rem;
-  min-width: 0;
-  width: 100%;
-  max-width: 340px;
+  padding: 0.8rem 1rem;
   box-sizing: border-box;
-  transition: box-shadow 0.2s, background 0.2s;
+  transition: all 0.2s ease;
   cursor: pointer;
-  margin-bottom: 0.1rem;
 }
 .sura-card:hover {
   background: var(--card-bg-hover);
-  box-shadow: 0 4px 16px rgba(40, 167, 69, 0.13);
+  box-shadow: 0 6px 20px rgba(40, 167, 69, 0.15);
+  transform: translateY(-2px);
+  border-color: var(--chip-bg);
 }
 .sura-header {
   font-size: 1.7rem;
   font-weight: bold;
-  margin-bottom: 0.1rem;
+  margin-bottom: 0.3rem;
   display: flex;
   gap: 0.7rem;
   align-items: center;
@@ -177,25 +131,24 @@ function showTranslation(sura: any) {
   border: none;
 }
 .sura-info {
-  font-size: 1.15rem;
+  font-size: 1rem;
   color: var(--subtitle-color);
-  margin-bottom: 0.2rem;
-  display: none;
-  flex-direction: column;
-  gap: 0.1rem;
-  text-align: right;
-}
-.sura-card:hover .sura-info {
+  margin-top: 0.5rem;
   display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+  text-align: center;
+  width: 100%;
 }
 .sura-translation {
   font-style: italic;
+  color: var(--subtitle-color);
 }
 .sura-type {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
 }
 .sura-total {
-  font-size: 1.05rem;
+  font-size: 0.95rem;
 }
 .q-btn {
   align-self: flex-end;
@@ -214,11 +167,11 @@ function showTranslation(sura: any) {
   --text-color: #111;
   --title-color: #155724;
   --subtitle-color: #6c757d;
-  --card-border: var(--text-color);
+  --card-border: rgba(0, 0, 0, 0.12);
   --card-bg: #fff;
-  --card-bg-hover: #f3f6f3;
-  --chip-bg: #006400;
-  --chip-text-color: #111;
+  --card-bg-hover: #f8faf8;
+  --chip-bg: #28a745;
+  --chip-text-color: #fff;
 }
 
 :global(body.body--dark) .islamic-design {
@@ -226,51 +179,60 @@ function showTranslation(sura: any) {
   --text-color: #fff;
   --title-color: #fff;
   --subtitle-color: #b0b0b0;
-  --card-border: var(--text-color);
-  --card-bg: #23272e;
-  --card-bg-hover: #2c313a;
-  --chip-bg: #006400;
+  --card-border: rgba(255, 255, 255, 0.2);
+  --card-bg: #2c313a;
+  --card-bg-hover: #363c47;
+  --chip-bg: #28a745;
   --chip-text-color: #fff;
 }
 
-@media (max-width: 900px) {
-  .mushaf-columns {
-    flex-direction: row;
-    gap: 0.5rem;
-    align-items: flex-start;
-  }
-  .mushaf-column {
-    width: 50%;
-    max-width: 50vw;
-    flex-direction: column;
-    flex-wrap: nowrap;
-    gap: 0.5rem;
-    justify-content: flex-start;
-  }
-  .sura-card {
-    min-width: 0;
-    max-width: 98vw;
-    font-size: 1rem;
-    margin: 0 0 0.2rem 0;
-    padding: 0.3em 0.1em;
-  }
-}
+/* All phones: always 2 columns (no single column mode) */
 @media (max-width: 600px) {
+  .mushaf-columns {
+    grid-template-columns: repeat(2, 1fr) !important;
+    gap: 0.5rem;
+    padding: 0 0.4rem;
+  }
   .sura-card {
-    font-size: 0.78rem;
-    padding: 0.18em 0.05em;
+    font-size: 0.8rem;
+    padding: 0.4rem 0.25rem;
   }
   .sura-header {
     font-size: 0.95rem;
+    flex-direction: column;
+    gap: 0.2rem;
+    margin-bottom: 0.2rem;
   }
   .sura-name {
-    font-size: 0.85rem;
-    padding: 0.08em 0.3em;
+    font-size: 0.8rem;
+    padding: 0.1em 0.4em;
   }
   .sura-id {
-    width: 1.2rem;
-    height: 1.2rem;
+    width: 1.3rem;
+    height: 1.3rem;
     font-size: 0.7rem;
+    margin-inline-end: 0;
+  }
+  .sura-info {
+    font-size: 0.68rem;
+    margin-top: 0.2rem;
+    gap: 0.1rem;
+  }
+  .sura-type,
+  .sura-total,
+  .sura-translation {
+    font-size: 0.62rem;
+  }
+}
+
+/* Tablet: 2 columns with more space */
+@media (min-width: 601px) and (max-width: 900px) {
+  .mushaf-columns {
+    gap: 1rem;
+  }
+  .sura-card {
+    font-size: 1.2rem;
+    padding: 0.7rem 0.9rem;
   }
 }
 </style>

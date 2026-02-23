@@ -1,0 +1,54 @@
+[
+  {
+    "_id": "post_20260221_product-update",
+    "id": "product-update-quran-sharing-bismillah-bookmarks",
+    "slug": "product-update-quran-sharing-bismillah-bookmarks",
+    "title": "How to Use the Quran Interaction Window + Share Any Ayah Link",
+    "excerpt": "Quick guide: interact with any ayah while reading Quran, then share a direct verse URL like /quran/2:255.",
+    "content": "Assalamu Alaikum,\n\nYou are right: what matters is helping people actually use the Quran page. Here is the practical flow.\n\n1) Open any surah\n- Go to /quran and choose a surah.\n- You can read in reader/mushaf/native mode.\n\n2) Use the interaction window while reading\n- Hover or interact with the ayah controls in the Quran view.\n- You can play, restart, bookmark, and navigate quickly from the same reading context.\n\n3) Share a specific ayah link\n- The app supports direct verse links in this format:\n  /quran/{sura}:{ayah}\n- Example (Ayat al-Kursi):\n  /quran/2:255\n- This opens Surah 2 and jumps to Ayah 255.\n\n4) Share from bookmarks\n- In the bookmark menu, use the Share button on an ayah entry.\n- It opens native share (when available) or copies the link to clipboard.\n\n5) Recitation start behavior\n- When you start recitation from main actions, a Bismillah intro is played before the ayah stream.\n\nGoal: read Quran, interact without leaving context, and share exact ayah links quickly.\n\nJazakum Allahu khayran for the clear feedback.",
+    "tags": [
+      "quran",
+      "recitation",
+      "bookmarks",
+      "sharing",
+      "guide"
+    ],
+    "date": "2026-02-21",
+    "author": "Publisher",
+    "createdAt": "2026-02-21T00:00:00.000Z",
+    "updatedAt": "2026-02-21T18:30:00.000Z"
+  },
+  {
+    "_id": "post_20260221_share-any-ayah",
+    "id": "share-any-ayah-in-seconds",
+    "slug": "share-any-ayah-in-seconds",
+    "title": "Share Any Ayah in Seconds",
+    "excerpt": "Use links like /quran/2:255 to open the exact verse and share directly while reading.",
+    "content": "Assalamu Alaikum,\n\nReading Quran should be simple, interactive, and easy to share with others.\n\nHow to share a specific ayah:\n- Use this format: /quran/{sura}:{ayah}\n- Example (Ayat al-Kursi): /quran/2:255\n- Opening this URL takes the reader to the right surah and verse location.\n\nWhile reading, you can interact in one place:\n- Play recitation\n- Restart from an ayah\n- Bookmark an ayah\n- Open quick access ayat\n- Share directly from bookmark entries\n\nRecitation flow:\n- Before user-initiated recitation starts, a Bismillah intro clip is played, then ayah playback continues.\n\nWhy this helps:\n- Less friction while reading\n- Faster sharing of exact verses\n- Better collaboration for study circles\n\nJazakum Allahu khayran.",
+    "tags": [
+      "quran",
+      "sharing",
+      "ayah",
+      "guide"
+    ],
+    "date": "2026-02-21",
+    "author": "Publisher",
+    "createdAt": "2026-02-21T19:15:00.000Z",
+    "updatedAt": "2026-02-21T19:15:00.000Z"
+  },
+  {
+    "id": "aya sharing ",
+    "slug": "aya sharing ",
+    "title": "How to share a specific ayah",
+    "excerpt": "",
+    "content": "Use this link format:\n\n/quran/{sura}:{ayah}\nExample (Ayat al-Kursi):\n\n/quran/2:255\nWhen someone opens that URL, it goes to the right surah and jumps to that ayah.\n\nhttps://peace2074.com/quran/2:255\n\n",
+    "tags": [
+      "Share"
+    ],
+    "date": "2026-02-21",
+    "author": "Wael Admin",
+    "createdAt": "2026-02-21T12:53:00.185Z",
+    "updatedAt": "2026-02-21T12:53:00.185Z",
+    "_id": "9cedd88a-7f4c-43fc-94b1-50bd32e715e6"
+  }
+]

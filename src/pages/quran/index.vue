@@ -88,19 +88,78 @@ onMounted(async () => {
 
 .surahs-grid {
   display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  grid-template-columns: 1fr;
   gap: 1rem;
+  max-width: 1200px;
+  margin: 0 auto;
+}
+
+/* 2-column layout for tablets and up */
+@media (min-width: 600px) {
+  .surahs-grid {
+    grid-template-columns: repeat(2, 1fr);
+    gap: 1.5rem;
+  }
 }
 
 .sura-card {
   text-decoration: none;
   color: inherit;
-  transition: transform 0.2s, box-shadow 0.2s;
+  background: white;
+  border-radius: 8px;
+  border: 1px solid rgba(0, 0, 0, 0.08);
+  transition: all 0.2s ease;
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
 }
 
 .sura-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.12);
+  border-color: var(--q-primary);
+}
+
+.sura-card .text-subtitle1 {
+  font-weight: 600;
+  color: var(--q-primary);
+}
+
+.sura-card .text-body2 {
+  font-size: 1.1rem;
+  font-weight: 500;
+}
+
+.sura-card .text-caption {
+  color: rgba(0, 0, 0, 0.6);
+}
+
+/* Dark mode support */
+body.body--dark .sura-card {
+  background: #1e1e1e;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.body--dark .sura-card:hover {
+  background: #2a2a2a;
+  border-color: var(--q-primary);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
+}
+
+body.body--dark .sura-card .text-subtitle1 {
+  color: var(--q-accent);
+}
+
+body.body--dark .sura-card .text-body2 {
+  color: #e0e0e0;
+}
+
+body.body--dark .sura-card .text-caption {
+  color: rgba(255, 255, 255, 0.6);
+}
+
+.hint {
+  text-align: center;
 }
 </style>
 
