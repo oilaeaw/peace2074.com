@@ -1049,5 +1049,11 @@
       "meaning": "The Most Patient"
     }
   },
-  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna"
+  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna",
+  "consent": {
+    "message": "Мы используем файлы cookie для улучшения вашего опыта и анализа использования сайта.",
+    "details": "Нажимая 'Принять', вы соглашаетесь на использование нами файлов cookie для аналитики.",
+    "accept": "Принять",
+    "decline": "Отклонить"
+  }
 }

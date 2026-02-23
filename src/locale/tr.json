@@ -1049,5 +1049,11 @@
             "meaning": "En Sabırlı"
         }
     },
-    "Asma' Allah Al-Husna": "Esmâü'l-Hüsnâ"
+    "Asma' Allah Al-Husna": "Esmâü'l-Hüsnâ",
+    "consent": {
+        "message": "Deneyiminizi geliştirmek ve site kullanımını analiz etmek için çerezler kullanıyoruz.",
+        "details": "'Kabul Et'e tıklayarak, analiz için çerez kullanımımızı kabul etmiş olursunuz.",
+        "accept": "Kabul Et",
+        "decline": "Reddet"
+    }
 }
