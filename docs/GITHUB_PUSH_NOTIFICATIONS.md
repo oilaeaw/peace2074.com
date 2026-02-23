@@ -15,11 +15,13 @@ Automatically send push notifications to all app subscribers when code is pushed
 ### 1. Configure Webhook Secret (Optional but Recommended)
 
 Add to your `.env` file:
+
 ```bash
 GITHUB_WEBHOOK_SECRET=your-random-secret-here
 ```
 
 Generate a random secret:
+
 ```bash
 # macOS/Linux
 openssl rand -hex 32
@@ -29,12 +31,14 @@ node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
 Add the same secret to Netlify environment variables:
+
 - Go to: Netlify Dashboard → Site Settings → Environment Variables
 - Add: `GITHUB_WEBHOOK_SECRET` with the same value
 
 ### 2. Set Up GitHub Webhook
 
 Go to your GitHub repository:
+
 1. Navigate to: **Settings → Webhooks → Add webhook**
 
 2. Configure the webhook:
@@ -49,12 +53,14 @@ Go to your GitHub repository:
 ### 3. Test the Webhook
 
 After setup, make a test commit and push:
+
 ```bash
 git commit --allow-empty -m "test: trigger push notification"
 git push
 ```
 
 Check the webhook delivery in GitHub:
+
 - Go to: **Settings → Webhooks → Your webhook → Recent Deliveries**
 - You should see a successful delivery (green checkmark)
 - All app subscribers will receive a push notification
@@ -62,6 +68,7 @@ Check the webhook delivery in GitHub:
 ## Notification Content
 
 Subscribers will see:
+
 - **Title**: "🚀 peace2074.com updated"
 - **Body**: "{pusher} pushed {count} commit(s) to {branch}"
 - **Second line**: Latest commit message
@@ -75,8 +82,8 @@ Edit `apps/nitro-api/server/routes/webhooks/github-push.post.ts`:
 
 ```typescript
 // Change this line (currently notifies for 'one' and 'main')
-if (branch !== 'one' && branch !== 'main') {
-    return { ok: true, message: `Ignored push to ${branch}` }
+if (branch !== "one" && branch !== "main") {
+  return { ok: true, message: `Ignored push to ${branch}` };
 }
 ```
 
@@ -86,10 +93,10 @@ Edit the `payload` object in the same file:
 
 ```typescript
 const payload = JSON.stringify({
-    title: `🚀 ${repoName} updated`,
-    body: `Custom message here`,
-    // ... other options
-})
+  title: `🚀 ${repoName} updated`,
+  body: `Custom message here`,
+  // ... other options
+});
 ```
 
 ## Troubleshooting
