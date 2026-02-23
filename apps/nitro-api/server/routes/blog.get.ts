@@ -1,5 +1,5 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { getCollection } from '../utils/kv-db'
+import { getPrisma } from '../utils/prisma'
 
 /**
  * GET /api/blog
@@ -10,11 +10,15 @@ export default defineEventHandler(async (event) => {
     const { slug } = query
 
     try {
-        const Blog = await getCollection('blog_posts')
+        const prisma = await getPrisma()
+
+        if (!prisma) {
+            return { ok: false, error: 'Database not available' }
+        }
 
         // Get single post by slug
         if (slug && typeof slug === 'string') {
-            const post = await Blog.findOne({ slug })
+            const post = await prisma.blogPost.findUnique({ where: { slug } })
             if (!post) {
                 return { ok: false, error: 'Post not found' }
             }
@@ -22,9 +26,9 @@ export default defineEventHandler(async (event) => {
         }
 
         // Get all posts, sorted by date descending
-        const posts = await Blog.find({})
-            .sort({ date: -1 })
-            .toArray()
+        const posts = await prisma.blogPost.findMany({
+            orderBy: { date: 'desc' }
+        })
 
         return { ok: true, posts }
     } catch (err: any) {

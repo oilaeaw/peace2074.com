@@ -24,3 +24,18 @@ model User {
 
   @@map("User")
 }
+
+model BlogPost {
+  id        String   @id @map("_id")
+  slug      String   @unique
+  title     String
+  excerpt   String?
+  content   String
+  tags      String[]
+  date      String
+  author    String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@map("BlogPost")
+}

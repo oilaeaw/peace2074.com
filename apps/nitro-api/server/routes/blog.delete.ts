@@ -1,6 +1,6 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getCollection } from '../utils/kv-db'
+import { getPrisma } from '../utils/prisma'
 
 /**
  * DELETE /api/blog?slug=xxx
@@ -21,13 +21,13 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing slug parameter' }
         }
 
-        const Blog = await getCollection('blog_posts')
+        const prisma = await getPrisma()
 
-        const result = await Blog.deleteOne({ slug })
-
-        if (result.deletedCount === 0) {
-            return { ok: false, error: 'Post not found' }
+        if (!prisma) {
+            return { ok: false, error: 'Database not available' }
         }
+
+        await prisma.blogPost.delete({ where: { slug } })
 
         return { ok: true, message: 'Post deleted successfully' }
     } catch (err: any) {

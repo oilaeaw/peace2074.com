@@ -1,4 +1,4 @@
-import { getCollection } from '../utils/kv-db'
+import { getPrisma } from '../utils/prisma'
 
 /**
  * Nitro plugin that seeds blog posts on server startup
@@ -8,7 +8,12 @@ export default defineNitroPlugin(async () => {
     try {
         console.log('[Blog Seed] Checking blog posts...')
 
-        const Blog = await getCollection('blog_posts')
+        const prisma = await getPrisma()
+        
+        if (!prisma) {
+            console.warn('[Blog Seed] Prisma not available, skipping blog seeding')
+            return
+        }
 
         // Import seed data
         const seedData = await import('../data/blog-seed.json').then(m => m.default)
@@ -17,17 +22,24 @@ export default defineNitroPlugin(async () => {
         let seededCount = 0
 
         for (const post of seedData) {
-            const existing = await Blog.findOne({ slug: post.slug })
+            const existing = await prisma.blogPost.findUnique({ where: { slug: post.slug } })
 
             if (!existing) {
-                // Add dates if not present
+                // Add post with dates
                 const postData = {
-                    ...post,
+                    id: post.id,
+                    slug: post.slug,
+                    title: post.title,
+                    excerpt: post.excerpt || '',
+                    content: post.content,
+                    tags: post.tags || [],
+                    date: post.date,
+                    author: post.author,
                     createdAt: post.createdAt ? new Date(post.createdAt) : new Date(),
                     updatedAt: post.updatedAt ? new Date(post.updatedAt) : new Date(),
                 }
 
-                await Blog.insertOne(postData)
+                await prisma.blogPost.create({ data: postData })
                 seededCount++
                 console.log(`[Blog Seed] ✓ Seeded: ${post.title}`)
             }
@@ -40,8 +52,8 @@ export default defineNitroPlugin(async () => {
         }
 
         // Log total count
-        const allPosts = await Blog.find({}).toArray()
-        console.log(`[Blog Seed] Total blog posts: ${allPosts.length}`)
+        const total = await prisma.blogPost.count()
+        console.log(`[Blog Seed] Total blog posts: ${total}`)
 
     } catch (error: any) {
         console.error('[Blog Seed] Error seeding blog posts:', error?.message || error)

@@ -10,7 +10,8 @@
         "postinstall": "pnpm exec prisma generate --schema ./prisma/schema.prisma",
         "prisma:generate": "pnpm exec prisma generate --schema ./prisma/schema.prisma",
         "prisma:push": "pnpm exec prisma db push --schema ./prisma/schema.prisma",
-        "prisma:sync-users": "pnpm exec dotenv -e ../../.env -- node ./scripts/sync-users-to-prisma.mjs"
+        "prisma:sync-users": "pnpm exec dotenv -e ../../.env -- node ./scripts/sync-users-to-prisma.mjs",
+        "prisma:sync-blogs": "pnpm exec dotenv -e ../../.env -- node ./scripts/sync-blogs-to-prisma.mjs"
     },
     "dependencies": {
         "@playwright/test": "1.44.0",

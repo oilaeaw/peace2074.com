@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getCollection } from '../utils/kv-db'
+import { getPrisma } from '../utils/prisma'
 
 /**
  * PUT /api/blog
@@ -21,23 +21,24 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing slug parameter' }
         }
 
-        const Blog = await getCollection('blog_posts')
+        const prisma = await getPrisma()
+
+        if (!prisma) {
+            return { ok: false, error: 'Database not available' }
+        }
 
         // Build update object (only include provided fields)
-        const update: any = {
-            updatedAt: new Date(),
-        }
+        const update: any = {}
 
         if (title) update.title = title
         if (excerpt !== undefined) update.excerpt = excerpt
         if (content) update.content = content
         if (tags) update.tags = Array.isArray(tags) ? tags : []
 
-        const result = await Blog.findOneAndUpdate(
-            { slug },
-            { $set: update },
-            { returnDocument: 'after' }
-        )
+        const result = await prisma.blogPost.update({
+            where: { slug },
+            data: update
+        })
 
         if (!result) {
             return { ok: false, error: 'Post not found' }

@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getCollection } from '../utils/kv-db'
+import { getPrisma } from '../utils/prisma'
 import { getVapidConfig } from '../utils/vapid'
 
 /**
@@ -22,34 +22,38 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing required fields: title, content, slug' }
         }
 
-        const Blog = await getCollection('blog_posts')
+        const prisma = await getPrisma()
+
+        if (!prisma) {
+            return { ok: false, error: 'Database not available' }
+        }
 
         // Check if slug already exists
-        const existing = await Blog.findOne({ slug })
+        const existing = await prisma.blogPost.findUnique({ where: { slug } })
         if (existing) {
             return { ok: false, error: 'A post with this slug already exists' }
         }
 
-        const post = {
-            id: slug,
-            slug,
-            title,
-            excerpt: excerpt || '',
-            content,
-            tags: Array.isArray(tags) ? tags : [],
-            date: new Date().toISOString().split('T')[0], // YYYY-MM-DD
-            author: user.name || user.id,
-            createdAt: new Date(),
-            updatedAt: new Date(),
-        }
-
-        const result = await Blog.insertOne(post)
+        const post = await prisma.blogPost.create({
+            data: {
+                id: slug,
+                slug,
+                title,
+                excerpt: excerpt || '',
+                content,
+                tags: Array.isArray(tags) ? tags : [],
+                date: new Date().toISOString().split('T')[0],
+                author: user.name || user.id,
+            }
+        })
 
         // Optional: Send push notification to all subscribers
+        // TODO: Migrate push subscriptions to Prisma/MongoDB
         if (process.env.ENABLE_BLOG_NOTIFICATIONS === 'true') {
             try {
                 const webpush = await import('web-push')
                 const vapid = getVapidConfig()
+                const { getCollection } = await import('../utils/kv-db')
 
                 if (vapid) {
                     webpush.default.setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey)
@@ -87,7 +91,7 @@ export default defineEventHandler(async (event) => {
 
         return {
             ok: true,
-            post: { ...post, _id: result.insertedId },
+            post,
         }
     } catch (err: any) {
         console.error('[Blog POST] Error:', err)
