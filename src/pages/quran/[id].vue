@@ -2098,3 +2098,4 @@ body.body--dark .verse-text-arabic {
 body.body--dark .verse-translation-native {
   color: #b0b0b0;
 }
+</style>
