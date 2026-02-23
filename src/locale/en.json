@@ -530,6 +530,7 @@
     "enterCredentials": "Please enter username and password",
     "signIn": "Sign In",
     "signUp": "Sign Up",
+    "login": "Login",
     "rememberMe": "Remember me",
     "orContinueWith": "or continue with",
     "signInWithGitHub": "Sign in with GitHub",

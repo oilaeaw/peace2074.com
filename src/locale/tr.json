@@ -530,6 +530,7 @@
         "enterCredentials": "Lütfen kullanıcı adı ve şifre girin",
         "signIn": "Giriş Yap",
         "signUp": "Kayıt Ol",
+        "login": "Giriş Yap",
         "rememberMe": "Beni hatırla",
         "orContinueWith": "veya şununla devam et",
         "signInWithGitHub": "GitHub ile giriş yap",
