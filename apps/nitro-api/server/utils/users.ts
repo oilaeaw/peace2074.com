@@ -36,7 +36,7 @@ const DEFAULT_USERS: User[] = [
     {
         id: 'waelio',
         username: 'waelio',
-        password: '123456789',
+        password: 'gLHVHtMcSY8Sum+H',
         email: 'wael@peace2074.com',
         role: 'admin',
         first_name: 'Wael',
