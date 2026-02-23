@@ -9,7 +9,7 @@ export default defineNitroPlugin(async () => {
         console.log('[Blog Seed] Checking blog posts...')
 
         const prisma = await getPrisma()
-        
+
         if (!prisma) {
             console.warn('[Blog Seed] Prisma not available, skipping blog seeding')
             return
