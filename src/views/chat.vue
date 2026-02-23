@@ -14,7 +14,10 @@
 
     <q-card class="q-mt-xl live-chat">
       <q-card-section class="row items-center justify-between no-wrap">
-        <div class="text-h6">{{ t('pages.chat.live.title') }}</div>
+        <div class="row items-center q-gutter-sm">
+          <div class="text-h6">{{ t('pages.chat.live.title') }}</div>
+          <q-badge v-if="canManageChat" color="orange" outline>Admin</q-badge>
+        </div>
         <div class="row items-center q-gutter-sm">
           <q-badge :color="statusColor" outline>{{ statusLabel }}</q-badge>
           <q-btn dense flat icon="refresh" @click="refresh" :disable="messaging.connecting" :aria-label="t('pages.chat.live.reconnect')" />
@@ -70,10 +73,27 @@
       <q-separator />
       <q-card-actions align="between" class="row no-wrap q-gutter-sm">
         <div class="col">
-          <q-input v-model="draft" dense outlined :label="selectedUser ? t('pages.chat.live.directMessage') : t('pages.chat.live.broadcastMessage')" @keyup.enter="send" />
+          <q-input 
+            v-model="draft" 
+            dense 
+            outlined 
+            :label="selectedUser ? t('pages.chat.live.directMessage') : t('pages.chat.live.broadcastMessage')" 
+            @keyup.enter="send"
+            :disable="!canReadChat"
+          />
         </div>
-        <q-btn color="primary" unelevated :label="selectedUser ? t('pages.chat.live.sendDirect') : t('pages.chat.live.send')" @click="send" :disable="!messaging.connected" />
+        <q-btn 
+          color="primary" 
+          unelevated 
+          :label="selectedUser ? t('pages.chat.live.sendDirect') : t('pages.chat.live.send')" 
+          @click="send" 
+          :disable="!messaging.connected || !canReadChat" 
+        />
       </q-card-actions>
+      <q-banner v-if="!canReadChat" class="q-mt-sm" rounded dense color="warning" text-color="dark">
+        <q-icon name="warning" class="q-mr-sm" />
+        You need chat access permissions to send messages. Please contact an administrator.
+      </q-banner>
       <q-banner v-if="messaging.error" class="q-mt-sm" rounded dense color="negative" text-color="white">
         {{ messaging.error }}
       </q-banner>
@@ -108,14 +128,36 @@
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
 import { useI18n } from "vue-i18n";
 import { useMessagingStore } from "@/stores/messaging.pinia";
+import { useAuthStore } from "@/stores/auth.pinia";
+import { CaslSubjectE, CaslActionE } from "@shared/types";
 
 const { t } = useI18n();
 const messaging = useMessagingStore();
+const authStore = useAuthStore();
 const draft = ref("");
 const selectedUser = ref<string | null>(null);
 
 const messages = computed(() => messaging.messages);
 const me = computed(() => messaging.me);
+
+// CASL permission checks
+const canReadChat = computed(() => {
+  try {
+    return authStore.ability?.can(CaslActionE.READ, CaslSubjectE.CHAT)
+  } catch {
+    return false
+  }
+});
+
+const canManageChat = computed(() => {
+  try {
+    return authStore.ability?.can(CaslActionE.MANAGE, CaslSubjectE.CHAT)
+  } catch {
+    return false
+  }
+});
+
+const isAdmin = computed(() => authStore._user?.role === 'admin');
 
 const statusLabel = computed(() => {
   if (messaging.connected) return t('pages.chat.live.connected');

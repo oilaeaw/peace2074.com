@@ -349,6 +349,7 @@ export enum CaslSubjectE {
   ALL = 'all',
   ADMIN = 'admin',
   CATEGORY = 'category',
+  CHAT = 'chat',
   LIKES = 'likes',
   MEDIAFILE = 'mediafile',
   PERMISSIONS = 'permissions',
@@ -361,7 +362,7 @@ export enum CaslSubjectE {
 
 export type CaslActionsT = CaslActionE.CREATE | CaslActionE.READ | CaslActionE.UPDATE | CaslActionE.DELETE
 
-export type CaslSubjectsT = CaslSubjectE.CATEGORY | CaslSubjectE.LIKES | CaslSubjectE.MEDIAFILE | CaslSubjectE.PERMISSIONS | CaslSubjectE.POST | CaslSubjectE.ROLES | CaslSubjectE.TWEET | CaslSubjectE.USER | CaslSubjectE.ADMIN
+export type CaslSubjectsT = CaslSubjectE.CATEGORY | CaslSubjectE.CHAT | CaslSubjectE.LIKES | CaslSubjectE.MEDIAFILE | CaslSubjectE.PERMISSIONS | CaslSubjectE.POST | CaslSubjectE.ROLES | CaslSubjectE.TWEET | CaslSubjectE.USER | CaslSubjectE.ADMIN
 
 export interface CaslActionsI {
   actions: CaslActionsT

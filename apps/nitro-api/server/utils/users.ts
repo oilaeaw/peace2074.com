@@ -30,6 +30,7 @@ export interface User {
     bookmarks?: Bookmark[]
     avatar_url?: string
     github_id?: string
+    permissions?: any[]
 }
 
 const DEFAULT_USERS: User[] = [
@@ -41,7 +42,17 @@ const DEFAULT_USERS: User[] = [
         role: 'admin',
         first_name: 'Wael',
         last_name: 'Admin',
-        tasbeeh: []
+        tasbeeh: [],
+        permissions: [
+            { action: 'read', subject: 'category' },
+            { action: 'read', subject: 'post' },
+            { action: 'create', subject: 'user' },
+            { action: 'read', subject: 'user' },
+            { action: 'update', subject: 'user' },
+            { action: 'manage', subject: 'admin' },
+            { action: 'manage', subject: 'chat' },
+            { action: 'read', subject: 'chat' },
+        ]
     }
 ]
 
@@ -130,6 +141,7 @@ function toAppUser(user: any): User {
         bookmarks: Array.isArray(user.bookmarks) ? user.bookmarks : [],
         avatar_url: user.avatar_url || undefined,
         github_id: user.github_id || undefined,
+        permissions: Array.isArray(user.permissions) ? user.permissions : [],
     }
 }
 
@@ -146,6 +158,7 @@ function normalizeUser(input: Partial<User>): User {
         bookmarks: Array.isArray(input.bookmarks) ? input.bookmarks : [],
         avatar_url: input.avatar_url,
         github_id: input.github_id,
+        permissions: Array.isArray(input.permissions) ? input.permissions : [],
     }
 }
 
@@ -182,6 +195,7 @@ async function upsertByIdentity(user: User) {
         bookmarks: user.bookmarks || [],
         avatar_url: user.avatar_url || null,
         github_id: user.github_id || null,
+        permissions: user.permissions || [],
     }
 
     if (existing) {
@@ -356,6 +370,7 @@ export async function addUser(user: User) {
                 bookmarks: normalized.bookmarks || [],
                 avatar_url: normalized.avatar_url || null,
                 github_id: normalized.github_id || null,
+                permissions: normalized.permissions || [],
             },
         })
         return

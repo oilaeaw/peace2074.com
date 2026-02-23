@@ -58,9 +58,14 @@ export const useAuthStore = defineStore('auth', () => {
     try {
       if (u && u.role === 'admin') {
         _permissions.value.push({ action: CaslActionE.MANAGE, subject: CaslSubjectE.ADMIN })
+        _permissions.value.push({ action: CaslActionE.MANAGE, subject: CaslSubjectE.CHAT })
       }
       else if (u && u.role === 'editor') {
         _permissions.value.push({ action: CaslActionE.UPDATE, subject: CaslSubjectE.POST })
+      }
+      // All authenticated users can access chat
+      if (u) {
+        _permissions.value.push({ action: CaslActionE.READ, subject: CaslSubjectE.CHAT })
       }
     }
     catch { }

@@ -59,7 +59,8 @@ export default defineEventHandler(async (event) => {
                 email: user.email,
                 role: user.role,
                 first_name: user.first_name,
-                last_name: user.last_name
+                last_name: user.last_name,
+                permissions: user.permissions || []
             }
         }
     } catch (error: any) {
