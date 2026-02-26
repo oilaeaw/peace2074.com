@@ -8,6 +8,11 @@
   publish = "dist"
   functions = "netlify/functions"
 
+# Secrets scanning configuration
+# DEEPSEEK_BASE_URL is a public API endpoint, not a credential
+[build.environment]
+  SECRETS_SCAN_OMIT_KEYS = "DEEPSEEK_BASE_URL"
+
 # Edge caching for better performance
 [functions]
   directory = "netlify/functions"
