@@ -53,11 +53,11 @@ Make sure these are also set in Netlify:
 
 ```bash
 # Auth secrets (required for login/signup)
-netlify env:set AUTH_SECRET "your-secret-key-here"
-netlify env:set AUTH_PASSCODE "your-passcode-here"
+netlify env:set AUTH_SECRET "your-auth-secret-from-env"
+netlify env:set AUTH_PASSCODE "your-auth-passcode-from-env"
 
 # DeepSeek API (for AI chat)
-netlify env:set DEEPSEEK_API_KEY "your-deepseek-key"
+netlify env:set DEEPSEEK_API_KEY "your-deepseek-api-key"
 netlify env:set DEEPSEEK_BASE_URL "https://api.deepseek.com"
 
 # SMTP for contact form (optional)

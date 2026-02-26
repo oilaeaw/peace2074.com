@@ -1,26 +1,109 @@
-# 🚨 SECURITY ALERT: MongoDB Credentials Exposed
+# 🚨 SECURITY ALERT: Multiple Secrets Exposed
 
 ## What Happened
 
-GitHub detected exposed MongoDB credentials in commit `58894985` in file `DATABASE_CONNECTION_FIX.md`.
+GitHub detected exposed secrets in multiple commits and files:
 
-**Status**: ✅ **FIXED** - The exposed credentials have been removed from the documentation.
+1. **MongoDB credentials** in `DATABASE_CONNECTION_FIX.md` (commit `58894985`)
+2. **DeepSeek API Key** in `netlify-env-setup.sh`
+3. **AUTH_SECRET** in `netlify-env-setup.sh`
+4. **NETLIFY_WEBHOOK_SECRET** in `netlify-env-setup.sh`
+
+**Status**: ✅ **FIXED** - All exposed credentials have been removed and replaced with placeholders.
 
 ## What Was Exposed
 
-- MongoDB Atlas cluster hostname (specific cluster identifier)
-- Connection string pattern that revealed database structure
+### 1. MongoDB Atlas
+
+- ❌ Cluster hostname pattern (`peace2074.1o4lzch.mongodb.net`)
+- ✅ Password was not directly exposed (in gitignored `.env`)
+
+### 2. DeepSeek API Key
+
+- ❌ Complete API key: `sk-c9500709d5d6483689e12cd77f735222`
+- 🔐 **CRITICAL**: Rotate immediately
+
+### 3. Authentication Secrets
+
+- ❌ AUTH_SECRET: `T^n?10fZEo@#fsaMg?A1pBej1+Kv?m}k`
+- 🔐 **CRITICAL**: Rotate immediately
+
+### 4. Webhook Secret
+
+- ❌ NETLIFY_WEBHOOK_SECRET: `csesGwJx367WG37J8L6n`
+- 🔐 **HIGH**: Rotate recommended
 
 ## Immediate Actions Taken
 
-1. ✅ Removed exposed credentials from `DATABASE_CONNECTION_FIX.md`
-2. ✅ Replaced with generic placeholders
-3. ✅ Added security warning to documentation
+1. ✅ Sanitized `DATABASE_CONNECTION_FIX.md` with generic placeholders
+2. ✅ Sanitized `netlify-env-setup.sh` with generic placeholders
+3. ✅ Added security warnings to all template files
 4. ✅ Verified `.env` is properly gitignored
 
-## ⚠️ REQUIRED ACTION: Rotate MongoDB Credentials
+## ⚠️ CRITICAL: Rotate All Exposed Secrets
 
-Even though the actual password wasn't directly exposed, **you should rotate your MongoDB credentials as a precaution**:
+### 1. Rotate DeepSeek API Key (HIGHEST PRIORITY)
+
+1. Go to https://platform.deepseek.com (or your DeepSeek dashboard)
+2. Navigate to **API Keys**
+3. **Delete** the exposed key: `sk-c95007...`
+4. **Create** a new API key
+5. Update your local `.env`:
+   ```bash
+   DEEPSEEK_API_KEY="your-new-key-here"
+   ```
+6. Update Netlify:
+   ```bash
+   netlify env:set DEEPSEEK_API_KEY "your-new-key-here"
+   netlify env:set NITRO_DEEPSEEK_API_KEY "your-new-key-here"
+   ```
+
+### 2. Rotate AUTH_SECRET (HIGHEST PRIORITY)
+
+Generate a new strong secret:
+
+```bash
+# Generate a new random secret
+node -e "console.log(require('crypto').randomBytes(32).toString('base64'))"
+```
+
+Update everywhere:
+
+```bash
+# Update .env
+AUTH_SECRET="your-new-secret-here"
+
+# Update Netlify
+netlify env:set AUTH_SECRET "your-new-secret-here"
+netlify env:set NITRO_AUTH_SECRET "your-new-secret-here"
+```
+
+⚠️ **Note**: Rotating AUTH_SECRET will **invalidate all existing user sessions**. Users will need to log in again.
+
+### 3. Rotate NETLIFY_WEBHOOK_SECRET (HIGH PRIORITY)
+
+Generate a new webhook secret:
+
+```bash
+# Generate new secret
+node -e "console.log(require('crypto').randomBytes(16).toString('hex'))"
+```
+
+Update:
+
+```bash
+# Update .env
+NETLIFY_WEBHOOK_SECRET="your-new-secret-here"
+
+# Update Netlify
+netlify env:set NETLIFY_WEBHOOK_SECRET "your-new-secret-here"
+
+# Update GitHub webhook settings
+# Go to: https://github.com/peace2074/peace2074.com/settings/hooks
+# Update the secret for any webhooks pointing to your API
+```
+
+### 4. Rotate MongoDB Credentials (RECOMMENDED)
 
 ### 1. Create New MongoDB User
 
