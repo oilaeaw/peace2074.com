@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { applyCors } from '../utils/cors'
 import { readSession } from '../utils/auth'
-import { getUserTasbeeh, updateUserTasbeeh } from '../utils/users'
+import { getTasbeehDaily, addTasbeehDaily, addTasbeehSession } from '../utils/tasbeeh'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
@@ -16,11 +16,11 @@ export default defineEventHandler(async (event) => {
         }
 
         const userId = session.id
-        const tasbeehData = await getUserTasbeeh(userId)
+        const tasbeehData = await getTasbeehDaily(userId)
         return { data: { daily: tasbeehData } }
     }
 
-    // For POST requests, store the data in user record
+    // For POST requests, store the data
     if (event.method === 'POST') {
         if (!session) {
             // Silently ignore unauthenticated POST - client should check auth first
@@ -28,26 +28,32 @@ export default defineEventHandler(async (event) => {
         }
 
         const body = await readBody(event)
-        const { date, total, sessions } = body
-
-        if (!date || typeof total !== 'number' || typeof sessions !== 'number') {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Invalid tasbeeh data. Required: date (string), total (number), sessions (number)',
-            })
-        }
+        const { date, total, sessions, session: sessionData } = body
 
         const userId = session.id
-        const success = await updateUserTasbeeh(userId, { date, total, sessions })
 
-        if (!success) {
-            throw createError({
-                statusCode: 404,
-                statusMessage: 'User not found',
+        // Save daily stats
+        if (date && typeof total === 'number' && typeof sessions === 'number') {
+            const success = await addTasbeehDaily(userId, { date, total, sessions })
+            if (!success) {
+                throw createError({
+                    statusCode: 500,
+                    statusMessage: 'Failed to save tasbeeh data',
+                })
+            }
+        }
+
+        // Save session data if provided
+        if (sessionData && sessionData.phraseIndex !== undefined) {
+            await addTasbeehSession(userId, {
+                phraseIndex: sessionData.phraseIndex,
+                count: sessionData.count || 0,
+                target: sessionData.target || 33,
+                completedAt: new Date().toISOString()
             })
         }
 
-        return { ok: true, message: 'Tasbeeh data saved to user profile' }
+        return { ok: true, message: 'Tasbeeh data saved' }
     }
 
     throw createError({

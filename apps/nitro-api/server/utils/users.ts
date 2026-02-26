@@ -6,30 +6,12 @@ import { getPrisma } from './prisma'
 // Cached Prisma client after successful initialization
 let prisma: any = null
 
-export interface TasbeehRecord {
-    date: string
-    total: number
-    sessions: number
-}
-
-export interface Bookmark {
-    _id: string
-    bookmark: string
-    createdAt: string
-}
-
 export interface User {
     id: string
     username: string
     password: string
     email: string
     role: string
-    first_name?: string
-    last_name?: string
-    tasbeeh?: TasbeehRecord[]
-    bookmarks?: Bookmark[]
-    avatar_url?: string
-    github_id?: string
     permissions?: any[]
 }
 
@@ -40,9 +22,6 @@ const DEFAULT_USERS: User[] = [
         password: 'gLHVHtMcSY8Sum+H',
         email: 'wael@peace2074.com',
         role: 'admin',
-        first_name: 'Wael',
-        last_name: 'Admin',
-        tasbeeh: [],
         permissions: [
             { action: 'read', subject: 'category' },
             { action: 'read', subject: 'post' },
@@ -364,12 +343,6 @@ export async function addUser(user: User) {
                 password: normalized.password,
                 email: normalized.email,
                 role: normalized.role,
-                first_name: normalized.first_name || null,
-                last_name: normalized.last_name || null,
-                tasbeeh: normalized.tasbeeh || [],
-                bookmarks: normalized.bookmarks || [],
-                avatar_url: normalized.avatar_url || null,
-                github_id: normalized.github_id || null,
                 permissions: normalized.permissions || [],
             },
         })
@@ -377,142 +350,11 @@ export async function addUser(user: User) {
     }
 
     const users = await loadFallbackUsers()
-    users.push({
-        ...normalized,
-        tasbeeh: normalized.tasbeeh || [],
-        bookmarks: normalized.bookmarks || [],
-    })
+    users.push(normalized)
     await saveFallbackUsers(users)
 }
 
-export async function getUserTasbeeh(userId: string): Promise<TasbeehRecord[]> {
-    const user = await findUserById(userId)
-    return user?.tasbeeh || []
-}
 
-export async function updateUserTasbeeh(userId: string, record: TasbeehRecord): Promise<boolean> {
-    const user = await findUserById(userId)
-    if (!user) {
-        return false
-    }
-
-    const tasbeeh = Array.isArray(user.tasbeeh) ? [...user.tasbeeh] : []
-
-    const existingIndex = tasbeeh.findIndex((d) => d.date === record.date)
-    if (existingIndex >= 0) {
-        tasbeeh[existingIndex] = record
-    } else {
-        tasbeeh.push(record)
-    }
-
-    if (tasbeeh.length > 30) {
-        tasbeeh.splice(0, tasbeeh.length - 30)
-    }
-
-    if (await isPrismaReady()) {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { tasbeeh },
-        })
-        return true
-    }
-
-    const users = await loadFallbackUsers()
-    const fallbackUser = users.find((u) => u.id === userId)
-    if (!fallbackUser) return false
-    fallbackUser.tasbeeh = tasbeeh
-    await saveFallbackUsers(users)
-    return true
-}
-
-export async function getUserBookmarks(userId: string): Promise<Bookmark[]> {
-    const user = await findUserById(userId)
-    return user?.bookmarks || []
-}
-
-export async function createUserBookmark(userId: string, bookmark: string): Promise<Bookmark | null> {
-    const user = await findUserById(userId)
-    if (!user) return null
-
-    const bookmarks = Array.isArray(user.bookmarks) ? [...user.bookmarks] : []
-
-    const existing = bookmarks.find((b) => b.bookmark === bookmark)
-    if (existing) return existing
-
-    const newBookmark: Bookmark = {
-        _id: `bm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
-        bookmark,
-        createdAt: new Date().toISOString(),
-    }
-    bookmarks.push(newBookmark)
-
-    if (await isPrismaReady()) {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { bookmarks },
-        })
-        return newBookmark
-    }
-
-    const users = await loadFallbackUsers()
-    const fallbackUser = users.find((u) => u.id === userId)
-    if (!fallbackUser) return null
-    fallbackUser.bookmarks = bookmarks
-    await saveFallbackUsers(users)
-    return newBookmark
-}
-
-export async function updateUserBookmark(userId: string, bookmarkId: string, newBookmark: string): Promise<Bookmark | null> {
-    const user = await findUserById(userId)
-    if (!user || !user.bookmarks) return null
-
-    const bookmarks = [...user.bookmarks]
-    const bm = bookmarks.find((b) => b._id === bookmarkId)
-    if (!bm) return null
-
-    bm.bookmark = newBookmark
-
-    if (await isPrismaReady()) {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { bookmarks },
-        })
-        return bm
-    }
-
-    const users = await loadFallbackUsers()
-    const fallbackUser = users.find((u) => u.id === userId)
-    if (!fallbackUser) return null
-    fallbackUser.bookmarks = bookmarks
-    await saveFallbackUsers(users)
-    return bm
-}
-
-export async function deleteUserBookmark(userId: string, bookmarkId: string): Promise<boolean> {
-    const user = await findUserById(userId)
-    if (!user || !user.bookmarks) return false
-
-    const bookmarks = [...user.bookmarks]
-    const index = bookmarks.findIndex((b) => b._id === bookmarkId || b.bookmark === bookmarkId)
-    if (index === -1) return false
-
-    bookmarks.splice(index, 1)
-
-    if (await isPrismaReady()) {
-        await prisma.user.update({
-            where: { id: userId },
-            data: { bookmarks },
-        })
-        return true
-    }
-
-    const users = await loadFallbackUsers()
-    const fallbackUser = users.find((u) => u.id === userId)
-    if (!fallbackUser) return false
-    fallbackUser.bookmarks = bookmarks
-    await saveFallbackUsers(users)
-    return true
-}
 
 export async function getUserStorageDiagnostics(): Promise<{
     source: 'prisma' | 'fallback'

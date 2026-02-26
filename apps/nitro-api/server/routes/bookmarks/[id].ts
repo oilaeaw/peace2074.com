@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, createError, getRouterParam } from 'h3'
 import { applyCors } from '../../utils/cors'
 import { readSession } from '../../utils/auth'
-import { updateUserBookmark, deleteUserBookmark } from '../../utils/users'
+import { removeBookmark } from '../../utils/profile'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
@@ -22,32 +22,9 @@ export default defineEventHandler(async (event) => {
         })
     }
 
-    // PUT - Update a bookmark
-    if (event.method === 'PUT') {
-        const body = await readBody(event)
-        const { bookmark } = body
-
-        if (!bookmark || typeof bookmark !== 'string') {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Bookmark string is required',
-            })
-        }
-
-        const updated = await updateUserBookmark(session.id, bookmarkId, bookmark)
-        if (!updated) {
-            throw createError({
-                statusCode: 404,
-                statusMessage: 'Bookmark not found',
-            })
-        }
-
-        return { ok: true, bookmark: updated }
-    }
-
     // DELETE - Delete a bookmark
     if (event.method === 'DELETE') {
-        const deleted = await deleteUserBookmark(session.id, bookmarkId)
+        const deleted = await removeBookmark(session.id, bookmarkId)
         if (!deleted) {
             throw createError({
                 statusCode: 404,

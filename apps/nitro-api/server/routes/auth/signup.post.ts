@@ -1,5 +1,6 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { addUser, findUserByEmail, findUserByUsername } from '../../utils/users'
+import { createProfile } from '../../utils/profile'
 import { hashPassword } from '../../utils/password'
 
 export default defineEventHandler(async (event) => {
@@ -7,11 +8,15 @@ export default defineEventHandler(async (event) => {
         username?: string
         email?: string
         password?: string
+        first_name?: string
+        last_name?: string
     }>(event) || {}
 
     const username = (body.username || '').trim()
     const email = (body.email || '').trim()
     const password = (body.password || '').trim()
+    const first_name = (body.first_name || username).trim()
+    const last_name = (body.last_name || '').trim()
 
     // Validation
     if (!username || !email || !password) {
@@ -57,19 +62,29 @@ export default defineEventHandler(async (event) => {
         { action: 'read', subject: 'chat' },  // New users can access chat
     ]
 
-    // Create new user
+    const userId = `user_${Date.now()}`
+
+    // Create new user (identity only)
     const newUser = {
-        id: `user_${Date.now()}`,
+        id: userId,
         username,
         email,
         password: hashedPassword,
         role: 'user',
-        first_name: username,
-        last_name: '',
         permissions: defaultPermissions
     }
 
     await addUser(newUser)
+
+    // Create user profile
+    await createProfile({
+        userId,
+        first_name,
+        last_name,
+        settings: {},
+        tasbeeh_summary: { total: 0, sessions: 0 }
+    })
+
     return {
         ok: true,
         message: 'Account created successfully'

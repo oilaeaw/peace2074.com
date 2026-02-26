@@ -13,17 +13,39 @@ model User {
   password    String
   email       String   @unique
   role        String
-  first_name  String?
-  last_name   String?
-  tasbeeh     Json?
-  bookmarks   Json?
-  avatar_url  String?
-  github_id   String?
   permissions Json?    @default("[]")
   createdAt   DateTime @default(now())
   updatedAt   DateTime @updatedAt
 
   @@map("User")
+}
+
+model Profile {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @unique
+  first_name      String?
+  last_name       String?
+  avatar_url      String?
+  github_id       String?
+  bookmarks       Json?    @default("[]")
+  settings        Json?    @default("{}")
+  tasbeeh_summary Json?    @default("{\"total\":0,\"sessions\":0}")
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  @@map("Profile")
+}
+
+model Tasbeeh {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  daily     Json?    @default("[]")
+  sessions  Json?    @default("[]")
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([userId])
+  @@map("Tasbeeh")
 }
 
 model BlogPost {

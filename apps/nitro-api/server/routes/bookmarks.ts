@@ -1,7 +1,7 @@
 import { defineEventHandler, readBody, createError } from 'h3'
 import { applyCors } from '../utils/cors'
 import { readSession } from '../utils/auth'
-import { getUserBookmarks, createUserBookmark } from '../utils/users'
+import { getBookmarks, addBookmark } from '../utils/profile'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
@@ -14,7 +14,7 @@ export default defineEventHandler(async (event) => {
             return { bookmarks: [] }
         }
 
-        const bookmarks = await getUserBookmarks(session.id)
+        const bookmarks = await getBookmarks(session.id)
         return { bookmarks }
     }
 
@@ -37,11 +37,11 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        const created = await createUserBookmark(session.id, bookmark)
+        const created = await addBookmark(session.id, bookmark)
         if (!created) {
             throw createError({
                 statusCode: 404,
-                statusMessage: 'User not found',
+                statusMessage: 'Profile not found',
             })
         }
 
