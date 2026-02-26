@@ -1,5 +1,8 @@
 # Database Connection Issue Fix
 
+> ⚠️ **SECURITY WARNING**: Never commit your actual `DATABASE_URL` or credentials to git.
+> Always use placeholders in documentation and keep real values in `.env` (which is gitignored).
+
 ## Problem
 
 Your production API is **not connected to MongoDB**. It's using fallback in-memory storage, which means:
@@ -40,8 +43,8 @@ netlify login
 # Navigate to your project
 cd /Users/waelio/Code/peace2074.com
 
-# Set DATABASE_URL (replace with your actual connection string)
-netlify env:set DATABASE_URL "mongodb+srv://username:password@peace2074.1o4lzch.mongodb.net/api?retryWrites=true&w=majority&appName=Peace2074"
+# Set DATABASE_URL (replace with your actual MongoDB connection string from .env)
+netlify env:set DATABASE_URL "mongodb+srv://YOUR_USERNAME:YOUR_PASSWORD@YOUR_CLUSTER.mongodb.net/YOUR_DATABASE?retryWrites=true&w=majority"
 ```
 
 ### Step 2: Verify Other Required Environment Variables
