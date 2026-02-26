@@ -19,7 +19,8 @@ netlify env:set AUTH_SECRET "YOUR_AUTH_SECRET_HERE"
 netlify env:set NITRO_AUTH_SECRET "YOUR_AUTH_SECRET_HERE"
 netlify env:set DEEPSEEK_API_KEY "YOUR_DEEPSEEK_API_KEY_HERE"
 netlify env:set NITRO_DEEPSEEK_API_KEY "YOUR_DEEPSEEK_API_KEY_HERE"
-netlify env:set DEEPSEEK_BASE_URL "https://api.deepseek.com"
+# DEEPSEEK_BASE_URL defaults to the public DeepSeek API - only set if using custom endpoint
+# netlify env:set DEEPSEEK_BASE_URL "YOUR_CUSTOM_ENDPOINT_URL_IF_NEEDED"
 netlify env:set NETLIFY_WEBHOOK_SECRET "YOUR_WEBHOOK_SECRET_HERE"
 
 # Push Notifications (Web Push API)
