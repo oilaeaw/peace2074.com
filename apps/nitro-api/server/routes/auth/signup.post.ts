@@ -47,6 +47,16 @@ export default defineEventHandler(async (event) => {
     // Hash password securely
     const hashedPassword = await hashPassword(password)
 
+    // Default user permissions
+    const defaultPermissions = [
+        { action: 'read', subject: 'category' },
+        { action: 'read', subject: 'post' },
+        { action: 'create', subject: 'user' },
+        { action: 'read', subject: 'user' },
+        { action: 'update', subject: 'user' },
+        { action: 'read', subject: 'chat' },  // New users can access chat
+    ]
+
     // Create new user
     const newUser = {
         id: `user_${Date.now()}`,
@@ -55,7 +65,8 @@ export default defineEventHandler(async (event) => {
         password: hashedPassword,
         role: 'user',
         first_name: username,
-        last_name: ''
+        last_name: '',
+        permissions: defaultPermissions
     }
 
     await addUser(newUser)
