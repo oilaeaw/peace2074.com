@@ -99,15 +99,6 @@ export const routes: Array<RouteRecordRaw> = [
     path: '/chat',
     name: 'Chat',
     component: () => import('@/views/chat.vue'),
-    beforeEnter: (to, from, next) => {
-      // Check if user is authenticated for chat access
-      const authStore = (window as any).authStore || null
-      if (!authStore || !authStore.isAuthenticated) {
-        // Redirect to login with return path
-        return next({ path: '/login', query: { redirect: to.fullPath } })
-      }
-      next()
-    },
     meta: {
       title: 'Chat',
       titleKey: 'pages.chat.title',
