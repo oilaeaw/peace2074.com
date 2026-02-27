@@ -103,15 +103,11 @@ export const useMessagingStore = defineStore("messaging", () => {
             connected.value = true;
             connecting.value = false;
 
-            // Register with username if authenticated
+            // Set local identity from auth store
             const username = authStore._user?.username || authStore.savedName;
             if (username) {
-                socket.send(JSON.stringify({ type: "register", id: username }));
+                me.value = username;
             }
-
-            // Ask for history and users if the hub supports these message types
-            requestHistory();
-            requestUsers();
         });
 
         socket.addEventListener("close", () => {
