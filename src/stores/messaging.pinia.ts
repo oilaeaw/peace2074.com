@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
+import { useAuthStore } from "./auth.pinia";
 
 export type MessagingEnvelope = {
     id?: string;
@@ -62,6 +63,7 @@ function normalizeMessage(msg: MessagingEnvelope): ChatMessage {
 }
 
 export const useMessagingStore = defineStore("messaging", () => {
+    const authStore = useAuthStore();
     const ws = ref<WebSocket | null>(null);
     const url = ref<string>(DEFAULT_MESSAGING_URL);
     const connected = ref(false);
@@ -100,6 +102,13 @@ export const useMessagingStore = defineStore("messaging", () => {
         socket.addEventListener("open", () => {
             connected.value = true;
             connecting.value = false;
+
+            // Register with username if authenticated
+            const username = authStore._user?.username || authStore.savedName;
+            if (username) {
+                socket.send(JSON.stringify({ type: "register", id: username }));
+            }
+
             // Ask for history and users if the hub supports these message types
             requestHistory();
             requestUsers();

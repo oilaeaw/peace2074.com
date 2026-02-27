@@ -1,6 +1,7 @@
 import { createError, defineEventHandler, readBody } from 'h3'
 import { createSession, requireSecrets } from '../../utils/auth'
 import { findUserByUsername, updateUserPassword } from '../../utils/users'
+import { getProfile } from '../../utils/profile'
 import { verifyPassword, hashPassword, isPasswordHashed } from '../../utils/password'
 
 export default defineEventHandler(async (event) => {
@@ -43,10 +44,16 @@ export default defineEventHandler(async (event) => {
             console.log(`[auth/login] Migrated password to hashed format for user: ${username}`)
         }
 
+        // Get user profile for display name
+        const profile = await getProfile(user.id)
+        const displayName = profile
+            ? `${profile.first_name || ''} ${profile.last_name || ''}`.trim() || user.username
+            : user.username
+
         const sessionUser = {
             id: user.id,
             role: user.role,
-            name: `${user.first_name} ${user.last_name}`
+            name: displayName
         }
 
         createSession(event, sessionUser)
@@ -58,8 +65,9 @@ export default defineEventHandler(async (event) => {
                 username: user.username,
                 email: user.email,
                 role: user.role,
-                first_name: user.first_name,
-                last_name: user.last_name,
+                first_name: profile?.first_name || user.username,
+                last_name: profile?.last_name || '',
+                avatar_url: profile?.avatar_url || null,
                 permissions: user.permissions || []
             }
         }
