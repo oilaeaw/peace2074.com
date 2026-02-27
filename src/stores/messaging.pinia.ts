@@ -72,6 +72,8 @@ export const useMessagingStore = defineStore("messaging", () => {
     const messages = ref<ChatMessage[]>([]);
     const users = ref<string[]>([]);
     const me = ref<string | null>(null);
+    const currentRoom = ref<string>("general");
+    const rooms = ref<string[]>(["general", "support", "dev"]);
 
     function disconnect() {
         try {
@@ -180,15 +182,17 @@ export const useMessagingStore = defineStore("messaging", () => {
         }
     }
 
-    function sendBroadcast(text: string) {
+    function sendBroadcast(text: string, room?: string) {
         const body = (text || "").trim();
         if (!body) return;
-        const sent = safeSend({ type: "broadcast", payload: body });
+        const targetRoom = room || currentRoom.value;
+        const sent = safeSend({ type: "broadcast", payload: body, room: targetRoom });
         if (!sent) return;
         messages.value.push({
             id: makeId("local"),
             type: "broadcast",
             from: me.value || "me",
+            room: targetRoom,
             text: body,
             ts: Date.now(),
         });
@@ -218,8 +222,33 @@ export const useMessagingStore = defineStore("messaging", () => {
         safeSend({ type: "userlist" });
     }
 
+    function joinRoom(roomName: string) {
+        const room = roomName.trim();
+        if (!room) return;
+        currentRoom.value = room;
+        if (!rooms.value.includes(room)) {
+            rooms.value.push(room);
+        }
+    }
+
+    function createRoom(roomName: string) {
+        const room = roomName.trim();
+        if (!room || rooms.value.includes(room)) return;
+        rooms.value.push(room);
+        joinRoom(room);
+    }
+
     const sortedMessages = computed(() =>
         messages.value.slice().sort((a, b) => a.ts - b.ts)
+    );
+
+    const roomMessages = computed(() =>
+        sortedMessages.value.filter((msg) => {
+            // Show all direct messages
+            if (msg.type === "direct") return true;
+            // Show messages in current room or no room specified
+            return !msg.room || msg.room === currentRoom.value;
+        })
     );
 
     return {
@@ -229,7 +258,10 @@ export const useMessagingStore = defineStore("messaging", () => {
         error,
         users,
         me,
+        currentRoom,
+        rooms,
         messages: sortedMessages,
+        roomMessages,
         rawMessages: messages,
         connect,
         disconnect,
@@ -237,5 +269,7 @@ export const useMessagingStore = defineStore("messaging", () => {
         sendDirect,
         requestHistory,
         requestUsers,
+        joinRoom,
+        createRoom,
     };
 });

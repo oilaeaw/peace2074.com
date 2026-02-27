@@ -25,11 +25,21 @@
       </q-card-section>
       <q-separator />
 
+      <!-- Room Tabs -->
+      <q-tabs v-model="currentRoom" dense align="left" class="text-grey-7" active-color="primary" indicator-color="primary">
+        <q-tab v-for="room in messaging.rooms" :key="room" :name="room" :label="room" />
+        <q-tab name="__new__" icon="add" @click="showCreateRoom = true" />
+      </q-tabs>
+      <q-separator />
+
       <q-card-section class="row chat-panel">
         <div class="col-12 col-md-8 chat-messages">
-          <q-scroll-area style="height: 320px">
+          <div class="room-header q-pa-sm bg-grey-2">
+            <div class="text-subtitle2">#{{ currentRoom }}</div>
+          </div>
+          <q-scroll-area style="height: 300px">
             <q-list separator>
-              <q-item v-for="msg in messages" :key="msg.id">
+              <q-item v-for="msg in roomMessages" :key="msg.id">
                 <q-item-section avatar>
                   <q-chip dense :color="msg.type === 'direct' ? 'secondary' : 'primary'" text-color="white">
                     {{ msg.from || t('pages.chat.live.anon') }}
@@ -77,7 +87,7 @@
             v-model="draft" 
             dense 
             outlined 
-            :label="selectedUser ? t('pages.chat.live.directMessage') : t('pages.chat.live.broadcastMessage')" 
+            :label="inputPlaceholder" 
             @keyup.enter="send"
             :disable="!canReadChat"
           />
@@ -98,6 +108,29 @@
         {{ messaging.error }}
       </q-banner>
     </q-card>
+
+    <!-- Create Room Dialog -->
+    <q-dialog v-model="showCreateRoom">
+      <q-card style="min-width: 350px">
+        <q-card-section>
+          <div class="text-h6">Create New Room</div>
+        </q-card-section>
+        <q-card-section>
+          <q-input
+            v-model="newRoomName"
+            dense
+            outlined
+            label="Room name"
+            autofocus
+            @keyup.enter="createRoom"
+          />
+        </q-card-section>
+        <q-card-actions align="right">
+          <q-btn flat label="Cancel" color="primary" v-close-popup />
+          <q-btn unelevated label="Create" color="primary" @click="createRoom" :disable="!newRoomName.trim()" />
+        </q-card-actions>
+      </q-card>
+    </q-dialog>
 
     <div class="content-grid q-gutter-md q-mt-lg">
       <q-card>
@@ -136,7 +169,19 @@ const messaging = useMessagingStore();
 const authStore = useAuthStore();
 const draft = ref("");
 const selectedUser = ref<string | null>(null);
+const showCreateRoom = ref(false);
+const newRoomName = ref("");
 
+const currentRoom = computed({
+  get: () => messaging.currentRoom,
+  set: (val) => {
+    if (val !== "__new__") {
+      messaging.joinRoom(val);
+    }
+  },
+});
+
+const roomMessages = computed(() => messaging.roomMessages);
 const messages = computed(() => messaging.messages);
 const me = computed(() => messaging.me);
 
@@ -170,6 +215,19 @@ const statusColor = computed(() => {
   if (messaging.connecting) return "warning";
   return "negative";
 });
+
+const inputPlaceholder = computed(() => {
+  if (selectedUser.value) return t('pages.chat.live.directMessage');
+  return `Message #${currentRoom.value}`;
+});
+
+function createRoom() {
+  const name = newRoomName.value.trim();
+  if (!name) return;
+  messaging.createRoom(name);
+  newRoomName.value = "";
+  showCreateRoom.value = false;
+}
 
 function send() {
   const text = draft.value.trim();
@@ -241,6 +299,9 @@ onBeforeUnmount(() => {
 }
 .chat-messages .q-list {
   background: #f8fafc;
+}
+.room-header {
+  border-bottom: 1px solid #e2e8f0;
 }
 .chat-users {
   min-width: 220px;
