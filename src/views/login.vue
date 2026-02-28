@@ -1,12 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const $q = useQuasar()
 
@@ -41,6 +42,14 @@ function computeNitroBase() {
 }
 
 const NITRO_BASE = computeNitroBase()
+
+function getPostLoginPath() {
+  const redirect = String(route.query.redirect || '').trim()
+  if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login') {
+    return redirect
+  }
+  return '/chat'
+}
 
 function handleGitHubLogin() {
   // Redirect to GitHub OAuth authorize endpoint
@@ -92,7 +101,7 @@ async function handleLogin() {
       position: 'top'
     })
     
-    router.push('/')
+    router.push(getPostLoginPath())
     
   } catch (err: any) {
     $q.notify({

@@ -353,6 +353,14 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
 
 // Initialize Netlify Identity after DOM is ready
 if (isClient) {
+  const getPostLoginPath = () => {
+    const redirect = String(router.currentRoute.value?.query?.redirect || '').trim()
+    if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login') {
+      return redirect
+    }
+    return '/chat'
+  }
+
   const initNetlifyIdentity = () => {
     netlifyIdentity.init()
     // Modal will be injected into document.body by default
@@ -386,6 +394,7 @@ if (isClient) {
           last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
         })
       }
+      router.push(getPostLoginPath())
       netlifyIdentity.close()
     })
 
