@@ -32,7 +32,10 @@ test('locale switch updates UI and persists', async ({ page }) => {
     // Open locale selector and choose Arabic
     const localeSelect = page.locator('.q-select').first()
     await localeSelect.click()
-    await page.getByText('العربية', { exact: true }).click()
+    
+    // Wait for dropdown menu and click Arabic option
+    await page.waitForSelector('.q-menu', { state: 'visible' })
+    await page.locator('.q-item').filter({ hasText: /العربية|Arabic/ }).first().click()
 
     // Arabic placeholder should now appear and document direction set to RTL
     await expect(searchInput).toHaveAttribute('placeholder', /ابحث/)

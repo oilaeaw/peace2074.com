@@ -189,6 +189,41 @@ function updateTitleForRoute(to: any) {
 
 const SEO_BASE_URL = 'https://peace2074.com'
 const DEFAULT_DESCRIPTION = 'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more'
+const PAGEVIEW_DEDUPE_MS = 1200
+let lastTrackedPageView = {
+  key: '',
+  at: 0,
+}
+
+function isQuranDetailPath(path: string): boolean {
+  return /^\/quran\/\d+$/.test(path)
+}
+
+function trackPageViewForRoute(to: any, source: 'router_after_each' | 'router_ready') {
+  if (!isClient) return
+  const gtag = (window as any)?.gtag
+  if (typeof gtag !== 'function') return
+
+  const pagePath = `${to?.path || window.location.pathname}${window.location.search || ''}`
+  // Quran detail pages emit richer, component-level page views with real sura names.
+  if (isQuranDetailPath(to?.path || window.location.pathname)) return
+
+  const pageTitle = document.title || 'PEACE2074'
+  const dedupeKey = `${pagePath}|${pageTitle}`
+  const now = Date.now()
+  if (lastTrackedPageView.key === dedupeKey && now - lastTrackedPageView.at < PAGEVIEW_DEDUPE_MS) {
+    return
+  }
+
+  lastTrackedPageView = { key: dedupeKey, at: now }
+
+  gtag('event', 'page_view', {
+    page_title: pageTitle,
+    page_location: window.location.href,
+    page_path: pagePath,
+    source,
+  })
+}
 
 function upsertMetaTag(attr: 'name' | 'property', key: string, content: string) {
   if (!isClient || !content) return
@@ -248,11 +283,13 @@ function updateSeoMetaForRoute(to: any) {
 router.afterEach((to) => {
   updateTitleForRoute(to)
   updateSeoMetaForRoute(to)
+  trackPageViewForRoute(to, 'router_after_each')
 });
 
 router.isReady().then(() => {
   updateTitleForRoute(router.currentRoute.value)
   updateSeoMetaForRoute(router.currentRoute.value)
+  trackPageViewForRoute(router.currentRoute.value, 'router_ready')
 })
 
 // Update title immediately on locale change

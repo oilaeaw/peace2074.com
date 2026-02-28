@@ -38,18 +38,45 @@ const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
 
 // Quran verse tree for O(log n) verse lookup
 const quranTree = useQuranTree()
+const PAGEVIEW_DEDUPE_MS = 1500
+let lastTrackedQuranDetailKey = ''
+let lastTrackedQuranDetailAt = 0
+const API_5XX_DEDUPE_MS = 15000
+const recentApi5xxEvents = new Map<string, number>()
 
 function trackPageView(pageTitle: string) {
   if (typeof window === 'undefined') return
   const gtag = (window as any)?.gtag
   if (typeof gtag !== 'function') return
+  const pagePath = `${window.location.pathname}${window.location.search}`
+  const dedupeKey = `${pagePath}|${pageTitle}|${Number(sura.value?.id || route.params.id || 0)}`
+  const now = Date.now()
+  if (lastTrackedQuranDetailKey === dedupeKey && now - lastTrackedQuranDetailAt < PAGEVIEW_DEDUPE_MS) {
+    return
+  }
+  lastTrackedQuranDetailKey = dedupeKey
+  lastTrackedQuranDetailAt = now
+
+  const suraId = Number(sura.value?.id || route.params.id || 0)
+  const suraNameEn = String(sura.value?.e_name || '')
+
   gtag('event', 'page_view', {
     page_title: pageTitle,
     page_location: window.location.href,
-    page_path: `${window.location.pathname}${window.location.search}`,
+    page_path: pagePath,
     content_group: 'quran',
-    sura_id: Number(sura.value?.id || route.params.id || 0),
-    sura_name_en: String(sura.value?.e_name || ''),
+    sura_id: suraId,
+    sura_name_en: suraNameEn,
+    source: 'quran_detail',
+  })
+
+  gtag('event', 'quran_detail_view', {
+    sura_id: suraId,
+    sura_name_en: suraNameEn,
+    sura_name_ar: String(sura.value?.name || ''),
+    verses_count: Number(sura.value?.total_verses || 0),
+    page_path: pagePath,
+    locale: String(locale.value || 'en'),
   })
 }
 
@@ -58,6 +85,24 @@ function trackApi5xx(source: string, status: number, url: string) {
   if (typeof window === 'undefined') return
   const gtag = (window as any)?.gtag
   if (typeof gtag !== 'function') return
+
+  const dedupeKey = `${source}|${status}|${url}`
+  const now = Date.now()
+  const lastSeen = recentApi5xxEvents.get(dedupeKey) || 0
+  if (now - lastSeen < API_5XX_DEDUPE_MS) {
+    return
+  }
+  recentApi5xxEvents.set(dedupeKey, now)
+
+  // small cleanup to avoid unbounded growth in long sessions
+  if (recentApi5xxEvents.size > 200) {
+    for (const [key, ts] of recentApi5xxEvents.entries()) {
+      if (now - ts > API_5XX_DEDUPE_MS * 2) {
+        recentApi5xxEvents.delete(key)
+      }
+    }
+  }
+
   gtag('event', 'api_5xx', {
     source,
     status,

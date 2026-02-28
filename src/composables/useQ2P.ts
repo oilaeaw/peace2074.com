@@ -13,12 +13,30 @@ const API_BASE = (typeof window !== 'undefined'
 let chaptersCache: any[] | null = null
 let quranCache: Record<string, any[]> | null = null
 let localDataPromise: Promise<Sura[]> | null = null
+const API_5XX_DEDUPE_MS = 15000
+const recentApi5xxEvents = new Map<string, number>()
 
 function trackApi5xx(url: string, status: number) {
     if (status < 500) return
     if (typeof window === 'undefined') return
     const gtag = (window as any)?.gtag
     if (typeof gtag !== 'function') return
+
+    const dedupeKey = `quran_api|${status}|${url}`
+    const now = Date.now()
+    const lastSeen = recentApi5xxEvents.get(dedupeKey) || 0
+    if (now - lastSeen < API_5XX_DEDUPE_MS) {
+        return
+    }
+    recentApi5xxEvents.set(dedupeKey, now)
+
+    if (recentApi5xxEvents.size > 200) {
+        for (const [key, ts] of recentApi5xxEvents.entries()) {
+            if (now - ts > API_5XX_DEDUPE_MS * 2) {
+                recentApi5xxEvents.delete(key)
+            }
+        }
+    }
 
     gtag('event', 'api_5xx', {
         source: 'quran_api',
