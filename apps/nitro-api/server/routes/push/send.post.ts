@@ -18,7 +18,14 @@ export default defineEventHandler(async (event) => {
 
     try {
         const body = await readBody(event)
-        const { title, message, url, userId } = body
+        const { campaign, userId } = body
+        let { title, message, url } = body
+
+        if (campaign === 'ramadan') {
+            title = title || '🌙 Ramadan Reflection'
+            message = message || 'Your daily Ramadan reflection is ready in PEACE2074. Open Quran, Tasbeeh, or Chat to continue your streak.'
+            url = url || '/?campaign=ramadan'
+        }
 
         if (!title || !message) {
             return { ok: false, error: 'Title and message are required' }
@@ -53,8 +60,10 @@ export default defineEventHandler(async (event) => {
             body: message,
             icon: '/android-chrome-192x192.png',
             badge: '/android-chrome-192x192.png',
+            tag: campaign ? `peace2074-${campaign}` : 'peace2074-notification',
             data: {
                 url: url || '/',
+                campaign: campaign || null,
                 timestamp: Date.now(),
             },
         })

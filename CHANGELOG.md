@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.2.6 (2026-03-01)
+
+### Features
+
+- add Ramadan campaign home banner with daily prompts and analytics tracking (`ramadan_banner_view`, `ramadan_cta_click`, `ramadan_daily_prompt_apply`)
+- add push notification campaign preset support (`campaign: "ramadan"`) in `/api/push/send`
+
+### Chores
+
+- bump project version to `0.2.6` in root and Nitro API package manifests
+
 ## 0.2.4 (2026-02-21)
 
 ### Features
