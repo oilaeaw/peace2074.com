@@ -45,10 +45,25 @@ const NITRO_BASE = computeNitroBase()
 
 function getPostLoginPath() {
   const redirect = String(route.query.redirect || '').trim()
-  if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login') {
+  if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login' && redirect !== '/signup') {
     return redirect
   }
-  return '/chat'
+
+  if (typeof window !== 'undefined' && window.document?.referrer) {
+    try {
+      const ref = new URL(window.document.referrer)
+      if (ref.origin === window.location.origin) {
+        const refPath = `${ref.pathname}${ref.search}${ref.hash}`
+        if (refPath.startsWith('/') && refPath !== '/login' && refPath !== '/signup') {
+          return refPath
+        }
+      }
+    } catch {
+      /* noop */
+    }
+  }
+
+  return '/'
 }
 
 function handleGitHubLogin() {

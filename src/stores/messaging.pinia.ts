@@ -75,6 +75,30 @@ export const useMessagingStore = defineStore("messaging", () => {
     const currentRoom = ref<string>("general");
     const rooms = ref<string[]>(["general", "support", "dev"]);
 
+    function resolveAuthDisplayName(): string | null {
+        const user = (authStore as any)?._user || null
+        if (!user || typeof user !== 'object') return null
+
+        const firstName = String(user.first_name || '').trim()
+        const lastName = String(user.last_name || '').trim()
+        const fullName = `${firstName} ${lastName}`.trim()
+        if (fullName) return fullName
+
+        const username = String(user.username || '').trim()
+        if (username) return username
+
+        const name = String(user.name || '').trim()
+        if (name) return name
+
+        const email = String(user.email || '').trim()
+        if (email && email.includes('@')) {
+            return email.split('@')[0]
+        }
+
+        const id = String(user.id || '').trim()
+        return id || null
+    }
+
     function disconnect() {
         try {
             ws.value?.close();
@@ -106,9 +130,19 @@ export const useMessagingStore = defineStore("messaging", () => {
             connecting.value = false;
 
             // Set local identity from auth store
-            const username = authStore._user?.username || authStore.savedName;
+            const username = resolveAuthDisplayName() || authStore.savedName;
             if (username) {
                 me.value = username;
+                try {
+                    // Best-effort identity registration for servers that support named clients
+                    socket.send(JSON.stringify({
+                        type: "register",
+                        id: username,
+                        payload: { id: username, name: username },
+                    }))
+                } catch {
+                    // ignore registration issues; connection still usable
+                }
             }
         });
 
@@ -186,12 +220,16 @@ export const useMessagingStore = defineStore("messaging", () => {
         const body = (text || "").trim();
         if (!body) return;
         const targetRoom = room || currentRoom.value;
-        const sent = safeSend({ type: "broadcast", payload: body, room: targetRoom });
+        const sender = me.value || resolveAuthDisplayName() || "me"
+        if (!me.value && sender) {
+            me.value = sender
+        }
+        const sent = safeSend({ type: "broadcast", payload: body, room: targetRoom, from: sender });
         if (!sent) return;
         messages.value.push({
             id: makeId("local"),
             type: "broadcast",
-            from: me.value || "me",
+            from: sender,
             room: targetRoom,
             text: body,
             ts: Date.now(),
@@ -201,13 +239,17 @@ export const useMessagingStore = defineStore("messaging", () => {
     function sendDirect(text: string, to: string) {
         const body = (text || "").trim();
         if (!body || !to) return;
+        const sender = me.value || resolveAuthDisplayName() || "me"
+        if (!me.value && sender) {
+            me.value = sender
+        }
         // Hub expects "route" for targeted messages
-        const sent = safeSend({ type: "route", to, payload: body });
+        const sent = safeSend({ type: "route", to, payload: body, from: sender });
         if (!sent) return;
         messages.value.push({
             id: makeId("local"),
             type: "direct",
-            from: me.value || "me",
+            from: sender,
             to,
             text: body,
             ts: Date.now(),

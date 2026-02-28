@@ -3,6 +3,9 @@
     <section class="hero">
       <h1>{{ t("pages.chat.title") }}</h1>
       <p class="subtitle">{{ t("pages.chat.subtitle") }}</p>
+      <p v-if="isAuthenticated" class="logged-user q-mt-xs">
+        {{ loggedInLabel }}
+      </p>
       <q-banner class="q-mt-sm" dense rounded color="primary" text-color="white">
         {{ t("pages.chat.banner") }}
       </q-banner>
@@ -172,6 +175,35 @@ const selectedUser = ref<string | null>(null);
 const showCreateRoom = ref(false);
 const newRoomName = ref("");
 
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+
+const loggedInName = computed(() => {
+  const user = authStore._user as any
+  if (!user || typeof user !== 'object') return ''
+
+  const first = String(user.first_name || '').trim()
+  const last = String(user.last_name || '').trim()
+  const full = `${first} ${last}`.trim()
+  if (full) return full
+
+  const username = String(user.username || '').trim()
+  if (username) return username
+
+  const name = String(user.name || '').trim()
+  if (name) return name
+
+  const email = String(user.email || '').trim()
+  if (email.includes('@')) return email.split('@')[0]
+
+  return String(user.id || '').trim()
+})
+
+const loggedInLabel = computed(() => {
+  const name = loggedInName.value
+  if (!name) return String(t('welcome_guest') || '')
+  return String(t('welcome_back', { name }) || name)
+})
+
 const currentRoom = computed({
   get: () => messaging.currentRoom,
   set: (val) => {
@@ -286,6 +318,12 @@ onBeforeUnmount(() => {
   color: #475569;
   margin-top: 6px;
 }
+
+.logged-user {
+  color: #334155;
+  font-weight: 500;
+}
+
 .hero-actions {
   display: flex;
   justify-content: center;

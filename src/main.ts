@@ -355,10 +355,25 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
 if (isClient) {
   const getPostLoginPath = () => {
     const redirect = String(router.currentRoute.value?.query?.redirect || '').trim()
-    if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login') {
+    if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login' && redirect !== '/signup') {
       return redirect
     }
-    return '/chat'
+
+    if (window.document?.referrer) {
+      try {
+        const ref = new URL(window.document.referrer)
+        if (ref.origin === window.location.origin) {
+          const refPath = `${ref.pathname}${ref.search}${ref.hash}`
+          if (refPath.startsWith('/') && refPath !== '/login' && refPath !== '/signup') {
+            return refPath
+          }
+        }
+      } catch {
+        /* noop */
+      }
+    }
+
+    return '/'
   }
 
   const initNetlifyIdentity = () => {
