@@ -135,6 +135,17 @@
                 "historyEmpty": "Henüz önceki soru yok.",
                 "reuse": "Yeniden kullan",
                 "clearHistory": "Geçmişi temizle"
+            },
+            "ramadan": {
+                "badge": "Ramazan Kampanyası",
+                "title": "30 Günlük Tefekkür ve İstikrar",
+                "body": "Kur'an okuma, tesbih ve topluluk desteğiyle nazik bir günlük alışkanlık oluşturun.",
+                "todayPrompt": "Bugünün tefekkür sorusu",
+                "ctaQuran": "Kur'an'ı aç",
+                "ctaTasbeeh": "Tesbih'i aç",
+                "ctaChat": "Sohbeti aç",
+                "usePrompt": "Soruyu AI'da kullan",
+                "promptApplied": "Bugünün Ramazan sorusu PEACE AI'ye eklendi."
             }
         },
         "holynames": "Allah'ın Güzel İsimleri",

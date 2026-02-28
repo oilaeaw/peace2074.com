@@ -11,6 +11,49 @@
         </div>
       </div>
 
+      <q-banner v-if="showRamadanCampaign" class="ramadan-banner q-pa-md">
+        <div class="ramadan-eyebrow">{{ t('pages.home.ramadan.badge') }}</div>
+        <div class="ramadan-title">{{ t('pages.home.ramadan.title') }}</div>
+        <div class="ramadan-body">{{ t('pages.home.ramadan.body') }}</div>
+
+        <div v-if="dailyRamadanPrompt" class="ramadan-prompt q-mt-sm">
+          <div class="ramadan-prompt-label">{{ t('pages.home.ramadan.todayPrompt') }}</div>
+          <div>{{ dailyRamadanPrompt }}</div>
+        </div>
+
+        <div class="ramadan-actions q-mt-md">
+          <q-btn
+            color="primary"
+            unelevated
+            size="sm"
+            :label="t('pages.home.ramadan.ctaQuran')"
+            @click="onRamadanCta('quran')"
+          />
+          <q-btn
+            color="secondary"
+            outline
+            size="sm"
+            :label="t('pages.home.ramadan.ctaTasbeeh')"
+            @click="onRamadanCta('tasbeeh')"
+          />
+          <q-btn
+            color="primary"
+            flat
+            size="sm"
+            :label="t('pages.home.ramadan.ctaChat')"
+            @click="onRamadanCta('chat')"
+          />
+          <q-btn
+            v-if="dailyRamadanPrompt"
+            flat
+            size="sm"
+            icon="auto_awesome"
+            :label="t('pages.home.ramadan.usePrompt')"
+            @click="applyRamadanPrompt"
+          />
+        </div>
+      </q-banner>
+
       <q-card class="ai-card q-pa-md q-mt-lg">
         <div class="ai-header">
           <div>
@@ -125,8 +168,9 @@ import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { sendDeepSeekChat } from '@/stores/services'
+import { getRamadanPrompt, isRamadanCampaignActive, ramadanCampaign } from '@/app/config/ramadan'
 
-const { t, tm } = useI18n()
+const { t, tm, locale } = useI18n()
 const $q = useQuasar()
 const router = useRouter()
 
@@ -138,6 +182,7 @@ const history = ref<{ id: string; prompt: string; response: string; ts: number }
 const recentPosts = ref<{ slug: string; title: string; excerpt: string; date: string }[]>([])
 const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
+const RAMADAN_IMPRESSION_KEY = 'ramadan-campaign-last-view'
 
 const { copy } = useClipboard({ source: aiResponse })
 
@@ -152,6 +197,75 @@ const currentPromptIndex = ref(0)
 const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`
 
 const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value)
+const isRamadanPreview = computed(() => String(router.currentRoute.value?.query?.campaign || '').toLowerCase() === 'ramadan')
+const showRamadanCampaign = computed(() => isRamadanCampaignActive() || isRamadanPreview.value)
+const dailyRamadanPrompt = computed(() => {
+  if (!showRamadanCampaign.value) return ''
+  return getRamadanPrompt(String(locale.value || 'en'))
+})
+
+function trackRamadanEvent(eventName: string, payload: Record<string, any> = {}) {
+  if (typeof window === 'undefined') return
+  const gtag = (window as any)?.gtag
+  if (typeof gtag !== 'function') return
+  gtag('event', eventName, {
+    campaign_id: ramadanCampaign.id,
+    locale: String(locale.value || 'en'),
+    ...payload,
+  })
+}
+
+function trackRamadanImpressionOnce() {
+  if (!showRamadanCampaign.value) return
+  if (typeof localStorage === 'undefined') {
+    trackRamadanEvent('ramadan_banner_view')
+    return
+  }
+
+  const today = new Date().toISOString().slice(0, 10)
+  const storageValue = `${ramadanCampaign.id}:${today}`
+  try {
+    const lastSeen = localStorage.getItem(RAMADAN_IMPRESSION_KEY)
+    if (lastSeen === storageValue) return
+    localStorage.setItem(RAMADAN_IMPRESSION_KEY, storageValue)
+  } catch {
+    // continue and track best-effort
+  }
+
+  trackRamadanEvent('ramadan_banner_view', {
+    prompt_available: Boolean(dailyRamadanPrompt.value),
+    preview_mode: isRamadanPreview.value,
+  })
+}
+
+function onRamadanCta(cta: 'quran' | 'tasbeeh' | 'chat') {
+  const targetPath = ramadanCampaign.ctaRoutes[cta]
+  trackRamadanEvent('ramadan_cta_click', {
+    cta,
+    target_path: targetPath,
+    prompt_available: Boolean(dailyRamadanPrompt.value),
+  })
+  router.push(targetPath)
+}
+
+function applyRamadanPrompt() {
+  if (!dailyRamadanPrompt.value || isLoading.value) return
+  userPrompt.value = dailyRamadanPrompt.value
+  errorMessage.value = null
+  aiResponse.value = null
+
+  trackRamadanEvent('ramadan_daily_prompt_apply', {
+    prompt_length: dailyRamadanPrompt.value.length,
+  })
+
+  $q.notify({
+    message: t('pages.home.ramadan.promptApplied'),
+    color: 'positive',
+    position: 'top',
+    timeout: 1800,
+    icon: 'auto_awesome',
+  })
+}
 
 function copyResponse() {
   if (!aiResponse.value) return
@@ -261,6 +375,7 @@ function formatBlogDate(date: string) {
 onMounted(() => {
   loadHistory()
   void loadRecentPosts()
+  trackRamadanImpressionOnce()
 })
 
 function setNextPromptExample() {
@@ -295,6 +410,47 @@ function setNextPromptExample() {
   margin: 0 0 6px;
 }
 .actions { margin-top: 12px }
+.ramadan-banner {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  border-radius: 14px;
+  border: 1px solid rgba(253, 224, 71, 0.35);
+  background: linear-gradient(120deg, #fffbeb 0%, #fff7ed 100%);
+}
+.ramadan-eyebrow {
+  font-size: 0.75rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  color: #92400e;
+  font-weight: 700;
+}
+.ramadan-title {
+  margin-top: 2px;
+  font-size: 1.1rem;
+  font-weight: 700;
+  color: #7c2d12;
+}
+.ramadan-body {
+  margin-top: 4px;
+  color: #7c2d12;
+}
+.ramadan-prompt {
+  background: rgba(255, 255, 255, 0.65);
+  border-radius: 10px;
+  padding: 10px 12px;
+  border: 1px dashed rgba(146, 64, 14, 0.2);
+  color: #78350f;
+}
+.ramadan-prompt-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  margin-bottom: 4px;
+}
+.ramadan-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
 .ai-card { width: min(420px, 100%); backdrop-filter: blur(6px); }
 .ai-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
 .ai-title { font-weight:600; margin-bottom:4px; }
@@ -341,6 +497,9 @@ function setNextPromptExample() {
   .title { font-size: clamp(1.6rem, 6vw, 2.1rem); margin-bottom: 4px; }
   .lead { margin-bottom: 8px; }
   .actions { justify-content: center; margin-top: 10px; }
+  .ramadan-actions {
+    justify-content: center;
+  }
   .ai-card { width: 100%; align-self: stretch; }
   .ai-header { align-items: center; }
   .response-content {

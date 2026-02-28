@@ -135,6 +135,17 @@
         "historyEmpty": "No previous questions yet.",
         "reuse": "Reuse",
         "clearHistory": "Clear history"
+      },
+      "ramadan": {
+        "badge": "Ramadan Campaign",
+        "title": "30 Days of Reflection & Consistency",
+        "body": "Build a gentle daily habit with Quran reading, Tasbeeh, and community support.",
+        "todayPrompt": "Today's reflection prompt",
+        "ctaQuran": "Open Quran",
+        "ctaTasbeeh": "Open Tasbeeh",
+        "ctaChat": "Open Chat",
+        "usePrompt": "Use prompt in AI",
+        "promptApplied": "Today's Ramadan prompt is ready in PEACE AI."
       }
     },
     "holynames": "God's Glory Names",

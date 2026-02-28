@@ -88,6 +88,17 @@
         "historyEmpty": "Noch keine früheren Fragen.",
         "reuse": "Wiederverwenden",
         "clearHistory": "Verlauf löschen"
+      },
+      "ramadan": {
+        "badge": "Ramadan-Kampagne",
+        "title": "30 Tage Reflexion & Beständigkeit",
+        "body": "Baue mit Quran-Lesen, Tasbeeh und Gemeinschaft eine ruhige tägliche Gewohnheit auf.",
+        "todayPrompt": "Heutiger Impuls",
+        "ctaQuran": "Quran öffnen",
+        "ctaTasbeeh": "Tasbeeh öffnen",
+        "ctaChat": "Chat öffnen",
+        "usePrompt": "Prompt in KI nutzen",
+        "promptApplied": "Der heutige Ramadan-Impuls ist in PEACE AI bereit."
       }
     },
     "holynames": "Die Namen Gottes",
