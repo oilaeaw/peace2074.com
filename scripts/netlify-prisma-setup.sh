@@ -14,25 +14,44 @@ cd apps/nitro-api
 pnpm exec prisma generate --schema ./prisma/schema.prisma
 cd ../..
 
-# Copy .prisma folder to function directory
-echo "📂 Copying Prisma generated client..."
+# Copy .prisma folder and @prisma/client to function directory
+echo "📂 Copying Prisma runtime and generated client..."
 
 # Find .prisma/client in pnpm's nested structure
-PRISMA_SRC=$(find node_modules/.pnpm -name "client" -path "*/.prisma/client" -type d 2>/dev/null | head -n 1)
+PRISMA_GEN=$(find node_modules/.pnpm -name "client" -path "*/.prisma/client" -type d 2>/dev/null | head -n 1)
+PRISMA_PKG=$(find node_modules/.pnpm -name "@prisma" -path "*/@prisma+client*/node_modules/@prisma" -type d 2>/dev/null | head -n 1)
 
-if [ -z "$PRISMA_SRC" ]; then
+if [ -z "$PRISMA_GEN" ]; then
   # Fallback to standard location (non-pnpm)
   if [ -d "node_modules/.prisma/client" ]; then
-    PRISMA_SRC="node_modules/.prisma/client"
+    PRISMA_GEN="node_modules/.prisma/client"
   fi
 fi
 
-if [ -n "$PRISMA_SRC" ]; then
+if [ -z "$PRISMA_PKG" ]; then
+  # Fallback to standard location (non-pnpm)
+  if [ -d "node_modules/@prisma" ]; then
+    PRISMA_PKG="node_modules/@prisma"
+  fi
+fi
+
+# Copy .prisma/client
+if [ -n "$PRISMA_GEN" ]; then
   mkdir -p "$FUNC_DIR/node_modules/.prisma"
-  cp -r "$PRISMA_SRC" "$FUNC_DIR/node_modules/.prisma/"
-  echo "✅ Copied .prisma/client from $PRISMA_SRC"
+  cp -r "$PRISMA_GEN" "$FUNC_DIR/node_modules/.prisma/"
+  echo "✅ Copied .prisma/client from $PRISMA_GEN"
 else
   echo "❌ .prisma/client not found in node_modules"
+  exit 1
+fi
+
+# Copy @prisma/client package
+if [ -n "$PRISMA_PKG" ]; then
+  mkdir -p "$FUNC_DIR/node_modules"
+  cp -r "$PRISMA_PKG" "$FUNC_DIR/node_modules/"
+  echo "✅ Copied @prisma/client from $PRISMA_PKG"
+else
+  echo "❌ @prisma/client package not found in node_modules"
   exit 1
 fi
 
