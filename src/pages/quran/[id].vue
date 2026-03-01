@@ -1620,12 +1620,12 @@ watch(locale, () => {
 
 .reader-layout .arabic-block {
   font-family: "Noto Naskh Arabic", serif;
-  font-size: 1.55rem;
-  line-height: 2.2rem;
+  font-size: clamp(1.25rem, 2.5vw, 2.5rem);
+  line-height: 1.8;
   direction: rtl;
   text-align: justify;
   background: #ffffff;
-  padding: 24px;
+  padding: clamp(16px, 3vw, 32px);
   border-radius: 16px;
   border: 1px solid rgba(0, 0, 0, 0.08);
 }
@@ -2025,7 +2025,7 @@ watch(locale, () => {
   unicode-bidi: embed;
   display: block;
   margin: 8px 0;
-  font-size: 1.25rem;
+  font-size: clamp(1.1rem, 2.2vw, 2.2rem);
   line-height: 1.8;
 }
 
