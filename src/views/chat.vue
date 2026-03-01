@@ -356,4 +356,58 @@ onBeforeUnmount(() => {
     flex-direction: column;
   }
 }
+
+/* Landscape Optimizations */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Compact header for more message space */
+  .hero {
+    padding: 12px 0;
+  }
+  
+  .hero h1 {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+  
+  .subtitle {
+    font-size: 0.85rem;
+    margin-top: 2px;
+  }
+  
+  .hero-actions {
+    margin-top: 8px;
+  }
+  
+  /* Taller message area */
+  .chat-messages .q-scroll-area {
+    height: 250px !important;
+  }
+  
+  /* Single row layout for better keyboard handling */
+  .chat-panel {
+    gap: 8px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 768px) {
+  /* Side-by-side messages and users */
+  .chat-panel {
+    display: grid;
+    grid-template-columns: 1fr 280px;
+    gap: 16px;
+  }
+  
+  .chat-messages {
+    grid-column: 1;
+  }
+  
+  .chat-users {
+    grid-column: 2;
+  }
+  
+  /* Taller scroll area for desktop landscape */
+  .chat-messages .q-scroll-area {
+    height: 400px !important;
+  }
+}
 </style>

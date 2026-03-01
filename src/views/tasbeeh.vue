@@ -748,4 +748,70 @@ watch(
     }
   }
 }
+
+/* Landscape Optimizations */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Horizontal layout for counter */
+  .tasbeeh-container {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 16px;
+    align-items: center;
+    padding: 1rem;
+  }
+  
+  .page-header {
+    grid-column: 1 / -1;
+    padding: 12px 0;
+  }
+  
+  .page-title {
+    font-size: 1.5rem;
+    margin-bottom: 4px;
+  }
+  
+  .page-subtitle {
+    font-size: 0.9rem;
+  }
+  
+  .current-tasbeeh,
+  .counter-section {
+    grid-column: 1;
+  }
+  
+  .action-section,
+  .controls-section {
+    grid-column: 2;
+  }
+  
+  /* Bigger counter in landscape */
+  .counter-display .count-number {
+    font-size: 5rem;
+  }
+  
+  .progress-ring :global(.progress-circle) {
+    font-size: 240px;
+  }
+  
+  .tasbeeh-button {
+    width: 140px;
+    height: 140px;
+  }
+  
+  .tasbeeh-button :global(.q-icon) {
+    font-size: 64px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 768px) and (max-height: 600px) {
+  /* Optimize for tablet landscape */
+  .tasbeeh-selection {
+    margin-top: 16px;
+  }
+  
+  .tasbeeh-grid {
+    grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
+    gap: 12px;
+  }
+}
 </style>

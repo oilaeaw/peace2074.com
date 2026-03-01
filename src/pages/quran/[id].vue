@@ -2143,4 +2143,58 @@ body.body--dark .verse-text-arabic {
 body.body--dark .verse-translation-native {
   color: #b0b0b0;
 }
+
+/* Landscape Optimizations */
+@media (orientation: landscape) and (max-height: 500px) {
+  /* Compact header for more content space */
+  .sura-heading {
+    padding: 8px 0;
+  }
+  
+  .text-h5 {
+    font-size: 1.2rem !important;
+  }
+  
+  .heading-actions {
+    gap: 4px;
+  }
+}
+
+@media (orientation: landscape) and (min-width: 768px) {
+  /* Side-by-side Arabic and translation in reader mode */
+  .verse-row {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 24px;
+    align-items: start;
+  }
+  
+  .verse-main-row {
+    grid-column: 1;
+  }
+  
+  .verse-meta {
+    grid-column: 2;
+    margin: 0;
+    display: flex;
+    align-items: center;
+  }
+  
+  .verse-translation {
+    padding: 16px;
+    background: rgba(0, 0, 0, 0.02);
+    border-radius: 8px;
+    min-height: 100%;
+  }
+  
+  body.body--dark .verse-translation {
+    background: rgba(255, 255, 255, 0.05);
+  }
+  
+  /* Better mushaf columns in landscape */
+  .mushaf-body {
+    column-count: 2;
+    column-gap: 32px;
+  }
+}
 </style>
