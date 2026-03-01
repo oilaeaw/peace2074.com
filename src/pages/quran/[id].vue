@@ -1090,7 +1090,7 @@ watch(locale, () => {
 })
 
 // Sync layout mode with URL query parameter
-watch(layoutMode, (newMode) => {
+watch(() => layoutModeStore.value.value, (newMode) => {
   if (route.query.mode !== newMode) {
     router.replace({ query: { ...route.query, mode: newMode } })
   }
