@@ -82,7 +82,6 @@
           round
           color="primary"
           :icon="isAthanPlaying ? 'pause' : 'volume_up'"
-          class="q-ml-md"
           @click="toggleAthan"
           :aria-label="
             isAthanPlaying
@@ -96,7 +95,6 @@
           round
           color="negative"
           icon="stop"
-          class="q-ml-sm"
           @click="stopAthan"
           :aria-label="t('appShell.stopAthan')"
         />
@@ -112,8 +110,7 @@
           emit-value
           map-options
           v-model="localeModel"
-          class="glassy-field"
-          style="max-width: 140px; margin-left: 12px"
+          class="glassy-field locale-select"
         />
 
         <!-- User Profile Button -->
@@ -122,7 +119,6 @@
           round
           :color="isAuthenticated ? 'positive' : 'white'"
           :icon="isAuthenticated ? 'account_circle' : 'login'"
-          class="q-ml-sm"
         >
           <q-menu>
             <q-list style="min-width: 200px">
@@ -637,6 +633,8 @@ const orderedNavItems = computed(() => {
   max-width: 1200px;
   margin: 0 auto;
   width: 100%;
+  flex-wrap: nowrap;
+  gap: 8px;
 }
 
 .brand-logo {
@@ -660,8 +658,9 @@ const orderedNavItems = computed(() => {
 }
 
 .search {
-  max-width: 360px;
-  margin-left: 12px;
+  max-width: 240px;
+  min-width: 160px;
+  width: 100%;
 }
 
 .search-wrapper {
@@ -683,6 +682,11 @@ const orderedNavItems = computed(() => {
 
 .glassy-field :deep(.q-field__native::placeholder) {
   color: rgba(255, 255, 255, 0.65);
+}
+
+.locale-select {
+  max-width: 120px;
+  min-width: 100px;
 }
 
 .footer {
