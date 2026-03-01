@@ -372,9 +372,9 @@ function formatBlogDate(date: string) {
   }
 }
 
-onMounted(() => {
+onMounted(async () => {
   loadHistory()
-  void loadRecentPosts()
+  await loadRecentPosts()
   trackRamadanImpressionOnce()
 })
 
