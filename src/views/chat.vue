@@ -105,7 +105,7 @@
       </q-card-actions>
       <q-banner v-if="!canReadChat" class="q-mt-sm" rounded dense color="warning" text-color="dark">
         <q-icon name="warning" class="q-mr-sm" />
-        You need chat access permissions to send messages. Please contact an administrator.
+        Please log in to send messages.
       </q-banner>
       <q-banner v-if="messaging.error" class="q-mt-sm" rounded dense color="negative" text-color="white">
         {{ messaging.error }}
@@ -219,11 +219,7 @@ const me = computed(() => messaging.me);
 
 // CASL permission checks
 const canReadChat = computed(() => {
-  try {
-    return authStore.ability?.can(CaslActionE.READ, CaslSubjectE.CHAT)
-  } catch {
-    return false
-  }
+  return isAuthenticated.value
 });
 
 const canManageChat = computed(() => {
