@@ -1,8 +1,6 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getPrisma } from '../utils/prisma'
-import { readFileSync } from 'node:fs'
-import { fileURLToPath } from 'node:url'
-import { dirname, join } from 'node:path'
+import blogSeedData from '../data/blog-seed.json'
 
 type BlogSeedPost = {
     id?: string
@@ -19,12 +17,8 @@ type BlogSeedPost = {
 
 function loadSeedPosts(): BlogSeedPost[] {
     try {
-        const __filename = fileURLToPath(import.meta.url)
-        const __dirname = dirname(__filename)
-        const seedPath = join(__dirname, '../data/blog-seed.json')
-        const raw = readFileSync(seedPath, 'utf-8')
-        const parsed = JSON.parse(raw)
-        return Array.isArray(parsed) ? parsed : []
+        // Import the JSON directly so it gets bundled
+        return Array.isArray(blogSeedData) ? blogSeedData : []
     } catch (error) {
         console.warn('[Blog GET] Seed fallback load failed:', error instanceof Error ? error.message : 'unknown')
         return []
