@@ -1969,9 +1969,10 @@ watch(locale, () => {
 }
 
 .native-content {
-  max-width: 900px;
+  max-width: 100%;
   margin: 0 auto;
   line-height: 2;
+  padding: 0 clamp(16px, 2vw, 48px);
 }
 
 .verse-paragraph {
@@ -1984,6 +1985,8 @@ watch(locale, () => {
   border-radius: 8px;
   transition: all 0.2s ease;
   cursor: pointer;
+  text-align: justify;
+  direction: rtl;
 }
 
 .verse-paragraph:hover {
