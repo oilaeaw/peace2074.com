@@ -658,8 +658,8 @@ const orderedNavItems = computed(() => {
 }
 
 .search {
-  max-width: 240px;
-  min-width: 160px;
+  max-width: 400px;
+  min-width: 200px;
   width: 100%;
 }
 
@@ -685,8 +685,8 @@ const orderedNavItems = computed(() => {
 }
 
 .locale-select {
-  max-width: 120px;
-  min-width: 100px;
+  max-width: 160px;
+  min-width: 120px;
 }
 
 .footer {
