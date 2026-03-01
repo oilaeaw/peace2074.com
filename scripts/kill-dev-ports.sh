@@ -3,27 +3,34 @@
 # Kill processes on ports 4000, 3000, and 3001
 echo "🔍 Checking for processes on ports 4000, 3000, and 3001..."
 
+# Kill any lingering node/dev processes first
+pkill -9 -f "vite --strictPort" 2>/dev/null
+pkill -9 -f "nitro dev" 2>/dev/null
+pkill -9 -f "concurrently" 2>/dev/null
+sleep 1
+
+# Kill by port
 for port in 4000 3000 3001; do
   PID=$(lsof -ti:$port 2>/dev/null)
   if [ -n "$PID" ]; then
     echo "⚡ Killing process $PID on port $port"
     kill -9 $PID 2>/dev/null
+    sleep 0.5
   fi
 done
-
-# Kill any lingering node processes from previous dev servers
-pkill -f "vite --strictPort" 2>/dev/null
-pkill -f "nitro dev" 2>/dev/null
 
 # Wait for ports to be free
 sleep 2
 
-# Verify ports are free
+# Final verification and force cleanup if needed
 for port in 4000 3000 3001; do
   if lsof -i:$port >/dev/null 2>&1; then
     echo "⚠️  Port $port still occupied, forcing cleanup..."
     lsof -ti:$port | xargs kill -9 2>/dev/null
+    sleep 1
+  else
+    echo "✅ Port $port is free"
   fi
 done
 
-echo "✅ Ports ready"
+echo "✅ All ports ready"
