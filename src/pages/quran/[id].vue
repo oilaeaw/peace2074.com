@@ -1059,6 +1059,9 @@ onMounted(async () => {
   const queryMode = route.query.mode as 'reader' | 'mushaf' | 'native' | undefined
   if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
     layoutMode.value = queryMode
+  } else {
+    // Add current mode to URL if not present
+    router.replace({ query: { ...route.query, mode: layoutMode.value } })
   }
   
   await loadSuraById(Number(route.params.id || 1))
