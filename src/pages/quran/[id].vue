@@ -1098,6 +1098,13 @@ watch(locale, () => {
   applyQuranDetailTitle(false)
 })
 
+// Watch layoutModeStore for changes (deep watch for nested ref)
+watch(layoutModeStore.value, (newMode) => {
+  if (route.query.mode !== newMode) {
+    router.replace({ query: { ...route.query, mode: newMode } })
+  }
+}, { deep: true })
+
 // Watch for URL query changes (browser back/forward)
 watch(() => route.query.mode, (newMode) => {
   if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
@@ -1212,7 +1219,6 @@ watch(() => route.query.mode, (newMode) => {
           <div class="view-toggle">
             <q-btn-toggle
               v-model="layoutMode"
-              @update:model-value="(val) => layoutMode = val"
               :options="viewModeOptions"
               rounded
               glossy
