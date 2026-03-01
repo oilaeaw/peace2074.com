@@ -1055,6 +1055,12 @@ function getHoverWidgetStyle() {
 }
 
 onMounted(async () => {
+  // Initialize layout mode from query parameter if present
+  const queryMode = route.query.mode as 'reader' | 'mushaf' | 'native' | undefined
+  if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
+    layoutMode.value = queryMode
+  }
+  
   await loadSuraById(Number(route.params.id || 1))
   try {
     await bookmarksStore.init()
@@ -1081,6 +1087,23 @@ watch(() => route.hash, (hash) => {
 watch(locale, () => {
   if (!sura.value) return
   applyQuranDetailTitle(false)
+})
+
+// Sync layout mode with URL query parameter
+watch(layoutMode, (newMode) => {
+  if (route.query.mode !== newMode) {
+    router.replace({ query: { ...route.query, mode: newMode } })
+  }
+})
+
+// Watch for URL query changes (browser back/forward)
+watch(() => route.query.mode, (newMode) => {
+  if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
+    const mode = newMode as 'reader' | 'mushaf' | 'native'
+    if (layoutMode.value !== mode) {
+      layoutMode.value = mode
+    }
+  }
 })
 
 </script>
