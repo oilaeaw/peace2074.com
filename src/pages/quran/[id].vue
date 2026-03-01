@@ -33,7 +33,13 @@ const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'reader')
 const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
-  set: (mode) => layoutModeStore.set(mode),
+  set: (mode) => {
+    layoutModeStore.set(mode)
+    // Update URL query immediately
+    if (route.query.mode !== mode) {
+      router.replace({ query: { ...route.query, mode } })
+    }
+  },
 })
 
 // Quran verse tree for O(log n) verse lookup
@@ -1090,13 +1096,6 @@ watch(() => route.hash, (hash) => {
 watch(locale, () => {
   if (!sura.value) return
   applyQuranDetailTitle(false)
-})
-
-// Sync layout mode with URL query parameter
-watch(() => layoutMode.value, (newMode) => {
-  if (route.query.mode !== newMode) {
-    router.replace({ query: { ...route.query, mode: newMode } })
-  }
 })
 
 // Watch for URL query changes (browser back/forward)
