@@ -35,9 +35,12 @@ const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
   set: (mode) => {
     layoutModeStore.set(mode)
-    // Update URL query immediately
-    if (route.query.mode !== mode) {
-      router.replace({ query: { ...route.query, mode } })
+    // Update URL param immediately
+    if (route.params.mode !== mode) {
+      router.replace({ 
+        name: 'QuranDetail',
+        params: { ...route.params, mode } 
+      })
     }
   },
 })
@@ -1061,13 +1064,16 @@ function getHoverWidgetStyle() {
 }
 
 onMounted(async () => {
-  // Initialize layout mode from query parameter if present
-  const queryMode = route.query.mode as 'reader' | 'mushaf' | 'native' | undefined
-  if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
-    layoutMode.value = queryMode
-  } else {
+  // Initialize layout mode from route param if present
+  const paramMode = route.params.mode as 'reader' | 'mushaf' | 'native' | undefined
+  if (paramMode && ['reader', 'mushaf', 'native'].includes(paramMode)) {
+    layoutMode.value = paramMode
+  } else if (!route.params.mode) {
     // Add current mode to URL if not present
-    router.replace({ query: { ...route.query, mode: layoutMode.value } })
+    router.replace({ 
+      name: 'QuranDetail',
+      params: { ...route.params, mode: layoutMode.value } 
+    })
   }
   
   await loadSuraById(Number(route.params.id || 1))
@@ -1100,13 +1106,16 @@ watch(locale, () => {
 
 // Watch layoutModeStore for changes (deep watch for nested ref)
 watch(layoutModeStore.value, (newMode) => {
-  if (route.query.mode !== newMode) {
-    router.replace({ query: { ...route.query, mode: newMode } })
+  if (route.params.mode !== newMode) {
+    router.replace({ 
+      name: 'QuranDetail',
+      params: { ...route.params, mode: newMode } 
+    })
   }
 }, { deep: true })
 
-// Watch for URL query changes (browser back/forward)
-watch(() => route.query.mode, (newMode) => {
+// Watch for URL param changes (browser back/forward)
+watch(() => route.params.mode, (newMode) => {
   if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
     const mode = newMode as 'reader' | 'mushaf' | 'native'
     if (layoutMode.value !== mode) {

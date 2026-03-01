@@ -80,7 +80,7 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/quran/:id(\\d+)',
+    path: '/quran/:id(\\d+)/:mode(reader|mushaf|native)?',
     name: 'QuranDetail',
     component: () => import('@/pages/quran/[id].vue'),
     beforeEnter: (to) => {
