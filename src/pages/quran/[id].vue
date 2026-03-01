@@ -1212,6 +1212,7 @@ watch(() => route.query.mode, (newMode) => {
           <div class="view-toggle">
             <q-btn-toggle
               v-model="layoutMode"
+              @update:model-value="(val) => layoutMode = val"
               :options="viewModeOptions"
               rounded
               glossy
