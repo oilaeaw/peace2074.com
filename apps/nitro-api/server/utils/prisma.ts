@@ -9,22 +9,29 @@ export async function getPrisma() {
     _prismaAttempted = true
 
     try {
-        // Dynamic import to defer loading until runtime
-        const { createRequire } = await import('node:module')
-        const require = createRequire(import.meta.url)
-        const prismaPackageName = ['@prisma', 'client'].join('/')
+        console.log('🔍 Attempting to load Prisma Client...')
 
-        console.log('🔍 Attempting to load Prisma from:', prismaPackageName)
-        console.log('📂 import.meta.url:', import.meta.url)
+        // Try dynamic import first (better for ESM/Netlify Functions)
+        let prismaModule: any
+        try {
+            prismaModule = await import('@prisma/client')
+            console.log('✅ Loaded via import()')
+        } catch (importErr) {
+            console.log('⚠️  import() failed, trying require():', importErr instanceof Error ? importErr.message : importErr)
+            // Fallback to createRequire for environments that need it
+            const { createRequire } = await import('node:module')
+            const require = createRequire(import.meta.url)
+            prismaModule = require('@prisma/client')
+            console.log('✅ Loaded via require()')
+        }
 
-        const prismaModule = require(prismaPackageName) as Record<string, any>
         const PrismaClient = prismaModule?.PrismaClient || prismaModule?.default?.PrismaClient
 
         if (!PrismaClient) {
-            throw new Error('PrismaClient constructor missing')
+            throw new Error('PrismaClient constructor not found in module')
         }
 
-        console.log('✅ PrismaClient loaded successfully')
+        console.log('✅ PrismaClient constructor found')
 
         type PrismaGlobal = typeof globalThis & {
             __peace2074Prisma?: any
@@ -33,7 +40,7 @@ export async function getPrisma() {
         const globalForPrisma = globalThis as PrismaGlobal
         _prisma = globalForPrisma.__peace2074Prisma ?? new PrismaClient()
 
-        console.log('✅ PrismaClient instance created')
+        console.log('✅ PrismaClient instance created successfully')
 
         if (process.env.NODE_ENV !== 'production') {
             globalForPrisma.__peace2074Prisma = _prisma
