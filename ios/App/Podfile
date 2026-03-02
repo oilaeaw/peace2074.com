@@ -22,24 +22,27 @@ end
 post_install do |installer|
   assertDeploymentTarget(installer)
   
-  # Fix double-quoted imports in CapacitorCordova framework headers
+  # Fix double-quoted imports and smart quotes in CapacitorCordova framework headers
   capacitor_cordova_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public', __dir__)
   
   if Dir.exist?(capacitor_cordova_path)
     Dir.glob("#{capacitor_cordova_path}/*.{h,m}").each do |file_path|
       text = File.read(file_path)
+      original_text = text.dup
+      
       # Replace double-quoted CDV imports with angle-bracketed ones
-      new_contents = text.gsub(/#import "CDV([^"]+)"/, '#import <Cordova/CDV\1>')
-      if text != new_contents
-        File.write(file_path, new_contents)
-        puts "✓ Fixed imports in #{File.basename(file_path)}"
+      text = text.gsub(/#import "CDV([^"]+)"/, '#import <Cordova/CDV\1>')
+      
+      # Replace smart/curly double quotes with straight quotes
+      text = text.gsub(/[""]/, '"')
+      
+      # Replace smart/curly single quotes with straight apostrophes
+      text = text.gsub(/['']/, "'")
+      
+      if text != original_text
+        File.write(file_path, text)
+        puts "✓ Fixed quotes in #{File.basename(file_path)}"
       end
-    end
-  end
-  
-  installer.pods_project.targets.each do |target|
-    target.build_configurations.each do |config|
-      config.build_settings['USE_HEADERMAP'] = 'NO'
     end
   end
 end
