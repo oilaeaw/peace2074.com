@@ -197,19 +197,14 @@ async function upsertByIdentity(user: User) {
 }
 
 async function repairExistingPasswords() {
-    const users = await prisma.user.findMany({
-        where: {
-            OR: [
-                { password: '' },
-                { password: null as any },
-            ],
-        },
-    })
+    // Get all users and filter in memory since MongoDB/Prisma doesn't support OR with null/empty well
+    const allUsers = await prisma.user.findMany()
+    const usersNeedingRepair = allUsers.filter(u => !u.password || u.password === '')
 
-    if (!users.length) return
+    if (!usersNeedingRepair.length) return
 
     const defaultsById = new Map(DEFAULT_USERS.map((u) => [u.id, u]))
-    for (const user of users) {
+    for (const user of usersNeedingRepair) {
         const fallback = defaultsById.get(user.id)
         if (!fallback?.password) continue
         await prisma.user.update({
