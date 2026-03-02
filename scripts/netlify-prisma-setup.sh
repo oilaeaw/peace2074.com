@@ -19,7 +19,8 @@ echo "📂 Copying Prisma runtime and generated client..."
 
 # Find .prisma/client in pnpm's nested structure
 PRISMA_GEN=$(find node_modules/.pnpm -name "client" -path "*/.prisma/client" -type d 2>/dev/null | head -n 1)
-PRISMA_PKG=$(find node_modules/.pnpm -name "@prisma" -path "*/@prisma+client*/node_modules/@prisma" -type d 2>/dev/null | head -n 1)
+# Find the full @prisma/client package directory
+PRISMA_CLIENT_PKG=$(find node_modules/.pnpm -type d -path "*/@prisma+client*/node_modules/@prisma/client" 2>/dev/null | head -n 1)
 
 if [ -z "$PRISMA_GEN" ]; then
   # Fallback to standard location (non-pnpm)
@@ -28,10 +29,10 @@ if [ -z "$PRISMA_GEN" ]; then
   fi
 fi
 
-if [ -z "$PRISMA_PKG" ]; then
+if [ -z "$PRISMA_CLIENT_PKG" ]; then
   # Fallback to standard location (non-pnpm)
-  if [ -d "node_modules/@prisma" ]; then
-    PRISMA_PKG="node_modules/@prisma"
+  if [ -d "node_modules/@prisma/client" ]; then
+    PRISMA_CLIENT_PKG="node_modules/@prisma/client"
   fi
 fi
 
@@ -46,10 +47,10 @@ else
 fi
 
 # Copy @prisma/client package
-if [ -n "$PRISMA_PKG" ]; then
-  mkdir -p "$FUNC_DIR/node_modules"
-  cp -r "$PRISMA_PKG" "$FUNC_DIR/node_modules/"
-  echo "✅ Copied @prisma/client from $PRISMA_PKG"
+if [ -n "$PRISMA_CLIENT_PKG" ]; then
+  mkdir -p "$FUNC_DIR/node_modules/@prisma"
+  cp -r "$PRISMA_CLIENT_PKG" "$FUNC_DIR/node_modules/@prisma/"
+  echo "✅ Copied @prisma/client package from $PRISMA_CLIENT_PKG"
 else
   echo "❌ @prisma/client package not found in node_modules"
   exit 1
