@@ -34,6 +34,163 @@ const sura = ref<any | null>(null)
 const loading = ref(true)
 const error = ref('')
 const selectedBookmark = ref('')
+
+// Enhanced Notification System
+interface TaggedNotification {
+  id: string
+  type: 'positive' | 'negative' | 'warning' | 'info'
+  message: string
+  tag?: string
+  icon?: string
+  timestamp: number
+  group?: string
+}
+
+const notificationQueue = ref<TaggedNotification[]>([])
+const notificationHistory = ref<TaggedNotification[]>([])
+const announcementQueue = ref<{ message: string; type: string; icon: string; actions?: any[] }[]>([])
+const showAnnouncementBanner = ref(false)
+const currentAnnouncement = ref<any>(null)
+const NOTIFICATION_BATCH_DELAY = 1500 // ms
+let notificationTimer: ReturnType<typeof setTimeout> | null = null
+
+function notify(options: {
+  type: 'positive' | 'negative' | 'warning' | 'info'
+  message: string
+  tag?: string
+  icon?: string
+  group?: string
+  position?: string
+  timeout?: number
+  caption?: string
+  announce?: boolean
+  actions?: any[]
+}) {
+  const notification: TaggedNotification = {
+    id: `${Date.now()}-${Math.random()}`,
+    type: options.type,
+    message: options.message,
+    tag: options.tag,
+    icon: options.icon,
+    timestamp: Date.now(),
+    group: options.group,
+  }
+
+  // Add to history
+  notificationHistory.value.unshift(notification)
+  if (notificationHistory.value.length > 50) {
+    notificationHistory.value = notificationHistory.value.slice(0, 50)
+  }
+
+  // Handle announcements separately
+  if (options.announce) {
+    announcementQueue.value.push({
+      message: options.message,
+      type: options.type,
+      icon: options.icon || 'campaign',
+      actions: options.actions,
+    })
+    showNextAnnouncement()
+    return
+  }
+
+  // Check if we should batch this notification
+  if (options.group) {
+    const existingInQueue = notificationQueue.value.find(n => n.group === options.group)
+    if (existingInQueue) {
+      // Update existing notification instead of showing duplicate
+      existingInQueue.message = options.message
+      existingInQueue.timestamp = Date.now()
+      return
+    }
+  }
+
+  // Add to queue
+  notificationQueue.value.push(notification)
+
+  // Clear existing timer
+  if (notificationTimer) {
+    clearTimeout(notificationTimer)
+  }
+
+  // Set timer to flush queue
+  notificationTimer = setTimeout(() => {
+    flushNotificationQueue()
+  }, NOTIFICATION_BATCH_DELAY)
+
+  // Show immediately if it's important
+  if (options.type === 'negative' || notificationQueue.value.length >= 3) {
+    flushNotificationQueue()
+  }
+}
+
+function flushNotificationQueue() {
+  if (notificationTimer) {
+    clearTimeout(notificationTimer)
+    notificationTimer = null
+  }
+
+  if (notificationQueue.value.length === 0) return
+
+  // Group notifications by tag
+  const grouped = notificationQueue.value.reduce((acc, notif) => {
+    const key = notif.tag || 'general'
+    if (!acc[key]) acc[key] = []
+    acc[key].push(notif)
+    return acc
+  }, {} as Record<string, TaggedNotification[]>)
+
+  // Show grouped notifications
+  Object.entries(grouped).forEach(([tag, notifs]) => {
+    if (notifs.length === 1) {
+      // Single notification
+      $q.notify({
+        type: notifs[0].type,
+        message: notifs[0].message,
+        icon: notifs[0].icon,
+        position: 'top',
+        timeout: 2500,
+        badge: tag !== 'general' ? tag : undefined,
+        badgeColor: 'primary',
+      })
+    } else {
+      // Batched notifications
+      const messages = notifs.map(n => n.message).join(' • ')
+      $q.notify({
+        type: notifs[0].type,
+        message: `${notifs.length} updates`,
+        caption: messages,
+        icon: notifs[0].icon || 'notifications',
+        position: 'top',
+        timeout: 3500,
+        badge: tag !== 'general' ? `${tag} (${notifs.length})` : `${notifs.length}`,
+        badgeColor: 'primary',
+      })
+    }
+  })
+
+  // Clear queue
+  notificationQueue.value = []
+}
+
+function showNextAnnouncement() {
+  if (showAnnouncementBanner.value || announcementQueue.value.length === 0) return
+  
+  currentAnnouncement.value = announcementQueue.value.shift()
+  showAnnouncementBanner.value = true
+}
+
+function dismissAnnouncement() {
+  showAnnouncementBanner.value = false
+  currentAnnouncement.value = null
+  
+  // Show next announcement after a short delay
+  setTimeout(() => {
+    if (announcementQueue.value.length > 0) {
+      showNextAnnouncement()
+    }
+  }, 500)
+}
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'mushaf')
 const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
@@ -301,7 +458,13 @@ async function bookmarkVerse(verse: number | string) {
   
   // Check if already bookmarked
   if (isVerseBookmarked(verse)) {
-    $q.notify({ type: 'info', message: t('pages.quran.bookmarks.alreadySaved') || 'Already bookmarked' })
+    notify({ 
+      type: 'info', 
+      message: t('pages.quran.bookmarks.alreadySaved') || 'Already bookmarked',
+      tag: 'bookmark',
+      icon: 'info',
+      group: 'bookmark-duplicate'
+    })
     return
   }
   
@@ -318,18 +481,29 @@ async function bookmarkVerse(verse: number | string) {
       await bookmarksStore.fetchBookmarks()
     }
     
-    $q.notify({ 
+    notify({ 
       type: 'positive', 
       message: t('pages.quran.bookmarks.saved'),
-      position: 'top',
-      timeout: 1500
+      tag: 'bookmark',
+      icon: 'bookmark',
+      group: 'bookmark-save',
+      announce: true,
+      actions: [
+        {
+          label: t('general.undo') || 'Undo',
+          color: 'white',
+          handler: () => removeBookmark({ ...entry, normalized, key: normalized } as BookmarkEntry)
+        }
+      ]
     })
   } catch (err: any) {
     console.error('[Bookmark] Failed to save:', err)
-    $q.notify({ 
+    notify({ 
       type: 'negative', 
       message: err?.message || t('pages.quran.bookmarks.error'),
-      position: 'top'
+      tag: 'error',
+      icon: 'error',
+      group: 'bookmark-error'
     })
   }
 }
@@ -394,12 +568,12 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
         text: shareText,
         url,
       })
-      $q.notify({ 
+      notify({ 
         type: 'positive', 
         message: `Shared ${label}`,
+        tag: 'share',
         icon: 'share',
-        position: 'top',
-        timeout: 2000
+        group: 'share-success'
       })
       return
     }
@@ -411,13 +585,13 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
   try {
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(url)
-      $q.notify({ 
+      notify({ 
         type: 'positive', 
         message: `Link copied: ${shareText}`,
+        tag: 'clipboard',
         icon: 'content_copy',
-        position: 'top',
-        timeout: 2500,
-        caption: url
+        caption: url,
+        group: 'clipboard-copy'
       })
       return
     }
@@ -842,7 +1016,13 @@ async function startSuraAudio() {
   currentWordIndex.value = -1
 
   if (!audioList.value.length) {
-    $q.notify({ type: 'warning', message: t('general.fetchingUpdates') || 'Loading audio…' })
+    notify({ 
+      type: 'warning', 
+      message: t('general.fetchingUpdates') || 'Loading audio…',
+      tag: 'audio',
+      icon: 'downloading',
+      group: 'audio-loading'
+    })
     return
   }
 
@@ -1217,11 +1397,12 @@ function pauseAudio() {
     isPlayingAudio.value = false
     // Save position for later resumption
     savePlaybackPosition()
-    $q.notify({
+    notify({
       type: 'info',
       message: t('pages.quran.paused') || 'Paused',
+      tag: 'playback',
       icon: 'pause',
-      timeout: 1000,
+      group: 'audio-pause'
     })
   }
 }
@@ -1230,11 +1411,12 @@ function resumeAudio() {
   if (audioEl.value && audioEl.value.paused) {
     audioEl.value.play()
     isPlayingAudio.value = true
-    $q.notify({
+    notify({
       type: 'positive',
       message: t('pages.quran.resumed') || 'Resumed',
+      tag: 'playback',
       icon: 'play_arrow',
-      timeout: 1000,
+      group: 'audio-resume'
     })
   }
 }
@@ -1245,11 +1427,12 @@ function pauseTTS() {
     isTTSPlaying.value = false
     // Save position for TTS as well
     savePlaybackPosition()
-    $q.notify({
+    notify({
       type: 'info',
       message: t('pages.quran.paused') || 'Paused',
+      tag: 'tts',
       icon: 'pause',
-      timeout: 1000,
+      group: 'tts-pause'
     })
   }
 }
@@ -1412,6 +1595,39 @@ watch(() => route.params.mode, (newMode) => {
 <template>
   <div class="q-pa-md">
     <q-btn flat class="q-mb-md" to="/quran" :label="`← ${t('pages.quran.backToList')}`" />
+    
+    <!-- Announcement Banner -->
+    <Transition name="slide-down">
+      <q-banner 
+        v-if="showAnnouncementBanner && currentAnnouncement" 
+        class="announcement-banner q-mb-md" 
+        rounded
+        dense
+      >
+        <template v-slot:avatar>
+          <q-icon :name="currentAnnouncement.icon" color="primary" size="32px" class="pulse-icon" />
+        </template>
+        <div class="announcement-content">
+          <div class="text-weight-bold text-h6">{{ currentAnnouncement.message }}</div>
+        </div>
+        <template v-slot:action>
+          <q-btn 
+            v-for="(action, idx) in currentAnnouncement.actions" 
+            :key="idx"
+            flat 
+            :label="action.label" 
+            :color="action.color || 'primary'"
+            @click="action.handler(); dismissAnnouncement()"
+          />
+          <q-btn 
+            flat 
+            icon="close" 
+            @click="dismissAnnouncement"
+            aria-label="Dismiss"
+          />
+        </template>
+      </q-banner>
+    </Transition>
     
     <!-- Paused Indicator Badge -->
     <Transition name="slide-down">
@@ -2718,4 +2934,42 @@ body.body--dark .paused-indicator-banner {
 body.body--dark .recommended-icon {
   filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.7));
 }
+
+/* Announcement banner */
+.announcement-banner {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(21, 101, 192, 0.1));
+  border: 2px solid #2196f3;
+  box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
+  animation: glow 2s ease-in-out infinite;
+}
+
+@keyframes glow {
+  0%, 100% {
+    box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
+  }
+  50% {
+    box-shadow: 0 6px 20px rgba(33, 150, 243, 0.5);
+  }
+}
+
+.announcement-content {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+body.body--dark .announcement-banner {
+  background: linear-gradient(135deg, rgba(33, 150, 243, 0.25), rgba(21, 101, 192, 0.15));
+  border-color: #42a5f5;
+}
+
+/* Notification badges */
+:deep(.q-notification__badge) {
+  font-weight: 600;
+  letter-spacing: 0.3px;
+  padding: 2px 8px;
+  border-radius: 12px;
+  font-size: 11px;
+}
 </style>
+
