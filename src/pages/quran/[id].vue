@@ -35,7 +35,7 @@ const loading = ref(true)
 const error = ref('')
 const selectedBookmark = ref('')
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
-const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'reader')
+const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'mushaf')
 const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
   set: (mode) => {
@@ -213,8 +213,8 @@ const touchEndX = ref(0)
 const MIN_SWIPE_DISTANCE = 50
 
 const viewModeOptions = computed(() => ([
-  { label: t('pages.quran.modes.reader'), value: 'reader', icon: 'menu_book' },
   { label: t('pages.quran.modes.mushaf'), value: 'mushaf', icon: 'auto_stories' },
+  { label: t('pages.quran.modes.reader'), value: 'reader', icon: 'menu_book' },
   { label: t('pages.quran.modes.native'), value: 'native', icon: 'article' },
 ]))
 
@@ -353,25 +353,45 @@ function buildVerseShareUrl(entry: BookmarkEntry) {
   return buildVerseShareUrlFromParts(suraId, verse)
 }
 
-function buildVerseShareUrlFromParts(suraId: number, verse: number) {
+function buildVerseShareUrlFromParts(suraId: number, verse: number, options: { autoplay?: boolean; mode?: string } = {}) {
   if (!suraId || !verse) return ''
   const path = `/quran/${suraId}:${verse}`
   const env = (import.meta as any)?.env || {}
   const configuredSite = String(env.VITE_SITE_URL || '').trim()
   const i18nSite = String(t('general.SiteDomain') || '').trim()
   const base = (configuredSite || i18nSite || 'https://peace2074.com').replace(/\/$/, '')
-  return `${base}${path}`
+  
+  // Add query parameters
+  const params = new URLSearchParams()
+  if (options.autoplay) {
+    params.set('autoplay', 'true')
+  }
+  if (options.mode && ['reader', 'mushaf', 'native'].includes(options.mode)) {
+    params.set('mode', options.mode)
+  }
+  
+  const queryString = params.toString()
+  return `${base}${path}${queryString ? `?${queryString}` : ''}`
 }
 
 async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:${verse}`) {
-  const url = buildVerseShareUrlFromParts(suraId, verse)
+  // Include current mode and autoplay in share link
+  const url = buildVerseShareUrlFromParts(suraId, verse, { 
+    autoplay: true, 
+    mode: layoutMode.value 
+  })
   if (!url) return
+
+  // Get sura name for better share text
+  const suraName = sura.value?.e_name || `Sura ${suraId}`
+  const shareTitle = `${suraName} ${verse}`
+  const shareText = `Read Quran ${suraName} ${suraId}:${verse}`
 
   try {
     if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
       await navigator.share({
-        title: `Quran ${label}`,
-        text: `Read Quran ${label}`,
+        title: shareTitle,
+        text: shareText,
         url,
       })
       $q.notify({ 
@@ -393,7 +413,7 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
       await navigator.clipboard.writeText(url)
       $q.notify({ 
         type: 'positive', 
-        message: `Link copied: ${label}`,
+        message: `Link copied: ${shareText}`,
         icon: 'content_copy',
         position: 'top',
         timeout: 2500,
@@ -587,9 +607,24 @@ async function loadSuraById(id: number) {
     // Load audio from alquran.cloud (per-verse) and timings from qurancdn (word segments)
     await loadAudioAndTimings(id)
     await nextTick()
-    // Enable autoplay if hash is present (shared verse link)
-    const hasHash = Boolean(route.hash)
-    await scrollToHash(route.hash, { autoplay: hasHash })
+    
+    // Check for query params (autoplay and mode)
+    const shouldAutoplay = route.query.autoplay === 'true' || Boolean(route.hash)
+    const queryMode = route.query.mode as 'reader' | 'mushaf' | 'native' | undefined
+    
+    // Apply mode from query param if present
+    if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
+      layoutMode.value = queryMode
+      // Update URL to use path param instead of query param
+      router.replace({
+        name: 'QuranDetail',
+        params: { ...route.params, mode: queryMode },
+        hash: route.hash
+      })
+    }
+    
+    // Enable autoplay if query param or hash is present (shared verse link)
+    await scrollToHash(route.hash, { autoplay: shouldAutoplay })
     applyQuranDetailTitle(true)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
@@ -1532,7 +1567,15 @@ watch(() => route.params.mode, (newMode) => {
               unelevated
               size="sm"
               class="mode-toggle-buttons"
-            />
+            >
+              <template v-slot:mushaf>
+                <div class="row items-center q-gutter-xs">
+                  <q-icon name="auto_stories" size="16px" />
+                  <span>{{ t('pages.quran.modes.mushaf') }}</span>
+                  <q-icon name="star" size="14px" color="amber" class="recommended-icon" />
+                </div>
+              </template>
+            </q-btn-toggle>
           </div>
           <!-- Quick Access for popular verses like Ayat al-Kursi -->
           <q-btn
@@ -2652,5 +2695,27 @@ body.body--dark .verse-translation-native {
 body.body--dark .paused-indicator-banner {
   background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.15));
   border-color: #ffb300;
+}
+
+/* Recommended mode indicator */
+.recommended-icon {
+  margin-left: 2px;
+  filter: drop-shadow(0 0 2px rgba(255, 193, 7, 0.5));
+  animation: twinkle 2s ease-in-out infinite;
+}
+
+@keyframes twinkle {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+body.body--dark .recommended-icon {
+  filter: drop-shadow(0 0 3px rgba(255, 193, 7, 0.7));
 }
 </style>

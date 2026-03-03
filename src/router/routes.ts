@@ -67,9 +67,11 @@ export const routes: Array<RouteRecordRaw> = [
         return { path: '/quran', query: { invalidSura: '1' }, replace: true }
       }
 
+      // Preserve query parameters (autoplay, mode, etc.)
       return {
         path: `/quran/${sura}`,
         hash: `#${sura}_${verse}`,
+        query: to.query,
         replace: true,
       }
     },
