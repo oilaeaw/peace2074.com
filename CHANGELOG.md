@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.2.7 (2026-03-03)
+
+### Features
+
+- add prominent Sign Up button to header navigation menu (visible when not authenticated)
+- improve user registration discoverability - signup now accessible from main header, not just login page
+
+### Chores
+
+- bump project version to `0.2.7` in root and Nitro API package manifests
+
 ## 0.2.6 (2026-03-01)
 
 ### Features
