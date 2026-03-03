@@ -8,6 +8,11 @@ import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
 
+// Define component name for keep-alive
+defineOptions({
+  name: 'QuranDetail'
+})
+
 type BookmarkEntry = {
   key: string
   normalized: string
@@ -208,10 +213,43 @@ const touchEndX = ref(0)
 const MIN_SWIPE_DISTANCE = 50
 
 const viewModeOptions = computed(() => ([
-  { label: t('pages.quran.modes.reader'), value: 'reader' },
-  { label: t('pages.quran.modes.mushaf'), value: 'mushaf' },
-  { label: t('pages.quran.modes.native'), value: 'native' },
+  { label: t('pages.quran.modes.reader'), value: 'reader', icon: 'menu_book' },
+  { label: t('pages.quran.modes.mushaf'), value: 'mushaf', icon: 'auto_stories' },
+  { label: t('pages.quran.modes.native'), value: 'native', icon: 'article' },
 ]))
+
+const readerModeOptions = computed(() => ([
+  { label: t('pages.quran.readerMode.audio') || 'Audio', value: 'audio', icon: 'volume_up' },
+  { label: t('pages.quran.readerMode.tts') || 'TTS', value: 'tts', icon: 'record_voice_over' },
+]))
+
+// Track which Quick Access verse is currently playing
+const activeQuickAccessId = computed(() => {
+  if (!isReading.value || currentAyahIndex.value < 0) return null
+  return `${currentSuraId.value}_${currentAyahIndex.value + 1}`
+})
+
+// Track which Bookmark is currently playing
+const activeBookmarkId = computed(() => {
+  if (!isReading.value || currentAyahIndex.value < 0) return null
+  return bookmarkEntries.value.find(
+    entry => entry.suraId === currentSuraId.value && entry.verse === (currentAyahIndex.value + 1)
+  )?.key
+})
+
+// Check if a specific Quick Access verse is currently playing
+const isQuickAccessPlaying = (qa: QuickAccessVerse) => {
+  return isReading.value && 
+    currentSuraId.value === qa.suraId && 
+    currentAyahIndex.value === (qa.verse - 1)
+}
+
+// Check if a specific Bookmark is currently playing
+const isBookmarkPlaying = (entry: BookmarkEntry) => {
+  return isReading.value && 
+    currentSuraId.value === entry.suraId && 
+    currentAyahIndex.value === ((entry.verse || 1) - 1)
+}
 
 const bookmarkEntries = computed<BookmarkEntry[]>(() => {
   const rows = (bookmarksStore.bookmarks || []) as any[]
@@ -509,7 +547,7 @@ function scrollToVerse(verse?: number | null) {
   }
 }
 
-async function scrollToHash(rawHash?: string | null) {
+async function scrollToHash(rawHash?: string | null, options: { autoplay?: boolean } = {}) {
   if (typeof window === 'undefined') return
   const hash = (rawHash || window.location.hash || '').replace(/^#/, '')
   if (!hash) return
@@ -519,6 +557,23 @@ async function scrollToHash(rawHash?: string | null) {
   selectedBookmark.value = `id_${normalized}`
   await nextTick()
   scrollToVerse(versePart ? Number(versePart) : undefined)
+  
+  // Autoplay from the shared verse if requested
+  if (options.autoplay && versePart && audioList.value.length > 0) {
+    const verseIndex = Number(versePart) - 1
+    if (verseIndex >= 0 && verseIndex < audioList.value.length) {
+      stopRequested.value = false
+      // Small delay to ensure scroll completes
+      await new Promise(resolve => setTimeout(resolve, 100))
+      await startAudioRecitation(verseIndex, { withIntro: true })
+      $q.notify({ 
+        type: 'positive', 
+        message: `Playing verse ${versePart} - Mishary Al-Afasy`,
+        icon: 'play_arrow',
+        timeout: 2500
+      })
+    }
+  }
 }
 
 async function loadSuraById(id: number) {
@@ -532,7 +587,9 @@ async function loadSuraById(id: number) {
     // Load audio from alquran.cloud (per-verse) and timings from qurancdn (word segments)
     await loadAudioAndTimings(id)
     await nextTick()
-    await scrollToHash(route.hash)
+    // Enable autoplay if hash is present (shared verse link)
+    const hasHash = Boolean(route.hash)
+    await scrollToHash(route.hash, { autoplay: hasHash })
     applyQuranDetailTitle(true)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
@@ -1087,6 +1144,38 @@ const isPaused = computed(() => {
   }
 })
 
+// Current playback status for display
+const playbackStatus = computed(() => {
+  if (isReading.value) {
+    return {
+      state: 'playing',
+      verse: currentAyahIndex.value + 1,
+      sura: currentSuraId.value,
+      mode: readerMode.value,
+      icon: 'play_arrow',
+      color: 'positive'
+    }
+  } else if (isPaused.value) {
+    return {
+      state: 'paused',
+      verse: currentAyahIndex.value + 1,
+      sura: currentSuraId.value,
+      mode: readerMode.value,
+      icon: 'pause',
+      color: 'warning'
+    }
+  } else {
+    return {
+      state: 'stopped',
+      verse: -1,
+      sura: currentSuraId.value,
+      mode: readerMode.value,
+      icon: 'stop',
+      color: 'grey'
+    }
+  }
+})
+
 function pauseAudio() {
   if (audioEl.value && !audioEl.value.paused) {
     audioEl.value.pause()
@@ -1145,11 +1234,6 @@ function resumeTTS() {
     startTTS()
   }
 }
-
-const readerModeOptions = computed(() => [
-  { label: t('pages.quran.audioRecitation'), value: 'audio' },
-  { label: t('pages.quran.nativeReader'), value: 'tts' },
-])
 
 function updateCurrentWord(time: number) {
   const idx = currentAyahIndex.value
@@ -1293,6 +1377,40 @@ watch(() => route.params.mode, (newMode) => {
 <template>
   <div class="q-pa-md">
     <q-btn flat class="q-mb-md" to="/quran" :label="`← ${t('pages.quran.backToList')}`" />
+    
+    <!-- Paused Indicator Badge -->
+    <Transition name="slide-down">
+      <q-banner v-if="isPaused" class="paused-indicator-banner" rounded dense>
+        <template v-slot:avatar>
+          <q-icon :name="playbackStatus.icon" :color="playbackStatus.color" size="28px" class="pulse-icon" />
+        </template>
+        <div class="paused-info">
+          <div class="text-weight-bold">{{ t('pages.quran.paused') }}</div>
+          <div class="text-caption">
+            {{ t('pages.quran.sura.name') }} {{ currentSuraId }} • 
+            {{ t('pages.quran.verses') }} {{ playbackStatus.verse }} / {{ sura?.total_verses || 0 }} •
+            {{ playbackStatus.mode === 'audio' ? t('pages.quran.readerMode.audio') : t('pages.quran.readerMode.tts') }}
+          </div>
+        </div>
+        <template v-slot:action>
+          <q-btn 
+            flat 
+            :label="t('pages.quran.resume')" 
+            color="primary" 
+            icon="play_arrow"
+            @click="startReading"
+          />
+          <q-btn 
+            flat 
+            :label="t('pages.quran.stopRecitation')" 
+            color="negative" 
+            icon="stop"
+            @click="stopReading"
+          />
+        </template>
+      </q-banner>
+    </Transition>
+    
     <div v-if="loading" class="status">Loading…</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
@@ -1321,9 +1439,22 @@ watch(() => route.params.mode, (newMode) => {
             color="white"
             unelevated
             size="sm"
-            class="q-mr-sm"
+            class="q-mr-sm reader-mode-toggle"
             @update:model-value="stopReading"
-          />
+          >
+            <template v-slot:audio>
+              <div class="row items-center q-gutter-xs">
+                <q-icon name="volume_up" size="16px" />
+                <span>{{ t('pages.quran.readerMode.audio') || 'Audio' }}</span>
+              </div>
+            </template>
+            <template v-slot:tts>
+              <div class="row items-center q-gutter-xs">
+                <q-icon name="record_voice_over" size="16px" />
+                <span>{{ t('pages.quran.readerMode.tts') || 'TTS' }}</span>
+              </div>
+            </template>
+          </q-btn-toggle>
           <q-btn
             :icon="isReading ? 'pause' : (isPaused ? 'play_arrow' : 'play_arrow')"
             color="primary"
@@ -1427,10 +1558,30 @@ watch(() => route.params.mode, (newMode) => {
                     <q-item-label caption>{{ qa.suraId }}:{{ qa.verse }}</q-item-label>
                   </q-item-section>
                   <q-item-section side>
-                    <q-icon 
-                      :name="qa.suraId === currentSuraId ? 'check_circle' : 'chevron_right'" 
-                      :color="qa.suraId === currentSuraId ? 'positive' : 'grey'"
-                    />
+                    <div class="row items-center q-gutter-xs">
+                      <q-btn
+                        round
+                        dense
+                        flat
+                        size="sm"
+                        :icon="isQuickAccessPlaying(qa) ? 'stop' : 'play_arrow'"
+                        :color="isQuickAccessPlaying(qa) ? 'negative' : 'primary'"
+                        @click.stop="isQuickAccessPlaying(qa) ? stopReading() : navigateToQuickAccess(qa)"
+                        class="animated-play-btn"
+                      >
+                        <q-tooltip v-if="isQuickAccessPlaying(qa)">
+                          {{ t('pages.quran.stopRecitation') }} ({{ playbackStatus.mode }})
+                        </q-tooltip>
+                        <q-tooltip v-else>
+                          {{ t('pages.quran.playRecitation') }}
+                        </q-tooltip>
+                      </q-btn>
+                      <q-icon 
+                        :name="qa.suraId === currentSuraId && isQuickAccessPlaying(qa) ? 'graphic_eq' : (qa.suraId === currentSuraId ? 'check_circle' : 'chevron_right')" 
+                        :color="isQuickAccessPlaying(qa) ? 'positive' : (qa.suraId === currentSuraId ? 'positive' : 'grey')"
+                        :class="{ 'pulse-icon': isQuickAccessPlaying(qa) }"
+                      />
+                    </div>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -1465,20 +1616,48 @@ watch(() => route.params.mode, (newMode) => {
                     </div>
                   </q-item-section>
                   <q-item-section side>
-                    <q-btn
-                      round
-                      dense
-                      flat
-                      icon="share"
-                      @click.stop="shareBookmark(entry)"
-                    />
-                    <q-btn
-                      round
-                      dense
-                      flat
-                      icon="delete"
-                      @click.stop="removeBookmark(entry)"
-                    />
+                    <div class="row items-center q-gutter-xs">
+                      <q-btn
+                        round
+                        dense
+                        flat
+                        size="sm"
+                        :icon="isBookmarkPlaying(entry) ? 'stop' : 'play_arrow'"
+                        :color="isBookmarkPlaying(entry) ? 'negative' : 'primary'"
+                        @click.stop="isBookmarkPlaying(entry) ? stopReading() : handleBookmarkNavigate(entry)"
+                        class="animated-play-btn"
+                      >
+                        <q-tooltip v-if="isBookmarkPlaying(entry)">
+                          {{ t('pages.quran.stopRecitation') }} ({{ playbackStatus.mode }})
+                        </q-tooltip>
+                        <q-tooltip v-else>
+                          {{ t('pages.quran.playRecitation') }}
+                        </q-tooltip>
+                        <q-badge v-if="isBookmarkPlaying(entry)" color="positive" floating rounded />
+                      </q-btn>
+                      <q-btn
+                        round
+                        dense
+                        flat
+                        size="sm"
+                        icon="share"
+                        color="teal"
+                        @click.stop="shareBookmark(entry)"
+                      >
+                        <q-tooltip>{{ t('general.share') }}</q-tooltip>
+                      </q-btn>
+                      <q-btn
+                        round
+                        dense
+                        flat
+                        size="sm"
+                        icon="delete"
+                        color="negative"
+                        @click.stop="removeBookmark(entry)"
+                      >
+                        <q-tooltip>{{ t('general.delete') }}</q-tooltip>
+                      </q-btn>
+                    </div>
                   </q-item-section>
                 </q-item>
               </q-list>
@@ -2404,5 +2583,74 @@ body.body--dark .verse-translation-native {
     column-count: 2;
     column-gap: 32px;
   }
+}
+
+/* Animation for active play buttons */
+.animated-play-btn {
+  transition: all 0.3s ease;
+}
+
+.animated-play-btn:hover {
+  transform: scale(1.15);
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.7;
+    transform: scale(1.1);
+  }
+}
+
+.pulse-icon {
+  animation: pulse 1.5s ease-in-out infinite;
+}
+
+/* Reader mode toggle enhancements */
+.reader-mode-toggle {
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+  transition: all 0.3s ease;
+}
+
+.reader-mode-toggle:hover {
+  box-shadow: 0 3px 6px rgba(0, 0, 0, 0.15);
+}
+
+/* Paused indicator banner */
+.paused-indicator-banner {
+  margin-bottom: 16px;
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
+  border: 2px solid #ffc107;
+  box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
+}
+
+.paused-info {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+/* Slide down transition for paused banner */
+.slide-down-enter-active,
+.slide-down-leave-active {
+  transition: all 0.4s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+.slide-down-enter-from {
+  opacity: 0;
+  transform: translateY(-20px);
+}
+
+.slide-down-leave-to {
+  opacity: 0;
+  transform: translateY(-10px);
+}
+
+body.body--dark .paused-indicator-banner {
+  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.15));
+  border-color: #ffb300;
 }
 </style>

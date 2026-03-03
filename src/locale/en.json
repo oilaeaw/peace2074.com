@@ -188,6 +188,10 @@
         "mushaf": "Mushaf mode",
         "native": "Native mode"
       },
+      "readerMode": {
+        "audio": "Audio",
+        "tts": "TTS"
+      },
       "bookmarks": {
         "menu": "Bookmarks",
         "empty": "No bookmarks yet",

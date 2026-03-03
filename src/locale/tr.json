@@ -188,6 +188,10 @@
                 "mushaf": "Mushaf modu",
                 "native": "Yerel mod"
             },
+            "readerMode": {
+                "audio": "Ses",
+                "tts": "TTS"
+            },
             "bookmarks": {
                 "menu": "Yer İmleri",
                 "empty": "Henüz yer imi yok",

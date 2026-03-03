@@ -141,6 +141,10 @@
         "mushaf": "Mushaf-Modus",
         "native": "Nativer Modus"
       },
+      "readerMode": {
+        "audio": "Audio",
+        "tts": "TTS"
+      },
       "bookmarks": {
         "menu": "Lesezeichen",
         "empty": "Noch keine Lesezeichen",

@@ -176,6 +176,10 @@
                 "mushaf": "מצב מוסחף",
                 "native": "מצב מקורי"
             },
+            "readerMode": {
+                "audio": "אודיו",
+                "tts": "TTS"
+            },
             "bookmarks": {
                 "menu": "סימניות",
                 "empty": "אין סימניות עדיין",

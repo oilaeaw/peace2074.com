@@ -195,7 +195,11 @@
     </q-drawer>
 
     <q-page-container>
-      <RouterView />
+      <RouterView v-slot="{ Component }">
+        <keep-alive :include="['QuranDetail']">
+          <component :is="Component" />
+        </keep-alive>
+      </RouterView>
     </q-page-container>
 
     <SupportAIWidget v-if="showLazyWidgets" />

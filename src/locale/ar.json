@@ -169,6 +169,10 @@
         "mushaf": "وضع المصحف",
         "native": "الوضع الأصلي"
       },
+      "readerMode": {
+        "audio": "صوت",
+        "tts": "TTS"
+      },
       "bookmarks": {
         "menu": "العلامات",
         "empty": "لا توجد علامات بعد",
