@@ -172,6 +172,16 @@ const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
 const stopRequested = ref(false)
 
+// Persistent playback position
+interface PlaybackPosition {
+  suraId: number
+  ayahIndex: number
+  audioTime: number
+  timestamp: number
+}
+const PLAYBACK_POSITION_KEY = 'quran-playback-position'
+const playbackPositionStore = useStorageRef<PlaybackPosition | null>(PLAYBACK_POSITION_KEY, null)
+
 // Hover widget state
 const hoverWidgetVisible = ref(false)
 const hoverWidgetVerse = ref<number | null>(null)
@@ -767,6 +777,73 @@ function stopAudio() {
   isPlayingAudio.value = false
   currentAyahIndex.value = -1
   currentWordIndex.value = -1
+  // Clear saved playback position when completely stopped
+  clearPlaybackPosition()
+}
+
+function savePlaybackPosition() {
+  if (currentAyahIndex.value >= 0 && currentSuraId.value) {
+    const position: PlaybackPosition = {
+      suraId: currentSuraId.value,
+      ayahIndex: currentAyahIndex.value,
+      audioTime: audioEl.value?.currentTime || 0,
+      timestamp: Date.now(),
+    }
+    playbackPositionStore.set(position)
+  }
+}
+
+function clearPlaybackPosition() {
+  playbackPositionStore.set(null)
+}
+
+async function restorePlaybackPosition() {
+  const saved = playbackPositionStore.value.value
+  if (!saved || saved.suraId !== currentSuraId.value) {
+    return false
+  }
+  
+  // Check if position is not too old (within last 24 hours)
+  const hoursSinceLastPlay = (Date.now() - saved.timestamp) / (1000 * 60 * 60)
+  if (hoursSinceLastPlay > 24) {
+    clearPlaybackPosition()
+    return false
+  }
+  
+  // Restore position
+  currentAyahIndex.value = saved.ayahIndex
+  
+  // Show notification asking if they want to resume
+  $q.notify({
+    type: 'info',
+    message: t('pages.quran.resumeFromLast') || `Resume from verse ${saved.ayahIndex + 1}?`,
+    icon: 'replay',
+    timeout: 5000,
+    actions: [
+      {
+        label: t('pages.quran.resume') || 'Resume',
+        color: 'white',
+        handler: async () => {
+          stopRequested.value = false
+          await startAudioRecitation(saved.ayahIndex, { withIntro: false })
+          // Seek to saved time if available
+          if (audioEl.value && saved.audioTime > 0) {
+            audioEl.value.currentTime = saved.audioTime
+          }
+        }
+      },
+      {
+        label: t('pages.quran.restart') || 'Start Over',
+        color: 'white',
+        handler: () => {
+          clearPlaybackPosition()
+          currentAyahIndex.value = -1
+        }
+      }
+    ]
+  })
+  
+  return true
 }
 
 function togglePauseResume() {
@@ -972,9 +1049,23 @@ function stopTTS() {
 
 function startReading() {
   if (readerMode.value === 'tts') {
-    startTTS()
+    // TTS: pause/resume if already speaking, otherwise start
+    if (isTTSPlaying.value) {
+      pauseTTS()
+    } else if (currentAyahIndex.value >= 0) {
+      resumeTTS()
+    } else {
+      startTTS()
+    }
   } else {
-    startSuraAudio()
+    // Audio: pause/resume if already playing, otherwise start
+    if (isPlayingAudio.value && audioEl.value && !audioEl.value.paused) {
+      pauseAudio()
+    } else if (audioEl.value && audioEl.value.paused && currentAyahIndex.value >= 0) {
+      resumeAudio()
+    } else {
+      startSuraAudio()
+    }
   }
 }
 
@@ -987,6 +1078,73 @@ function stopReading() {
 }
 
 const isReading = computed(() => readerMode.value === 'tts' ? isTTSPlaying.value : isPlayingAudio.value)
+
+const isPaused = computed(() => {
+  if (readerMode.value === 'tts') {
+    return !isTTSPlaying.value && currentAyahIndex.value >= 0
+  } else {
+    return audioEl.value?.paused && currentAyahIndex.value >= 0
+  }
+})
+
+function pauseAudio() {
+  if (audioEl.value && !audioEl.value.paused) {
+    audioEl.value.pause()
+    isPlayingAudio.value = false
+    // Save position for later resumption
+    savePlaybackPosition()
+    $q.notify({
+      type: 'info',
+      message: t('pages.quran.paused') || 'Paused',
+      icon: 'pause',
+      timeout: 1000,
+    })
+  }
+}
+
+function resumeAudio() {
+  if (audioEl.value && audioEl.value.paused) {
+    audioEl.value.play()
+    isPlayingAudio.value = true
+    $q.notify({
+      type: 'positive',
+      message: t('pages.quran.resumed') || 'Resumed',
+      icon: 'play_arrow',
+      timeout: 1000,
+    })
+  }
+}
+
+function pauseTTS() {
+  if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+    window.speechSynthesis.pause()
+    isTTSPlaying.value = false
+    // Save position for TTS as well
+    savePlaybackPosition()
+    $q.notify({
+      type: 'info',
+      message: t('pages.quran.paused') || 'Paused',
+      icon: 'pause',
+      timeout: 1000,
+    })
+  }
+}
+
+function resumeTTS() {
+  if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.paused) {
+    window.speechSynthesis.resume()
+    isTTSPlaying.value = true
+    $q.notify({
+      type: 'positive',
+      message: t('pages.quran.resumed') || 'Resumed',
+      icon: 'play_arrow',
+      timeout: 1000,
+    })
+  } else if (currentAyahIndex.value >= 0) {
+    // If not currently paused but we have a position, restart from that position
+    startTTS()
+  }
+}
 
 const readerModeOptions = computed(() => [
   { label: t('pages.quran.audioRecitation'), value: 'audio' },
@@ -1087,6 +1245,12 @@ onMounted(async () => {
     // Chrome loads voices async
     window.speechSynthesis.onvoiceschanged = loadVoices
   }
+  
+  // Check for saved playback position and offer to resume
+  await nextTick()
+  if (audioList.value.length > 0) {
+    await restorePlaybackPosition()
+  }
 })
 
 watch(() => route.params.id, (newId) => {
@@ -1161,13 +1325,13 @@ watch(() => route.params.mode, (newMode) => {
             @update:model-value="stopReading"
           />
           <q-btn
-            icon="play_arrow"
+            :icon="isReading ? 'pause' : (isPaused ? 'play_arrow' : 'play_arrow')"
             color="primary"
             flat
             dense
             @click="startReading"
             :disable="readerMode === 'audio' && !audioList.length"
-            :label="isReading ? t('general.pause') : t('pages.quran.playRecitation')"
+            :label="isReading ? t('pages.quran.pause') : (isPaused ? t('pages.quran.resume') : t('pages.quran.playRecitation'))"
           />
           <q-btn
             icon="stop"
