@@ -142,6 +142,15 @@
                 </q-item-section>
               </q-item>
 
+              <q-item clickable v-ripple @click="$router.push('/signup')" v-if="!isAuthenticated">
+                <q-item-section avatar>
+                  <q-icon name="person_add" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{ t('auth.signUp') }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
               <q-item clickable v-ripple @click="handleLogout" v-if="isAuthenticated">
                 <q-item-section avatar>
                   <q-icon name="logout" />
