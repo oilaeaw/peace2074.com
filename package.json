@@ -22,7 +22,11 @@
     "test:e2e:debug": "playwright test --debug",
     "mobile:sync": "pnpm build && pnpm exec cap sync",
     "mobile:android": "pnpm build && pnpm exec cap sync android && pnpm exec cap open android",
-    "mobile:ios": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
+    "mobile:ios": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
+    "ios:open": "pnpm exec cap open ios",
+    "ios:sync": "pnpm exec cap sync ios",
+    "ios:dev": "pnpm exec cap sync ios && pnpm exec cap open ios",
+    "ios:build": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

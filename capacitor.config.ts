@@ -7,7 +7,11 @@ const config: CapacitorConfig = {
     bundledWebRuntime: false,
     server: {
         androidScheme: 'https',
-        // Point to production API for testing
+        // For local development with live reload, uncomment:
+        // url: 'http://localhost:4000',
+        // cleartext: true,
+
+        // For production or testing bundled app, use:
         url: 'https://peace2074.com',
         cleartext: true,
     },
