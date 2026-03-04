@@ -25,7 +25,9 @@
           <div class="lang">
             <label for="lang" class="q-mr-xs">{{ t('general.languages') }}:</label>
             <select id="lang" @change="onLangChange($event)" :value="locale">
-              <option v-for="l in langs" :key="l.value" :value="l.value">{{ l.label }}</option>
+              <option v-for="l in langs" :key="l.value" :value="l.value">
+                {{ l.flag }} {{ t(`general.languageNames.${l.value}`) }}
+              </option>
             </select>
           </div>
         </nav>
@@ -51,11 +53,22 @@ import { useI18n } from "vue-i18n";
 const { locale, t } = useI18n({ useScope: "global" });
 
 const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+
+const languageFlags: Record<string, string> = {
+  en: '🇺🇸',
+  ar: '🇸🇦',
+  de: '🇩🇪',
+  ru: '🇷🇺',
+  he: '🇮🇱',
+  tr: '🇹🇷',
+};
+
 const langs = computed(() => {
   locale.value;
   return languageCodes.map((code) => ({
     value: code,
-    label: t(`general.languageNames.${code}`),
+    label: `${languageFlags[code] || ''} ${t(`general.languageNames.${code}`)}`,
+    flag: languageFlags[code],
   }));
 });
 

@@ -111,7 +111,21 @@
           map-options
           v-model="localeModel"
           class="glassy-field locale-select"
-        />
+        >
+          <template v-slot:selected>
+            <span>{{ languageFlags[localeModel] }}</span>
+          </template>
+          <template v-slot:option="scope">
+            <q-item v-bind="scope.itemProps">
+              <q-item-section avatar>
+                <span class="text-h6">{{ scope.opt.flag }}</span>
+              </q-item-section>
+              <q-item-section>
+                <q-item-label>{{ scope.opt.label.replace(scope.opt.flag, '').trim() }}</q-item-label>
+              </q-item-section>
+            </q-item>
+          </template>
+        </q-select>
 
         <!-- User Profile Button -->
         <q-btn
@@ -267,11 +281,21 @@ const localeModel = computed({
   },
 });
 
+const languageFlags: Record<string, string> = {
+  en: '🇺🇸',
+  ar: '🇸🇦',
+  de: '🇩🇪',
+  ru: '🇷🇺',
+  he: '🇮🇱',
+  tr: '🇹🇷',
+};
+
 const langs = computed(() => {
   locale.value;
   return languageCodes.map((code) => ({
     value: code,
-    label: t(`general.languageNames.${code}`),
+    label: `${languageFlags[code] || ''} ${t(`general.languageNames.${code}`)}`,
+    flag: languageFlags[code],
   }));
 });
 
