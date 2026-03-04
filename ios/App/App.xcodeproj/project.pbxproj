@@ -213,7 +213,12 @@
 			projectRoot = "";
 			targets = (
 				504EC3031FED79650016851F /* App */,
+				1F334CB32F54B88900BC45FE /* peace2074 */,
+			);
+		};
+/* End PBXProject section */
 
+/* Begin PBXResourcesBuildPhase section */
 		1F334CB22F54B88900BC45FE /* Resources */ = {
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
