@@ -29,6 +29,41 @@ post_install do |installer|
     end
   end
   
+  # Fix malformed imports in Capacitor framework headers
+  capacitor_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor', __dir__)
+  
+  if Dir.exist?(capacitor_path)
+    Dir.glob("#{capacitor_path}/*.{h,m}").each do |file_path|
+      text = File.read(file_path)
+      original_text = text.dup
+      
+      # Replace @import with #import for framework headers
+      text = text.gsub(/@import\s+UIKit;/, '#import <UIKit/UIKit.h>')
+      text = text.gsub(/@import\s+Cordova;/, '#import <Cordova/CDVConfigParser.h>')
+      text = text.gsub(/@import\s+Foundation;/, '#import <Foundation/Foundation.h>')
+      text = text.gsub(/@import\s+WebKit;/, '#import <WebKit/WebKit.h>')
+      
+      # Fix incorrect Cordova.h import (doesn't exist, use CDVConfigParser.h)
+      text = text.gsub(/#import\s+<Cordova\/Cordova\.h>/, '#import <Cordova/CDVConfigParser.h>')
+      
+      # Fix missing brackets/quotes in #import statements
+      # Example: #import CAPPluginMethod.h -> #import <Capacitor/CAPPluginMethod.h>
+      text = text.gsub(/#import\s+([A-Z][A-Za-z0-9]+\.h)/, '#import <Capacitor/\1>')
+      
+      # Fix double-quoted Capacitor imports to use angle brackets
+      text = text.gsub(/#import "CAP([^"]+)"/, '#import <Capacitor/CAP\1>')
+      
+      # Replace smart/curly quotes with straight quotes
+      text = text.gsub(/[""]/, '"')
+      text = text.gsub(/['']/, "'")
+      
+      if text != original_text
+        File.write(file_path, text)
+        puts "✓ Fixed imports in #{File.basename(file_path)}"
+      end
+    end
+  end
+  
   # Fix double-quoted imports and smart quotes in CapacitorCordova framework headers
   capacitor_cordova_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public', __dir__)
   
