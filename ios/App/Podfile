@@ -22,6 +22,13 @@ end
 post_install do |installer|
   assertDeploymentTarget(installer)
   
+  # Enable modules to fix @import warnings in framework headers
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+    end
+  end
+  
   # Fix double-quoted imports and smart quotes in CapacitorCordova framework headers
   capacitor_cordova_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public', __dir__)
   
