@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header elevated class="app-header text-white">
+    <q-header elevated reveal class="app-header text-white">
       <q-toolbar class="app-toolbar">
         <q-btn
           flat
@@ -228,7 +228,7 @@
     <SupportAIWidget v-if="showLazyWidgets" />
     <ConsentBanner v-if="showLazyWidgets" />
 
-    <q-footer class="text-center q-pa-sm">
+    <q-footer class="text-center q-pa-sm" elevated reveal>
       <div class="footer">
         <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
         <span>© 2025 {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>

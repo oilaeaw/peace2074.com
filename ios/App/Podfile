@@ -29,6 +29,16 @@ post_install do |installer|
     end
   end
   
+  # Fix "Run script build phase will be run during every build" warning
+  # Set alwaysOutOfDate to suppress dependency analysis warnings
+  installer.pods_project.targets.each do |target|
+    target.build_phases.each do |build_phase|
+      if build_phase.respond_to?(:always_out_of_date) && build_phase.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+        build_phase.always_out_of_date = "1"
+      end
+    end
+  end
+  
   # Fix malformed imports in Capacitor framework headers
   capacitor_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor', __dir__)
   
@@ -61,6 +71,18 @@ post_install do |installer|
         File.write(file_path, text)
         puts "✓ Fixed imports in #{File.basename(file_path)}"
       end
+    end
+  end
+  
+  # Fix specific missing import in CAPBridgeViewController+CDVScreenOrientationDelegate.h
+  screen_orientation_file = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeViewController+CDVScreenOrientationDelegate.h', __dir__)
+  if File.exist?(screen_orientation_file)
+    text = File.read(screen_orientation_file)
+    if text.include?('<CDVScreenOrientationDelegate>') && !text.include?('CDVScreenOrientationDelegate.h')
+      # Add missing import after the Capacitor-Swift.h import
+      text = text.gsub(/(#import <Capacitor\/Capacitor-Swift\.h>)/, "\\1\n#import <Cordova/CDVScreenOrientationDelegate.h>")
+      File.write(screen_orientation_file, text)
+      puts "✓ Added CDVScreenOrientationDelegate import"
     end
   end
   

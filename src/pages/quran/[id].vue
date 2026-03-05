@@ -2020,15 +2020,6 @@ watch(() => route.params.mode, (newMode) => {
                   >
                     <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
                   </button>
-                  <button
-                    type="button"
-                    class="share-trigger mushaf-trigger"
-                    @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
-                    :aria-label="`Share verse ${currentSuraId}:${a.verse}`"
-                    :title="`Share ${currentSuraId}:${a.verse}`"
-                  >
-                    <q-icon name="share" size="18px" />
-                  </button>
                 </div>
               </div>
             </div>
