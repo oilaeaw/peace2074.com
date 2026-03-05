@@ -2104,10 +2104,10 @@ watch(() => route.params.mode, (newMode) => {
               <q-btn
                 round
                 dense
-                icon="first_page"
+                :icon="isVerseBookmarked(hoverWidgetVerse!) ? 'star' : 'star_outline'"
                 color="accent"
-                @click="restartSura"
-                :title="t('pages.quran.restartSura') || 'Restart sura'"
+                @click="bookmarkVerse(hoverWidgetVerse!)"
+                :title="t('pages.quran.bookmarks.add', { verse: hoverWidgetVerse })"
               />
               <q-btn
                 round
