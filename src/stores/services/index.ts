@@ -194,3 +194,50 @@ export async function sendContactMessage(payload: ContactPayload) {
 
   return res.json();
 }
+
+export async function fetchDeployLikes() {
+  try {
+    const res = await fetch(resolveNitroUrl("/deploys/likes"), {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data?.error || `Failed to fetch likes (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch deploy likes", e);
+    return { ok: false, likeCounts: {}, userLiked: [] };
+  }
+}
+
+export async function sendDeployLike(version: string) {
+  try {
+    const res = await fetch(resolveNitroUrl("/deploys/likes"), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ version }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+
+      // Check if auth is required
+      if (res.status === 401 || data?.authRequired) {
+        return { ok: false, authRequired: true, error: data?.error };
+      }
+
+      throw new Error(data?.error || `Failed to toggle like (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to toggle deploy like", e);
+    throw e;
+  }
+}

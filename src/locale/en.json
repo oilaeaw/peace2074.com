@@ -50,7 +50,8 @@
       "login": "Login",
       "logout": "Sign Out",
       "blog": "Blog",
-      "contact": "Contact"
+      "contact": "Contact",
+      "deploys": "Deploys"
     }
   },
   "navigation": {
@@ -436,6 +437,13 @@
         "postNotFound": "Post not found",
         "fillRequired": "Please fill in all required fields"
       }
+    },
+    "deploys": {
+      "title": "Deployment History",
+      "subtitle": "Track our releases and feature updates over time",
+      "features": "Features",
+      "fixes": "Bug Fixes",
+      "chores": "Chores"
     }
   },
   "general": {

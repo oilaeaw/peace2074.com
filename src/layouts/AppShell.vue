@@ -312,6 +312,7 @@ const defaultNavItems = [
   { key: "admin", labelKey: "navigation.AdminPage", to: "/admin" },
   { key: "login", labelKey: "appShell.nav.login", to: "/login" },
   { key: "blog", labelKey: "appShell.nav.blog", to: "/blog" },
+  { key: "deploys", labelKey: "appShell.nav.deploys", to: "/deploys" },
   { key: "contact", labelKey: "appShell.nav.contact", to: "/contact" },
 ];
 

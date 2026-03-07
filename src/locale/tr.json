@@ -50,7 +50,8 @@
             "login": "Giriş",
             "logout": "Çıkış Yap",
             "blog": "Blog",
-            "contact": "İletişim"
+            "contact": "İletişim",
+            "deploys": "Dağıtımlar"
         }
     },
     "navigation": {
@@ -436,6 +437,13 @@
                 "postNotFound": "Yazı bulunamadı",
                 "fillRequired": "Lütfen tüm zorunlu alanları doldurun"
             }
+        },
+        "deploys": {
+            "title": "Dağıtım Geçmişi",
+            "subtitle": "Sürümlerimizi ve özellik güncellemelerimizi zaman içinde takip edin",
+            "features": "Özellikler",
+            "fixes": "Hata Düzeltmeleri",
+            "chores": "Bakım Çalışmaları"
         }
     },
     "general": {

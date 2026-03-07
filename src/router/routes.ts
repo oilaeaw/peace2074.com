@@ -162,6 +162,15 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/deploys',
+    name: 'Deploys',
+    component: () => import('@/pages/deploys.vue'),
+    meta: {
+      title: 'Deploys',
+      titleKey: 'pages.deploys.title',
+    },
+  },
+  {
     path: '/admin',
     name: 'Admin',
     component: () => import('@/views/admin.vue'),

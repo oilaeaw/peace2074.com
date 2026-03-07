@@ -62,3 +62,15 @@ model BlogPost {
 
   @@map("BlogPost")
 }
+
+model DeployLike {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  version   String
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([version, userId])
+  @@index([version])
+  @@index([userId])
+  @@map("DeployLike")
+}

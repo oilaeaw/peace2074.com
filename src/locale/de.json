@@ -50,7 +50,8 @@
       "login": "Login",
       "logout": "Abmelden",
       "blog": "Blog",
-      "contact": "Kontakt"
+      "contact": "Kontakt",
+      "deploys": "Bereitstellungen"
     }
   },
   "pages": {
@@ -401,6 +402,13 @@
         "postNotFound": "Beitrag nicht gefunden",
         "fillRequired": "Bitte fülle alle Pflichtfelder aus"
       }
+    },
+    "deploys": {
+      "title": "Bereitstellungsverlauf",
+      "subtitle": "Verfolgen Sie unsere Releases und Feature-Updates über die Zeit",
+      "features": "Funktionen",
+      "fixes": "Fehlerbehebungen",
+      "chores": "Wartungsarbeiten"
     }
   },
   "general": {
