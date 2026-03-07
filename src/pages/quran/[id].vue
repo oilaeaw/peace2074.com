@@ -348,6 +348,14 @@ interface PlaybackPosition {
 const PLAYBACK_POSITION_KEY = 'quran-playback-position'
 const playbackPositionStore = useStorageRef<PlaybackPosition | null>(PLAYBACK_POSITION_KEY, null)
 
+// Auto-continue to next sura setting
+const AUTO_CONTINUE_KEY = 'quran-auto-continue'
+const autoContinueStore = useStorageRef<boolean>(AUTO_CONTINUE_KEY, false)
+const autoContinueEnabled = computed({
+  get: () => autoContinueStore.value.value,
+  set: (enabled) => autoContinueStore.set(enabled),
+})
+
 // Hover widget state
 const hoverWidgetVisible = ref(false)
 const hoverWidgetVerse = ref<number | null>(null)
@@ -468,6 +476,41 @@ function markSuraAsRead(suraId: number) {
     localStorage.setItem(READ_KEY, JSON.stringify(Array.from(readSet)))
   } catch (e) {
     console.error('Failed to mark sura as read:', e)
+  }
+}
+
+// Mark sura as completed in Ramadan progress tracking
+const PROGRESS_KEY = 'quran-ramadan-progress'
+function markSuraAsCompleted(suraId: number) {
+  try {
+    const stored = localStorage.getItem(PROGRESS_KEY)
+    const completedSet = stored ? new Set(JSON.parse(stored)) : new Set<number>()
+    
+    // Only mark as complete if not already completed
+    if (!completedSet.has(suraId)) {
+      completedSet.add(suraId)
+      localStorage.setItem(PROGRESS_KEY, JSON.stringify(Array.from(completedSet)))
+      
+      // Show completion notification
+      $q.notify({
+        type: 'positive',
+        message: t('pages.quran.ramadanProgress.suraCompleted', { sura: suraId }) || `Sura ${suraId} completed! ✓`,
+        icon: 'check_circle',
+        timeout: 3000,
+        position: 'top',
+        actions: [
+          {
+            label: t('pages.quran.backToList') || 'View Progress',
+            color: 'white',
+            handler: () => {
+              router.push('/quran')
+            }
+          }
+        ]
+      })
+    }
+  } catch (e) {
+    console.error('Failed to mark sura as completed:', e)
   }
 }
 
@@ -1048,6 +1091,29 @@ function playAyah(index: number) {
     el.onended = () => {
       if (stopRequested.value) {
         stopAudio()
+      } else if (index + 1 >= audioList.value.length) {
+        // Sura completed - mark as complete
+        markSuraAsCompleted(currentSuraId.value)
+        
+        // Check if auto-continue is enabled
+        if (autoContinueEnabled.value && currentSuraId.value < 114) {
+          // Navigate to next sura and start playing
+          const nextSuraId = currentSuraId.value + 1
+          $q.notify({
+            type: 'info',
+            message: `Starting Sura ${nextSuraId}...`,
+            icon: 'skip_next',
+            timeout: 2000,
+            position: 'top'
+          })
+          
+          // Navigate and set flag to autoplay
+          setTimeout(async () => {
+            await router.push(`/quran/${nextSuraId}?autoplay=true`)
+          }, 1000)
+        } else {
+          stopAudio()
+        }
       } else {
         playAyah(index + 1)
       }
