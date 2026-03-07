@@ -212,7 +212,8 @@
                 "suraIncomplete": "סורה {sura} סומנה כלא הושלמה",
                 "progressReset": "ההתקדמות אופסה"
             },
-            "autoContinue": "המשך אוטומטי לסורה הבאה"
+            "autoContinue": "המשך אוטומטי לסורה הבאה",
+            "autoContinueAnnouncement": "🎉 תכונה חדשה: הפעל 'המשך אוטומטי' כדי להתקדם אוטומטית דרך כל 114 הסורות במהלך הקריאה!"
         },
         "miracles": {
             "pageTitle": "עמוד הניסים",

@@ -224,7 +224,8 @@
         "suraIncomplete": "Sura {sura} marked as incomplete",
         "progressReset": "Progress reset"
       },
-      "autoContinue": "Auto-continue to next sura"
+      "autoContinue": "Auto-continue to next sura",
+      "autoContinueAnnouncement": "🎉 New Feature: Enable 'Auto-continue' to automatically progress through all 114 suras during recitation!"
     },
     "miracles": {
       "pageTitle": "Miracles Page",

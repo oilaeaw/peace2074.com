@@ -177,7 +177,8 @@
         "suraIncomplete": "Sure {sura} als unvollständig markiert",
         "progressReset": "Fortschritt zurückgesetzt"
       },
-      "autoContinue": "Automatisch zur nächsten Sure fortfahren"
+      "autoContinue": "Automatisch zur nächsten Sure fortfahren",
+      "autoContinueAnnouncement": "🎉 Neue Funktion: Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren!"
     },
     "settings": {
       "title": "Einstellungen",

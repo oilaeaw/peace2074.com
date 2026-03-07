@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.2.8 (2026-03-07)
+
+### Features
+
+- add auto-continue feature for Quran recitation - automatically progress through all 114 suras
+- add UI toggle switch in playback controls to enable/disable auto-continue
+- add localStorage persistence for auto-continue preference (`quran-auto-continue`)
+- add automatic sura completion marking when recitation finishes
+- add notification "Starting Sura X..." before auto-navigation to next sura
+- add full i18n support for auto-continue across all 6 languages (en, ar, he, de, ru, tr)
+- add 1-second delay between suras for smooth transitions
+
+### Chores
+
+- bump project version to `0.2.8` in root and Nitro API package manifests
+
 ## 0.2.7 (2026-03-03)
 
 ### Features

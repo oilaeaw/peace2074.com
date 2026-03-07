@@ -1729,6 +1729,30 @@ onMounted(async () => {
   if (audioList.value.length > 0) {
     await restorePlaybackPosition()
   }
+  
+  // Show feature announcement for auto-continue (only once)
+  const FEATURE_ANNOUNCEMENT_KEY = 'quran-feature-auto-continue-announced'
+  const hasSeenAnnouncement = localStorage.getItem(FEATURE_ANNOUNCEMENT_KEY)
+  if (!hasSeenAnnouncement) {
+    setTimeout(() => {
+      notify({
+        type: 'info',
+        message: t('pages.quran.autoContinueAnnouncement') || '🎉 New Feature: Enable Auto-continue to automatically progress through all 114 suras!',
+        icon: 'auto_awesome',
+        announce: true,
+        actions: [
+          {
+            label: t('common.close') || 'Close',
+            color: 'white',
+            handler: () => {
+              localStorage.setItem(FEATURE_ANNOUNCEMENT_KEY, 'true')
+              dismissAnnouncement()
+            }
+          }
+        ]
+      })
+    }, 2000) // Show after 2 seconds to avoid overwhelming user
+  }
 })
 
 watch(() => route.params.id, (newId) => {
