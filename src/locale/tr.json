@@ -223,7 +223,8 @@
                 "suraCompleted": "Sure {sura} tamamlandı! ✓",
                 "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
                 "progressReset": "İlerleme sıfırlandı"
-            }
+            },
+            "autoContinue": "Otomatik olarak sonraki sureye devam et"
         },
         "miracles": {
             "pageTitle": "Mucizeler Sayfası",

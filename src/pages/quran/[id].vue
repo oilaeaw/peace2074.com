@@ -1901,6 +1901,16 @@ watch(() => route.params.mode, (newMode) => {
             @click.prevent="stopReading"
             :label="t('pages.quran.stopRecitation')"
           />
+          
+          <!-- Auto-continue toggle -->
+          <q-toggle
+            v-model="autoContinueEnabled"
+            :label="t('pages.quran.autoContinue') || 'Auto-continue'"
+            color="secondary"
+            dense
+            class="q-ml-sm"
+          />
+          
           <!-- Audio playback rate (audio mode) -->
           <q-select
             v-if="readerMode === 'audio'"

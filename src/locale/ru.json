@@ -211,7 +211,8 @@
         "suraCompleted": "Сура {sura} завершена! ✓",
         "suraIncomplete": "Сура {sura} отмечена как незавершенная",
         "progressReset": "Прогресс сброшен"
-      }
+      },
+      "autoContinue": "Автопродолжение к следующей суре"
     },
     "settings": {
       "title": "Настройки",

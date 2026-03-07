@@ -223,7 +223,8 @@
         "suraCompleted": "Sura {sura} completed! ✓",
         "suraIncomplete": "Sura {sura} marked as incomplete",
         "progressReset": "Progress reset"
-      }
+      },
+      "autoContinue": "Auto-continue to next sura"
     },
     "miracles": {
       "pageTitle": "Miracles Page",

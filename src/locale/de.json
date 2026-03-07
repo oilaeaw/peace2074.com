@@ -176,7 +176,8 @@
         "suraCompleted": "Sure {sura} abgeschlossen! ✓",
         "suraIncomplete": "Sure {sura} als unvollständig markiert",
         "progressReset": "Fortschritt zurückgesetzt"
-      }
+      },
+      "autoContinue": "Automatisch zur nächsten Sure fortfahren"
     },
     "settings": {
       "title": "Einstellungen",

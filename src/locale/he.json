@@ -211,7 +211,8 @@
                 "suraCompleted": "סורה {sura} הושלמה! ✓",
                 "suraIncomplete": "סורה {sura} סומנה כלא הושלמה",
                 "progressReset": "ההתקדמות אופסה"
-            }
+            },
+            "autoContinue": "המשך אוטומטי לסורה הבאה"
         },
         "miracles": {
             "pageTitle": "עמוד הניסים",
