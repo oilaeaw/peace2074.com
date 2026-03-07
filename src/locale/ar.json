@@ -191,6 +191,20 @@
         "mulk": "الملك",
         "ikhlas": "الإخلاص"
       },
+      "ramadanProgress": {
+        "title": "تتبع إتمام القرآن الكريم",
+        "badge": "رمضان",
+        "message": "رمضان مبارك! تقبل الله تلاوتكم في هذا الشهر الفضيل.",
+        "completed": "{completed} / {total} سورة ({percentage}%)",
+        "continueReading": "متابعة القراءة",
+        "restart": "إعادة البدء",
+        "resetProgress": "إعادة تعيين التقدم",
+        "resetConfirm": "إعادة تعيين التقدم",
+        "resetConfirmMessage": "هل أنت متأكد من إعادة تعيين كل تقدم قراءة القرآن؟",
+        "suraCompleted": "السورة {sura} مكتملة! ✓",
+        "suraIncomplete": "السورة {sura} محددة كغير مكتملة",
+        "progressReset": "تم إعادة تعيين التقدم"
+      },
       "sura": {
         "name": "اسم السورة",
         "id": "رقم السورة",

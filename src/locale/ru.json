@@ -197,6 +197,20 @@
         "yasin": "Йа-Син",
         "mulk": "Аль-Мульк",
         "ikhlas": "Аль-Ихлас"
+      },
+      "ramadanProgress": {
+        "title": "Отслеживайте завершение Корана",
+        "badge": "Рамадан",
+        "message": "Благословенный Рамадан! Да примет Аллах ваше чтение в этот благословенный месяц.",
+        "completed": "{completed} / {total} сур ({percentage}%)",
+        "continueReading": "Продолжить чтение",
+        "restart": "Начать заново",
+        "resetProgress": "Сбросить прогресс",
+        "resetConfirm": "Сбросить прогресс",
+        "resetConfirmMessage": "Вы уверены, что хотите сбросить весь прогресс чтения Корана?",
+        "suraCompleted": "Сура {sura} завершена! ✓",
+        "suraIncomplete": "Сура {sura} отмечена как незавершенная",
+        "progressReset": "Прогресс сброшен"
       }
     },
     "settings": {

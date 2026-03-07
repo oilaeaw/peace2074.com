@@ -162,6 +162,20 @@
         "yasin": "Ya-Sin",
         "mulk": "Al-Mulk",
         "ikhlas": "Al-Ikhlas"
+      },
+      "ramadanProgress": {
+        "title": "Verfolgen Sie Ihre Koran-Fertigstellung",
+        "badge": "Ramadan",
+        "message": "Ramadan Mubarak! Möge Allah deine Rezitation in diesem gesegneten Monat akzeptieren.",
+        "completed": "{completed} / {total} Suren ({percentage}%)",
+        "continueReading": "Weiterlesen",
+        "restart": "Neu starten",
+        "resetProgress": "Fortschritt zurücksetzen",
+        "resetConfirm": "Fortschritt zurücksetzen",
+        "resetConfirmMessage": "Möchten Sie wirklich den gesamten Koran-Lesefortschritt zurücksetzen?",
+        "suraCompleted": "Sure {sura} abgeschlossen! ✓",
+        "suraIncomplete": "Sure {sura} als unvollständig markiert",
+        "progressReset": "Fortschritt zurückgesetzt"
       }
     },
     "settings": {

@@ -197,6 +197,20 @@
                 "yasin": "יא-סין",
                 "mulk": "אל-מולכ",
                 "ikhlas": "אל-אחלאס"
+            },
+            "ramadanProgress": {
+                "title": "עקוב אחר השלמת הקוראן",
+                "badge": "רמדאן",
+                "message": "רמדאן מבורך! יהי רצון שאללה יקבל את קריאתך בחודש המבורך הזה.",
+                "completed": "{completed} / {total} סורות ({percentage}%)",
+                "continueReading": "המשך קריאה",
+                "restart": "התחל מחדש",
+                "resetProgress": "אפס התקדמות",
+                "resetConfirm": "אפס התקדמות",
+                "resetConfirmMessage": "האם אתה בטוח שברצונך לאפס את כל התקדמות קריאת הקוראן?",
+                "suraCompleted": "סורה {sura} הושלמה! ✓",
+                "suraIncomplete": "סורה {sura} סומנה כלא הושלמה",
+                "progressReset": "ההתקדמות אופסה"
             }
         },
         "miracles": {

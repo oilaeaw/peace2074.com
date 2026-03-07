@@ -209,6 +209,20 @@
         "yasin": "Ya-Sin",
         "mulk": "Al-Mulk",
         "ikhlas": "Al-Ikhlas"
+      },
+      "ramadanProgress": {
+        "title": "Track Your Quran Completion",
+        "badge": "Ramadan",
+        "message": "Ramadan Mubarak! May Allah accept your recitation during this blessed month.",
+        "completed": "{completed} / {total} Surahs ({percentage}%)",
+        "continueReading": "Continue Reading",
+        "restart": "Restart",
+        "resetProgress": "Reset Progress",
+        "resetConfirm": "Reset Progress",
+        "resetConfirmMessage": "Are you sure you want to reset all Quran reading progress?",
+        "suraCompleted": "Sura {sura} completed! ✓",
+        "suraIncomplete": "Sura {sura} marked as incomplete",
+        "progressReset": "Progress reset"
       }
     },
     "miracles": {

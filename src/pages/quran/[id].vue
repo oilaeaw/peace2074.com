@@ -180,7 +180,10 @@ function showNextAnnouncement() {
   showAnnouncementBanner.value = true
 }
 
-function dismissAnnouncement() {
+function dismissAnnouncement(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   showAnnouncementBanner.value = false
   currentAnnouncement.value = null
   
@@ -333,6 +336,7 @@ const currentWordIndex = ref<number>(-1)
 const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
 const stopRequested = ref(false)
+const isStartingRecitation = ref(false)
 
 // Persistent playback position
 interface PlaybackPosition {
@@ -349,6 +353,8 @@ const hoverWidgetVisible = ref(false)
 const hoverWidgetVerse = ref<number | null>(null)
 const hoverTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 const hoverWidgetPosition = ref({ top: 0, left: 0 })
+const lastDoubleClickTime = ref(0)
+const DOUBLE_CLICK_DEBOUNCE = 500 // ms
 
 // TTS (Text-to-Speech) state
 const READER_MODE_KEY = 'quran-reader-mode'
@@ -452,7 +458,23 @@ const isVerseBookmarked = (verse: number | string) => {
 
 const bookmarkActionLabel = (verse: number | string) => t('pages.quran.bookmarks.add', { verse })
 
-async function bookmarkVerse(verse: number | string) {
+// Mark sura as read in localStorage
+const READ_KEY = 'quran-read-suras'
+function markSuraAsRead(suraId: number) {
+  try {
+    const stored = localStorage.getItem(READ_KEY)
+    const readSet = stored ? new Set(JSON.parse(stored)) : new Set<number>()
+    readSet.add(suraId)
+    localStorage.setItem(READ_KEY, JSON.stringify(Array.from(readSet)))
+  } catch (e) {
+    console.error('Failed to mark sura as read:', e)
+  }
+}
+
+async function bookmarkVerse(verse: number | string, event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   if (!sura.value) return
   const normalized = `${sura.value.id}_${verse}`
   
@@ -508,7 +530,10 @@ async function bookmarkVerse(verse: number | string) {
   }
 }
 
-function removeBookmark(entry: BookmarkEntry) {
+function removeBookmark(entry: BookmarkEntry, event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   const identifier = typeof entry.raw === 'string'
     ? entry.raw
     : entry.raw?._id || entry.raw?.bookmark || entry.normalized
@@ -608,20 +633,31 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
   })
 }
 
-async function shareBookmark(entry: BookmarkEntry) {
+async function shareBookmark(entry: BookmarkEntry, event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   const suraId = Number(entry.suraId || currentSuraId.value)
   const verse = Number(entry.verse || 1)
   await shareVerseLink(suraId, verse, entry.label)
 }
 
-async function shareHoverVerse() {
+async function shareHoverVerse(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   const verse = Number(hoverWidgetVerse.value || 0)
   const suraId = Number(currentSuraId.value || 0)
   if (!suraId || !verse) return
   await shareVerseLink(suraId, verse, `${suraId}:${verse}`)
 }
 
-async function handleBookmarkNavigate(entry: BookmarkEntry) {
+async function handleBookmarkNavigate(entry: BookmarkEntry, event?: MouseEvent | Event) {
+  if (event) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  
   if (!entry) return
   selectedBookmark.value = `id_${entry.normalized}`
   
@@ -675,7 +711,12 @@ async function handleBookmarkNavigate(entry: BookmarkEntry) {
  * Navigate to a quick access verse using the Red-Black Tree for O(log n) lookup
  * After navigation, automatically plays the ayah audio
  */
-async function navigateToQuickAccess(qaVerse: QuickAccessVerse) {
+async function navigateToQuickAccess(qaVerse: QuickAccessVerse, event?: MouseEvent | Event) {
+  if (event) {
+    event.preventDefault()
+    event.stopPropagation()
+  }
+  
   // Use tree for efficient lookup (preload context)
   const verseData = await quranTree.getVerse(qaVerse.suraId, qaVerse.verse)
   if (verseData) {
@@ -775,6 +816,10 @@ async function loadSuraById(id: number) {
   error.value = ''
   selectedBookmark.value = ''
   stopAudio()
+  
+  // Mark sura as read
+  markSuraAsRead(id)
+  
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
@@ -908,21 +953,32 @@ async function playBismillahIntro(): Promise<void> {
 }
 
 async function startAudioRecitation(index: number, opts: { withIntro?: boolean } = {}) {
+  // Prevent concurrent starts from rapid clicks
+  if (isStartingRecitation.value) {
+    console.debug('[Audio] Already starting recitation, ignoring duplicate call')
+    return
+  }
+
   const withIntro = opts.withIntro !== false
   const startIndex = Math.max(0, index)
 
   if (!audioList.value.length || startIndex >= audioList.value.length) return
 
-  stopAudio()
-  stopRequested.value = false
-  currentWordIndex.value = -1
+  isStartingRecitation.value = true
+  try {
+    stopAudio()
+    stopRequested.value = false
+    currentWordIndex.value = -1
 
-  if (withIntro) {
-    await playBismillahIntro()
-  }
+    if (withIntro) {
+      await playBismillahIntro()
+    }
 
-  if (!stopRequested.value) {
-    playAyah(startIndex)
+    if (!stopRequested.value) {
+      playAyah(startIndex)
+    }
+  } finally {
+    isStartingRecitation.value = false
   }
 }
 
@@ -1012,6 +1068,12 @@ function playAyah(index: number) {
 }
 
 async function startSuraAudio() {
+  // Prevent concurrent starts from rapid clicks
+  if (isStartingRecitation.value) {
+    console.debug('[Audio] Already starting sura audio, ignoring duplicate call')
+    return
+  }
+
   stopRequested.value = false
   currentWordIndex.value = -1
 
@@ -1155,30 +1217,51 @@ function hideHoverWidget() {
   hoverWidgetVerse.value = null
 }
 
-async function restartFromVerse(verse: number) {
+async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   hideHoverWidget()
   await nextTick()
   await startAudioRecitation(verse - 1, { withIntro: true })
 }
 
-async function restartSura() {
+async function restartSura(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   hideHoverWidget()
   await nextTick()
   await startAudioRecitation(0, { withIntro: true })
 }
 
-function goHome() {
+function goHome(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   hideHoverWidget()
   stopAudio()
   router.push('/')
 }
 
-function scrollToTop() {
+function scrollToTop(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
 async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
-  stopRequested.value = false
+  event.preventDefault()
+  event.stopPropagation()
+  
+  // Debounce to prevent rapid double-clicks
+  const now = Date.now()
+  if (now - lastDoubleClickTime.value < DOUBLE_CLICK_DEBOUNCE) {
+    console.debug('[DoubleClick] Debounced - too soon')
+    return
+  }
+  lastDoubleClickTime.value = now
   
   // Show hover widget at double-click location
   hoverWidgetPosition.value = {
@@ -1188,9 +1271,24 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   hoverWidgetVerse.value = verse
   hoverWidgetVisible.value = true
   
-  // Play the specific verse
   const verseIndex = verse - 1
-  if (verseIndex >= 0 && verseIndex < audioList.value.length) {
+  
+  // Check if this verse is currently playing
+  const isThisVersePlaying = isPlayingAudio.value && currentAyahIndex.value === verseIndex
+  
+  if (isThisVersePlaying) {
+    // If this verse is already playing, stop it
+    stopAudio()
+    $q.notify({
+      type: 'info',
+      message: `Stopped verse ${verse}`,
+      icon: 'stop',
+      timeout: 1500,
+      position: 'top'
+    })
+  } else if (verseIndex >= 0 && verseIndex < audioList.value.length) {
+    // If it's not playing or a different verse is playing, start this verse
+    stopRequested.value = false
     await startAudioRecitation(verseIndex, { withIntro: true })
     $q.notify({
       type: 'positive',
@@ -1319,7 +1417,16 @@ function stopTTS() {
   currentAyahIndex.value = -1
 }
 
-function startReading() {
+function startReading(event?: MouseEvent | Event) {
+  // Prevent default browser behavior and concurrent starts
+  event?.preventDefault()
+  event?.stopPropagation()
+  
+  if (isStartingRecitation.value) {
+    console.debug('[Reading] Already starting, ignoring duplicate click')
+    return
+  }
+
   if (readerMode.value === 'tts') {
     // TTS: pause/resume if already speaking, otherwise start
     if (isTTSPlaying.value) {
@@ -1341,7 +1448,10 @@ function startReading() {
   }
 }
 
-function stopReading() {
+function stopReading(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+  
   if (readerMode.value === 'tts') {
     stopTTS()
   } else {
@@ -1617,12 +1727,12 @@ watch(() => route.params.mode, (newMode) => {
             flat 
             :label="action.label" 
             :color="action.color || 'primary'"
-            @click="action.handler(); dismissAnnouncement()"
+            @click.prevent="action.handler(); dismissAnnouncement()"
           />
           <q-btn 
             flat 
             icon="close" 
-            @click="dismissAnnouncement"
+            @click.prevent="dismissAnnouncement"
             aria-label="Dismiss"
           />
         </template>
@@ -1649,14 +1759,14 @@ watch(() => route.params.mode, (newMode) => {
             :label="t('pages.quran.resume')" 
             color="primary" 
             icon="play_arrow"
-            @click="startReading"
+            @click.prevent="startReading"
           />
           <q-btn 
             flat 
             :label="t('pages.quran.stopRecitation')" 
             color="negative" 
             icon="stop"
-            @click="stopReading"
+            @click.prevent="stopReading"
           />
         </template>
       </q-banner>
@@ -1711,17 +1821,18 @@ watch(() => route.params.mode, (newMode) => {
             color="primary"
             flat
             dense
-            @click="startReading"
-            :disable="readerMode === 'audio' && !audioList.length"
+            @click.prevent="startReading"
+            :disable="(readerMode === 'audio' && !audioList.length) || isStartingRecitation"
+            :loading="isStartingRecitation"
             :label="isReading ? t('pages.quran.pause') : (isPaused ? t('pages.quran.resume') : t('pages.quran.playRecitation'))"
           />
           <q-btn
+            v-if="isReading || isPaused"
             icon="stop"
             color="negative"
             flat
             dense
-            @click="stopReading"
-            :disable="!isReading"
+            @click.prevent="stopReading"
             :label="t('pages.quran.stopRecitation')"
           />
           <!-- Audio playback rate (audio mode) -->
@@ -1807,7 +1918,7 @@ watch(() => route.params.mode, (newMode) => {
                   v-for="qa in quickAccessVerses"
                   :key="qa.id"
                   clickable
-                  @click="navigateToQuickAccess(qa)"
+                  @click.prevent="navigateToQuickAccess(qa)"
                 >
                   <q-item-section avatar>
                     <q-icon :name="qa.icon" color="primary" />
@@ -1825,7 +1936,7 @@ watch(() => route.params.mode, (newMode) => {
                         size="sm"
                         :icon="isQuickAccessPlaying(qa) ? 'stop' : 'play_arrow'"
                         :color="isQuickAccessPlaying(qa) ? 'negative' : 'primary'"
-                        @click.stop="isQuickAccessPlaying(qa) ? stopReading() : navigateToQuickAccess(qa)"
+                        @click.stop.prevent="isQuickAccessPlaying(qa) ? stopReading() : navigateToQuickAccess(qa)"
                         class="animated-play-btn"
                       >
                         <q-tooltip v-if="isQuickAccessPlaying(qa)">
@@ -1861,7 +1972,7 @@ watch(() => route.params.mode, (newMode) => {
                   v-for="entry in bookmarkEntries"
                   :key="entry.key"
                   clickable
-                  @click="handleBookmarkNavigate(entry)"
+                  @click.prevent="handleBookmarkNavigate(entry)"
                 >
                   <q-item-section>
                     <div class="bookmark-label">
@@ -1883,7 +1994,7 @@ watch(() => route.params.mode, (newMode) => {
                         size="sm"
                         :icon="isBookmarkPlaying(entry) ? 'stop' : 'play_arrow'"
                         :color="isBookmarkPlaying(entry) ? 'negative' : 'primary'"
-                        @click.stop="isBookmarkPlaying(entry) ? stopReading() : handleBookmarkNavigate(entry)"
+                        @click.stop.prevent="isBookmarkPlaying(entry) ? stopReading() : handleBookmarkNavigate(entry)"
                         class="animated-play-btn"
                       >
                         <q-tooltip v-if="isBookmarkPlaying(entry)">
@@ -1901,7 +2012,7 @@ watch(() => route.params.mode, (newMode) => {
                         size="sm"
                         icon="share"
                         color="teal"
-                        @click.stop="shareBookmark(entry)"
+                        @click.stop.prevent="shareBookmark(entry)"
                       >
                         <q-tooltip>{{ t('general.share') }}</q-tooltip>
                       </q-btn>
@@ -1912,7 +2023,7 @@ watch(() => route.params.mode, (newMode) => {
                         size="sm"
                         icon="delete"
                         color="negative"
-                        @click.stop="removeBookmark(entry)"
+                        @click.stop.prevent="removeBookmark(entry)"
                       >
                         <q-tooltip>{{ t('general.delete') }}</q-tooltip>
                       </q-btn>

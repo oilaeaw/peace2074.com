@@ -209,6 +209,20 @@
                 "yasin": "Yasin",
                 "mulk": "Mülk",
                 "ikhlas": "İhlâs"
+            },
+            "ramadanProgress": {
+                "title": "Kuran Tamamlama İlerlemenizi Takip Edin",
+                "badge": "Ramazan",
+                "message": "Ramazan-ı şerif mübarek olsun! Allah bu mübarek ayda okuduğunuz Kuran'ı kabul etsin.",
+                "completed": "{completed} / {total} Sure ({percentage}%)",
+                "continueReading": "Okumaya Devam Et",
+                "restart": "Yeniden Başla",
+                "resetProgress": "İlerlemeyi Sıfırla",
+                "resetConfirm": "İlerlemeyi Sıfırla",
+                "resetConfirmMessage": "Tüm Kuran okuma ilerlemenizi sıfırlamak istediğinizden emin misiniz?",
+                "suraCompleted": "Sure {sura} tamamlandı! ✓",
+                "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
+                "progressReset": "İlerleme sıfırlandı"
             }
         },
         "miracles": {
