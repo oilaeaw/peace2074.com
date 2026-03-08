@@ -179,7 +179,9 @@
         "resetConfirmMessage": "Möchten Sie wirklich den gesamten Koran-Lesefortschritt zurücksetzen?",
         "suraCompleted": "Sure {sura} abgeschlossen! ✓",
         "suraIncomplete": "Sure {sura} als unvollständig markiert",
-        "progressReset": "Fortschritt zurückgesetzt"
+        "progressReset": "Fortschritt zurückgesetzt",
+        "registerToSync": "Melden Sie sich an, um Ihren Fortschritt in der Cloud zu speichern und von jedem Gerät darauf zuzugreifen!",
+        "register": "Registrieren"
       },
       "autoContinue": "Automatisch zur nächsten Sure fortfahren",
       "autoContinueAnnouncement": "Eine neue Funktion ist jetzt verfügbar! Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren."

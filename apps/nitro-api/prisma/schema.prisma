@@ -74,3 +74,13 @@ model DeployLike {
   @@index([userId])
   @@map("DeployLike")
 }
+
+model QuranProgress {
+  id              String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId          String   @unique
+  completedSuras  Int[]    @default([])
+  lastUpdated     DateTime @default(now())
+  createdAt       DateTime @default(now())
+
+  @@map("QuranProgress")
+}

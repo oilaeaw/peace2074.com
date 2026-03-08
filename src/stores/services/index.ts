@@ -241,3 +241,50 @@ export async function sendDeployLike(version: string) {
     throw e;
   }
 }
+
+// Quran Progress API
+export async function fetchQuranProgress() {
+  try {
+    const res = await fetch(resolveNitroUrl("/quran/progress"), {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      console.warn(`Failed to fetch quran progress: ${res.status}`);
+      return { ok: false, completedSuras: [] };
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch quran progress", e);
+    return { ok: false, completedSuras: [] };
+  }
+}
+
+export async function saveQuranProgress(completedSuras: number[]) {
+  try {
+    const res = await fetch(resolveNitroUrl("/quran/progress"), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ completedSuras }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+
+      // Check if auth is required
+      if (res.status === 401 || data?.authRequired) {
+        return { ok: false, authRequired: true };
+      }
+
+      throw new Error(data?.error || `Failed to save progress (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to save quran progress", e);
+    return { ok: false, error: String(e) };
+  }
+}

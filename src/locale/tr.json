@@ -226,7 +226,9 @@
                 "resetConfirmMessage": "Tüm Kuran okuma ilerlemenizi sıfırlamak istediğinizden emin misiniz?",
                 "suraCompleted": "Sure {sura} tamamlandı! ✓",
                 "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
-                "progressReset": "İlerleme sıfırlandı"
+                "progressReset": "İlerleme sıfırlandı",
+                "registerToSync": "Kaydınızı buluta kaydetmek ve herhangi bir cihazdan erişmek için kayıt olun!",
+                "register": "Kayıt Ol"
             },
             "autoContinue": "Otomatik olarak sonraki sureye devam et",
             "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin."

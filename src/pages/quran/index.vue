@@ -5,6 +5,8 @@ import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useQ2P as useQ2PStore } from '@/stores/q2p.pinia'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
+import { useAuthStore } from '@/stores/auth.pinia'
+import { fetchQuranProgress, saveQuranProgress } from '@/stores/services'
 
 const { t } = useI18n()
 const $q = useQuasar()
@@ -12,6 +14,7 @@ const route = useRoute()
 const router = useRouter()
 const store = useQ2PStore()
 const bookmarksStore = useBookmarksStore()
+const authStore = useAuthStore()
 const loading = ref(true)
 const error = ref('')
 const invalidSuraNotice = ref(false)
@@ -59,8 +62,27 @@ function gregorianToHijri(date: Date): { year: number; month: number; day: numbe
   return { year: hYear, month: hMonth, day: hDay }
 }
 
-// Load progress from localStorage
-const loadProgress = () => {
+// Load progress from database (if authenticated) or localStorage
+const loadProgress = async () => {
+  const userId = authStore.user?.id || authStore.user?._id
+  
+  if (userId) {
+    // Authenticated: load from database
+    try {
+      const response = await fetchQuranProgress()
+      if (response.ok && Array.isArray(response.completedSuras)) {
+        completedSuras.value = new Set(response.completedSuras)
+        
+        // Also sync to localStorage as backup
+        localStorage.setItem(PROGRESS_KEY, JSON.stringify(response.completedSuras))
+        return
+      }
+    } catch (e) {
+      console.error('Failed to load progress from database:', e)
+    }
+  }
+  
+  // Guest or DB fetch failed: load from localStorage
   try {
     const stored = localStorage.getItem(PROGRESS_KEY)
     if (stored) {
@@ -68,22 +90,34 @@ const loadProgress = () => {
       completedSuras.value = new Set(parsed)
     }
   } catch (e) {
-    console.error('Failed to load progress:', e)
+    console.error('Failed to load progress from localStorage:', e)
   }
 }
 
-// Save progress to localStorage
-const saveProgress = () => {
+// Save progress to database (if authenticated) or localStorage
+const saveProgress = async () => {
+  const userId = authStore.user?.id || authStore.user?._id
+  const data = Array.from(completedSuras.value)
+  
+  // Always save to localStorage as backup
   try {
-    const data = Array.from(completedSuras.value)
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(data))
   } catch (e) {
-    console.error('Failed to save progress:', e)
+    console.error('Failed to save to localStorage:', e)
+  }
+  
+  // If authenticated, also save to database
+  if (userId) {
+    try {
+      await saveQuranProgress(data)
+    } catch (e) {
+      console.error('Failed to save progress to database:', e)
+    }
   }
 }
 
 // Toggle completion status
-const toggleCompletion = (suraId: number, event: Event) => {
+const toggleCompletion = async (suraId: number, event: Event) => {
   event.preventDefault()
   event.stopPropagation()
   
@@ -104,7 +138,7 @@ const toggleCompletion = (suraId: number, event: Event) => {
       timeout: 2000
     })
   }
-  saveProgress()
+  await saveProgress()
 }
 
 // Calculate progress
@@ -346,6 +380,28 @@ onMounted(async () => {
         />
       </q-card-actions>
     </q-card>
+
+    <!-- Guest Registration Incentive Banner -->
+    <q-banner
+      v-if="!authStore.user && completionStats.completed > 0"
+      inline-actions
+      rounded
+      class="bg-info text-white q-mb-md"
+    >
+      <template #avatar>
+        <q-icon name="cloud_upload" size="32px" />
+      </template>
+      {{ t('pages.quran.ramadanProgress.registerToSync') }}
+      <template #action>
+        <q-btn 
+          flat 
+          dense 
+          color="white" 
+          :label="t('pages.quran.ramadanProgress.register')" 
+          @click="router.push('/profile')" 
+        />
+      </template>
+    </q-banner>
 
     <q-banner
       v-if="invalidSuraNotice"
