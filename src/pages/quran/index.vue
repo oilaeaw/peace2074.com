@@ -4,12 +4,14 @@ import { ref, onMounted, computed } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useQ2P as useQ2PStore } from '@/stores/q2p.pinia'
+import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 
 const { t } = useI18n()
 const $q = useQuasar()
 const route = useRoute()
 const router = useRouter()
 const store = useQ2PStore()
+const bookmarksStore = useBookmarksStore()
 const loading = ref(true)
 const error = ref('')
 const invalidSuraNotice = ref(false)
@@ -17,6 +19,9 @@ const invalidSuraNotice = ref(false)
 // Ramadan Progress Tracking
 const PROGRESS_KEY = 'quran-ramadan-progress'
 const completedSuras = ref<Set<number>>(new Set())
+
+// Bookmarked Suras Tracking
+const bookmarkedSuras = ref<Set<number>>(new Set())
 
 // Detect if we're in Ramadan (9th month of Islamic calendar)
 const isRamadan = computed(() => {
@@ -144,11 +149,94 @@ const resetProgress = () => {
   })
 }
 
+// Load bookmarked suras from store
+const loadBookmarks = () => {
+  try {
+    const bookmarkStrings = bookmarksStore.bookmarkStrings || []
+    const suraIds = new Set<number>()
+    
+    for (const bmStr of bookmarkStrings) {
+      // Extract sura ID from bookmark string (format: "1" or "1_5" or "/quran/1")
+      const match = bmStr.match(/\/?quran\/(\d+)|^(\d+)(?:_|$)/)
+      if (match) {
+        const suraId = parseInt(match[1] || match[2], 10)
+        if (suraId >= 1 && suraId <= 114) {
+          suraIds.add(suraId)
+        }
+      }
+    }
+    
+    bookmarkedSuras.value = suraIds
+  } catch (e) {
+    console.error('Failed to load bookmarks:', e)
+  }
+}
+
+// Toggle bookmark status
+const toggleBookmark = async (suraId: number, event: Event) => {
+  event.preventDefault()
+  event.stopPropagation()
+  
+  const bookmarkStr = String(suraId)
+  const isCurrentlyBookmarked = bookmarkedSuras.value.has(suraId)
+  
+  try {
+    if (isCurrentlyBookmarked) {
+      // Find and remove bookmark
+      const bookmarksList = bookmarksStore.myBookmarks || []
+      const toRemove = bookmarksList.find((bm: any) => {
+        const bmStr = typeof bm === 'string' ? bm : (bm?.bookmark || '')
+        return bmStr === bookmarkStr || bmStr.startsWith(`${suraId}_`) || bmStr === `/quran/${suraId}`
+      })
+      
+      if (toRemove) {
+        const bookmarkId = typeof toRemove === 'string' ? toRemove : (toRemove?._id || toRemove?.id)
+        await bookmarksStore.deleteBookmark(bookmarkId)
+        bookmarkedSuras.value.delete(suraId)
+        
+        $q.notify({
+          type: 'info',
+          message: t('pages.quran.bookmarks.removed') || 'Bookmark removed',
+          icon: 'bookmark_border',
+          timeout: 1500
+        })
+      }
+    } else {
+      // Add bookmark
+      await bookmarksStore.createBookmark(bookmarkStr)
+      bookmarkedSuras.value.add(suraId)
+      
+      $q.notify({
+        type: 'positive',
+        message: t('pages.quran.bookmarks.saved') || 'Sura bookmarked!',
+        icon: 'bookmark',
+        timeout: 2000
+      })
+    }
+  } catch (error: any) {
+    console.error('Failed to toggle bookmark:', error)
+    $q.notify({
+      type: 'negative',
+      message: error?.message || 'Failed to save bookmark',
+      icon: 'error',
+      timeout: 2500
+    })
+  }
+}
+
 // Reactive list from Pinia store so DevTools shows populated state
 const surahs = computed(() => store.GetQ)
 
 onMounted(async () => {
   loadProgress()
+  
+  // Initialize bookmarks store and load bookmarked suras
+  try {
+    await bookmarksStore.init()
+    loadBookmarks()
+  } catch (e) {
+    console.error('Failed to initialize bookmarks:', e)
+  }
   
   if (route.query.invalidSura === '1') {
     invalidSuraNotice.value = true
@@ -268,20 +356,36 @@ onMounted(async () => {
             <div class="text-body2">{{ s.name }}</div>
             <div class="text-caption">{{ s.total_verses }} {{ t('pages.quran.verses') }} • {{ s.type }}</div>
           </div>
-          <q-btn
-            round
-            dense
-            flat
-            class="completion-btn"
-            :icon="completedSuras.has(s.id) ? 'check_circle' : 'radio_button_unchecked'"
-            :color="completedSuras.has(s.id) ? 'positive' : 'grey-5'"
-            @click="toggleCompletion(s.id, $event)"
-            :aria-label="completedSuras.has(s.id) ? 'Mark incomplete' : 'Mark complete'"
-          >
-            <q-tooltip>
-              {{ completedSuras.has(s.id) ? 'Mark as incomplete' : 'Mark as complete' }}
-            </q-tooltip>
-          </q-btn>
+          <div class="sura-actions">
+            <q-btn
+              round
+              dense
+              flat
+              class="bookmark-btn"
+              :icon="bookmarkedSuras.has(s.id) ? 'bookmark' : 'bookmark_border'"
+              :color="bookmarkedSuras.has(s.id) ? 'amber' : 'grey-5'"
+              @click="toggleBookmark(s.id, $event)"
+              :aria-label="bookmarkedSuras.has(s.id) ? 'Remove bookmark' : 'Bookmark'"
+            >
+              <q-tooltip>
+                {{ bookmarkedSuras.has(s.id) ? 'Remove bookmark' : 'Bookmark sura' }}
+              </q-tooltip>
+            </q-btn>
+            <q-btn
+              round
+              dense
+              flat
+              class="completion-btn"
+              :icon="completedSuras.has(s.id) ? 'check_circle' : 'radio_button_unchecked'"
+              :color="completedSuras.has(s.id) ? 'positive' : 'grey-5'"
+              @click="toggleCompletion(s.id, $event)"
+              :aria-label="completedSuras.has(s.id) ? 'Mark incomplete' : 'Mark complete'"
+            >
+              <q-tooltip>
+                {{ completedSuras.has(s.id) ? 'Mark as incomplete' : 'Mark as complete' }}
+              </q-tooltip>
+            </q-btn>
+          </div>
         </RouterLink>
       </div>
     </div>
@@ -485,6 +589,13 @@ body.body--dark .sura-card.is-completed::before {
 
 .sura-card .text-caption {
   color: rgba(0, 0, 0, 0.6);
+}
+
+.sura-actions {
+  display: flex;
+  gap: 0.25rem;
+  flex-shrink: 0;
+  align-items: center;
 }
 
 .completion-btn {

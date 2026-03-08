@@ -198,6 +198,7 @@
         "empty": "No bookmarks yet",
         "add": "Bookmark verse {verse}",
         "saved": "Bookmark saved",
+        "removed": "Bookmark removed",
         "alreadySaved": "Already bookmarked",
         "error": "Could not save bookmark",
         "current": "this sura"
