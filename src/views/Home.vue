@@ -11,6 +11,14 @@
         </div>
       </div>
 
+      <!-- Vision Manifesto -->
+      <q-card class="manifesto-card q-pa-lg q-mt-lg">
+        <blockquote class="manifesto-quote">
+          {{ t('pages.home.manifesto.quote') }}
+        </blockquote>
+        <p class="manifesto-attribution">— {{ t('pages.home.manifesto.attribution') }}</p>
+      </q-card>
+
       <q-banner v-if="showRamadanCampaign" class="ramadan-banner q-pa-md">
         <div class="ramadan-eyebrow">{{ t('pages.home.ramadan.badge') }}</div>
         <div class="ramadan-title">{{ t('pages.home.ramadan.title') }}</div>
@@ -410,6 +418,47 @@ function setNextPromptExample() {
   margin: 0 0 6px;
 }
 .actions { margin-top: 12px }
+.manifesto-card {
+  width: min(760px, 100%);
+  margin: 0 auto;
+  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+  color: #ffffff;
+  position: relative;
+  overflow: hidden;
+}
+.manifesto-card::before {
+  content: '';
+  position: absolute;
+  top: -50%;
+  right: -50%;
+  width: 200%;
+  height: 200%;
+  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
+  animation: subtle-pulse 8s ease-in-out infinite;
+}
+@keyframes subtle-pulse {
+  0%, 100% { opacity: 0.3; transform: scale(1); }
+  50% { opacity: 0.5; transform: scale(1.05); }
+}
+.manifesto-quote {
+  margin: 0;
+  padding-left: 20px;
+  border-left: 4px solid rgba(255, 255, 255, 0.5);
+  font-size: 1.05rem;
+  line-height: 1.7;
+  font-style: italic;
+  position: relative;
+  z-index: 1;
+}
+.manifesto-attribution {
+  margin-top: 16px;
+  text-align: right;
+  font-weight: 600;
+  font-size: 0.95rem;
+  opacity: 0.9;
+  position: relative;
+  z-index: 1;
+}
 .ramadan-banner {
   width: min(760px, 100%);
   margin: 0 auto;

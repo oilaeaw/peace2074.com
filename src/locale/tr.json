@@ -137,6 +137,10 @@
                 "reuse": "Yeniden kullan",
                 "clearHistory": "Geçmişi temizle"
             },
+            "manifesto": {
+                "quote": "Delilere. Uyumsuzlara. İsyancılara. Sorun çıkaranlara. Kare deliklerdeki yuvarlak çivilere. İşleri farklı görenlere. Kuralları sevmezler ve statükoyla ilgilenmezler. Onları alıntılayabilir, onlara katılmayabilir, yüceltebilir veya karalayabilirsiniz. Ancak yapamayacağınız tek şey onları görmezden gelmektir. Çünkü onlar değiştirir. İnsanlığı ileriye taşırlar. Ve bazıları onları deli olarak görse de, biz dâhilik görürüz. Çünkü dünyayı değiştirebileceklerini düşünecek kadar deli olan insanlar, bunu yapanlardır.",
+                "attribution": "Farklı Düşün, Apple 1997"
+            },
             "ramadan": {
                 "badge": "Ramazan Kampanyası",
                 "title": "30 Günlük Tefekkür ve İstikrar",
