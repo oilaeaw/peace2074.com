@@ -288,3 +288,24 @@ export async function saveQuranProgress(completedSuras: number[]) {
     return { ok: false, error: String(e) };
   }
 }
+
+// Changelog API
+export async function fetchChangelog() {
+  try {
+    const res = await fetch(resolveNitroUrl("/changelog"), {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      console.warn(`Failed to fetch changelog: ${res.status}`);
+      return { ok: false, deploys: [] };
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch changelog", e);
+    return { ok: false, deploys: [] };
+  }
+}
+

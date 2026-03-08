@@ -6,7 +6,11 @@
         <p class="text-subtitle1 text-grey-7">{{ t('pages.deploys.subtitle') }}</p>
       </div>
 
-      <q-timeline color="secondary" class="deploy-timeline">
+      <div v-if="loading" class="flex flex-center q-py-xl">
+        <q-spinner color="primary" size="3em" />
+      </div>
+
+      <q-timeline v-else color="secondary" class="deploy-timeline">
         <q-timeline-entry
           v-for="deploy in deploys"
           :key="deploy.version"
@@ -87,7 +91,7 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { sendDeployLike, fetchDeployLikes } from '@/stores/services'
+import { sendDeployLike, fetchDeployLikes, fetchChangelog } from '@/stores/services'
 
 const { t } = useI18n()
 const $q = useQuasar()
@@ -103,84 +107,32 @@ interface Deploy {
   chores?: string[]
 }
 
-const deploys = ref<Deploy[]>([
-  {
-    version: '0.2.8',
-    date: 'March 7, 2026',
-    message: 'Auto-continue recitation feature',
-    icon: 'auto_awesome',
-    color: 'positive',
-    features: [
-      'Auto-continue feature for Quran recitation - automatically progress through all 114 suras',
-      'UI toggle switch in playback controls to enable/disable auto-continue',
-      'localStorage persistence for auto-continue preference (quran-auto-continue)',
-      'Automatic sura completion marking when recitation finishes',
-      'Notification "Starting Sura X..." before auto-navigation to next sura',
-      'Full i18n support for auto-continue across all 6 languages (en, ar, he, de, ru, tr)',
-      '1-second delay between suras for smooth transitions',
-    ],
-    chores: [
-      'Bump project version to 0.2.8 in root and Nitro API package manifests',
-    ],
-  },
-  {
-    version: '0.2.7',
-    date: 'March 3, 2026',
-    message: 'Improved user registration',
-    icon: 'person_add',
-    color: 'secondary',
-    features: [
-      'Add prominent Sign Up button to header navigation menu (visible when not authenticated)',
-      'Improve user registration discoverability - signup now accessible from main header, not just login page',
-    ],
-    chores: [
-      'Bump project version to 0.2.7 in root and Nitro API package manifests',
-    ],
-  },
-  {
-    version: '0.2.6',
-    date: 'March 1, 2026',
-    message: 'Ramadan campaign features',
-    icon: 'campaign',
-    color: 'amber',
-    features: [
-      'Add Ramadan campaign home banner with daily prompts and analytics tracking',
-      'Add push notification campaign preset support (campaign: "ramadan") in /api/push/send',
-    ],
-    chores: [
-      'Bump project version to 0.2.6 in root and Nitro API package manifests',
-    ],
-  },
-  {
-    version: '0.2.4',
-    date: 'February 21, 2026',
-    message: 'Turkish locale and Quran improvements',
-    icon: 'translate',
-    color: 'info',
-    features: [
-      'Add Turkish (tr) locale as a first-class language with UI selector support',
-      'Add complete src/locale/tr.json translations and register locale across i18n wiring',
-      'Add Quran verse deep-link route support in /quran/{sura}:{ayah} format (example: /quran/2:255)',
-      'Add bookmark share/copy action for Quran verse links',
-      'Add Bismillah intro clip before user-initiated Quran recitation starts (same reciter source)',
-    ],
-    fixes: [
-      'Sync missing locale keys in ar, de, ru, and he so pnpm check:locales passes',
-      'Improve bookmark durability by syncing guest bookmarks into authenticated bookmark collections (deduplicated)',
-    ],
-    chores: [
-      'Bump project patch version from 0.2.3 to 0.2.4 in root and Nitro API package manifests',
-    ],
-  },
-])
-
+const deploys = ref<Deploy[]>([])
+const loading = ref(true)
 const likeCounts = ref<Record<string, number>>({})
 const userLiked = ref<string[]>([])
 const likingInProgress = ref<Record<string, boolean>>({})
 
 onMounted(async () => {
-  await loadLikes()
+  await Promise.all([loadChangelog(), loadLikes()])
+  loading.value = false
 })
+
+async function loadChangelog() {
+  try {
+    const response = await fetchChangelog()
+    if (response.ok && Array.isArray(response.deploys)) {
+      deploys.value = response.deploys
+    }
+  } catch (error) {
+    console.error('Failed to load changelog:', error)
+    $q.notify({
+      type: 'warning',
+      message: 'Failed to load deployment history',
+      timeout: 2500
+    })
+  }
+}
 
 async function loadLikes() {
   try {
