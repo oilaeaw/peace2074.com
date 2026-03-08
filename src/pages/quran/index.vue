@@ -182,29 +182,51 @@ const toggleBookmark = async (suraId: number, event: Event) => {
   
   try {
     if (isCurrentlyBookmarked) {
-      // Find and remove bookmark
-      const bookmarksList = bookmarksStore.myBookmarks || []
-      const toRemove = bookmarksList.find((bm: any) => {
-        const bmStr = typeof bm === 'string' ? bm : (bm?.bookmark || '')
-        return bmStr === bookmarkStr || bmStr.startsWith(`${suraId}_`) || bmStr === `/quran/${suraId}`
-      })
-      
-      if (toRemove) {
-        const bookmarkId = typeof toRemove === 'string' ? toRemove : (toRemove?._id || toRemove?.id)
-        await bookmarksStore.deleteBookmark(bookmarkId)
-        bookmarkedSuras.value.delete(suraId)
-        
-        $q.notify({
-          type: 'info',
-          message: t('pages.quran.bookmarks.removed') || 'Bookmark removed',
-          icon: 'bookmark_border',
-          timeout: 1500
+      // Show confirmation dialog before removing
+      $q.dialog({
+        title: t('pages.quran.bookmarks.confirmRemove') || 'Remove Bookmark?',
+        message: t('pages.quran.bookmarks.confirmRemoveMessage') || 'Are you sure you want to remove this bookmark?',
+        cancel: true,
+        persistent: false,
+        ok: {
+          label: t('pages.blog.actions.delete') || 'Remove',
+          color: 'negative',
+          flat: true
+        },
+        cancel: {
+          label: t('cancel') || 'Cancel',
+          color: 'grey',
+          flat: true
+        }
+      }).onOk(async () => {
+        // Find and remove bookmark
+        const bookmarksList = bookmarksStore.myBookmarks || []
+        const toRemove = bookmarksList.find((bm: any) => {
+          const bmStr = typeof bm === 'string' ? bm : (bm?.bookmark || '')
+          return bmStr === bookmarkStr || bmStr.startsWith(`${suraId}_`) || bmStr === `/quran/${suraId}`
         })
-      }
+        
+        if (toRemove) {
+          const bookmarkId = typeof toRemove === 'string' ? toRemove : (toRemove?._id || toRemove?.id)
+          await bookmarksStore.deleteBookmark(bookmarkId)
+          
+          // Reload to sync with store state
+          loadBookmarks()
+          
+          $q.notify({
+            type: 'info',
+            message: t('pages.quran.bookmarks.removed') || 'Bookmark removed',
+            icon: 'bookmark_border',
+            timeout: 1500
+          })
+        }
+      })
     } else {
       // Add bookmark
       await bookmarksStore.createBookmark(bookmarkStr)
-      bookmarkedSuras.value.add(suraId)
+      
+      // Reload to sync with store state
+      loadBookmarks()
       
       $q.notify({
         type: 'positive',

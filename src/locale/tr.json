@@ -199,6 +199,8 @@
                 "add": "{verse}. ayeti yer imine ekle",
                 "saved": "Yer imi kaydedildi",
                 "removed": "Yer imi kaldırıldı",
+                "confirmRemove": "Yer imi kaldırılsın mı?",
+                "confirmRemoveMessage": "Bu yer imini kaldırmak istediğinizden emin misiniz?",
                 "alreadySaved": "Zaten yer imlerinde",
                 "error": "Yer imi kaydedilemedi",
                 "current": "bu sure"

@@ -152,6 +152,8 @@
         "add": "Vers {verse} speichern",
         "saved": "Lesezeichen gespeichert",
         "removed": "Lesezeichen entfernt",
+        "confirmRemove": "Lesezeichen entfernen?",
+        "confirmRemoveMessage": "Möchten Sie dieses Lesezeichen wirklich entfernen?",
         "alreadySaved": "Bereits als Lesezeichen gesetzt",
         "error": "Lesezeichen konnte nicht gespeichert werden",
         "current": "diese Sure"

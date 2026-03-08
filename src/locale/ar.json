@@ -180,6 +180,8 @@
         "add": "احفظ الآية {verse}",
         "saved": "تم حفظ العلامة",
         "removed": "تم إزالة العلامة",
+        "confirmRemove": "إزالة العلامة؟",
+        "confirmRemoveMessage": "هل أنت متأكد من إزالة هذه العلامة؟",
         "alreadySaved": "محفوظة بالفعل",
         "error": "تعذر حفظ العلامة",
         "current": "هذه السورة"

@@ -199,6 +199,8 @@
         "add": "Bookmark verse {verse}",
         "saved": "Bookmark saved",
         "removed": "Bookmark removed",
+        "confirmRemove": "Remove Bookmark?",
+        "confirmRemoveMessage": "Are you sure you want to remove this bookmark?",
         "alreadySaved": "Already bookmarked",
         "error": "Could not save bookmark",
         "current": "this sura"
