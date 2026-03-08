@@ -151,6 +151,7 @@
         "empty": "Noch keine Lesezeichen",
         "add": "Vers {verse} speichern",
         "saved": "Lesezeichen gespeichert",
+        "removed": "Lesezeichen entfernt",
         "alreadySaved": "Bereits als Lesezeichen gesetzt",
         "error": "Lesezeichen konnte nicht gespeichert werden",
         "current": "diese Sure"
@@ -179,7 +180,7 @@
         "progressReset": "Fortschritt zurückgesetzt"
       },
       "autoContinue": "Automatisch zur nächsten Sure fortfahren",
-      "autoContinueAnnouncement": "🎉 Neue Funktion: Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren!"
+      "autoContinueAnnouncement": "Eine neue Funktion ist jetzt verfügbar! Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren."
     },
     "settings": {
       "title": "Einstellungen",

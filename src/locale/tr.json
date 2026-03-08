@@ -198,6 +198,7 @@
                 "empty": "Henüz yer imi yok",
                 "add": "{verse}. ayeti yer imine ekle",
                 "saved": "Yer imi kaydedildi",
+                "removed": "Yer imi kaldırıldı",
                 "alreadySaved": "Zaten yer imlerinde",
                 "error": "Yer imi kaydedilemedi",
                 "current": "bu sure"
@@ -226,7 +227,7 @@
                 "progressReset": "İlerleme sıfırlandı"
             },
             "autoContinue": "Otomatik olarak sonraki sureye devam et",
-            "autoContinueAnnouncement": "🎉 Yeni Özellik: Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin!"
+            "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin."
         },
         "miracles": {
             "pageTitle": "Mucizeler Sayfası",
