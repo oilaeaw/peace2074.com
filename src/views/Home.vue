@@ -17,7 +17,11 @@
         <blockquote class="manifesto-quote">
           {{ dailyVerse.en }}
         </blockquote>
-        <p class="manifesto-attribution">— {{ dailyVerse.ref }}</p>
+        <p class="manifesto-attribution">
+          <router-link :to="`/quran/${dailyVerse.sura}:${dailyVerse.ayah}`" class="verse-link">
+            — {{ dailyVerse.ref }}
+          </router-link>
+        </p>
       </q-card>
 
       <q-banner v-if="showRamadanCampaign" class="ramadan-banner q-pa-md">
@@ -218,37 +222,51 @@ const inspiringVerses = [
   {
     en: "Indeed, with hardship comes ease.",
     ar: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
-    ref: "Quran 94:6"
+    ref: "Quran 94:6",
+    sura: 94,
+    ayah: 6
   },
   {
     en: "And He is with you wherever you are.",
     ar: "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ",
-    ref: "Quran 57:4"
+    ref: "Quran 57:4",
+    sura: 57,
+    ayah: 4
   },
   {
     en: "So remember Me; I will remember you.",
     ar: "فَاذْكُرُونِي أَذْكُرْكُمْ",
-    ref: "Quran 2:152"
+    ref: "Quran 2:152",
+    sura: 2,
+    ayah: 152
   },
   {
     en: "Indeed, Allah does not change the condition of a people until they change what is in themselves.",
     ar: "إِنَّ اللَّهَ لَا يُغَيِّرُ مَا بِقَوْمٍ حَتَّىٰ يُغَيِّرُوا مَا بِأَنفُسِهِمْ",
-    ref: "Quran 13:11"
+    ref: "Quran 13:11",
+    sura: 13,
+    ayah: 11
   },
   {
     en: "And whoever fears Allah, He will make for him a way out.",
     ar: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا",
-    ref: "Quran 65:2"
+    ref: "Quran 65:2",
+    sura: 65,
+    ayah: 2
   },
   {
     en: "My mercy encompasses all things.",
     ar: "وَرَحْمَتِي وَسِعَتْ كُلَّ شَيْءٍ",
-    ref: "Quran 7:156"
+    ref: "Quran 7:156",
+    sura: 7,
+    ayah: 156
   },
   {
     en: "Be patient, for indeed, Allah is with the patient.",
     ar: "وَاصْبِرُوا إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
-    ref: "Quran 8:46"
+    ref: "Quran 8:46",
+    sura: 8,
+    ayah: 46
   }
 ]
 
@@ -505,6 +523,15 @@ function setNextPromptExample() {
   opacity: 0.9;
   position: relative;
   z-index: 1;
+}
+.verse-link {
+  color: #ffffff;
+  text-decoration: none;
+  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
+  transition: border-color 0.2s ease;
+}
+.verse-link:hover {
+  border-bottom-color: rgba(255, 255, 255, 0.9);
 }
 .ramadan-banner {
   width: min(760px, 100%);
