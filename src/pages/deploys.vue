@@ -189,6 +189,15 @@ async function toggleLike(version: string) {
         userLiked.value = userLiked.value.filter(v => v !== version)
       }
       likeCounts.value[version] = response.count || 0
+      
+      // Track deploy interaction
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'deploy_interaction', {
+          action: response.liked ? 'like' : 'unlike',
+          version: version,
+          page_path: '/deploys'
+        })
+      }
 
       $q.notify({
         type: 'positive',

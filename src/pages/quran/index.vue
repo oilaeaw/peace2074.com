@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted, computed, watch } from 'vue'
 import { useQuasar } from 'quasar'
 import { useRoute, useRouter } from 'vue-router'
 import { useQ2P as useQ2PStore } from '@/stores/q2p.pinia'
@@ -25,6 +25,9 @@ const completedSuras = ref<Set<number>>(new Set())
 
 // Bookmarked Suras Tracking
 const bookmarkedSuras = ref<Set<number>>(new Set())
+
+// Track if registration banner analytics event was fired
+const registrationBannerShown = ref(false)
 
 // Detect if we're in Ramadan (9th month of Islamic calendar)
 const isRamadan = computed(() => {
@@ -110,8 +113,28 @@ const saveProgress = async () => {
   if (userId) {
     try {
       await saveQuranProgress(data)
+      
+      // Track progress sync to database
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'quran_progress', {
+          action: 'synced_db',
+          completed_count: completedSuras.value.size,
+          is_authenticated: true,
+          page_path: '/quran'
+        })
+      }
     } catch (e) {
       console.error('Failed to save progress to database:', e)
+    }
+  } else {
+    // Track local-only save for guest users
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'quran_progress', {
+        action: 'saved_local',
+        completed_count: completedSuras.value.size,
+        is_authenticated: false,
+        page_path: '/quran'
+      })
     }
   }
 }
@@ -216,6 +239,15 @@ const toggleBookmark = async (suraId: number, event: Event) => {
   
   try {
     if (isCurrentlyBookmarked) {
+      // Track confirmation dialog shown
+      if (typeof window !== 'undefined' && window.gtag) {
+        window.gtag('event', 'bookmark_delete_dialog', {
+          action: 'shown',
+          sura_id: suraId,
+          page_path: '/quran'
+        })
+      }
+      
       // Show confirmation dialog before removing
       $q.dialog({
         title: t('pages.quran.bookmarks.confirmRemove') || 'Remove Bookmark?',
@@ -247,6 +279,17 @@ const toggleBookmark = async (suraId: number, event: Event) => {
           // Reload to sync with store state
           loadBookmarks()
           
+          // Track bookmark deletion
+          if (typeof window !== 'undefined' && window.gtag) {
+            const suraName = surahs.value.find((s: any) => s.id === suraId)?.e_name
+            window.gtag('event', 'bookmark_action', {
+              action: 'delete_confirmed',
+              sura_id: suraId,
+              sura_name_en: suraName,
+              page_path: '/quran'
+            })
+          }
+          
           $q.notify({
             type: 'info',
             message: t('pages.quran.bookmarks.removed') || 'Bookmark removed',
@@ -261,6 +304,17 @@ const toggleBookmark = async (suraId: number, event: Event) => {
       
       // Reload to sync with store state
       loadBookmarks()
+      
+      // Track bookmark creation
+      if (typeof window !== 'undefined' && window.gtag) {
+        const suraName = surahs.value.find((s: any) => s.id === suraId)?.e_name
+        window.gtag('event', 'bookmark_action', {
+          action: 'create',
+          sura_id: suraId,
+          sura_name_en: suraName,
+          page_path: '/quran'
+        })
+      }
       
       $q.notify({
         type: 'positive',
@@ -282,6 +336,39 @@ const toggleBookmark = async (suraId: number, event: Event) => {
 
 // Reactive list from Pinia store so DevTools shows populated state
 const surahs = computed(() => store.GetQ)
+
+// Computed to check if registration banner should be shown
+const shouldShowRegistrationBanner = computed(() => {
+  return !authStore.user && completionStats.value.completed > 0
+})
+
+// Watch for registration banner visibility and track analytics
+watch(shouldShowRegistrationBanner, (shouldShow) => {
+  if (shouldShow && !registrationBannerShown.value) {
+    // Track banner shown event (only once per session)
+    if (typeof window !== 'undefined' && window.gtag) {
+      window.gtag('event', 'registration_prompt', {
+        trigger: 'quran_progress',
+        completed_suras: completionStats.value.completed,
+        page_path: '/quran'
+      })
+      registrationBannerShown.value = true
+    }
+  }
+})
+
+// Handle registration banner click
+const handleRegisterClick = () => {
+  // Track registration intent
+  if (typeof window !== 'undefined' && window.gtag) {
+    window.gtag('event', 'registration_intent', {
+      source: 'progress_banner',
+      completed_suras: completionStats.value.completed,
+      page_path: '/quran'
+    })
+  }
+  router.push('/profile')
+}
 
 onMounted(async () => {
   loadProgress()
@@ -383,7 +470,7 @@ onMounted(async () => {
 
     <!-- Guest Registration Incentive Banner -->
     <q-banner
-      v-if="!authStore.user && completionStats.completed > 0"
+      v-if="shouldShowRegistrationBanner"
       inline-actions
       rounded
       class="bg-info text-white q-mb-md"
@@ -398,7 +485,7 @@ onMounted(async () => {
           dense 
           color="white" 
           :label="t('pages.quran.ramadanProgress.register')" 
-          @click="router.push('/profile')" 
+          @click="handleRegisterClick" 
         />
       </template>
     </q-banner>
