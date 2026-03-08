@@ -11,12 +11,13 @@
         </div>
       </div>
 
-      <!-- Vision Manifesto -->
+      <!-- Daily Quranic Verse -->
       <q-card class="manifesto-card q-pa-lg q-mt-lg">
+        <div class="verse-arabic">{{ dailyVerse.ar }}</div>
         <blockquote class="manifesto-quote">
-          {{ t('pages.home.manifesto.quote') }}
+          {{ dailyVerse.en }}
         </blockquote>
-        <p class="manifesto-attribution">— {{ t('pages.home.manifesto.attribution') }}</p>
+        <p class="manifesto-attribution">— {{ dailyVerse.ref }}</p>
       </q-card>
 
       <q-banner v-if="showRamadanCampaign" class="ramadan-banner q-pa-md">
@@ -210,6 +211,55 @@ const showRamadanCampaign = computed(() => isRamadanCampaignActive() || isRamada
 const dailyRamadanPrompt = computed(() => {
   if (!showRamadanCampaign.value) return ''
   return getRamadanPrompt(String(locale.value || 'en'))
+})
+
+// Daily rotating Quranic verses for manifesto
+const inspiringVerses = [
+  {
+    en: "Indeed, with hardship comes ease.",
+    ar: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
+    ref: "Quran 94:6"
+  },
+  {
+    en: "And He is with you wherever you are.",
+    ar: "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ",
+    ref: "Quran 57:4"
+  },
+  {
+    en: "So remember Me; I will remember you.",
+    ar: "فَاذْكُرُونِي أَذْكُرْكُمْ",
+    ref: "Quran 2:152"
+  },
+  {
+    en: "Indeed, Allah does not change the condition of a people until they change what is in themselves.",
+    ar: "إِنَّ اللَّهَ لَا يُغَيِّرُ مَا بِقَوْمٍ حَتَّىٰ يُغَيِّرُوا مَا بِأَنفُسِهِمْ",
+    ref: "Quran 13:11"
+  },
+  {
+    en: "And whoever fears Allah, He will make for him a way out.",
+    ar: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا",
+    ref: "Quran 65:2"
+  },
+  {
+    en: "My mercy encompasses all things.",
+    ar: "وَرَحْمَتِي وَسِعَتْ كُلَّ شَيْءٍ",
+    ref: "Quran 7:156"
+  },
+  {
+    en: "Be patient, for indeed, Allah is with the patient.",
+    ar: "وَاصْبِرُوا إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
+    ref: "Quran 8:46"
+  }
+]
+
+const dailyVerse = computed(() => {
+  // Rotate verse based on day of year (consistent for all users same day)
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = now.getTime() - start.getTime()
+  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
+  const index = dayOfYear % inspiringVerses.length
+  return inspiringVerses[index]
 })
 
 function trackRamadanEvent(eventName: string, payload: Record<string, any> = {}) {
@@ -426,19 +476,16 @@ function setNextPromptExample() {
   position: relative;
   overflow: hidden;
 }
-.manifesto-card::before {
-  content: '';
-  position: absolute;
-  top: -50%;
-  right: -50%;
-  width: 200%;
-  height: 200%;
-  background: radial-gradient(circle, rgba(255,255,255,0.1) 0%, transparent 70%);
-  animation: subtle-pulse 8s ease-in-out infinite;
-}
-@keyframes subtle-pulse {
-  0%, 100% { opacity: 0.3; transform: scale(1); }
-  50% { opacity: 0.5; transform: scale(1.05); }
+.verse-arabic {
+  font-family: 'Amiri', 'Traditional Arabic', serif;
+  font-size: 1.5rem;
+  text-align: center;
+  margin-bottom: 16px;
+  line-height: 2;
+  opacity: 0.95;
+  position: relative;
+  z-index: 1;
+  direction: rtl;
 }
 .manifesto-quote {
   margin: 0;
