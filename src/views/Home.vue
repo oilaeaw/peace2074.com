@@ -12,14 +12,37 @@
       </div>
 
       <!-- Daily Quranic Verse -->
-      <q-card class="manifesto-card q-pa-lg q-mt-lg">
-        <div class="verse-arabic">{{ dailyVerse.ar }}</div>
+      <q-card class="manifesto-card q-pa-lg q-mt-lg relative-position">
+        <div class="absolute-top-right q-pa-sm">
+          <q-btn
+            flat
+            round
+            dense
+            icon="content_copy"
+            color="primary"
+            class="q-mr-xs"
+            @click="copyVerse"
+          >
+            <q-tooltip>{{ t('pages.home.ai.copy') }}</q-tooltip>
+          </q-btn>
+          <q-btn
+            flat
+            round
+            dense
+            icon="shuffle"
+            color="primary"
+            @click="shuffleVerse"
+          >
+            <q-tooltip>{{ t('pages.home.ai.tryAnother') }}</q-tooltip>
+          </q-btn>
+        </div>
+        <div class="verse-arabic">{{ displayedVerse.ar }}</div>
         <blockquote class="manifesto-quote">
-          {{ dailyVerse.en }}
+          {{ displayedVerse.en }}
         </blockquote>
         <p class="manifesto-attribution">
-          <router-link :to="`/quran/${dailyVerse.sura}:${dailyVerse.ayah}`" class="verse-link">
-            — {{ dailyVerse.ref }}
+          <router-link :to="`/quran/${displayedVerse.sura}:${displayedVerse.ayah}`" class="verse-link">
+            — {{ displayedVerse.ref }}
           </router-link>
         </p>
       </q-card>
@@ -182,6 +205,7 @@ import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { sendDeepSeekChat } from '@/stores/services'
 import { getRamadanPrompt, isRamadanCampaignActive, ramadanCampaign } from '@/app/config/ramadan'
+import inspiringVerses from '@/app/data/verses.json'
 
 const { t, tm, locale } = useI18n()
 const $q = useQuasar()
@@ -205,6 +229,100 @@ const promptExamples = computed<string[]>(() => {
   if (typeof raw === 'string') return [raw]
   return []
 })
+
+const displayedVerse = ref(inspiringVerses[0])
+
+const setDailyVerse = () => {
+  const now = new Date()
+  const start = new Date(now.getFullYear(), 0, 0)
+  const diff = (now as any) - (start as any)
+  const oneDay = 1000 * 60 * 60 * 24
+  const dayOfYear = Math.floor(diff / oneDay)
+  displayedVerse.value = inspiringVerses[dayOfYear % inspiringVerses.length]
+}
+
+const shuffleVerse = () => {
+  const randomIndex = Math.floor(Math.random() * inspiringVerses.length)
+  displayedVerse.value = inspiringVerses[randomIndex]
+}
+
+const copyVerse = async () => {
+  const text = `${displayedVerse.value.ar}\n\n${displayedVerse.value.en}\n— ${displayedVerse.value.ref}`
+  await copy(text)
+  $q.notify({
+    message: t('pages.home.ai.copied'),
+    color: 'positive',
+    icon: 'check',
+    timeout: 2000
+  })
+}
+
+const setNextPromptExample = () => {
+  currentPromptIndex.value = (currentPromptIndex.value + 1) % promptExamples.value.length
+  userPrompt.value = promptExamples.value[currentPromptIndex.value]
+}
+
+const askPeaceAI = async () => {
+  if (!canSubmit.value) return
+  isLoading.value = true
+  errorMessage.value = null
+  try {
+    const res = await sendDeepSeekChat([
+      { role: 'system', content: systemPrompt },
+      { role: 'user', content: userPrompt.value }
+    ])
+    aiResponse.value = res
+    history.value.unshift({
+      id: Date.now().toString(),
+      prompt: userPrompt.value,
+      response: res,
+      ts: Date.now()
+    })
+    userPrompt.value = ''
+  } catch (err: any) {
+    errorMessage.value = err.message || 'AI request failed'
+  } finally {
+    isLoading.value = false
+  }
+}
+
+const copyResponse = async () => {
+  if (aiResponse.value) {
+    await copy(aiResponse.value)
+    $q.notify({ message: t('pages.home.ai.copied'), color: 'positive' })
+  }
+}
+
+const clearHistory = () => { history.value = [] }
+
+const reusePrompt = (item: any) => { userPrompt.value = item.prompt }
+
+const onRamadanCta = (target: string) => {
+  if (target === 'chat') {
+    userPrompt.value = dailyRamadanPrompt.value
+  } else {
+    router.push(`/${target}`)
+  }
+}
+
+const applyRamadanPrompt = () => {
+  userPrompt.value = dailyRamadanPrompt.value
+}
+
+const goToBlogPost = (slug: string) => {
+  router.push(`/blog/${slug}`)
+}
+
+const formatBlogDate = (date: string) => {
+  return new Date(date).toLocaleDateString()
+}
+
+onMounted(() => {
+  setDailyVerse()
+  if (promptExamples.value.length > 0) {
+    userPrompt.value = promptExamples.value[0]
+  }
+})
 const currentPromptIndex = ref(0)
 
 const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`
@@ -216,422 +334,4 @@ const dailyRamadanPrompt = computed(() => {
   if (!showRamadanCampaign.value) return ''
   return getRamadanPrompt(String(locale.value || 'en'))
 })
-
-// Daily rotating Quranic verses for manifesto
-const inspiringVerses = [
-  {
-    en: "Indeed, with hardship comes ease.",
-    ar: "إِنَّ مَعَ الْعُسْرِ يُسْرًا",
-    ref: "Quran 94:6",
-    sura: 94,
-    ayah: 6
-  },
-  {
-    en: "And He is with you wherever you are.",
-    ar: "وَهُوَ مَعَكُمْ أَيْنَ مَا كُنتُمْ",
-    ref: "Quran 57:4",
-    sura: 57,
-    ayah: 4
-  },
-  {
-    en: "So remember Me; I will remember you.",
-    ar: "فَاذْكُرُونِي أَذْكُرْكُمْ",
-    ref: "Quran 2:152",
-    sura: 2,
-    ayah: 152
-  },
-  {
-    en: "Indeed, Allah does not change the condition of a people until they change what is in themselves.",
-    ar: "إِنَّ اللَّهَ لَا يُغَيِّرُ مَا بِقَوْمٍ حَتَّىٰ يُغَيِّرُوا مَا بِأَنفُسِهِمْ",
-    ref: "Quran 13:11",
-    sura: 13,
-    ayah: 11
-  },
-  {
-    en: "And whoever fears Allah, He will make for him a way out.",
-    ar: "وَمَن يَتَّقِ اللَّهَ يَجْعَل لَّهُ مَخْرَجًا",
-    ref: "Quran 65:2",
-    sura: 65,
-    ayah: 2
-  },
-  {
-    en: "My mercy encompasses all things.",
-    ar: "وَرَحْمَتِي وَسِعَتْ كُلَّ شَيْءٍ",
-    ref: "Quran 7:156",
-    sura: 7,
-    ayah: 156
-  },
-  {
-    en: "Be patient, for indeed, Allah is with the patient.",
-    ar: "وَاصْبِرُوا إِنَّ اللَّهَ مَعَ الصَّابِرِينَ",
-    ref: "Quran 8:46",
-    sura: 8,
-    ayah: 46
-  }
-]
-
-const dailyVerse = computed(() => {
-  // Rotate verse based on day of year (consistent for all users same day)
-  const now = new Date()
-  const start = new Date(now.getFullYear(), 0, 0)
-  const diff = now.getTime() - start.getTime()
-  const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24))
-  const index = dayOfYear % inspiringVerses.length
-  return inspiringVerses[index]
-})
-
-function trackRamadanEvent(eventName: string, payload: Record<string, any> = {}) {
-  if (typeof window === 'undefined') return
-  const gtag = (window as any)?.gtag
-  if (typeof gtag !== 'function') return
-  gtag('event', eventName, {
-    campaign_id: ramadanCampaign.id,
-    locale: String(locale.value || 'en'),
-    ...payload,
-  })
-}
-
-function trackRamadanImpressionOnce() {
-  if (!showRamadanCampaign.value) return
-  if (typeof localStorage === 'undefined') {
-    trackRamadanEvent('ramadan_banner_view')
-    return
-  }
-
-  const today = new Date().toISOString().slice(0, 10)
-  const storageValue = `${ramadanCampaign.id}:${today}`
-  try {
-    const lastSeen = localStorage.getItem(RAMADAN_IMPRESSION_KEY)
-    if (lastSeen === storageValue) return
-    localStorage.setItem(RAMADAN_IMPRESSION_KEY, storageValue)
-  } catch {
-    // continue and track best-effort
-  }
-
-  trackRamadanEvent('ramadan_banner_view', {
-    prompt_available: Boolean(dailyRamadanPrompt.value),
-    preview_mode: isRamadanPreview.value,
-  })
-}
-
-function onRamadanCta(cta: 'quran' | 'tasbeeh' | 'chat') {
-  const targetPath = ramadanCampaign.ctaRoutes[cta]
-  trackRamadanEvent('ramadan_cta_click', {
-    cta,
-    target_path: targetPath,
-    prompt_available: Boolean(dailyRamadanPrompt.value),
-  })
-  router.push(targetPath)
-}
-
-function applyRamadanPrompt() {
-  if (!dailyRamadanPrompt.value || isLoading.value) return
-  userPrompt.value = dailyRamadanPrompt.value
-  errorMessage.value = null
-  aiResponse.value = null
-
-  trackRamadanEvent('ramadan_daily_prompt_apply', {
-    prompt_length: dailyRamadanPrompt.value.length,
-  })
-
-  $q.notify({
-    message: t('pages.home.ramadan.promptApplied'),
-    color: 'positive',
-    position: 'top',
-    timeout: 1800,
-    icon: 'auto_awesome',
-  })
-}
-
-function copyResponse() {
-  if (!aiResponse.value) return
-  copy(aiResponse.value)
-  $q.notify({
-    message: t('pages.home.ai.copied'),
-    color: 'positive',
-    position: 'top',
-    timeout: 2000,
-    icon: 'fas fa-check-circle',
-  })
-}
-
-async function askPeaceAI() {
-  if (!canSubmit.value) return
-  isLoading.value = true
-  errorMessage.value = null
-  aiResponse.value = null // Clear previous response
-
-  try {
-    const res = await sendDeepSeekChat({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt.value.trim() },
-      ],
-    })
-    aiResponse.value = res?.message?.content ?? t('pages.home.ai.noReply')
-    if (aiResponse.value) {
-      addToHistory(userPrompt.value.trim(), aiResponse.value)
-    }
-  } catch (error: any) {
-    errorMessage.value = error?.data?.message || error?.message || t('pages.home.ai.requestFailed')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-function addToHistory(prompt: string, response: string) {
-  const entry = { id: crypto.randomUUID?.() || String(Date.now()), prompt, response, ts: Date.now() }
-  history.value = [entry, ...history.value].slice(0, 20)
-  try {
-    localStorage.setItem(HISTORY_KEY, JSON.stringify(history.value))
-  } catch {}
-}
-
-function loadHistory() {
-  if (typeof localStorage === 'undefined') return
-  try {
-    const raw = localStorage.getItem(HISTORY_KEY)
-    if (raw) {
-      const parsed = JSON.parse(raw)
-      if (Array.isArray(parsed)) {
-        history.value = parsed
-      }
-    }
-  } catch {}
-}
-
-function reusePrompt(entry: { prompt: string }) {
-  userPrompt.value = entry.prompt
-  errorMessage.value = null
-  aiResponse.value = null
-}
-
-function clearHistory() {
-  history.value = []
-  try {
-    localStorage.removeItem(HISTORY_KEY)
-  } catch {}
-}
-
-async function loadRecentPosts() {
-  blogLoading.value = true
-  try {
-    const res = await fetch('/api/blog', { credentials: 'include' })
-    const data = await res.json().catch(() => ({}))
-    if (data?.ok && Array.isArray(data.posts)) {
-      recentPosts.value = data.posts.slice(0, 3).map((post: any) => ({
-        slug: String(post?.slug || ''),
-        title: String(post?.title || ''),
-        excerpt: String(post?.excerpt || ''),
-        date: String(post?.date || ''),
-      })).filter((post: any) => post.slug && post.title)
-      return
-    }
-    recentPosts.value = []
-  } catch {
-    recentPosts.value = []
-  } finally {
-    blogLoading.value = false
-  }
-}
-
-function goToBlogPost(slug: string) {
-  if (!slug) return
-  router.push(`/blog/${slug}`)
-}
-
-function formatBlogDate(date: string) {
-  try {
-    return new Date(date).toLocaleDateString()
-  } catch {
-    return date
-  }
-}
-
-onMounted(async () => {
-  loadHistory()
-  await loadRecentPosts()
-  trackRamadanImpressionOnce()
-})
-
-function setNextPromptExample() {
-  if (isLoading.value) return
-  const examples = promptExamples.value
-  if (!examples.length) return
-  currentPromptIndex.value = (currentPromptIndex.value + 1) % examples.length
-  userPrompt.value = examples[currentPromptIndex.value]
-  errorMessage.value = null
-  aiResponse.value = null
-}
 </script>
-
-<style scoped>
-.hero-content-vertical { 
-  display: flex; 
-  flex-direction: column; 
-  gap: 24px; 
-  max-width: 900px;
-  margin: 0 auto;
-}
-.top-section { 
-  text-align: center;
-}
-.title {
-  font-size: 2.4rem;
-  margin: 0 0 4px;
-  color: #0f172a;
-}
-.lead {
-  color: #334155;
-  margin: 0 0 6px;
-}
-.actions { margin-top: 12px }
-.manifesto-card {
-  width: min(760px, 100%);
-  margin: 0 auto;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  color: #ffffff;
-  position: relative;
-  overflow: hidden;
-}
-.verse-arabic {
-  font-family: 'Amiri', 'Traditional Arabic', serif;
-  font-size: 1.5rem;
-  text-align: center;
-  margin-bottom: 16px;
-  line-height: 2;
-  opacity: 0.95;
-  position: relative;
-  z-index: 1;
-  direction: rtl;
-}
-.manifesto-quote {
-  margin: 0;
-  padding-left: 20px;
-  border-left: 4px solid rgba(255, 255, 255, 0.5);
-  font-size: 1.05rem;
-  line-height: 1.7;
-  font-style: italic;
-  position: relative;
-  z-index: 1;
-}
-.manifesto-attribution {
-  margin-top: 16px;
-  text-align: right;
-  font-weight: 600;
-  font-size: 0.95rem;
-  opacity: 0.9;
-  position: relative;
-  z-index: 1;
-}
-.verse-link {
-  color: #ffffff;
-  text-decoration: none;
-  border-bottom: 1px solid rgba(255, 255, 255, 0.4);
-  transition: border-color 0.2s ease;
-}
-.verse-link:hover {
-  border-bottom-color: rgba(255, 255, 255, 0.9);
-}
-.ramadan-banner {
-  width: min(760px, 100%);
-  margin: 0 auto;
-  border-radius: 14px;
-  border: 1px solid rgba(253, 224, 71, 0.35);
-  background: linear-gradient(120deg, #fffbeb 0%, #fff7ed 100%);
-}
-.ramadan-eyebrow {
-  font-size: 0.75rem;
-  text-transform: uppercase;
-  letter-spacing: 0.08em;
-  color: #92400e;
-  font-weight: 700;
-}
-.ramadan-title {
-  margin-top: 2px;
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: #7c2d12;
-}
-.ramadan-body {
-  margin-top: 4px;
-  color: #7c2d12;
-}
-.ramadan-prompt {
-  background: rgba(255, 255, 255, 0.65);
-  border-radius: 10px;
-  padding: 10px 12px;
-  border: 1px dashed rgba(146, 64, 14, 0.2);
-  color: #78350f;
-}
-.ramadan-prompt-label {
-  font-size: 0.8rem;
-  font-weight: 600;
-  margin-bottom: 4px;
-}
-.ramadan-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-}
-.ai-card { width: min(420px, 100%); backdrop-filter: blur(6px); }
-.ai-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-.ai-title { font-weight:600; margin-bottom:4px; }
-.ai-form { display:flex; flex-direction:column; gap:12px; margin-top:12px; }
-.response { background:#f8fafc; border-radius:12px; position: relative; }
-.response-header { display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px; }
-.response-title { font-weight:600; }
-.response-content {
-  white-space: pre-wrap;
-  font-family: inherit;
-  margin: 0;
-  max-height: clamp(180px, 40vh, 340px);
-  overflow: auto;
-  word-break: break-word;
-  overscroll-behavior: contain;
-  padding-right: 4px;
-}
-.history-response {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  word-break: break-word;
-  max-height: 2.8em;
-  line-height: 1.4;
-}
-.full-width { width:100%; }
-.blog-card { width: min(680px, 100%); }
-.blog-header { display:flex; justify-content:space-between; gap:12px; align-items:flex-start; }
-.blog-title { font-weight:600; margin-bottom:4px; }
-.blog-excerpt {
-  display: -webkit-box;
-  -webkit-line-clamp: 2;
-  -webkit-box-orient: vertical;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  margin-top: 2px;
-}
-@media (max-width: 720px) {
-  .home-hero { padding-top: 12px; }
-  .hero-content { flex-direction: column; }
-  .left { width: 100%; text-align: center; }
-  .title { font-size: clamp(1.6rem, 6vw, 2.1rem); margin-bottom: 4px; }
-  .lead { margin-bottom: 8px; }
-  .actions { justify-content: center; margin-top: 10px; }
-  .ramadan-actions {
-    justify-content: center;
-  }
-  .ai-card { width: 100%; align-self: stretch; }
-  .ai-header { align-items: center; }
-  .response-content {
-    max-height: 240px;
-  }
-  .history {
-    max-height: 260px;
-    overflow: auto;
-  }
-  .blog-card { width: 100%; }
-}
-</style>
