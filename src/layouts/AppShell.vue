@@ -228,10 +228,18 @@
     <SupportAIWidget v-if="showLazyWidgets" />
     <ConsentBanner v-if="showLazyWidgets" />
 
-    <q-footer class="text-center q-pa-sm" elevated reveal>
-      <div class="footer">
-        <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-        <span>© 2026 {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
+    <q-footer class="app-footer q-pa-sm" elevated reveal>
+      <div class="footer-inner">
+        <div class="footer-brand">
+          <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
+          <span>© {{ currentYear }} {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
+        </div>
+        <nav class="footer-links" aria-label="Footer links">
+          <RouterLink to="/quran" class="footer-link">{{ t('appShell.nav.quran') }}</RouterLink>
+          <RouterLink to="/terms" class="footer-link">{{ t('terms_and_conditions') }}</RouterLink>
+          <RouterLink to="/privacy" class="footer-link">{{ t('privacy_policy') }}</RouterLink>
+          <RouterLink to="/contact" class="footer-link">{{ t('appShell.nav.contact') }}</RouterLink>
+        </nav>
       </div>
     </q-footer>
   </q-layout>
@@ -323,6 +331,7 @@ const navOrderingEnabled = ref(readOrderingEnabled());
 const compactLayout = ref(readCompactPreference());
 const reduceMotion = ref(readReduceMotionPreference());
 const autoPlayAthan = ref(readAutoplayPreference());
+const currentYear = new Date().getFullYear();
 
 const menuOpen = ref(false);
 const searchRef = ref(null);
@@ -398,7 +407,7 @@ const {
   isPlaying: isAthanPlaying,
 } = useAthanPlayer();
 
-const appVersion = __APP_VERSION__ || "0.0.0";
+const appVersion = __APP_VERSION__ || "2.9";
 
 function goToResult(item: any) {
   router.push(item.path);
@@ -734,6 +743,51 @@ const orderedNavItems = computed(() => {
   gap: 8px;
   padding-bottom: env(safe-area-inset-bottom);
 }
+
+.app-footer {
+  background: rgba(9, 14, 27, 0.92);
+  backdrop-filter: blur(8px);
+  border-top: 1px solid rgba(255, 255, 255, 0.12);
+}
+
+.footer-inner {
+  max-width: 1200px;
+  margin: 0 auto;
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  flex-wrap: wrap;
+  padding-bottom: env(safe-area-inset-bottom);
+}
+
+.footer-brand {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  color: rgba(255, 255, 255, 0.9);
+  font-size: 0.9rem;
+}
+
+.footer-links {
+  display: inline-flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.footer-link {
+  color: rgba(255, 255, 255, 0.78);
+  text-decoration: none;
+  font-size: 0.86rem;
+  transition: color 0.2s ease;
+}
+
+.footer-link:hover {
+  color: #ffffff;
+}
+
 .decor {
   height: 16px;
   opacity: 0.6;
