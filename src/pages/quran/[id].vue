@@ -2149,16 +2149,6 @@ watch(() => route.params.mode, (newMode) => {
             @mouseleave="onVerseMouseLeave"
           >
             <div class="verse-main-row">
-              <div class="arabic-text">
-                <template v-if="wordTimings[a.verse - 1]?.length">
-                  <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
-                    <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
-                  </template>
-                </template>
-                <template v-else>
-                  {{ a.text }}
-                </template>
-              </div>
               <div class="verse-inline-actions">
                 <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
                 <button
@@ -2180,6 +2170,16 @@ watch(() => route.params.mode, (newMode) => {
                   <q-icon name="share" size="18px" />
                 </button>
               </div>
+              <div class="arabic-text">
+                <template v-if="wordTimings[a.verse - 1]?.length">
+                  <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
+                    <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                  </template>
+                </template>
+                <template v-else>
+                  {{ a.text }}
+                </template>
+              </div>
             </div>
             <div class="verse-meta">
               <div class="verse-translation" v-if="a.translation">
@@ -2200,17 +2200,14 @@ watch(() => route.params.mode, (newMode) => {
               </div>
             </div>
             <div class="mushaf-body">
-              <div
-                v-for="a in sura?.ayat || []"
-                :key="`m-${a.verse}`"
-                :id="getVerseElementId(a.verse)"
-                class="mushaf-ayah"
-                :class="{ 'is-selected': isVerseSelected(a.verse) }"
-                @dblclick="handleVerseDoubleClick($event, a.verse)"
-                @mouseenter="onVerseMouseEnter($event, a.verse)"
-                @mouseleave="onVerseMouseLeave"
-              >
-                <span class="ayah-text">
+              <div class="mushaf-flow-text">
+                <span
+                  v-for="a in sura?.ayat || []"
+                  :key="`m-${a.verse}`"
+                  :id="getVerseElementId(a.verse)"
+                  class="mushaf-ayah-inline"
+                  :class="{ 'is-selected': isVerseSelected(a.verse) }"
+                >
                   <template v-if="wordTimings[a.verse - 1]?.length">
                     <template v-for="(word, wIdx) in a.text.split(' ')" :key="`m-${a.verse}-${wIdx}`">
                       <span :id="`word-mushaf-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
@@ -2219,19 +2216,8 @@ watch(() => route.params.mode, (newMode) => {
                   <template v-else>
                     {{ a.text }}
                   </template>
+                  <span class="ayah-inline-number" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
                 </span>
-                <div class="ayah-controls">
-                  <span class="ayah-number" @click="scrollToVerse(a.verse)">۝ {{ a.verse }}</span>
-                  <button
-                    type="button"
-                    class="bookmark-trigger mushaf-trigger"
-                    :class="{ 'is-active': isVerseBookmarked(a.verse) }"
-                    @click.stop="bookmarkVerse(a.verse)"
-                    :aria-label="bookmarkActionLabel(a.verse)"
-                  >
-                    <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
-                  </button>
-                </div>
               </div>
             </div>
           </div>
@@ -2250,7 +2236,7 @@ watch(() => route.params.mode, (newMode) => {
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
           >
-            <span class="verse-marker">[{{ a.verse }}]</span>
+            <span class="verse-marker" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
             <span class="native-inline-actions">
               <button
                 type="button"
@@ -2502,17 +2488,22 @@ watch(() => route.params.mode, (newMode) => {
 
 .arabic-text {
   font-feature-settings: "rlig" 1, "liga" 1;
+  direction: rtl;
+  text-align: justify;
+  font-family: "Noto Naskh Arabic", serif;
 }
 
 .verse-main-row {
-  display: flex;
-  align-items: flex-start;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: max-content minmax(0, 1fr);
+  align-items: start;
+  column-gap: 24px;
+  direction: rtl;
 }
 
 .verse-main-row .arabic-text {
-  flex: 1;
   min-width: 0;
+  overflow: hidden;
 }
 
 .verse-inline-actions {
@@ -2520,7 +2511,8 @@ watch(() => route.params.mode, (newMode) => {
   align-items: center;
   gap: 6px;
   flex-shrink: 0;
-  direction: ltr;
+  direction: rtl;
+  min-width: 108px;
   margin-top: 2px;
 }
 
@@ -2534,7 +2526,6 @@ watch(() => route.params.mode, (newMode) => {
 .verse-meta-bar {
   display: flex;
   align-items: center;
-  justify-content: space-between;
   gap: 12px;
   flex-wrap: wrap;
 }
@@ -2543,9 +2534,9 @@ watch(() => route.params.mode, (newMode) => {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: 50%;
   width: 28px;
   height: 28px;
+  border-radius: 50%;
   font-size: 12px;
   background: #f5f5f5;
   color: #424242;
@@ -2648,16 +2639,12 @@ watch(() => route.params.mode, (newMode) => {
   font-weight: 500;
 }
 
-.mushaf-ayah.is-selected .ayah-text {
-  color: #b8860b;
-  font-weight: 500;
-}
-
 .mushaf-layout {
   background: linear-gradient(135deg, #f7f2e7, #fefbf4);
   padding: 16px;
   border-radius: 24px;
   border: 1px solid rgba(116, 84, 40, 0.1);
+  width: 100%;
 }
 
 .mushaf-page {
@@ -2665,6 +2652,7 @@ watch(() => route.params.mode, (newMode) => {
   border-radius: 18px;
   padding: 18px;
   box-shadow: inset 0 0 0 2px rgba(115, 84, 40, 0.15);
+  width: 100%;
 }
 
 .page-border {
@@ -2676,6 +2664,7 @@ watch(() => route.params.mode, (newMode) => {
     rgba(214, 185, 128, 0.22),
     transparent 50%
   );
+  width: 100%;
 }
 
 .mushaf-header {
@@ -2695,56 +2684,32 @@ watch(() => route.params.mode, (newMode) => {
 }
 
 .mushaf-body {
-  column-count: 2;
-  column-gap: 28px;
+  column-count: 1;
+  column-gap: 0;
+  column-fill: auto;
   direction: rtl;
   font-family: "Noto Naskh Arabic", serif;
+  font-size: clamp(1.45rem, 2.8vw, 2rem);
+  line-height: 2.35;
+  width: 100%;
 }
 
-@media (max-width: 880px) {
-  .mushaf-body {
-    column-count: 1;
-  }
-}
-
-.mushaf-ayah {
-  break-inside: avoid;
-  margin-bottom: 18px;
-  font-size: 1.45rem;
-  line-height: 2.1rem;
-  text-align: justify;
-  position: relative;
-  padding-inline-start: 32px;
-  transition: all 0.2s ease;
-  cursor: pointer;
-}
-
-.mushaf-ayah:hover {
-  background: rgba(214, 185, 128, 0.15);
-  border-radius: 12px;
-  padding: 12px 12px 12px 44px;
-}
-
-.mushaf-ayah.is-selected {
-  background: linear-gradient(135deg, rgba(243, 223, 184, 0.5), rgba(214, 185, 128, 0.4));
-  border-radius: 14px;
-  padding: 18px 18px 18px 48px;
-  border: 2px solid #d4af37;
-  box-shadow: 0 2px 8px rgba(212, 175, 55, 0.25);
-}
-
-.ayah-text {
+.mushaf-flow-text {
   display: block;
+  text-align: justify;
+  word-spacing: 0.05em;
+  width: 100%;
 }
 
-.ayah-controls {
-  position: absolute;
-  left: 0;
-  top: 50%;
-  transform: translateY(-50%);
-  display: flex;
-  align-items: center;
-  gap: 6px;
+.mushaf-ayah-inline {
+  display: inline;
+  direction: rtl;
+  cursor: text;
+}
+
+.mushaf-ayah-inline.is-selected {
+  background: rgba(212, 175, 55, 0.16);
+  border-radius: 6px;
 }
 
 .heading-actions {
@@ -2789,21 +2754,33 @@ watch(() => route.params.mode, (newMode) => {
   opacity: 0;
 }
 
-.ayah-number {
-  font-size: 0.95rem;
+.ayah-inline-number {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 1.95em;
+  height: 1.95em;
+  margin-inline: 0.35em 0.2em;
+  padding: 0 0.3em;
+  vertical-align: middle;
+  font-size: 0.56em;
+  line-height: 1;
   color: #d4af37;
-  cursor: pointer;
-  font-weight: 600;
-  transition: color 0.2s ease;
+  background: rgba(255, 255, 255, 0.98);
+  border: 2px solid #d4af37;
+  border-radius: 50%;
+  cursor: text;
+  font-weight: 700;
+  transition: all 0.2s ease;
+  box-shadow: 0 1px 4px rgba(212, 175, 55, 0.2);
 }
 
-.ayah-number:hover {
-  color: #b8860b;
-}
-
-.mushaf-trigger {
-  width: 28px;
-  height: 28px;
+.ayah-inline-number:hover {
+  color: #d4af37;
+  background: rgba(255, 255, 255, 0.98);
+  border-color: #d4af37;
+  transform: none;
+  box-shadow: 0 1px 4px rgba(212, 175, 55, 0.2);
 }
 
 .native-layout {
@@ -2823,8 +2800,8 @@ watch(() => route.params.mode, (newMode) => {
 .verse-paragraph {
   margin: 16px 0;
   padding: 12px;
-  border-left: 4px solid #4caf50;
-  padding-left: 16px;
+  border-inline-end: 4px solid #4caf50;
+  padding-inline-end: 16px;
   font-size: 1.05rem;
   background: rgba(255, 255, 255, 0.7);
   border-radius: 8px;
@@ -2837,27 +2814,41 @@ watch(() => route.params.mode, (newMode) => {
 .verse-paragraph:hover {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
-  transform: translateX(-4px);
+  transform: translateX(4px);
 }
 
 .verse-paragraph.is-selected {
   background: rgba(255, 193, 7, 0.08);
-  border-left-color: #ffc107;
-  border-left-width: 6px;
+  border-inline-end-color: #ffc107;
+  border-inline-end-width: 6px;
   box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
-  transform: translateX(-4px);
+  transform: translateX(4px);
 }
 
 .verse-marker {
-  display: inline-block;
-  font-weight: bold;
-  color: white;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 32px;
+  height: 32px;
+  padding: 0 8px;
+  font-size: 0.9rem;
+  color: #fff;
   background: linear-gradient(135deg, #66bb6a, #4caf50);
-  margin-right: 8px;
-  font-size: 0.85rem;
-  padding: 4px 8px;
-  border-radius: 12px;
-  box-shadow: 0 2px 4px rgba(76, 175, 80, 0.3);
+  border: 2px solid #4caf50;
+  border-radius: 50%;
+  margin-inline-start: 8px;
+  font-weight: 700;
+  cursor: pointer;
+  transition: all 0.2s ease;
+  box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
+}
+
+.verse-marker:hover {
+  background: linear-gradient(135deg, #4caf50, #388e3c);
+  border-color: #388e3c;
+  transform: scale(1.1);
+  box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
 }
 
 .native-inline-actions {
@@ -2957,17 +2948,24 @@ body.body--dark .mushaf-meta {
   color: #b0b0b0;
 }
 
-body.body--dark .mushaf-ayah {
+body.body--dark .mushaf-ayah-inline {
   color: #e0e0e0;
 }
 
-body.body--dark .ayah-text {
-  color: #e0e0e0;
+body.body--dark .ayah-inline-number {
+  background: rgba(42, 42, 42, 0.95);
+  color: #d4af37;
+  border-color: #d4af37;
 }
 
-body.body--dark .mushaf-ayah.is-selected {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(212, 175, 55, 0.15));
+body.body--dark .ayah-inline-number:hover {
+  background: #d4af37;
+  color: #1a1a1a;
   border-color: #ffc107;
+}
+
+body.body--dark .mushaf-ayah-inline.is-selected {
+  background: rgba(255, 193, 7, 0.18);
 }
 
 body.body--dark .native-layout {
@@ -3039,10 +3037,10 @@ body.body--dark .verse-translation-native {
     background: rgba(255, 255, 255, 0.05);
   }
   
-  /* Better mushaf columns in landscape */
+  /* Keep mushaf in one full-width flow in landscape */
   .mushaf-body {
-    column-count: 2;
-    column-gap: 32px;
+    column-count: 1;
+    column-gap: 0;
   }
 }
 

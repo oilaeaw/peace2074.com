@@ -231,7 +231,7 @@
     <q-footer class="text-center q-pa-sm" elevated reveal>
       <div class="footer">
         <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-        <span>© 2025 {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
+        <span>© 2026 {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
       </div>
     </q-footer>
   </q-layout>

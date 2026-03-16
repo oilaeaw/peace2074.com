@@ -41,7 +41,7 @@
     <q-footer class="text-center q-pa-sm">
       <div class="footer">
         <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-        <span>© 2025 PEACE2074</span>
+        <span>© 2026 {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
       </div>
     </q-footer>
   </q-layout>
@@ -51,6 +51,10 @@
 import { computed } from "vue";
 import { useI18n } from "vue-i18n";
 const { locale, t } = useI18n({ useScope: "global" });
+
+declare const __APP_VERSION__: string;
+
+const appVersion = __APP_VERSION__ || "0.0.0";
 
 const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
 
