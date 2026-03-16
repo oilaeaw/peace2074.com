@@ -2,6 +2,35 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 0.2.9 (2026-03-16)
+
+### Features
+
+- add blog likes system with heart icons and like counts for all blog posts
+- add ReaderStats database schema to track Quran reading analytics per user
+- add bilingual (Arabic/English) inspirational blog post: "Light in Darkness: Finding Strength in Difficult Times"
+- add Quran list 2-column grid layout with even height cards
+- add daily rotating banner messages (7 messages, one for each day of week)
+- expand inspirational verses collection to 114 (one verse per surah for complete coverage)
+- add reader stats API endpoints for recording and fetching reading analytics
+- add Pinia store for managing reader statistics and analytics
+- add blog likes API endpoints (`GET /api/blog/likes` and `POST /api/blog/likes`)
+- add like toggle functionality requiring authentication with login prompt
+
+### Bug Fixes
+
+- fix Dialog plugin not registered in Quasar configuration
+- fix i18n translation key for blog delete button (use `pages.blog.editor.delete`)
+- fix corrupted verses.json and restore clean data from backup
+- fix verses.json missing from src/app/data/ directory
+
+### Chores
+
+- generate Prisma client for new BlogLike and ReaderStats models
+- create server utilities for reader stats operations and analytics
+- add service functions for blog likes and reader stats API calls
+- create comprehensive reader stats documentation
+
 ## 0.2.8 (2026-03-07)
 
 ### Features
