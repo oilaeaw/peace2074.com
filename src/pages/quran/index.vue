@@ -255,7 +255,7 @@ const toggleBookmark = async (suraId: number, event: Event) => {
         cancel: true,
         persistent: false,
         ok: {
-          label: t('pages.blog.actions.delete') || 'Remove',
+          label: t('pages.blog.editor.delete') || 'Remove',
           color: 'negative',
           flat: true
         },

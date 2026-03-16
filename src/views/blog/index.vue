@@ -44,7 +44,7 @@
       >
         <q-card-section>
           <div class="row items-center justify-between">
-            <div>
+            <div class="col">
               <div class="text-h6">{{ post.title }}</div>
               <div class="text-caption text-grey-6 q-mt-xs">
                 {{ formatDate(post.date) }}
@@ -56,16 +56,29 @@
                   tag
                 }}</q-badge>
               </div>
-              <q-btn
-                v-if="isAuthenticated"
-                dense
-                flat
-                size="sm"
-                icon="edit"
-                color="primary"
-                :label="t('general.edit')"
-                @click.stop="editPost(post.slug)"
-              />
+              <div class="row q-gutter-xs items-center">
+                <q-btn
+                  dense
+                  flat
+                  size="sm"
+                  :icon="isLiked(post.slug) ? 'favorite' : 'favorite_border'"
+                  :color="isLiked(post.slug) ? 'red' : 'grey'"
+                  @click.stop="handleLike(post.slug, $event)"
+                >
+                  <q-badge v-if="getLikeCount(post.slug) > 0" color="red" floating>
+                    {{ getLikeCount(post.slug) }}
+                  </q-badge>
+                </q-btn>
+                <q-btn
+                  v-if="isAuthenticated"
+                  dense
+                  flat
+                  size="sm"
+                  icon="edit"
+                  color="primary"
+                  @click.stop="editPost(post.slug)"
+                />
+              </div>
             </div>
           </div>
           <div class="text-body2 q-mt-sm">{{ post.excerpt }}</div>
@@ -83,14 +96,19 @@ import { ref, computed, onMounted } from "vue";
 import { useI18n } from "vue-i18n";
 import { useRouter } from "vue-router";
 import { useAuthStore } from "@/stores/auth.pinia";
+import { useQuasar } from "quasar";
+import { fetchBlogLikes, toggleBlogLike } from "@/stores/services";
 
 const { t } = useI18n();
 const router = useRouter();
 const authStore = useAuthStore();
+const $q = useQuasar();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const posts = ref<any[]>([]);
 const loading = ref(true);
+const likeCounts = ref<Record<string, number>>({});
+const userLiked = ref<string[]>([]);
 
 const postsSorted = computed(() => {
   return [...posts.value].sort(
@@ -115,6 +133,66 @@ async function loadPosts() {
   }
 }
 
+async function loadLikes() {
+  try {
+    const data = await fetchBlogLikes();
+    if (data.ok) {
+      likeCounts.value = data.likeCounts || {};
+      userLiked.value = data.userLiked || [];
+    }
+  } catch (err) {
+    console.error('[Blog] Load likes error:', err);
+  }
+}
+
+async function handleLike(slug: string, event: Event) {
+  event.stopPropagation();
+  
+  if (!isAuthenticated.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('pages.blog.editor.authRequired'),
+      icon: 'lock',
+      actions: [
+        {
+          label: t('auth.login'),
+          color: 'white',
+          handler: () => router.push('/login')
+        }
+      ]
+    });
+    return;
+  }
+
+  try {
+    const result = await toggleBlogLike(slug);
+    if (result.ok) {
+      // Update local state
+      likeCounts.value[slug] = result.count;
+      if (result.liked) {
+        userLiked.value.push(slug);
+      } else {
+        userLiked.value = userLiked.value.filter(s => s !== slug);
+      }
+    }
+  } catch (err) {
+    console.error('[Blog] Like error:', err);
+    $q.notify({
+      type: 'negative',
+      message: 'Failed to update like',
+      icon: 'error'
+    });
+  }
+}
+
+function isLiked(slug: string): boolean {
+  return userLiked.value.includes(slug);
+}
+
+function getLikeCount(slug: string): number {
+  return likeCounts.value[slug] || 0;
+}
+
 function go(slug: string) {
   router.push(`/blog/${slug}`);
 }
@@ -131,8 +209,9 @@ function formatDate(date: string) {
   }
 }
 
-onMounted(() => {
-  loadPosts();
+onMounted(async () => {
+  await loadPosts();
+  await loadLikes();
 });
 </script>
 

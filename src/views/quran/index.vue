@@ -98,20 +98,18 @@ function showTranslation(sura: any) {
   direction: rtl;
 }
 .mushaf-columns {
-  display: flex;
-  flex-direction: row;
-  gap: 1.2rem;
-  justify-content: center;
-  align-items: flex-start;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 1.5rem;
+  max-width: 1400px;
+  margin: 0 auto;
   width: 100%;
-  max-width: 100vw;
   box-sizing: border-box;
 }
 .mushaf-column {
-  flex: 1 1 0;
   display: flex;
   flex-direction: column;
-  gap: 0.7rem;
+  gap: 0.8rem;
   min-width: 0;
 }
 .sura-card {
@@ -122,18 +120,20 @@ function showTranslation(sura: any) {
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
   font-family: 'Amiri', serif;
   font-size: 1.45rem;
   min-width: 0;
   width: 100%;
-  max-width: 340px;
+  height: 120px;
   box-sizing: border-box;
+  padding: 0.8rem 1rem;
   transition:
     box-shadow 0.2s,
-    background 0.2s;
+    background 0.2s,
+    transform 0.2s;
   cursor: pointer;
-  margin-bottom: 0.1rem;
 }
 .sura-card:hover {
   background: var(--card-bg-hover);

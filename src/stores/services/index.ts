@@ -307,3 +307,111 @@ export async function fetchChangelog() {
   }
 }
 
+// Reader Stats API
+export async function recordReaderStat(sura: number) {
+  try {
+    const res = await fetch(resolveNitroUrl("/reader-stats"), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ sura }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data?.error || `Failed to record stat (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to record reader stat", e);
+    return { ok: false, error: String(e) };
+  }
+}
+
+export async function fetchReaderStats() {
+  try {
+    const res = await fetch(resolveNitroUrl("/reader-stats"), {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      console.warn(`Failed to fetch reader stats: ${res.status}`);
+      return { ok: false, stats: [] };
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch reader stats", e);
+    return { ok: false, stats: [] };
+  }
+}
+
+export async function fetchReaderAnalytics() {
+  try {
+    const res = await fetch(resolveNitroUrl("/reader-stats?analytics=true"), {
+      method: "GET",
+      credentials: "include",
+    });
+
+    if (!res.ok) {
+      console.warn(`Failed to fetch reader analytics: ${res.status}`);
+      return { ok: false, analytics: null };
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch reader analytics", e);
+    return { ok: false, analytics: null };
+  }
+}
+
+// Blog Likes API
+export async function fetchBlogLikes() {
+  try {
+    const res = await fetch(resolveNitroUrl("/blog/likes"), {
+      method: "GET",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+      throw new Error(data?.error || `Failed to fetch likes (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to fetch blog likes", e);
+    return { ok: false, likeCounts: {}, userLiked: [] };
+  }
+}
+
+export async function toggleBlogLike(slug: string) {
+  try {
+    const res = await fetch(resolveNitroUrl("/blog/likes"), {
+      method: "POST",
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ slug }),
+    });
+
+    if (!res.ok) {
+      const data = await res.json().catch(() => ({}));
+
+      // Check if auth is required
+      if (res.status === 401 || data?.authRequired) {
+        return { ok: false, authRequired: true, error: data?.error };
+      }
+
+      throw new Error(data?.error || `Failed to toggle like (${res.status})`);
+    }
+
+    return res.json();
+  } catch (e) {
+    console.warn("Failed to toggle blog like", e);
+    throw e;
+  }
+}
+

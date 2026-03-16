@@ -18,18 +18,25 @@
           tag
         }}</q-badge>
       </div>
+      <div class="row q-gutter-sm items-center q-mt-sm">
+        <q-btn
+          :icon="isLiked ? 'favorite' : 'favorite_border'"
+          :color="isLiked ? 'red' : 'grey'"
+          :label="`${likeCount} ${likeCount === 1 ? 'Like' : 'Likes'}`"
+          outline
+          @click="handleLike"
+        />
+        <q-btn
+          v-if="isAuthenticated"
+          flat
+          color="primary"
+          icon="edit"
+          :label="t('general.edit')"
+          @click="editPost"
+        />
+      </div>
       <q-separator />
       <div class="text-body1 prewrap">{{ post.content }}</div>
-      
-      <q-btn
-        v-if="isAuthenticated"
-        flat
-        color="primary"
-        icon="edit"
-        :label="t('general.edit')"
-        @click="editPost"
-        class="q-mt-md"
-      />
     </div>
 
     <q-banner v-else rounded class="q-mt-lg" color="warning" text-color="black">
@@ -43,15 +50,20 @@ import { ref, computed, onMounted, watch } from "vue";
 import { useRoute, useRouter } from "vue-router";
 import { useI18n } from "vue-i18n";
 import { useAuthStore } from "@/stores/auth.pinia";
+import { useQuasar } from "quasar";
+import { toggleBlogLike, fetchBlogLikes } from "@/stores/services";
 
 const route = useRoute();
 const router = useRouter();
 const { t } = useI18n();
 const authStore = useAuthStore();
+const $q = useQuasar();
 
 const isAuthenticated = computed(() => authStore.isAuthenticated);
 const post = ref<any>(null);
 const loading = ref(true);
+const likeCount = ref(0);
+const isLiked = ref(false);
 
 async function loadPost(slug: string) {
   loading.value = true;
@@ -62,6 +74,7 @@ async function loadPost(slug: string) {
     const data = await res.json();
     if (data.ok && data.post) {
       post.value = data.post;
+      await loadLikes(slug);
     } else {
       post.value = null;
     }
@@ -70,6 +83,53 @@ async function loadPost(slug: string) {
     post.value = null;
   } finally {
     loading.value = false;
+  }
+}
+
+async function loadLikes(slug: string) {
+  try {
+    const data = await fetchBlogLikes();
+    if (data.ok) {
+      likeCount.value = data.likeCounts?.[slug] || 0;
+      isLiked.value = data.userLiked?.includes(slug) || false;
+    }
+  } catch (err) {
+    console.error('[Blog Detail] Load likes error:', err);
+  }
+}
+
+async function handleLike() {
+  const slug = String(route.params.slug || "");
+  
+  if (!isAuthenticated.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('pages.blog.editor.authRequired'),
+      icon: 'lock',
+      actions: [
+        {
+          label: t('auth.login'),
+          color: 'white',
+          handler: () => router.push('/login')
+        }
+      ]
+    });
+    return;
+  }
+
+  try {
+    const result = await toggleBlogLike(slug);
+    if (result.ok) {
+      likeCount.value = result.count;
+      isLiked.value = result.liked;
+    }
+  } catch (err) {
+    console.error('[Blog Detail] Like error:', err);
+    $q.notify({
+      type: 'negative',
+      message: 'Failed to update like',
+      icon: 'error'
+    });
   }
 }
 

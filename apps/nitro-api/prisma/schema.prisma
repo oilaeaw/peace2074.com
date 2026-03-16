@@ -75,6 +75,18 @@ model DeployLike {
   @@map("DeployLike")
 }
 
+model BlogLike {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  slug      String
+  userId    String
+  createdAt DateTime @default(now())
+
+  @@unique([slug, userId])
+  @@index([slug])
+  @@index([userId])
+  @@map("BlogLike")
+}
+
 model QuranProgress {
   id              String   @id @default(auto()) @map("_id") @db.ObjectId
   userId          String   @unique
@@ -83,4 +95,16 @@ model QuranProgress {
   createdAt       DateTime @default(now())
 
   @@map("QuranProgress")
+}
+
+model ReaderStats {
+  id        String   @id @default(auto()) @map("_id") @db.ObjectId
+  userId    String
+  sura      Int
+  timestamp DateTime @default(now())
+
+  @@index([userId])
+  @@index([sura])
+  @@index([timestamp])
+  @@map("ReaderStats")
 }
