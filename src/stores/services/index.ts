@@ -1,5 +1,3 @@
-import { useFetch } from "@vueuse/core";
-
 export async function getHolyNames() {
   const url = "/api/holynames";
   try {

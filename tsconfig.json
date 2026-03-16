@@ -23,7 +23,7 @@
       "~/*": ["src/*"],
       "~/assets/*": ["src/assets/*"],
       "~/store/*": ["src/stores/*"],
-      "~/app/*": ["src/*"],
+      "~/app/*": ["src/app/*"],
       "@shared/*": ["src/shared/*"],
       "@shared": ["src/shared"]
     }
