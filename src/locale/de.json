@@ -338,6 +338,7 @@
       "todoBody": "Wir fügen bald Live-Chat, Räume und Verlauf mit waelio-messaging hinzu.",
       "live": {
         "title": "Live-Chat",
+        "adminBadge": "Admin",
         "reconnect": "Neu verbinden",
         "anon": "Anonym",
         "users": "Online-Benutzer",
@@ -348,6 +349,10 @@
         "disconnected": "Getrennt",
         "directMessage": "Direktnachricht",
         "broadcastMessage": "Nachricht an alle",
+        "loginRequiredToSend": "Bitte melde dich an, um Nachrichten zu senden.",
+        "createRoomTitle": "Neuen Raum erstellen",
+        "roomNameLabel": "Raumname",
+        "createRoomAction": "Erstellen",
         "sendDirect": "An Benutzer senden",
         "send": "Senden"
       }

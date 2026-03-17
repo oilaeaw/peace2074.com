@@ -283,6 +283,7 @@
             "todoBody": "waelio-messaging ile canlı sohbet, odalar ve geçmiş ekliyoruz.",
             "live": {
                 "title": "Canlı Sohbet",
+                "adminBadge": "Yönetici",
                 "reconnect": "Yeniden bağlan",
                 "anon": "Anonim",
                 "users": "Çevrimiçi kullanıcılar",
@@ -293,6 +294,10 @@
                 "disconnected": "Bağlantı kesildi",
                 "directMessage": "Doğrudan mesaj",
                 "broadcastMessage": "Herkese mesaj",
+                "loginRequiredToSend": "Mesaj göndermek için lütfen giriş yapın.",
+                "createRoomTitle": "Yeni Oda Oluştur",
+                "roomNameLabel": "Oda adı",
+                "createRoomAction": "Oluştur",
                 "sendDirect": "Kullanıcıya gönder",
                 "send": "Gönder"
             }

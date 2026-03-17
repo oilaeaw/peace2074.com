@@ -283,6 +283,7 @@
       "todoBody": "We are adding live chat, rooms, and history with waelio-messaging.",
       "live": {
         "title": "Live Chat",
+        "adminBadge": "Admin",
         "reconnect": "Reconnect",
         "anon": "Anonymous",
         "users": "Online users",
@@ -293,6 +294,10 @@
         "disconnected": "Disconnected",
         "directMessage": "Direct message",
         "broadcastMessage": "Message to all",
+        "loginRequiredToSend": "Please log in to send messages.",
+        "createRoomTitle": "Create New Room",
+        "roomNameLabel": "Room name",
+        "createRoomAction": "Create",
         "sendDirect": "Send to user",
         "send": "Send"
       }

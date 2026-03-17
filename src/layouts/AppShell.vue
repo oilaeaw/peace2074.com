@@ -407,7 +407,10 @@ const {
   isPlaying: isAthanPlaying,
 } = useAthanPlayer();
 
-const appVersion = __APP_VERSION__ || "2.9";
+const appVersionRaw = __APP_VERSION__ || "0.0.0";
+const appVersion = appVersionRaw.split('.').length >= 2
+  ? appVersionRaw.split('.').slice(-2).join('.')
+  : appVersionRaw;
 
 function goToResult(item: any) {
   router.push(item.path);

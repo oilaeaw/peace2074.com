@@ -19,7 +19,7 @@
       <q-card-section class="row items-center justify-between no-wrap">
         <div class="row items-center q-gutter-sm">
           <div class="text-h6">{{ t('pages.chat.live.title') }}</div>
-          <q-badge v-if="canManageChat" color="orange" outline>Admin</q-badge>
+          <q-badge v-if="canManageChat" color="orange" outline>{{ t('pages.chat.live.adminBadge') }}</q-badge>
         </div>
         <div class="row items-center q-gutter-sm">
           <q-badge :color="statusColor" outline>{{ statusLabel }}</q-badge>
@@ -105,7 +105,7 @@
       </q-card-actions>
       <q-banner v-if="!canReadChat" class="q-mt-sm" rounded dense color="warning" text-color="dark">
         <q-icon name="warning" class="q-mr-sm" />
-        Please log in to send messages.
+        {{ t('pages.chat.live.loginRequiredToSend') }}
       </q-banner>
       <q-banner v-if="messaging.error" class="q-mt-sm" rounded dense color="negative" text-color="white">
         {{ messaging.error }}
@@ -116,21 +116,21 @@
     <q-dialog v-model="showCreateRoom">
       <q-card style="min-width: 350px">
         <q-card-section>
-          <div class="text-h6">Create New Room</div>
+          <div class="text-h6">{{ t('pages.chat.live.createRoomTitle') }}</div>
         </q-card-section>
         <q-card-section>
           <q-input
             v-model="newRoomName"
             dense
             outlined
-            label="Room name"
+            :label="t('pages.chat.live.roomNameLabel')"
             autofocus
             @keyup.enter="createRoom"
           />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat label="Cancel" color="primary" v-close-popup />
-          <q-btn unelevated label="Create" color="primary" @click="createRoom" :disable="!newRoomName.trim()" />
+          <q-btn flat :label="t('cancel')" color="primary" v-close-popup />
+          <q-btn unelevated :label="t('pages.chat.live.createRoomAction')" color="primary" @click="createRoom" :disable="!newRoomName.trim()" />
         </q-card-actions>
       </q-card>
     </q-dialog>

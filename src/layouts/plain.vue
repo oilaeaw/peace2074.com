@@ -15,9 +15,9 @@ const pageTitle = computed(() => {
   <div class="plain-container">
     <header class="plain-header">
       <nav class="plain-nav">
-        <a :href="route.path.startsWith('/quran/') ? '/quran' : '/'" class="plain-link">← Back</a>
+        <a :href="route.path.startsWith('/quran/') ? '/quran' : '/'" class="plain-link">← {{ t('button.back') }}</a>
         <h1 class="plain-title">{{ pageTitle }}</h1>
-        <a href="/" class="plain-link">Home</a>
+        <a href="/" class="plain-link">{{ t('appShell.nav.home') }}</a>
       </nav>
     </header>
     <main class="plain-main">

@@ -271,6 +271,7 @@
             "todoBody": "אנחנו מוסיפים בקרוב צ׳אט חי, חדרים והיסטוריה עם waelio-messaging.",
             "live": {
                 "title": "צ׳אט חי",
+                "adminBadge": "מנהל",
                 "reconnect": "התחבר מחדש",
                 "anon": "אנונימי",
                 "users": "משתמשים מחוברים",
@@ -281,6 +282,10 @@
                 "disconnected": "מנותק",
                 "directMessage": "הודעה ישירה",
                 "broadcastMessage": "הודעה לכולם",
+                "loginRequiredToSend": "אנא התחבר כדי לשלוח הודעות.",
+                "createRoomTitle": "צור חדר חדש",
+                "roomNameLabel": "שם החדר",
+                "createRoomAction": "צור",
                 "sendDirect": "שלח למשתמש",
                 "send": "שלח"
             }

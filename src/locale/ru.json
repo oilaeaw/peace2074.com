@@ -373,6 +373,7 @@
       "todoBody": "Скоро добавим живой чат, комнаты и историю через waelio-messaging.",
       "live": {
         "title": "Прямой чат",
+        "adminBadge": "Админ",
         "reconnect": "Переподключиться",
         "anon": "Аноним",
         "users": "Пользователи онлайн",
@@ -383,6 +384,10 @@
         "disconnected": "Отключено",
         "directMessage": "Прямое сообщение",
         "broadcastMessage": "Сообщение всем",
+        "loginRequiredToSend": "Пожалуйста, войдите, чтобы отправлять сообщения.",
+        "createRoomTitle": "Создать новую комнату",
+        "roomNameLabel": "Название комнаты",
+        "createRoomAction": "Создать",
         "sendDirect": "Отправить пользователю",
         "send": "Отправить"
       }

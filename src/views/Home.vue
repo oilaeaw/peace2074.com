@@ -182,9 +182,9 @@
           <q-spinner color="primary" size="28px" />
         </div>
 
-        <q-list v-else-if="recentPosts.length" separator class="q-mt-sm">
+        <q-list v-else-if="allPostsSorted.length" separator class="q-mt-sm">
           <q-item
-            v-for="post in recentPosts"
+            v-for="post in allPostsSorted"
             :key="post.slug"
             clickable
             @click="goToBlogPost(post.slug)"
@@ -225,7 +225,14 @@ const aiResponse = ref<string | null>(null)
 const errorMessage = ref<string | null>(null)
 const isLoading = ref(false)
 const history = ref<{ id: string; prompt: string; response: string; ts: number }[]>([])
-const recentPosts = ref<{ slug: string; title: string; excerpt: string; date: string }[]>([])
+type BlogPost = {
+  slug: string
+  title: string
+  excerpt: string
+  date: string
+}
+
+const allPosts = ref<BlogPost[]>([])
 const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
 const RAMADAN_IMPRESSION_KEY = 'ramadan-campaign-last-view'
@@ -248,6 +255,12 @@ const promptExamples = computed<string[]>(() => {
 })
 
 const displayedVerse = ref(inspiringVerses[0])
+
+const allPostsSorted = computed(() => {
+  return [...allPosts.value].sort(
+    (a, b) => new Date(b.date).getTime() - new Date(a.date).getTime()
+  )
+})
 
 const setDailyVerse = () => {
   const now = new Date()
@@ -334,11 +347,32 @@ const formatBlogDate = (date: string) => {
   return new Date(date).toLocaleDateString()
 }
 
-onMounted(() => {
+const loadAllBlogPosts = async () => {
+  blogLoading.value = true
+  try {
+    const res = await fetch('/api/blog', {
+      credentials: 'include',
+    })
+    const data = await res.json()
+    if (data?.ok && Array.isArray(data.posts)) {
+      allPosts.value = data.posts
+    } else {
+      allPosts.value = []
+    }
+  } catch (err) {
+    console.error('[Home] Failed to load blog posts:', err)
+    allPosts.value = []
+  } finally {
+    blogLoading.value = false
+  }
+}
+
+onMounted(async () => {
   setDailyVerse()
   if (promptExamples.value.length > 0) {
     userPrompt.value = promptExamples.value[0]
   }
+  await loadAllBlogPosts()
 });
 
 const currentPromptIndex = ref(0);

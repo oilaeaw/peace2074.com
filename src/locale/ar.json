@@ -373,6 +373,7 @@
       "todoBody": "نضيف قريباً الدردشة الحية والغرف والسجل عبر waelio-messaging.",
       "live": {
         "title": "الدردشة المباشرة",
+        "adminBadge": "مشرف",
         "reconnect": "إعادة الاتصال",
         "anon": "مجهول",
         "users": "المستخدمون المتصلون",
@@ -383,6 +384,10 @@
         "disconnected": "غير متصل",
         "directMessage": "رسالة مباشرة",
         "broadcastMessage": "رسالة للجميع",
+        "loginRequiredToSend": "يرجى تسجيل الدخول لإرسال الرسائل.",
+        "createRoomTitle": "إنشاء غرفة جديدة",
+        "roomNameLabel": "اسم الغرفة",
+        "createRoomAction": "إنشاء",
         "sendDirect": "إرسال للمستخدم",
         "send": "إرسال"
       }

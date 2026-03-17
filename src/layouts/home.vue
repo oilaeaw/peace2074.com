@@ -62,7 +62,10 @@ const { locale, t } = useI18n({ useScope: "global" });
 
 declare const __APP_VERSION__: string;
 
-const appVersion = __APP_VERSION__ || "2.9";
+const appVersionRaw = __APP_VERSION__ || "0.0.0";
+const appVersion = appVersionRaw.split('.').length >= 2
+  ? appVersionRaw.split('.').slice(-2).join('.')
+  : appVersionRaw;
 const currentYear = new Date().getFullYear();
 
 const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
