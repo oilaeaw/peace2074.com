@@ -55,49 +55,6 @@
         </p>
       </q-card>
 
-      <q-banner v-if="showRamadanCampaign" class="ramadan-banner q-pa-md">
-        <div class="ramadan-eyebrow">{{ t('pages.home.ramadan.badge') }}</div>
-        <div class="ramadan-title">{{ t('pages.home.ramadan.title') }}</div>
-        <div class="ramadan-body">{{ t('pages.home.ramadan.body') }}</div>
-
-        <div v-if="dailyRamadanPrompt" class="ramadan-prompt q-mt-sm">
-          <div class="ramadan-prompt-label">{{ t('pages.home.ramadan.todayPrompt') }}</div>
-          <div>{{ dailyRamadanPrompt }}</div>
-        </div>
-
-        <div class="ramadan-actions q-mt-md">
-          <q-btn
-            color="primary"
-            unelevated
-            size="sm"
-            :label="t('pages.home.ramadan.ctaQuran')"
-            @click="onRamadanCta('quran')"
-          />
-          <q-btn
-            color="secondary"
-            outline
-            size="sm"
-            :label="t('pages.home.ramadan.ctaTasbeeh')"
-            @click="onRamadanCta('tasbeeh')"
-          />
-          <q-btn
-            color="primary"
-            flat
-            size="sm"
-            :label="t('pages.home.ramadan.ctaChat')"
-            @click="onRamadanCta('chat')"
-          />
-          <q-btn
-            v-if="dailyRamadanPrompt"
-            flat
-            size="sm"
-            icon="auto_awesome"
-            :label="t('pages.home.ramadan.usePrompt')"
-            @click="applyRamadanPrompt"
-          />
-        </div>
-      </q-banner>
-
       <q-banner v-if="showEidCelebration" class="eid-banner q-pa-md">
         <div class="eid-confetti" aria-hidden="true">
           <span
@@ -225,7 +182,6 @@ import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
 import { sendDeepSeekChat } from '@/stores/services'
-import { getRamadanPrompt, isRamadanCampaignActive, ramadanCampaign } from '@/app/config/ramadan'
 import inspiringVerses from '@/app/data/verses.json'
 import dailyMessagesData from '@/app/data/daily-messages.json'
 
@@ -248,7 +204,6 @@ type BlogPost = {
 const allPosts = ref<BlogPost[]>([])
 const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
-const RAMADAN_IMPRESSION_KEY = 'ramadan-campaign-last-view'
 
 const { copy } = useClipboard({ source: aiResponse })
 
@@ -340,18 +295,6 @@ const clearHistory = () => { history.value = [] }
 
 const reusePrompt = (item: any) => { userPrompt.value = item.prompt }
 
-const onRamadanCta = (target: string) => {
-  if (target === 'chat') {
-    userPrompt.value = dailyRamadanPrompt.value
-  } else {
-    router.push(`/${target}`)
-  }
-}
-
-const applyRamadanPrompt = () => {
-  userPrompt.value = dailyRamadanPrompt.value
-}
-
 const goToBlogPost = (slug: string) => {
   router.push(`/blog/${slug}`)
 }
@@ -393,11 +336,6 @@ const currentPromptIndex = ref(0);
 const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`;
 
 const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value);
-const isRamadanPreview = computed(() => String(router.currentRoute.value?.query?.campaign || '').toLowerCase() === 'ramadan');
-const showRamadanCampaign = computed(() => {
-  if (isRamadanCampaignActive()) return true
-  return Boolean(import.meta.env.DEV && isRamadanPreview.value)
-});
 
 const EID_START_AT = Date.parse('2026-03-20T00:00:00.000Z')
 const EID_END_AT = Date.parse('2026-03-22T23:59:59.999Z')
@@ -417,10 +355,6 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   },
 }))
 
-const dailyRamadanPrompt = computed(() => {
-  if (!showRamadanCampaign.value) return ''
-  return getRamadanPrompt(String(locale.value || 'en'))
-})
 </script>
 
 <style scoped lang="scss">
@@ -568,55 +502,6 @@ const dailyRamadanPrompt = computed(() => {
     color: #3b4d7a;
     text-decoration: underline;
   }
-}
-
-.ramadan-banner {
-  background: #fce4ec;
-  border: 1px solid #f8bbd0;
-  color: #d81b60;
-  border-radius: 16px;
-  margin-top: 1.5rem;
-  animation: slideUp 0.8s ease-out 0.6s both;
-}
-
-.ramadan-eyebrow {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.1em;
-  opacity: 0.9;
-  margin-bottom: 0.5rem;
-}
-
-.ramadan-title {
-  font-size: 1.5rem;
-  font-weight: 700;
-  margin-bottom: 0.75rem;
-}
-
-.ramadan-body {
-  font-size: 1rem;
-  line-height: 1.6;
-  opacity: 0.95;
-}
-
-.ramadan-prompt {
-  background: #f3e5f5;
-  border: 1px solid #e1bee7;
-  padding: 1rem;
-  border-radius: 8px;
-}
-
-.ramadan-prompt-label {
-  font-weight: 600;
-  margin-bottom: 0.5rem;
-  font-size: 0.9rem;
-}
-
-.ramadan-actions {
-  display: flex;
-  gap: 0.5rem;
-  flex-wrap: wrap;
 }
 
 .eid-banner {
@@ -776,19 +661,6 @@ const dailyRamadanPrompt = computed(() => {
   &:hover {
     color: #9ca9d0;
   }
-}
-
-:deep(body.body--dark) .ramadan-banner,
-.body--dark .ramadan-banner {
-  background: #3d2633;
-  border-color: #4d3643;
-  color: #f8bbd0;
-}
-
-:deep(body.body--dark) .ramadan-prompt,
-.body--dark .ramadan-prompt {
-  background: #2d1f29;
-  border-color: #3d2f39;
 }
 
 :deep(body.body--dark) .eid-banner,
