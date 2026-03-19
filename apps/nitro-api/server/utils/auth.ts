@@ -1,5 +1,5 @@
 import crypto from 'node:crypto'
-import { H3Event, createError, deleteCookie, getCookie, setCookie } from 'h3'
+import { H3Event, createError, deleteCookie, getCookie, getHeader, setCookie } from 'h3'
 
 const COOKIE_NAME = 'waelio_session'
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days
@@ -63,10 +63,15 @@ export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp
     const { secret } = requireSecrets({ needPasscode: false })
     const exp = Date.now() + COOKIE_MAX_AGE * 1000
     const token = sign({ ...payload, exp }, secret)
+
+    const origin = (getHeader(event, 'origin') || '').toLowerCase()
+    const isCapacitorLikeOrigin = origin.startsWith('capacitor:') || origin.startsWith('ionic:') || origin.startsWith('app:')
+    const useCrossSiteCookie = process.env.NODE_ENV === 'production' || isCapacitorLikeOrigin
+
     setCookie(event, COOKIE_NAME, token, {
         httpOnly: true,
-        sameSite: 'lax',
-        secure: process.env.NODE_ENV === 'production',
+        sameSite: useCrossSiteCookie ? 'none' : 'lax',
+        secure: useCrossSiteCookie,
         path: '/',
         maxAge: COOKIE_MAX_AGE,
     })
@@ -74,7 +79,15 @@ export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp
 }
 
 export function clearSessionCookie(event: H3Event) {
-    deleteCookie(event, COOKIE_NAME, { path: '/' })
+    const origin = (getHeader(event, 'origin') || '').toLowerCase()
+    const isCapacitorLikeOrigin = origin.startsWith('capacitor:') || origin.startsWith('ionic:') || origin.startsWith('app:')
+    const useCrossSiteCookie = process.env.NODE_ENV === 'production' || isCapacitorLikeOrigin
+
+    deleteCookie(event, COOKIE_NAME, {
+        path: '/',
+        sameSite: useCrossSiteCookie ? 'none' : 'lax',
+        secure: useCrossSiteCookie,
+    })
 }
 
 export function readSession(event: H3Event): SessionPayload | null {

@@ -12,7 +12,7 @@ export type RamadanCampaignConfig = {
 
 export const ramadanCampaign: RamadanCampaignConfig = {
     id: 'ramadan-2026',
-    // Approximate Gregorian range for Ramadan 2026 (inclusive)
+    // Ramadan 2026 campaign window (inclusive)
     startsAt: '2026-02-17T00:00:00.000Z',
     endsAt: '2026-03-19T23:59:59.999Z',
     ctaRoutes: {

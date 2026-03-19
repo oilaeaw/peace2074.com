@@ -23,19 +23,27 @@ const sendingReset = ref(false)
 // Compute Nitro API base URL
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
+const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location
+    const configured = env.VITE_NITRO_BASE
+
+    // Explicit override always wins
+    if (configured && typeof configured === 'string') {
+      return configured.replace(/\/$/, '')
+    }
+
+    // Capacitor runtime is cross-origin from hosted API
+    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+      return DEFAULT_MOBILE_API_BASE
+    }
+
     if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      // Dev: check for override, otherwise use local Nitro
-      const configured = env.VITE_NITRO_BASE
-      if (configured && typeof configured === 'string') {
-        return configured.replace(/\/$/, '')
-      }
       return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`
     }
-    // Production: always use /api prefix for Netlify Functions routing
+
     return '/api'
   }
   return '/api'

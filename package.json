@@ -16,17 +16,18 @@
     "typecheck": "vue-tsc --noEmit",
     "prepare": "husky",
     "check:locales": "node --experimental-strip-types scripts/check-locales.ts",
+    "sync:branding": "node scripts/sync-mobile-branding.mjs",
     "test:e2e": "playwright test",
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
     "mobile:sync": "pnpm build && pnpm exec cap sync",
     "mobile:android": "pnpm build && pnpm exec cap sync android && pnpm exec cap open android",
-    "mobile:ios": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
+    "mobile:ios": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
     "ios:open": "pnpm exec cap open ios",
-    "ios:sync": "pnpm exec cap sync ios",
-    "ios:dev": "pnpm exec cap sync ios && pnpm exec cap open ios",
-    "ios:build": "pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
+    "ios:sync": "pnpm sync:branding && pnpm exec cap sync ios",
+    "ios:dev": "pnpm sync:branding && pnpm exec cap sync ios && pnpm exec cap open ios",
+    "ios:build": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",

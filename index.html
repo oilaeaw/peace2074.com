@@ -2,7 +2,8 @@
 <html lang="en">
   <head>
     <meta charset="UTF-8" />
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="icon" type="image/png" href="/logo.png" />
+    <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico" />
     <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
     <link rel="manifest" href="/manifest.webmanifest" />
     <meta
@@ -84,70 +85,70 @@
     </script>
 
     <script>
-      (function () {
-        var base = "https://peace2074.com";
-        var path = (window.location.pathname || "/").replace(/\/$/, "") || "/";
-        var canonical = base + path;
-        var link = document.querySelector('link[rel="canonical"]');
+      ;(function () {
+        var base = 'https://peace2074.com'
+        var path = (window.location.pathname || '/').replace(/\/$/, '') || '/'
+        var canonical = base + path
+        var link = document.querySelector('link[rel="canonical"]')
         if (!link) {
-          link = document.createElement("link");
-          link.setAttribute("rel", "canonical");
-          document.head.appendChild(link);
+          link = document.createElement('link')
+          link.setAttribute('rel', 'canonical')
+          document.head.appendChild(link)
         }
-        link.setAttribute("href", canonical);
+        link.setAttribute('href', canonical)
 
-        var ogUrl = document.querySelector('meta[property="og:url"]');
+        var ogUrl = document.querySelector('meta[property="og:url"]')
         if (!ogUrl) {
-          ogUrl = document.createElement("meta");
-          ogUrl.setAttribute("property", "og:url");
-          document.head.appendChild(ogUrl);
+          ogUrl = document.createElement('meta')
+          ogUrl.setAttribute('property', 'og:url')
+          document.head.appendChild(ogUrl)
         }
-        ogUrl.setAttribute("content", canonical);
-      })();
+        ogUrl.setAttribute('content', canonical)
+      })()
     </script>
 
     <!-- Google Analytics (disabled on localhost to avoid noisy blocked-network errors) -->
     <script>
       const isLocalhost =
-        typeof window !== "undefined" &&
-        ["localhost", "127.0.0.1"].includes(window.location.hostname);
+        typeof window !== 'undefined' &&
+        ['localhost', '127.0.0.1'].includes(window.location.hostname)
 
-      window.dataLayer = window.dataLayer || [];
+      window.dataLayer = window.dataLayer || []
       function gtag() {
-        dataLayer.push(arguments);
+        dataLayer.push(arguments)
       }
 
       if (!isLocalhost) {
-        const gaScript = document.createElement("script");
-        gaScript.async = true;
+        const gaScript = document.createElement('script')
+        gaScript.async = true
         gaScript.src =
-          "https://www.googletagmanager.com/gtag/js?id=G-XN9FGVQBKX";
-        document.head.appendChild(gaScript);
+          'https://www.googletagmanager.com/gtag/js?id=G-XN9FGVQBKX'
+        document.head.appendChild(gaScript)
 
-        gtag("js", new Date());
+        gtag('js', new Date())
 
         // Default consent to denied
-        gtag("consent", "default", {
-          ad_user_data: "denied",
-          ad_personalization: "denied",
-          ad_storage: "denied",
-          analytics_storage: "denied",
-        });
+        gtag('consent', 'default', {
+          ad_user_data: 'denied',
+          ad_personalization: 'denied',
+          ad_storage: 'denied',
+          analytics_storage: 'denied',
+        })
 
-        gtag("config", "G-XN9FGVQBKX");
+        gtag('config', 'G-XN9FGVQBKX')
 
         // Function to grant all consent
         window.allConsentGranted = function () {
-          gtag("consent", "update", {
-            ad_user_data: "granted",
-            ad_personalization: "granted",
-            ad_storage: "granted",
-            analytics_storage: "granted",
-          });
-        };
+          gtag('consent', 'update', {
+            ad_user_data: 'granted',
+            ad_personalization: 'granted',
+            ad_storage: 'granted',
+            analytics_storage: 'granted',
+          })
+        }
       } else {
         // Keep API shape for callers in local development.
-        window.allConsentGranted = function () {};
+        window.allConsentGranted = function () {}
       }
     </script>
   </head>

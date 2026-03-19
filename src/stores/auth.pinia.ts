@@ -4,6 +4,39 @@ import { CaslActionE, CaslSubjectE } from '@shared/types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { useQuasar } from 'quasar'
 
+const env = (import.meta as any)?.env || {}
+const DEFAULT_NITRO_PORT = 3000
+const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
+
+function computeNitroBase() {
+  if (typeof window !== 'undefined') {
+    const { protocol, hostname } = window.location
+    const configured = env.VITE_NITRO_BASE
+
+    if (configured && typeof configured === 'string') {
+      return configured.replace(/\/$/, '')
+    }
+
+    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+      return DEFAULT_MOBILE_API_BASE
+    }
+
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`
+    }
+
+    return '/api'
+  }
+
+  return '/api'
+}
+
+function resolveNitroUrl(path: string) {
+  const base = computeNitroBase()
+  const normalized = path.startsWith('/') ? path : `/${path}`
+  return `${base}${normalized}`
+}
+
 // Central CASL ability instance
 const ability = createMongoAbility()
 
@@ -76,7 +109,7 @@ export const useAuthStore = defineStore('auth', () => {
     // Call server to clear http-only auth cookie
     try {
       if (isClient)
-        await fetch('/api/auth/logout', { method: 'POST', credentials: 'include' })
+        await fetch(resolveNitroUrl('/auth/logout'), { method: 'POST', credentials: 'include' })
     }
     catch { }
     _user.value = null

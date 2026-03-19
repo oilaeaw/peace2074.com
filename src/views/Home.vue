@@ -98,6 +98,19 @@
         </div>
       </q-banner>
 
+      <q-banner v-if="showEidCelebration" class="eid-banner q-pa-md">
+        <div class="eid-confetti" aria-hidden="true">
+          <span
+            v-for="piece in confettiPieces"
+            :key="piece.id"
+            class="confetti-piece"
+            :style="piece.style"
+          />
+        </div>
+        <div class="eid-title">✨ Eid Mubarak ✨</div>
+        <div class="eid-body">May Allah accept your Ramadan and bless your Eid.</div>
+      </q-banner>
+
       <q-card class="ai-card q-pa-md q-mt-lg">
         <div class="ai-header">
           <div>
@@ -381,7 +394,29 @@ const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset
 
 const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value);
 const isRamadanPreview = computed(() => String(router.currentRoute.value?.query?.campaign || '').toLowerCase() === 'ramadan');
-const showRamadanCampaign = computed(() => isRamadanCampaignActive() || isRamadanPreview.value);
+const showRamadanCampaign = computed(() => {
+  if (isRamadanCampaignActive()) return true
+  return Boolean(import.meta.env.DEV && isRamadanPreview.value)
+});
+
+const EID_START_AT = Date.parse('2026-03-20T00:00:00.000Z')
+const EID_END_AT = Date.parse('2026-03-22T23:59:59.999Z')
+
+const showEidCelebration = computed(() => {
+  const now = Date.now()
+  return Number.isFinite(EID_START_AT) && Number.isFinite(EID_END_AT) && now >= EID_START_AT && now <= EID_END_AT
+})
+
+const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
+  id: `c-${idx}`,
+  style: {
+    left: `${5 + (idx * 5)}%`,
+    backgroundColor: ['#ffca28', '#ab47bc', '#42a5f5', '#66bb6a', '#ef5350'][idx % 5],
+    animationDelay: `${(idx % 6) * 0.2}s`,
+    animationDuration: `${2.6 + (idx % 4) * 0.35}s`,
+  },
+}))
+
 const dailyRamadanPrompt = computed(() => {
   if (!showRamadanCampaign.value) return ''
   return getRamadanPrompt(String(locale.value || 'en'))
@@ -584,6 +619,59 @@ const dailyRamadanPrompt = computed(() => {
   flex-wrap: wrap;
 }
 
+.eid-banner {
+  position: relative;
+  overflow: hidden;
+  background: linear-gradient(135deg, #fff9c4, #ffe082);
+  border: 1px solid #ffd54f;
+  color: #6d4c41;
+  border-radius: 16px;
+  margin-top: 1rem;
+}
+
+.eid-title {
+  position: relative;
+  z-index: 1;
+  font-size: 1.4rem;
+  font-weight: 700;
+}
+
+.eid-body {
+  position: relative;
+  z-index: 1;
+  margin-top: 0.35rem;
+  font-size: 0.98rem;
+}
+
+.eid-confetti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: -14px;
+  width: 8px;
+  height: 14px;
+  border-radius: 2px;
+  opacity: 0.85;
+  animation-name: confettiFall;
+  animation-timing-function: linear;
+  animation-iteration-count: infinite;
+}
+
+@keyframes confettiFall {
+  0% {
+    transform: translateY(-16px) rotate(0deg);
+    opacity: 0.95;
+  }
+  100% {
+    transform: translateY(160px) rotate(330deg);
+    opacity: 0.2;
+  }
+}
+
 .ai-card {
   background: #ffffff;
   border: 1px solid #e0e6ed;
@@ -701,6 +789,13 @@ const dailyRamadanPrompt = computed(() => {
 .body--dark .ramadan-prompt {
   background: #2d1f29;
   border-color: #3d2f39;
+}
+
+:deep(body.body--dark) .eid-banner,
+.body--dark .eid-banner {
+  background: linear-gradient(135deg, #4e3b12, #5d4514);
+  border-color: #8d6e22;
+  color: #ffe8a3;
 }
 
 :deep(body.body--dark) .ai-card,
