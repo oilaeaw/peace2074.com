@@ -6,7 +6,7 @@ use_frameworks!
 # workaround to avoid Xcode caching of Pods that requires
 # Product -> Clean Build Folder after new Cordova plugins installed
 # Requires CocoaPods 1.6 or newer
-install! 'cocoapods', :disable_input_output_paths => true
+install! 'cocoapods', :disable_input_output_paths => false
 
 def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios'
@@ -21,92 +21,70 @@ end
 
 post_install do |installer|
   assertDeploymentTarget(installer)
-  
-  # Enable modules to fix @import warnings in framework headers
+
+  # Fix intermittent header resolution error:
+  # 'Cordova/CDVConfigParser.h' file not found from CAPInstanceDescriptor.h
+  # Keep public header independent of Cordova includes; import in .m instead.
+  capacitor_instance_header = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.h', __dir__)).first
+  capacitor_instance_impl = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.m', __dir__)).first
+
+  if capacitor_instance_header && File.exist?(capacitor_instance_header)
+    header_text = File.read(capacitor_instance_header)
+    if header_text.include?('#import <Cordova/CDVConfigParser.h>')
+      header_text = header_text.gsub('#import <Cordova/CDVConfigParser.h>', '@class CDVConfigParser;')
+      File.write(capacitor_instance_header, header_text)
+      puts "✓ Patched CAPInstanceDescriptor.h to forward-declare CDVConfigParser"
+    end
+  end
+
+  if capacitor_instance_impl && File.exist?(capacitor_instance_impl)
+    impl_text = File.read(capacitor_instance_impl)
+    unless impl_text.include?('#import <Cordova/CDVConfigParser.h>')
+      impl_text = impl_text.sub('#import <Capacitor/Capacitor-Swift.h>', "#import <Capacitor/Capacitor-Swift.h>\n#import <Cordova/CDVConfigParser.h>")
+      File.write(capacitor_instance_impl, impl_text)
+      puts "✓ Added CDVConfigParser import to CAPInstanceDescriptor.m"
+    end
+  end
+
+  # CapacitorCordova uses APIs that trigger deprecation warnings on newer iOS SDKs
+  # (e.g. WKProcessPool in iOS 15+). Keep app builds clean without patching vendored sources.
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
-      config.build_settings['CLANG_ENABLE_MODULES'] = 'YES'
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+    end
+
+    next unless target.name == 'CapacitorCordova'
+
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS'] = 'NO'
+      config.build_settings['CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS'] = 'NO'
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      cflags = config.build_settings['OTHER_CFLAGS'] || '$(inherited)'
+      cflags = Array(cflags)
+      unless cflags.include?('-Wno-deprecated-declarations')
+        cflags << '-Wno-deprecated-declarations'
+      end
+      config.build_settings['OTHER_CFLAGS'] = cflags
     end
   end
-  
-  # Fix "Run script build phase will be run during every build" warning
-  # Set alwaysOutOfDate to suppress dependency analysis warnings
-  installer.pods_project.targets.each do |target|
-    target.build_phases.each do |build_phase|
-      if build_phase.respond_to?(:always_out_of_date) && build_phase.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
-        build_phase.always_out_of_date = "1"
+
+  installer.aggregate_targets.each do |aggregate_target|
+    user_project = aggregate_target.user_project
+    next unless user_project
+
+    user_project.native_targets.each do |native_target|
+      native_target.build_configurations.each do |config|
+        config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      end
+
+      native_target.build_phases.each do |build_phase|
+        next unless build_phase.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+        next unless build_phase.name&.start_with?('[CP]')
+
+        build_phase.always_out_of_date = '0'
       end
     end
-  end
-  
-  # Fix malformed imports in Capacitor framework headers
-  capacitor_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor', __dir__)
-  
-  if Dir.exist?(capacitor_path)
-    Dir.glob("#{capacitor_path}/*.{h,m}").each do |file_path|
-      text = File.read(file_path)
-      original_text = text.dup
-      
-      # Replace @import with #import for framework headers
-      text = text.gsub(/@import\s+UIKit;/, '#import <UIKit/UIKit.h>')
-      text = text.gsub(/@import\s+Cordova;/, '#import <Cordova/CDVConfigParser.h>')
-      text = text.gsub(/@import\s+Foundation;/, '#import <Foundation/Foundation.h>')
-      text = text.gsub(/@import\s+WebKit;/, '#import <WebKit/WebKit.h>')
-      
-      # Fix incorrect Cordova.h import (doesn't exist, use CDVConfigParser.h)
-      text = text.gsub(/#import\s+<Cordova\/Cordova\.h>/, '#import <Cordova/CDVConfigParser.h>')
-      
-      # Fix missing brackets/quotes in #import statements
-      # Example: #import CAPPluginMethod.h -> #import <Capacitor/CAPPluginMethod.h>
-      text = text.gsub(/#import\s+([A-Z][A-Za-z0-9]+\.h)/, '#import <Capacitor/\1>')
-      
-      # Fix double-quoted Capacitor imports to use angle brackets
-      text = text.gsub(/#import "CAP([^"]+)"/, '#import <Capacitor/CAP\1>')
-      
-      # Replace smart/curly quotes with straight quotes
-      text = text.gsub(/[""]/, '"')
-      text = text.gsub(/['']/, "'")
-      
-      if text != original_text
-        File.write(file_path, text)
-        puts "✓ Fixed imports in #{File.basename(file_path)}"
-      end
-    end
-  end
-  
-  # Fix specific missing import in CAPBridgeViewController+CDVScreenOrientationDelegate.h
-  screen_orientation_file = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeViewController+CDVScreenOrientationDelegate.h', __dir__)
-  if File.exist?(screen_orientation_file)
-    text = File.read(screen_orientation_file)
-    if text.include?('<CDVScreenOrientationDelegate>') && !text.include?('CDVScreenOrientationDelegate.h')
-      # Add missing import after the Capacitor-Swift.h import
-      text = text.gsub(/(#import <Capacitor\/Capacitor-Swift\.h>)/, "\\1\n#import <Cordova/CDVScreenOrientationDelegate.h>")
-      File.write(screen_orientation_file, text)
-      puts "✓ Added CDVScreenOrientationDelegate import"
-    end
-  end
-  
-  # Fix double-quoted imports and smart quotes in CapacitorCordova framework headers
-  capacitor_cordova_path = File.expand_path('../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public', __dir__)
-  
-  if Dir.exist?(capacitor_cordova_path)
-    Dir.glob("#{capacitor_cordova_path}/*.{h,m}").each do |file_path|
-      text = File.read(file_path)
-      original_text = text.dup
-      
-      # Replace double-quoted CDV imports with angle-bracketed ones
-      text = text.gsub(/#import "CDV([^"]+)"/, '#import <Cordova/CDV\1>')
-      
-      # Replace smart/curly double quotes with straight quotes
-      text = text.gsub(/[""]/, '"')
-      
-      # Replace smart/curly single quotes with straight apostrophes
-      text = text.gsub(/['']/, "'")
-      
-      if text != original_text
-        File.write(file_path, text)
-        puts "✓ Fixed quotes in #{File.basename(file_path)}"
-      end
-    end
+
+    user_project.save
   end
 end

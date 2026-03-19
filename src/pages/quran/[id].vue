@@ -364,6 +364,20 @@ const hoverWidgetPosition = ref({ top: 0, left: 0 })
 const lastDoubleClickTime = ref(0)
 const DOUBLE_CLICK_DEBOUNCE = 500 // ms
 
+function isTouchPointerDevice() {
+  if (typeof window === 'undefined') return false
+  return (
+    window.matchMedia?.('(pointer: coarse)').matches ||
+    'ontouchstart' in window ||
+    (navigator as any)?.maxTouchPoints > 0
+  )
+}
+
+function shouldDockAyahActionCard() {
+  if (typeof window === 'undefined') return false
+  return isTouchPointerDevice() && window.innerWidth <= 640
+}
+
 // TTS (Text-to-Speech) state
 const READER_MODE_KEY = 'quran-reader-mode'
 const readerModeStore = useStorageRef<'audio' | 'tts'>(READER_MODE_KEY, 'audio')
@@ -1247,7 +1261,13 @@ async function restorePlaybackPosition() {
 }
 
 function togglePauseResume() {
-  if (!audioEl.value) return
+  if (!audioEl.value) {
+    const verse = Number(hoverWidgetVerse.value || 0)
+    if (verse > 0) {
+      void startAudioRecitation(verse - 1, { withIntro: true })
+    }
+    return
+  }
   if (audioEl.value.paused) {
     audioEl.value.play()
     isPlayingAudio.value = true
@@ -1255,6 +1275,25 @@ function togglePauseResume() {
     audioEl.value.pause()
     isPlayingAudio.value = false
   }
+}
+
+function handleVerseTap(event: MouseEvent, verse: number) {
+  if (!isTouchPointerDevice()) return
+
+  event.preventDefault()
+  event.stopPropagation()
+
+  if (hoverWidgetVisible.value && hoverWidgetVerse.value === verse) {
+    hideHoverWidget()
+    return
+  }
+
+  hoverWidgetPosition.value = {
+    top: event.clientY,
+    left: event.clientX
+  }
+  hoverWidgetVerse.value = verse
+  hoverWidgetVisible.value = true
 }
 
 // Hover widget functions
@@ -1664,6 +1703,16 @@ function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
 }
 
 function getHoverWidgetStyle() {
+  if (shouldDockAyahActionCard()) {
+    return {
+      top: 'auto',
+      left: '50%',
+      right: 'auto',
+      bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
+      transform: 'translateX(-50%)'
+    }
+  }
+
   const WIDGET_WIDTH = 260
   const WIDGET_HEIGHT = 50
   const PADDING = 12
@@ -2144,6 +2193,7 @@ watch(() => route.params.mode, (newMode) => {
             :id="getVerseElementId(a.verse)"
             class="verse-row q-mb-md"
             :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            @click="handleVerseTap($event, a.verse)"
             @dblclick="handleVerseDoubleClick($event, a.verse)"
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
@@ -2207,6 +2257,7 @@ watch(() => route.params.mode, (newMode) => {
                   :id="getVerseElementId(a.verse)"
                   class="mushaf-ayah-inline"
                   :class="{ 'is-selected': isVerseSelected(a.verse) }"
+                  @click="handleVerseTap($event, a.verse)"
                 >
                   <template v-if="wordTimings[a.verse - 1]?.length">
                     <template v-for="(word, wIdx) in a.text.split(' ')" :key="`m-${a.verse}-${wIdx}`">
@@ -2232,6 +2283,7 @@ watch(() => route.params.mode, (newMode) => {
             :id="getVerseElementId(a.verse)"
             class="verse-paragraph"
             :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            @click="handleVerseTap($event, a.verse)"
             @dblclick="handleVerseDoubleClick($event, a.verse)"
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
@@ -2276,69 +2328,55 @@ watch(() => route.params.mode, (newMode) => {
       <Teleport to="body">
         <Transition name="fade">
           <div
-            v-if="hoverWidgetVisible && audioEl && currentAyahIndex >= 0"
+            v-if="hoverWidgetVisible && hoverWidgetVerse !== null"
             class="audio-hover-widget"
             :style="getHoverWidgetStyle()"
             @mouseleave="hideHoverWidget"
           >
-            <div class="hover-widget-content">
-              <q-btn
-                round
-                dense
-                :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
-                color="primary"
-                @click="togglePauseResume"
-                :title="isPlayingAudio ? t('pages.quran.pause') : t('pages.quran.play')"
-              />
-              <q-btn
-                round
-                dense
-                icon="replay"
-                color="secondary"
-                @click="restartFromVerse(hoverWidgetVerse!)"
-                :title="t('pages.quran.restart') || 'Restart verse'"
-              />
-              <q-btn
-                round
-                dense
-                :icon="isVerseBookmarked(hoverWidgetVerse!) ? 'star' : 'star_outline'"
-                color="accent"
-                @click="bookmarkVerse(hoverWidgetVerse!)"
-                :title="t('pages.quran.bookmarks.add', { verse: hoverWidgetVerse })"
-              />
-              <q-btn
-                round
-                dense
-                icon="share"
-                color="teal"
-                @click="shareHoverVerse"
-                :title="`Share ${currentSuraId}:${hoverWidgetVerse}`"
-              />
-              <q-btn
-                round
-                dense
-                icon="arrow_upward"
-                color="info"
-                @click="scrollToTop"
-                :title="t('pages.quran.scrollToTop') || 'Scroll to top'"
-              />
-              <q-btn
-                round
-                dense
-                icon="home"
-                color="grey"
-                @click="goHome"
-                :title="t('appShell.nav.home') || 'Home'"
-              />
-              <q-btn
-                round
-                dense
-                flat
-                icon="close"
-                size="sm"
-                @click="hideHoverWidget"
-              />
-            </div>
+            <q-card class="ayah-action-card" flat bordered>
+              <q-card-actions align="around" class="ayah-action-buttons q-pa-sm">
+                <q-btn
+                  round
+                  dense
+                  :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
+                  color="primary"
+                  @click="togglePauseResume"
+                  :title="isPlayingAudio ? t('pages.quran.pause') : t('pages.quran.play')"
+                />
+                <q-btn
+                  round
+                  dense
+                  icon="replay"
+                  color="secondary"
+                  @click="restartFromVerse(hoverWidgetVerse!)"
+                  :title="t('pages.quran.restart') || 'Restart verse'"
+                />
+                <q-btn
+                  round
+                  dense
+                  :icon="isVerseBookmarked(hoverWidgetVerse!) ? 'star' : 'star_outline'"
+                  color="accent"
+                  @click="bookmarkVerse(hoverWidgetVerse!)"
+                  :title="t('pages.quran.bookmarks.add', { verse: hoverWidgetVerse })"
+                />
+                <q-btn
+                  round
+                  dense
+                  icon="share"
+                  color="teal"
+                  @click="shareHoverVerse"
+                  :title="`Share ${currentSuraId}:${hoverWidgetVerse}`"
+                />
+                <q-btn
+                  round
+                  dense
+                  icon="close"
+                  color="grey-7"
+                  @click="hideHoverWidget"
+                  :title="t('common.close') || 'Close'"
+                />
+              </q-card-actions>
+            </q-card>
           </div>
         </Transition>
       </Teleport>
@@ -2730,18 +2768,21 @@ watch(() => route.params.mode, (newMode) => {
 .audio-hover-widget {
   position: fixed;
   z-index: 9999;
-  background: rgba(255, 255, 255, 0.98);
-  border-radius: 12px;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
-  padding: 12px 16px;
-  backdrop-filter: blur(8px);
+  backdrop-filter: blur(6px);
   pointer-events: auto;
+  max-width: min(94vw, 380px);
 }
 
-.hover-widget-content {
+.ayah-action-card {
+  border-radius: 14px;
+  background: rgba(255, 255, 255, 0.97);
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.2);
+}
+
+.ayah-action-buttons {
   display: flex;
   align-items: center;
-  gap: 8px;
+  gap: 6px;
 }
 
 .fade-enter-active,

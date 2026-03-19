@@ -252,7 +252,6 @@ const toggleBookmark = async (suraId: number, event: Event) => {
       $q.dialog({
         title: t('pages.quran.bookmarks.confirmRemove') || 'Remove Bookmark?',
         message: t('pages.quran.bookmarks.confirmRemoveMessage') || 'Are you sure you want to remove this bookmark?',
-        cancel: true,
         persistent: false,
         ok: {
           label: t('pages.blog.editor.delete') || 'Remove',
