@@ -16,6 +16,24 @@ type BlogSeedPost = {
     updatedAt?: string
 }
 
+function buildSlugVariants(slug?: string) {
+    const raw = String(slug || '').trim()
+    if (!raw) return []
+
+    const variants = new Set<string>([
+        raw,
+        raw.toLowerCase(),
+        raw.replace(/\s+/g, '-'),
+        raw.toLowerCase().replace(/\s+/g, '-'),
+        raw.replace(/-/g, ' '),
+        raw.toLowerCase().replace(/-/g, ' '),
+        `${raw} `,
+        `${raw.toLowerCase()} `,
+    ])
+
+    return [...variants].filter(Boolean)
+}
+
 function loadSeedPosts(): BlogSeedPost[] {
     try {
         // Import the JSON directly so it gets bundled
@@ -35,6 +53,7 @@ export default defineEventHandler(async (event) => {
     const { slug } = query
     const fallbackPosts = loadSeedPosts()
     const normalizedSlug = typeof slug === 'string' ? slug.trim() : undefined
+    const slugVariants = buildSlugVariants(normalizedSlug)
 
     try {
         // 1) Prefer Prisma as primary source
@@ -43,7 +62,16 @@ export default defineEventHandler(async (event) => {
         if (prisma) {
             // Get single post by slug
             if (normalizedSlug) {
-                const post = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+                let post = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+                if (!post && slugVariants.length) {
+                    post = await prisma.blogPost.findFirst({
+                        where: {
+                            slug: {
+                                in: slugVariants,
+                            },
+                        },
+                    })
+                }
                 if (post) {
                     return { ok: true, post, source: 'prisma' }
                 }
@@ -62,9 +90,12 @@ export default defineEventHandler(async (event) => {
         // 2) Fallback to DatoCMS when Prisma has no data or no match
         try {
             if (normalizedSlug) {
-                const datocmsPost = await fetchDatoCmsBlogPosts({ slug: normalizedSlug })
-                if (datocmsPost) {
-                    return { ok: true, post: datocmsPost, source: 'datocms' }
+                const candidateSlugs = slugVariants.length ? slugVariants : [normalizedSlug]
+                for (const candidate of candidateSlugs) {
+                    const datocmsPost = await fetchDatoCmsBlogPosts({ slug: candidate })
+                    if (datocmsPost) {
+                        return { ok: true, post: datocmsPost, source: 'datocms' }
+                    }
                 }
             } else {
                 const datocmsPosts = await fetchDatoCmsBlogPosts()
@@ -78,7 +109,10 @@ export default defineEventHandler(async (event) => {
 
         // 3) Seed fallback
         if (normalizedSlug) {
-            const fallbackPost = fallbackPosts.find((post) => String(post?.slug || '') === normalizedSlug)
+            const fallbackPost = fallbackPosts.find((post) => {
+                const postSlug = String(post?.slug || '')
+                return slugVariants.includes(postSlug) || slugVariants.includes(postSlug.trim())
+            })
             if (!fallbackPost) {
                 return { ok: false, error: 'Post not found' }
             }
