@@ -4,6 +4,14 @@ import { getPrisma } from '../utils/prisma'
 import { getVapidConfig } from '../utils/vapid'
 import { createDatoCmsBlogPost } from '../utils/datocms'
 
+function toCanonicalSlug(value: string) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+}
+
 /**
  * POST /api/blog
  * Creates a new blog post (requires authentication)
@@ -23,12 +31,16 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing required fields: title, content, slug' }
         }
 
-        const normalizedSlug = String(slug).trim()
+        const normalizedSlug = toCanonicalSlug(String(slug))
         const normalizedTitle = String(title).trim()
         const normalizedExcerpt = String(excerpt || '').trim()
         const normalizedTags = Array.isArray(tags) ? tags : []
         const normalizedAuthor = user.name || user.id
         const normalizedDate = new Date().toISOString().split('T')[0]
+
+        if (!normalizedSlug) {
+            return { ok: false, error: 'Invalid slug value' }
+        }
 
         const prisma = await getPrisma()
 

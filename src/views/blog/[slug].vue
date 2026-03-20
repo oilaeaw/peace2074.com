@@ -65,6 +65,58 @@ const loading = ref(true);
 const likeCount = ref(0);
 const isLiked = ref(false);
 
+const SEO_BASE_URL = 'https://peace2074.com'
+
+function toCanonicalSlug(value: string) {
+  return String(value || '')
+    .trim()
+    .toLowerCase()
+    .replace(/\s+/g, '-')
+    .replace(/-+/g, '-')
+}
+
+function upsertMetaTag(attr: 'name' | 'property', key: string, content: string) {
+  if (!content || typeof document === 'undefined') return
+  const selector = `meta[${attr}="${key}"]`
+  let tag = document.head.querySelector(selector) as HTMLMetaElement | null
+  if (!tag) {
+    tag = document.createElement('meta')
+    tag.setAttribute(attr, key)
+    document.head.appendChild(tag)
+  }
+  tag.setAttribute('content', content)
+}
+
+function upsertCanonical(href: string) {
+  if (!href || typeof document === 'undefined') return
+  let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  if (!link) {
+    link = document.createElement('link')
+    link.setAttribute('rel', 'canonical')
+    document.head.appendChild(link)
+  }
+  link.setAttribute('href', href)
+}
+
+function applyBlogSeo(postData: any) {
+  if (!postData || typeof document === 'undefined') return
+  const title = String(postData.title || t('pages.blog.title')).trim()
+  const excerpt = String(postData.excerpt || '').trim()
+  const canonicalSlug = toCanonicalSlug(String(postData.slug || route.params.slug || ''))
+  const canonicalUrl = `${SEO_BASE_URL}/blog/${encodeURIComponent(canonicalSlug)}`
+  const docTitle = `${title} | PEACE2074`
+  const description = excerpt || `${title} — ${t('pages.blog.subtitle')}`
+
+  document.title = docTitle
+  upsertMetaTag('name', 'description', description)
+  upsertMetaTag('property', 'og:title', docTitle)
+  upsertMetaTag('property', 'og:description', description)
+  upsertMetaTag('property', 'og:url', canonicalUrl)
+  upsertMetaTag('name', 'twitter:title', docTitle)
+  upsertMetaTag('name', 'twitter:description', description)
+  upsertCanonical(canonicalUrl)
+}
+
 async function loadPost(slug: string) {
   loading.value = true;
   try {
@@ -74,9 +126,19 @@ async function loadPost(slug: string) {
     const data = await res.json();
     if (data.ok && data.post) {
       post.value = data.post;
+      const apiCanonical = String(data.canonicalSlug || '').trim()
+      const routeCanonical = toCanonicalSlug(slug)
+      const targetCanonical = apiCanonical || toCanonicalSlug(String(data.post?.slug || ''))
+
+      if (targetCanonical && targetCanonical !== routeCanonical) {
+        router.replace(`/blog/${encodeURIComponent(targetCanonical)}`)
+      }
+
+      applyBlogSeo(data.post)
       await loadLikes(slug);
     } else {
       post.value = null;
+      document.title = `${t('pages.blog.notFound')} | PEACE2074`
     }
   } catch (err) {
     console.error('[Blog Detail] Load error:', err);
@@ -147,7 +209,7 @@ function formatDate(date: string) {
 }
 
 onMounted(() => {
-  const slug = String(route.params.slug || "");
+  const slug = decodeURIComponent(String(route.params.slug || ""));
   if (slug) {
     loadPost(slug);
   }
@@ -155,7 +217,7 @@ onMounted(() => {
 
 watch(() => route.params.slug, (newSlug) => {
   if (newSlug) {
-    loadPost(String(newSlug));
+    loadPost(decodeURIComponent(String(newSlug)));
   }
 });
 </script>

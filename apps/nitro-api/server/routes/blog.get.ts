@@ -34,6 +34,14 @@ function buildSlugVariants(slug?: string) {
     return [...variants].filter(Boolean)
 }
 
+function toCanonicalSlug(value?: string) {
+    return String(value || '')
+        .trim()
+        .toLowerCase()
+        .replace(/\s+/g, '-')
+        .replace(/-+/g, '-')
+}
+
 function loadSeedPosts(): BlogSeedPost[] {
     try {
         // Import the JSON directly so it gets bundled
@@ -73,7 +81,12 @@ export default defineEventHandler(async (event) => {
                     })
                 }
                 if (post) {
-                    return { ok: true, post, source: 'prisma' }
+                    return {
+                        ok: true,
+                        post,
+                        source: 'prisma',
+                        canonicalSlug: toCanonicalSlug((post as any)?.slug),
+                    }
                 }
             }
 
@@ -94,7 +107,12 @@ export default defineEventHandler(async (event) => {
                 for (const candidate of candidateSlugs) {
                     const datocmsPost = await fetchDatoCmsBlogPosts({ slug: candidate })
                     if (datocmsPost) {
-                        return { ok: true, post: datocmsPost, source: 'datocms' }
+                        return {
+                            ok: true,
+                            post: datocmsPost,
+                            source: 'datocms',
+                            canonicalSlug: toCanonicalSlug((datocmsPost as any)?.slug),
+                        }
                     }
                 }
             } else {
@@ -116,7 +134,12 @@ export default defineEventHandler(async (event) => {
             if (!fallbackPost) {
                 return { ok: false, error: 'Post not found' }
             }
-            return { ok: true, post: fallbackPost, source: 'seed-fallback' }
+            return {
+                ok: true,
+                post: fallbackPost,
+                source: 'seed-fallback',
+                canonicalSlug: toCanonicalSlug((fallbackPost as any)?.slug),
+            }
         }
 
         if (fallbackPosts.length) {
