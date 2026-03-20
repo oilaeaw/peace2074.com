@@ -64,8 +64,8 @@
             :style="piece.style"
           />
         </div>
-        <div class="eid-title">✨ Eid Mubarak ✨</div>
-        <div class="eid-body">May Allah accept your Ramadan and bless your Eid.</div>
+        <div class="eid-title">{{ t('general.greetings.eidMubarak') }}</div>
+        <div class="eid-body">{{ t('general.greetings.englishCustomers') }}</div>
       </q-banner>
 
       <q-card class="ai-card q-pa-md q-mt-lg">

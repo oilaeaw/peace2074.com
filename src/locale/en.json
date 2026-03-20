@@ -493,7 +493,11 @@
     "stop": "Stop",
     "updateAvailable": "A new version is available!",
     "update": "Update Now",
-    "later": "Later"
+    "later": "Later",
+    "greetings": {
+      "eidMubarak": "✨ Eid Mubarak ✨",
+      "englishCustomers": "For our English-speaking customers, we can show a greeting."
+    }
   },
   "intro": {
     "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."

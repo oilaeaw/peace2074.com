@@ -493,7 +493,11 @@
         "stop": "Durdur",
         "updateAvailable": "Yeni bir sürüm mevcut!",
         "update": "Şimdi Güncelle",
-        "later": "Sonra"
+        "later": "Sonra",
+        "greetings": {
+            "eidMubarak": "✨ Bayramınız mübarek olsun ✨",
+            "englishCustomers": "İngilizce konuşan müşterilerimiz için bir selamlama gösterebiliriz."
+        }
     },
     "intro": {
         "desc": "JavaScript meraklısı, Wolf Pack kardeşi, Ducks tutkunu; yeniden kullanılabilirlik ve iyileştirmeler odaklı."

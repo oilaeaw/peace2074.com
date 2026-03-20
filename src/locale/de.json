@@ -458,7 +458,11 @@
     "stop": "Stopp",
     "updateAvailable": "Eine neue Version ist verfügbar!",
     "update": "Jetzt aktualisieren",
-    "later": "Später"
+    "later": "Später",
+    "greetings": {
+      "eidMubarak": "✨ Gesegnetes Eid-Fest ✨",
+      "englishCustomers": "Für unsere englischsprachigen Kundinnen und Kunden können wir eine Begrüßung anzeigen."
+    }
   },
   "intro": {
     "desc": "JavaScript-Enthusiast, Wolf-Pack-Bruder, Enten-Liebhaber — alles über Wiederverwendbarkeit und Verbesserungen."
