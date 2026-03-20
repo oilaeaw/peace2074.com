@@ -27,7 +27,8 @@
     "ios:open": "pnpm exec cap open ios",
     "ios:sync": "pnpm sync:branding && pnpm exec cap sync ios",
     "ios:dev": "pnpm sync:branding && pnpm exec cap sync ios && pnpm exec cap open ios",
-    "ios:build": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios"
+    "ios:build": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
+    "demo:datocms": "node --env-file=.env scripts/demo-datocms-cma.mjs"
   },
   "devDependencies": {
     "@commitlint/cli": "^20.1.0",
