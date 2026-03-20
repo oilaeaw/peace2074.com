@@ -5,7 +5,6 @@ import { initFaLibrary, FontAwesomeIcon } from "@/plugins/font-awesome";
 import pinia from "@/plugins/pinia";
 import i18n from "./i18n";
 import registerQuasar from '@/plugins/quasar'
-import netlifyIdentity from 'netlify-identity-widget'
 import { Dark } from 'quasar'
 import { useLocalStorage } from '@/composables/useUStore'
 import '@/assets/app.scss'
@@ -388,14 +387,30 @@ if (isClient) {
   }
 
   const initNetlifyIdentity = () => {
-    netlifyIdentity.init()
-    // Modal will be injected into document.body by default
+    import('netlify-identity-widget').then(({ default: netlifyIdentity }) => {
+      netlifyIdentity.init()
+      // Modal will be injected into document.body by default
 
-    // Sync auth state with Pinia store
-    netlifyIdentity.on('init', user => {
-      if (user) {
+      // Sync auth state with Pinia store
+      netlifyIdentity.on('init', user => {
+        if (user) {
+          const authStore = (pinia as any)._s.get('auth')
+          if (authStore) {
+            authStore.setUser({
+              id: user.id,
+              email: user.email,
+              username: user.user_metadata?.full_name || user.email?.split('@')[0],
+              role: user.app_metadata?.roles?.[0] || 'user',
+              first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
+              last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
+            })
+          }
+        }
+      })
+
+      netlifyIdentity.on('login', user => {
         const authStore = (pinia as any)._s.get('auth')
-        if (authStore) {
+        if (authStore && user) {
           authStore.setUser({
             id: user.id,
             email: user.email,
@@ -405,30 +420,18 @@ if (isClient) {
             last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
           })
         }
-      }
-    })
+        router.push(getPostLoginPath())
+        netlifyIdentity.close()
+      })
 
-    netlifyIdentity.on('login', user => {
-      const authStore = (pinia as any)._s.get('auth')
-      if (authStore && user) {
-        authStore.setUser({
-          id: user.id,
-          email: user.email,
-          username: user.user_metadata?.full_name || user.email?.split('@')[0],
-          role: user.app_metadata?.roles?.[0] || 'user',
-          first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
-          last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
-        })
-      }
-      router.push(getPostLoginPath())
-      netlifyIdentity.close()
-    })
-
-    netlifyIdentity.on('logout', () => {
-      const authStore = (pinia as any)._s.get('auth')
-      if (authStore) {
-        authStore.logout()
-      }
+      netlifyIdentity.on('logout', () => {
+        const authStore = (pinia as any)._s.get('auth')
+        if (authStore) {
+          authStore.logout()
+        }
+      })
+    }).catch((error) => {
+      console.warn('Netlify Identity initialization skipped', error)
     })
   }
 
