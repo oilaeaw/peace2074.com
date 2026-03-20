@@ -40,7 +40,7 @@ jobs:
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
-          node-version: 22
+          node-version: 22.12.0
           cache: pnpm
 
       - name: Install dependencies
@@ -62,28 +62,49 @@ jobs:
           pnpm version "$RELEASE_TYPE" --no-git-tag-version
 
           VERSION=$(node -e "const fs=require('fs');const pkg=JSON.parse(fs.readFileSync('package.json','utf8'));process.stdout.write(pkg.version)")
+          MAJOR_MINOR=$(node -e "const v='${VERSION}'.split('.');process.stdout.write(v[0]+'.'+v[1])")
+          RELEASE_TAG="v${MAJOR_MINOR}"
 
           node -e "const fs=require('fs');const p='apps/nitro-api/package.json';const pkg=JSON.parse(fs.readFileSync(p,'utf8'));pkg.version='${VERSION}';fs.writeFileSync(p, JSON.stringify(pkg, null, 2)+'\\n');"
 
           git add package.json apps/nitro-api/package.json
           git commit -m "chore(release): v${VERSION}"
-          git tag "v${VERSION}"
+          # Batch release tags at minor level (e.g. v0.3) so patch bumps roll into one stream.
+          git tag -f "${RELEASE_TAG}"
+
+          echo "VERSION=${VERSION}" >> "$GITHUB_ENV"
+          echo "RELEASE_TAG=${RELEASE_TAG}" >> "$GITHUB_ENV"
 
       - name: Push changes
         run: |
-          git push --follow-tags origin ${{ github.ref_name }}
+          git push origin ${{ github.ref_name }}
+          git push origin "${RELEASE_TAG}" --force
 
       - name: Create GitHub Release
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
-          TAG=$(git describe --tags --abbrev=0)
-          # Extract release notes for the current version from CHANGELOG.md
-          awk "/^## ${TAG#v}/,/^## [0-9]/" CHANGELOG.md | sed '1d;$d' > /tmp/release-notes.md
+          TAG="${RELEASE_TAG}"
+          # Extract release notes for the current concrete version from CHANGELOG.md
+          awk "/^## ${VERSION}/,/^## [0-9]/" CHANGELOG.md | sed '1d;$d' > /tmp/release-notes.md
           if [ ! -s /tmp/release-notes.md ]; then
-            echo "Release $TAG" > /tmp/release-notes.md
+            echo "Release ${TAG} (latest: v${VERSION})" > /tmp/release-notes.md
+          else
+            {
+              echo "Latest patch in ${TAG}: v${VERSION}"
+              echo
+              cat /tmp/release-notes.md
+            } > /tmp/release-notes.final.md
+            mv /tmp/release-notes.final.md /tmp/release-notes.md
           fi
-          gh release create "$TAG" \
-            --title "$TAG" \
-            --notes-file /tmp/release-notes.md \
-            --verify-tag
+
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release edit "$TAG" \
+              --title "$TAG" \
+              --notes-file /tmp/release-notes.md
+          else
+            gh release create "$TAG" \
+              --title "$TAG" \
+              --notes-file /tmp/release-notes.md \
+              --verify-tag
+          fi

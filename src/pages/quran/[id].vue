@@ -2831,7 +2831,7 @@ watch(() => route.params.mode, (newMode) => {
   z-index: 9999;
   backdrop-filter: blur(6px);
   pointer-events: auto;
-  max-width: min(94vw, 380px);
+  max-width: min(96vw, 420px);
 }
 
 .ayah-action-card {
@@ -2844,6 +2844,13 @@ watch(() => route.params.mode, (newMode) => {
   display: flex;
   align-items: center;
   gap: 6px;
+  flex-wrap: wrap;
+  justify-content: center;
+}
+
+.ayah-action-buttons :deep(.q-btn) {
+  min-width: 34px;
+  min-height: 34px;
 }
 
 .fade-enter-active,
