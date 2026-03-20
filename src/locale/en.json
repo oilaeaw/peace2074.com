@@ -313,7 +313,9 @@
         "motion": "Reduce motion",
         "motionHint": "Soften animations for calmer interaction.",
         "darkMode": "Dark mode",
-        "darkModeHint": "Switch between light and dark theme."
+        "darkModeHint": "Switch between light and dark theme.",
+        "translation": "Show Quran translation",
+        "translationHint": "Always display translation after Arabic text for transparency."
       },
       "accessibility": {
         "title": "Accessibility",

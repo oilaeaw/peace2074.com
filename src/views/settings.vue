@@ -8,6 +8,7 @@ const DRAWER_OPEN_KEY = "drawer-open-by-default";
 const COMPACT_KEY = "pref-compact-layout";
 const MOTION_KEY = "pref-reduce-motion";
 const AUTOPLAY_KEY = "pref-autoplay-athan";
+const QURAN_TRANSLATION_KEY = "quran-show-translation";
 const NOTIFICATIONS_KEY = "pref-enable-notifications";
 const DARK_MODE_KEY = "pref-dark-mode";
 const FONT_SIZE_KEY = "pref-font-size";
@@ -22,6 +23,7 @@ const drawerOpenByDefault = ref(readDrawerOpenPreference());
 const compactLayout = ref(readCompactPreference());
 const reduceMotion = ref(readReduceMotionPreference());
 const autoPlayAthan = ref(readAutoplayAthanPreference());
+const showQuranTranslation = ref(readQuranTranslationPreference());
 const darkMode = ref(readDarkModePreference());
 const fontSize = ref(readFontSizePreference());
 const highContrast = ref(readHighContrastPreference());
@@ -49,6 +51,11 @@ watch(reduceMotion, (val) => {
 watch(autoPlayAthan, (val) => {
   persistAutoplayPreference(val);
   broadcastAutoplayPreference(val);
+});
+
+watch(showQuranTranslation, (val) => {
+  persistQuranTranslationPreference(val);
+  broadcastQuranTranslationPreference(val);
 });
 
 watch(darkMode, (val) => {
@@ -190,6 +197,27 @@ function broadcastAutoplayPreference(val: boolean) {
   if (typeof window === "undefined") return;
   window.dispatchEvent(
     new CustomEvent("autoplay-athan-changed", { detail: { enabled: val } })
+  );
+}
+
+function readQuranTranslationPreference(): boolean {
+  if (typeof window === "undefined") return true;
+  const stored = window.localStorage.getItem(QURAN_TRANSLATION_KEY);
+  if (stored === null) return true;
+  return stored === "true";
+}
+
+function persistQuranTranslationPreference(val: boolean) {
+  if (typeof window === "undefined") return;
+  window.localStorage.setItem(QURAN_TRANSLATION_KEY, String(val));
+}
+
+function broadcastQuranTranslationPreference(val: boolean) {
+  if (typeof window === "undefined") return;
+  window.dispatchEvent(
+    new CustomEvent("quran-translation-visibility-changed", {
+      detail: { enabled: val },
+    })
   );
 }
 
@@ -524,6 +552,7 @@ async function reloadApp() {
         COMPACT_KEY,
         MOTION_KEY,
         AUTOPLAY_KEY,
+        QURAN_TRANSLATION_KEY,
         NOTIFICATIONS_KEY,
         DARK_MODE_KEY
       ];
@@ -621,6 +650,20 @@ async function reloadApp() {
                 v-model="darkMode"
                 color="primary"
                 :aria-label="t('pages.settings.display.darkMode')"
+              />
+            </div>
+            <q-separator spaced />
+            <div class="setting-row">
+              <div>
+                <div class="text-subtitle1">{{ t("pages.settings.display.translation") }}</div>
+                <div class="text-caption text-grey-6">
+                  {{ t("pages.settings.display.translationHint") }}
+                </div>
+              </div>
+              <q-toggle
+                v-model="showQuranTranslation"
+                color="primary"
+                :aria-label="t('pages.settings.display.translation')"
               />
             </div>
           </q-card-section>

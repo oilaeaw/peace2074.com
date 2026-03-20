@@ -64,6 +64,17 @@ async function fetchJsonSequential(urls: string[]): Promise<any> {
     throw new Error('All API endpoints failed')
 }
 
+function normalizeApiLang(lang: string): string {
+    const raw = String(lang || 'en').trim().toLowerCase().replace('_', '-')
+    const base = raw.split('-')[0] || 'en'
+    const aliasMap: Record<string, string> = {
+        iw: 'he',
+        in: 'id',
+        ji: 'yi',
+    }
+    return aliasMap[base] || base
+}
+
 async function buildLocalData() {
     if (localDataPromise) return localDataPromise
 
@@ -105,17 +116,18 @@ export default function useQ2P() {
 
     async function init(index = 1, lang = 'en') {
         currentLang.value = lang
+        const apiLang = normalizeApiLang(lang)
         try {
             // Try API first (Nitro: /quran/:id, or Waelio: /api/quran?s=ID)
             if (!Number.isNaN(Number(index)) && Number(index) > 0) {
                 const id = Number(index)
                 const payload = await fetchJsonSequential([
                     // Local Nitro API through Vite proxy
-                    `${API_BASE}/api/quran/${id}`,
-                    `/api/quran/${id}`,
+                    `${API_BASE}/api/quran/${id}?lang=${encodeURIComponent(apiLang)}`,
+                    `/api/quran/${id}?lang=${encodeURIComponent(apiLang)}`,
                     // Waelio-style API fallback
-                    `${API_BASE}/api/quran?s=${id}`,
-                    `/api/quran?s=${id}`,
+                    `${API_BASE}/api/quran?s=${id}&lang=${encodeURIComponent(apiLang)}`,
+                    `/api/quran?s=${id}&lang=${encodeURIComponent(apiLang)}`,
                 ])
                 let sura = (payload && (payload.sura || payload)) || null
                 if (Array.isArray(sura)) {

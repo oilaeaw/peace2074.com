@@ -201,7 +201,9 @@
         "motion": "Bewegung reduzieren",
         "motionHint": "Animationen abschwächen für mehr Ruhe.",
         "darkMode": "Dunkler Modus",
-        "darkModeHint": "Wechsel zwischen hellem und dunklem Design."
+        "darkModeHint": "Wechsel zwischen hellem und dunklem Design.",
+        "translation": "Quran-Übersetzung anzeigen",
+        "translationHint": "Die Übersetzung wird zur Transparenz immer nach dem arabischen Text angezeigt."
       },
       "accessibility": {
         "title": "Barrierefreiheit",

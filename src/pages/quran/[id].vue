@@ -3,7 +3,7 @@ import { useRoute, useRouter } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
 import { useQuranTree } from '@/composables/useQuranTree'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, watch, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
@@ -29,6 +29,7 @@ const router = useRouter()
 const q2p = useQ2P()
 const $q = useQuasar()
 const bookmarksStore = useBookmarksStore()
+const QURAN_TRANSLATION_KEY = 'quran-show-translation'
 
 const sura = ref<any | null>(null)
 const loading = ref(true)
@@ -196,6 +197,7 @@ function dismissAnnouncement(event?: MouseEvent | Event) {
 }
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'mushaf')
+const showTranslation = ref(readShowTranslationPreference())
 const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
   set: (mode) => {
@@ -376,6 +378,17 @@ function isTouchPointerDevice() {
 function shouldDockAyahActionCard() {
   if (typeof window === 'undefined') return false
   return isTouchPointerDevice() && window.innerWidth <= 640
+}
+
+function readShowTranslationPreference(): boolean {
+  if (typeof window === 'undefined') return true
+  const raw = window.localStorage.getItem(QURAN_TRANSLATION_KEY)
+  if (raw === null) return true
+  return raw === 'true'
+}
+
+function syncShowTranslationPreference() {
+  showTranslation.value = readShowTranslationPreference()
 }
 
 // TTS (Text-to-Speech) state
@@ -1356,6 +1369,18 @@ function scrollToTop(event?: MouseEvent | Event) {
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
+function pauseFromHover(event?: MouseEvent | Event) {
+  event?.preventDefault()
+  event?.stopPropagation()
+
+  if (readerMode.value === 'tts') {
+    pauseTTS()
+    return
+  }
+
+  pauseAudio()
+}
+
 async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   event.preventDefault()
   event.stopPropagation()
@@ -1749,6 +1774,11 @@ function getHoverWidgetStyle() {
 }
 
 onMounted(async () => {
+  syncShowTranslationPreference()
+  if (typeof window !== 'undefined') {
+    window.addEventListener('quran-translation-visibility-changed', syncShowTranslationPreference)
+  }
+
   // Initialize layout mode from route param if present
   const paramMode = route.params.mode as 'reader' | 'mushaf' | 'native' | undefined
   if (paramMode && ['reader', 'mushaf', 'native'].includes(paramMode)) {
@@ -1804,6 +1834,12 @@ onMounted(async () => {
   }
 })
 
+onUnmounted(() => {
+  if (typeof window !== 'undefined') {
+    window.removeEventListener('quran-translation-visibility-changed', syncShowTranslationPreference)
+  }
+})
+
 watch(() => route.params.id, (newId) => {
   if (!newId) return
   loadSuraById(Number(newId))
@@ -1816,6 +1852,7 @@ watch(() => route.hash, (hash) => {
 
 watch(locale, () => {
   if (!sura.value) return
+  loadSuraById(currentSuraId.value)
   applyQuranDetailTitle(false)
 })
 
@@ -2232,7 +2269,7 @@ watch(() => route.params.mode, (newMode) => {
               </div>
             </div>
             <div class="verse-meta">
-              <div class="verse-translation" v-if="a.translation">
+              <div class="verse-translation" v-if="showTranslation && a.translation">
                 {{ a.translation }}
               </div>
             </div>
@@ -2319,7 +2356,7 @@ watch(() => route.params.mode, (newMode) => {
                 {{ a.text }}
               </template>
             </span>
-            <span v-if="a.translation" class="verse-translation-native">{{ a.translation }}</span>
+            <span v-if="showTranslation && a.translation" class="verse-translation-native">{{ a.translation }}</span>
           </p>
         </article>
       </div>
@@ -2346,6 +2383,14 @@ watch(() => route.params.mode, (newMode) => {
                 <q-btn
                   round
                   dense
+                  icon="pause"
+                  color="orange"
+                  @click="pauseFromHover"
+                  :title="t('pages.quran.pause')"
+                />
+                <q-btn
+                  round
+                  dense
                   icon="replay"
                   color="secondary"
                   @click="restartFromVerse(hoverWidgetVerse!)"
@@ -2366,6 +2411,22 @@ watch(() => route.params.mode, (newMode) => {
                   color="teal"
                   @click="shareHoverVerse"
                   :title="`Share ${currentSuraId}:${hoverWidgetVerse}`"
+                />
+                <q-btn
+                  round
+                  dense
+                  icon="north"
+                  color="indigo"
+                  @click="scrollToTop"
+                  :title="t('pages.quran.scrollToTop')"
+                />
+                <q-btn
+                  round
+                  dense
+                  icon="home"
+                  color="primary"
+                  @click="goHome"
+                  :title="t('general.Home')"
                 />
                 <q-btn
                   round
@@ -3048,30 +3109,26 @@ body.body--dark .verse-translation-native {
 }
 
 @media (orientation: landscape) and (min-width: 768px) {
-  /* Side-by-side Arabic and translation in reader mode */
+  /* Keep translation below Arabic for transparency */
   .verse-row {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 24px;
-    align-items: start;
+    display: block;
   }
   
   .verse-main-row {
-    grid-column: 1;
+    grid-template-columns: max-content minmax(0, 1fr);
   }
   
   .verse-meta {
-    grid-column: 2;
-    margin: 0;
+    margin-top: 8px;
     display: flex;
-    align-items: center;
+    align-items: flex-start;
   }
   
   .verse-translation {
-    padding: 16px;
-    background: rgba(0, 0, 0, 0.02);
-    border-radius: 8px;
-    min-height: 100%;
+    padding: 0;
+    background: transparent;
+    border-radius: 0;
+    min-height: auto;
   }
   
   body.body--dark .verse-translation {

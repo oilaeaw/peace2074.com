@@ -316,6 +316,17 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
   import('virtual:pwa-register').then(({ registerSW }) => {
     const updateSW = registerSW({
       immediate: true,
+      onOfflineReady() {
+        import('quasar').then(({ Notify }) => {
+          Notify.create({
+            message: i18n.global.t('general.offline_ready'),
+            color: 'positive',
+            icon: 'cloud_done',
+            timeout: 3000,
+            position: 'top',
+          });
+        });
+      },
       onNeedRefresh() {
         // Notify user that an update is available
         import('quasar').then(({ Notify }) => {
