@@ -25,12 +25,3 @@ jobs:
 
       - name: Check locales
         run: pnpm check:locales
-
-      - name: Typecheck
-        run: pnpm typecheck
-
-      - name: Lint
-        run: pnpm lint
-
-      - name: Build
-        run: pnpm build

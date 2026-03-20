@@ -40,6 +40,8 @@
     "@quasar/vite-plugin": "^1.0.0",
     "@types/node": "^24.6.2",
     "@vitejs/plugin-vue": "^6.0.1",
+    "ajv": "^8.18.0",
+    "ajv-errors": "^3.0.0",
     "concurrently": "^9.2.1",
     "dotenv-cli": "^11.0.0",
     "eslint": "^9.37.0",

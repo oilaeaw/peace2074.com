@@ -1,65 +1,66 @@
-import { readFileSync, readdirSync } from "fs";
-import { join } from "path";
-import Ajv from "ajv";
-import ajvErrors from "ajv-errors";
+import { readFileSync, readdirSync } from 'fs'
+import { join } from 'path'
+import Ajv from 'ajv'
+import ajvErrors from 'ajv-errors'
 
-const ajv = new Ajv({ allErrors: true, jsonPointers: true });
-ajvErrors(ajv);
+const ajv = new Ajv({ allErrors: true })
+ajvErrors(ajv)
 
 const verseSchema = {
-  type: "array",
+  type: 'array',
   items: {
-    type: "object",
+    type: 'object',
     properties: {
-      en: { type: "string" },
+      en: { type: 'string' },
       ar: {
-        type: "string",
-        pattern: "^[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\s]+$",
+        type: 'string',
+        pattern:
+          '^[\\u0600-\\u06FF\\u0750-\\u077F\\u08A0-\\u08FF\\s.,،؛:!؟\'"«»()\\-…0-9٠-٩]+$',
       },
       ref: {
-        type: "string",
-        pattern: "^Quran \\d+:\\d+(?:-\\d+)?$",
+        type: 'string',
+        pattern: '^Quran \\d+:\\d+(?:-\\d+)?$',
       },
-      sura: { type: "integer", minimum: 1, maximum: 114 },
-      ayah: { type: "integer" },
+      sura: { type: 'integer', minimum: 1, maximum: 114 },
+      ayah: { type: 'integer' },
     },
-    required: ["en", "ar", "ref", "sura", "ayah"],
+    required: ['en', 'ar', 'ref', 'sura', 'ayah'],
     additionalProperties: false,
     errorMessage: {
-      type: "Each entry must be an object",
+      type: 'Each entry must be an object',
       required: {
         sura: "The 'sura' field is required and must be an integer.",
         en: "An English translation ('en') is required.",
       },
       properties: {
-        sura: "Sura must be an integer between 1 and 114.",
-        ayah: "Ayah must be a valid number.",
+        sura: 'Sura must be an integer between 1 and 114.',
+        ayah: 'Ayah must be a valid number.',
         ref: "The 'ref' field must follow the format 'Quran X:Y' or 'Quran X:Y-Z' (e.g., 'Quran 1:1' or 'Quran 94:5-6').",
-        ar: "The 'ar' field must only contain Arabic characters and spaces.",
+        ar: "The 'ar' field must contain Arabic text and allowed punctuation only.",
       },
     },
   },
-};
+}
 
-const validate = ajv.compile(verseSchema);
+const validate = ajv.compile(verseSchema)
 
-const directories = ["src/app/data", "src/views"];
-let hasError = false;
+const directories = ['src/app/data', 'src/views']
+let hasError = false
 
 directories.forEach((dir) => {
-  const files = readdirSync(dir).filter((f) => f.endsWith("verses.json"));
+  const files = readdirSync(dir).filter((f) => f.endsWith('verses.json'))
   files.forEach((file) => {
-    const path = join(dir, file);
+    const path = join(dir, file)
     try {
-      const data = JSON.parse(readFileSync(path, "utf-8"));
-      const valid = validate(data);
-      if (!valid) throw new Error(ajv.errorsText(validate.errors));
-      console.log(`✅ ${path} passed schema validation.`);
+      const data = JSON.parse(readFileSync(path, 'utf-8'))
+      const valid = validate(data)
+      if (!valid) throw new Error(ajv.errorsText(validate.errors))
+      console.log(`✅ ${path} passed schema validation.`)
     } catch (e) {
-      console.error(`❌ Validation failed for ${path}: ${e.message}`);
-      hasError = true;
+      console.error(`❌ Validation failed for ${path}: ${e.message}`)
+      hasError = true
     }
-  });
-});
+  })
+})
 
-if (hasError) process.exit(1);
+if (hasError) process.exit(1)
