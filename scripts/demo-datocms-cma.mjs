@@ -1,4 +1,4 @@
-const DATOCMS_CMA_BASE_URL = 'admin.datocms.com'
+const DATOCMS_CMA_BASE_URL = 'https://site-api.datocms.com'
 const DATOCMS_API_VERSION = '3'
 
 function maskToken(token = '') {
@@ -10,6 +10,8 @@ function isPlaceholderToken(token = '') {
   const normalized = token.trim().toLowerCase()
   return (
     normalized.length < 12 ||
+    normalized.startsWith('http://') ||
+    normalized.startsWith('https://') ||
     normalized.includes('your-') ||
     normalized.includes('<') ||
     normalized.includes('change-me')
@@ -26,7 +28,7 @@ async function run() {
       '[DatoCMS Demo] DATOCMS_API_TOKEN is missing or looks like a placeholder.'
     )
     console.error(
-      '[DatoCMS Demo] Set DATOCMS_API_TOKEN in .env, then re-run this demo.'
+      '[DatoCMS Demo] Set DATOCMS_API_TOKEN in .env to a real API token value (not your cms URL), then re-run this demo.'
     )
     process.exitCode = 1
     return

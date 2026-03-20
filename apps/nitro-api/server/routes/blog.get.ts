@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { getPrisma } from '../utils/prisma'
 import blogSeedData from '../data/blog-seed.json'
+import { fetchDatoCmsBlogPosts } from '../utils/datocms'
 
 type BlogSeedPost = {
     id?: string
@@ -33,42 +34,58 @@ export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const { slug } = query
     const fallbackPosts = loadSeedPosts()
+    const normalizedSlug = typeof slug === 'string' ? slug.trim() : undefined
 
     try {
+        // 1) Prefer Prisma as primary source
         const prisma = await getPrisma()
 
-        if (!prisma) {
-            if (slug && typeof slug === 'string') {
-                const fallbackPost = fallbackPosts.find((post) => String(post?.slug || '') === slug)
-                if (!fallbackPost) {
-                    return { ok: false, error: 'Post not found' }
+        if (prisma) {
+            // Get single post by slug
+            if (normalizedSlug) {
+                const post = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+                if (post) {
+                    return { ok: true, post, source: 'prisma' }
                 }
-                return { ok: true, post: fallbackPost, source: 'seed-fallback' }
             }
 
-            const sortedFallback = [...fallbackPosts].sort((a, b) => {
-                const ad = new Date(String(a?.date || a?.createdAt || 0)).getTime()
-                const bd = new Date(String(b?.date || b?.createdAt || 0)).getTime()
-                return bd - ad
+            // Get all posts, sorted by date descending
+            const posts = await prisma.blogPost.findMany({
+                orderBy: { date: 'desc' }
             })
-            return { ok: true, posts: sortedFallback, source: 'seed-fallback' }
+
+            if (!normalizedSlug && posts.length) {
+                return { ok: true, posts, source: 'prisma' }
+            }
         }
 
-        // Get single post by slug
-        if (slug && typeof slug === 'string') {
-            const post = await prisma.blogPost.findUnique({ where: { slug } })
-            if (!post) {
+        // 2) Fallback to DatoCMS when Prisma has no data or no match
+        try {
+            if (normalizedSlug) {
+                const datocmsPost = await fetchDatoCmsBlogPosts({ slug: normalizedSlug })
+                if (datocmsPost) {
+                    return { ok: true, post: datocmsPost, source: 'datocms' }
+                }
+            } else {
+                const datocmsPosts = await fetchDatoCmsBlogPosts()
+                if (Array.isArray(datocmsPosts) && datocmsPosts.length) {
+                    return { ok: true, posts: datocmsPosts, source: 'datocms' }
+                }
+            }
+        } catch (error) {
+            console.warn('[Blog GET] DatoCMS read failed, falling back:', error instanceof Error ? error.message : 'unknown')
+        }
+
+        // 3) Seed fallback
+        if (normalizedSlug) {
+            const fallbackPost = fallbackPosts.find((post) => String(post?.slug || '') === normalizedSlug)
+            if (!fallbackPost) {
                 return { ok: false, error: 'Post not found' }
             }
-            return { ok: true, post }
+            return { ok: true, post: fallbackPost, source: 'seed-fallback' }
         }
 
-        // Get all posts, sorted by date descending
-        const posts = await prisma.blogPost.findMany({
-            orderBy: { date: 'desc' }
-        })
-
-        if (!posts.length && fallbackPosts.length) {
+        if (fallbackPosts.length) {
             const sortedFallback = [...fallbackPosts].sort((a, b) => {
                 const ad = new Date(String(a?.date || a?.createdAt || 0)).getTime()
                 const bd = new Date(String(b?.date || b?.createdAt || 0)).getTime()
@@ -77,7 +94,7 @@ export default defineEventHandler(async (event) => {
             return { ok: true, posts: sortedFallback, source: 'seed-fallback' }
         }
 
-        return { ok: true, posts }
+        return { ok: true, posts: [], source: 'empty' }
     } catch (err: any) {
         console.error('[Blog GET] Error:', err)
         return { ok: false, error: err?.message || 'Failed to fetch posts' }
