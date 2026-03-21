@@ -192,7 +192,11 @@
       </q-list>
     </q-drawer>
 
-    <q-dialog v-model="searchDialogOpen" @hide="clearSearch" seamless>
+    <q-dialog
+      v-model="searchDialogOpen"
+      :maximized="$q.screen.lt.sm"
+      @hide="clearSearch"
+    >
       <q-card class="search-dialog-card">
         <q-card-section class="row items-center justify-between q-pb-sm">
           <div class="text-subtitle1 text-weight-medium">
@@ -314,6 +318,7 @@ import {
 } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
+import { useQuasar } from 'quasar'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
 import { useSiteSearch } from '@/composables/useSiteSearch'
 import { useAuthStore } from '@/stores/auth.pinia'
@@ -337,6 +342,7 @@ const AUTOPLAY_KEY = 'pref-autoplay-athan'
 const leftDrawer = ref(readDrawerPreference())
 const search = ref('')
 const { locale, t } = useI18n({ useScope: 'global' })
+const $q = useQuasar()
 const router = useRouter()
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)

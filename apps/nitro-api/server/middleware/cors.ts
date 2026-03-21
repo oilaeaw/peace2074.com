@@ -14,12 +14,12 @@ export default defineEventHandler((event) => {
     ];
 
     const origin = event.node.req.headers.origin;
-    if (origin && allowedOrigins.includes(origin)) {
+    if (origin && (allowedOrigins.includes(origin) || origin === "capacitor://localhost" || origin === "ionic://localhost" || origin === "app://localhost")) {
         setHeader(event, "Access-Control-Allow-Origin", origin);
         setHeader(event, "Access-Control-Allow-Credentials", "true");
     } else {
-        // Fallback for unknown origins (no credentials in this mode)
-        setHeader(event, "Access-Control-Allow-Origin", "*");
+        // Fallback for same-origin/non-browser calls without Origin header
+        setHeader(event, "Access-Control-Allow-Origin", "https://peace2074.com");
     }
 
     setHeader(event, "Vary", "Origin");

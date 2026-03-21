@@ -10,7 +10,7 @@ import { useStorageRef } from '@/composables/useUStore'
 
 // Define component name for keep-alive
 defineOptions({
-  name: 'QuranDetail'
+  name: 'QuranDetail',
 })
 
 type BookmarkEntry = {
@@ -49,7 +49,9 @@ interface TaggedNotification {
 
 const notificationQueue = ref<TaggedNotification[]>([])
 const notificationHistory = ref<TaggedNotification[]>([])
-const announcementQueue = ref<{ message: string; type: string; icon: string; actions?: any[] }[]>([])
+const announcementQueue = ref<
+  { message: string; type: string; icon: string; actions?: any[] }[]
+>([])
 const showAnnouncementBanner = ref(false)
 const currentAnnouncement = ref<any>(null)
 const NOTIFICATION_BATCH_DELAY = 1500 // ms
@@ -97,7 +99,9 @@ function notify(options: {
 
   // Check if we should batch this notification
   if (options.group) {
-    const existingInQueue = notificationQueue.value.find(n => n.group === options.group)
+    const existingInQueue = notificationQueue.value.find(
+      (n) => n.group === options.group
+    )
     if (existingInQueue) {
       // Update existing notification instead of showing duplicate
       existingInQueue.message = options.message
@@ -134,12 +138,15 @@ function flushNotificationQueue() {
   if (notificationQueue.value.length === 0) return
 
   // Group notifications by tag
-  const grouped = notificationQueue.value.reduce((acc, notif) => {
-    const key = notif.tag || 'general'
-    if (!acc[key]) acc[key] = []
-    acc[key].push(notif)
-    return acc
-  }, {} as Record<string, TaggedNotification[]>)
+  const grouped = notificationQueue.value.reduce(
+    (acc, notif) => {
+      const key = notif.tag || 'general'
+      if (!acc[key]) acc[key] = []
+      acc[key].push(notif)
+      return acc
+    },
+    {} as Record<string, TaggedNotification[]>
+  )
 
   // Show grouped notifications
   Object.entries(grouped).forEach(([tag, notifs]) => {
@@ -156,7 +163,7 @@ function flushNotificationQueue() {
       })
     } else {
       // Batched notifications
-      const messages = notifs.map(n => n.message).join(' • ')
+      const messages = notifs.map((n) => n.message).join(' • ')
       $q.notify({
         type: notifs[0].type,
         message: `${notifs.length} updates`,
@@ -164,7 +171,8 @@ function flushNotificationQueue() {
         icon: notifs[0].icon || 'notifications',
         position: 'top',
         timeout: 3500,
-        badge: tag !== 'general' ? `${tag} (${notifs.length})` : `${notifs.length}`,
+        badge:
+          tag !== 'general' ? `${tag} (${notifs.length})` : `${notifs.length}`,
         badgeColor: 'primary',
       })
     }
@@ -175,8 +183,9 @@ function flushNotificationQueue() {
 }
 
 function showNextAnnouncement() {
-  if (showAnnouncementBanner.value || announcementQueue.value.length === 0) return
-  
+  if (showAnnouncementBanner.value || announcementQueue.value.length === 0)
+    return
+
   currentAnnouncement.value = announcementQueue.value.shift()
   showAnnouncementBanner.value = true
 }
@@ -184,10 +193,10 @@ function showNextAnnouncement() {
 function dismissAnnouncement(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   showAnnouncementBanner.value = false
   currentAnnouncement.value = null
-  
+
   // Show next announcement after a short delay
   setTimeout(() => {
     if (announcementQueue.value.length > 0) {
@@ -196,7 +205,25 @@ function dismissAnnouncement(event?: MouseEvent | Event) {
   }, 500)
 }
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
-const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(LAYOUT_STORAGE_KEY, 'mushaf')
+const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(
+  LAYOUT_STORAGE_KEY,
+  'mushaf'
+)
+const isIOSRuntime = computed(() => {
+  if (typeof window === 'undefined') return false
+  const nav = window.navigator
+  const ua = String(nav?.userAgent || '')
+  const platform = String(nav?.platform || '')
+  const maxTouchPoints = Number(nav?.maxTouchPoints || 0)
+  const isIOSUA = /iPad|iPhone|iPod/i.test(ua)
+  const isIPadOSDesktopUA = platform === 'MacIntel' && maxTouchPoints > 1
+  const locProtocol = String(window.location?.protocol || '')
+  const isCapacitorLike =
+    locProtocol === 'capacitor:' ||
+    locProtocol === 'ionic:' ||
+    locProtocol === 'app:'
+  return isIOSUA || isIPadOSDesktopUA || isCapacitorLike
+})
 const showTranslation = ref(readShowTranslationPreference())
 const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   get: () => layoutModeStore.value.value,
@@ -204,9 +231,9 @@ const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
     layoutModeStore.set(mode)
     // Update URL param immediately
     if (route.params.mode !== mode) {
-      router.replace({ 
+      router.replace({
         name: 'QuranDetail',
-        params: { ...route.params, mode } 
+        params: { ...route.params, mode },
       })
     }
   },
@@ -227,7 +254,10 @@ function trackPageView(pageTitle: string) {
   const pagePath = `${window.location.pathname}${window.location.search}`
   const dedupeKey = `${pagePath}|${pageTitle}|${Number(sura.value?.id || route.params.id || 0)}`
   const now = Date.now()
-  if (lastTrackedQuranDetailKey === dedupeKey && now - lastTrackedQuranDetailAt < PAGEVIEW_DEDUPE_MS) {
+  if (
+    lastTrackedQuranDetailKey === dedupeKey &&
+    now - lastTrackedQuranDetailAt < PAGEVIEW_DEDUPE_MS
+  ) {
     return
   }
   lastTrackedQuranDetailKey = dedupeKey
@@ -321,11 +351,41 @@ interface QuickAccessVerse {
 }
 
 const quickAccessVerses = ref<QuickAccessVerse[]>([
-  { id: '2_255', suraId: 2, verse: 255, nameKey: 'pages.quran.quickAccess.kursi', icon: 'star' },
-  { id: '1_1', suraId: 1, verse: 1, nameKey: 'pages.quran.quickAccess.fatiha', icon: 'menu_book' },
-  { id: '36_1', suraId: 36, verse: 1, nameKey: 'pages.quran.quickAccess.yasin', icon: 'favorite' },
-  { id: '67_1', suraId: 67, verse: 1, nameKey: 'pages.quran.quickAccess.mulk', icon: 'king_bed' },
-  { id: '112_1', suraId: 112, verse: 1, nameKey: 'pages.quran.quickAccess.ikhlas', icon: 'brightness_7' },
+  {
+    id: '2_255',
+    suraId: 2,
+    verse: 255,
+    nameKey: 'pages.quran.quickAccess.kursi',
+    icon: 'star',
+  },
+  {
+    id: '1_1',
+    suraId: 1,
+    verse: 1,
+    nameKey: 'pages.quran.quickAccess.fatiha',
+    icon: 'menu_book',
+  },
+  {
+    id: '36_1',
+    suraId: 36,
+    verse: 1,
+    nameKey: 'pages.quran.quickAccess.yasin',
+    icon: 'favorite',
+  },
+  {
+    id: '67_1',
+    suraId: 67,
+    verse: 1,
+    nameKey: 'pages.quran.quickAccess.mulk',
+    icon: 'king_bed',
+  },
+  {
+    id: '112_1',
+    suraId: 112,
+    verse: 1,
+    nameKey: 'pages.quran.quickAccess.ikhlas',
+    icon: 'brightness_7',
+  },
 ])
 
 const audioList = ref<string[]>([])
@@ -336,7 +396,9 @@ const isPlayingAudio = ref(false)
 const currentAyahIndex = ref<number>(-1)
 const currentWordIndex = ref<number>(-1)
 const playbackRate = ref<number>(1)
-const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>({})
+const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>(
+  {}
+)
 const stopRequested = ref(false)
 const isStartingRecitation = ref(false)
 
@@ -348,7 +410,10 @@ interface PlaybackPosition {
   timestamp: number
 }
 const PLAYBACK_POSITION_KEY = 'quran-playback-position'
-const playbackPositionStore = useStorageRef<PlaybackPosition | null>(PLAYBACK_POSITION_KEY, null)
+const playbackPositionStore = useStorageRef<PlaybackPosition | null>(
+  PLAYBACK_POSITION_KEY,
+  null
+)
 
 // Auto-continue to next sura setting
 const AUTO_CONTINUE_KEY = 'quran-auto-continue'
@@ -403,23 +468,37 @@ const ttsVoice = ref<SpeechSynthesisVoice | null>(null)
 const availableVoices = ref<SpeechSynthesisVoice[]>([])
 const ttsRate = ref<number>(0.8)
 
-const currentSuraId = computed(() => Number(sura.value?.id || route.params.id || 0))
+const currentSuraId = computed(() =>
+  Number(sura.value?.id || route.params.id || 0)
+)
 
 // Swipe detection state
 const touchStartX = ref(0)
 const touchEndX = ref(0)
 const MIN_SWIPE_DISTANCE = 50
 
-const viewModeOptions = computed(() => ([
-  { label: t('pages.quran.modes.mushaf'), value: 'mushaf', icon: 'auto_stories' },
+const viewModeOptions = computed(() => [
+  {
+    label: t('pages.quran.modes.mushaf'),
+    value: 'mushaf',
+    icon: 'auto_stories',
+  },
   { label: t('pages.quran.modes.reader'), value: 'reader', icon: 'menu_book' },
   { label: t('pages.quran.modes.native'), value: 'native', icon: 'article' },
-]))
+])
 
-const readerModeOptions = computed(() => ([
-  { label: t('pages.quran.readerMode.audio') || 'Audio', value: 'audio', icon: 'volume_up' },
-  { label: t('pages.quran.readerMode.tts') || 'TTS', value: 'tts', icon: 'record_voice_over' },
-]))
+const readerModeOptions = computed(() => [
+  {
+    label: t('pages.quran.readerMode.audio') || 'Audio',
+    value: 'audio',
+    icon: 'volume_up',
+  },
+  {
+    label: t('pages.quran.readerMode.tts') || 'TTS',
+    value: 'tts',
+    icon: 'record_voice_over',
+  },
+])
 
 // Track which Quick Access verse is currently playing
 const activeQuickAccessId = computed(() => {
@@ -431,22 +510,28 @@ const activeQuickAccessId = computed(() => {
 const activeBookmarkId = computed(() => {
   if (!isReading.value || currentAyahIndex.value < 0) return null
   return bookmarkEntries.value.find(
-    entry => entry.suraId === currentSuraId.value && entry.verse === (currentAyahIndex.value + 1)
+    (entry) =>
+      entry.suraId === currentSuraId.value &&
+      entry.verse === currentAyahIndex.value + 1
   )?.key
 })
 
 // Check if a specific Quick Access verse is currently playing
 const isQuickAccessPlaying = (qa: QuickAccessVerse) => {
-  return isReading.value && 
-    currentSuraId.value === qa.suraId && 
-    currentAyahIndex.value === (qa.verse - 1)
+  return (
+    isReading.value &&
+    currentSuraId.value === qa.suraId &&
+    currentAyahIndex.value === qa.verse - 1
+  )
 }
 
 // Check if a specific Bookmark is currently playing
 const isBookmarkPlaying = (entry: BookmarkEntry) => {
-  return isReading.value && 
-    currentSuraId.value === entry.suraId && 
-    currentAyahIndex.value === ((entry.verse || 1) - 1)
+  return (
+    isReading.value &&
+    currentSuraId.value === entry.suraId &&
+    currentAyahIndex.value === (entry.verse || 1) - 1
+  )
 }
 
 const bookmarkEntries = computed<BookmarkEntry[]>(() => {
@@ -462,11 +547,16 @@ const bookmarkEntries = computed<BookmarkEntry[]>(() => {
         rawString = String(bm.bookmark || bm._id || '')
       }
       if (!rawString || typeof rawString !== 'string') return null
-      const normalized = rawString.startsWith('id_') ? rawString.slice(3) : rawString
+      const normalized = rawString.startsWith('id_')
+        ? rawString.slice(3)
+        : rawString
       const [suraPart, versePart] = normalized.split('_')
 
       return {
-        key: typeof bm === 'string' ? `${normalized}_${idx}` : bm?._id || `${normalized}_${idx}`,
+        key:
+          typeof bm === 'string'
+            ? `${normalized}_${idx}`
+            : bm?._id || `${normalized}_${idx}`,
         normalized,
         label: suraPart && versePart ? `${suraPart}:${versePart}` : normalized,
         suraId: suraPart ? Number(suraPart) : null,
@@ -480,18 +570,22 @@ const bookmarkEntries = computed<BookmarkEntry[]>(() => {
 
 const hasBookmarks = computed(() => bookmarkEntries.value.length > 0)
 
-const getVerseElementId = (verse: number | string) => `aya-${currentSuraId.value}-${verse}`
+const getVerseElementId = (verse: number | string) =>
+  `aya-${currentSuraId.value}-${verse}`
 
-const getBookmarkId = (verse: number | string, suraId = currentSuraId.value) => `id_${suraId}_${verse}`
+const getBookmarkId = (verse: number | string, suraId = currentSuraId.value) =>
+  `id_${suraId}_${verse}`
 
-const isVerseSelected = (verse: number | string) => selectedBookmark.value === getBookmarkId(verse)
+const isVerseSelected = (verse: number | string) =>
+  selectedBookmark.value === getBookmarkId(verse)
 
 const isVerseBookmarked = (verse: number | string) => {
   const normalized = `${currentSuraId.value}_${verse}`
-  return bookmarkEntries.value.some(entry => entry.normalized === normalized)
+  return bookmarkEntries.value.some((entry) => entry.normalized === normalized)
 }
 
-const bookmarkActionLabel = (verse: number | string) => t('pages.quran.bookmarks.add', { verse })
+const bookmarkActionLabel = (verse: number | string) =>
+  t('pages.quran.bookmarks.add', { verse })
 
 // Mark sura as read in localStorage
 const READ_KEY = 'quran-read-suras'
@@ -511,17 +605,24 @@ const PROGRESS_KEY = 'quran-ramadan-progress'
 function markSuraAsCompleted(suraId: number) {
   try {
     const stored = localStorage.getItem(PROGRESS_KEY)
-    const completedSet = stored ? new Set(JSON.parse(stored)) : new Set<number>()
-    
+    const completedSet = stored
+      ? new Set(JSON.parse(stored))
+      : new Set<number>()
+
     // Only mark as complete if not already completed
     if (!completedSet.has(suraId)) {
       completedSet.add(suraId)
-      localStorage.setItem(PROGRESS_KEY, JSON.stringify(Array.from(completedSet)))
-      
+      localStorage.setItem(
+        PROGRESS_KEY,
+        JSON.stringify(Array.from(completedSet))
+      )
+
       // Show completion notification
       $q.notify({
         type: 'positive',
-        message: t('pages.quran.ramadanProgress.suraCompleted', { sura: suraId }) || `Sura ${suraId} completed! ✓`,
+        message:
+          t('pages.quran.ramadanProgress.suraCompleted', { sura: suraId }) ||
+          `Sura ${suraId} completed! ✓`,
         icon: 'check_circle',
         timeout: 3000,
         position: 'top',
@@ -531,9 +632,9 @@ function markSuraAsCompleted(suraId: number) {
             color: 'white',
             handler: () => {
               router.push('/quran')
-            }
-          }
-        ]
+            },
+          },
+        ],
       })
     }
   } catch (e) {
@@ -541,25 +642,28 @@ function markSuraAsCompleted(suraId: number) {
   }
 }
 
-async function bookmarkVerse(verse: number | string, event?: MouseEvent | Event) {
+async function bookmarkVerse(
+  verse: number | string,
+  event?: MouseEvent | Event
+) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   if (!sura.value) return
   const normalized = `${sura.value.id}_${verse}`
-  
+
   // Check if already bookmarked
   if (isVerseBookmarked(verse)) {
-    notify({ 
-      type: 'info', 
+    notify({
+      type: 'info',
       message: t('pages.quran.bookmarks.alreadySaved') || 'Already bookmarked',
       tag: 'bookmark',
       icon: 'info',
-      group: 'bookmark-duplicate'
+      group: 'bookmark-duplicate',
     })
     return
   }
-  
+
   try {
     const saved = await bookmarksStore.createBookmark(normalized)
     if (!saved?.ok) {
@@ -572,9 +676,9 @@ async function bookmarkVerse(verse: number | string, event?: MouseEvent | Event)
     if (saved.source === 'server') {
       await bookmarksStore.fetchBookmarks()
     }
-    
-    notify({ 
-      type: 'positive', 
+
+    notify({
+      type: 'positive',
       message: t('pages.quran.bookmarks.saved'),
       tag: 'bookmark',
       icon: 'bookmark',
@@ -584,18 +688,23 @@ async function bookmarkVerse(verse: number | string, event?: MouseEvent | Event)
         {
           label: t('general.undo') || 'Undo',
           color: 'white',
-          handler: () => removeBookmark({ ...entry, normalized, key: normalized } as BookmarkEntry)
-        }
-      ]
+          handler: () =>
+            removeBookmark({
+              ...entry,
+              normalized,
+              key: normalized,
+            } as BookmarkEntry),
+        },
+      ],
     })
   } catch (err: any) {
     console.error('[Bookmark] Failed to save:', err)
-    notify({ 
-      type: 'negative', 
+    notify({
+      type: 'negative',
       message: err?.message || t('pages.quran.bookmarks.error'),
       tag: 'error',
       icon: 'error',
-      group: 'bookmark-error'
+      group: 'bookmark-error',
     })
   }
 }
@@ -603,13 +712,14 @@ async function bookmarkVerse(verse: number | string, event?: MouseEvent | Event)
 function removeBookmark(entry: BookmarkEntry, event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
-  const identifier = typeof entry.raw === 'string'
-    ? entry.raw
-    : entry.raw?._id || entry.raw?.bookmark || entry.normalized
-  
+
+  const identifier =
+    typeof entry.raw === 'string'
+      ? entry.raw
+      : entry.raw?._id || entry.raw?.bookmark || entry.normalized
+
   bookmarksStore.deleteBookmark(identifier)
-  
+
   // Force refresh after deletion
   nextTick(() => {
     bookmarksStore.fetchBookmarks()
@@ -622,14 +732,21 @@ function buildVerseShareUrl(entry: BookmarkEntry) {
   return buildVerseShareUrlFromParts(suraId, verse)
 }
 
-function buildVerseShareUrlFromParts(suraId: number, verse: number, options: { autoplay?: boolean; mode?: string } = {}) {
+function buildVerseShareUrlFromParts(
+  suraId: number,
+  verse: number,
+  options: { autoplay?: boolean; mode?: string } = {}
+) {
   if (!suraId || !verse) return ''
   const path = `/quran/${suraId}:${verse}`
   const env = (import.meta as any)?.env || {}
   const configuredSite = String(env.VITE_SITE_URL || '').trim()
   const i18nSite = String(t('general.SiteDomain') || '').trim()
-  const base = (configuredSite || i18nSite || 'https://peace2074.com').replace(/\/$/, '')
-  
+  const base = (configuredSite || i18nSite || 'https://peace2074.com').replace(
+    /\/$/,
+    ''
+  )
+
   // Add query parameters
   const params = new URLSearchParams()
   if (options.autoplay) {
@@ -638,16 +755,20 @@ function buildVerseShareUrlFromParts(suraId: number, verse: number, options: { a
   if (options.mode && ['reader', 'mushaf', 'native'].includes(options.mode)) {
     params.set('mode', options.mode)
   }
-  
+
   const queryString = params.toString()
   return `${base}${path}${queryString ? `?${queryString}` : ''}`
 }
 
-async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:${verse}`) {
+async function shareVerseLink(
+  suraId: number,
+  verse: number,
+  label = `${suraId}:${verse}`
+) {
   // Include current mode and autoplay in share link
-  const url = buildVerseShareUrlFromParts(suraId, verse, { 
-    autoplay: true, 
-    mode: layoutMode.value 
+  const url = buildVerseShareUrlFromParts(suraId, verse, {
+    autoplay: true,
+    mode: layoutMode.value,
   })
   if (!url) return
 
@@ -657,18 +778,21 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
   const shareText = `Read Quran ${suraName} ${suraId}:${verse}`
 
   try {
-    if (typeof navigator !== 'undefined' && typeof navigator.share === 'function') {
+    if (
+      typeof navigator !== 'undefined' &&
+      typeof navigator.share === 'function'
+    ) {
       await navigator.share({
         title: shareTitle,
         text: shareText,
         url,
       })
-      notify({ 
-        type: 'positive', 
+      notify({
+        type: 'positive',
         message: `Shared ${label}`,
         tag: 'share',
         icon: 'share',
-        group: 'share-success'
+        group: 'share-success',
       })
       return
     }
@@ -680,13 +804,13 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
   try {
     if (typeof navigator !== 'undefined' && navigator.clipboard?.writeText) {
       await navigator.clipboard.writeText(url)
-      notify({ 
-        type: 'positive', 
+      notify({
+        type: 'positive',
         message: `Link copied: ${shareText}`,
         tag: 'clipboard',
         icon: 'content_copy',
         caption: url,
-        group: 'clipboard-copy'
+        group: 'clipboard-copy',
       })
       return
     }
@@ -694,19 +818,19 @@ async function shareVerseLink(suraId: number, verse: number, label = `${suraId}:
     // ignore and fallback notify
   }
 
-  $q.notify({ 
-    type: 'info', 
+  $q.notify({
+    type: 'info',
     message: url,
     icon: 'link',
     position: 'top',
-    timeout: 3000
+    timeout: 3000,
   })
 }
 
 async function shareBookmark(entry: BookmarkEntry, event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   const suraId = Number(entry.suraId || currentSuraId.value)
   const verse = Number(entry.verse || 1)
   await shareVerseLink(suraId, verse, entry.label)
@@ -715,59 +839,69 @@ async function shareBookmark(entry: BookmarkEntry, event?: MouseEvent | Event) {
 async function shareHoverVerse(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   const verse = Number(hoverWidgetVerse.value || 0)
   const suraId = Number(currentSuraId.value || 0)
   if (!suraId || !verse) return
   await shareVerseLink(suraId, verse, `${suraId}:${verse}`)
 }
 
-async function handleBookmarkNavigate(entry: BookmarkEntry, event?: MouseEvent | Event) {
+async function handleBookmarkNavigate(
+  entry: BookmarkEntry,
+  event?: MouseEvent | Event
+) {
   if (event) {
     event.preventDefault()
     event.stopPropagation()
   }
-  
+
   if (!entry) return
   selectedBookmark.value = `id_${entry.normalized}`
-  
+
   const playVerseAfterLoad = async () => {
     // Wait for sura to fully load (check loading state and correct sura)
     let retries = 30 // 30 x 200ms = 6 seconds max wait
     while (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 200))
       // Check if we're on the correct sura and audio is loaded
-      if (!loading.value && 
-          currentSuraId.value === entry.suraId && 
-          audioList.value.length >= (entry.verse || 0)) {
+      if (
+        !loading.value &&
+        currentSuraId.value === entry.suraId &&
+        audioList.value.length >= (entry.verse || 0)
+      ) {
         break
       }
       retries--
     }
-    
+
     // Verify we have the correct audio list before playing
     const verseIndex = (entry.verse || 1) - 1
-    if (currentSuraId.value === entry.suraId && 
-        audioList.value.length > verseIndex && 
-        verseIndex >= 0) {
+    if (
+      currentSuraId.value === entry.suraId &&
+      audioList.value.length > verseIndex &&
+      verseIndex >= 0
+    ) {
       stopRequested.value = false
       // Scroll to verse first
       await nextTick()
       scrollToVerse(entry.verse)
       // Small delay to ensure scroll completes
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
       await startAudioRecitation(verseIndex, { withIntro: true })
-      $q.notify({ 
-        type: 'positive', 
+      $q.notify({
+        type: 'positive',
         message: `${entry.label} - Mishary Al-Afasy`,
         icon: 'play_arrow',
-        timeout: 2000
+        timeout: 2000,
       })
     }
   }
-  
+
   if (entry.suraId && entry.suraId !== currentSuraId.value) {
-    await router.push({ path: `/quran/${entry.suraId}`, hash: `#${entry.normalized}` })
+    await router.push({
+      path: `/quran/${entry.suraId}`,
+      hash: `#${entry.normalized}`,
+    })
     // Wait for sura to load and then play
     await playVerseAfterLoad()
   } else {
@@ -781,60 +915,74 @@ async function handleBookmarkNavigate(entry: BookmarkEntry, event?: MouseEvent |
  * Navigate to a quick access verse using the Red-Black Tree for O(log n) lookup
  * After navigation, automatically plays the ayah audio
  */
-async function navigateToQuickAccess(qaVerse: QuickAccessVerse, event?: MouseEvent | Event) {
+async function navigateToQuickAccess(
+  qaVerse: QuickAccessVerse,
+  event?: MouseEvent | Event
+) {
   if (event) {
     event.preventDefault()
     event.stopPropagation()
   }
-  
+
   // Use tree for efficient lookup (preload context)
   const verseData = await quranTree.getVerse(qaVerse.suraId, qaVerse.verse)
   if (verseData) {
-    console.debug(`[QuranTree] Found verse ${verseData.id}: ${verseData.text.slice(0, 50)}...`)
+    console.debug(
+      `[QuranTree] Found verse ${verseData.id}: ${verseData.text.slice(0, 50)}...`
+    )
   }
-  
+
   selectedBookmark.value = `id_${qaVerse.id}`
-  
+
   const playVerseAfterLoad = async () => {
     // Wait for sura to fully load (check loading state and correct sura)
     let retries = 30 // 30 x 200ms = 6 seconds max wait
     while (retries > 0) {
-      await new Promise(resolve => setTimeout(resolve, 200))
+      await new Promise((resolve) => setTimeout(resolve, 200))
       // Check if we're on the correct sura and audio is loaded
-      if (!loading.value && 
-          currentSuraId.value === qaVerse.suraId && 
-          audioList.value.length >= qaVerse.verse) {
+      if (
+        !loading.value &&
+        currentSuraId.value === qaVerse.suraId &&
+        audioList.value.length >= qaVerse.verse
+      ) {
         break
       }
       retries--
     }
-    
+
     // Verify we have the correct audio list before playing
     const verseIndex = qaVerse.verse - 1
-    if (currentSuraId.value === qaVerse.suraId && 
-        audioList.value.length > verseIndex && 
-        verseIndex >= 0) {
+    if (
+      currentSuraId.value === qaVerse.suraId &&
+      audioList.value.length > verseIndex &&
+      verseIndex >= 0
+    ) {
       stopRequested.value = false
       // Scroll to verse first
       await nextTick()
       scrollToVerse(qaVerse.verse)
       // Small delay to ensure scroll completes
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
       await startAudioRecitation(verseIndex, { withIntro: true })
-      $q.notify({ 
-        type: 'positive', 
+      $q.notify({
+        type: 'positive',
         message: `${t(qaVerse.nameKey)} - Mishary Al-Afasy`,
         icon: 'play_arrow',
-        timeout: 2000
+        timeout: 2000,
       })
     } else {
-      console.error(`[QuickAccess] Failed to play: sura=${currentSuraId.value}, expected=${qaVerse.suraId}, audioLen=${audioList.value.length}, verseIndex=${verseIndex}`)
+      console.error(
+        `[QuickAccess] Failed to play: sura=${currentSuraId.value}, expected=${qaVerse.suraId}, audioLen=${audioList.value.length}, verseIndex=${verseIndex}`
+      )
     }
   }
-  
+
   if (qaVerse.suraId !== currentSuraId.value) {
     // Navigate to different sura, then play after load
-    await router.push({ path: `/quran/${qaVerse.suraId}`, hash: `#${qaVerse.id}` })
+    await router.push({
+      path: `/quran/${qaVerse.suraId}`,
+      hash: `#${qaVerse.id}`,
+    })
     // Wait for sura to load and then play
     await playVerseAfterLoad()
   } else {
@@ -845,14 +993,18 @@ async function navigateToQuickAccess(qaVerse: QuickAccessVerse, event?: MouseEve
 }
 
 function scrollToVerse(verse?: number | null) {
-  if (typeof window === 'undefined' || verse === undefined || verse === null) return
+  if (typeof window === 'undefined' || verse === undefined || verse === null)
+    return
   const el = document.getElementById(getVerseElementId(verse))
   if (el) {
     el.scrollIntoView({ behavior: 'smooth', block: 'center' })
   }
 }
 
-async function scrollToHash(rawHash?: string | null, options: { autoplay?: boolean } = {}) {
+async function scrollToHash(
+  rawHash?: string | null,
+  options: { autoplay?: boolean } = {}
+) {
   if (typeof window === 'undefined') return
   const hash = (rawHash || window.location.hash || '').replace(/^#/, '')
   if (!hash) return
@@ -862,20 +1014,20 @@ async function scrollToHash(rawHash?: string | null, options: { autoplay?: boole
   selectedBookmark.value = `id_${normalized}`
   await nextTick()
   scrollToVerse(versePart ? Number(versePart) : undefined)
-  
+
   // Autoplay from the shared verse if requested
   if (options.autoplay && versePart && audioList.value.length > 0) {
     const verseIndex = Number(versePart) - 1
     if (verseIndex >= 0 && verseIndex < audioList.value.length) {
       stopRequested.value = false
       // Small delay to ensure scroll completes
-      await new Promise(resolve => setTimeout(resolve, 100))
+      await new Promise((resolve) => setTimeout(resolve, 100))
       await startAudioRecitation(verseIndex, { withIntro: true })
-      $q.notify({ 
-        type: 'positive', 
+      $q.notify({
+        type: 'positive',
         message: `Playing verse ${versePart} - Mishary Al-Afasy`,
         icon: 'play_arrow',
-        timeout: 2500
+        timeout: 2500,
       })
     }
   }
@@ -886,21 +1038,26 @@ async function loadSuraById(id: number) {
   error.value = ''
   selectedBookmark.value = ''
   stopAudio()
-  
+
   // Mark sura as read
   markSuraAsRead(id)
-  
+
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
     // Load audio from alquran.cloud (per-verse) and timings from qurancdn (word segments)
     await loadAudioAndTimings(id)
     await nextTick()
-    
+
     // Check for query params (autoplay and mode)
-    const shouldAutoplay = route.query.autoplay === 'true' || Boolean(route.hash)
-    const queryMode = route.query.mode as 'reader' | 'mushaf' | 'native' | undefined
-    
+    const shouldAutoplay =
+      route.query.autoplay === 'true' || Boolean(route.hash)
+    const queryMode = route.query.mode as
+      | 'reader'
+      | 'mushaf'
+      | 'native'
+      | undefined
+
     // Apply mode from query param if present
     if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
       layoutMode.value = queryMode
@@ -908,10 +1065,10 @@ async function loadSuraById(id: number) {
       router.replace({
         name: 'QuranDetail',
         params: { ...route.params, mode: queryMode },
-        hash: route.hash
+        hash: route.hash,
       })
     }
-    
+
     // Enable autoplay if query param or hash is present (shared verse link)
     await scrollToHash(route.hash, { autoplay: shouldAutoplay })
     applyQuranDetailTitle(true)
@@ -931,33 +1088,35 @@ async function loadAudioAndTimings(id: number) {
   audioList.value = []
   wordTimings.value = {}
   currentAyahIndex.value = -1
-  
+
   const AUDIO_BASE_URL = 'https://verses.quran.com/'
-  
+
   try {
     // Fetch verses with audio segments for reciter 7 (Al-Afasy)
     const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&per_page=300`
     const res = await fetch(sourceUrl)
     if (!res.ok) {
       trackApi5xx('quran_com_verses', res.status, sourceUrl)
-      console.warn('[Quran Audio] Failed to load from quran.com, falling back to alquran.cloud')
+      console.warn(
+        '[Quran Audio] Failed to load from quran.com, falling back to alquran.cloud'
+      )
       await loadAudioListFallback(id)
       return
     }
-    
+
     const json = await res.json()
     const verses = json?.verses || []
-    
+
     verses.forEach((verse: any) => {
       const verseNum = verse?.verse_number
       if (!verseNum) return
-      
+
       // Build full audio URL
       const audioPath = verse?.audio?.url
       if (audioPath) {
         audioList.value[verseNum - 1] = `${AUDIO_BASE_URL}${audioPath}`
       }
-      
+
       // Extract word timings from segments
       // Segment format: [char_start, char_end, start_ms, end_ms]
       const segments: number[][] = verse?.audio?.segments || []
@@ -966,18 +1125,20 @@ async function loadAudioAndTimings(id: number) {
           .filter((seg: number[]) => seg.length >= 4)
           .map((seg: number[]) => ({
             start: (seg[2] ?? 0) / 1000,
-            end: (seg[3] ?? 0) / 1000
+            end: (seg[3] ?? 0) / 1000,
           }))
         if (timings.length > 0) {
           wordTimings.value[verseNum - 1] = timings
         }
       }
     })
-    
+
     // Filter out any undefined entries
     audioList.value = audioList.value.filter(Boolean)
-    
-    console.debug(`[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`)
+
+    console.debug(
+      `[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`
+    )
   } catch (err) {
     console.error('[Quran Audio] Failed to load from quran.com:', err)
     await loadAudioListFallback(id)
@@ -1022,10 +1183,15 @@ async function playBismillahIntro(): Promise<void> {
   })
 }
 
-async function startAudioRecitation(index: number, opts: { withIntro?: boolean } = {}) {
+async function startAudioRecitation(
+  index: number,
+  opts: { withIntro?: boolean } = {}
+) {
   // Prevent concurrent starts from rapid clicks
   if (isStartingRecitation.value) {
-    console.debug('[Audio] Already starting recitation, ignoring duplicate call')
+    console.debug(
+      '[Audio] Already starting recitation, ignoring duplicate call'
+    )
     return
   }
 
@@ -1121,7 +1287,7 @@ function playAyah(index: number) {
       } else if (index + 1 >= audioList.value.length) {
         // Sura completed - mark as complete
         markSuraAsCompleted(currentSuraId.value)
-        
+
         // Check if auto-continue is enabled
         if (autoContinueEnabled.value && currentSuraId.value < 114) {
           // Navigate to next sura and start playing
@@ -1131,9 +1297,9 @@ function playAyah(index: number) {
             message: `Starting Sura ${nextSuraId}...`,
             icon: 'skip_next',
             timeout: 2000,
-            position: 'top'
+            position: 'top',
           })
-          
+
           // Navigate and set flag to autoplay
           setTimeout(async () => {
             await router.push(`/quran/${nextSuraId}?autoplay=true`)
@@ -1163,7 +1329,9 @@ function playAyah(index: number) {
 async function startSuraAudio() {
   // Prevent concurrent starts from rapid clicks
   if (isStartingRecitation.value) {
-    console.debug('[Audio] Already starting sura audio, ignoring duplicate call')
+    console.debug(
+      '[Audio] Already starting sura audio, ignoring duplicate call'
+    )
     return
   }
 
@@ -1171,12 +1339,12 @@ async function startSuraAudio() {
   currentWordIndex.value = -1
 
   if (!audioList.value.length) {
-    notify({ 
-      type: 'warning', 
+    notify({
+      type: 'warning',
       message: t('general.fetchingUpdates') || 'Loading audio…',
       tag: 'audio',
       icon: 'downloading',
-      group: 'audio-loading'
+      group: 'audio-loading',
     })
     return
   }
@@ -1229,21 +1397,23 @@ async function restorePlaybackPosition() {
   if (!saved || saved.suraId !== currentSuraId.value) {
     return false
   }
-  
+
   // Check if position is not too old (within last 24 hours)
   const hoursSinceLastPlay = (Date.now() - saved.timestamp) / (1000 * 60 * 60)
   if (hoursSinceLastPlay > 24) {
     clearPlaybackPosition()
     return false
   }
-  
+
   // Restore position
   currentAyahIndex.value = saved.ayahIndex
-  
+
   // Show notification asking if they want to resume
   $q.notify({
     type: 'info',
-    message: t('pages.quran.resumeFromLast') || `Resume from verse ${saved.ayahIndex + 1}?`,
+    message:
+      t('pages.quran.resumeFromLast') ||
+      `Resume from verse ${saved.ayahIndex + 1}?`,
     icon: 'replay',
     timeout: 5000,
     actions: [
@@ -1257,7 +1427,7 @@ async function restorePlaybackPosition() {
           if (audioEl.value && saved.audioTime > 0) {
             audioEl.value.currentTime = saved.audioTime
           }
-        }
+        },
       },
       {
         label: t('pages.quran.restart') || 'Start Over',
@@ -1265,11 +1435,11 @@ async function restorePlaybackPosition() {
         handler: () => {
           clearPlaybackPosition()
           currentAyahIndex.value = -1
-        }
-      }
-    ]
+        },
+      },
+    ],
   })
-  
+
   return true
 }
 
@@ -1303,7 +1473,7 @@ function handleVerseTap(event: MouseEvent, verse: number) {
 
   hoverWidgetPosition.value = {
     top: event.clientY,
-    left: event.clientX
+    left: event.clientX,
   }
   hoverWidgetVerse.value = verse
   hoverWidgetVisible.value = true
@@ -1316,7 +1486,7 @@ function onVerseMouseEnter(event: MouseEvent, verse: number) {
     // Position widget near the cursor location
     hoverWidgetPosition.value = {
       top: event.clientY,
-      left: event.clientX
+      left: event.clientX,
     }
     hoverWidgetVerse.value = verse
     hoverWidgetVisible.value = true
@@ -1338,7 +1508,7 @@ function hideHoverWidget() {
 async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   hideHoverWidget()
   await nextTick()
   await startAudioRecitation(verse - 1, { withIntro: true })
@@ -1347,7 +1517,7 @@ async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
 async function restartSura(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   hideHoverWidget()
   await nextTick()
   await startAudioRecitation(0, { withIntro: true })
@@ -1356,7 +1526,7 @@ async function restartSura(event?: MouseEvent | Event) {
 function goHome(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   hideHoverWidget()
   stopAudio()
   router.push('/')
@@ -1365,7 +1535,7 @@ function goHome(event?: MouseEvent | Event) {
 function scrollToTop(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   window.scrollTo({ top: 0, behavior: 'smooth' })
 }
 
@@ -1384,7 +1554,7 @@ function pauseFromHover(event?: MouseEvent | Event) {
 async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   event.preventDefault()
   event.stopPropagation()
-  
+
   // Debounce to prevent rapid double-clicks
   const now = Date.now()
   if (now - lastDoubleClickTime.value < DOUBLE_CLICK_DEBOUNCE) {
@@ -1392,20 +1562,21 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
     return
   }
   lastDoubleClickTime.value = now
-  
+
   // Show hover widget at double-click location
   hoverWidgetPosition.value = {
     top: event.clientY,
-    left: event.clientX
+    left: event.clientX,
   }
   hoverWidgetVerse.value = verse
   hoverWidgetVisible.value = true
-  
+
   const verseIndex = verse - 1
-  
+
   // Check if this verse is currently playing
-  const isThisVersePlaying = isPlayingAudio.value && currentAyahIndex.value === verseIndex
-  
+  const isThisVersePlaying =
+    isPlayingAudio.value && currentAyahIndex.value === verseIndex
+
   if (isThisVersePlaying) {
     // If this verse is already playing, stop it
     stopAudio()
@@ -1414,7 +1585,7 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
       message: `Stopped verse ${verse}`,
       icon: 'stop',
       timeout: 1500,
-      position: 'top'
+      position: 'top',
     })
   } else if (verseIndex >= 0 && verseIndex < audioList.value.length) {
     // If it's not playing or a different verse is playing, start this verse
@@ -1425,7 +1596,7 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
       message: `Playing verse ${verse}`,
       icon: 'play_arrow',
       timeout: 1500,
-      position: 'top'
+      position: 'top',
     })
   }
 }
@@ -1441,16 +1612,17 @@ function handleTouchMove(e: TouchEvent) {
 
 function handleTouchEnd() {
   const swipeDistance = touchEndX.value - touchStartX.value
-  
+
   if (Math.abs(swipeDistance) < MIN_SWIPE_DISTANCE) {
     // Not a significant swipe
     return
   }
-  
-  const nextId = swipeDistance < 0 
-    ? currentSuraId.value + 1  // Swipe left = next sura
-    : currentSuraId.value - 1  // Swipe right = previous sura
-  
+
+  const nextId =
+    swipeDistance < 0
+      ? currentSuraId.value + 1 // Swipe left = next sura
+      : currentSuraId.value - 1 // Swipe right = previous sura
+
   // Validate sura ID range (1-114)
   if (nextId >= 1 && nextId <= 114) {
     router.push(`/quran/${nextId}`)
@@ -1458,7 +1630,7 @@ function handleTouchEnd() {
       type: 'info',
       message: swipeDistance < 0 ? '→ Next Sura' : '← Previous Sura',
       timeout: 1000,
-      position: 'top'
+      position: 'top',
     })
   }
 }
@@ -1468,7 +1640,7 @@ function loadVoices() {
   if (typeof window === 'undefined' || !window.speechSynthesis) return
   const voices = window.speechSynthesis.getVoices()
   // Prefer Arabic voices, fallback to any available
-  const arabicVoices = voices.filter(v => v.lang.startsWith('ar'))
+  const arabicVoices = voices.filter((v) => v.lang.startsWith('ar'))
   availableVoices.value = arabicVoices.length ? arabicVoices : voices
   // Auto-select first Arabic voice if available
   if (!ttsVoice.value && availableVoices.value.length) {
@@ -1478,61 +1650,70 @@ function loadVoices() {
 
 function speakAyah(index: number) {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
-    $q.notify({ type: 'warning', message: t('pages.quran.ttsNotSupported') || 'Text-to-speech not supported in this browser' })
+    $q.notify({
+      type: 'warning',
+      message:
+        t('pages.quran.ttsNotSupported') ||
+        'Text-to-speech not supported in this browser',
+    })
     return
   }
-  
+
   if (stopRequested.value) {
     isTTSPlaying.value = false
     return
   }
-  
+
   const ayat = sura.value?.ayat || []
   if (index < 0 || index >= ayat.length) {
     stopTTS()
     return
   }
-  
+
   const ayah = ayat[index]
-  const text = typeof ayah === 'string' ? ayah : (ayah?.text || '')
+  const text = typeof ayah === 'string' ? ayah : ayah?.text || ''
   if (!text) {
     speakAyah(index + 1)
     return
   }
-  
+
   window.speechSynthesis.cancel()
-  
+
   const utterance = new SpeechSynthesisUtterance(text)
   utterance.rate = ttsRate.value
   utterance.lang = 'ar'
   if (ttsVoice.value) {
     utterance.voice = ttsVoice.value
   }
-  
+
   currentAyahIndex.value = index
   isTTSPlaying.value = true
-  
+
   utterance.onend = () => {
     if (!stopRequested.value) {
       speakAyah(index + 1)
     }
   }
-  
+
   utterance.onerror = () => {
     if (!stopRequested.value) {
       speakAyah(index + 1)
     }
   }
-  
+
   window.speechSynthesis.speak(utterance)
 }
 
 function startTTS() {
   if (typeof window === 'undefined' || !window.speechSynthesis) {
-    $q.notify({ type: 'warning', message: t('pages.quran.ttsNotSupported') || 'Text-to-speech not supported' })
+    $q.notify({
+      type: 'warning',
+      message:
+        t('pages.quran.ttsNotSupported') || 'Text-to-speech not supported',
+    })
     return
   }
-  
+
   stopRequested.value = false
   loadVoices()
   speakAyah(currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
@@ -1551,7 +1732,7 @@ function startReading(event?: MouseEvent | Event) {
   // Prevent default browser behavior and concurrent starts
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   if (isStartingRecitation.value) {
     console.debug('[Reading] Already starting, ignoring duplicate click')
     return
@@ -1570,7 +1751,11 @@ function startReading(event?: MouseEvent | Event) {
     // Audio: pause/resume if already playing, otherwise start
     if (isPlayingAudio.value && audioEl.value && !audioEl.value.paused) {
       pauseAudio()
-    } else if (audioEl.value && audioEl.value.paused && currentAyahIndex.value >= 0) {
+    } else if (
+      audioEl.value &&
+      audioEl.value.paused &&
+      currentAyahIndex.value >= 0
+    ) {
       resumeAudio()
     } else {
       startSuraAudio()
@@ -1581,7 +1766,7 @@ function startReading(event?: MouseEvent | Event) {
 function stopReading(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
-  
+
   if (readerMode.value === 'tts') {
     stopTTS()
   } else {
@@ -1589,7 +1774,9 @@ function stopReading(event?: MouseEvent | Event) {
   }
 }
 
-const isReading = computed(() => readerMode.value === 'tts' ? isTTSPlaying.value : isPlayingAudio.value)
+const isReading = computed(() =>
+  readerMode.value === 'tts' ? isTTSPlaying.value : isPlayingAudio.value
+)
 
 const isPaused = computed(() => {
   if (readerMode.value === 'tts') {
@@ -1608,7 +1795,7 @@ const playbackStatus = computed(() => {
       sura: currentSuraId.value,
       mode: readerMode.value,
       icon: 'play_arrow',
-      color: 'positive'
+      color: 'positive',
     }
   } else if (isPaused.value) {
     return {
@@ -1617,7 +1804,7 @@ const playbackStatus = computed(() => {
       sura: currentSuraId.value,
       mode: readerMode.value,
       icon: 'pause',
-      color: 'warning'
+      color: 'warning',
     }
   } else {
     return {
@@ -1626,7 +1813,7 @@ const playbackStatus = computed(() => {
       sura: currentSuraId.value,
       mode: readerMode.value,
       icon: 'stop',
-      color: 'grey'
+      color: 'grey',
     }
   }
 })
@@ -1642,7 +1829,7 @@ function pauseAudio() {
       message: t('pages.quran.paused') || 'Paused',
       tag: 'playback',
       icon: 'pause',
-      group: 'audio-pause'
+      group: 'audio-pause',
     })
   }
 }
@@ -1656,13 +1843,17 @@ function resumeAudio() {
       message: t('pages.quran.resumed') || 'Resumed',
       tag: 'playback',
       icon: 'play_arrow',
-      group: 'audio-resume'
+      group: 'audio-resume',
     })
   }
 }
 
 function pauseTTS() {
-  if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.speaking) {
+  if (
+    typeof window !== 'undefined' &&
+    window.speechSynthesis &&
+    window.speechSynthesis.speaking
+  ) {
     window.speechSynthesis.pause()
     isTTSPlaying.value = false
     // Save position for TTS as well
@@ -1672,13 +1863,17 @@ function pauseTTS() {
       message: t('pages.quran.paused') || 'Paused',
       tag: 'tts',
       icon: 'pause',
-      group: 'tts-pause'
+      group: 'tts-pause',
     })
   }
 }
 
 function resumeTTS() {
-  if (typeof window !== 'undefined' && window.speechSynthesis && window.speechSynthesis.paused) {
+  if (
+    typeof window !== 'undefined' &&
+    window.speechSynthesis &&
+    window.speechSynthesis.paused
+  ) {
     window.speechSynthesis.resume()
     isTTSPlaying.value = true
     $q.notify({
@@ -1712,7 +1907,7 @@ function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
   // Try to find the word element based on current layout mode
   const verseNum = ayahIndex + 1
   let wordId: string
-  
+
   if (layoutMode.value === 'mushaf') {
     wordId = `word-mushaf-${verseNum}-${wordIndex}`
   } else if (layoutMode.value === 'native') {
@@ -1720,10 +1915,14 @@ function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
   } else {
     wordId = `word-${verseNum}-${wordIndex}` // reader mode
   }
-  
+
   const el = document.getElementById(wordId)
   if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center', inline: 'nearest' })
+    el.scrollIntoView({
+      behavior: 'smooth',
+      block: 'center',
+      inline: 'nearest',
+    })
   }
 }
 
@@ -1734,7 +1933,7 @@ function getHoverWidgetStyle() {
       left: '50%',
       right: 'auto',
       bottom: 'calc(env(safe-area-inset-bottom, 0px) + 14px)',
-      transform: 'translateX(-50%)'
+      transform: 'translateX(-50%)',
     }
   }
 
@@ -1742,73 +1941,86 @@ function getHoverWidgetStyle() {
   const WIDGET_HEIGHT = 50
   const PADDING = 12
   const OFFSET = 12 // Distance from cursor
-  
+
   let top = hoverWidgetPosition.value.top + OFFSET
   let left = hoverWidgetPosition.value.left + OFFSET
-  
+
   // Adjust for viewport boundaries
   if (typeof window !== 'undefined') {
     const viewportHeight = window.innerHeight
     const viewportWidth = window.innerWidth
-    
+
     // Keep widget within viewport - move above cursor if too close to bottom
     if (top + WIDGET_HEIGHT > viewportHeight - PADDING) {
       top = hoverWidgetPosition.value.top - WIDGET_HEIGHT - OFFSET
     }
-    
+
     // Move left if too close to right edge
     if (left + WIDGET_WIDTH > viewportWidth - PADDING) {
       left = hoverWidgetPosition.value.left - WIDGET_WIDTH - OFFSET
     }
-    
+
     // Ensure minimum distances from viewport edges
-    top = Math.max(PADDING, Math.min(top, viewportHeight - WIDGET_HEIGHT - PADDING))
-    left = Math.max(PADDING, Math.min(left, viewportWidth - WIDGET_WIDTH - PADDING))
+    top = Math.max(
+      PADDING,
+      Math.min(top, viewportHeight - WIDGET_HEIGHT - PADDING)
+    )
+    left = Math.max(
+      PADDING,
+      Math.min(left, viewportWidth - WIDGET_WIDTH - PADDING)
+    )
   }
-  
+
   return {
     top: `${top}px`,
     left: `${left}px`,
-    transform: 'translate(0, 0)'
+    transform: 'translate(0, 0)',
   }
 }
 
 onMounted(async () => {
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
-    window.addEventListener('quran-translation-visibility-changed', syncShowTranslationPreference)
+    window.addEventListener(
+      'quran-translation-visibility-changed',
+      syncShowTranslationPreference
+    )
   }
 
   // Initialize layout mode from route param if present
-  const paramMode = route.params.mode as 'reader' | 'mushaf' | 'native' | undefined
+  const paramMode = route.params.mode as
+    | 'reader'
+    | 'mushaf'
+    | 'native'
+    | undefined
   if (paramMode && ['reader', 'mushaf', 'native'].includes(paramMode)) {
     layoutMode.value = paramMode
   } else if (!route.params.mode) {
     // Add current mode to URL if not present
-    router.replace({ 
+    router.replace({
       name: 'QuranDetail',
-      params: { ...route.params, mode: layoutMode.value } 
+      params: { ...route.params, mode: layoutMode.value },
     })
   }
-  
+
   await loadSuraById(Number(route.params.id || 1))
   try {
     await bookmarksStore.init()
   } catch {}
-  
+
   // Load TTS voices
   if (typeof window !== 'undefined' && window.speechSynthesis) {
     loadVoices()
     // Chrome loads voices async
     window.speechSynthesis.onvoiceschanged = loadVoices
   }
-  
+
   // Check for saved playback position and offer to resume
   await nextTick()
   if (audioList.value.length > 0) {
     await restorePlaybackPosition()
   }
-  
+
   // Show feature announcement for auto-continue (only once)
   const FEATURE_ANNOUNCEMENT_KEY = 'quran-feature-auto-continue-announced'
   const hasSeenAnnouncement = localStorage.getItem(FEATURE_ANNOUNCEMENT_KEY)
@@ -1816,7 +2028,9 @@ onMounted(async () => {
     setTimeout(() => {
       notify({
         type: 'info',
-        message: t('pages.quran.autoContinueAnnouncement') || '🎉 New Feature: Enable Auto-continue to automatically progress through all 114 suras!',
+        message:
+          t('pages.quran.autoContinueAnnouncement') ||
+          '🎉 New Feature: Enable Auto-continue to automatically progress through all 114 suras!',
         icon: 'auto_awesome',
         announce: true,
         actions: [
@@ -1826,9 +2040,9 @@ onMounted(async () => {
             handler: () => {
               localStorage.setItem(FEATURE_ANNOUNCEMENT_KEY, 'true')
               dismissAnnouncement()
-            }
-          }
-        ]
+            },
+          },
+        ],
       })
     }, 2000) // Show after 2 seconds to avoid overwhelming user
   }
@@ -1836,19 +2050,28 @@ onMounted(async () => {
 
 onUnmounted(() => {
   if (typeof window !== 'undefined') {
-    window.removeEventListener('quran-translation-visibility-changed', syncShowTranslationPreference)
+    window.removeEventListener(
+      'quran-translation-visibility-changed',
+      syncShowTranslationPreference
+    )
   }
 })
 
-watch(() => route.params.id, (newId) => {
-  if (!newId) return
-  loadSuraById(Number(newId))
-})
+watch(
+  () => route.params.id,
+  (newId) => {
+    if (!newId) return
+    loadSuraById(Number(newId))
+  }
+)
 
-watch(() => route.hash, (hash) => {
-  if (!hash) return
-  scrollToHash(hash)
-})
+watch(
+  () => route.hash,
+  (hash) => {
+    if (!hash) return
+    scrollToHash(hash)
+  }
+)
 
 watch(locale, () => {
   if (!sura.value) return
@@ -1857,103 +2080,134 @@ watch(locale, () => {
 })
 
 // Watch layoutModeStore for changes (deep watch for nested ref)
-watch(layoutModeStore.value, (newMode) => {
-  if (route.params.mode !== newMode) {
-    router.replace({ 
-      name: 'QuranDetail',
-      params: { ...route.params, mode: newMode } 
-    })
-  }
-}, { deep: true })
+watch(
+  layoutModeStore.value,
+  (newMode) => {
+    if (route.params.mode !== newMode) {
+      router.replace({
+        name: 'QuranDetail',
+        params: { ...route.params, mode: newMode },
+      })
+    }
+  },
+  { deep: true }
+)
 
 // Watch for URL param changes (browser back/forward)
-watch(() => route.params.mode, (newMode) => {
-  if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
-    const mode = newMode as 'reader' | 'mushaf' | 'native'
-    if (layoutMode.value !== mode) {
-      layoutMode.value = mode
+watch(
+  () => route.params.mode,
+  (newMode) => {
+    if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
+      const mode = newMode as 'reader' | 'mushaf' | 'native'
+      if (layoutMode.value !== mode) {
+        layoutMode.value = mode
+      }
     }
   }
-})
-
+)
 </script>
 
 <template>
   <div class="q-pa-md">
-    <q-btn flat class="q-mb-md" to="/quran" :label="`← ${t('pages.quran.backToList')}`" />
-    
+    <q-btn
+      flat
+      class="q-mb-md"
+      to="/quran"
+      :label="`← ${t('pages.quran.backToList')}`"
+    />
+
     <!-- Announcement Banner -->
     <Transition name="slide-down">
-      <q-banner 
-        v-if="showAnnouncementBanner && currentAnnouncement" 
-        class="announcement-banner q-mb-md" 
+      <q-banner
+        v-if="showAnnouncementBanner && currentAnnouncement"
+        class="announcement-banner q-mb-md"
         rounded
         dense
       >
         <template v-slot:avatar>
-          <q-icon :name="currentAnnouncement.icon" color="primary" size="32px" class="pulse-icon" />
+          <q-icon
+            :name="currentAnnouncement.icon"
+            color="primary"
+            size="32px"
+            class="pulse-icon"
+          />
         </template>
         <div class="announcement-content">
-          <div class="text-weight-bold text-h6">{{ currentAnnouncement.message }}</div>
+          <div class="text-weight-bold text-h6">
+            {{ currentAnnouncement.message }}
+          </div>
         </div>
         <template v-slot:action>
-          <q-btn 
-            v-for="(action, idx) in currentAnnouncement.actions" 
+          <q-btn
+            v-for="(action, idx) in currentAnnouncement.actions"
             :key="idx"
-            flat 
-            :label="action.label" 
+            flat
+            :label="action.label"
             :color="action.color || 'primary'"
-            @click.prevent="action.handler(); dismissAnnouncement()"
+            @click.prevent="
+              action.handler()
+              dismissAnnouncement()
+            "
           />
-          <q-btn 
-            flat 
-            icon="close" 
+          <q-btn
+            flat
+            icon="close"
             @click.prevent="dismissAnnouncement"
             aria-label="Dismiss"
           />
         </template>
       </q-banner>
     </Transition>
-    
+
     <!-- Paused Indicator Badge -->
     <Transition name="slide-down">
       <q-banner v-if="isPaused" class="paused-indicator-banner" rounded dense>
         <template v-slot:avatar>
-          <q-icon :name="playbackStatus.icon" :color="playbackStatus.color" size="28px" class="pulse-icon" />
+          <q-icon
+            :name="playbackStatus.icon"
+            :color="playbackStatus.color"
+            size="28px"
+            class="pulse-icon"
+          />
         </template>
         <div class="paused-info">
           <div class="text-weight-bold">{{ t('pages.quran.paused') }}</div>
           <div class="text-caption">
-            {{ t('pages.quran.sura.name') }} {{ currentSuraId }} • 
-            {{ t('pages.quran.verses') }} {{ playbackStatus.verse }} / {{ sura?.total_verses || 0 }} •
-            {{ playbackStatus.mode === 'audio' ? t('pages.quran.readerMode.audio') : t('pages.quran.readerMode.tts') }}
+            {{ t('pages.quran.sura.name') }} {{ currentSuraId }} •
+            {{ t('pages.quran.verses') }} {{ playbackStatus.verse }} /
+            {{ sura?.total_verses || 0 }} •
+            {{
+              playbackStatus.mode === 'audio'
+                ? t('pages.quran.readerMode.audio')
+                : t('pages.quran.readerMode.tts')
+            }}
           </div>
         </div>
         <template v-slot:action>
-          <q-btn 
-            flat 
-            :label="t('pages.quran.resume')" 
-            color="primary" 
+          <q-btn
+            flat
+            :label="t('pages.quran.resume')"
+            color="primary"
             icon="play_arrow"
             @click.prevent="startReading"
           />
-          <q-btn 
-            flat 
-            :label="t('pages.quran.stopRecitation')" 
-            color="negative" 
+          <q-btn
+            flat
+            :label="t('pages.quran.stopRecitation')"
+            color="negative"
             icon="stop"
             @click.prevent="stopReading"
           />
         </template>
       </q-banner>
     </Transition>
-    
+
     <div v-if="loading" class="status">Loading…</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
       <div class="sura-heading">
         <div>
-          <div 
+          <div
             class="text-h5 sura-title-swipeable"
             @touchstart="handleTouchStart"
             @touchmove="handleTouchMove"
@@ -1962,7 +2216,8 @@ watch(() => route.params.mode, (newMode) => {
             {{ sura?.e_name }} — {{ sura?.name }}
           </div>
           <div class="text-caption q-mt-xs">
-            ID: {{ sura?.id }} • {{ sura?.type }} • {{ sura?.total_verses }} ayat
+            ID: {{ sura?.id }} • {{ sura?.type }} •
+            {{ sura?.total_verses }} ayat
           </div>
         </div>
         <div class="heading-actions">
@@ -1993,14 +2248,23 @@ watch(() => route.params.mode, (newMode) => {
             </template>
           </q-btn-toggle>
           <q-btn
-            :icon="isReading ? 'pause' : (isPaused ? 'play_arrow' : 'play_arrow')"
+            :icon="isReading ? 'pause' : isPaused ? 'play_arrow' : 'play_arrow'"
             color="primary"
             flat
             dense
             @click.prevent="startReading"
-            :disable="(readerMode === 'audio' && !audioList.length) || isStartingRecitation"
+            :disable="
+              (readerMode === 'audio' && !audioList.length) ||
+              isStartingRecitation
+            "
             :loading="isStartingRecitation"
-            :label="isReading ? t('pages.quran.pause') : (isPaused ? t('pages.quran.resume') : t('pages.quran.playRecitation'))"
+            :label="
+              isReading
+                ? t('pages.quran.pause')
+                : isPaused
+                  ? t('pages.quran.resume')
+                  : t('pages.quran.playRecitation')
+            "
           />
           <q-btn
             v-if="isReading || isPaused"
@@ -2011,7 +2275,7 @@ watch(() => route.params.mode, (newMode) => {
             @click.prevent="stopReading"
             :label="t('pages.quran.stopRecitation')"
           />
-          
+
           <!-- Auto-continue toggle -->
           <q-toggle
             v-model="autoContinueEnabled"
@@ -2020,7 +2284,7 @@ watch(() => route.params.mode, (newMode) => {
             dense
             class="q-ml-sm"
           />
-          
+
           <!-- Audio playback rate (audio mode) -->
           <q-select
             v-if="readerMode === 'audio'"
@@ -2037,7 +2301,11 @@ watch(() => route.params.mode, (newMode) => {
             emit-value
             map-options
             style="width: 90px"
-            @update:model-value="(v) => { if (audioEl) audioEl.playbackRate = v; }"
+            @update:model-value="
+              (v) => {
+                if (audioEl) audioEl.playbackRate = v
+              }
+            "
           />
           <!-- TTS rate (TTS mode) -->
           <q-select
@@ -2085,7 +2353,12 @@ watch(() => route.params.mode, (newMode) => {
                 <div class="row items-center q-gutter-xs">
                   <q-icon name="auto_stories" size="16px" />
                   <span>{{ t('pages.quran.modes.mushaf') }}</span>
-                  <q-icon name="star" size="14px" color="amber" class="recommended-icon" />
+                  <q-icon
+                    name="star"
+                    size="14px"
+                    color="amber"
+                    class="recommended-icon"
+                  />
                 </div>
               </template>
             </q-btn-toggle>
@@ -2099,7 +2372,9 @@ watch(() => route.params.mode, (newMode) => {
           >
             <q-menu auto-close anchor="bottom right" self="top right">
               <q-list class="quick-access-list">
-                <q-item-label header>{{ t('pages.quran.quickAccess.title') }}</q-item-label>
+                <q-item-label header>{{
+                  t('pages.quran.quickAccess.title')
+                }}</q-item-label>
                 <q-item
                   v-for="qa in quickAccessVerses"
                   :key="qa.id"
@@ -2111,7 +2386,9 @@ watch(() => route.params.mode, (newMode) => {
                   </q-item-section>
                   <q-item-section>
                     <q-item-label>{{ t(qa.nameKey) }}</q-item-label>
-                    <q-item-label caption>{{ qa.suraId }}:{{ qa.verse }}</q-item-label>
+                    <q-item-label caption
+                      >{{ qa.suraId }}:{{ qa.verse }}</q-item-label
+                    >
                   </q-item-section>
                   <q-item-section side>
                     <div class="row items-center q-gutter-xs">
@@ -2121,20 +2398,41 @@ watch(() => route.params.mode, (newMode) => {
                         flat
                         size="sm"
                         :icon="isQuickAccessPlaying(qa) ? 'stop' : 'play_arrow'"
-                        :color="isQuickAccessPlaying(qa) ? 'negative' : 'primary'"
-                        @click.stop.prevent="isQuickAccessPlaying(qa) ? stopReading() : navigateToQuickAccess(qa)"
+                        :color="
+                          isQuickAccessPlaying(qa) ? 'negative' : 'primary'
+                        "
+                        @click.stop.prevent="
+                          isQuickAccessPlaying(qa)
+                            ? stopReading()
+                            : navigateToQuickAccess(qa)
+                        "
                         class="animated-play-btn"
                       >
                         <q-tooltip v-if="isQuickAccessPlaying(qa)">
-                          {{ t('pages.quran.stopRecitation') }} ({{ playbackStatus.mode }})
+                          {{ t('pages.quran.stopRecitation') }} ({{
+                            playbackStatus.mode
+                          }})
                         </q-tooltip>
                         <q-tooltip v-else>
                           {{ t('pages.quran.playRecitation') }}
                         </q-tooltip>
                       </q-btn>
-                      <q-icon 
-                        :name="qa.suraId === currentSuraId && isQuickAccessPlaying(qa) ? 'graphic_eq' : (qa.suraId === currentSuraId ? 'check_circle' : 'chevron_right')" 
-                        :color="isQuickAccessPlaying(qa) ? 'positive' : (qa.suraId === currentSuraId ? 'positive' : 'grey')"
+                      <q-icon
+                        :name="
+                          qa.suraId === currentSuraId &&
+                          isQuickAccessPlaying(qa)
+                            ? 'graphic_eq'
+                            : qa.suraId === currentSuraId
+                              ? 'check_circle'
+                              : 'chevron_right'
+                        "
+                        :color="
+                          isQuickAccessPlaying(qa)
+                            ? 'positive'
+                            : qa.suraId === currentSuraId
+                              ? 'positive'
+                              : 'grey'
+                        "
                         :class="{ 'pulse-icon': isQuickAccessPlaying(qa) }"
                       />
                     </div>
@@ -2179,17 +2477,30 @@ watch(() => route.params.mode, (newMode) => {
                         flat
                         size="sm"
                         :icon="isBookmarkPlaying(entry) ? 'stop' : 'play_arrow'"
-                        :color="isBookmarkPlaying(entry) ? 'negative' : 'primary'"
-                        @click.stop.prevent="isBookmarkPlaying(entry) ? stopReading() : handleBookmarkNavigate(entry)"
+                        :color="
+                          isBookmarkPlaying(entry) ? 'negative' : 'primary'
+                        "
+                        @click.stop.prevent="
+                          isBookmarkPlaying(entry)
+                            ? stopReading()
+                            : handleBookmarkNavigate(entry)
+                        "
                         class="animated-play-btn"
                       >
                         <q-tooltip v-if="isBookmarkPlaying(entry)">
-                          {{ t('pages.quran.stopRecitation') }} ({{ playbackStatus.mode }})
+                          {{ t('pages.quran.stopRecitation') }} ({{
+                            playbackStatus.mode
+                          }})
                         </q-tooltip>
                         <q-tooltip v-else>
                           {{ t('pages.quran.playRecitation') }}
                         </q-tooltip>
-                        <q-badge v-if="isBookmarkPlaying(entry)" color="positive" floating rounded />
+                        <q-badge
+                          v-if="isBookmarkPlaying(entry)"
+                          color="positive"
+                          floating
+                          rounded
+                        />
                       </q-btn>
                       <q-btn
                         round
@@ -2237,7 +2548,9 @@ watch(() => route.params.mode, (newMode) => {
           >
             <div class="verse-main-row">
               <div class="verse-inline-actions">
-                <span class="verse-num" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
+                <span class="verse-num" @click="scrollToVerse(a.verse)">{{
+                  a.verse
+                }}</span>
                 <button
                   type="button"
                   class="bookmark-trigger inline-trigger"
@@ -2245,12 +2558,21 @@ watch(() => route.params.mode, (newMode) => {
                   @click.stop="bookmarkVerse(a.verse)"
                   :aria-label="bookmarkActionLabel(a.verse)"
                 >
-                  <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
+                  <q-icon
+                    :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'"
+                    size="18px"
+                  />
                 </button>
                 <button
                   type="button"
                   class="share-trigger inline-trigger"
-                  @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
+                  @click.stop="
+                    shareVerseLink(
+                      currentSuraId,
+                      a.verse,
+                      `${currentSuraId}:${a.verse}`
+                    )
+                  "
                   :aria-label="`Share verse ${currentSuraId}:${a.verse}`"
                   :title="`Share ${currentSuraId}:${a.verse}`"
                 >
@@ -2259,8 +2581,19 @@ watch(() => route.params.mode, (newMode) => {
               </div>
               <div class="arabic-text">
                 <template v-if="wordTimings[a.verse - 1]?.length">
-                  <template v-for="(word, wIdx) in a.text.split(' ')" :key="`${a.verse}-${wIdx}`">
-                    <span :id="`word-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                  <template
+                    v-for="(word, wIdx) in a.text.split(' ')"
+                    :key="`${a.verse}-${wIdx}`"
+                  >
+                    <span
+                      :id="`word-${a.verse}-${wIdx}`"
+                      :class="{
+                        'is-current-word':
+                          currentAyahIndex === a.verse - 1 &&
+                          currentWordIndex === wIdx,
+                      }"
+                      >{{ word }}</span
+                    >{{ ' ' }}
                   </template>
                 </template>
                 <template v-else>
@@ -2269,7 +2602,10 @@ watch(() => route.params.mode, (newMode) => {
               </div>
             </div>
             <div class="verse-meta">
-              <div class="verse-translation" v-if="showTranslation && a.translation">
+              <div
+                class="verse-translation"
+                v-if="showTranslation && a.translation"
+              >
                 {{ a.translation }}
               </div>
             </div>
@@ -2297,14 +2633,29 @@ watch(() => route.params.mode, (newMode) => {
                   @click="handleVerseTap($event, a.verse)"
                 >
                   <template v-if="wordTimings[a.verse - 1]?.length">
-                    <template v-for="(word, wIdx) in a.text.split(' ')" :key="`m-${a.verse}-${wIdx}`">
-                      <span :id="`word-mushaf-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                    <template
+                      v-for="(word, wIdx) in a.text.split(' ')"
+                      :key="`m-${a.verse}-${wIdx}`"
+                    >
+                      <span
+                        :id="`word-mushaf-${a.verse}-${wIdx}`"
+                        :class="{
+                          'is-current-word':
+                            currentAyahIndex === a.verse - 1 &&
+                            currentWordIndex === wIdx,
+                        }"
+                        >{{ word }}</span
+                      >{{ ' ' }}
                     </template>
                   </template>
                   <template v-else>
                     {{ a.text }}
                   </template>
-                  <span class="ayah-inline-number" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
+                  <span
+                    class="ayah-inline-number"
+                    @click="scrollToVerse(a.verse)"
+                    >{{ a.verse }}</span
+                  >
                 </span>
               </div>
             </div>
@@ -2312,7 +2663,11 @@ watch(() => route.params.mode, (newMode) => {
         </div>
       </div>
 
-      <div v-else-if="layoutMode === 'native'" class="native-layout q-mt-lg">
+      <div
+        v-else-if="layoutMode === 'native'"
+        class="native-layout q-mt-lg"
+        :class="{ 'is-ios-native': isIOSRuntime }"
+      >
         <article class="native-content">
           <p
             v-for="a in sura?.ayat || []"
@@ -2325,7 +2680,9 @@ watch(() => route.params.mode, (newMode) => {
             @mouseenter="onVerseMouseEnter($event, a.verse)"
             @mouseleave="onVerseMouseLeave"
           >
-            <span class="verse-marker" @click="scrollToVerse(a.verse)">{{ a.verse }}</span>
+            <span class="verse-marker" @click="scrollToVerse(a.verse)">{{
+              a.verse
+            }}</span>
             <span class="native-inline-actions">
               <button
                 type="button"
@@ -2334,12 +2691,21 @@ watch(() => route.params.mode, (newMode) => {
                 @click.stop="bookmarkVerse(a.verse)"
                 :aria-label="bookmarkActionLabel(a.verse)"
               >
-                <q-icon :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'" size="18px" />
+                <q-icon
+                  :name="isVerseBookmarked(a.verse) ? 'star' : 'star_outline'"
+                  size="18px"
+                />
               </button>
               <button
                 type="button"
                 class="share-trigger native-trigger"
-                @click.stop="shareVerseLink(currentSuraId, a.verse, `${currentSuraId}:${a.verse}`)"
+                @click.stop="
+                  shareVerseLink(
+                    currentSuraId,
+                    a.verse,
+                    `${currentSuraId}:${a.verse}`
+                  )
+                "
                 :aria-label="`Share ${currentSuraId}:${a.verse}`"
                 :title="`Share ${currentSuraId}:${a.verse}`"
               >
@@ -2348,15 +2714,30 @@ watch(() => route.params.mode, (newMode) => {
             </span>
             <span class="verse-text-arabic">
               <template v-if="wordTimings[a.verse - 1]?.length">
-                <template v-for="(word, wIdx) in a.text.split(' ')" :key="`n-${a.verse}-${wIdx}`">
-                  <span :id="`word-native-${a.verse}-${wIdx}`" :class="{ 'is-current-word': currentAyahIndex === (a.verse - 1) && currentWordIndex === wIdx }">{{ word }}</span>{{ ' ' }}
+                <template
+                  v-for="(word, wIdx) in a.text.split(' ')"
+                  :key="`n-${a.verse}-${wIdx}`"
+                >
+                  <span
+                    :id="`word-native-${a.verse}-${wIdx}`"
+                    :class="{
+                      'is-current-word':
+                        currentAyahIndex === a.verse - 1 &&
+                        currentWordIndex === wIdx,
+                    }"
+                    >{{ word }}</span
+                  >{{ ' ' }}
                 </template>
               </template>
               <template v-else>
                 {{ a.text }}
               </template>
             </span>
-            <span v-if="showTranslation && a.translation" class="verse-translation-native">{{ a.translation }}</span>
+            <span
+              v-if="showTranslation && a.translation"
+              class="verse-translation-native"
+              >{{ a.translation }}</span
+            >
           </p>
         </article>
       </div>
@@ -2371,14 +2752,21 @@ watch(() => route.params.mode, (newMode) => {
             @mouseleave="hideHoverWidget"
           >
             <q-card class="ayah-action-card" flat bordered>
-              <q-card-actions align="around" class="ayah-action-buttons q-pa-sm">
+              <q-card-actions
+                align="around"
+                class="ayah-action-buttons q-pa-sm"
+              >
                 <q-btn
                   round
                   dense
                   :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
                   color="primary"
                   @click="togglePauseResume"
-                  :title="isPlayingAudio ? t('pages.quran.pause') : t('pages.quran.play')"
+                  :title="
+                    isPlayingAudio
+                      ? t('pages.quran.pause')
+                      : t('pages.quran.play')
+                  "
                 />
                 <q-btn
                   round
@@ -2399,10 +2787,16 @@ watch(() => route.params.mode, (newMode) => {
                 <q-btn
                   round
                   dense
-                  :icon="isVerseBookmarked(hoverWidgetVerse!) ? 'star' : 'star_outline'"
+                  :icon="
+                    isVerseBookmarked(hoverWidgetVerse!)
+                      ? 'star'
+                      : 'star_outline'
+                  "
                   color="accent"
                   @click="bookmarkVerse(hoverWidgetVerse!)"
-                  :title="t('pages.quran.bookmarks.add', { verse: hoverWidgetVerse })"
+                  :title="
+                    t('pages.quran.bookmarks.add', { verse: hoverWidgetVerse })
+                  "
                 />
                 <q-btn
                   round
@@ -2549,7 +2943,7 @@ watch(() => route.params.mode, (newMode) => {
 }
 
 .reader-layout .arabic-block {
-  font-family: "Noto Naskh Arabic", serif;
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: clamp(1.25rem, 2.5vw, 2.5rem);
   line-height: 1.8;
   direction: rtl;
@@ -2586,10 +2980,12 @@ watch(() => route.params.mode, (newMode) => {
 }
 
 .arabic-text {
-  font-feature-settings: "rlig" 1, "liga" 1;
+  font-feature-settings:
+    'rlig' 1,
+    'liga' 1;
   direction: rtl;
   text-align: justify;
-  font-family: "Noto Naskh Arabic", serif;
+  font-family: 'Noto Naskh Arabic', serif;
 }
 
 .verse-main-row {
@@ -2787,7 +3183,7 @@ watch(() => route.params.mode, (newMode) => {
   column-gap: 0;
   column-fill: auto;
   direction: rtl;
-  font-family: "Noto Naskh Arabic", serif;
+  font-family: 'Noto Naskh Arabic', serif;
   font-size: clamp(1.45rem, 2.8vw, 2rem);
   line-height: 2.35;
   width: 100%;
@@ -2899,11 +3295,27 @@ watch(() => route.params.mode, (newMode) => {
   border: 2px solid #81c784;
 }
 
+.native-layout.is-ios-native {
+  background: linear-gradient(180deg, #f7f8fa 0%, #eef2f7 100%);
+  border: 1px solid rgba(60, 60, 67, 0.14);
+  border-radius: 20px;
+  box-shadow: 0 10px 30px rgba(17, 24, 39, 0.08);
+  padding: 16px;
+}
+
 .native-content {
   max-width: 100%;
   margin: 0 auto;
   line-height: 2;
   padding: 0 clamp(16px, 2vw, 48px);
+}
+
+.native-layout.is-ios-native .native-content {
+  font-family:
+    -apple-system, BlinkMacSystemFont, 'SF Pro Text', 'SF Pro Display',
+    'Noto Sans', sans-serif;
+  line-height: 1.6;
+  padding: 0 clamp(8px, 2vw, 20px);
 }
 
 .verse-paragraph {
@@ -2920,10 +3332,27 @@ watch(() => route.params.mode, (newMode) => {
   direction: rtl;
 }
 
+.native-layout.is-ios-native .verse-paragraph {
+  margin: 10px 0;
+  padding: 12px 14px;
+  border-inline-end: none;
+  background: rgba(255, 255, 255, 0.9);
+  border: 1px solid rgba(60, 60, 67, 0.12);
+  border-radius: 14px;
+  text-align: start;
+  box-shadow: 0 1px 2px rgba(17, 24, 39, 0.04);
+}
+
 .verse-paragraph:hover {
   background: rgba(255, 255, 255, 0.95);
   box-shadow: 0 2px 8px rgba(76, 175, 80, 0.15);
   transform: translateX(4px);
+}
+
+.native-layout.is-ios-native .verse-paragraph:hover {
+  background: rgba(255, 255, 255, 0.98);
+  box-shadow: 0 4px 14px rgba(17, 24, 39, 0.08);
+  transform: translateX(0);
 }
 
 .verse-paragraph.is-selected {
@@ -2932,6 +3361,13 @@ watch(() => route.params.mode, (newMode) => {
   border-inline-end-width: 6px;
   box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
   transform: translateX(4px);
+}
+
+.native-layout.is-ios-native .verse-paragraph.is-selected {
+  background: rgba(10, 132, 255, 0.1);
+  border: 1px solid rgba(10, 132, 255, 0.35);
+  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.14);
+  transform: translateX(0);
 }
 
 .verse-marker {
@@ -2953,11 +3389,29 @@ watch(() => route.params.mode, (newMode) => {
   box-shadow: 0 2px 6px rgba(76, 175, 80, 0.3);
 }
 
+.native-layout.is-ios-native .verse-marker {
+  min-width: 30px;
+  height: 30px;
+  font-size: 0.8rem;
+  background: #f2f2f7;
+  border: 1px solid rgba(60, 60, 67, 0.28);
+  color: #1c1c1e;
+  box-shadow: none;
+}
+
 .verse-marker:hover {
   background: linear-gradient(135deg, #4caf50, #388e3c);
   border-color: #388e3c;
   transform: scale(1.1);
   box-shadow: 0 4px 12px rgba(76, 175, 80, 0.5);
+}
+
+.native-layout.is-ios-native .verse-marker:hover {
+  background: #e5e5ea;
+  border-color: rgba(60, 60, 67, 0.36);
+  color: #1c1c1e;
+  transform: scale(1.03);
+  box-shadow: none;
 }
 
 .native-inline-actions {
@@ -2967,8 +3421,21 @@ watch(() => route.params.mode, (newMode) => {
   direction: ltr;
 }
 
+.native-layout.is-ios-native .native-inline-actions {
+  gap: 6px;
+  margin-inline: 8px;
+}
+
+.native-layout.is-ios-native .native-trigger {
+  width: 32px;
+  height: 32px;
+  border-radius: 10px;
+  background: rgba(255, 255, 255, 0.85);
+  border: 1px solid rgba(60, 60, 67, 0.16);
+}
+
 .verse-text-arabic {
-  font-family: "Noto Naskh Arabic", serif;
+  font-family: 'Noto Naskh Arabic', serif;
   direction: rtl;
   unicode-bidi: embed;
   display: block;
@@ -2977,12 +3444,25 @@ watch(() => route.params.mode, (newMode) => {
   line-height: 1.8;
 }
 
+.native-layout.is-ios-native .verse-text-arabic {
+  font-size: clamp(1.18rem, 2.8vw, 2.05rem);
+  line-height: 1.9;
+}
+
 .verse-translation-native {
   display: block;
   margin-top: 8px;
   color: #555;
   font-style: italic;
   font-size: 0.95rem;
+}
+
+.native-layout.is-ios-native .verse-translation-native {
+  margin-top: 10px;
+  color: #3a3a3c;
+  font-style: normal;
+  font-size: 0.95rem;
+  line-height: 1.45;
 }
 
 /* Dark mode overrides */
@@ -3082,21 +3562,63 @@ body.body--dark .native-layout {
   border-color: #4caf50;
 }
 
+body.body--dark .native-layout.is-ios-native {
+  background: linear-gradient(180deg, #161618 0%, #1c1c1e 100%);
+  border-color: rgba(255, 255, 255, 0.14);
+  box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
+}
+
 body.body--dark .verse-paragraph {
   background: rgba(42, 42, 42, 0.7);
   color: #e0e0e0;
+}
+
+body.body--dark .native-layout.is-ios-native .verse-paragraph {
+  background: rgba(44, 44, 46, 0.82);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f2f2f7;
+}
+
+body.body--dark .native-layout.is-ios-native .verse-paragraph.is-selected {
+  background: rgba(10, 132, 255, 0.16);
+  border-color: rgba(10, 132, 255, 0.46);
+  box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
 }
 
 body.body--dark .verse-paragraph:hover {
   background: rgba(42, 42, 42, 0.95);
 }
 
+body.body--dark .native-layout.is-ios-native .verse-paragraph:hover {
+  background: rgba(58, 58, 60, 0.9);
+}
+
 body.body--dark .verse-text-arabic {
   color: #e0e0e0;
 }
 
+body.body--dark .native-layout.is-ios-native .verse-marker {
+  background: rgba(58, 58, 60, 0.95);
+  border-color: rgba(255, 255, 255, 0.2);
+  color: #f2f2f7;
+}
+
+body.body--dark .native-layout.is-ios-native .verse-marker:hover {
+  background: rgba(72, 72, 74, 0.95);
+  border-color: rgba(255, 255, 255, 0.28);
+}
+
+body.body--dark .native-layout.is-ios-native .native-trigger {
+  background: rgba(58, 58, 60, 0.82);
+  border-color: rgba(255, 255, 255, 0.14);
+}
+
 body.body--dark .verse-translation-native {
   color: #b0b0b0;
+}
+
+body.body--dark .native-layout.is-ios-native .verse-translation-native {
+  color: #d1d1d6;
 }
 
 /* Landscape Optimizations */
@@ -3105,11 +3627,11 @@ body.body--dark .verse-translation-native {
   .sura-heading {
     padding: 8px 0;
   }
-  
+
   .text-h5 {
     font-size: 1.2rem !important;
   }
-  
+
   .heading-actions {
     gap: 4px;
   }
@@ -3120,28 +3642,28 @@ body.body--dark .verse-translation-native {
   .verse-row {
     display: block;
   }
-  
+
   .verse-main-row {
     grid-template-columns: max-content minmax(0, 1fr);
   }
-  
+
   .verse-meta {
     margin-top: 8px;
     display: flex;
     align-items: flex-start;
   }
-  
+
   .verse-translation {
     padding: 0;
     background: transparent;
     border-radius: 0;
     min-height: auto;
   }
-  
+
   body.body--dark .verse-translation {
     background: rgba(255, 255, 255, 0.05);
   }
-  
+
   /* Keep mushaf in one full-width flow in landscape */
   .mushaf-body {
     column-count: 1;
@@ -3159,7 +3681,8 @@ body.body--dark .verse-translation-native {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -3186,7 +3709,11 @@ body.body--dark .verse-translation-native {
 /* Paused indicator banner */
 .paused-indicator-banner {
   margin-bottom: 16px;
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.15), rgba(255, 152, 0, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 193, 7, 0.15),
+    rgba(255, 152, 0, 0.1)
+  );
   border: 2px solid #ffc107;
   box-shadow: 0 4px 12px rgba(255, 193, 7, 0.25);
 }
@@ -3214,7 +3741,11 @@ body.body--dark .verse-translation-native {
 }
 
 body.body--dark .paused-indicator-banner {
-  background: linear-gradient(135deg, rgba(255, 193, 7, 0.2), rgba(255, 152, 0, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(255, 193, 7, 0.2),
+    rgba(255, 152, 0, 0.15)
+  );
   border-color: #ffb300;
 }
 
@@ -3226,7 +3757,8 @@ body.body--dark .paused-indicator-banner {
 }
 
 @keyframes twinkle {
-  0%, 100% {
+  0%,
+  100% {
     opacity: 1;
     transform: scale(1);
   }
@@ -3242,14 +3774,19 @@ body.body--dark .recommended-icon {
 
 /* Announcement banner */
 .announcement-banner {
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.15), rgba(21, 101, 192, 0.1));
+  background: linear-gradient(
+    135deg,
+    rgba(33, 150, 243, 0.15),
+    rgba(21, 101, 192, 0.1)
+  );
   border: 2px solid #2196f3;
   box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
   animation: glow 2s ease-in-out infinite;
 }
 
 @keyframes glow {
-  0%, 100% {
+  0%,
+  100% {
     box-shadow: 0 4px 16px rgba(33, 150, 243, 0.3);
   }
   50% {
@@ -3264,7 +3801,11 @@ body.body--dark .recommended-icon {
 }
 
 body.body--dark .announcement-banner {
-  background: linear-gradient(135deg, rgba(33, 150, 243, 0.25), rgba(21, 101, 192, 0.15));
+  background: linear-gradient(
+    135deg,
+    rgba(33, 150, 243, 0.25),
+    rgba(21, 101, 192, 0.15)
+  );
   border-color: #42a5f5;
 }
 
@@ -3277,4 +3818,3 @@ body.body--dark .announcement-banner {
   font-size: 11px;
 }
 </style>
-
