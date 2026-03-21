@@ -36,7 +36,11 @@ function computeNitroBase() {
     }
 
     // Capacitor runtime is cross-origin from hosted API
-    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+    if (
+      protocol === 'capacitor:' ||
+      protocol === 'ionic:' ||
+      protocol === 'app:'
+    ) {
       return DEFAULT_MOBILE_API_BASE
     }
 
@@ -51,9 +55,42 @@ function computeNitroBase() {
 
 const NITRO_BASE = computeNitroBase()
 
+function isCapacitorLikeRuntime() {
+  if (typeof window === 'undefined') return false
+  const protocol = window.location?.protocol
+  return (
+    protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
+  )
+}
+
+function isNetworkLikeError(err: any) {
+  const msg = String(err?.message || '')
+  return (
+    err instanceof TypeError ||
+    /load failed|failed to fetch|networkerror/i.test(msg)
+  )
+}
+
+async function loginRequest(base: string) {
+  return fetch(`${base}/auth/login`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({
+      username: username.value,
+      password: password.value,
+    }),
+  })
+}
+
 function getPostLoginPath() {
   const redirect = String(route.query.redirect || '').trim()
-  if (redirect.startsWith('/') && !redirect.startsWith('//') && redirect !== '/login' && redirect !== '/signup') {
+  if (
+    redirect.startsWith('/') &&
+    !redirect.startsWith('//') &&
+    redirect !== '/login' &&
+    redirect !== '/signup'
+  ) {
     return redirect
   }
 
@@ -62,7 +99,11 @@ function getPostLoginPath() {
       const ref = new URL(window.document.referrer)
       if (ref.origin === window.location.origin) {
         const refPath = `${ref.pathname}${ref.search}${ref.hash}`
-        if (refPath.startsWith('/') && refPath !== '/login' && refPath !== '/signup') {
+        if (
+          refPath.startsWith('/') &&
+          refPath !== '/login' &&
+          refPath !== '/signup'
+        ) {
           return refPath
         }
       }
@@ -82,7 +123,7 @@ function handleGitHubLogin() {
 function handleNetlifyLogin() {
   // Open Netlify Identity modal
   if (typeof window !== 'undefined' && (window as any).netlifyIdentity) {
-    (window as any).netlifyIdentity.open('login')
+    ;(window as any).netlifyIdentity.open('login')
   }
 }
 
@@ -91,7 +132,7 @@ async function handleLogin() {
     $q.notify({
       type: 'warning',
       message: t('auth.enterCredentials'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -99,15 +140,23 @@ async function handleLogin() {
   loading.value = true
 
   try {
-    const response = await fetch(`${NITRO_BASE}/auth/login`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        username: username.value,
-        password: password.value
-      })
-    })
+    let response: Response
+
+    try {
+      response = await loginRequest(NITRO_BASE)
+    } catch (err: any) {
+      // iOS WebView sometimes surfaces cross-origin/preflight/network issues as
+      // generic "Load failed". Fallback to canonical mobile API base.
+      if (
+        isCapacitorLikeRuntime() &&
+        NITRO_BASE !== DEFAULT_MOBILE_API_BASE &&
+        isNetworkLikeError(err)
+      ) {
+        response = await loginRequest(DEFAULT_MOBILE_API_BASE)
+      } else {
+        throw err
+      }
+    }
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
@@ -115,22 +164,25 @@ async function handleLogin() {
     }
 
     const data = await response.json()
-    
+
     authStore.setUser(data.user)
-    
+
     $q.notify({
       type: 'positive',
       message: t('auth.loginSuccess'),
-      position: 'top'
+      position: 'top',
     })
-    
+
     router.push(getPostLoginPath())
-    
   } catch (err: any) {
+    const message = isNetworkLikeError(err)
+      ? 'Unable to reach the server. Please check your connection and try again.'
+      : err.message || t('auth.loginError')
+
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.loginError'),
-      position: 'top'
+      message,
+      position: 'top',
     })
     console.error('Login error:', err)
   } finally {
@@ -147,7 +199,7 @@ async function handleResetRequest() {
     $q.notify({
       type: 'warning',
       message: t('auth.enterEmail'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -156,21 +208,21 @@ async function handleResetRequest() {
 
   try {
     // TODO: Implement actual password reset endpoint
-    await new Promise(resolve => setTimeout(resolve, 1500))
-    
+    await new Promise((resolve) => setTimeout(resolve, 1500))
+
     $q.notify({
       type: 'positive',
       message: t('auth.resetEmailSent'),
-      position: 'top'
+      position: 'top',
     })
-    
+
     showForgotDialog.value = false
     resetEmail.value = ''
   } catch (err: any) {
     $q.notify({
       type: 'negative',
       message: err.message || t('auth.resetError'),
-      position: 'top'
+      position: 'top',
     })
   } finally {
     sendingReset.value = false
@@ -209,7 +261,7 @@ async function handleResetRequest() {
               :disable="loading"
               autocomplete="username"
               lazy-rules
-              :rules="[val => !!val || t('auth.usernameRequired')]"
+              :rules="[(val) => !!val || t('auth.usernameRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="person" />
@@ -225,7 +277,7 @@ async function handleResetRequest() {
               :disable="loading"
               autocomplete="current-password"
               lazy-rules
-              :rules="[val => !!val || t('auth.passwordRequired')]"
+              :rules="[(val) => !!val || t('auth.passwordRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -275,10 +327,12 @@ async function handleResetRequest() {
             <div class="q-mt-md">
               <div class="row items-center q-mb-sm">
                 <div class="col"><q-separator /></div>
-                <div class="col-auto q-px-md text-caption text-grey-7">{{ t('auth.orContinueWith') }}</div>
+                <div class="col-auto q-px-md text-caption text-grey-7">
+                  {{ t('auth.orContinueWith') }}
+                </div>
                 <div class="col"><q-separator /></div>
               </div>
-              
+
               <q-btn
                 outline
                 color="grey-8"
@@ -305,7 +359,9 @@ async function handleResetRequest() {
             </div>
 
             <div class="text-center q-mt-md">
-              <span class="text-caption text-grey-7">{{ t('auth.dontHaveAccount') }}</span>
+              <span class="text-caption text-grey-7">{{
+                t('auth.dontHaveAccount')
+              }}</span>
               <q-btn
                 flat
                 dense
@@ -319,52 +375,50 @@ async function handleResetRequest() {
           </q-form>
         </q-card-section>
 
+        <!-- Forgot Password Dialog -->
+        <q-dialog v-model="showForgotDialog">
+          <q-card style="min-width: 400px">
+            <q-card-section>
+              <div class="text-h6">{{ t('auth.resetPassword') }}</div>
+            </q-card-section>
 
+            <q-card-section class="q-pt-none">
+              <p class="text-body2 text-grey-7">
+                {{ t('auth.resetInstructions') }}
+              </p>
+              <q-input
+                v-model="resetEmail"
+                outlined
+                type="email"
+                :label="t('auth.email')"
+                :placeholder="t('auth.enterEmail')"
+                :disable="sendingReset"
+                autocomplete="email"
+              >
+                <template v-slot:prepend>
+                  <q-icon name="email" />
+                </template>
+              </q-input>
+            </q-card-section>
 
-      <!-- Forgot Password Dialog -->
-      <q-dialog v-model="showForgotDialog">
-        <q-card style="min-width: 400px">
-          <q-card-section>
-            <div class="text-h6">{{ t('auth.resetPassword') }}</div>
-          </q-card-section>
-
-          <q-card-section class="q-pt-none">
-            <p class="text-body2 text-grey-7">
-              {{ t('auth.resetInstructions') }}
-            </p>
-            <q-input
-              v-model="resetEmail"
-              outlined
-              type="email"
-              :label="t('auth.email')"
-              :placeholder="t('auth.enterEmail')"
-              :disable="sendingReset"
-              autocomplete="email"
-            >
-              <template v-slot:prepend>
-                <q-icon name="email" />
-              </template>
-            </q-input>
-          </q-card-section>
-
-          <q-card-actions align="right">
-            <q-btn
-              flat
-              :label="t('cancel')"
-              color="grey-7"
-              v-close-popup
-              :disable="sendingReset"
-            />
-            <q-btn
-              unelevated
-              :label="t('auth.sendResetLink')"
-              color="primary"
-              @click="handleResetRequest"
-              :loading="sendingReset"
-            />
-          </q-card-actions>
-        </q-card>
-      </q-dialog>
+            <q-card-actions align="right">
+              <q-btn
+                flat
+                :label="t('cancel')"
+                color="grey-7"
+                v-close-popup
+                :disable="sendingReset"
+              />
+              <q-btn
+                unelevated
+                :label="t('auth.sendResetLink')"
+                color="primary"
+                @click="handleResetRequest"
+                :loading="sendingReset"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
       </q-card>
     </div>
   </div>
@@ -396,7 +450,11 @@ async function handleResetRequest() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: linear-gradient(45deg, rgba(102, 126, 234, 0.9) 0%, rgba(118, 75, 162, 0.9) 100%);
+  background: linear-gradient(
+    45deg,
+    rgba(102, 126, 234, 0.9) 0%,
+    rgba(118, 75, 162, 0.9) 100%
+  );
 }
 
 .pattern-overlay {
@@ -405,15 +463,28 @@ async function handleResetRequest() {
   left: 0;
   width: 100%;
   height: 100%;
-  background-image: 
-    radial-gradient(circle at 20% 50%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 80% 80%, rgba(255, 255, 255, 0.05) 0%, transparent 50%),
-    radial-gradient(circle at 40% 20%, rgba(255, 255, 255, 0.03) 0%, transparent 50%);
+  background-image:
+    radial-gradient(
+      circle at 20% 50%,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 80% 80%,
+      rgba(255, 255, 255, 0.05) 0%,
+      transparent 50%
+    ),
+    radial-gradient(
+      circle at 40% 20%,
+      rgba(255, 255, 255, 0.03) 0%,
+      transparent 50%
+    );
   animation: float 20s ease-in-out infinite;
 }
 
 @keyframes float {
-  0%, 100% {
+  0%,
+  100% {
     transform: translateY(0) scale(1);
   }
   50% {
@@ -461,7 +532,8 @@ async function handleResetRequest() {
 }
 
 @keyframes pulse {
-  0%, 100% {
+  0%,
+  100% {
     transform: scale(1);
     box-shadow: 0 10px 30px rgba(102, 126, 234, 0.3);
   }
@@ -494,16 +566,16 @@ async function handleResetRequest() {
   .login-content {
     padding: 16px;
   }
-  
+
   .login-card {
     border-radius: 16px;
   }
-  
+
   .logo-container {
     width: 80px;
     height: 80px;
   }
-  
+
   .logo-container .q-icon {
     font-size: 48px;
   }
