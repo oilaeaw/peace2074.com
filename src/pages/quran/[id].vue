@@ -1041,6 +1041,26 @@ async function scrollToHash(
   }
 }
 
+async function autoplayCurrentSuraFromStart() {
+  if (readerMode.value === 'tts') {
+    currentAyahIndex.value = 0
+    stopRequested.value = false
+    startTTS()
+    return
+  }
+
+  if (audioList.value.length > 0) {
+    stopRequested.value = false
+    await startAudioRecitation(0, { withIntro: true })
+    $q.notify({
+      type: 'positive',
+      message: `Playing Sura ${currentSuraId.value} from verse 1`,
+      icon: 'play_arrow',
+      timeout: 2000,
+    })
+  }
+}
+
 async function loadSuraById(id: number) {
   loading.value = true
   error.value = ''
@@ -1078,7 +1098,14 @@ async function loadSuraById(id: number) {
     }
 
     // Enable autoplay if query param or hash is present (shared verse link)
+    const normalizedHash = String(route.hash || '').replace(/^#/, '')
     await scrollToHash(route.hash, { autoplay: shouldAutoplay })
+
+    // For auto-continue to next sura (`?autoplay=true`) with no verse hash,
+    // start from the first ayah of the loaded sura.
+    if (shouldAutoplay && !normalizedHash) {
+      await autoplayCurrentSuraFromStart()
+    }
     applyQuranDetailTitle(true)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
