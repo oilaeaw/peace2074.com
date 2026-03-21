@@ -115,16 +115,29 @@ function getPostLoginPath() {
   return '/'
 }
 
-function handleGitHubLogin() {
-  // Redirect to GitHub OAuth authorize endpoint
-  window.location.href = `${NITRO_BASE}/auth/github/authorize`
-}
-
-function handleNetlifyLogin() {
-  // Open Netlify Identity modal
+function openSocialLogin(provider: 'google' | 'apple') {
+  // Social login is handled by Netlify Identity in this app.
   if (typeof window !== 'undefined' && (window as any).netlifyIdentity) {
     ;(window as any).netlifyIdentity.open('login')
+    return
   }
+
+  $q.notify({
+    type: 'warning',
+    message:
+      provider === 'google'
+        ? 'Google login is currently unavailable.'
+        : 'Apple login is currently unavailable.',
+    position: 'top',
+  })
+}
+
+function handleGoogleLogin() {
+  openSocialLogin('google')
+}
+
+function handleAppleLogin() {
+  openSocialLogin('apple')
 }
 
 async function handleLogin() {
@@ -334,27 +347,27 @@ async function handleResetRequest() {
               </div>
 
               <q-btn
-                outline
-                color="grey-8"
+                unelevated
+                color="primary"
                 class="full-width"
                 size="md"
-                @click="handleGitHubLogin"
+                @click="handleGoogleLogin"
                 :disable="loading"
               >
-                <q-icon name="fab fa-github" size="20px" class="q-mr-sm" />
-                {{ t('auth.signInWithGitHub') }}
+                <q-icon name="fab fa-google" size="20px" class="q-mr-sm" />
+                {{ t('sign_in_with_google', 'Sign in with Google') }}
               </q-btn>
 
               <q-btn
-                unelevated
-                color="primary"
+                outline
+                color="dark"
                 class="full-width q-mt-sm"
                 size="md"
-                @click="handleNetlifyLogin"
+                @click="handleAppleLogin"
                 :disable="loading"
               >
-                <q-icon name="bolt" size="20px" class="q-mr-sm" />
-                {{ t('auth.signInWithNetlify') }}
+                <q-icon name="fab fa-apple" size="20px" class="q-mr-sm" />
+                {{ t('auth.signInWithApple', 'Sign in with Apple') }}
               </q-btn>
             </div>
 
@@ -498,6 +511,7 @@ async function handleResetRequest() {
   width: 100%;
   max-width: 480px;
   padding: 20px;
+  box-sizing: border-box;
 }
 
 .login-card {

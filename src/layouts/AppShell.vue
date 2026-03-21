@@ -14,68 +14,22 @@
         <q-avatar square size="36px" class="q-ml-sm brand-logo">
           <img src="/logo.svg" alt="PEACE2074" class="app-logo" />
         </q-avatar>
-        <q-toolbar-title>
-          <RouterLink to="/" class="brand-link">{{ t("general.SiteTitle") }}</RouterLink>
+        <q-toolbar-title class="app-toolbar-title">
+          <RouterLink to="/" class="brand-link">{{
+            t('general.SiteTitle')
+          }}</RouterLink>
         </q-toolbar-title>
 
-        <div class="search-wrapper" ref="searchRef">
-          <q-input
-            dense
-            round
-            dark
-            :placeholder="t('appShell.searchPlaceholder')"
-            class="search glassy-field"
-            v-model="search"
-            debounce="300"
-            clearable
-            @clear="clearSearch"
-            @focus="menuOpen = true"
-            @keyup.esc="clearSearch"
-          />
-          <q-menu
-            v-model="menuOpen"
-            :fit="true"
-            anchor="bottom left"
-            self="top left"
-            transition-show="jump-down"
-            transition-hide="jump-up"
-            :offset="[0, 6]"
-            persistent
-          >
-            <q-list style="min-width: 320px; max-height: 320px" class="search-results">
-              <q-item v-if="searchLoading">
-                <q-item-section avatar>
-                  <q-spinner color="primary" size="24px" />
-                </q-item-section>
-                <q-item-section>{{
-                  t("general.searching")
-                }}</q-item-section>
-              </q-item>
-              <q-item
-                v-for="item in searchResults"
-                :key="item.id"
-                clickable
-                v-ripple
-                @click="goToResult(item)"
-              >
-                <q-item-section>
-                  <div class="text-weight-medium">{{ item.title }}</div>
-                  <div class="text-caption text-grey-5">{{ item.subtitle }}</div>
-                </q-item-section>
-                <q-item-section side>
-                  <q-badge color="primary" outline>{{
-                    item.type === "sura" ? t("appShell.resultType.sura") : t("appShell.resultType.page")
-                  }}</q-badge>
-                </q-item-section>
-              </q-item>
-              <q-item v-if="!searchResults.length">
-                <q-item-section>{{
-                  search ? t("notfound") : t("appShell.searchPlaceholder")
-                }}</q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </div>
+        <q-btn
+          dense
+          round
+          color="white"
+          text-color="dark"
+          icon="search"
+          class="search-trigger"
+          @click="openSearchDialog"
+          :aria-label="t('appShell.searchPlaceholder')"
+        />
 
         <q-btn
           dense
@@ -121,7 +75,9 @@
                 <span class="text-h6">{{ scope.opt.flag }}</span>
               </q-item-section>
               <q-item-section>
-                <q-item-label>{{ scope.opt.label.replace(scope.opt.flag, '').trim() }}</q-item-label>
+                <q-item-label>{{
+                  scope.opt.label.replace(scope.opt.flag, '').trim()
+                }}</q-item-label>
               </q-item-section>
             </q-item>
           </template>
@@ -141,13 +97,20 @@
                   <q-avatar color="primary" text-color="white" icon="person" />
                 </q-item-section>
                 <q-item-section>
-                  <q-item-label>{{ authUser?.username || t('user') }}</q-item-label>
+                  <q-item-label>{{
+                    authUser?.username || t('user')
+                  }}</q-item-label>
                   <q-item-label caption>{{ authUser?.email }}</q-item-label>
                 </q-item-section>
               </q-item>
               <q-separator v-if="isAuthenticated" />
-              
-              <q-item clickable v-ripple @click="$router.push('/login')" v-if="!isAuthenticated">
+
+              <q-item
+                clickable
+                v-ripple
+                @click="$router.push('/login')"
+                v-if="!isAuthenticated"
+              >
                 <q-item-section avatar>
                   <q-icon name="login" />
                 </q-item-section>
@@ -156,7 +119,12 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-ripple @click="$router.push('/signup')" v-if="!isAuthenticated">
+              <q-item
+                clickable
+                v-ripple
+                @click="$router.push('/signup')"
+                v-if="!isAuthenticated"
+              >
                 <q-item-section avatar>
                   <q-icon name="person_add" />
                 </q-item-section>
@@ -165,7 +133,12 @@
                 </q-item-section>
               </q-item>
 
-              <q-item clickable v-ripple @click="handleLogout" v-if="isAuthenticated">
+              <q-item
+                clickable
+                v-ripple
+                @click="handleLogout"
+                v-if="isAuthenticated"
+              >
                 <q-item-section avatar>
                   <q-icon name="logout" />
                 </q-item-section>
@@ -210,12 +183,85 @@
               :color="item.pinned ? 'amber' : 'grey-6'"
               :disable="!navOrderingEnabled"
               @click.stop="togglePin(item.key)"
-              :aria-label="item.pinned ? t('appShell.unpin') : t('appShell.pin')"
+              :aria-label="
+                item.pinned ? t('appShell.unpin') : t('appShell.pin')
+              "
             />
           </q-item-section>
         </q-item>
       </q-list>
     </q-drawer>
+
+    <q-dialog v-model="searchDialogOpen" @hide="clearSearch" seamless>
+      <q-card class="search-dialog-card">
+        <q-card-section class="row items-center justify-between q-pb-sm">
+          <div class="text-subtitle1 text-weight-medium">
+            {{ t('appShell.searchPlaceholder') }}
+          </div>
+          <q-btn
+            flat
+            round
+            dense
+            icon="close"
+            @click="searchDialogOpen = false"
+          />
+        </q-card-section>
+
+        <q-card-section class="q-pt-none">
+          <q-input
+            dense
+            outlined
+            autofocus
+            :placeholder="t('appShell.searchPlaceholder')"
+            class="search"
+            v-model="search"
+            debounce="300"
+            clearable
+            @clear="clearSearch"
+            @keyup.esc="searchDialogOpen = false"
+          />
+        </q-card-section>
+
+        <q-separator />
+
+        <q-card-section class="q-pa-none search-dialog-results">
+          <q-list>
+            <q-item v-if="searchLoading">
+              <q-item-section avatar>
+                <q-spinner color="primary" size="24px" />
+              </q-item-section>
+              <q-item-section>{{ t('general.searching') }}</q-item-section>
+            </q-item>
+
+            <q-item
+              v-for="item in searchResults"
+              :key="item.id"
+              clickable
+              v-ripple
+              @click="goToResult(item)"
+            >
+              <q-item-section>
+                <div class="text-weight-medium">{{ item.title }}</div>
+                <div class="text-caption text-grey-7">{{ item.subtitle }}</div>
+              </q-item-section>
+              <q-item-section side>
+                <q-badge color="primary" outline>{{
+                  item.type === 'sura'
+                    ? t('appShell.resultType.sura')
+                    : t('appShell.resultType.page')
+                }}</q-badge>
+              </q-item-section>
+            </q-item>
+
+            <q-item v-if="!searchLoading && !searchResults.length">
+              <q-item-section>
+                {{ search ? t('notfound') : t('appShell.searchPlaceholder') }}
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
     <q-page-container>
       <RouterView v-slot="{ Component }">
@@ -232,13 +278,25 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-          <span>© {{ currentYear }} {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
+          <span
+            >© {{ currentYear }} {{ t('general.SiteTitle') }} · v{{
+              appVersion
+            }}</span
+          >
         </div>
         <nav class="footer-links" aria-label="Footer links">
-          <RouterLink to="/quran" class="footer-link">{{ t('appShell.nav.quran') }}</RouterLink>
-          <RouterLink to="/terms" class="footer-link">{{ t('terms_and_conditions') }}</RouterLink>
-          <RouterLink to="/privacy" class="footer-link">{{ t('privacy_policy') }}</RouterLink>
-          <RouterLink to="/contact" class="footer-link">{{ t('appShell.nav.contact') }}</RouterLink>
+          <RouterLink to="/quran" class="footer-link">{{
+            t('appShell.nav.quran')
+          }}</RouterLink>
+          <RouterLink to="/terms" class="footer-link">{{
+            t('terms_and_conditions')
+          }}</RouterLink>
+          <RouterLink to="/privacy" class="footer-link">{{
+            t('privacy_policy')
+          }}</RouterLink>
+          <RouterLink to="/contact" class="footer-link">{{
+            t('appShell.nav.contact')
+          }}</RouterLink>
         </nav>
       </div>
     </q-footer>
@@ -246,48 +304,63 @@
 </template>
 
 <script setup lang="ts">
-import { computed, onBeforeUnmount, onMounted, ref, watch, defineAsyncComponent } from "vue";
-import { useI18n } from "vue-i18n";
-import { useRouter } from "vue-router";
-import { useAthanPlayer } from "@/composables/useAthanPlayer";
-import { useSiteSearch } from "@/composables/useSiteSearch";
-import { useAuthStore } from "@/stores/auth.pinia";
-const SupportAIWidget = defineAsyncComponent(() => import("@/components/common/SupportAIWidget.vue"));
-const ConsentBanner = defineAsyncComponent(() => import("@/components/common/ConsentBanner.vue"));
+import {
+  computed,
+  onBeforeUnmount,
+  onMounted,
+  ref,
+  watch,
+  defineAsyncComponent,
+} from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useRouter } from 'vue-router'
+import { useAthanPlayer } from '@/composables/useAthanPlayer'
+import { useSiteSearch } from '@/composables/useSiteSearch'
+import { useAuthStore } from '@/stores/auth.pinia'
+const SupportAIWidget = defineAsyncComponent(
+  () => import('@/components/common/SupportAIWidget.vue')
+)
+const ConsentBanner = defineAsyncComponent(
+  () => import('@/components/common/ConsentBanner.vue')
+)
 
-declare const __APP_VERSION__: string;
+declare const __APP_VERSION__: string
 
-const LOCALE_STORAGE_KEY = "app-locale";
-const NAV_STORAGE_KEY = "nav-items-v1";
-const NAV_ORDERING_KEY = "nav-ordering-enabled";
-const DRAWER_OPEN_KEY = "drawer-open-by-default";
-const COMPACT_KEY = "pref-compact-layout";
-const MOTION_KEY = "pref-reduce-motion";
-const AUTOPLAY_KEY = "pref-autoplay-athan";
+const LOCALE_STORAGE_KEY = 'app-locale'
+const NAV_STORAGE_KEY = 'nav-items-v1'
+const NAV_ORDERING_KEY = 'nav-ordering-enabled'
+const DRAWER_OPEN_KEY = 'drawer-open-by-default'
+const COMPACT_KEY = 'pref-compact-layout'
+const MOTION_KEY = 'pref-reduce-motion'
+const AUTOPLAY_KEY = 'pref-autoplay-athan'
 
-const leftDrawer = ref(readDrawerPreference());
-const search = ref("");
-const { locale, t } = useI18n({ useScope: "global" });
-const router = useRouter();
-const authStore = useAuthStore();
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-const authUser = computed(() => authStore._user);
-const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+const leftDrawer = ref(readDrawerPreference())
+const search = ref('')
+const { locale, t } = useI18n({ useScope: 'global' })
+const router = useRouter()
+const authStore = useAuthStore()
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const authUser = computed(() => authStore._user)
+const languageCodes = ['en', 'ar', 'de', 'ru', 'he', 'tr'] as const
 
 const localeModel = computed({
   get: () => locale.value,
   set: (value: string) => {
-    if (!value) return;
-    const normalized = String(value).trim().toLowerCase().split('-')[0];
-    if (!languageCodes.includes(normalized as (typeof languageCodes)[number])) return;
-    locale.value = normalized;
-    if (typeof window !== "undefined" && typeof window.localStorage !== "undefined") {
+    if (!value) return
+    const normalized = String(value).trim().toLowerCase().split('-')[0]
+    if (!languageCodes.includes(normalized as (typeof languageCodes)[number]))
+      return
+    locale.value = normalized
+    if (
+      typeof window !== 'undefined' &&
+      typeof window.localStorage !== 'undefined'
+    ) {
       try {
-        window.localStorage.setItem(LOCALE_STORAGE_KEY, normalized);
+        window.localStorage.setItem(LOCALE_STORAGE_KEY, normalized)
       } catch {}
     }
   },
-});
+})
 
 const languageFlags: Record<string, string> = {
   en: '🇺🇸',
@@ -296,363 +369,382 @@ const languageFlags: Record<string, string> = {
   ru: '🇷🇺',
   he: '🇮🇱',
   tr: '🇹🇷',
-};
+}
 
 const langs = computed(() => {
-  locale.value;
+  locale.value
   return languageCodes.map((code) => ({
     value: code,
     label: `${languageFlags[code] || ''} ${t(`general.languageNames.${code}`)}`,
     flag: languageFlags[code],
-  }));
-});
+  }))
+})
 
 const defaultNavItems = [
-  { key: "home", labelKey: "appShell.nav.home", to: "/" },
-  { key: "quran", labelKey: "appShell.nav.quran", to: "/quran" },
-  { key: "holynames", labelKey: "appShell.nav.holynames", to: "/holynames" },
-  { key: "tasbeeh", labelKey: "appShell.nav.tasbeeh", to: "/tasbeeh" },
-  { key: "miracles", labelKey: "appShell.nav.miracles", to: "/miracles" },
-  { key: "chat", labelKey: "appShell.nav.chat", to: "/chat" },
-  { key: "support", labelKey: "appShell.nav.support", to: "/support" },
-  { key: "settings", labelKey: "appShell.nav.settings", to: "/settings" },
-  { key: "preferences", labelKey: "appShell.nav.preferences", to: "/preferences" },
-  { key: "admin", labelKey: "navigation.AdminPage", to: "/admin" },
-  { key: "login", labelKey: "appShell.nav.login", to: "/login" },
-  { key: "blog", labelKey: "appShell.nav.blog", to: "/blog" },
-  { key: "deploys", labelKey: "appShell.nav.deploys", to: "/deploys" },
-  { key: "contact", labelKey: "appShell.nav.contact", to: "/contact" },
-];
+  { key: 'home', labelKey: 'appShell.nav.home', to: '/' },
+  { key: 'quran', labelKey: 'appShell.nav.quran', to: '/quran' },
+  { key: 'holynames', labelKey: 'appShell.nav.holynames', to: '/holynames' },
+  { key: 'tasbeeh', labelKey: 'appShell.nav.tasbeeh', to: '/tasbeeh' },
+  { key: 'miracles', labelKey: 'appShell.nav.miracles', to: '/miracles' },
+  { key: 'chat', labelKey: 'appShell.nav.chat', to: '/chat' },
+  { key: 'support', labelKey: 'appShell.nav.support', to: '/support' },
+  { key: 'settings', labelKey: 'appShell.nav.settings', to: '/settings' },
+  {
+    key: 'preferences',
+    labelKey: 'appShell.nav.preferences',
+    to: '/preferences',
+  },
+  { key: 'admin', labelKey: 'navigation.AdminPage', to: '/admin' },
+  { key: 'login', labelKey: 'appShell.nav.login', to: '/login' },
+  { key: 'blog', labelKey: 'appShell.nav.blog', to: '/blog' },
+  { key: 'deploys', labelKey: 'appShell.nav.deploys', to: '/deploys' },
+  { key: 'contact', labelKey: 'appShell.nav.contact', to: '/contact' },
+]
 
-type NavItem = typeof defaultNavItems[number] & { pinned?: boolean };
-const navItems = ref<NavItem[]>(restoreNavState());
-const draggingKey = ref<string | null>(null);
-const navOrderingEnabled = ref(readOrderingEnabled());
-const compactLayout = ref(readCompactPreference());
-const reduceMotion = ref(readReduceMotionPreference());
-const autoPlayAthan = ref(readAutoplayPreference());
-const currentYear = new Date().getFullYear();
+type NavItem = (typeof defaultNavItems)[number] & { pinned?: boolean }
+const navItems = ref<NavItem[]>(restoreNavState())
+const draggingKey = ref<string | null>(null)
+const navOrderingEnabled = ref(readOrderingEnabled())
+const compactLayout = ref(readCompactPreference())
+const reduceMotion = ref(readReduceMotionPreference())
+const autoPlayAthan = ref(readAutoplayPreference())
+const currentYear = new Date().getFullYear()
 
-const menuOpen = ref(false);
-const searchRef = ref(null);
-const showLazyWidgets = ref(false);
+const searchDialogOpen = ref(false)
+const showLazyWidgets = ref(false)
 const {
   results: searchResults,
   loading: searchLoading,
   search: runSearch,
-} = useSiteSearch(locale);
+} = useSiteSearch(locale)
 
 watch(search, (q) => {
-  runSearch(q);
-  menuOpen.value = !!q && (!!searchResults.value.length || q.length > 0);
-});
+  runSearch(q)
+})
 
 watch(
   navItems,
   (items) => {
-    saveNavState(items);
+    saveNavState(items)
   },
   { deep: true }
-);
+)
 
 onMounted(() => {
-  window.addEventListener("storage", onStorage);
-  window.addEventListener("nav-ordering-changed", onNavOrderingChanged as EventListener);
+  window.addEventListener('storage', onStorage)
   window.addEventListener(
-    "drawer-preference-changed",
+    'nav-ordering-changed',
+    onNavOrderingChanged as EventListener
+  )
+  window.addEventListener(
+    'drawer-preference-changed',
     onDrawerPreferenceChanged as EventListener
-  );
-  window.addEventListener("compact-layout-changed", onCompactChanged as EventListener);
+  )
   window.addEventListener(
-    "reduce-motion-changed",
+    'compact-layout-changed',
+    onCompactChanged as EventListener
+  )
+  window.addEventListener(
+    'reduce-motion-changed',
     onReduceMotionChanged as EventListener
-  );
-  window.addEventListener("autoplay-athan-changed", onAutoplayChanged as EventListener);
+  )
+  window.addEventListener(
+    'autoplay-athan-changed',
+    onAutoplayChanged as EventListener
+  )
 
-  applyCompact(compactLayout.value);
-  applyReduceMotion(reduceMotion.value);
-  applyAutoplay(autoPlayAthan.value);
+  applyCompact(compactLayout.value)
+  applyReduceMotion(reduceMotion.value)
+  applyAutoplay(autoPlayAthan.value)
 
   // Defer optional widgets until after first paint to shrink initial payload
   requestAnimationFrame(() => {
-    showLazyWidgets.value = true;
-  });
-});
+    showLazyWidgets.value = true
+  })
+})
 
 onBeforeUnmount(() => {
-  window.removeEventListener("storage", onStorage);
+  window.removeEventListener('storage', onStorage)
   window.removeEventListener(
-    "nav-ordering-changed",
+    'nav-ordering-changed',
     onNavOrderingChanged as EventListener
-  );
+  )
   window.removeEventListener(
-    "drawer-preference-changed",
+    'drawer-preference-changed',
     onDrawerPreferenceChanged as EventListener
-  );
-  window.removeEventListener("compact-layout-changed", onCompactChanged as EventListener);
+  )
   window.removeEventListener(
-    "reduce-motion-changed",
+    'compact-layout-changed',
+    onCompactChanged as EventListener
+  )
+  window.removeEventListener(
+    'reduce-motion-changed',
     onReduceMotionChanged as EventListener
-  );
+  )
   window.removeEventListener(
-    "autoplay-athan-changed",
+    'autoplay-athan-changed',
     onAutoplayChanged as EventListener
-  );
-});
+  )
+})
 
 // Global Athan player - accessible from every page via header button
 const {
   toggle: toggleAthan,
   stop: stopAthan,
   isPlaying: isAthanPlaying,
-} = useAthanPlayer();
+} = useAthanPlayer()
 
-const appVersionRaw = __APP_VERSION__ || "0.0.0";
-const appVersion = appVersionRaw.split('.').length >= 2
-  ? appVersionRaw.split('.').slice(-2).join('.')
-  : appVersionRaw;
+const appVersionRaw = __APP_VERSION__ || '0.0.0'
+const appVersion =
+  appVersionRaw.split('.').length >= 2
+    ? appVersionRaw.split('.').slice(-2).join('.')
+    : appVersionRaw
 
 function goToResult(item: any) {
-  router.push(item.path);
-  clearSearch();
+  router.push(item.path)
+  searchDialogOpen.value = false
+  clearSearch()
 }
 
 function clearSearch() {
-  search.value = "";
-  runSearch("");
-  menuOpen.value = false;
+  search.value = ''
+  runSearch('')
+}
+
+function openSearchDialog() {
+  searchDialogOpen.value = true
 }
 
 async function handleLogout() {
-  await authStore.logout();
-  router.push("/");
+  await authStore.logout()
+  router.push('/')
 }
 
 function togglePin(key: string) {
-  const idx = navItems.value.findIndex((i) => i.key === key);
-  if (idx === -1) return;
-  const current = navItems.value[idx];
-  const updated: NavItem = { ...current, pinned: !current.pinned };
-  navItems.value.splice(idx, 1);
+  const idx = navItems.value.findIndex((i) => i.key === key)
+  if (idx === -1) return
+  const current = navItems.value[idx]
+  const updated: NavItem = { ...current, pinned: !current.pinned }
+  navItems.value.splice(idx, 1)
   if (updated.pinned) {
-    navItems.value.unshift(updated);
+    navItems.value.unshift(updated)
   } else {
-    const pinnedSlice = navItems.value.filter((i) => i.pinned);
-    const unpinnedSlice = navItems.value.filter((i) => !i.pinned);
+    const pinnedSlice = navItems.value.filter((i) => i.pinned)
+    const unpinnedSlice = navItems.value.filter((i) => !i.pinned)
     navItems.value.splice(
       0,
       navItems.value.length,
       ...pinnedSlice,
       updated,
       ...unpinnedSlice
-    );
+    )
   }
 }
 
 function moveToTop(key: string) {
-  const idx = navItems.value.findIndex((i) => i.key === key);
-  if (idx === -1) return;
-  const [item] = navItems.value.splice(idx, 1);
-  navItems.value.unshift({ ...item, pinned: item.pinned });
+  const idx = navItems.value.findIndex((i) => i.key === key)
+  if (idx === -1) return
+  const [item] = navItems.value.splice(idx, 1)
+  navItems.value.unshift({ ...item, pinned: item.pinned })
 }
 
 function onDragStart(key: string, ev: DragEvent) {
-  if (!navOrderingEnabled.value) return;
-  draggingKey.value = key;
+  if (!navOrderingEnabled.value) return
+  draggingKey.value = key
   if (ev.dataTransfer) {
-    ev.dataTransfer.effectAllowed = "move";
-    ev.dataTransfer.setData("text/plain", key);
+    ev.dataTransfer.effectAllowed = 'move'
+    ev.dataTransfer.setData('text/plain', key)
   }
 }
 
 function onDragOver(key: string, ev: DragEvent) {
-  if (!navOrderingEnabled.value) return;
-  ev.preventDefault();
-  if (!draggingKey.value || draggingKey.value === key) return;
-  const from = navItems.value.findIndex((i) => i.key === draggingKey.value);
-  const to = navItems.value.findIndex((i) => i.key === key);
-  if (from === -1 || to === -1) return;
-  const [item] = navItems.value.splice(from, 1);
-  navItems.value.splice(to, 0, item);
+  if (!navOrderingEnabled.value) return
+  ev.preventDefault()
+  if (!draggingKey.value || draggingKey.value === key) return
+  const from = navItems.value.findIndex((i) => i.key === draggingKey.value)
+  const to = navItems.value.findIndex((i) => i.key === key)
+  if (from === -1 || to === -1) return
+  const [item] = navItems.value.splice(from, 1)
+  navItems.value.splice(to, 0, item)
 }
 
 function onDrop(key: string, ev: DragEvent) {
-  if (!navOrderingEnabled.value) return;
-  ev.preventDefault();
-  draggingKey.value = null;
+  if (!navOrderingEnabled.value) return
+  ev.preventDefault()
+  draggingKey.value = null
 }
 
 function onDragEnd() {
-  draggingKey.value = null;
+  draggingKey.value = null
 }
 
 function onStorage(e: StorageEvent) {
   if (e.key === NAV_ORDERING_KEY && e.newValue !== null) {
-    navOrderingEnabled.value = e.newValue === "true";
+    navOrderingEnabled.value = e.newValue === 'true'
   }
   if (e.key === DRAWER_OPEN_KEY && e.newValue !== null) {
-    leftDrawer.value = e.newValue === "true";
+    leftDrawer.value = e.newValue === 'true'
   }
   if (e.key === COMPACT_KEY && e.newValue !== null) {
-    compactLayout.value = e.newValue === "true";
-    applyCompact(compactLayout.value);
+    compactLayout.value = e.newValue === 'true'
+    applyCompact(compactLayout.value)
   }
   if (e.key === MOTION_KEY && e.newValue !== null) {
-    reduceMotion.value = e.newValue === "true";
-    applyReduceMotion(reduceMotion.value);
+    reduceMotion.value = e.newValue === 'true'
+    applyReduceMotion(reduceMotion.value)
   }
   if (e.key === AUTOPLAY_KEY && e.newValue !== null) {
-    autoPlayAthan.value = e.newValue === "true";
-    applyAutoplay(autoPlayAthan.value);
+    autoPlayAthan.value = e.newValue === 'true'
+    applyAutoplay(autoPlayAthan.value)
   }
   if (e.key === NAV_STORAGE_KEY && e.newValue) {
     try {
-      const parsed: NavItem[] = JSON.parse(e.newValue);
+      const parsed: NavItem[] = JSON.parse(e.newValue)
       if (Array.isArray(parsed)) {
-        navItems.value = parsed;
+        navItems.value = parsed
       }
     } catch {}
   }
 }
 
 function onNavOrderingChanged(ev: CustomEvent) {
-  if (typeof ev.detail?.enabled === "boolean") {
-    navOrderingEnabled.value = ev.detail.enabled;
+  if (typeof ev.detail?.enabled === 'boolean') {
+    navOrderingEnabled.value = ev.detail.enabled
   }
 }
 
 function onDrawerPreferenceChanged(ev: CustomEvent) {
-  if (typeof ev.detail?.open === "boolean") {
-    leftDrawer.value = ev.detail.open;
+  if (typeof ev.detail?.open === 'boolean') {
+    leftDrawer.value = ev.detail.open
   }
 }
 
 function onCompactChanged(ev: CustomEvent) {
-  if (typeof ev.detail?.enabled === "boolean") {
-    compactLayout.value = ev.detail.enabled;
-    applyCompact(compactLayout.value);
+  if (typeof ev.detail?.enabled === 'boolean') {
+    compactLayout.value = ev.detail.enabled
+    applyCompact(compactLayout.value)
   }
 }
 
 function onReduceMotionChanged(ev: CustomEvent) {
-  if (typeof ev.detail?.enabled === "boolean") {
-    reduceMotion.value = ev.detail.enabled;
-    applyReduceMotion(reduceMotion.value);
+  if (typeof ev.detail?.enabled === 'boolean') {
+    reduceMotion.value = ev.detail.enabled
+    applyReduceMotion(reduceMotion.value)
   }
 }
 
 function onAutoplayChanged(ev: CustomEvent) {
-  if (typeof ev.detail?.enabled === "boolean") {
-    autoPlayAthan.value = ev.detail.enabled;
-    applyAutoplay(autoPlayAthan.value);
+  if (typeof ev.detail?.enabled === 'boolean') {
+    autoPlayAthan.value = ev.detail.enabled
+    applyAutoplay(autoPlayAthan.value)
   }
 }
 
 function readOrderingEnabled(): boolean {
   try {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(NAV_ORDERING_KEY);
-      if (stored === null) return true;
-      return stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(NAV_ORDERING_KEY)
+      if (stored === null) return true
+      return stored === 'true'
     }
   } catch {}
-  return true;
+  return true
 }
 
 function readDrawerPreference(): boolean {
   try {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(DRAWER_OPEN_KEY);
-      if (stored === null) return false;
-      return stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(DRAWER_OPEN_KEY)
+      if (stored === null) return false
+      return stored === 'true'
     }
   } catch {}
-  return false;
+  return false
 }
 
 function readCompactPreference(): boolean {
   try {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(COMPACT_KEY);
-      if (stored === null) return false;
-      return stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(COMPACT_KEY)
+      if (stored === null) return false
+      return stored === 'true'
     }
   } catch {}
-  return false;
+  return false
 }
 
 function readReduceMotionPreference(): boolean {
   try {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(MOTION_KEY);
-      if (stored === null) return false;
-      return stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(MOTION_KEY)
+      if (stored === null) return false
+      return stored === 'true'
     }
   } catch {}
-  return false;
+  return false
 }
 
 function readAutoplayPreference(): boolean {
   try {
-    if (typeof window !== "undefined") {
-      const stored = window.localStorage.getItem(AUTOPLAY_KEY);
-      if (stored === null) return false;
-      return stored === "true";
+    if (typeof window !== 'undefined') {
+      const stored = window.localStorage.getItem(AUTOPLAY_KEY)
+      if (stored === null) return false
+      return stored === 'true'
     }
   } catch {}
-  return false;
+  return false
 }
 
 function applyCompact(enabled: boolean) {
-  if (typeof document === "undefined") return;
-  document.body.classList.toggle("is-compact", enabled);
-  document.documentElement.classList.toggle("is-compact", enabled);
+  if (typeof document === 'undefined') return
+  document.body.classList.toggle('is-compact', enabled)
+  document.documentElement.classList.toggle('is-compact', enabled)
 }
 
 function applyReduceMotion(enabled: boolean) {
-  if (typeof document === "undefined") return;
-  document.body.classList.toggle("reduce-motion", enabled);
-  document.documentElement.classList.toggle("reduce-motion", enabled);
+  if (typeof document === 'undefined') return
+  document.body.classList.toggle('reduce-motion', enabled)
+  document.documentElement.classList.toggle('reduce-motion', enabled)
 }
 
 function applyAutoplay(enabled: boolean) {
-  if (!enabled) return;
+  if (!enabled) return
   try {
     if (!isAthanPlaying.value) {
-      toggleAthan();
+      toggleAthan()
     }
   } catch {}
 }
 
 function restoreNavState(): NavItem[] {
   try {
-    if (typeof window !== "undefined") {
-      const raw = window.localStorage.getItem(NAV_STORAGE_KEY);
+    if (typeof window !== 'undefined') {
+      const raw = window.localStorage.getItem(NAV_STORAGE_KEY)
       if (raw) {
-        const saved: NavItem[] = JSON.parse(raw);
+        const saved: NavItem[] = JSON.parse(raw)
         if (Array.isArray(saved)) {
-          const defaultsMap = new Map(defaultNavItems.map((i) => [i.key, i]));
-          const restored: NavItem[] = [];
+          const defaultsMap = new Map(defaultNavItems.map((i) => [i.key, i]))
+          const restored: NavItem[] = []
           for (const savedItem of saved) {
-            const base = defaultsMap.get(savedItem.key);
+            const base = defaultsMap.get(savedItem.key)
             if (base) {
-              restored.push({ ...base, pinned: !!savedItem.pinned });
-              defaultsMap.delete(savedItem.key);
+              restored.push({ ...base, pinned: !!savedItem.pinned })
+              defaultsMap.delete(savedItem.key)
             }
           }
-          defaultsMap.forEach((value) => restored.push({ ...value }));
-          return restored;
+          defaultsMap.forEach((value) => restored.push({ ...value }))
+          return restored
         }
       }
     }
   } catch {}
-  return [...defaultNavItems];
+  return [...defaultNavItems]
 }
 
 function saveNavState(items: NavItem[]) {
   try {
-    if (typeof window !== "undefined") {
-      window.localStorage.setItem(NAV_STORAGE_KEY, JSON.stringify(items));
+    if (typeof window !== 'undefined') {
+      window.localStorage.setItem(NAV_STORAGE_KEY, JSON.stringify(items))
     }
   } catch {}
 }
@@ -660,16 +752,16 @@ function saveNavState(items: NavItem[]) {
 const orderedNavItems = computed(() => {
   // Filter out login link when user is authenticated
   const filteredItems = navItems.value.filter((item) => {
-    if (item.key === "login" && isAuthenticated.value) {
-      return false;
+    if (item.key === 'login' && isAuthenticated.value) {
+      return false
     }
-    return true;
-  });
-  
-  const pinned = filteredItems.filter((i) => i.pinned);
-  const rest = filteredItems.filter((i) => !i.pinned);
-  return [...pinned, ...rest];
-});
+    return true
+  })
+
+  const pinned = filteredItems.filter((i) => i.pinned)
+  const rest = filteredItems.filter((i) => !i.pinned)
+  return [...pinned, ...rest]
+})
 </script>
 
 <style scoped>
@@ -685,6 +777,12 @@ const orderedNavItems = computed(() => {
   width: 100%;
   flex-wrap: nowrap;
   gap: 8px;
+  min-width: 0;
+}
+
+.app-toolbar-title {
+  min-width: 0;
+  overflow: hidden;
 }
 
 .brand-logo {
@@ -705,16 +803,29 @@ const orderedNavItems = computed(() => {
   text-decoration: none;
   font-weight: 600;
   letter-spacing: 0.02em;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
 
 .search {
-  max-width: 400px;
-  min-width: 200px;
   width: 100%;
 }
 
-.search-wrapper {
-  position: relative;
+.search-trigger {
+  box-shadow: 0 6px 14px rgba(0, 0, 0, 0.22);
+}
+
+.search-dialog-card {
+  width: min(680px, 92vw);
+  max-height: min(80vh, 720px);
+  display: flex;
+  flex-direction: column;
+  border-radius: 16px;
+}
+
+.search-dialog-results {
+  overflow-y: auto;
 }
 
 .glassy-field :deep(.q-field__control) {
@@ -737,6 +848,22 @@ const orderedNavItems = computed(() => {
 .locale-select {
   max-width: 160px;
   min-width: 120px;
+}
+
+@media (max-width: 760px) {
+  .app-toolbar {
+    flex-wrap: wrap;
+    row-gap: 8px;
+  }
+
+  .app-toolbar-title {
+    flex: 1 1 auto;
+  }
+
+  .locale-select {
+    min-width: 76px;
+    max-width: 92px;
+  }
 }
 
 .footer {

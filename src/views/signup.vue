@@ -32,7 +32,11 @@ function computeNitroBase() {
     }
 
     // Capacitor runtime is cross-origin from hosted API
-    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+    if (
+      protocol === 'capacitor:' ||
+      protocol === 'ionic:' ||
+      protocol === 'app:'
+    ) {
       return DEFAULT_MOBILE_API_BASE
     }
 
@@ -47,12 +51,46 @@ function computeNitroBase() {
 
 const NITRO_BASE = computeNitroBase()
 
+function isCapacitorLikeRuntime() {
+  if (typeof window === 'undefined') return false
+  const protocol = window.location?.protocol
+  return (
+    protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
+  )
+}
+
+function isNetworkLikeError(err: any) {
+  const msg = String(err?.message || '')
+  return (
+    err instanceof TypeError ||
+    /load failed|failed to fetch|networkerror/i.test(msg)
+  )
+}
+
+async function signupRequest(base: string) {
+  return fetch(`${base}/auth/signup`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify({
+      username: username.value,
+      email: email.value,
+      password: password.value,
+    }),
+  })
+}
+
 async function handleSignup() {
-  if (!username.value || !email.value || !password.value || !confirmPassword.value) {
+  if (
+    !username.value ||
+    !email.value ||
+    !password.value ||
+    !confirmPassword.value
+  ) {
     $q.notify({
       type: 'warning',
       message: t('auth.fillAllFields'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -61,7 +99,7 @@ async function handleSignup() {
     $q.notify({
       type: 'negative',
       message: t('auth.passwordMismatch'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -70,7 +108,7 @@ async function handleSignup() {
     $q.notify({
       type: 'negative',
       message: t('pages.preferences.security.errors.passwordTooShort'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -79,7 +117,7 @@ async function handleSignup() {
     $q.notify({
       type: 'warning',
       message: t('auth.acceptTerms'),
-      position: 'top'
+      position: 'top',
     })
     return
   }
@@ -87,16 +125,22 @@ async function handleSignup() {
   loading.value = true
 
   try {
-    const response = await fetch(`${NITRO_BASE}/auth/signup`, {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      credentials: 'include',
-      body: JSON.stringify({
-        username: username.value,
-        email: email.value,
-        password: password.value
-      })
-    })
+    let response: Response
+
+    try {
+      response = await signupRequest(NITRO_BASE)
+    } catch (err: any) {
+      // Same mitigation as login for iOS WebView generic network failures.
+      if (
+        isCapacitorLikeRuntime() &&
+        NITRO_BASE !== DEFAULT_MOBILE_API_BASE &&
+        isNetworkLikeError(err)
+      ) {
+        response = await signupRequest(DEFAULT_MOBILE_API_BASE)
+      } else {
+        throw err
+      }
+    }
 
     if (!response.ok) {
       const data = await response.json().catch(() => ({}))
@@ -106,16 +150,19 @@ async function handleSignup() {
     $q.notify({
       type: 'positive',
       message: t('auth.signupSuccess'),
-      position: 'top'
+      position: 'top',
     })
-    
+
     router.push('/login')
-    
   } catch (err: any) {
+    const message = isNetworkLikeError(err)
+      ? 'Unable to reach the server. Please check your connection and try again.'
+      : err.message || t('auth.signupError')
+
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.signupError'),
-      position: 'top'
+      message,
+      position: 'top',
     })
     console.error('Signup error:', err)
   } finally {
@@ -153,7 +200,7 @@ async function handleSignup() {
               :disable="loading"
               autocomplete="username"
               lazy-rules
-              :rules="[val => !!val || t('auth.usernameRequired')]"
+              :rules="[(val) => !!val || t('auth.usernameRequired')]"
             >
               <template v-slot:prepend>
                 <q-icon name="person" />
@@ -169,7 +216,7 @@ async function handleSignup() {
               :disable="loading"
               autocomplete="email"
               lazy-rules
-              :rules="[val => !!val || t('email_required')]"
+              :rules="[(val) => !!val || t('email_required')]"
             >
               <template v-slot:prepend>
                 <q-icon name="email" />
@@ -185,7 +232,12 @@ async function handleSignup() {
               :disable="loading"
               autocomplete="new-password"
               lazy-rules
-              :rules="[val => !!val || t('auth.passwordRequired'), val => val.length >= 8 || t('pages.preferences.security.errors.passwordTooShort')]"
+              :rules="[
+                (val) => !!val || t('auth.passwordRequired'),
+                (val) =>
+                  val.length >= 8 ||
+                  t('pages.preferences.security.errors.passwordTooShort'),
+              ]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -208,7 +260,10 @@ async function handleSignup() {
               :disable="loading"
               autocomplete="new-password"
               lazy-rules
-              :rules="[val => !!val || t('confirm_password'), val => val === password || t('auth.passwordMismatch')]"
+              :rules="[
+                (val) => !!val || t('confirm_password'),
+                (val) => val === password || t('auth.passwordMismatch'),
+              ]"
             >
               <template v-slot:prepend>
                 <q-icon name="lock" />
@@ -222,15 +277,13 @@ async function handleSignup() {
               </template>
             </q-input>
 
-            <q-checkbox
-              v-model="acceptTerms"
-              color="primary"
-              dense
-            >
+            <q-checkbox v-model="acceptTerms" color="primary" dense>
               <template v-slot:default>
                 <span class="text-caption">
                   {{ t('auth.iAccept') }}
-                  <router-link to="/terms" class="text-primary">{{ t('auth.termsAndConditions') }}</router-link>
+                  <router-link to="/terms" class="text-primary">{{
+                    t('auth.termsAndConditions')
+                  }}</router-link>
                 </span>
               </template>
             </q-checkbox>
@@ -243,7 +296,13 @@ async function handleSignup() {
               size="lg"
               unelevated
               :loading="loading"
-              :disable="!username || !email || !password || !confirmPassword || !acceptTerms"
+              :disable="
+                !username ||
+                !email ||
+                !password ||
+                !confirmPassword ||
+                !acceptTerms
+              "
             >
               <template v-slot:loading>
                 <q-spinner-dots />
@@ -251,7 +310,9 @@ async function handleSignup() {
             </q-btn>
 
             <div class="text-center q-mt-md">
-              <span class="text-caption text-grey-7">{{ t('auth.alreadyHaveAccount') }}</span>
+              <span class="text-caption text-grey-7">{{
+                t('auth.alreadyHaveAccount')
+              }}</span>
               <q-btn
                 flat
                 dense
@@ -295,7 +356,11 @@ async function handleSignup() {
   left: 0;
   width: 100%;
   height: 100%;
-  background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.1), transparent 60%);
+  background: radial-gradient(
+    circle at 50% 0%,
+    rgba(255, 255, 255, 0.1),
+    transparent 60%
+  );
 }
 
 .pattern-overlay {
@@ -310,8 +375,13 @@ async function handleSignup() {
 }
 
 @keyframes float {
-  0%, 100% { transform: translateY(0px); }
-  50% { transform: translateY(-20px); }
+  0%,
+  100% {
+    transform: translateY(0px);
+  }
+  50% {
+    transform: translateY(-20px);
+  }
 }
 
 .signup-content {
@@ -320,6 +390,7 @@ async function handleSignup() {
   width: 100%;
   max-width: 480px;
   padding: 24px;
+  box-sizing: border-box;
 }
 
 .signup-card {
@@ -341,7 +412,12 @@ async function handleSignup() {
 }
 
 @keyframes pulse {
-  0%, 100% { transform: scale(1); }
-  50% { transform: scale(1.05); }
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.05);
+  }
 }
 </style>
