@@ -204,6 +204,14 @@ function dismissAnnouncement(event?: MouseEvent | Event) {
     }
   }, 500)
 }
+
+function handleAnnouncementAction(action?: { handler?: () => void }) {
+  try {
+    action?.handler?.()
+  } finally {
+    dismissAnnouncement()
+  }
+}
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
 const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(
   LAYOUT_STORAGE_KEY,
@@ -1818,6 +1826,34 @@ const playbackStatus = computed(() => {
   }
 })
 
+const recitationStatusTitle = computed(() => {
+  if (playbackStatus.value.state === 'playing') {
+    return t('pages.quran.playing') || 'Recitation playing'
+  }
+  if (playbackStatus.value.state === 'paused') {
+    return t('pages.quran.paused') || 'Recitation paused'
+  }
+  return t('pages.quran.playRecitation') || 'Recitation ready'
+})
+
+const recitationVerseDisplay = computed(() => {
+  return playbackStatus.value.verse > 0 ? playbackStatus.value.verse : 1
+})
+
+const recitationPrimaryLabel = computed(() => {
+  if (playbackStatus.value.state === 'playing') {
+    return t('pages.quran.pause')
+  }
+  if (playbackStatus.value.state === 'paused') {
+    return t('pages.quran.resume')
+  }
+  return t('pages.quran.playRecitation')
+})
+
+const recitationPrimaryIcon = computed(() => {
+  return playbackStatus.value.state === 'playing' ? 'pause' : 'play_arrow'
+})
+
 function pauseAudio() {
   if (audioEl.value && !audioEl.value.paused) {
     audioEl.value.pause()
@@ -2144,10 +2180,7 @@ watch(
             flat
             :label="action.label"
             :color="action.color || 'primary'"
-            @click.prevent="
-              action.handler()
-              dismissAnnouncement()
-            "
+            @click.prevent="handleAnnouncementAction(action)"
           />
           <q-btn
             flat
@@ -2176,20 +2209,11 @@ watch(
           />
         </template>
         <div class="paused-info">
-          <div class="text-weight-bold">
-            {{
-              playbackStatus.state === 'playing'
-                ? t('pages.quran.playing') || 'Recitation playing'
-                : playbackStatus.state === 'paused'
-                  ? t('pages.quran.paused') || 'Recitation paused'
-                  : t('pages.quran.playRecitation') || 'Recitation ready'
-            }}
-          </div>
+          <div class="text-weight-bold">{{ recitationStatusTitle }}</div>
           <div class="text-caption">
             {{ t('pages.quran.sura.name') }} {{ currentSuraId }} •
             {{ t('pages.quran.verses') }}
-            {{ playbackStatus.verse > 0 ? playbackStatus.verse : 1 }} /
-            {{ sura?.total_verses || 0 }} •
+            {{ recitationVerseDisplay }} / {{ sura?.total_verses || 0 }} •
             {{
               playbackStatus.mode === 'audio'
                 ? t('pages.quran.readerMode.audio')
@@ -2200,15 +2224,9 @@ watch(
         <template v-slot:action>
           <q-btn
             flat
-            :label="
-              playbackStatus.state === 'playing'
-                ? t('pages.quran.pause')
-                : playbackStatus.state === 'paused'
-                  ? t('pages.quran.resume')
-                  : t('pages.quran.playRecitation')
-            "
+            :label="recitationPrimaryLabel"
             color="primary"
-            :icon="playbackStatus.state === 'playing' ? 'pause' : 'play_arrow'"
+            :icon="recitationPrimaryIcon"
             @click.prevent="startReading"
           />
           <q-btn
