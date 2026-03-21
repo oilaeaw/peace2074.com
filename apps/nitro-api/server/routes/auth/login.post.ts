@@ -3,8 +3,11 @@ import { createSession, requireSecrets } from '../../utils/auth'
 import { findUserByUsername, updateUserPassword } from '../../utils/users'
 import { getProfile } from '../../utils/profile'
 import { verifyPassword, hashPassword, isPasswordHashed } from '../../utils/password'
+import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler(async (event) => {
+    applyCors(event)
+
     try {
         const body = (await readBody<{ username?: string; password?: string }>(event)) || {}
         const username = (body.username || '').trim()

@@ -2,8 +2,11 @@ import { createError, defineEventHandler, readBody } from 'h3'
 import { addUser, findUserByEmail, findUserByUsername } from '../../utils/users'
 import { createProfile } from '../../utils/profile'
 import { hashPassword } from '../../utils/password'
+import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler(async (event) => {
+    applyCors(event)
+
     const body = await readBody<{
         username?: string
         email?: string

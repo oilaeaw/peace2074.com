@@ -32,12 +32,14 @@
           class="row items-start justify-between q-col-gutter-sm ai-card__header"
         >
           <div class="col">
-            <div class="text-h6">{{ t("pages.support.aiTitle", "Ask support AI") }}</div>
+            <div class="text-h6">
+              {{ t('pages.support.aiTitle', 'Ask support AI') }}
+            </div>
             <div class="text-body2 text-grey-7 q-mt-xs">
               {{
                 t(
-                  "pages.support.aiSubtitle",
-                  "Describe your issue and DeepSeek will suggest next steps."
+                  'pages.support.aiSubtitle',
+                  'Describe your issue and DeepSeek will suggest next steps.'
                 )
               }}
             </div>
@@ -52,7 +54,7 @@
               :aria-label="t('general.reload', 'Reset')"
             >
               <q-tooltip class="text-caption">{{
-                t("general.reload", "Reset conversation")
+                t('general.reload', 'Reset conversation')
               }}</q-tooltip>
             </q-btn>
             <q-btn
@@ -78,7 +80,7 @@
               :aria-label="t('general.close', 'Hide AI panel')"
             >
               <q-tooltip class="text-caption">{{
-                t("general.close", "Hide panel")
+                t('general.close', 'Hide panel')
               }}</q-tooltip>
             </q-btn>
           </div>
@@ -88,8 +90,8 @@
           <div class="text-caption text-grey-7">
             {{
               t(
-                "pages.support.aiHintInline",
-                "Use the header icons to hide. A reopen button sits bottom-right."
+                'pages.support.aiHintInline',
+                'Use the header icons to hide. A reopen button sits bottom-right.'
               )
             }}
           </div>
@@ -98,7 +100,12 @@
             type="textarea"
             autogrow
             outlined
-            :label="t('pages.support.aiPlaceholder', 'Describe the problem or question')"
+            :label="
+              t(
+                'pages.support.aiPlaceholder',
+                'Describe the problem or question'
+              )
+            "
             :disable="loading"
           />
           <div class="row items-center justify-between">
@@ -118,7 +125,13 @@
               :aria-label="t('general.copy', 'Copy')"
             />
           </div>
-          <q-banner v-if="error" rounded dense color="negative" text-color="white">
+          <q-banner
+            v-if="error"
+            rounded
+            dense
+            color="negative"
+            text-color="white"
+          >
             {{ error }}
           </q-banner>
           <q-banner v-if="answer" rounded dense class="ai-answer">
@@ -131,62 +144,68 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from "vue";
-import { useI18n } from "vue-i18n";
-import { useClipboard } from "@vueuse/core";
-import { sendDeepSeekChat } from "@/stores/services";
+import { ref } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useClipboard } from '@vueuse/core'
+import { sendDeepSeekChat } from '@/stores/services'
 
-const { t } = useI18n();
-const HIDE_STORAGE_KEY = "support-ai-hidden";
-const prompt = ref("");
-const answer = ref("");
-const error = ref<string | null>(null);
-const loading = ref(false);
-const open = ref(false);
-const hidden = ref(false);
+const { t } = useI18n()
+const HIDE_STORAGE_KEY = 'support-ai-hidden'
+const prompt = ref('')
+const answer = ref('')
+const error = ref<string | null>(null)
+const loading = ref(false)
+const open = ref(false)
+const hidden = ref(false)
 
-const { copy: copyToClipboard } = useClipboard({ source: answer });
+const { copy: copyToClipboard } = useClipboard({ source: answer })
 
-if (typeof window !== "undefined") {
-  hidden.value = window.sessionStorage.getItem(HIDE_STORAGE_KEY) === "1";
+if (typeof window !== 'undefined') {
+  hidden.value = window.sessionStorage.getItem(HIDE_STORAGE_KEY) === '1'
 }
 
 async function ask() {
-  const content = prompt.value.trim();
-  if (!content) return;
-  loading.value = true;
-  error.value = null;
+  const content = prompt.value.trim()
+  if (!content) return
+  loading.value = true
+  error.value = null
   try {
-    const res = await sendDeepSeekChat({ messages: [{ role: "user", content }] });
+    const res = await sendDeepSeekChat({
+      messages: [{ role: 'user', content }],
+    })
     const text =
-      res?.choices?.[0]?.message?.content || res?.message || JSON.stringify(res);
-    answer.value = text;
+      res?.message?.content ||
+      res?.choices?.[0]?.message?.content ||
+      res?.raw?.[0]?.message?.content ||
+      (typeof res?.message === 'string' ? res.message : '') ||
+      JSON.stringify(res)
+    answer.value = text
   } catch (e: any) {
-    error.value = e?.message || "Request failed";
+    error.value = e?.message || 'Request failed'
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
 function copy() {
-  copyToClipboard();
+  copyToClipboard()
 }
 
 function reset() {
-  prompt.value = "";
-  answer.value = "";
-  error.value = null;
+  prompt.value = ''
+  answer.value = ''
+  error.value = null
 }
 
 function close() {
-  open.value = false;
+  open.value = false
 }
 
 function hideForSession() {
-  hidden.value = true;
-  open.value = false;
-  if (typeof window !== "undefined") {
-    window.sessionStorage.setItem(HIDE_STORAGE_KEY, "1");
+  hidden.value = true
+  open.value = false
+  if (typeof window !== 'undefined') {
+    window.sessionStorage.setItem(HIDE_STORAGE_KEY, '1')
   }
 }
 </script>
@@ -233,7 +252,11 @@ function hideForSession() {
   backdrop-filter: blur(12px) saturate(1.05);
 }
 .ai-card__header {
-  background: linear-gradient(135deg, rgba(74, 144, 226, 0.12), rgba(56, 189, 248, 0.18));
+  background: linear-gradient(
+    135deg,
+    rgba(74, 144, 226, 0.12),
+    rgba(56, 189, 248, 0.18)
+  );
   border-bottom: 1px solid rgba(255, 255, 255, 0.32);
   border-top-left-radius: 14px;
   border-top-right-radius: 14px;
@@ -252,7 +275,9 @@ function hideForSession() {
 }
 .fade-enter-active,
 .fade-leave-active {
-  transition: opacity 0.2s ease, transform 0.2s ease;
+  transition:
+    opacity 0.2s ease,
+    transform 0.2s ease;
 }
 .fade-enter-from,
 .fade-leave-to {
