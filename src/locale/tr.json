@@ -313,7 +313,9 @@
                 "motion": "Hareketi azalt",
                 "motionHint": "Daha sakin etkileşim için animasyonları yumuşatın.",
                 "darkMode": "Karanlık mod",
-                "darkModeHint": "Açık ve koyu tema arasında geçiş yapın."
+                "darkModeHint": "Açık ve koyu tema arasında geçiş yapın.",
+                "translation": "Kur'an çevirisini göster",
+                "translationHint": "Şeffaflık için Arapça metinden sonra çeviriyi her zaman göster."
             },
             "accessibility": {
                 "title": "Erişilebilirlik",
