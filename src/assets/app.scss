@@ -20,7 +20,7 @@
 @supports not (-webkit-touch-callout: none) {
   /* CSS for other than iOS devices */
 }
-@import url("https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap");
+@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
 
 /* Utility: prefer high-quality Arabic types for Quran pages */
 .arabic-font,
@@ -28,7 +28,7 @@
 .sura-name,
 .bismillah,
 .allah {
-  font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif !important;
+  font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif !important;
 }
 .text-whit {
   color: white !important;
@@ -74,28 +74,28 @@ body.body--dark {
   background-color: white;
 }
 @font-face {
-  font-family: "DM Sans";
+  font-family: 'DM Sans';
   src:
-    url("/assets/fonts/dmsans-2fb93aaf.woff2") format("woff2"),
-    url("/assets/fonts/dmsans-dbe1f17c.woff2") format("woff2");
+    url('/assets/fonts/dmsans-2fb93aaf.woff2') format('woff2'),
+    url('/assets/fonts/dmsans-dbe1f17c.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "DM Serif Display";
+  font-family: 'DM Serif Display';
   src:
-    url("/assets/fonts/dmserifdisplay-aca0e217.woff2") format("woff2"),
-    url("/assets/fonts/dmserifdisplay-cbc631ca.woff2") format("woff2");
+    url('/assets/fonts/dmserifdisplay-aca0e217.woff2') format('woff2'),
+    url('/assets/fonts/dmserifdisplay-cbc631ca.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
 }
 @font-face {
-  font-family: "DM Mono";
+  font-family: 'DM Mono';
   src:
-    url("/assets/fonts/dmmono-612bc94f.woff2") format("woff2"),
-    url("/assets/fonts/dmmono-cbe07c46.woff2") format("woff2");
+    url('/assets/fonts/dmmono-612bc94f.woff2') format('woff2'),
+    url('/assets/fonts/dmmono-cbe07c46.woff2') format('woff2');
   font-weight: 400;
   font-style: normal;
   font-display: swap;
@@ -104,7 +104,7 @@ body.body--dark {
 /* Global theme variables for Islamic design pages.
      These ensure consistent colors and background pattern across pages. */
 :root {
-  --background-pattern: url("~/assets/patterns/islamic-pattern-light.svg");
+  --background-pattern: url('~/assets/patterns/islamic-pattern-light.svg');
   --text-color: #173a2e;
   --title-color: #14492e;
   --subtitle-color: #6c757d;
@@ -113,7 +113,7 @@ body.body--dark {
 }
 
 body.body--dark {
-  --background-pattern: url("~/assets/patterns/islamic-pattern-dark.svg");
+  --background-pattern: url('~/assets/patterns/islamic-pattern-dark.svg');
   --text-color: #e0e0e0;
   --title-color: #e0e0e0;
   --subtitle-color: #b0b0b0;

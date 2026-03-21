@@ -47,12 +47,18 @@ const pageTitle = computed(() => {
   align-items: center;
   max-width: 1200px;
   margin: 0 auto;
+  gap: 8px;
+  min-width: 0;
 }
 
 .plain-title {
   font-size: 1.2rem;
   font-weight: 600;
   margin: 0;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
 }
 
 .plain-link {
@@ -70,5 +76,27 @@ const pageTitle = computed(() => {
   margin: 0 auto;
   padding: 2rem 1rem;
   line-height: 1.8;
+}
+
+@media (max-width: 480px) {
+  .plain-nav {
+    flex-wrap: wrap;
+    justify-content: center;
+  }
+
+  .plain-title {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    font-size: 1rem;
+  }
+
+  .plain-link {
+    padding: 0.35rem;
+  }
+
+  .plain-main {
+    padding: 1rem 0.75rem;
+  }
 }
 </style>
