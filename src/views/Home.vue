@@ -13,8 +13,19 @@
         <h1 class="title">{{ t('pages.home.hero.title') }}</h1>
         <p class="lead">{{ t('pages.home.hero.lead') }}</p>
         <div class="actions">
-          <q-btn to="/quran" :label="t('pages.home.hero.ctaReadQuran')" color="primary" class="q-mr-sm" />
-          <q-btn to="/holynames" :label="t('pages.home.hero.ctaHolyNames')" color="primary" outline class="q-mr-sm" />
+          <q-btn
+            to="/quran"
+            :label="t('pages.home.hero.ctaReadQuran')"
+            color="primary"
+            class="q-mr-sm"
+          />
+          <q-btn
+            to="/holynames"
+            :label="t('pages.home.hero.ctaHolyNames')"
+            color="primary"
+            outline
+            class="q-mr-sm"
+          />
           <q-btn to="/tasbeeh" flat :label="t('pages.home.hero.ctaTasbeeh')" />
         </div>
       </div>
@@ -49,7 +60,10 @@
           {{ displayedVerse.en }}
         </blockquote>
         <p class="manifesto-attribution">
-          <router-link :to="`/quran/${displayedVerse.sura}:${displayedVerse.ayah}`" class="verse-link">
+          <router-link
+            :to="`/quran/${displayedVerse.sura}:${displayedVerse.ayah}`"
+            class="verse-link"
+          >
             — {{ displayedVerse.ref }}
           </router-link>
         </p>
@@ -65,7 +79,9 @@
           />
         </div>
         <div class="eid-title">{{ t('general.greetings.eidMubarak') }}</div>
-        <div class="eid-body">{{ t('general.greetings.englishCustomers') }}</div>
+        <div class="eid-body">
+          {{ t('general.greetings.englishCustomers') }}
+        </div>
       </q-banner>
 
       <q-card class="ai-card q-pa-md q-mt-lg">
@@ -74,7 +90,13 @@
             <p class="ai-title">{{ t('pages.home.ai.title') }}</p>
             <small>{{ t('pages.home.ai.subtitle') }}</small>
           </div>
-          <q-chip clickable color="primary" text-color="white" size="sm" @click="setNextPromptExample">
+          <q-chip
+            clickable
+            color="primary"
+            text-color="white"
+            size="sm"
+            @click="setNextPromptExample"
+          >
             {{ t('pages.home.ai.tryAnother') }}
           </q-chip>
         </div>
@@ -95,17 +117,25 @@
             unelevated
             class="full-width"
             :disable="!canSubmit"
-            :label="isLoading ? t('pages.home.ai.thinking') : t('pages.home.ai.ask')"
+            :label="
+              isLoading ? t('pages.home.ai.thinking') : t('pages.home.ai.ask')
+            "
           />
         </q-form>
 
-        <q-banner v-if="errorMessage" class="q-mt-sm bg-negative text-white" dense>
+        <q-banner
+          v-if="errorMessage"
+          class="q-mt-sm bg-negative text-white"
+          dense
+        >
           {{ errorMessage }}
         </q-banner>
 
         <q-card-section v-if="aiResponse" class="response q-mt-sm">
           <div class="response-header">
-            <div class="response-title">{{ t('pages.home.ai.responseTitle') }}</div>
+            <div class="response-title">
+              {{ t('pages.home.ai.responseTitle') }}
+            </div>
             <q-btn flat round dense @click="copyResponse">
               <font-awesome-icon icon="fa-solid fa-copy" />
             </q-btn>
@@ -117,8 +147,16 @@
 
         <div class="history">
           <div class="history-header">
-            <div class="text-subtitle2">{{ t('pages.home.ai.historyTitle') }}</div>
-            <q-btn v-if="history.length" flat size="sm" color="negative" @click="clearHistory">
+            <div class="text-subtitle2">
+              {{ t('pages.home.ai.historyTitle') }}
+            </div>
+            <q-btn
+              v-if="history.length"
+              flat
+              size="sm"
+              color="negative"
+              @click="clearHistory"
+            >
               {{ t('pages.home.ai.clearHistory') }}
             </q-btn>
           </div>
@@ -126,13 +164,27 @@
             {{ t('pages.home.ai.historyEmpty') }}
           </div>
           <q-list v-else separator class="q-mt-xs">
-            <q-item v-for="item in history" :key="item.id" clickable @click="reusePrompt(item)">
+            <q-item
+              v-for="item in history"
+              :key="item.id"
+              clickable
+              @click="reusePrompt(item)"
+            >
               <q-item-section>
                 <div class="text-weight-medium">{{ item.prompt }}</div>
-                <div class="text-caption text-grey-6 history-response">{{ item.response }}</div>
+                <div class="text-caption text-grey-6 history-response">
+                  {{ item.response }}
+                </div>
               </q-item-section>
               <q-item-section side>
-                <q-btn flat round dense icon="refresh" @click.stop="reusePrompt(item)" :title="t('pages.home.ai.reuse')" />
+                <q-btn
+                  flat
+                  round
+                  dense
+                  icon="refresh"
+                  @click.stop="reusePrompt(item)"
+                  :title="t('pages.home.ai.reuse')"
+                />
               </q-item-section>
             </q-item>
           </q-list>
@@ -145,7 +197,12 @@
             <p class="blog-title">{{ t('pages.blog.title') }}</p>
             <small>{{ t('pages.blog.subtitle') }}</small>
           </div>
-          <q-btn flat color="primary" to="/blog" :label="t('appShell.nav.blog')" />
+          <q-btn
+            flat
+            color="primary"
+            to="/blog"
+            :label="t('appShell.nav.blog')"
+          />
         </div>
 
         <div v-if="blogLoading" class="text-center q-py-md">
@@ -161,7 +218,9 @@
           >
             <q-item-section>
               <div class="text-weight-medium">{{ post.title }}</div>
-              <div class="text-caption text-grey-6">{{ formatBlogDate(post.date) }}</div>
+              <div class="text-caption text-grey-6">
+                {{ formatBlogDate(post.date) }}
+              </div>
               <div class="text-body2 blog-excerpt">{{ post.excerpt }}</div>
             </q-item-section>
           </q-item>
@@ -181,7 +240,7 @@ import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
-import { sendDeepSeekChat } from '@/stores/services'
+import { sendDeepSeekChat, resolveNitroUrl } from '@/stores/services'
 import inspiringVerses from '@/app/data/verses.json'
 import dailyMessagesData from '@/app/data/daily-messages.json'
 
@@ -193,7 +252,9 @@ const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)
 const errorMessage = ref<string | null>(null)
 const isLoading = ref(false)
-const history = ref<{ id: string; prompt: string; response: string; ts: number }[]>([])
+const history = ref<
+  { id: string; prompt: string; response: string; ts: number }[]
+>([])
 type BlogPost = {
   slug: string
   title: string
@@ -251,12 +312,13 @@ const copyVerse = async () => {
     message: t('pages.home.ai.copied'),
     color: 'positive',
     icon: 'check',
-    timeout: 2000
+    timeout: 2000,
   })
 }
 
 const setNextPromptExample = () => {
-  currentPromptIndex.value = (currentPromptIndex.value + 1) % promptExamples.value.length
+  currentPromptIndex.value =
+    (currentPromptIndex.value + 1) % promptExamples.value.length
   userPrompt.value = promptExamples.value[currentPromptIndex.value]
 }
 
@@ -267,14 +329,14 @@ const askPeaceAI = async () => {
   try {
     const res = await sendDeepSeekChat([
       { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt.value }
+      { role: 'user', content: userPrompt.value },
     ])
     aiResponse.value = res
     history.value.unshift({
       id: Date.now().toString(),
       prompt: userPrompt.value,
       response: res,
-      ts: Date.now()
+      ts: Date.now(),
     })
     userPrompt.value = ''
   } catch (err: any) {
@@ -291,9 +353,13 @@ const copyResponse = async () => {
   }
 }
 
-const clearHistory = () => { history.value = [] }
+const clearHistory = () => {
+  history.value = []
+}
 
-const reusePrompt = (item: any) => { userPrompt.value = item.prompt }
+const reusePrompt = (item: any) => {
+  userPrompt.value = item.prompt
+}
 
 const goToBlogPost = (slug: string) => {
   router.push(`/blog/${slug}`)
@@ -306,7 +372,7 @@ const formatBlogDate = (date: string) => {
 const loadAllBlogPosts = async () => {
   blogLoading.value = true
   try {
-    const res = await fetch('/api/blog', {
+    const res = await fetch(resolveNitroUrl('/blog'), {
       credentials: 'include',
     })
     const data = await res.json()
@@ -329,32 +395,40 @@ onMounted(async () => {
     userPrompt.value = promptExamples.value[0]
   }
   await loadAllBlogPosts()
-});
+})
 
-const currentPromptIndex = ref(0);
+const currentPromptIndex = ref(0)
 
-const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`;
+const systemPrompt = `You are the PEACE2074 virtual guide. Use the Quran dataset embedded in the app (chapters, ayat metadata) and reference UI sections such as /quran and bookmarks. Keep answers concise (<=120 words) and mention navigation paths when relevant.`
 
-const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value);
+const canSubmit = computed(
+  () => userPrompt.value.trim().length > 4 && !isLoading.value
+)
 
 const EID_START_AT = Date.parse('2026-03-20T00:00:00.000Z')
 const EID_END_AT = Date.parse('2026-03-22T23:59:59.999Z')
 
 const showEidCelebration = computed(() => {
   const now = Date.now()
-  return Number.isFinite(EID_START_AT) && Number.isFinite(EID_END_AT) && now >= EID_START_AT && now <= EID_END_AT
+  return (
+    Number.isFinite(EID_START_AT) &&
+    Number.isFinite(EID_END_AT) &&
+    now >= EID_START_AT &&
+    now <= EID_END_AT
+  )
 })
 
 const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   id: `c-${idx}`,
   style: {
-    left: `${5 + (idx * 5)}%`,
-    backgroundColor: ['#ffca28', '#ab47bc', '#42a5f5', '#66bb6a', '#ef5350'][idx % 5],
+    left: `${5 + idx * 5}%`,
+    backgroundColor: ['#ffca28', '#ab47bc', '#42a5f5', '#66bb6a', '#ef5350'][
+      idx % 5
+    ],
     animationDelay: `${(idx % 6) * 0.2}s`,
     animationDuration: `${2.6 + (idx % 4) * 0.35}s`,
   },
 }))
-
 </script>
 
 <style scoped lang="scss">
@@ -443,13 +517,15 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   background: #ffffff;
   border: 1px solid #e0e6ed;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  transition:
+    transform 0.3s ease,
+    box-shadow 0.3s ease;
   animation: slideUp 0.8s ease-out 0.4s both;
 
   &:hover {
     transform: translateY(-4px);
-    box-shadow: 0 4px 16px rgba(0,0,0,0.1);
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
   }
 }
 
@@ -561,7 +637,7 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   background: #ffffff;
   border: 1px solid #e0e6ed;
   border-radius: 16px;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
   animation: slideUp 0.8s ease-out 0.8s both;
 }
 

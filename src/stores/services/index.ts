@@ -141,7 +141,7 @@ if (typeof window !== "undefined") {
   }
 }
 
-function resolveNitroUrl(path: string) {
+export function resolveNitroUrl(path: string) {
   const normalized = path.startsWith("/") ? path : `/${path}`;
   return NITRO_BASE ? `${NITRO_BASE}${normalized}` : normalized;
 }

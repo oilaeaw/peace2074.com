@@ -40,30 +40,34 @@
     </div>
 
     <q-banner v-else rounded class="q-mt-lg" color="warning" text-color="black">
-      {{ t("pages.blog.notFound") }}
+      {{ t('pages.blog.notFound') }}
     </q-banner>
   </q-page>
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted, watch } from "vue";
-import { useRoute, useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useAuthStore } from "@/stores/auth.pinia";
-import { useQuasar } from "quasar";
-import { toggleBlogLike, fetchBlogLikes } from "@/stores/services";
+import { ref, computed, onMounted, watch } from 'vue'
+import { useRoute, useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth.pinia'
+import { useQuasar } from 'quasar'
+import {
+  toggleBlogLike,
+  fetchBlogLikes,
+  resolveNitroUrl,
+} from '@/stores/services'
 
-const route = useRoute();
-const router = useRouter();
-const { t } = useI18n();
-const authStore = useAuthStore();
-const $q = useQuasar();
+const route = useRoute()
+const router = useRouter()
+const { t } = useI18n()
+const authStore = useAuthStore()
+const $q = useQuasar()
 
-const isAuthenticated = computed(() => authStore.isAuthenticated);
-const post = ref<any>(null);
-const loading = ref(true);
-const likeCount = ref(0);
-const isLiked = ref(false);
+const isAuthenticated = computed(() => authStore.isAuthenticated)
+const post = ref<any>(null)
+const loading = ref(true)
+const likeCount = ref(0)
+const isLiked = ref(false)
 
 const SEO_BASE_URL = 'https://peace2074.com'
 
@@ -75,7 +79,11 @@ function toCanonicalSlug(value: string) {
     .replace(/-+/g, '-')
 }
 
-function upsertMetaTag(attr: 'name' | 'property', key: string, content: string) {
+function upsertMetaTag(
+  attr: 'name' | 'property',
+  key: string,
+  content: string
+) {
   if (!content || typeof document === 'undefined') return
   const selector = `meta[${attr}="${key}"]`
   let tag = document.head.querySelector(selector) as HTMLMetaElement | null
@@ -89,7 +97,9 @@ function upsertMetaTag(attr: 'name' | 'property', key: string, content: string) 
 
 function upsertCanonical(href: string) {
   if (!href || typeof document === 'undefined') return
-  let link = document.head.querySelector('link[rel="canonical"]') as HTMLLinkElement | null
+  let link = document.head.querySelector(
+    'link[rel="canonical"]'
+  ) as HTMLLinkElement | null
   if (!link) {
     link = document.createElement('link')
     link.setAttribute('rel', 'canonical')
@@ -102,7 +112,9 @@ function applyBlogSeo(postData: any) {
   if (!postData || typeof document === 'undefined') return
   const title = String(postData.title || t('pages.blog.title')).trim()
   const excerpt = String(postData.excerpt || '').trim()
-  const canonicalSlug = toCanonicalSlug(String(postData.slug || route.params.slug || ''))
+  const canonicalSlug = toCanonicalSlug(
+    String(postData.slug || route.params.slug || '')
+  )
   const canonicalUrl = `${SEO_BASE_URL}/blog/${encodeURIComponent(canonicalSlug)}`
   const docTitle = `${title} | PEACE2074`
   const description = excerpt || `${title} — ${t('pages.blog.subtitle')}`
@@ -118,51 +130,55 @@ function applyBlogSeo(postData: any) {
 }
 
 async function loadPost(slug: string) {
-  loading.value = true;
+  loading.value = true
   try {
-    const res = await fetch(`/api/blog?slug=${encodeURIComponent(slug)}`, {
-      credentials: 'include',
-    });
-    const data = await res.json();
+    const res = await fetch(
+      `${resolveNitroUrl('/blog')}?slug=${encodeURIComponent(slug)}`,
+      {
+        credentials: 'include',
+      }
+    )
+    const data = await res.json()
     if (data.ok && data.post) {
-      post.value = data.post;
+      post.value = data.post
       const apiCanonical = String(data.canonicalSlug || '').trim()
       const routeCanonical = toCanonicalSlug(slug)
-      const targetCanonical = apiCanonical || toCanonicalSlug(String(data.post?.slug || ''))
+      const targetCanonical =
+        apiCanonical || toCanonicalSlug(String(data.post?.slug || ''))
 
       if (targetCanonical && targetCanonical !== routeCanonical) {
         router.replace(`/blog/${encodeURIComponent(targetCanonical)}`)
       }
 
       applyBlogSeo(data.post)
-      await loadLikes(slug);
+      await loadLikes(slug)
     } else {
-      post.value = null;
+      post.value = null
       document.title = `${t('pages.blog.notFound')} | PEACE2074`
     }
   } catch (err) {
-    console.error('[Blog Detail] Load error:', err);
-    post.value = null;
+    console.error('[Blog Detail] Load error:', err)
+    post.value = null
   } finally {
-    loading.value = false;
+    loading.value = false
   }
 }
 
 async function loadLikes(slug: string) {
   try {
-    const data = await fetchBlogLikes();
+    const data = await fetchBlogLikes()
     if (data.ok) {
-      likeCount.value = data.likeCounts?.[slug] || 0;
-      isLiked.value = data.userLiked?.includes(slug) || false;
+      likeCount.value = data.likeCounts?.[slug] || 0
+      isLiked.value = data.userLiked?.includes(slug) || false
     }
   } catch (err) {
-    console.error('[Blog Detail] Load likes error:', err);
+    console.error('[Blog Detail] Load likes error:', err)
   }
 }
 
 async function handleLike() {
-  const slug = String(route.params.slug || "");
-  
+  const slug = String(route.params.slug || '')
+
   if (!isAuthenticated.value) {
     $q.notify({
       type: 'warning',
@@ -172,54 +188,57 @@ async function handleLike() {
         {
           label: t('auth.login'),
           color: 'white',
-          handler: () => router.push('/login')
-        }
-      ]
-    });
-    return;
+          handler: () => router.push('/login'),
+        },
+      ],
+    })
+    return
   }
 
   try {
-    const result = await toggleBlogLike(slug);
+    const result = await toggleBlogLike(slug)
     if (result.ok) {
-      likeCount.value = result.count;
-      isLiked.value = result.liked;
+      likeCount.value = result.count
+      isLiked.value = result.liked
     }
   } catch (err) {
-    console.error('[Blog Detail] Like error:', err);
+    console.error('[Blog Detail] Like error:', err)
     $q.notify({
       type: 'negative',
       message: 'Failed to update like',
-      icon: 'error'
-    });
+      icon: 'error',
+    })
   }
 }
 
 function editPost() {
-  const slug = String(route.params.slug || "");
-  router.push(`/blog-editor?slug=${encodeURIComponent(slug)}`);
+  const slug = String(route.params.slug || '')
+  router.push(`/blog-editor?slug=${encodeURIComponent(slug)}`)
 }
 
 function formatDate(date: string) {
   try {
-    return new Date(date).toLocaleDateString();
+    return new Date(date).toLocaleDateString()
   } catch {
-    return date;
+    return date
   }
 }
 
 onMounted(() => {
-  const slug = decodeURIComponent(String(route.params.slug || ""));
+  const slug = decodeURIComponent(String(route.params.slug || ''))
   if (slug) {
-    loadPost(slug);
+    loadPost(slug)
   }
-});
+})
 
-watch(() => route.params.slug, (newSlug) => {
-  if (newSlug) {
-    loadPost(decodeURIComponent(String(newSlug)));
+watch(
+  () => route.params.slug,
+  (newSlug) => {
+    if (newSlug) {
+      loadPost(decodeURIComponent(String(newSlug)))
+    }
   }
-});
+)
 </script>
 
 <style scoped>

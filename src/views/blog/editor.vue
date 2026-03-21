@@ -3,7 +3,13 @@
     <q-breadcrumbs class="q-mb-md">
       <q-breadcrumbs-el :label="t('appShell.nav.home')" icon="home" to="/" />
       <q-breadcrumbs-el :label="t('pages.blog.title')" to="/blog" />
-      <q-breadcrumbs-el :label="isEditMode ? t('pages.blog.editor.editPost') : t('pages.blog.editor.newPost')" />
+      <q-breadcrumbs-el
+        :label="
+          isEditMode
+            ? t('pages.blog.editor.editPost')
+            : t('pages.blog.editor.newPost')
+        "
+      />
     </q-breadcrumbs>
 
     <div v-if="!isAuthenticated" class="auth-required q-pa-md">
@@ -27,7 +33,7 @@
         v-model="form.title"
         :label="t('pages.blog.editor.title')"
         filled
-        :rules="[val => !!val || t('pages.blog.editor.titleRequired')]"
+        :rules="[(val) => !!val || t('pages.blog.editor.titleRequired')]"
         counter
         maxlength="200"
       />
@@ -37,7 +43,7 @@
         :label="t('pages.blog.editor.slug')"
         filled
         :hint="t('pages.blog.editor.slugHint')"
-        :rules="[val => !!val || t('pages.blog.editor.slugRequired')]"
+        :rules="[(val) => !!val || t('pages.blog.editor.slugRequired')]"
         :disable="isEditMode"
       />
 
@@ -57,7 +63,7 @@
         filled
         type="textarea"
         rows="12"
-        :rules="[val => !!val || t('pages.blog.editor.contentRequired')]"
+        :rules="[(val) => !!val || t('pages.blog.editor.contentRequired')]"
       />
 
       <q-input
@@ -85,7 +91,11 @@
         <q-btn
           type="submit"
           color="primary"
-          :label="isEditMode ? t('pages.blog.editor.update') : t('pages.blog.editor.publish')"
+          :label="
+            isEditMode
+              ? t('pages.blog.editor.update')
+              : t('pages.blog.editor.publish')
+          "
           :loading="submitting"
           icon="send"
         />
@@ -115,6 +125,7 @@ import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
+import { resolveNitroUrl } from '@/stores/services'
 
 const { t } = useI18n()
 const router = useRouter()
@@ -141,17 +152,20 @@ function updateTags() {
   if (!tagsInput.value.trim()) return
   const tags = tagsInput.value
     .split(',')
-    .map(t => t.trim())
-    .filter(t => t && !form.value.tags.includes(t))
+    .map((t) => t.trim())
+    .filter((t) => t && !form.value.tags.includes(t))
   form.value.tags.push(...tags)
   tagsInput.value = ''
 }
 
 async function loadPost(slug: string) {
   try {
-    const res = await fetch(`/api/blog?slug=${encodeURIComponent(slug)}`, {
-      credentials: 'include',
-    })
+    const res = await fetch(
+      `${resolveNitroUrl('/blog')}?slug=${encodeURIComponent(slug)}`,
+      {
+        credentials: 'include',
+      }
+    )
     const data = await res.json()
     if (data.ok && data.post) {
       form.value = {
@@ -162,7 +176,10 @@ async function loadPost(slug: string) {
         tags: data.post.tags || [],
       }
     } else {
-      $q.notify({ type: 'negative', message: t('pages.blog.editor.postNotFound') })
+      $q.notify({
+        type: 'negative',
+        message: t('pages.blog.editor.postNotFound'),
+      })
       router.push('/blog')
     }
   } catch (err) {
@@ -180,7 +197,7 @@ async function handleSubmit() {
   submitting.value = true
   try {
     const method = isEditMode.value ? 'PUT' : 'POST'
-    const res = await fetch('/api/blog', {
+    const res = await fetch(resolveNitroUrl('/blog'), {
       method,
       headers: { 'Content-Type': 'application/json' },
       credentials: 'include',
@@ -197,7 +214,10 @@ async function handleSubmit() {
       })
       router.push('/blog')
     } else {
-      $q.notify({ type: 'negative', message: data.error || t('pages.blog.editor.saveError') })
+      $q.notify({
+        type: 'negative',
+        message: data.error || t('pages.blog.editor.saveError'),
+      })
     }
   } catch (err) {
     console.error('[Blog Editor] Submit error:', err)
@@ -214,24 +234,35 @@ async function handleDelete() {
       message: t('pages.blog.editor.confirmDeleteMessage'),
       cancel: true,
       persistent: true,
-    }).onOk(() => resolve(true)).onCancel(() => resolve(false))
+    })
+      .onOk(() => resolve(true))
+      .onCancel(() => resolve(false))
   })
 
   if (!confirmed) return
 
   deleting.value = true
   try {
-    const res = await fetch(`/api/blog?slug=${encodeURIComponent(form.value.slug)}`, {
-      method: 'DELETE',
-      credentials: 'include',
-    })
+    const res = await fetch(
+      `${resolveNitroUrl('/blog')}?slug=${encodeURIComponent(form.value.slug)}`,
+      {
+        method: 'DELETE',
+        credentials: 'include',
+      }
+    )
 
     const data = await res.json()
     if (data.ok) {
-      $q.notify({ type: 'positive', message: t('pages.blog.editor.deleteSuccess') })
+      $q.notify({
+        type: 'positive',
+        message: t('pages.blog.editor.deleteSuccess'),
+      })
       router.push('/blog')
     } else {
-      $q.notify({ type: 'negative', message: data.error || t('pages.blog.editor.deleteError') })
+      $q.notify({
+        type: 'negative',
+        message: data.error || t('pages.blog.editor.deleteError'),
+      })
     }
   } catch (err) {
     console.error('[Blog Editor] Delete error:', err)
