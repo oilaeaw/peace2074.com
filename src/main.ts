@@ -438,10 +438,16 @@ if (isClient) {
   // Call after app mount to ensure DOM is ready
   app.mount("#app")
 
-  // Wait for Vue to finish rendering before initializing Netlify Identity
+  // Defer non-critical auth widget init to idle time to reduce startup work.
   nextTick(() => {
-    if (initNetlifyIdentity) {
-      initNetlifyIdentity()
+    const schedule = (window as any).requestIdleCallback as
+      | ((cb: () => void, options?: { timeout: number }) => number)
+      | undefined
+
+    if (typeof schedule === 'function') {
+      schedule(() => initNetlifyIdentity(), { timeout: 2500 })
+    } else {
+      window.setTimeout(() => initNetlifyIdentity(), 2000)
     }
   })
 } else {

@@ -1,4 +1,3 @@
-import Home from "@/views/Home.vue";
 import { RouteRecordRaw } from "vue-router";
 
 // Type definitions
@@ -21,7 +20,7 @@ export const routes: Array<RouteRecordRaw> = [
   {
     path: ROUTE_PATHS.Home,
     name: ROUTE_NAMES.Home,
-    component: Home,
+    component: () => import('@/views/Home.vue'),
     meta: {
       title: 'Home',
       titleKey: 'pages.home.title',
