@@ -1,9 +1,9 @@
 import UIKit
-import Capacitor
+@preconcurrency import Capacitor
 
 @UIApplicationMain
 @MainActor
-class AppDelegate: UIResponder, UIApplicationDelegate {
+class AppDelegate: UIResponder, UIApplicationDelegate, UIWindowSceneDelegate {
 
     var window: UIWindow?
 

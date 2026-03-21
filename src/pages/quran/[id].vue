@@ -2159,9 +2159,14 @@ watch(
       </q-banner>
     </Transition>
 
-    <!-- Paused Indicator Badge -->
+    <!-- Recitation Indicator (always visible while sura is loaded) -->
     <Transition name="slide-down">
-      <q-banner v-if="isPaused" class="paused-indicator-banner" rounded dense>
+      <q-banner
+        v-if="!loading && !error && sura"
+        class="paused-indicator-banner"
+        rounded
+        dense
+      >
         <template v-slot:avatar>
           <q-icon
             :name="playbackStatus.icon"
@@ -2171,10 +2176,19 @@ watch(
           />
         </template>
         <div class="paused-info">
-          <div class="text-weight-bold">{{ t('pages.quran.paused') }}</div>
+          <div class="text-weight-bold">
+            {{
+              playbackStatus.state === 'playing'
+                ? t('pages.quran.playing') || 'Recitation playing'
+                : playbackStatus.state === 'paused'
+                  ? t('pages.quran.paused') || 'Recitation paused'
+                  : t('pages.quran.playRecitation') || 'Recitation ready'
+            }}
+          </div>
           <div class="text-caption">
             {{ t('pages.quran.sura.name') }} {{ currentSuraId }} •
-            {{ t('pages.quran.verses') }} {{ playbackStatus.verse }} /
+            {{ t('pages.quran.verses') }}
+            {{ playbackStatus.verse > 0 ? playbackStatus.verse : 1 }} /
             {{ sura?.total_verses || 0 }} •
             {{
               playbackStatus.mode === 'audio'
@@ -2186,12 +2200,19 @@ watch(
         <template v-slot:action>
           <q-btn
             flat
-            :label="t('pages.quran.resume')"
+            :label="
+              playbackStatus.state === 'playing'
+                ? t('pages.quran.pause')
+                : playbackStatus.state === 'paused'
+                  ? t('pages.quran.resume')
+                  : t('pages.quran.playRecitation')
+            "
             color="primary"
-            icon="play_arrow"
+            :icon="playbackStatus.state === 'playing' ? 'pause' : 'play_arrow'"
             @click.prevent="startReading"
           />
           <q-btn
+            v-if="playbackStatus.state !== 'stopped'"
             flat
             :label="t('pages.quran.stopRecitation')"
             color="negative"
@@ -3709,6 +3730,9 @@ body.body--dark .native-layout.is-ios-native .verse-translation-native {
 /* Paused indicator banner */
 .paused-indicator-banner {
   margin-bottom: 16px;
+  position: sticky;
+  top: 10px;
+  z-index: 30;
   background: linear-gradient(
     135deg,
     rgba(255, 193, 7, 0.15),
