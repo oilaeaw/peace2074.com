@@ -28,6 +28,7 @@
     "ios:sync": "pnpm sync:branding && ./node_modules/.bin/cap sync ios",
     "ios:dev": "pnpm sync:branding && ./node_modules/.bin/cap sync ios && ./node_modules/.bin/cap open ios",
     "ios:build": "pnpm sync:branding && pnpm build && ./node_modules/.bin/cap sync ios && ./node_modules/.bin/cap open ios",
+    "ios:archive": "xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive | xcpretty || xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive",
     "demo:datocms": "node --env-file=.env scripts/demo-datocms-cma.mjs",
     "create:datocms:post": "node --env-file=.env scripts/create-datocms-post.mjs"
   },
