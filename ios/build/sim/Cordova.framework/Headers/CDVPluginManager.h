@@ -6,9 +6,9 @@
 //
 
 #import <Foundation/Foundation.h>
-#import "CDVPlugin.h"
-#import "CDVConfigParser.h"
-#import "CDVCommandDelegate.h"
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVConfigParser.h>
+#import <Cordova/CDVCommandDelegate.h>
 
 @interface CDVPluginManager : NSObject
 

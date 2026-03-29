@@ -19,9 +19,9 @@
 
 #import <Foundation/Foundation.h>
 #import <UIKit/UIKit.h>
-#import "CDVPluginResult.h"
-#import "CDVCommandDelegate.h"
-#import "CDVAvailability.h"
+#import <Cordova/CDVPluginResult.h>
+#import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVAvailability.h>
 #import <WebKit/WebKit.h>
 
 @interface UIView (org_apache_cordova_UIView_Extension)

@@ -18,7 +18,7 @@
  */
 
 #import <Foundation/Foundation.h>
-#import "CDVAvailability.h"
+#import <Cordova/CDVAvailability.h>
 
 @class CDVViewController;
 

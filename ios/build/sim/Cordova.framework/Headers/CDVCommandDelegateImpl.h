@@ -18,9 +18,9 @@
  */
 
 #import <UIKit/UIKit.h>
-#import "CDVCommandDelegate.h"
+#import <Cordova/CDVCommandDelegate.h>
 #import <WebKit/WebKit.h>
-#import "CDVPluginManager.h"
+#import <Cordova/CDVPluginManager.h>
 
 @class CDVViewController;
 @class CDVCommandQueue;
