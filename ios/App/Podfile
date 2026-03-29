@@ -29,7 +29,31 @@ post_install do |installer|
     patched = text.gsub(/#import "(CDV[^"]+\.h)"/, '#import <Cordova/\1>')
     if patched != text
       File.write(header, patched)
-      puts "✓ Fixed angle-bracket imports in #{File.basename(header)}"
+      puts "✓ Fixed Cordova angle-bracket imports in #{File.basename(header)}"
+    end
+  end
+
+  # Fix double-quoted CAP* imports and @import Cordova in Capacitor framework headers.
+  # CAPBridgedPlugin.h, CAPPluginMethod.h use "CAP*.h" and CAPInstanceDescriptor.h uses @import Cordova.
+  Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/*.h', __dir__)).each do |header|
+    text = File.read(header)
+    patched = text
+      .gsub(/#import "(CAP[^"]+\.h)"/, '#import <Capacitor/\1>')
+      .gsub('@import Cordova;', '@class CDVConfigParser;')
+    if patched != text
+      File.write(header, patched)
+      puts "✓ Fixed Capacitor framework header: #{File.basename(header)}"
+    end
+  end
+
+  # Ensure CAPInstanceDescriptor.m has the Cordova import the header no longer provides.
+  desc_m = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.m', __dir__)).first
+  if desc_m && File.exist?(desc_m)
+    text = File.read(desc_m)
+    unless text.include?('#import <Cordova/CDVConfigParser.h>')
+      text = text.sub(/(#import [^\n]+\n)/, "\\1#import <Cordova/CDVConfigParser.h>\n")
+      File.write(desc_m, text)
+      puts "✓ Added <Cordova/CDVConfigParser.h> to CAPInstanceDescriptor.m"
     end
   end
 
@@ -50,30 +74,6 @@ post_install do |installer|
     unless File.read(appdelegate_h).include?('UIResponder')
       File.write(appdelegate_h, correct)
       puts "✓ Fixed AppDelegate.h base class to UIResponder<UIApplicationDelegate>"
-    end
-  end
-
-  # Fix intermittent header resolution error:
-  # 'Cordova/CDVConfigParser.h' file not found from CAPInstanceDescriptor.h
-  # Keep public header independent of Cordova includes; import in .m instead.
-  capacitor_instance_header = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.h', __dir__)).first
-  capacitor_instance_impl = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.m', __dir__)).first
-
-  if capacitor_instance_header && File.exist?(capacitor_instance_header)
-    header_text = File.read(capacitor_instance_header)
-    if header_text.include?('#import <Cordova/CDVConfigParser.h>')
-      header_text = header_text.gsub('#import <Cordova/CDVConfigParser.h>', '@class CDVConfigParser;')
-      File.write(capacitor_instance_header, header_text)
-      puts "✓ Patched CAPInstanceDescriptor.h to forward-declare CDVConfigParser"
-    end
-  end
-
-  if capacitor_instance_impl && File.exist?(capacitor_instance_impl)
-    impl_text = File.read(capacitor_instance_impl)
-    unless impl_text.include?('#import <Cordova/CDVConfigParser.h>')
-      impl_text = impl_text.sub('#import <Capacitor/Capacitor-Swift.h>', "#import <Capacitor/Capacitor-Swift.h>\n#import <Cordova/CDVConfigParser.h>")
-      File.write(capacitor_instance_impl, impl_text)
-      puts "✓ Added CDVConfigParser import to CAPInstanceDescriptor.m"
     end
   end
 

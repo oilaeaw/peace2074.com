@@ -1,5 +1,5 @@
-#import "CAPPluginCall.h"
-#import "CAPPlugin.h"
+#import <Capacitor/CAPPluginCall.h>
+#import <Capacitor/CAPPlugin.h>
 
 typedef enum {
   CAPPluginMethodArgumentNotNullable,

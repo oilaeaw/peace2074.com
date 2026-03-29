@@ -1,4 +1,4 @@
-#import "CAPPluginMethod.h"
+#import <Capacitor/CAPPluginMethod.h>
 
 #if defined(__cplusplus)
 #define CAP_EXTERN extern "C" __attribute__((visibility("default")))

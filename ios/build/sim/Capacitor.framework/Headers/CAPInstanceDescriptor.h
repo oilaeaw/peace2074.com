@@ -2,7 +2,7 @@
 #define CAPInstanceDescriptor_h
 
 @import UIKit;
-@import Cordova;
+@class CDVConfigParser;
 
 typedef NS_ENUM(NSInteger, CAPInstanceType) {
     CAPInstanceTypeFixed NS_SWIFT_NAME(fixed),
