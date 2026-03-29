@@ -57,6 +57,22 @@ post_install do |installer|
     end
   end
 
+  # Fix "Cannot find protocol declaration for 'CDVScreenOrientationDelegate'"
+  # CAPBridgeViewController+CDVScreenOrientationDelegate.h references the protocol
+  # but omits the import for it. Add the missing #import <Cordova/CDVScreenOrientationDelegate.h>.
+  orientation_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeViewController+CDVScreenOrientationDelegate.h', __dir__)).first
+  if orientation_h && File.exist?(orientation_h)
+    text = File.read(orientation_h)
+    unless text.include?('CDVScreenOrientationDelegate.h')
+      text = text.sub(
+        '#import <Capacitor/Capacitor-Swift.h>',
+        "#import <Capacitor/Capacitor-Swift.h>\n#import <Cordova/CDVScreenOrientationDelegate.h>"
+      )
+      File.write(orientation_h, text)
+      puts "✓ Fixed CDVScreenOrientationDelegate protocol import"
+    end
+  end
+
   # Fix "Class 'AppDelegate' defined without specifying a base class"
   # AppDelegate.h must extend UIResponder<UIApplicationDelegate>, not NSObject.
   appdelegate_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h', __dir__)).first
