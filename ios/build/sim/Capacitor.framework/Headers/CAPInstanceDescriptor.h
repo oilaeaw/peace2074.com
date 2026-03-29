@@ -1,7 +1,7 @@
 #ifndef CAPInstanceDescriptor_h
 #define CAPInstanceDescriptor_h
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 @class CDVConfigParser;
 
 typedef NS_ENUM(NSInteger, CAPInstanceType) {

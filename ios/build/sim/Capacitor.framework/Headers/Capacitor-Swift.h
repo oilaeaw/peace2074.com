@@ -281,11 +281,11 @@ typedef unsigned int swift_uint4  __attribute__((__ext_vector_type__(4)));
 #if __has_warning("-Watimport-in-framework-header")
 #pragma clang diagnostic ignored "-Watimport-in-framework-header"
 #endif
-@import Foundation;
-@import ObjectiveC;
-@import UIKit;
-@import UserNotifications;
-@import WebKit;
+#import <Foundation/Foundation.h>
+#import <ObjectiveC/ObjectiveC.h>
+#import <UIKit/UIKit.h>
+#import <UserNotifications/UserNotifications.h>
+#import <WebKit/WebKit.h>
 #endif
 
 #import <Capacitor/Capacitor.h>

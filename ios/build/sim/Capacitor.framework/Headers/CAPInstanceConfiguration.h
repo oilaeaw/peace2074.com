@@ -1,7 +1,7 @@
 #ifndef CAPInstanceConfiguration_h
 #define CAPInstanceConfiguration_h
 
-@import UIKit;
+#import <UIKit/UIKit.h>
 
 @class CAPInstanceDescriptor;
 

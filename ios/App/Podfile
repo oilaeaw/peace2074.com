@@ -22,27 +22,26 @@ end
 post_install do |installer|
   assertDeploymentTarget(installer)
 
-  # Fix "double-quoted include in framework header, expected angle-bracketed instead"
-  # ALL public CapacitorCordova headers use #import "CDV*.h" instead of #import <Cordova/CDV*.h>.
-  Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/*.h', __dir__)).each do |header|
-    text = File.read(header)
-    patched = text.gsub(/#import "(CDV[^"]+\.h)"/, '#import <Cordova/\1>')
-    if patched != text
-      File.write(header, patched)
-      puts "✓ Fixed Cordova angle-bracket imports in #{File.basename(header)}"
-    end
-  end
-
-  # Fix double-quoted CAP* imports and @import Cordova in Capacitor framework headers.
-  # CAPBridgedPlugin.h, CAPPluginMethod.h use "CAP*.h" and CAPInstanceDescriptor.h uses @import Cordova.
-  Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/*.h', __dir__)).each do |header|
-    text = File.read(header)
-    patched = text
-      .gsub(/#import "(CAP[^"]+\.h)"/, '#import <Capacitor/\1>')
-      .gsub('@import Cordova;', '@class CDVConfigParser;')
-    if patched != text
-      File.write(header, patched)
-      puts "✓ Fixed Capacitor framework header: #{File.basename(header)}"
+  # ── Comprehensive Capacitor/CapacitorCordova framework header fixes ───────────
+  # These vendored headers were written for non-framework builds and have three
+  # issues that cause Xcode warnings/errors as framework headers:
+  #   1. #import "CAP*.h"  -> must be #import <Capacitor/CAP*.h>
+  #   2. #import "CDV*.h"  -> must be #import <Cordova/CDV*.h>
+  #   3. @import Foo;      -> must be #import <Foo/Foo.h>  (-fmodules discouraged)
+  [
+    File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/*.h', __dir__),
+    File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/*.h', __dir__),
+  ].each do |pattern|
+    Dir.glob(pattern).each do |header|
+      text = File.read(header)
+      patched = text
+        .gsub(/#import "(CAP[^"]+\.h)"/, '#import <Capacitor/\1>')
+        .gsub(/#import "(CDV[^"]+\.h)"/, '#import <Cordova/\1>')
+        .gsub(/@import (\w+);/) { "#import <#{$1}/#{$1}.h>" }
+      if patched != text
+        File.write(header, patched)
+        puts "✓ Fixed framework header: #{File.basename(header)}"
+      end
     end
   end
 
