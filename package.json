@@ -33,6 +33,7 @@
     "create:datocms:post": "node --env-file=.env scripts/create-datocms-post.mjs"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.4.2",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",
