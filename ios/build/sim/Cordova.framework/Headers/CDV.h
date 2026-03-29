@@ -17,12 +17,12 @@
  under the License.
  */
 
-#import "CDVAvailability.h"
-#import "CDVPlugin.h"
-#import "CDVPluginResult.h"
-#import "CDVCommandDelegate.h"
-#import "CDVInvokedUrlCommand.h"
-#import "CDVViewController.h"
-#import "CDVURLProtocol.h"
-#import "CDVScreenOrientationDelegate.h"
-#import "CDVWebViewProcessPoolFactory.h"
+#import <Cordova/CDVAvailability.h>
+#import <Cordova/CDVPlugin.h>
+#import <Cordova/CDVPluginResult.h>
+#import <Cordova/CDVCommandDelegate.h>
+#import <Cordova/CDVInvokedUrlCommand.h>
+#import <Cordova/CDVViewController.h>
+#import <Cordova/CDVURLProtocol.h>
+#import <Cordova/CDVScreenOrientationDelegate.h>
+#import <Cordova/CDVWebViewProcessPoolFactory.h>

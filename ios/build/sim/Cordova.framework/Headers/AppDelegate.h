@@ -1,7 +1,7 @@
-#import <Foundation/Foundation.h>
-#import "CDVViewController.h"
+#import <UIKit/UIKit.h>
+#import <Cordova/CDVViewController.h>
 
-@interface AppDelegate : NSObject
+@interface AppDelegate : UIResponder <UIApplicationDelegate>
 
 @property (nonatomic, strong) CDVViewController* viewController;
 

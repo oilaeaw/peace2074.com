@@ -22,6 +22,38 @@ end
 post_install do |installer|
   assertDeploymentTarget(installer)
 
+  # Fix "double-quoted include in framework header, expected angle-bracketed instead"
+  # CDV.h in CapacitorCordova uses #import "CDV*.h" instead of #import <Cordova/CDV*.h>.
+  cdv_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDV.h', __dir__)).first
+  if cdv_h && File.exist?(cdv_h)
+    text = File.read(cdv_h)
+    patched = text.gsub(/#import "(CDV[^"]+\.h)"/, '#import <Cordova/\1>')
+    if patched != text
+      File.write(cdv_h, patched)
+      puts "✓ Fixed angle-bracket imports in CDV.h"
+    end
+  end
+
+  # Fix "Class 'AppDelegate' defined without specifying a base class"
+  # AppDelegate.h must extend UIResponder<UIApplicationDelegate>, not NSObject.
+  appdelegate_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h', __dir__)).first
+  if appdelegate_h && File.exist?(appdelegate_h)
+    correct = <<~OBJC
+      #import <UIKit/UIKit.h>
+      #import <Cordova/CDVViewController.h>
+
+      @interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+      @property (nonatomic, strong) CDVViewController* viewController;
+
+      @end
+    OBJC
+    unless File.read(appdelegate_h).include?('UIResponder')
+      File.write(appdelegate_h, correct)
+      puts "✓ Fixed AppDelegate.h base class to UIResponder<UIApplicationDelegate>"
+    end
+  end
+
   # Fix intermittent header resolution error:
   # 'Cordova/CDVConfigParser.h' file not found from CAPInstanceDescriptor.h
   # Keep public header independent of Cordova includes; import in .m instead.

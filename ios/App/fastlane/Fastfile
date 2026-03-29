@@ -1,0 +1,55 @@
+default_platform(:ios)
+
+platform :ios do
+
+  # ─── screenshots ────────────────────────────────────────────────────────────
+  desc "Take App Store screenshots on all required device sizes"
+  lane :screenshots do
+    snapshot
+  end
+
+  # ─── metadata ───────────────────────────────────────────────────────────────
+  desc "Upload metadata (no screenshots, no binary)"
+  lane :metadata do
+    deliver(
+      skip_binary_upload: true,
+      skip_screenshots:   true,
+      force:              true,
+    )
+  end
+
+  # ─── screenshots + metadata ─────────────────────────────────────────────────
+  desc "Upload screenshots + metadata (no binary)"
+  lane :store_assets do
+    deliver(
+      skip_binary_upload: true,
+      force:              true,
+    )
+  end
+
+  # ─── full submit ────────────────────────────────────────────────────────────
+  desc "Build, upload and submit for review"
+  lane :release do
+    # Bump build number to match CI build counter if provided
+    increment_build_number(
+      build_number: ENV.fetch("BUILD_NUMBER", Time.now.strftime("%Y%m%d%H%M")),
+      xcodeproj:    "App.xcodeproj",
+    )
+
+    build_app(
+      scheme:          "App",
+      workspace:       "App.xcworkspace",
+      configuration:   "Release",
+      export_method:   "app-store",
+      output_directory: "./build",
+    )
+
+    deliver(
+      skip_metadata:    false,
+      skip_screenshots: false,
+      submit_for_review: true,
+      automatic_release: false,
+      force:             true,
+    )
+  end
+end
