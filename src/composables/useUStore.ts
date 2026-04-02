@@ -1,4 +1,5 @@
 // Use local storage shim to avoid GunDB auto-initialization from @waelio/ustore
+import type { Ref } from 'vue'
 import { localStorage, sessionStorage, memoryStorage } from '@/utils/storage-shim'
 import { _encrypt, _decrypt } from 'waelio-utils'
 
@@ -152,13 +153,13 @@ export function useSessionStorage() {
  */
 export function useMemoryStorage() {
     return {
-        set: <T>(key: string, value: T, namespace?: string) => {
-            const scopedKey = ns(key, namespace)
+        set: <T>(key: string, value: T, options: StoreOptions = {}) => {
+            const scopedKey = ns(key, options.namespace)
             memoryStorage.set(scopedKey, value as any)
         },
 
-        get: <T>(key: string, fallback?: T, namespace?: string): T | undefined => {
-            const scopedKey = ns(key, namespace)
+        get: <T>(key: string, fallback?: T, options: StoreOptions = {}): T | undefined => {
+            const scopedKey = ns(key, options.namespace)
             const raw = memoryStorage.get(scopedKey) as any
             return raw === null || raw === undefined ? fallback : (raw as T)
         },
@@ -197,11 +198,16 @@ export function useStorageRef<T>(
     defaultValue: T,
     storage: 'local' | 'session' | 'memory' = 'local',
     options: StoreOptions = {}
-) {
+): {
+    value: Ref<T>
+    set: (newValue: T) => void
+    remove: () => void
+    has: () => boolean
+} {
     const stores = useUStore()
     const storageAPI = stores[storage]
 
-    const value = ref<T>(storageAPI.get<T>(key, defaultValue, options) as T)
+    const value = ref<T>(storageAPI.get<T>(key, defaultValue, options) as T) as Ref<T>
 
     const setValue = (newValue: T) => {
         value.value = newValue

@@ -1,528 +1,529 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from "vue";
-import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
+import { onMounted, ref, watch } from 'vue'
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
 
-const NAV_ORDERING_KEY = "nav-ordering-enabled";
-const DRAWER_OPEN_KEY = "drawer-open-by-default";
-const COMPACT_KEY = "pref-compact-layout";
-const MOTION_KEY = "pref-reduce-motion";
-const AUTOPLAY_KEY = "pref-autoplay-athan";
-const QURAN_TRANSLATION_KEY = "quran-show-translation";
-const NOTIFICATIONS_KEY = "pref-enable-notifications";
-const DARK_MODE_KEY = "pref-dark-mode";
-const FONT_SIZE_KEY = "pref-font-size";
-const HIGH_CONTRAST_KEY = "pref-high-contrast";
+const NAV_ORDERING_KEY = 'nav-ordering-enabled'
+const DRAWER_OPEN_KEY = 'drawer-open-by-default'
+const COMPACT_KEY = 'pref-compact-layout'
+const MOTION_KEY = 'pref-reduce-motion'
+const AUTOPLAY_KEY = 'pref-autoplay-athan'
+const QURAN_TRANSLATION_KEY = 'quran-show-translation'
+const NOTIFICATIONS_KEY = 'pref-enable-notifications'
+const DARK_MODE_KEY = 'pref-dark-mode'
+const FONT_SIZE_KEY = 'pref-font-size'
+const HIGH_CONTRAST_KEY = 'pref-high-contrast'
 
-const { t } = useI18n();
-const $q = useQuasar();
+const { t } = useI18n()
+const $q = useQuasar()
 
-const enableNotifications = ref(readNotificationsPreference());
-const navOrderingEnabled = ref(readNavOrderingEnabled());
-const drawerOpenByDefault = ref(readDrawerOpenPreference());
-const compactLayout = ref(readCompactPreference());
-const reduceMotion = ref(readReduceMotionPreference());
-const autoPlayAthan = ref(readAutoplayAthanPreference());
-const showQuranTranslation = ref(readQuranTranslationPreference());
-const darkMode = ref(readDarkModePreference());
-const fontSize = ref(readFontSizePreference());
-const highContrast = ref(readHighContrastPreference());
+const enableNotifications = ref(readNotificationsPreference())
+const navOrderingEnabled = ref(readNavOrderingEnabled())
+const drawerOpenByDefault = ref(readDrawerOpenPreference())
+const compactLayout = ref(readCompactPreference())
+const reduceMotion = ref(readReduceMotionPreference())
+const autoPlayAthan = ref(readAutoplayAthanPreference())
+const showQuranTranslation = ref(readQuranTranslationPreference())
+const darkMode = ref(readDarkModePreference())
+const fontSize = ref(readFontSizePreference())
+const highContrast = ref(readHighContrastPreference())
 
 watch(navOrderingEnabled, (val) => {
-  persistNavOrdering(val);
-  broadcastNavOrdering(val);
-});
+  persistNavOrdering(val)
+  broadcastNavOrdering(val)
+})
 
 watch(drawerOpenByDefault, (val) => {
-  persistDrawerPreference(val);
-  broadcastDrawerPreference(val);
-});
+  persistDrawerPreference(val)
+  broadcastDrawerPreference(val)
+})
 
 watch(compactLayout, (val) => {
-  persistCompactPreference(val);
-  broadcastCompactPreference(val);
-});
+  persistCompactPreference(val)
+  broadcastCompactPreference(val)
+})
 
 watch(reduceMotion, (val) => {
-  persistReduceMotionPreference(val);
-  broadcastReduceMotionPreference(val);
-});
+  persistReduceMotionPreference(val)
+  broadcastReduceMotionPreference(val)
+})
 
 watch(autoPlayAthan, (val) => {
-  persistAutoplayPreference(val);
-  broadcastAutoplayPreference(val);
-});
+  persistAutoplayPreference(val)
+  broadcastAutoplayPreference(val)
+})
 
 watch(showQuranTranslation, (val) => {
-  persistQuranTranslationPreference(val);
-  broadcastQuranTranslationPreference(val);
-});
+  persistQuranTranslationPreference(val)
+  broadcastQuranTranslationPreference(val)
+})
 
 watch(darkMode, (val) => {
-  $q.dark.set(val);
-  persistDarkModePreference(val);
-});
+  $q.dark.set(val)
+  persistDarkModePreference(val)
+})
 
 watch(fontSize, (val) => {
-  persistFontSizePreference(val);
-  applyFontSize(val);
-});
+  persistFontSizePreference(val)
+  applyFontSize(val)
+})
 
 watch(highContrast, (val) => {
-  persistHighContrastPreference(val);
-  applyHighContrast(val);
-});
+  persistHighContrastPreference(val)
+  applyHighContrast(val)
+})
 
 watch(enableNotifications, async (val) => {
   if (val) {
-    const ok = await activateNotifications();
-    persistNotificationsPreference(ok);
+    const ok = await activateNotifications()
+    persistNotificationsPreference(ok)
     if (!ok) {
-      enableNotifications.value = false;
+      enableNotifications.value = false
     }
-    return;
+    return
   }
 
   // Unsubscribe from push notifications
-  await unsubscribeFromPushNotifications();
-  persistNotificationsPreference(false);
-});
+  await unsubscribeFromPushNotifications()
+  persistNotificationsPreference(false)
+})
 
 onMounted(async () => {
-  applyFontSize(fontSize.value);
-  applyHighContrast(highContrast.value);
-  
-  if (!enableNotifications.value) return;
-  const ok = await activateNotifications();
-  persistNotificationsPreference(ok);
+  applyFontSize(fontSize.value)
+  applyHighContrast(highContrast.value)
+
+  if (!enableNotifications.value) return
+  const ok = await activateNotifications()
+  persistNotificationsPreference(ok)
   if (!ok) {
-    enableNotifications.value = false;
+    enableNotifications.value = false
   }
-});
+})
 
 async function activateNotifications(): Promise<boolean> {
-  const granted = await ensureNotificationsPermission();
+  const granted = await ensureNotificationsPermission()
   if (!granted) {
-    return false;
+    return false
   }
 
-  const subscriptionResult = await subscribeToPushNotifications();
+  const subscriptionResult = await subscribeToPushNotifications()
   if (!subscriptionResult.ok) {
     $q.notify?.({
-      type: "negative",
-      message: subscriptionResult.error || t("pages.settings.notifications.error"),
-    });
-    return false;
+      type: 'negative',
+      message:
+        subscriptionResult.error || t('pages.settings.notifications.error'),
+    })
+    return false
   }
 
-  await showTestNotification();
+  await showTestNotification()
   $q.notify?.({
-    type: "positive",
-    message: t("pages.settings.notifications.enabled"),
-  });
+    type: 'positive',
+    message: t('pages.settings.notifications.enabled'),
+  })
 
-  return true;
+  return true
 }
 
 function readNavOrderingEnabled(): boolean {
-  if (typeof window === "undefined") return true;
-  const stored = window.localStorage.getItem(NAV_ORDERING_KEY);
-  if (stored === null) return true;
-  return stored === "true";
+  if (typeof window === 'undefined') return true
+  const stored = window.localStorage.getItem(NAV_ORDERING_KEY)
+  if (stored === null) return true
+  return stored === 'true'
 }
 
 function persistNavOrdering(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(NAV_ORDERING_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(NAV_ORDERING_KEY, String(val))
 }
 
 function broadcastNavOrdering(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("nav-ordering-changed", { detail: { enabled: val } })
-  );
+    new CustomEvent('nav-ordering-changed', { detail: { enabled: val } })
+  )
 }
 
 function readCompactPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(COMPACT_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(COMPACT_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistCompactPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(COMPACT_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(COMPACT_KEY, String(val))
 }
 
 function broadcastCompactPreference(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("compact-layout-changed", { detail: { enabled: val } })
-  );
+    new CustomEvent('compact-layout-changed', { detail: { enabled: val } })
+  )
 }
 
 function readReduceMotionPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(MOTION_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(MOTION_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistReduceMotionPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(MOTION_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(MOTION_KEY, String(val))
 }
 
 function broadcastReduceMotionPreference(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("reduce-motion-changed", { detail: { enabled: val } })
-  );
+    new CustomEvent('reduce-motion-changed', { detail: { enabled: val } })
+  )
 }
 
 function readAutoplayAthanPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(AUTOPLAY_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(AUTOPLAY_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistAutoplayPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(AUTOPLAY_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(AUTOPLAY_KEY, String(val))
 }
 
 function broadcastAutoplayPreference(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("autoplay-athan-changed", { detail: { enabled: val } })
-  );
+    new CustomEvent('autoplay-athan-changed', { detail: { enabled: val } })
+  )
 }
 
 function readQuranTranslationPreference(): boolean {
-  if (typeof window === "undefined") return true;
-  const stored = window.localStorage.getItem(QURAN_TRANSLATION_KEY);
-  if (stored === null) return true;
-  return stored === "true";
+  if (typeof window === 'undefined') return true
+  const stored = window.localStorage.getItem(QURAN_TRANSLATION_KEY)
+  if (stored === null) return true
+  return stored === 'true'
 }
 
 function persistQuranTranslationPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(QURAN_TRANSLATION_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(QURAN_TRANSLATION_KEY, String(val))
 }
 
 function broadcastQuranTranslationPreference(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("quran-translation-visibility-changed", {
+    new CustomEvent('quran-translation-visibility-changed', {
       detail: { enabled: val },
     })
-  );
+  )
 }
 
 function readNotificationsPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(NOTIFICATIONS_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(NOTIFICATIONS_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistNotificationsPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(NOTIFICATIONS_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(NOTIFICATIONS_KEY, String(val))
 }
 
 function readDarkModePreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(DARK_MODE_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(DARK_MODE_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistDarkModePreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(DARK_MODE_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(DARK_MODE_KEY, String(val))
 }
 
 function readFontSizePreference(): number {
-  if (typeof window === "undefined") return 1;
-  const stored = window.localStorage.getItem(FONT_SIZE_KEY);
-  return stored ? parseInt(stored, 10) : 1;
+  if (typeof window === 'undefined') return 1
+  const stored = window.localStorage.getItem(FONT_SIZE_KEY)
+  return stored ? parseInt(stored, 10) : 1
 }
 
 function persistFontSizePreference(val: number) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(FONT_SIZE_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(FONT_SIZE_KEY, String(val))
 }
 
 function applyFontSize(size: number) {
-  if (typeof document === "undefined") return;
-  const sizes = ["small", "medium", "large", "xlarge"];
-  const root = document.documentElement;
-  root.classList.remove("font-small", "font-medium", "font-large", "font-xlarge");
+  if (typeof document === 'undefined') return
+  const sizes = ['small', 'medium', 'large', 'xlarge']
+  const root = document.documentElement
+  root.classList.remove(
+    'font-small',
+    'font-medium',
+    'font-large',
+    'font-xlarge'
+  )
   root.classList.add(`font-${sizes[size]}`)
 }
 
 function readHighContrastPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(HIGH_CONTRAST_KEY);
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(HIGH_CONTRAST_KEY)
+  return stored === 'true'
 }
 
 function persistHighContrastPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(HIGH_CONTRAST_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(HIGH_CONTRAST_KEY, String(val))
 }
 
 function applyHighContrast(enabled: boolean) {
-  if (typeof document === "undefined") return;
-  const root = document.documentElement;
+  if (typeof document === 'undefined') return
+  const root = document.documentElement
   if (enabled) {
-    root.classList.add("high-contrast");
+    root.classList.add('high-contrast')
   } else {
-    root.classList.remove("high-contrast");
+    root.classList.remove('high-contrast')
   }
 }
 
 async function ensureNotificationsPermission(): Promise<boolean> {
-  if (typeof window === "undefined" || typeof Notification === "undefined") {
+  if (typeof window === 'undefined' || typeof Notification === 'undefined') {
     $q.notify?.({
-      type: "warning",
-      message: t("pages.settings.notifications.unavailable"),
-    });
-    return false;
+      type: 'warning',
+      message: t('pages.settings.notifications.unavailable'),
+    })
+    return false
   }
-  const current = Notification.permission;
-  if (current === "granted") return true;
-  if (current === "denied") {
+  const current = Notification.permission
+  if (current === 'granted') return true
+  if (current === 'denied') {
     $q.notify?.({
-      type: "negative",
-      message: t("pages.settings.notifications.denied"),
-    });
-    return false;
+      type: 'negative',
+      message: t('pages.settings.notifications.denied'),
+    })
+    return false
   }
   try {
-    const result = await Notification.requestPermission();
-    if (result === "granted") return true;
+    const result = await Notification.requestPermission()
+    if (result === 'granted') return true
     $q.notify?.({
-      type: "warning",
-      message: t("pages.settings.notifications.denied"),
-    });
-    return false;
+      type: 'warning',
+      message: t('pages.settings.notifications.denied'),
+    })
+    return false
   } catch (e) {
     $q.notify?.({
-      type: "negative",
-      message: t("pages.settings.notifications.error"),
-    });
-    return false;
+      type: 'negative',
+      message: t('pages.settings.notifications.error'),
+    })
+    return false
   }
 }
 
 async function showTestNotification(): Promise<boolean> {
-  if (typeof window === "undefined") return false;
+  if (typeof window === 'undefined') return false
 
   try {
-    if ("serviceWorker" in navigator) {
-      const reg = await navigator.serviceWorker.ready;
+    if ('serviceWorker' in navigator) {
+      const reg = await navigator.serviceWorker.ready
       if (reg?.showNotification) {
         await reg.showNotification(
-          t("pages.settings.notifications.testTitle"),
+          t('pages.settings.notifications.testTitle'),
           {
-            body: t("pages.settings.notifications.testBody"),
-            icon: "/android-chrome-192x192.png",
-            tag: "peace2074-notification-test",
+            body: t('pages.settings.notifications.testBody'),
+            icon: '/android-chrome-192x192.png',
+            tag: 'peace2074-notification-test',
           }
-        );
-        return true;
+        )
+        return true
       }
     }
 
-    if (typeof Notification !== "undefined" && Notification.permission === "granted") {
+    if (
+      typeof Notification !== 'undefined' &&
+      Notification.permission === 'granted'
+    ) {
       // Fallback to immediate notification in supported desktop browsers
       // eslint-disable-next-line no-new
-      new Notification(
-        t("pages.settings.notifications.testTitle"),
-        {
-          body: t("pages.settings.notifications.testBody"),
-          icon: "/android-chrome-192x192.png",
-          tag: "peace2074-notification-test",
-        }
-      );
-      return true;
+      new Notification(t('pages.settings.notifications.testTitle'), {
+        body: t('pages.settings.notifications.testBody'),
+        icon: '/android-chrome-192x192.png',
+        tag: 'peace2074-notification-test',
+      })
+      return true
     }
   } catch (err) {
-    console.warn("Notification test failed", err);
+    console.warn('Notification test failed', err)
   }
 
-  return false;
+  return false
 }
 
 type PushSubscriptionResult = {
-  ok: boolean;
-  error?: string;
+  ok: boolean
+  error?: string
 }
 
 async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-    console.warn("[Push] Service Worker not supported");
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    console.warn('[Push] Service Worker not supported')
     return {
       ok: false,
-      error:
-        t("pages.settings.notifications.unavailable"),
-    };
+      error: t('pages.settings.notifications.unavailable'),
+    }
   }
 
-  if (!("PushManager" in window)) {
+  if (!('PushManager' in window)) {
     return {
       ok: false,
-      error:
-        t("pages.settings.notifications.unavailable"),
-    };
+      error: t('pages.settings.notifications.unavailable'),
+    }
   }
 
   if (!window.isSecureContext) {
     return {
       ok: false,
-      error:
-        t("pages.settings.notifications.unavailable"),
-    };
+      error: t('pages.settings.notifications.unavailable'),
+    }
   }
 
   try {
     // Register service worker if not already registered
-    let registration = await navigator.serviceWorker.getRegistration();
+    let registration = await navigator.serviceWorker.getRegistration()
     if (!registration) {
-      registration = await navigator.serviceWorker.register("/sw.js");
-      await navigator.serviceWorker.ready;
+      registration = await navigator.serviceWorker.register('/sw.js')
+      await navigator.serviceWorker.ready
     }
 
     // Get VAPID public key from server
-    const keyRes = await fetch("/api/push/public-key", {
-      credentials: "include",
-    });
-    const keyData = await keyRes.json().catch(() => ({}));
+    const keyRes = await fetch('/api/push/public-key', {
+      credentials: 'include',
+    })
+    const keyData = await keyRes.json().catch(() => ({}))
 
     if (!keyRes.ok || !keyData?.ok || !keyData?.publicKey) {
       const errorMessage =
-        keyData?.error ||
-        `Failed to load push public key (${keyRes.status})`;
-      console.error("[Push]", errorMessage);
-      return { ok: false, error: errorMessage };
+        keyData?.error || `Failed to load push public key (${keyRes.status})`
+      console.error('[Push]', errorMessage)
+      return { ok: false, error: errorMessage }
     }
 
     // Convert base64 VAPID key to Uint8Array
-    const applicationServerKey = urlBase64ToUint8Array(keyData.publicKey);
+    const applicationServerKey = urlBase64ToUint8Array(keyData.publicKey)
 
     // Reuse existing subscription if present
-    let subscription = await registration.pushManager.getSubscription();
+    let subscription = await registration.pushManager.getSubscription()
 
     // Subscribe to push notifications
     if (!subscription) {
       subscription = await registration.pushManager.subscribe({
         userVisibleOnly: true,
-        applicationServerKey,
-      });
+        applicationServerKey: applicationServerKey as BufferSource,
+      })
     }
 
     // Send subscription to server
-    const subRes = await fetch("/api/push/subscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+    const subRes = await fetch('/api/push/subscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ subscription }),
-    });
+    })
 
-    const subData = await subRes.json().catch(() => ({}));
+    const subData = await subRes.json().catch(() => ({}))
 
     if (!subRes.ok || !subData?.ok) {
       const errorMessage =
-        subData?.error ||
-        `Failed to save subscription (${subRes.status})`;
-      console.error("[Push]", errorMessage);
-      return { ok: false, error: errorMessage };
+        subData?.error || `Failed to save subscription (${subRes.status})`
+      console.error('[Push]', errorMessage)
+      return { ok: false, error: errorMessage }
     }
 
-    console.log("[Push] Successfully subscribed to push notifications");
-    return { ok: true };
+    console.log('[Push] Successfully subscribed to push notifications')
+    return { ok: true }
   } catch (err) {
-    console.error("[Push] Subscription error:", err);
+    console.error('[Push] Subscription error:', err)
 
     const message =
       err instanceof Error
         ? err.message
-        : t("pages.settings.notifications.error");
+        : t('pages.settings.notifications.error')
 
-    return { ok: false, error: message };
+    return { ok: false, error: message }
   }
 }
 
 async function unsubscribeFromPushNotifications(): Promise<boolean> {
-  if (typeof window === "undefined" || !("serviceWorker" in navigator)) {
-    return true;
+  if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
+    return true
   }
 
   try {
-    const registration = await navigator.serviceWorker.getRegistration();
-    if (!registration) return true;
+    const registration = await navigator.serviceWorker.getRegistration()
+    if (!registration) return true
 
-    const subscription = await registration.pushManager.getSubscription();
-    if (!subscription) return true;
+    const subscription = await registration.pushManager.getSubscription()
+    if (!subscription) return true
 
     // Unsubscribe from push
-    await subscription.unsubscribe();
+    await subscription.unsubscribe()
 
     // Remove from server
-    await fetch("/api/push/unsubscribe", {
-      method: "POST",
-      headers: { "Content-Type": "application/json" },
-      credentials: "include",
+    await fetch('/api/push/unsubscribe', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
       body: JSON.stringify({ endpoint: subscription.endpoint }),
-    });
+    })
 
-    console.log("[Push] Unsubscribed from push notifications");
-    return true;
+    console.log('[Push] Unsubscribed from push notifications')
+    return true
   } catch (err) {
-    console.error("[Push] Unsubscribe error:", err);
-    return false;
+    console.error('[Push] Unsubscribe error:', err)
+    return false
   }
 }
 
 function urlBase64ToUint8Array(base64String: string): Uint8Array {
-  const padding = "=".repeat((4 - (base64String.length % 4)) % 4);
-  const base64 = (base64String + padding).replace(/-/g, "+").replace(/_/g, "/");
+  const padding = '='.repeat((4 - (base64String.length % 4)) % 4)
+  const base64 = (base64String + padding).replace(/-/g, '+').replace(/_/g, '/')
 
-  const rawData = window.atob(base64);
-  const outputArray = new Uint8Array(rawData.length);
+  const rawData = window.atob(base64)
+  const outputArray = new Uint8Array(rawData.length)
 
   for (let i = 0; i < rawData.length; ++i) {
-    outputArray[i] = rawData.charCodeAt(i);
+    outputArray[i] = rawData.charCodeAt(i)
   }
-  return outputArray;
+  return outputArray
 }
 
 function readDrawerOpenPreference(): boolean {
-  if (typeof window === "undefined") return false;
-  const stored = window.localStorage.getItem(DRAWER_OPEN_KEY);
-  if (stored === null) return false;
-  return stored === "true";
+  if (typeof window === 'undefined') return false
+  const stored = window.localStorage.getItem(DRAWER_OPEN_KEY)
+  if (stored === null) return false
+  return stored === 'true'
 }
 
 function persistDrawerPreference(val: boolean) {
-  if (typeof window === "undefined") return;
-  window.localStorage.setItem(DRAWER_OPEN_KEY, String(val));
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(DRAWER_OPEN_KEY, String(val))
 }
 
 function broadcastDrawerPreference(val: boolean) {
-  if (typeof window === "undefined") return;
+  if (typeof window === 'undefined') return
   window.dispatchEvent(
-    new CustomEvent("drawer-preference-changed", { detail: { open: val } })
-  );
+    new CustomEvent('drawer-preference-changed', { detail: { open: val } })
+  )
 }
 
 function onPullRefresh(done?: () => void) {
-  reloadApp();
-  if (done) done();
+  reloadApp()
+  if (done) done()
 }
 
 async function reloadApp() {
@@ -530,15 +531,15 @@ async function reloadApp() {
     type: 'info',
     message: t('pages.settings.clearingCache'),
     timeout: 2000,
-    position: 'top'
-  });
+    position: 'top',
+  })
 
   try {
     // Clear all caches
     if ('caches' in window) {
-      const cacheNames = await caches.keys();
-      await Promise.all(cacheNames.map(name => caches.delete(name)));
-      console.log(`[Settings] Cleared ${cacheNames.length} cache(s)`);
+      const cacheNames = await caches.keys()
+      await Promise.all(cacheNames.map((name) => caches.delete(name)))
+      console.log(`[Settings] Cleared ${cacheNames.length} cache(s)`)
     }
 
     // Clear localStorage (except critical settings)
@@ -554,43 +555,43 @@ async function reloadApp() {
         AUTOPLAY_KEY,
         QURAN_TRANSLATION_KEY,
         NOTIFICATIONS_KEY,
-        DARK_MODE_KEY
-      ];
-      const savedValues: Record<string, string> = {};
-      criticalKeys.forEach(key => {
-        const val = window.localStorage.getItem(key);
-        if (val !== null) savedValues[key] = val;
-      });
+        DARK_MODE_KEY,
+      ]
+      const savedValues: Record<string, string> = {}
+      criticalKeys.forEach((key) => {
+        const val = window.localStorage.getItem(key)
+        if (val !== null) savedValues[key] = val
+      })
 
       // Clear all
-      window.localStorage.clear();
+      window.localStorage.clear()
 
       // Restore critical settings
       Object.entries(savedValues).forEach(([key, val]) => {
-        window.localStorage.setItem(key, val);
-      });
-      
-      console.log('[Settings] Cleared localStorage (kept critical settings)');
+        window.localStorage.setItem(key, val)
+      })
+
+      console.log('[Settings] Cleared localStorage (kept critical settings)')
     }
 
     // Clear sessionStorage
     if (typeof window !== 'undefined' && window.sessionStorage) {
-      window.sessionStorage.clear();
-      console.log('[Settings] Cleared sessionStorage');
+      window.sessionStorage.clear()
+      console.log('[Settings] Cleared sessionStorage')
     }
 
     // Update service workers
-    if ("serviceWorker" in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations();
-      await Promise.all(regs.map(r => r.update().catch(() => {})));
-      console.log('[Settings] Updated service workers');
+    if ('serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(regs.map((r) => r.update().catch(() => {})))
+      console.log('[Settings] Updated service workers')
     }
   } catch (err) {
-    console.error('[Settings] Error clearing cache:', err);
+    console.error('[Settings] Error clearing cache:', err)
   }
 
   // Hard reload with cache bypass
-  window.location.reload();
+  window.location.reload()
 }
 </script>
 
@@ -598,24 +599,28 @@ async function reloadApp() {
   <q-page class="q-pa-md settings-page">
     <q-pull-to-refresh @refresh="onPullRefresh">
       <div class="page-header q-mb-md">
-        <h1 class="text-h4 q-mb-xs">{{ t("pages.settings.title") }}</h1>
-        <div class="text-subtitle2 text-grey-6">{{ t("pages.settings.subtitle") }}</div>
+        <h1 class="text-h4 q-mb-xs">{{ t('pages.settings.title') }}</h1>
+        <div class="text-subtitle2 text-grey-6">
+          {{ t('pages.settings.subtitle') }}
+        </div>
       </div>
 
       <div class="grid">
         <q-card class="glassy-card">
           <q-card-section>
-            <div class="text-h6 q-mb-sm">{{ t("pages.settings.display.title") }}</div>
+            <div class="text-h6 q-mb-sm">
+              {{ t('pages.settings.display.title') }}
+            </div>
             <div class="text-body2 text-grey-7 q-mb-md">
-              {{ t("pages.settings.display.desc") }}
+              {{ t('pages.settings.display.desc') }}
             </div>
             <div class="setting-row">
               <div>
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.display.compact") }}
+                  {{ t('pages.settings.display.compact') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.display.compactHint") }}
+                  {{ t('pages.settings.display.compactHint') }}
                 </div>
               </div>
               <q-toggle
@@ -627,9 +632,11 @@ async function reloadApp() {
             <q-separator spaced />
             <div class="setting-row">
               <div>
-                <div class="text-subtitle1">{{ t("pages.settings.display.motion") }}</div>
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.display.motion') }}
+                </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.display.motionHint") }}
+                  {{ t('pages.settings.display.motionHint') }}
                 </div>
               </div>
               <q-toggle
@@ -641,9 +648,11 @@ async function reloadApp() {
             <q-separator spaced />
             <div class="setting-row">
               <div>
-                <div class="text-subtitle1">{{ t("pages.settings.display.darkMode") }}</div>
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.display.darkMode') }}
+                </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.display.darkModeHint") }}
+                  {{ t('pages.settings.display.darkModeHint') }}
                 </div>
               </div>
               <q-toggle
@@ -655,9 +664,11 @@ async function reloadApp() {
             <q-separator spaced />
             <div class="setting-row">
               <div>
-                <div class="text-subtitle1">{{ t("pages.settings.display.translation") }}</div>
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.display.translation') }}
+                </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.display.translationHint") }}
+                  {{ t('pages.settings.display.translationHint') }}
                 </div>
               </div>
               <q-toggle
@@ -671,17 +682,19 @@ async function reloadApp() {
 
         <q-card class="glassy-card">
           <q-card-section>
-            <div class="text-h6 q-mb-sm">{{ t("pages.settings.accessibility.title") }}</div>
+            <div class="text-h6 q-mb-sm">
+              {{ t('pages.settings.accessibility.title') }}
+            </div>
             <div class="text-body2 text-grey-7 q-mb-md">
-              {{ t("pages.settings.accessibility.desc") }}
+              {{ t('pages.settings.accessibility.desc') }}
             </div>
             <div class="setting-row">
               <div class="q-mb-sm" style="flex: 1">
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.accessibility.fontSize") }}
+                  {{ t('pages.settings.accessibility.fontSize') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.accessibility.fontSizeHint") }}
+                  {{ t('pages.settings.accessibility.fontSizeHint') }}
                 </div>
               </div>
             </div>
@@ -694,17 +707,19 @@ async function reloadApp() {
               markers
               label
               color="primary"
-              :label-value="t(`pages.settings.accessibility.fontSizes.${fontSize}`)"
+              :label-value="
+                t(`pages.settings.accessibility.fontSizes.${fontSize}`)
+              "
               class="q-mb-md"
             />
             <q-separator spaced />
             <div class="setting-row">
               <div>
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.accessibility.highContrast") }}
+                  {{ t('pages.settings.accessibility.highContrast') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.accessibility.highContrastHint") }}
+                  {{ t('pages.settings.accessibility.highContrastHint') }}
                 </div>
               </div>
               <q-toggle
@@ -718,17 +733,19 @@ async function reloadApp() {
 
         <q-card class="glassy-card">
           <q-card-section>
-            <div class="text-h6 q-mb-sm">{{ t("pages.settings.navigation.title") }}</div>
+            <div class="text-h6 q-mb-sm">
+              {{ t('pages.settings.navigation.title') }}
+            </div>
             <div class="text-body2 text-grey-7 q-mb-md">
-              {{ t("pages.settings.navigation.desc") }}
+              {{ t('pages.settings.navigation.desc') }}
             </div>
             <div class="setting-row">
               <div>
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.navigation.enableOrdering") }}
+                  {{ t('pages.settings.navigation.enableOrdering') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.navigation.enableOrderingHint") }}
+                  {{ t('pages.settings.navigation.enableOrderingHint') }}
                 </div>
               </div>
               <q-toggle
@@ -741,10 +758,10 @@ async function reloadApp() {
             <div class="setting-row">
               <div>
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.navigation.drawerDefault") }}
+                  {{ t('pages.settings.navigation.drawerDefault') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.navigation.drawerDefaultHint") }}
+                  {{ t('pages.settings.navigation.drawerDefaultHint') }}
                 </div>
               </div>
               <q-toggle
@@ -759,18 +776,18 @@ async function reloadApp() {
         <q-card class="glassy-card">
           <q-card-section>
             <div class="text-h6 q-mb-sm">
-              {{ t("pages.settings.notifications.title") }}
+              {{ t('pages.settings.notifications.title') }}
             </div>
             <div class="text-body2 text-grey-7 q-mb-md">
-              {{ t("pages.settings.notifications.desc") }}
+              {{ t('pages.settings.notifications.desc') }}
             </div>
             <div class="setting-row">
               <div>
                 <div class="text-subtitle1">
-                  {{ t("pages.settings.notifications.enable") }}
+                  {{ t('pages.settings.notifications.enable') }}
                 </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.notifications.enableHint") }}
+                  {{ t('pages.settings.notifications.enableHint') }}
                 </div>
               </div>
               <q-toggle
@@ -779,11 +796,17 @@ async function reloadApp() {
                 :aria-label="t('pages.settings.notifications.enable')"
               />
             </div>
-            <q-banner dense rounded class="q-mt-md" color="green-1" text-color="positive">
+            <q-banner
+              dense
+              rounded
+              class="q-mt-md"
+              color="green-1"
+              text-color="positive"
+            >
               {{
                 enableNotifications
-                  ? t("pages.settings.notifications.enabled")
-                  : t("pages.settings.notifications.enableHint")
+                  ? t('pages.settings.notifications.enabled')
+                  : t('pages.settings.notifications.enableHint')
               }}
             </q-banner>
           </q-card-section>
@@ -791,15 +814,19 @@ async function reloadApp() {
 
         <q-card class="glassy-card">
           <q-card-section>
-            <div class="text-h6 q-mb-sm">{{ t("pages.settings.audio.title") }}</div>
+            <div class="text-h6 q-mb-sm">
+              {{ t('pages.settings.audio.title') }}
+            </div>
             <div class="text-body2 text-grey-7 q-mb-md">
-              {{ t("pages.settings.audio.desc") }}
+              {{ t('pages.settings.audio.desc') }}
             </div>
             <div class="setting-row">
               <div>
-                <div class="text-subtitle1">{{ t("pages.settings.audio.autoPlay") }}</div>
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.audio.autoPlay') }}
+                </div>
                 <div class="text-caption text-grey-6">
-                  {{ t("pages.settings.audio.autoPlayHint") }}
+                  {{ t('pages.settings.audio.autoPlayHint') }}
                 </div>
               </div>
               <q-toggle
@@ -813,9 +840,11 @@ async function reloadApp() {
 
         <q-card class="glassy-card">
           <q-card-section class="q-gutter-sm">
-            <div class="text-h6 q-mb-sm">{{ t("pages.settings.refresh.title") }}</div>
+            <div class="text-h6 q-mb-sm">
+              {{ t('pages.settings.refresh.title') }}
+            </div>
             <div class="text-body2 text-grey-7">
-              {{ t("pages.settings.refresh.desc") }}
+              {{ t('pages.settings.refresh.desc') }}
             </div>
             <q-btn
               color="primary"

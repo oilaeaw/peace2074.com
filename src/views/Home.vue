@@ -266,7 +266,8 @@ const allPosts = ref<BlogPost[]>([])
 const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
 
-const { copy } = useClipboard({ source: aiResponse })
+const clipboardSource = computed(() => aiResponse.value ?? '')
+const { copy } = useClipboard({ source: clipboardSource })
 
 // Daily message selection based on day of week
 const dailyMessage = computed(() => {
@@ -327,10 +328,12 @@ const askPeaceAI = async () => {
   isLoading.value = true
   errorMessage.value = null
   try {
-    const res = await sendDeepSeekChat([
-      { role: 'system', content: systemPrompt },
-      { role: 'user', content: userPrompt.value },
-    ])
+    const res = await sendDeepSeekChat({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt.value },
+      ],
+    })
     aiResponse.value = res
     history.value.unshift({
       id: Date.now().toString(),

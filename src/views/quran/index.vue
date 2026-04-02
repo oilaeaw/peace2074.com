@@ -5,18 +5,30 @@ import { useQ2P } from '~/store/q2p.pinia'
 
 const { t } = useI18n()
 
+type SuraListItem = {
+  id: number
+  name: string
+  e_name?: string
+  type?: string
+  total_verses?: number
+}
+
 // const q2p = useQ2P()
 const router = useRouter()
 const suras = computed(() => useQ2P().GetQ)
 
-const surasLeft = computed(() => suras.value.filter((_, i) => i % 2 === 0))
-const surasRight = computed(() => suras.value.filter((_, i) => i % 2 === 1))
+const surasLeft = computed(() =>
+  suras.value.filter((_: SuraListItem, i: number) => i % 2 === 0)
+)
+const surasRight = computed(() =>
+  suras.value.filter((_: SuraListItem, i: number) => i % 2 === 1)
+)
 
 function navToSura(id: number) {
   router.push(`/quran/${id}`)
 }
 
-function showTranslation(sura: any) {
+function showTranslation(sura: SuraListItem) {
   // Only show translation if it differs from the sura name
   return sura.e_name && sura.e_name !== sura.name
 }
@@ -51,7 +63,10 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
+            <span class="sura-total"
+              >{{ sura.total_verses }}
+              {{ t('pages.quran.sura.totverses') }}</span
+            >
           </div>
         </div>
       </div>
@@ -81,7 +96,10 @@ function showTranslation(sura: any) {
               {{ sura.e_name }}
             </span>
             <span class="sura-type">{{ sura.type }}</span>
-            <span class="sura-total">{{ sura.total_verses }} {{ t("pages.quran.sura.totverses") }}</span>
+            <span class="sura-total"
+              >{{ sura.total_verses }}
+              {{ t('pages.quran.sura.totverses') }}</span
+            >
           </div>
         </div>
       </div>

@@ -352,7 +352,7 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
           });
         });
       },
-      onRegisterError(error) {
+      onRegisterError(error: unknown) {
         console.error('PWA service worker registration failed', error);
       },
     });
@@ -392,7 +392,7 @@ if (isClient) {
       // Modal will be injected into document.body by default
 
       // Sync auth state with Pinia store
-      netlifyIdentity.on('init', user => {
+      netlifyIdentity.on('init', (user: any) => {
         if (user) {
           const authStore = (pinia as any)._s.get('auth')
           if (authStore) {
@@ -408,7 +408,7 @@ if (isClient) {
         }
       })
 
-      netlifyIdentity.on('login', user => {
+      netlifyIdentity.on('login', (user: any) => {
         const authStore = (pinia as any)._s.get('auth')
         if (authStore && user) {
           authStore.setUser({

@@ -1,0 +1,13 @@
+<svg width="2200" height="1250" viewBox="0 0 2200 1250" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <rect width="2200" height="1250" fill="#F5F7F6"/>
+  <text x="1100" y="74" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="54" font-weight="700" fill="#0A5B43">Icon comparison</text>
+
+  <text x="570" y="140" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#0A5B43">Current icon</text>
+  <text x="1630" y="140" text-anchor="middle" font-family="Arial, Helvetica, sans-serif" font-size="38" font-weight="700" fill="#0A5B43">Luna-inspired refresh</text>
+
+  <rect x="92" y="162" width="956" height="956" rx="42" fill="#FFFFFF" stroke="#D9E3DF" stroke-width="4"/>
+  <rect x="1152" y="162" width="956" height="956" rx="42" fill="#FFFFFF" stroke="#D9E3DF" stroke-width="4"/>
+
+  <image href="current-icon.png" x="110" y="180" width="920" height="920" preserveAspectRatio="xMidYMid meet"/>
+  <image href="icon-refresh-preview-luna.png" x="1170" y="180" width="920" height="920" preserveAspectRatio="xMidYMid meet"/>
+</svg>

@@ -158,8 +158,7 @@ function flushNotificationQueue() {
         icon: notifs[0].icon,
         position: 'top',
         timeout: 2500,
-        badge: tag !== 'general' ? tag : undefined,
-        badgeColor: 'primary',
+        caption: tag !== 'general' ? tag : undefined,
       })
     } else {
       // Batched notifications
@@ -171,9 +170,6 @@ function flushNotificationQueue() {
         icon: notifs[0].icon || 'notifications',
         position: 'top',
         timeout: 3500,
-        badge:
-          tag !== 'general' ? `${tag} (${notifs.length})` : `${notifs.length}`,
-        badgeColor: 'primary',
       })
     }
   })
@@ -698,9 +694,13 @@ async function bookmarkVerse(
           color: 'white',
           handler: () =>
             removeBookmark({
-              ...entry,
               normalized,
               key: normalized,
+              label: `${sura.value?.id}:${verse}`,
+              suraId: sura.value?.id ?? null,
+              verse,
+              raw: normalized,
+              rawString: normalized,
             } as BookmarkEntry),
         },
       ],

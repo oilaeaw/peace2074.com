@@ -6,6 +6,8 @@ export type MessagingEnvelope = {
     id?: string;
     type?: string;
     from?: string;
+    user?: string;
+    sender?: string;
     to?: string;
     room?: string;
     payload?: any;

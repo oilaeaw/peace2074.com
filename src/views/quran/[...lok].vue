@@ -176,6 +176,12 @@ function goToPrevSura() {
   }
 }
 
+function goToNextSura() {
+  if (lok.value < Quran.value.length) {
+    router.push(`/quran/${lok.value + 1}`);
+  }
+}
+
 onMounted(() => {
   // Set initial lok value from route
   lok.value = getLokFromRoute();

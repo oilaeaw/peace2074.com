@@ -14,9 +14,13 @@ import { useLocalStorage } from '@/composables/useUStore'
 interface PersistOptions {
     key?: string
     paths?: string[]
-    storage?: 'local' | 'session'
+    storage?: 'local' | 'session' | Storage
     encrypt?: boolean
     salt?: string
+    serializer?: {
+        serialize?: (value: unknown) => string
+        deserialize?: (value: string) => unknown
+    }
 }
 
 declare module 'pinia' {
