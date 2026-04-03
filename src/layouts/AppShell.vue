@@ -8,8 +8,8 @@
           round
           icon="menu"
           color="white"
-          @click="leftDrawer = !leftDrawer"
           :aria-label="t('appShell.toggleMenu')"
+          @click="leftDrawer = !leftDrawer"
         />
         <q-avatar square size="36px" class="q-ml-sm brand-logo">
           <img src="/logo.svg" alt="PEACE2074" class="app-logo" />
@@ -27,8 +27,8 @@
           text-color="dark"
           icon="search"
           class="search-trigger"
-          @click="openSearchDialog"
           :aria-label="t('appShell.searchPlaceholder')"
+          @click="openSearchDialog"
         />
 
         <q-btn
@@ -36,12 +36,12 @@
           round
           color="primary"
           :icon="isAthanPlaying ? 'pause' : 'volume_up'"
-          @click="toggleAthan"
           :aria-label="
             isAthanPlaying
               ? t('appShell.pauseAthan') || t('appShell.playAthan')
               : t('appShell.playAthan')
           "
+          @click="toggleAthan"
         />
         <q-btn
           v-if="isAthanPlaying"
@@ -49,12 +49,13 @@
           round
           color="negative"
           icon="stop"
-          @click="stopAthan"
           :aria-label="t('appShell.stopAthan')"
+          @click="stopAthan"
         />
 
         <q-select
           :key="`lang-select-${locale}`"
+          v-model="localeModel"
           dense
           outlined
           dark
@@ -63,13 +64,12 @@
           option-value="value"
           emit-value
           map-options
-          v-model="localeModel"
           class="glassy-field locale-select"
         >
-          <template v-slot:selected>
+          <template #selected>
             <span>{{ languageFlags[localeModel] }}</span>
           </template>
-          <template v-slot:option="scope">
+          <template #option="scope">
             <q-item v-bind="scope.itemProps">
               <q-item-section avatar>
                 <span class="text-h6">{{ scope.opt.flag }}</span>
@@ -106,10 +106,10 @@
               <q-separator v-if="isAuthenticated" />
 
               <q-item
-                clickable
-                v-ripple
-                @click="$router.push('/login')"
                 v-if="!isAuthenticated"
+                v-ripple
+                clickable
+                @click="$router.push('/login')"
               >
                 <q-item-section avatar>
                   <q-icon name="login" />
@@ -120,10 +120,10 @@
               </q-item>
 
               <q-item
-                clickable
-                v-ripple
-                @click="$router.push('/signup')"
                 v-if="!isAuthenticated"
+                v-ripple
+                clickable
+                @click="$router.push('/signup')"
               >
                 <q-item-section avatar>
                   <q-icon name="person_add" />
@@ -134,10 +134,10 @@
               </q-item>
 
               <q-item
-                clickable
-                v-ripple
-                @click="handleLogout"
                 v-if="isAuthenticated"
+                v-ripple
+                clickable
+                @click="handleLogout"
               >
                 <q-item-section avatar>
                   <q-icon name="logout" />
@@ -157,8 +157,8 @@
         <q-item
           v-for="item in orderedNavItems"
           :key="item.key"
-          clickable
           v-ripple
+          clickable
           :to="item.to"
           :draggable="navOrderingEnabled"
           :class="{
@@ -182,10 +182,10 @@
               :icon="item.pinned ? 'push_pin' : 'push_pin'"
               :color="item.pinned ? 'amber' : 'grey-6'"
               :disable="!navOrderingEnabled"
-              @click.stop="togglePin(item.key)"
               :aria-label="
                 item.pinned ? t('appShell.unpin') : t('appShell.pin')
               "
+              @click.stop="togglePin(item.key)"
             />
           </q-item-section>
         </q-item>
@@ -213,12 +213,12 @@
 
         <q-card-section class="q-pt-none">
           <q-input
+            v-model="search"
             dense
             outlined
             autofocus
             :placeholder="t('appShell.searchPlaceholder')"
             class="search"
-            v-model="search"
             debounce="300"
             clearable
             @clear="clearSearch"
@@ -240,8 +240,8 @@
             <q-item
               v-for="item in searchResults"
               :key="item.id"
-              clickable
               v-ripple
+              clickable
               @click="goToResult(item)"
             >
               <q-item-section>
