@@ -240,7 +240,6 @@ export default defineConfig({
       target: 'esnext',
     },
     entries: ['src/main.ts'],
-    holdersOnly: true,
   },
 
   server: {

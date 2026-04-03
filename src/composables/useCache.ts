@@ -1,4 +1,4 @@
-import { ref, computed } from 'vue'
+import { computed, shallowRef } from 'vue'
 
 interface CacheItem<T> {
   data: T
@@ -14,7 +14,7 @@ export function useCache<T = any>(
   key: string,
   ttl: number = 60 * 60 * 1000 // Default 1 hour in ms
 ) {
-  const cache = ref<CacheItem<T> | null>(null)
+  const cache = shallowRef<CacheItem<T> | null>(null)
   const isValid = computed(() => {
     if (!cache.value) return false
     if (!cache.value.ttl) return true

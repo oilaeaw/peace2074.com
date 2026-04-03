@@ -1,8 +1,8 @@
 <!-- eslint-disable unused-imports/no-unused-vars -->
 <script lang="ts" setup>
-import { useQuasar } from "quasar";
+import { useQuasar } from 'quasar';
 import { useBookmarksStore } from "@/stores/bookmarks.pinia";
-import ThreeBackground from '@/components/common/ThreeBackground.vue';
+import * as ThreeBackground from '@/components/common/ThreeBackground.vue';
 
 const $q = useQuasar();
 const q2p = useQ2P();
@@ -173,6 +173,12 @@ function goToBakara() {
 function goToPrevSura() {
   if (lok.value > 1) {
     router.push(`/quran/${lok.value - 1}`);
+  }
+}
+
+function goToNextSura() {
+  if (lok.value < Quran.value.length) {
+    router.push(`/quran/${lok.value + 1}`);
   }
 }
 

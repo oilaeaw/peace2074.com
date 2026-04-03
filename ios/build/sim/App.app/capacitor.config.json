@@ -1,0 +1,7 @@
+{
+	"appId": "com.peace2074.app",
+	"appName": "Peace2074",
+	"webDir": "dist",
+	"bundledWebRuntime": false,
+	"packageClassList": []
+}

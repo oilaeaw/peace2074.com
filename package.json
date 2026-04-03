@@ -5,6 +5,29 @@
   "engines": {
     "node": ">=22.12.0"
   },
+  "author": {
+    "name": "Wael Wahbeh",
+    "email": "wahbehw@gmmail.com",
+    "url": "https://waelio.com"
+  },
+  "license": "MIT",
+  "description": "Peace2074 — Quran recitation, Tasbeeh, and Holy Names for every Muslim",
+  "keywords": [
+    "quran",
+    "quran-recitation",
+    "tasbeeh",
+    "islamic",
+    "muslim",
+    "holy-names",
+    "asma-allah",
+    "dhikr",
+    "vue",
+    "quasar",
+    "capacitor",
+    "pwa",
+    "i18n",
+    "pinia"
+  ],
   "scripts": {
     "predev": "node -e \"const [maj, min, patch] = process.versions.node.split('.') ; if (Number(maj) < 22 || (Number(maj)==22 && Number(min)<12)) { console.error('Node 22.12+ required. Current:', process.versions.node); process.exit(1)}\" && pkill -9 -f 'vite --strictPort' 2>/dev/null; pkill -9 -f 'nitro dev' 2>/dev/null; pkill -9 -f 'concurrently' 2>/dev/null; for port in 4000 3000 3001; do lsof -ti:$port 2>/dev/null | xargs kill -9 2>/dev/null; done; sleep 3",
     "dev": "pnpm predev && concurrently \"pnpm:dev:vite\" \"pnpm:dev:nitro\"",
@@ -21,17 +44,19 @@
     "test:e2e:ui": "playwright test --ui",
     "test:e2e:headed": "playwright test --headed",
     "test:e2e:debug": "playwright test --debug",
-    "mobile:sync": "pnpm build && pnpm exec cap sync",
-    "mobile:android": "pnpm build && pnpm exec cap sync android && pnpm exec cap open android",
-    "mobile:ios": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
-    "ios:open": "pnpm exec cap open ios",
-    "ios:sync": "pnpm sync:branding && pnpm exec cap sync ios",
-    "ios:dev": "pnpm sync:branding && pnpm exec cap sync ios && pnpm exec cap open ios",
-    "ios:build": "pnpm sync:branding && pnpm build && pnpm exec cap sync ios && pnpm exec cap open ios",
+    "mobile:sync": "pnpm build && ./node_modules/.bin/cap sync",
+    "mobile:android": "pnpm build && ./node_modules/.bin/cap sync android && ./node_modules/.bin/cap open android",
+    "mobile:ios": "pnpm sync:branding && pnpm build && ./node_modules/.bin/cap sync ios && ./node_modules/.bin/cap open ios",
+    "ios:open": "./node_modules/.bin/cap open ios",
+    "ios:sync": "pnpm sync:branding && ./node_modules/.bin/cap sync ios",
+    "ios:dev": "pnpm sync:branding && ./node_modules/.bin/cap sync ios && ./node_modules/.bin/cap open ios",
+    "ios:build": "pnpm sync:branding && pnpm build && ./node_modules/.bin/cap sync ios && ./node_modules/.bin/cap open ios",
+    "ios:archive": "xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive | xcpretty || xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive",
     "demo:datocms": "node --env-file=.env scripts/demo-datocms-cma.mjs",
     "create:datocms:post": "node --env-file=.env scripts/create-datocms-post.mjs"
   },
   "devDependencies": {
+    "@capacitor/assets": "^3.0.5",
     "@capacitor/cli": "^7.4.2",
     "@commitlint/cli": "^20.1.0",
     "@commitlint/config-conventional": "^20.0.0",

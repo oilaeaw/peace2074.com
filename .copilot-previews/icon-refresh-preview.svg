@@ -1,0 +1,51 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="104" y1="88" x2="918" y2="936" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#064E3B"/>
+      <stop offset="0.5" stop-color="#0F7A5A"/>
+      <stop offset="1" stop-color="#22A06B"/>
+    </linearGradient>
+    <radialGradient id="halo" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 420) rotate(90) scale(480)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.18"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="moon" x1="180" y1="160" x2="820" y2="860" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF8DC"/>
+      <stop offset="0.55" stop-color="#F4D98B"/>
+      <stop offset="1" stop-color="#C99830"/>
+    </linearGradient>
+    <filter id="shadow" color-interpolation-filters="sRGB">
+      <feDropShadow dx="0" dy="18" stdDeviation="28" flood-color="#04311E" flood-opacity="0.30"/>
+    </filter>
+    <!-- crescent: big outer circle minus offset inner circle -->
+    <mask id="cMask">
+      <rect width="1024" height="1024" fill="black"/>
+      <circle cx="490" cy="440" r="310" fill="white"/>
+      <circle cx="650" cy="330" r="264" fill="black"/>
+    </mask>
+  </defs>
+
+  <!-- background -->
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#halo)"/>
+
+  <!-- crescent moon — upper half, gold -->
+  <g filter="url(#shadow)">
+    <circle cx="490" cy="440" r="310" fill="url(#moon)" mask="url(#cMask)"/>
+  </g>
+
+  <!-- PEACE2074 text -->
+  <text
+    x="512" y="830"
+    text-anchor="middle"
+    font-family="Georgia, 'Times New Roman', serif"
+    font-size="108"
+    font-weight="700"
+    letter-spacing="4"
+    fill="#FFF4C6"
+  >PEACE2074</text>
+
+  <!-- decorative wave underline -->
+  <path d="M330 878 C390 858 450 898 512 878 C574 858 634 898 694 878"
+    stroke="#F4D98B" stroke-width="10" stroke-linecap="round" fill="none"/>
+</svg>

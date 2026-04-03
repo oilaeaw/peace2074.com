@@ -27,3 +27,9 @@ apps/nitro-api/.output/
 # Local Netlify folder
 .netlify
 netlify/
+
+# fastlane secrets & build artifacts
+ios/App/fastlane/.env
+ios/App/fastlane/AuthKey*.p8
+ios/App/fastlane/build/
+ios/App/Gemfile.lock

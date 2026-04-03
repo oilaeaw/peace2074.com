@@ -162,7 +162,6 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from "vue";
-import { useI18n } from "vue-i18n";
 import { useMessagingStore } from "@/stores/messaging.pinia";
 import { useAuthStore } from "@/stores/auth.pinia";
 import { CaslSubjectE, CaslActionE } from "@shared/types";

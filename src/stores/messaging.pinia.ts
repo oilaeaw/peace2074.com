@@ -6,6 +6,8 @@ export type MessagingEnvelope = {
     id?: string;
     type?: string;
     from?: string;
+    user?: string;
+    sender?: string;
     to?: string;
     room?: string;
     payload?: any;
@@ -33,7 +35,7 @@ export type ChatMessage = {
 
 const env = (import.meta as any)?.env || {};
 const DEFAULT_MESSAGING_URL =
-    (env.VITE_MESSAGING_URL as string) || "wss://waelio-messaging.onrender.com/";
+    (env.VITE_MESSAGING_URL as string) || "wss://waelio-messagin-live.onrender.com/";
 const MAX_MESSAGES = 200;
 
 function makeId(prefix = "msg") {

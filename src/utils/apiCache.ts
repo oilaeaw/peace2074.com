@@ -1,4 +1,4 @@
-import type { $Fetch } from 'ofetch'
+type FetchLike = <T = unknown>(url: string, options?: any) => Promise<T>
 
 interface CacheEntry {
   data: any
@@ -15,7 +15,7 @@ const memoryCache = new Map<string, CacheEntry>()
 /**
  * Wrap fetch requests with intelligent caching
  */
-export function createCachedFetch($fetch: $Fetch<any>) {
+export function createCachedFetch($fetch: FetchLike) {
   return async function cachedFetch(
     url: string,
     options?: any & { cache?: number } // TTL in milliseconds

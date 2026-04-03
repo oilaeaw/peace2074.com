@@ -1,0 +1,155 @@
+require_relative '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/scripts/pods_helpers'
+
+platform :ios, '14.0'
+use_frameworks!
+
+# workaround to avoid Xcode caching of Pods that requires
+# Product -> Clean Build Folder after new Cordova plugins installed
+# Requires CocoaPods 1.6 or newer
+install! 'cocoapods', :disable_input_output_paths => false
+
+def capacitor_pods
+  pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios'
+  pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios'
+
+end
+
+target 'App' do
+  capacitor_pods
+  # Add your Pods here
+end
+
+post_install do |installer|
+  assertDeploymentTarget(installer)
+
+  # ── Comprehensive Capacitor/CapacitorCordova framework header fixes ───────────
+  # These vendored headers were written for non-framework builds and have three
+  # issues that cause Xcode warnings/errors as framework headers:
+  #   1. #import "CAP*.h"  -> must be #import <Capacitor/CAP*.h>
+  #   2. #import "CDV*.h"  -> must be #import <Cordova/CDV*.h>
+  #   3. @import Foo;      -> must be #import <Foo/Foo.h>  (-fmodules discouraged)
+  [
+    File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/*.h', __dir__),
+    File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/*.h', __dir__),
+  ].each do |pattern|
+    Dir.glob(pattern).each do |header|
+      text = File.read(header)
+      patched = text
+        .gsub(/#import "(CAP[^"]+\.h)"/, '#import <Capacitor/\1>')
+        .gsub(/#import "(CDV[^"]+\.h)"/, '#import <Cordova/\1>')
+        .gsub(/@import (\w+);/) { "#import <#{$1}/#{$1}.h>" }
+      if patched != text
+        File.write(header, patched)
+        puts "✓ Fixed framework header: #{File.basename(header)}"
+      end
+    end
+  end
+
+  # Ensure CAPInstanceDescriptor.m has the Cordova import the header no longer provides.
+  desc_m = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.m', __dir__)).first
+  if desc_m && File.exist?(desc_m)
+    text = File.read(desc_m)
+    unless text.include?('#import <Cordova/CDVConfigParser.h>')
+      text = text.sub(/(#import [^\n]+\n)/, "\\1#import <Cordova/CDVConfigParser.h>\n")
+      File.write(desc_m, text)
+      puts "✓ Added <Cordova/CDVConfigParser.h> to CAPInstanceDescriptor.m"
+    end
+  end
+
+  # Fix "Cannot find protocol declaration for 'CDVScreenOrientationDelegate'"
+  # CAPBridgeViewController+CDVScreenOrientationDelegate.h references the protocol
+  # but omits the import for it. Add the missing #import <Cordova/CDVScreenOrientationDelegate.h>.
+  orientation_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPBridgeViewController+CDVScreenOrientationDelegate.h', __dir__)).first
+  if orientation_h && File.exist?(orientation_h)
+    text = File.read(orientation_h)
+    unless text.include?('CDVScreenOrientationDelegate.h')
+      text = text.sub(
+        '#import <Capacitor/Capacitor-Swift.h>',
+        "#import <Capacitor/Capacitor-Swift.h>\n#import <Cordova/CDVScreenOrientationDelegate.h>"
+      )
+      File.write(orientation_h, text)
+      puts "✓ Fixed CDVScreenOrientationDelegate protocol import"
+    end
+  end
+
+  # Fix "Class 'AppDelegate' defined without specifying a base class"
+  # AppDelegate.h must extend UIResponder<UIApplicationDelegate>, not NSObject.
+  appdelegate_h = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/AppDelegate.h', __dir__)).first
+  if appdelegate_h && File.exist?(appdelegate_h)
+    correct = <<~OBJC
+      #import <UIKit/UIKit.h>
+      #import <Cordova/CDVViewController.h>
+
+      @interface AppDelegate : UIResponder <UIApplicationDelegate>
+
+      @property (nonatomic, strong) CDVViewController* viewController;
+
+      @end
+    OBJC
+    unless File.read(appdelegate_h).include?('UIResponder')
+      File.write(appdelegate_h, correct)
+      puts "✓ Fixed AppDelegate.h base class to UIResponder<UIApplicationDelegate>"
+    end
+  end
+
+  # Silence WKProcessPool deprecated warning in vendored Cordova header.
+  # This warning is emitted from public header declarations on newer SDKs.
+  cordova_pool_header = Dir.glob(File.expand_path('../../node_modules/.pnpm/@capacitor+ios@*/node_modules/@capacitor/ios/CapacitorCordova/CapacitorCordova/Classes/Public/CDVWebViewProcessPoolFactory.h', __dir__)).first
+  if cordova_pool_header && File.exist?(cordova_pool_header)
+    pool_text = File.read(cordova_pool_header)
+    unless pool_text.include?('BEGIN PEACE2074 WKProcessPool warning guard')
+      pool_text = pool_text.sub(
+        '@interface CDVWebViewProcessPoolFactory : NSObject',
+        "#pragma clang diagnostic push\n#pragma clang diagnostic ignored \"-Wdeprecated-declarations\"\n// BEGIN PEACE2074 WKProcessPool warning guard\n@interface CDVWebViewProcessPoolFactory : NSObject"
+      )
+      pool_text = pool_text.sub(
+        '@end',
+        "@end\n// END PEACE2074 WKProcessPool warning guard\n#pragma clang diagnostic pop"
+      )
+      File.write(cordova_pool_header, pool_text)
+      puts "✓ Patched CDVWebViewProcessPoolFactory.h deprecated warning guard"
+    end
+  end
+
+  # CapacitorCordova uses APIs that trigger deprecation warnings on newer iOS SDKs
+  # (e.g. WKProcessPool in iOS 15+). Keep app builds clean without patching vendored sources.
+  installer.pods_project.targets.each do |target|
+    target.build_configurations.each do |config|
+      config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+    end
+
+    next unless ['CapacitorCordova', 'Capacitor'].include?(target.name)
+
+    target.build_configurations.each do |config|
+      config.build_settings['GCC_WARN_ABOUT_DEPRECATED_FUNCTIONS'] = 'NO'
+      config.build_settings['CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS'] = 'NO'
+      config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+      cflags = config.build_settings['OTHER_CFLAGS'] || '$(inherited)'
+      cflags = Array(cflags)
+      unless cflags.include?('-Wno-deprecated-declarations')
+        cflags << '-Wno-deprecated-declarations'
+      end
+      config.build_settings['OTHER_CFLAGS'] = cflags
+    end
+  end
+
+  installer.aggregate_targets.each do |aggregate_target|
+    user_project = aggregate_target.user_project
+    next unless user_project
+
+    user_project.native_targets.each do |native_target|
+      native_target.build_configurations.each do |config|
+        config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      end
+
+      native_target.build_phases.each do |build_phase|
+        next unless build_phase.is_a?(Xcodeproj::Project::Object::PBXShellScriptBuildPhase)
+        next unless build_phase.name&.start_with?('[CP]')
+
+        build_phase.always_out_of_date = '0'
+      end
+    end
+
+    user_project.save
+  end
+end

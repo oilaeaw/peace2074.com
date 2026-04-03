@@ -1,7 +1,6 @@
 import { defineStore } from 'pinia'
 
-export const useMyLangsStore = defineStore({
-  id: 'myLangsStore',
+export const useMyLangsStore = defineStore('myLangsStore', {
   state: () => ({
     locales: [
       {
@@ -36,3 +35,5 @@ export const useMyLangsStore = defineStore({
     currentLocale: state => state.locale,
   },
 })
+
+export const useLangsStore = useMyLangsStore

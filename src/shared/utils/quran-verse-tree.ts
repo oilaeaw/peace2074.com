@@ -10,7 +10,7 @@
 const RED = true
 const BLACK = false
 
-interface QuranVerse {
+export interface QuranVerse {
     suraNumber: number
     ayaNumber: number
     text: string

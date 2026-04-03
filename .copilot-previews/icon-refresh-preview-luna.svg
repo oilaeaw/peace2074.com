@@ -1,0 +1,72 @@
+<svg width="1024" height="1024" viewBox="0 0 1024 1024" fill="none" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bg" x1="96" y1="88" x2="920" y2="940" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#07513D"/>
+      <stop offset="0.52" stop-color="#12805F"/>
+      <stop offset="1" stop-color="#23A36F"/>
+    </linearGradient>
+    <radialGradient id="glow" cx="0" cy="0" r="1" gradientUnits="userSpaceOnUse" gradientTransform="translate(512 350) rotate(90) scale(430)">
+      <stop offset="0" stop-color="#FFFFFF" stop-opacity="0.2"/>
+      <stop offset="0.68" stop-color="#FFFFFF" stop-opacity="0.05"/>
+      <stop offset="1" stop-color="#FFFFFF" stop-opacity="0"/>
+    </radialGradient>
+    <linearGradient id="moonGold" x1="255" y1="242" x2="651" y2="744" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFF2C7"/>
+      <stop offset="0.58" stop-color="#F5DA8A"/>
+      <stop offset="1" stop-color="#D4A845"/>
+    </linearGradient>
+    <linearGradient id="paper" x1="358" y1="392" x2="652" y2="634" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#FFFDF9"/>
+      <stop offset="1" stop-color="#F6EBCB"/>
+    </linearGradient>
+    <linearGradient id="paperShade" x1="512" y1="412" x2="512" y2="640" gradientUnits="userSpaceOnUse">
+      <stop offset="0" stop-color="#D9B764" stop-opacity="0"/>
+      <stop offset="1" stop-color="#D9B764" stop-opacity="0.28"/>
+    </linearGradient>
+    <filter id="softShadow" x="144" y="150" width="748" height="734" filterUnits="userSpaceOnUse" color-interpolation-filters="sRGB">
+      <feFlood flood-opacity="0" result="BackgroundImageFix"/>
+      <feColorMatrix in="SourceAlpha" type="matrix" values="0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 0 127 0" result="hardAlpha"/>
+      <feOffset dy="24"/>
+      <feGaussianBlur stdDeviation="28"/>
+      <feColorMatrix type="matrix" values="0 0 0 0 0.02 0 0 0 0 0.16 0 0 0 0 0.11 0 0 0 0.28 0"/>
+      <feBlend mode="normal" in2="BackgroundImageFix" result="effect1_dropShadow_1_1"/>
+      <feBlend mode="normal" in="SourceGraphic" in2="effect1_dropShadow_1_1" result="shape"/>
+    </filter>
+    <mask id="crescentMask">
+      <rect width="1024" height="1024" fill="black"/>
+      <circle cx="456" cy="432" r="262" fill="white"/>
+      <circle cx="612" cy="318" r="238" fill="black"/>
+    </mask>
+  </defs>
+
+  <rect width="1024" height="1024" rx="224" fill="url(#bg)"/>
+  <rect width="1024" height="1024" rx="224" fill="url(#glow)"/>
+
+  <circle cx="512" cy="512" r="318" stroke="#F0FDF4" stroke-opacity="0.11" stroke-width="22"/>
+  <circle cx="512" cy="512" r="246" stroke="#F0FDF4" stroke-opacity="0.08" stroke-width="16"/>
+
+  <g filter="url(#softShadow)">
+    <circle cx="512" cy="516" r="205" fill="#0D6B4F" fill-opacity="0.28"/>
+    <circle cx="512" cy="516" r="208" stroke="#F4DE95" stroke-opacity="0.38" stroke-width="8"/>
+
+    <circle cx="456" cy="432" r="262" fill="url(#moonGold)" mask="url(#crescentMask)"/>
+
+    <path d="M329 403C373 386 417 378 456 378C485 378 505 388 512 412C519 388 539 378 568 378C607 378 651 386 695 403L651 594C606 584 559 578 512 578C465 578 418 584 373 594L329 403Z" fill="url(#paper)"/>
+
+    <path d="M512 414V619" stroke="#F3D57E" stroke-width="18" stroke-linecap="round"/>
+    <path d="M512 414C480 388 435 374 385 374C361 374 339 378 319 386" stroke="#F3D57E" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M512 414C544 388 589 374 639 374C663 374 685 378 705 386" stroke="#F3D57E" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <path d="M387 479C429 472 473 457 512 431" stroke="#0E7A5A" stroke-opacity="0.72" stroke-width="10" stroke-linecap="round"/>
+    <path d="M637 479C595 472 551 457 512 431" stroke="#0E7A5A" stroke-opacity="0.72" stroke-width="10" stroke-linecap="round"/>
+
+    <path d="M382 603C429 580 473 568 512 568C551 568 595 580 642 603" stroke="#F7E3A6" stroke-width="16" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M512 413V620" stroke="url(#paperShade)" stroke-width="34" stroke-linecap="round"/>
+
+    <path d="M480 618L430 698" stroke="url(#moonGold)" stroke-width="20" stroke-linecap="round"/>
+    <path d="M544 618L594 698" stroke="url(#moonGold)" stroke-width="20" stroke-linecap="round"/>
+    <path d="M430 698C452 669 479 645 512 627C545 645 572 669 594 698" stroke="url(#moonGold)" stroke-width="20" stroke-linecap="round" stroke-linejoin="round"/>
+
+    <circle cx="512" cy="412" r="10" fill="#FFF0B5"/>
+  </g>
+</svg>
