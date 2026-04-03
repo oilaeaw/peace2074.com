@@ -18,6 +18,10 @@ const DEV = process.env.NODE_ENV === 'development';
 // https://vitejs.dev/config/
 export default defineConfig({
   base: "/",
+  esbuild: {
+    // Strip console and debugger calls from production builds
+    drop: DEV ? [] : ['console', 'debugger'],
+  },
   define: {
     __APP_VERSION__: JSON.stringify(pkg.version),
   },
