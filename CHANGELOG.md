@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.0.0 (2026-04-03)
+
+### Features
+
+- merge mobile branding and icon updates across iOS and Android assets
+- add Fastlane metadata and iOS release automation files
+
+### Bug Fixes
+
+- resolve branch merge conflicts for mobile branding sync and iOS project files
+
+### Chores
+
+- bump iOS app `MARKETING_VERSION` to `3.0` for Debug and Release builds
+
 ## 0.2.9 (2026-03-16)
 
 ### Features
