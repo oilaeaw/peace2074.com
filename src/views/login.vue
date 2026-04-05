@@ -1,9 +1,25 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
+import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useI18n } from 'vue-i18n'
+
+type LoginViewEnv = {
+  VITE_NITRO_BASE?: string
+}
+
+type IdentityWindow = Window & {
+  netlifyIdentity?: {
+    open: (view?: string) => void
+  }
+}
+
+type ErrorWithMessage = {
+  name?: string
+  message?: string
+}
 
 const { t } = useI18n()
 const router = useRouter()
@@ -19,9 +35,10 @@ const rememberMe = ref(false)
 const showForgotDialog = ref(false)
 const resetEmail = ref('')
 const sendingReset = ref(false)
+const passkeyLoading = ref(false)
 
 // Compute Nitro API base URL
-const env = (import.meta as any)?.env || {}
+const env = (import.meta as ImportMeta & { env?: LoginViewEnv }).env || {}
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 
@@ -63,8 +80,27 @@ function isCapacitorLikeRuntime() {
   )
 }
 
-function isNetworkLikeError(err: any) {
-  const msg = String(err?.message || '')
+const passkeysSupported = computed(() => {
+  if (typeof window === 'undefined') return false
+
+  return Boolean(
+    window.isSecureContext &&
+    window.PublicKeyCredential &&
+    window.navigator?.credentials &&
+    !isCapacitorLikeRuntime()
+  )
+})
+
+function getErrorMessage(err: unknown) {
+  if (err && typeof err === 'object' && 'message' in err) {
+    return String((err as ErrorWithMessage).message || '')
+  }
+
+  return String(err || '')
+}
+
+function isNetworkLikeError(err: unknown) {
+  const msg = getErrorMessage(err)
   return (
     err instanceof TypeError ||
     /load failed|failed to fetch|networkerror/i.test(msg)
@@ -81,6 +117,205 @@ async function loginRequest(base: string) {
       password: password.value,
     }),
   })
+}
+
+async function postAuthJson(
+  base: string,
+  path: string,
+  body: Record<string, unknown>
+) {
+  return fetch(`${base}${path}`, {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    credentials: 'include',
+    body: JSON.stringify(body),
+  })
+}
+
+async function parseErrorMessage(
+  response: Response,
+  fallback: string,
+  statusMessages: Partial<Record<number, string>> = {}
+) {
+  const data = await response.json().catch(() => ({}))
+  return statusMessages[response.status] || data.statusMessage || fallback
+}
+
+function isPasskeyCancelled(err: unknown) {
+  const error = (
+    err && typeof err === 'object' ? err : null
+  ) as ErrorWithMessage | null
+  const message = getErrorMessage(err)
+  return (
+    error?.name === 'AbortError' ||
+    error?.name === 'NotAllowedError' ||
+    /not allowed|timed out|abort|cancel/i.test(message)
+  )
+}
+
+function getPasskeyErrorMessage(err: unknown, fallback: string) {
+  if (isPasskeyCancelled(err)) {
+    return t('auth.passkeyCancelled')
+  }
+
+  return getErrorMessage(err) || fallback
+}
+
+function confirmPasskeyEnrollment() {
+  return new Promise<boolean>((resolve) => {
+    let settled = false
+    const finish = (value: boolean) => {
+      if (settled) return
+      settled = true
+      resolve(value)
+    }
+
+    $q.dialog({
+      title: t('auth.passkeyCreatePromptTitle'),
+      message: t('auth.passkeyCreatePromptMessage'),
+      ok: {
+        label: t('auth.passkeyCreatePromptConfirm'),
+        color: 'primary',
+        unelevated: true,
+      },
+      cancel: {
+        label: t('cancel'),
+        flat: true,
+      },
+    })
+      .onOk(() => finish(true))
+      .onCancel(() => finish(false))
+      .onDismiss(() => finish(false))
+  })
+}
+
+async function maybeOfferPasskeyEnrollment() {
+  if (!passkeysSupported.value) return
+
+  try {
+    const optionsResponse = await postAuthJson(
+      NITRO_BASE,
+      '/auth/passkey/register/options',
+      {}
+    )
+    if (!optionsResponse.ok) return
+
+    const data = await optionsResponse.json()
+    if (data.hasExistingPasskeys) return
+
+    const shouldCreate = await confirmPasskeyEnrollment()
+    if (!shouldCreate) return
+
+    const registrationResponse = await startRegistration({
+      optionsJSON: data.options,
+      useAutoRegister: true,
+    })
+
+    const verifyResponse = await postAuthJson(
+      NITRO_BASE,
+      '/auth/passkey/register/verify',
+      {
+        requestId: data.requestId,
+        registrationResponse,
+      }
+    )
+
+    if (!verifyResponse.ok) {
+      throw new Error(
+        await parseErrorMessage(verifyResponse, t('auth.passkeyCreateError'))
+      )
+    }
+
+    $q.notify({
+      type: 'positive',
+      message: t('auth.passkeyCreated'),
+      position: 'top',
+    })
+  } catch (err: unknown) {
+    if (isPasskeyCancelled(err)) return
+
+    console.warn('Passkey enrollment skipped:', err)
+    $q.notify({
+      type: 'warning',
+      message: getPasskeyErrorMessage(err, t('auth.passkeyCreateError')),
+      position: 'top',
+    })
+  }
+}
+
+async function handlePasskeyLogin() {
+  if (!passkeysSupported.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('auth.passkeyNotSupported'),
+      position: 'top',
+    })
+    return
+  }
+
+  passkeyLoading.value = true
+
+  try {
+    const optionsResponse = await postAuthJson(
+      NITRO_BASE,
+      '/auth/passkey/login/options',
+      {
+        username: username.value.trim() || undefined,
+      }
+    )
+
+    if (!optionsResponse.ok) {
+      throw new Error(
+        await parseErrorMessage(optionsResponse, t('auth.passkeyLoginError'), {
+          404: t('auth.passkeyUnavailable'),
+        })
+      )
+    }
+
+    const data = await optionsResponse.json()
+    const authenticationResponse = await startAuthentication({
+      optionsJSON: data.options,
+    })
+
+    const verifyResponse = await postAuthJson(
+      NITRO_BASE,
+      '/auth/passkey/login/verify',
+      {
+        requestId: data.requestId,
+        authenticationResponse,
+      }
+    )
+
+    if (!verifyResponse.ok) {
+      throw new Error(
+        await parseErrorMessage(verifyResponse, t('auth.passkeyLoginError'))
+      )
+    }
+
+    const result = await verifyResponse.json()
+    authStore.setUser(result.user)
+
+    $q.notify({
+      type: 'positive',
+      message: t('auth.passkeyLoginSuccess'),
+      position: 'top',
+    })
+
+    router.push(getPostLoginPath())
+  } catch (err: unknown) {
+    const notificationType = isPasskeyCancelled(err) ? 'info' : 'negative'
+    $q.notify({
+      type: notificationType,
+      message: getPasskeyErrorMessage(err, t('auth.passkeyLoginError')),
+      position: 'top',
+    })
+
+    if (!isPasskeyCancelled(err)) {
+      console.error('Passkey login error:', err)
+    }
+  } finally {
+    passkeyLoading.value = false
+  }
 }
 
 function getPostLoginPath() {
@@ -117,8 +352,13 @@ function getPostLoginPath() {
 
 function openSocialLogin(provider: 'google' | 'apple') {
   // Social login is handled by Netlify Identity in this app.
-  if (typeof window !== 'undefined' && (window as any).netlifyIdentity) {
-    ;(window as any).netlifyIdentity.open('login')
+  const identity =
+    typeof window !== 'undefined'
+      ? (window as IdentityWindow).netlifyIdentity
+      : undefined
+
+  if (identity) {
+    identity.open('login')
     return
   }
 
@@ -157,7 +397,7 @@ async function handleLogin() {
 
     try {
       response = await loginRequest(NITRO_BASE)
-    } catch (err: any) {
+    } catch (err: unknown) {
       // iOS WebView sometimes surfaces cross-origin/preflight/network issues as
       // generic "Load failed". Fallback to canonical mobile API base.
       if (
@@ -186,11 +426,13 @@ async function handleLogin() {
       position: 'top',
     })
 
+    await maybeOfferPasskeyEnrollment()
+
     router.push(getPostLoginPath())
-  } catch (err: any) {
+  } catch (err: unknown) {
     const message = isNetworkLikeError(err)
       ? 'Unable to reach the server. Please check your connection and try again.'
-      : err.message || t('auth.loginError')
+      : getErrorMessage(err) || t('auth.loginError')
 
     $q.notify({
       type: 'negative',
@@ -231,10 +473,10 @@ async function handleResetRequest() {
 
     showForgotDialog.value = false
     resetEmail.value = ''
-  } catch (err: any) {
+  } catch (err: unknown) {
     $q.notify({
       type: 'negative',
-      message: err.message || t('auth.resetError'),
+      message: getErrorMessage(err) || t('auth.resetError'),
       position: 'top',
     })
   } finally {
@@ -265,7 +507,7 @@ async function handleResetRequest() {
 
         <!-- Login Form -->
         <q-card-section class="q-pt-md">
-          <q-form @submit.prevent="handleLogin" class="q-gutter-md">
+          <q-form class="q-gutter-md" @submit.prevent="handleLogin">
             <q-input
               v-model="username"
               outlined
@@ -276,7 +518,7 @@ async function handleResetRequest() {
               lazy-rules
               :rules="[(val) => !!val || t('auth.usernameRequired')]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="person" />
               </template>
             </q-input>
@@ -292,10 +534,10 @@ async function handleResetRequest() {
               lazy-rules
               :rules="[(val) => !!val || t('auth.passwordRequired')]"
             >
-              <template v-slot:prepend>
+              <template #prepend>
                 <q-icon name="lock" />
               </template>
-              <template v-slot:append>
+              <template #append>
                 <q-icon
                   :name="showPassword ? 'visibility_off' : 'visibility'"
                   class="cursor-pointer"
@@ -330,12 +572,36 @@ async function handleResetRequest() {
               size="lg"
               unelevated
               :loading="loading"
-              :disable="!username || !password"
+              :disable="!username || !password || passkeyLoading"
             >
-              <template v-slot:loading>
+              <template #loading>
                 <q-spinner-dots />
               </template>
             </q-btn>
+
+            <q-btn
+              v-if="passkeysSupported"
+              outline
+              color="primary"
+              icon="fingerprint"
+              :label="t('auth.signInWithPasskey')"
+              class="full-width q-mt-sm"
+              size="lg"
+              :loading="passkeyLoading"
+              :disable="loading"
+              @click="handlePasskeyLogin"
+            >
+              <template #loading>
+                <q-spinner-dots />
+              </template>
+            </q-btn>
+
+            <div
+              v-if="passkeysSupported"
+              class="text-caption text-grey-7 text-center q-mt-sm"
+            >
+              {{ t('auth.passkeyHint') }}
+            </div>
 
             <div class="q-mt-md">
               <div class="row items-center q-mb-sm">
@@ -351,8 +617,8 @@ async function handleResetRequest() {
                 color="primary"
                 class="full-width"
                 size="md"
-                @click="handleGoogleLogin"
                 :disable="loading"
+                @click="handleGoogleLogin"
               >
                 <q-icon name="fab fa-google" size="20px" class="q-mr-sm" />
                 {{ t('sign_in_with_google', 'Sign in with Google') }}
@@ -363,8 +629,8 @@ async function handleResetRequest() {
                 color="dark"
                 class="full-width q-mt-sm"
                 size="md"
-                @click="handleAppleLogin"
                 :disable="loading"
+                @click="handleAppleLogin"
               >
                 <q-icon name="fab fa-apple" size="20px" class="q-mr-sm" />
                 {{ t('auth.signInWithApple', 'Sign in with Apple') }}
@@ -408,7 +674,7 @@ async function handleResetRequest() {
                 :disable="sendingReset"
                 autocomplete="email"
               >
-                <template v-slot:prepend>
+                <template #prepend>
                   <q-icon name="email" />
                 </template>
               </q-input>
@@ -416,18 +682,18 @@ async function handleResetRequest() {
 
             <q-card-actions align="right">
               <q-btn
+                v-close-popup
                 flat
                 :label="t('cancel')"
                 color="grey-7"
-                v-close-popup
                 :disable="sendingReset"
               />
               <q-btn
                 unelevated
                 :label="t('auth.sendResetLink')"
                 color="primary"
-                @click="handleResetRequest"
                 :loading="sendingReset"
+                @click="handleResetRequest"
               />
             </q-card-actions>
           </q-card>

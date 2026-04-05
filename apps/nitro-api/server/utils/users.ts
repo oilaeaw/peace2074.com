@@ -41,6 +41,16 @@ let memoryUsers: User[] | null = null
 let prismaMode: 'unknown' | 'on' | 'off' = 'unknown'
 let prismaFailureLogged = false
 
+function markPrismaUnavailable(error: unknown) {
+    prismaMode = 'off'
+    prisma = null
+    initPromise = null
+    if (!prismaFailureLogged) {
+        prismaFailureLogged = true
+        console.warn('[users] Prisma unavailable, falling back to Nitro storage:', error)
+    }
+}
+
 function repairUsers(users: User[]) {
     if (!Array.isArray(users) || !users.length) return { users, changed: false }
 
@@ -260,22 +270,22 @@ async function isPrismaReady() {
         }
         await ensureInitialized()
         prismaMode = 'on'
+        prismaFailureLogged = false
         return true
     } catch (error) {
-        prismaMode = 'off'
-        prisma = null
-        if (!prismaFailureLogged) {
-            prismaFailureLogged = true
-            console.warn('[users] Prisma unavailable, falling back to Nitro storage:', error)
-        }
+        markPrismaUnavailable(error)
         return false
     }
 }
 
 export async function getAllUsers(): Promise<User[]> {
     if (await isPrismaReady()) {
-        const users = await prisma.user.findMany()
-        return users.map(toAppUser)
+        try {
+            const users = await prisma.user.findMany()
+            return users.map(toAppUser)
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     return await loadFallbackUsers()
@@ -283,8 +293,12 @@ export async function getAllUsers(): Promise<User[]> {
 
 export async function findUserByUsername(username: string) {
     if (await isPrismaReady()) {
-        const user = await prisma.user.findUnique({ where: { username } })
-        return user ? toAppUser(user) : undefined
+        try {
+            const user = await prisma.user.findUnique({ where: { username } })
+            return user ? toAppUser(user) : undefined
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     const users = await loadFallbackUsers()
@@ -293,8 +307,12 @@ export async function findUserByUsername(username: string) {
 
 export async function findUserByEmail(email: string) {
     if (await isPrismaReady()) {
-        const user = await prisma.user.findUnique({ where: { email } })
-        return user ? toAppUser(user) : undefined
+        try {
+            const user = await prisma.user.findUnique({ where: { email } })
+            return user ? toAppUser(user) : undefined
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     const users = await loadFallbackUsers()
@@ -303,8 +321,12 @@ export async function findUserByEmail(email: string) {
 
 export async function findUserById(id: string) {
     if (await isPrismaReady()) {
-        const user = await prisma.user.findUnique({ where: { id } })
-        return user ? toAppUser(user) : undefined
+        try {
+            const user = await prisma.user.findUnique({ where: { id } })
+            return user ? toAppUser(user) : undefined
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     const users = await loadFallbackUsers()
@@ -313,10 +335,14 @@ export async function findUserById(id: string) {
 
 export async function updateUserPassword(userId: string, newPassword: string) {
     if (await isPrismaReady()) {
-        const user = await prisma.user.findUnique({ where: { id: userId } })
-        if (!user) return false
-        await prisma.user.update({ where: { id: userId }, data: { password: newPassword } })
-        return true
+        try {
+            const user = await prisma.user.findUnique({ where: { id: userId } })
+            if (!user) return false
+            await prisma.user.update({ where: { id: userId }, data: { password: newPassword } })
+            return true
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     const users = await loadFallbackUsers()
@@ -331,17 +357,21 @@ export async function addUser(user: User) {
     const normalized = normalizeUser(user)
 
     if (await isPrismaReady()) {
-        await prisma.user.create({
-            data: {
-                id: normalized.id,
-                username: normalized.username,
-                password: normalized.password,
-                email: normalized.email,
-                role: normalized.role,
-                permissions: normalized.permissions || [],
-            },
-        })
-        return
+        try {
+            await prisma.user.create({
+                data: {
+                    id: normalized.id,
+                    username: normalized.username,
+                    password: normalized.password,
+                    email: normalized.email,
+                    role: normalized.role,
+                    permissions: normalized.permissions || [],
+                },
+            })
+            return
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
     }
 
     const users = await loadFallbackUsers()
@@ -359,11 +389,15 @@ export async function getUserStorageDiagnostics(): Promise<{
     const prismaReachable = await isPrismaReady()
 
     if (prismaReachable) {
-        const usersCount = await prisma.user.count()
-        return {
-            source: 'prisma',
-            usersCount,
-            prismaReachable: true,
+        try {
+            const usersCount = await prisma.user.count()
+            return {
+                source: 'prisma',
+                usersCount,
+                prismaReachable: true,
+            }
+        } catch (error) {
+            markPrismaUnavailable(error)
         }
     }
 

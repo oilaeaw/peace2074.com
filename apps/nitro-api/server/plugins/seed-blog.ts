@@ -5,6 +5,11 @@ import { getPrisma } from '../utils/prisma'
  * This ensures blog posts persist across deployments in stateless environments (like Netlify)
  */
 export default defineNitroPlugin(async () => {
+    if (import.meta.dev) {
+        console.log('[Blog Seed] Skipping seed in dev mode')
+        return
+    }
+
     try {
         console.log('[Blog Seed] Checking blog posts...')
 
