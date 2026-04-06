@@ -230,11 +230,6 @@ async function ensureInitialized() {
     initPromise = (async () => {
         try {
             const count = await prisma.user.count()
-            if (count > 0) {
-                await repairExistingPasswords()
-                return
-            }
-
             const legacyUsers = await readLegacyUsers()
             const merged = repairUsers([...legacyUsers, ...DEFAULT_USERS]).users
 

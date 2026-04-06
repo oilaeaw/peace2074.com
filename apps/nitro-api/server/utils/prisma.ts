@@ -36,6 +36,11 @@ export async function getPrisma() {
 
             console.log('✅ PrismaClient constructor found')
 
+            // Skip Prisma if explicitly disabled for local dev
+            if (process.env.DISABLE_PRISMA === 'true') {
+                throw new Error('Prisma disabled via DISABLE_PRISMA env var')
+            }
+
             type PrismaGlobal = typeof globalThis & {
                 __peace2074Prisma?: any
             }
@@ -47,12 +52,6 @@ export async function getPrisma() {
             console.log('🔌 Connecting Prisma Client...')
             await prismaClient.$connect()
             console.log('✅ Prisma Client connected successfully')
-
-            _prisma = prismaClient
-
-            if (process.env.NODE_ENV !== 'production') {
-                globalForPrisma.__peace2074Prisma = _prisma
-            }
         } catch (error) {
             console.error('❌ Prisma initialization failed:')
             console.error('   Error:', error instanceof Error ? error.message : error)
