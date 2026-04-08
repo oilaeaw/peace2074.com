@@ -173,15 +173,24 @@ async function ask() {
     const res = await sendDeepSeekChat({
       messages: [{ role: 'user', content }],
     })
-    const text =
+
+    // Extract text from various possible response structures
+    let text =
       res?.message?.content ||
       res?.choices?.[0]?.message?.content ||
       res?.raw?.[0]?.message?.content ||
-      (typeof res?.message === 'string' ? res.message : '') ||
-      JSON.stringify(res)
+      (typeof res?.message === 'string' ? res.message : '')
+
+    // Ensure text is always a string
+    if (!text) {
+      text = typeof res === 'string' ? res : JSON.stringify(res, null, 2)
+    } else if (typeof text !== 'string') {
+      text = JSON.stringify(text, null, 2)
+    }
+
     answer.value = text
   } catch (e: any) {
-    error.value = e?.message || 'Request failed'
+    error.value = e?.message || String(e) || 'Request failed'
   } finally {
     loading.value = false
   }
