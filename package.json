@@ -115,6 +115,7 @@
     "netlify-identity-widget": "^1.9.2",
     "pinia": "^3.0.3",
     "quasar": "^2.12.10",
+    "socket.io-client": "^4.8.3",
     "three": "^0.182.0",
     "unstorage": "^1.17.3",
     "vue": "^3.5.22",

@@ -1,6 +1,6 @@
 import { defineStore } from "pinia";
 import { computed, ref } from "vue";
-import { useAuthStore } from "./auth.pinia";
+import { io, type Socket } from "socket.io-client";
 
 export type MessagingEnvelope = {
     id?: string;
@@ -8,17 +8,20 @@ export type MessagingEnvelope = {
     from?: string;
     user?: string;
     sender?: string;
+    senderId?: string;
     to?: string;
+    recipientId?: string;
     room?: string;
-    payload?: any;
+    payload?: unknown;
     text?: string;
     message?: string;
-    meta?: any;
-    ts?: number;
-    timestamp?: number;
+    meta?: unknown;
+    ts?: number | string;
+    timestamp?: number | string;
     users?: string[];
-    history?: any[];
+    history?: unknown[];
     you?: boolean;
+    isBroadcast?: boolean;
 };
 
 export type ChatMessage = {
@@ -28,22 +31,50 @@ export type ChatMessage = {
     to?: string;
     room?: string;
     text: string;
-    payload?: any;
+    payload?: unknown;
     ts: number;
-    meta?: any;
+    meta?: unknown;
 };
 
 const env = (import.meta as any)?.env || {};
 const DEFAULT_MESSAGING_URL =
-    (env.VITE_MESSAGING_URL as string) || "wss://waelio-messagin-live.onrender.com/";
+    (env.VITE_MESSAGING_URL as string) || "https://waelio-messagin-live.onrender.com";
 const MAX_MESSAGES = 200;
 
 function makeId(prefix = "msg") {
     return `${prefix}-${Date.now().toString(36)}-${Math.random().toString(16).slice(2, 8)}`;
 }
 
+function normalizeTimestamp(value: unknown) {
+    if (typeof value === "number" && Number.isFinite(value)) {
+        return value;
+    }
+
+    if (typeof value === "string") {
+        const numeric = Number(value);
+        if (Number.isFinite(numeric) && numeric > 0) {
+            return numeric;
+        }
+
+        const parsed = Date.parse(value);
+        if (Number.isFinite(parsed)) {
+            return parsed;
+        }
+    }
+
+    return Date.now();
+}
+
+function normalizeUsers(list: unknown) {
+    if (!Array.isArray(list)) {
+        return [] as string[];
+    }
+
+    return [...new Set(list.filter((entry): entry is string => typeof entry === "string" && entry.trim().length > 0))];
+}
+
 function normalizeMessage(msg: MessagingEnvelope): ChatMessage {
-    const ts = Number(msg?.ts || msg?.timestamp || Date.now());
+    const ts = normalizeTimestamp(msg?.ts ?? msg?.timestamp);
     const text =
         (typeof msg?.text === "string" && msg.text) ||
         (typeof msg?.payload === "string" && msg.payload) ||
@@ -51,11 +82,15 @@ function normalizeMessage(msg: MessagingEnvelope): ChatMessage {
         (typeof msg?.payload === "object" && JSON.stringify(msg.payload)) ||
         "";
 
+    const type =
+        msg?.type ||
+        (msg?.isBroadcast ? "broadcast" : (msg?.recipientId || msg?.to) ? "direct" : "message");
+
     return {
         id: msg?.id || makeId("msg"),
-        type: msg?.type || "message",
-        from: msg?.from || msg?.user || msg?.sender || "anon",
-        to: msg?.to,
+        type,
+        from: msg?.from || msg?.user || msg?.sender || msg?.senderId || "anon",
+        to: msg?.to || msg?.recipientId,
         room: msg?.room,
         text,
         payload: msg?.payload,
@@ -65,8 +100,7 @@ function normalizeMessage(msg: MessagingEnvelope): ChatMessage {
 }
 
 export const useMessagingStore = defineStore("messaging", () => {
-    const authStore = useAuthStore();
-    const ws = ref<WebSocket | null>(null);
+    const socket = ref<Socket | null>(null);
     const url = ref<string>(DEFAULT_MESSAGING_URL);
     const connected = ref(false);
     const connecting = ref(false);
@@ -77,37 +111,35 @@ export const useMessagingStore = defineStore("messaging", () => {
     const currentRoom = ref<string>("general");
     const rooms = ref<string[]>(["general", "support", "dev"]);
 
-    function resolveAuthDisplayName(): string | null {
-        const user = (authStore as any)?._user || null
-        if (!user || typeof user !== 'object') return null
-
-        const firstName = String(user.first_name || '').trim()
-        const lastName = String(user.last_name || '').trim()
-        const fullName = `${firstName} ${lastName}`.trim()
-        if (fullName) return fullName
-
-        const username = String(user.username || '').trim()
-        if (username) return username
-
-        const name = String(user.name || '').trim()
-        if (name) return name
-
-        const email = String(user.email || '').trim()
-        if (email && email.includes('@')) {
-            return email.split('@')[0]
-        }
-
-        const id = String(user.id || '').trim()
-        return id || null
-    }
-
     function disconnect() {
         try {
-            ws.value?.close();
+            socket.value?.removeAllListeners();
+            socket.value?.disconnect();
         } catch { }
-        ws.value = null;
+        socket.value = null;
         connected.value = false;
         connecting.value = false;
+    }
+
+    function pushMessage(message: ChatMessage) {
+        const exists = messages.value.some((entry) =>
+            entry.id === message.id || (
+                entry.ts === message.ts
+                && entry.type === message.type
+                && entry.from === message.from
+                && entry.to === message.to
+                && entry.text === message.text
+            )
+        );
+
+        if (exists) {
+            return;
+        }
+
+        messages.value.push(message);
+        if (messages.value.length > MAX_MESSAGES) {
+            messages.value.splice(0, messages.value.length - MAX_MESSAGES);
+        }
     }
 
     function connect(nextUrl?: string) {
@@ -118,152 +150,145 @@ export const useMessagingStore = defineStore("messaging", () => {
             return;
         }
 
-        if (ws.value) disconnect();
+        if (socket.value) disconnect();
 
         url.value = target;
         error.value = null;
         connecting.value = true;
 
-        const socket = new WebSocket(target);
-        ws.value = socket;
+        const client = io(target, {
+            transports: ["websocket", "polling"],
+            timeout: 10000,
+            reconnection: true,
+            reconnectionAttempts: 3,
+            withCredentials: false,
+        });
+        socket.value = client;
 
-        socket.addEventListener("open", () => {
+        client.on("connect", () => {
             connected.value = true;
             connecting.value = false;
+            error.value = null;
+            me.value = client.id || me.value;
 
-            // Set local identity from auth store
-            const username = resolveAuthDisplayName() || authStore.savedName;
-            if (username) {
-                me.value = username;
-                try {
-                    // Best-effort identity registration for servers that support named clients
-                    socket.send(JSON.stringify({
-                        type: "register",
-                        id: username,
-                        payload: { id: username, name: username },
-                    }))
-                } catch {
-                    // ignore registration issues; connection still usable
-                }
+            requestHistory();
+            requestUsers();
+        });
+
+        client.on("disconnect", (reason) => {
+            connected.value = false;
+            connecting.value = false;
+
+            if (reason !== "io client disconnect") {
+                error.value = "Disconnected from chat server";
             }
         });
 
-        socket.addEventListener("close", () => {
+        client.on("connect_error", (err) => {
             connected.value = false;
             connecting.value = false;
+            error.value = err?.message ? `Connection error: ${err.message}` : "Connection error";
+            console.warn("[messaging] connection failed", err);
         });
 
-        socket.addEventListener("error", () => {
-            error.value = "Connection error";
-            connecting.value = false;
+        client.on("register-success", (msg: MessagingEnvelope) => {
+            if (msg?.id) {
+                me.value = msg.id;
+            }
         });
 
-        socket.addEventListener("message", (event) => {
-            handleIncoming(event.data);
+        client.on("user-list", (msg: { users?: string[] }) => {
+            users.value = normalizeUsers(msg?.users);
+
+            if (me.value && !users.value.includes(me.value)) {
+                users.value = [me.value, ...users.value];
+            }
         });
-    }
 
-    function safeSend(payload: any) {
-        if (!ws.value || ws.value.readyState !== WebSocket.OPEN) return false;
-        try {
-            ws.value.send(JSON.stringify(payload));
-            return true;
-        } catch (err) {
-            console.warn("[messaging] send failed", err);
-            return false;
-        }
-    }
+        client.on("user-joined", (msg: { id?: string }) => {
+            const id = typeof msg?.id === "string" ? msg.id.trim() : "";
+            if (id && !users.value.includes(id)) {
+                users.value = [...users.value, id];
+            }
+        });
 
-    function handleIncoming(raw: any) {
-        let parsed: MessagingEnvelope | null = null;
-        try {
-            parsed =
-                typeof raw === "string"
-                    ? JSON.parse(raw)
-                    : JSON.parse(new TextDecoder().decode(raw));
-        } catch {
-            parsed = { type: "text", payload: raw as any };
-        }
-        if (!parsed) return;
-        processEnvelope(parsed);
-    }
+        client.on("user-left", (msg: { id?: string }) => {
+            const id = typeof msg?.id === "string" ? msg.id.trim() : "";
+            if (!id) {
+                return;
+            }
 
-    function processEnvelope(msg: MessagingEnvelope) {
-        const type = msg?.type || "message";
+            users.value = users.value.filter((entry) => entry !== id);
+        });
 
-        // Hub sends register-success { id } when client joins
-        if (type === "register-success" && msg?.id) {
-            me.value = msg.id;
-            return;
-        }
+        client.on("messages created", (msg: MessagingEnvelope) => {
+            pushMessage(normalizeMessage(msg));
+        });
 
-        if (msg?.you && msg?.id) {
-            me.value = msg.id;
-        }
+        client.on("history", (history: MessagingEnvelope[]) => {
+            if (!Array.isArray(history)) {
+                return;
+            }
 
-        if (type === "userlist" && Array.isArray(msg.users)) {
-            users.value = msg.users;
-            return;
-        }
-
-        if (type === "history" && Array.isArray(msg.history)) {
-            messages.value = msg.history.map((m: any) => normalizeMessage(m));
-            return;
-        }
-
-        const normalized = normalizeMessage(msg);
-        messages.value.push(normalized);
-        if (messages.value.length > MAX_MESSAGES) {
-            messages.value.splice(0, messages.value.length - MAX_MESSAGES);
-        }
+            messages.value = history.map((entry) => normalizeMessage(entry)).slice(-MAX_MESSAGES);
+        });
     }
 
     function sendBroadcast(text: string, room?: string) {
         const body = (text || "").trim();
         if (!body) return;
-        const targetRoom = room || currentRoom.value;
-        const sender = me.value || resolveAuthDisplayName() || "me"
-        if (!me.value && sender) {
-            me.value = sender
+
+        if (!socket.value || !connected.value) {
+            error.value = "Chat server is not connected";
+            return;
         }
-        const sent = safeSend({ type: "broadcast", payload: body, room: targetRoom, from: sender });
-        if (!sent) return;
-        messages.value.push({
-            id: makeId("local"),
+
+        error.value = null;
+        socket.value.emit("create", "messages", {
             type: "broadcast",
-            from: sender,
-            room: targetRoom,
-            text: body,
-            ts: Date.now(),
-        });
+            payload: body,
+        }, {});
     }
 
     function sendDirect(text: string, to: string) {
         const body = (text || "").trim();
         if (!body || !to) return;
-        const sender = me.value || resolveAuthDisplayName() || "me"
-        if (!me.value && sender) {
-            me.value = sender
+
+        if (!socket.value || !connected.value) {
+            error.value = "Chat server is not connected";
+            return;
         }
-        // Hub expects "route" for targeted messages
-        const sent = safeSend({ type: "route", to, payload: body, from: sender });
-        if (!sent) return;
-        messages.value.push({
-            id: makeId("local"),
-            type: "direct",
-            from: sender,
+
+        error.value = null;
+        socket.value.emit("create", "messages", {
+            type: "route",
             to,
-            text: body,
-            ts: Date.now(),
-        });
+            payload: body,
+        }, {});
     }
 
     function requestHistory() {
-        safeSend({ type: "history" });
+        if (!socket.value) {
+            return;
+        }
+
+        socket.value.emit("find", "messages", {}, (err: unknown, history?: MessagingEnvelope[]) => {
+            if (err) {
+                console.warn("[messaging] history request failed", err);
+                return;
+            }
+
+            if (!Array.isArray(history)) {
+                messages.value = [];
+                return;
+            }
+
+            messages.value = history.map((entry) => normalizeMessage(entry)).slice(-MAX_MESSAGES);
+        });
     }
 
     function requestUsers() {
-        safeSend({ type: "userlist" });
+        // The live service pushes user state via the "user-list" event.
     }
 
     function joinRoom(roomName: string) {
