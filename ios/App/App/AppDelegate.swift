@@ -5,7 +5,7 @@ import Capacitor
 @MainActor
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
-    nonisolated func application(
+    func application(
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
@@ -14,7 +14,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
     
     // MARK: UISceneSession Lifecycle
     
-    nonisolated func application(
+    func application(
         _ application: UIApplication,
         configurationForConnecting connectingSceneSession: UISceneSession,
         options: UIScene.ConnectionOptions
@@ -25,14 +25,14 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         )
     }
     
-    nonisolated func application(
+    func application(
         _ application: UIApplication,
         didDiscardSceneSessions sceneSessions: Set<UISceneSession>
     ) {
         // Called when the user discards a scene session.
     }
 
-    nonisolated func application(
+    func application(
         _ app: UIApplication,
         open url: URL,
         options: [UIApplication.OpenURLOptionsKey: Any] = [:]
@@ -40,7 +40,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
     }
 
-    nonisolated func application(
+    func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
         restorationHandler: @escaping ([UIUserActivityRestoring]?) -> Void

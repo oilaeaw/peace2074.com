@@ -15,7 +15,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         window = UIWindow(windowScene: windowScene)
         
-        if let rootViewController = window?.rootViewController as? CAPBridgeViewController {
+        if let _ = window?.rootViewController as? CAPBridgeViewController {
             // Capacitor is already configured
         }
         
@@ -42,7 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
     }
     
-    nonisolated func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let urlContext = URLContexts.first else { return }
         _ = ApplicationDelegateProxy.shared.application(
             UIApplication.shared,
@@ -51,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
     }
     
-    nonisolated func scene(
+    func scene(
         _ scene: UIScene,
         continue userActivity: NSUserActivity
     ) {
