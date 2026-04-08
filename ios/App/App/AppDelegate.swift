@@ -2,6 +2,7 @@ import UIKit
 @preconcurrency import Capacitor
 
 @main
+@MainActor
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(

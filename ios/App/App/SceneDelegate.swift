@@ -1,9 +1,10 @@
 import UIKit
 @preconcurrency import Capacitor
 
+@MainActor
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
-    @MainActor var window: UIWindow?
+    var window: UIWindow?
 
     func scene(
         _ scene: UIScene,
