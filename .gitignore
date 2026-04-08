@@ -35,6 +35,12 @@ ios/App/fastlane/build/
 ios/App/Gemfile.lock
 
 # Xcode user-specific files
+ios/App/**/*.xcodeproj/xcuserdata/
 ios/App/App.xcworkspace/xcuserdata/
 ios/App/*.xcworkspace/xcuserdata/
 *.xcuserstate
+
+# Local iOS build artifacts
+ios/build/
+ios/App/build/
+*.xcarchive
