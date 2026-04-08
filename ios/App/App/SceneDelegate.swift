@@ -11,15 +11,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         willConnectTo session: UISceneSession,
         options connectionOptions: UIScene.ConnectionOptions
     ) {
-        guard let windowScene = (scene as? UIWindowScene) else { return }
-        
-        window = UIWindow(windowScene: windowScene)
-        
-        if let _ = window?.rootViewController as? CAPBridgeViewController {
-            // Capacitor is already configured
+        guard let windowScene = scene as? UIWindowScene else { return }
+
+        window = windowScene.windows.first
+
+        if let urlContext = connectionOptions.urlContexts.first {
+            _ = ApplicationDelegateProxy.shared.application(
+                UIApplication.shared,
+                open: urlContext.url,
+                options: [:]
+            )
         }
-        
-        window?.makeKeyAndVisible()
+
+        if let userActivity = connectionOptions.userActivities.first {
+            _ = ApplicationDelegateProxy.shared.application(
+                UIApplication.shared,
+                continue: userActivity,
+                restorationHandler: { _ in }
+            )
+        }
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {

@@ -11,18 +11,8 @@ const ThreeBackground = defineAsyncComponent(
 const route = useRoute()
 const showBackground = ref(false)
 const showSplash = ref(true)
-const debugMessages = ref<string[]>([])
 const MIN_SPLASH_MS = 300
 const MAX_SPLASH_MS = 1200
-
-// Debug helper
-function addDebug(msg: string) {
-  console.log(msg)
-  debugMessages.value.push(
-    `${new Date().toISOString().split('T')[1].slice(0, 8)} ${msg}`
-  )
-  if (debugMessages.value.length > 10) debugMessages.value.shift()
-}
 
 // Detect Safari browser
 const isSafari = computed(() => {
@@ -85,10 +75,6 @@ function waitForFontsReady(timeoutMs = 800): Promise<void> {
 }
 
 onMounted(async () => {
-  addDebug('🚀 App.vue mounted')
-  addDebug(`Route: ${route.path}`)
-  addDebug(`Layout: ${usePlainLayout.value ? 'Plain' : 'AppShell'}`)
-
   const splashStartedAt = performance.now()
 
   await Promise.race([
@@ -99,12 +85,7 @@ onMounted(async () => {
   const elapsed = performance.now() - splashStartedAt
   const remaining = Math.max(0, MIN_SPLASH_MS - elapsed)
 
-  addDebug(
-    `⏱️ Elapsed: ${elapsed.toFixed(0)}ms, waiting ${remaining.toFixed(0)}ms`
-  )
-
   setTimeout(() => {
-    addDebug('✅ Hiding splash')
     showSplash.value = false
   }, remaining)
 
@@ -135,14 +116,6 @@ if (typeof window !== 'undefined') {
 
 <template>
   <div class="app-container">
-    <!-- Visible debug overlay -->
-    <div class="debug-overlay">
-      <div class="debug-title">🔍 Debug Log</div>
-      <div v-for="(msg, i) in debugMessages" :key="i" class="debug-msg">
-        {{ msg }}
-      </div>
-    </div>
-
     <Transition name="splash-fade">
       <div
         v-if="showSplash"
@@ -231,35 +204,5 @@ body {
 .splash-fade-enter-from,
 .splash-fade-leave-to {
   opacity: 0;
-}
-
-/* Debug overlay - visible on screen */
-.debug-overlay {
-  position: fixed;
-  top: 10px;
-  left: 10px;
-  right: 10px;
-  z-index: 999999;
-  background: rgba(0, 0, 0, 0.9);
-  color: #0f0;
-  font-family: monospace;
-  font-size: 11px;
-  padding: 8px;
-  border: 2px solid #0f0;
-  border-radius: 4px;
-  max-height: 200px;
-  overflow-y: auto;
-  pointer-events: none;
-}
-
-.debug-title {
-  font-weight: bold;
-  color: #ff0;
-  margin-bottom: 4px;
-}
-
-.debug-msg {
-  margin: 2px 0;
-  line-height: 1.3;
 }
 </style>

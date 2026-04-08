@@ -1,0 +1,30 @@
+{
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstanceDescriptor.swift" : {
+    "const-values" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceDescriptor-179b802d08a85848c0853919958c1513.swiftconstvalues",
+    "dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceDescriptor-179b802d08a85848c0853919958c1513.d",
+    "diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceDescriptor-179b802d08a85848c0853919958c1513.dia",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceDescriptor-179b802d08a85848c0853919958c1513.o",
+    "swift-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstanceDescriptor-179b802d08a85848c0853919958c1513.swiftdeps"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPInstancePlugin.swift" : {
+    "const-values" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstancePlugin.swiftconstvalues",
+    "dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstancePlugin.d",
+    "diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstancePlugin.dia",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstancePlugin.o",
+    "swift-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPInstancePlugin.swiftdeps"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPLog.swift" : {
+    "const-values" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPLog.swiftconstvalues",
+    "dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPLog.d",
+    "diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPLog.dia",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPLog.o",
+    "swift-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPLog.swiftdeps"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios/Capacitor/Capacitor/CAPNotifications.swift" : {
+    "const-values" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPNotifications.swiftconstvalues",
+    "dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPNotifications.d",
+    "diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPNotifications.dia",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPNotifications.o",
+    "swift-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/build/sim/Build/Intermediates.noindex/Pods.build/Debug-iphonesimulator/Capacitor.build/Objects-normal/x86_64/CAPNotifications.swiftdeps"
+  }
+}
