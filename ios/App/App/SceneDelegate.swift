@@ -1,6 +1,7 @@
 import UIKit
 import Capacitor
 
+@MainActor
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
     var window: UIWindow?
@@ -41,7 +42,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Called as the scene transitions from the foreground to the background.
     }
     
-    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+    nonisolated func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
         guard let urlContext = URLContexts.first else { return }
         _ = ApplicationDelegateProxy.shared.application(
             UIApplication.shared,
@@ -50,7 +51,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         )
     }
     
-    func scene(
+    nonisolated func scene(
         _ scene: UIScene,
         continue userActivity: NSUserActivity
     ) {
