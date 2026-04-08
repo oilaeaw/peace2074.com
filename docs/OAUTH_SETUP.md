@@ -111,7 +111,7 @@ GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 
 # Netlify (Production)
 # Add these in Netlify Dashboard → Site Settings → Environment Variables
-GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
+GOOGLE_CLIENT_ID=166860955615-i3oufoanjcpm3gakrtcqutnhjgn9ci30.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_REDIRECT_URI=https://peace2074.com/api/auth/google/callback
 PUBLIC_URL=https://peace2074.com
