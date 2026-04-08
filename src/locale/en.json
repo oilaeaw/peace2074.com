@@ -483,6 +483,7 @@
     "downloadFailed": "Download failed, please try again",
     "downloadAllComplete": "Downloaded {completed} suras. {failed} failed.",
     "cacheCleared": "All offline audio cleared",
+    "qualityChanged": "Quality changed. Reload to use offline audio.",
     "confirmDownloadAll": {
       "title": "Download All Quran?",
       "message": "This will download approximately {size} of audio data at {quality} quality. Make sure you have enough storage and a stable connection."

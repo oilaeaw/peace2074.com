@@ -462,6 +462,37 @@
             "chores": "עבודות תחזוקה"
         }
     },
+    "offline": {
+        "title": "קריאה לא מקוונת",
+        "subtitle": "הורד קריאות קוראן להאזנה ללא אינטרנט",
+        "selectQuality": "בחר איכות אודיו",
+        "regular": "איכות רגילה",
+        "highQuality": "איכות גבוהה",
+        "storageUsed": "נפח שנעשה בו שימוש",
+        "surasDownloaded": "סורות שהורדו",
+        "downloadOptions": "אפשרויות הורדה",
+        "downloadAllQuran": "הורד את כל הקוראן (114 סורות)",
+        "downloadCurrentSura": "הורד את הסורה הנוכחית",
+        "clearAllCache": "נקה את כל האודיו שהורד",
+        "downloading": "מוריד",
+        "sura": "סורה",
+        "verses": "פסוקים",
+        "noSuraSelected": "לא נבחרה סורה",
+        "downloadingStarted": "ההורדה התחילה...",
+        "downloadComplete": "ההורדה הושלמה!",
+        "downloadFailed": "ההורדה נכשלה, נסה שוב",
+        "downloadAllComplete": "{completed} סורות הורדו. {failed} נכשלו.",
+        "cacheCleared": "כל האודיו הלא מקוון נוקה",
+        "qualityChanged": "האיכות שונתה. טען מחדש כדי להשתמש באודיו לא מקוון.",
+        "confirmDownloadAll": {
+            "title": "להוריד את כל הקוראן?",
+            "message": "זה יוריד כ-{size} של נתוני אודיו באיכות {quality}. וודא שיש לך מספיק מקום וחיבור יציב."
+        },
+        "confirmClear": {
+            "title": "לנקות את כל האודיו הלא מקוון?",
+            "message": "זה ימחק את כל הקריאות שהורדו. אתה יכול להוריד אותן שוב מאוחר יותר."
+        }
+    },
     "general": {
         "Home": "בית",
         "SiteTitle": "Peace2074",
@@ -493,6 +524,9 @@
         "pause": "השהה",
         "play": "נגן",
         "stop": "עצור",
+        "download": "הורד",
+        "cancel": "ביטול",
+        "delete": "מחק",
         "updateAvailable": "גרסה חדשה זמינה!",
         "update": "עדכן עכשיו",
         "later": "מאוחר יותר",

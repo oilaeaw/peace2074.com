@@ -462,6 +462,37 @@
       "chores": "أعمال الصيانة"
     }
   },
+  "offline": {
+    "title": "التلاوة دون اتصال",
+    "subtitle": "حمّل تلاوات القرآن للاستماع بدون إنترنت",
+    "selectQuality": "اختر جودة الصوت",
+    "regular": "جودة عادية",
+    "highQuality": "جودة عالية",
+    "storageUsed": "المساحة المستخدمة",
+    "surasDownloaded": "السُّور المحملة",
+    "downloadOptions": "خيارات التحميل",
+    "downloadAllQuran": "حمّل القرآن كاملاً (114 سورة)",
+    "downloadCurrentSura": "حمّل السورة الحالية",
+    "clearAllCache": "امسح كل التلاوات المحملة",
+    "downloading": "جارٍ التحميل",
+    "sura": "سورة",
+    "verses": "آيات",
+    "noSuraSelected": "لم يتم اختيار سورة",
+    "downloadingStarted": "بدأ التحميل...",
+    "downloadComplete": "اكتمل التحميل!",
+    "downloadFailed": "فشل التحميل، حاول مرة أخرى",
+    "downloadAllComplete": "تم تحميل {completed} سورة. {failed} فشلت.",
+    "cacheCleared": "تم مسح جميع التلاوات",
+    "qualityChanged": "تم تغيير الجودة. أعد التحميل لاستخدام الصوت دون اتصال.",
+    "confirmDownloadAll": {
+      "title": "تحميل القرآن كاملاً؟",
+      "message": "سيتم تحميل حوالي {size} من بيانات الصوت بجودة {quality}. تأكد من وجود مساحة كافية واتصال مستقر."
+    },
+    "confirmClear": {
+      "title": "مسح كل التلاوات؟",
+      "message": "سيتم حذف جميع التلاوات المحملة. يمكنك إعادة تحميلها لاحقاً."
+    }
+  },
   "general": {
     "Home": "البيت",
     "SiteTitle": "Peace2074",
@@ -493,6 +524,9 @@
     "pause": "إيقاف مؤقت",
     "play": "تشغيل",
     "stop": "إيقاف",
+    "download": "تحميل",
+    "cancel": "إلغاء",
+    "delete": "حذف",
     "updateAvailable": "توجد نسخة جديدة!",
     "update": "تحديث الآن",
     "later": "لاحقاً",

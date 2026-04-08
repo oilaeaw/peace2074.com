@@ -427,6 +427,37 @@
       "chores": "Wartungsarbeiten"
     }
   },
+  "offline": {
+    "title": "Offline-Rezitation",
+    "subtitle": "Laden Sie Quran-Rezitationen für Offline-Anhören herunter",
+    "selectQuality": "Audioqualität wählen",
+    "regular": "Normale Qualität",
+    "highQuality": "Hohe Qualität",
+    "storageUsed": "Verwendeter Speicher",
+    "surasDownloaded": "Heruntergeladene Suren",
+    "downloadOptions": "Download-Optionen",
+    "downloadAllQuran": "Gesamten Quran herunterladen (114 Suren)",
+    "downloadCurrentSura": "Aktuelle Sure herunterladen",
+    "clearAllCache": "Alle heruntergeladenen Audios löschen",
+    "downloading": "Wird heruntergeladen",
+    "sura": "Sure",
+    "verses": "Verse",
+    "noSuraSelected": "Keine Sure ausgewählt",
+    "downloadingStarted": "Download gestartet...",
+    "downloadComplete": "Download abgeschlossen!",
+    "downloadFailed": "Download fehlgeschlagen, bitte erneut versuchen",
+    "downloadAllComplete": "{completed} Suren heruntergeladen. {failed} fehlgeschlagen.",
+    "cacheCleared": "Alle Offline-Audios gelöscht",
+    "qualityChanged": "Qualität geändert. Neu laden, um Offline-Audio zu verwenden.",
+    "confirmDownloadAll": {
+      "title": "Gesamten Quran herunterladen?",
+      "message": "Dies lädt etwa {size} an Audiodaten in {quality}-Qualität herunter. Stellen Sie sicher, dass Sie genügend Speicher und eine stabile Verbindung haben."
+    },
+    "confirmClear": {
+      "title": "Alle Offline-Audios löschen?",
+      "message": "Dies löscht alle heruntergeladenen Rezitationen. Sie können sie später erneut herunterladen."
+    }
+  },
   "general": {
     "Home": "Startseite",
     "SiteTitle": "Peace2074",
@@ -453,6 +484,9 @@
     "lightMode": "Lichtmodus ändern",
     "open": "öffnen",
     "close": "schließen",
+    "download": "Herunterladen",
+    "cancel": "Abbrechen",
+    "delete": "Löschen",
     "holdState": "Immer geöffnet",
     "swipeToChange": "Wischen zum ändern",
     "pause": "Pause",

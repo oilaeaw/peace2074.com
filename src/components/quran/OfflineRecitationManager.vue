@@ -120,7 +120,7 @@ import {
 } from '@/composables/useOfflineRecitation'
 import { useQ2P } from '@/stores/q2p.pinia'
 
-interface Props {
+export interface Props {
   currentSuraId?: number
   currentSuraTotalVerses?: number
 }
@@ -239,7 +239,6 @@ function confirmDownloadAll() {
       size: qualityInfo.value.estimatedSizeFullQuran,
       quality: qualityInfo.value.bitrate,
     }),
-    cancel: true,
     persistent: false,
     ok: {
       label: t('general.download'),
@@ -295,7 +294,6 @@ function confirmClearCache() {
   $q.dialog({
     title: t('offline.confirmClear.title'),
     message: t('offline.confirmClear.message'),
-    cancel: true,
     persistent: false,
     ok: {
       label: t('general.delete'),

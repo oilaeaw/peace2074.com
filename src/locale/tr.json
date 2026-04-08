@@ -462,6 +462,37 @@
             "chores": "Bakım Çalışmaları"
         }
     },
+    "offline": {
+        "title": "Çevrimdışı Okuma",
+        "subtitle": "Çevrimdışı dinlemek için Kuran okumalarını indirin",
+        "selectQuality": "Ses kalitesini seçin",
+        "regular": "Normal Kalite",
+        "highQuality": "Yüksek Kalite",
+        "storageUsed": "Kullanılan Depolama",
+        "surasDownloaded": "İndirilen Sureler",
+        "downloadOptions": "İndirme Seçenekleri",
+        "downloadAllQuran": "Tüm Kuran'ı İndir (114 Sure)",
+        "downloadCurrentSura": "Mevcut Sureyi İndir",
+        "clearAllCache": "Tüm İndirilen Sesleri Temizle",
+        "downloading": "İndiriliyor",
+        "sura": "Sure",
+        "verses": "Ayetler",
+        "noSuraSelected": "Sure seçilmedi",
+        "downloadingStarted": "İndirme başladı...",
+        "downloadComplete": "İndirme tamamlandı!",
+        "downloadFailed": "İndirme başarısız, lütfen tekrar deneyin",
+        "downloadAllComplete": "{completed} sure indirildi. {failed} başarısız.",
+        "cacheCleared": "Tüm çevrimdışı sesler temizlendi",
+        "qualityChanged": "Kalite değiştirildi. Çevrimdışı ses kullanmak için yeniden yükleyin.",
+        "confirmDownloadAll": {
+            "title": "Tüm Kuran İndirilsin mi?",
+            "message": "Bu, {quality} kalitesinde yaklaşık {size} ses verisi indirecektir. Yeterli depolamanız ve kararlı bir bağlantınız olduğundan emin olun."
+        },
+        "confirmClear": {
+            "title": "Tüm Çevrimdışı Sesler Temizlensin mi?",
+            "message": "Bu, indirilen tüm okumaları silecektir. Daha sonra tekrar indirebilirsiniz."
+        }
+    },
     "general": {
         "Home": "Ana Sayfa",
         "SiteTitle": "Peace2074",
@@ -493,6 +524,9 @@
         "pause": "Duraklat",
         "play": "Oynat",
         "stop": "Durdur",
+        "download": "İndir",
+        "cancel": "İptal",
+        "delete": "Sil",
         "updateAvailable": "Yeni bir sürüm mevcut!",
         "update": "Şimdi Güncelle",
         "later": "Sonra",
