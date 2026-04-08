@@ -7,6 +7,11 @@ import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
+import {
+  useOfflineRecitation,
+  type RecitationQuality,
+} from '@/composables/useOfflineRecitation'
+import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
 
 // Define component name for keep-alive
 defineOptions({
@@ -405,6 +410,16 @@ const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>(
 )
 const stopRequested = ref(false)
 const isStartingRecitation = ref(false)
+
+// Offline recitation manager
+const showOfflineManager = ref(false)
+const {
+  getCachedAudioUrl,
+  selectedQuality,
+  isSuraCached,
+  loadCachedSurasList,
+} = useOfflineRecitation()
+const isLoadingFromCache = ref(false)
 
 // Persistent playback position
 interface PlaybackPosition {
@@ -1116,13 +1131,76 @@ async function loadSuraById(id: number) {
 }
 
 /**
+ * Load audio from offline cache
+ */
+async function loadAudioFromCache(id: number): Promise<boolean> {
+  try {
+    const suraData = sura.value
+    if (!suraData) return false
+
+    isLoadingFromCache.value = true
+    audioList.value = []
+    wordTimings.value = {} // Word timings not available offline
+
+    // Load each verse from cache
+    for (let verse = 1; verse <= suraData.total_verses; verse++) {
+      const cachedUrl = await getCachedAudioUrl(
+        id,
+        verse,
+        selectedQuality.value
+      )
+      if (cachedUrl) {
+        audioList.value[verse - 1] = cachedUrl
+      } else {
+        // Cache incomplete, fall back to online
+        console.warn(`[Offline Audio] Missing verse ${verse} in cache`)
+        return false
+      }
+    }
+
+    console.debug(
+      `[Offline Audio] Loaded ${audioList.value.length} verses from cache for sura ${id}`
+    )
+
+    notify({
+      type: 'positive',
+      message:
+        t('pages.quran.playingOffline') || 'Playing from offline storage',
+      icon: 'offline_pin',
+      position: 'top',
+      timeout: 2000,
+    })
+
+    return true
+  } catch (err) {
+    console.error('[Offline Audio] Load error:', err)
+    return false
+  } finally {
+    isLoadingFromCache.value = false
+  }
+}
+
+/**
  * Load audio URLs and word timings from quran.com API.
  * Uses per-verse audio with synchronized word segments.
+ * Checks offline cache first before making network requests.
  */
 async function loadAudioAndTimings(id: number) {
   audioList.value = []
   wordTimings.value = {}
   currentAyahIndex.value = -1
+
+  // Check if sura is cached offline
+  const hasCached = await isSuraCached(id, selectedQuality.value)
+
+  if (hasCached) {
+    // Try loading from offline cache first
+    const loadedFromCache = await loadAudioFromCache(id)
+    if (loadedFromCache) {
+      return // Successfully loaded from cache
+    }
+    // If cache load failed, continue to online loading
+  }
 
   const AUDIO_BASE_URL = 'https://verses.quran.com/'
 
@@ -2041,6 +2119,31 @@ function getHoverWidgetStyle() {
   }
 }
 
+// Offline quality handlers
+function handleOfflineQualityChanged(quality: RecitationQuality) {
+  // Reload audio if currently playing to use new quality
+  if (isPlayingAudio.value || isReading.value) {
+    stopReading()
+    notify({
+      type: 'info',
+      message:
+        t('offline.qualityChanged') ||
+        'Quality changed. Reload to use offline audio.',
+      icon: 'info',
+      timeout: 3000,
+    })
+  }
+  // Reload audio list to check new quality cache
+  loadAudioAndTimings(currentSuraId.value)
+}
+
+function handleSuraDownloaded(suraId: number) {
+  // Reload audio to use cached version if it's the current sura
+  if (suraId === currentSuraId.value) {
+    loadAudioAndTimings(suraId)
+  }
+}
+
 onMounted(async () => {
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
@@ -2049,6 +2152,9 @@ onMounted(async () => {
       syncShowTranslationPreference
     )
   }
+
+  // Load list of cached suras for offline detection
+  await loadCachedSurasList()
 
   // Initialize layout mode from route param if present
   const paramMode = route.params.mode as
@@ -2596,6 +2702,17 @@ watch(
               </q-list>
             </q-menu>
           </q-btn>
+
+          <!-- Offline Recitation Manager Button -->
+          <q-btn
+            outline
+            icon="download"
+            class="q-ml-sm"
+            :label="t('offline.title')"
+            @click="showOfflineManager = true"
+          >
+            <q-tooltip>{{ t('offline.subtitle') }}</q-tooltip>
+          </q-btn>
         </div>
       </div>
 
@@ -2902,6 +3019,17 @@ watch(
         </Transition>
       </Teleport>
     </q-card>
+
+    <!-- Offline Recitation Manager Dialog -->
+    <q-dialog v-model="showOfflineManager" maximized>
+      <OfflineRecitationManager
+        :current-sura-id="currentSuraId"
+        :current-sura-total-verses="sura?.total_verses"
+        @quality-changed="handleOfflineQualityChanged"
+        @download-complete="handleSuraDownloaded"
+        @close="showOfflineManager = false"
+      />
+    </q-dialog>
   </div>
 </template>
 

@@ -462,6 +462,36 @@
       "chores": "Chores"
     }
   },
+  "offline": {
+    "title": "Offline Recitation",
+    "subtitle": "Download Quran recitations for offline listening",
+    "selectQuality": "Select Audio Quality",
+    "regular": "Regular Quality",
+    "highQuality": "High Quality",
+    "storageUsed": "Storage Used",
+    "surasDownloaded": "Suras Downloaded",
+    "downloadOptions": "Download Options",
+    "downloadAllQuran": "Download All Quran (114 Suras)",
+    "downloadCurrentSura": "Download Current Sura",
+    "clearAllCache": "Clear All Downloaded Audio",
+    "downloading": "Downloading",
+    "sura": "Sura",
+    "verses": "verses",
+    "noSuraSelected": "No sura selected",
+    "downloadingStarted": "Download started...",
+    "downloadComplete": "Download complete!",
+    "downloadFailed": "Download failed, please try again",
+    "downloadAllComplete": "Downloaded {completed} suras. {failed} failed.",
+    "cacheCleared": "All offline audio cleared",
+    "confirmDownloadAll": {
+      "title": "Download All Quran?",
+      "message": "This will download approximately {size} of audio data at {quality} quality. Make sure you have enough storage and a stable connection."
+    },
+    "confirmClear": {
+      "title": "Clear All Offline Audio?",
+      "message": "This will delete all downloaded recitations. You can re-download them later."
+    }
+  },
   "general": {
     "Home": "Home",
     "SiteTitle": "Peace2074",
@@ -474,6 +504,9 @@
     "fetchingUpdates": "Get Updates",
     "searching": "Searching…",
     "languages": "Languages",
+    "download": "Download",
+    "cancel": "Cancel",
+    "delete": "Delete",
     "languageNames": {
       "en": "English",
       "ar": "Arabic",

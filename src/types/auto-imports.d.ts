@@ -241,6 +241,7 @@ declare global {
   const useNetwork: typeof import('@vueuse/core')['useNetwork']
   const useNow: typeof import('@vueuse/core')['useNow']
   const useObjectUrl: typeof import('@vueuse/core')['useObjectUrl']
+  const useOfflineRecitation: typeof import('../composables/useOfflineRecitation').useOfflineRecitation
   const useOffsetPagination: typeof import('@vueuse/core')['useOffsetPagination']
   const useOnline: typeof import('@vueuse/core')['useOnline']
   const usePageLeave: typeof import('@vueuse/core')['usePageLeave']
@@ -339,6 +340,9 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { RecitationQuality } from '../composables/useOfflineRecitation'
+  import('../composables/useOfflineRecitation')
+  // @ts-ignore
   export type { QuranVerse } from '../composables/useQuranTree'
   import('../composables/useQuranTree')
   // @ts-ignore
@@ -427,6 +431,7 @@ declare module 'vue' {
     readonly useLocalStorage: UnwrapRef<typeof import('../composables/useUStore')['useLocalStorage']>
     readonly useMemoryStorage: UnwrapRef<typeof import('../composables/useUStore')['useMemoryStorage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
+    readonly useOfflineRecitation: UnwrapRef<typeof import('../composables/useOfflineRecitation')['useOfflineRecitation']>
     readonly useQ2P: UnwrapRef<typeof import('../composables/useQ2P')['default']>
     readonly useQuranTree: UnwrapRef<typeof import('../composables/useQuranTree')['useQuranTree']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
