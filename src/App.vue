@@ -75,6 +75,10 @@ function waitForFontsReady(timeoutMs = 800): Promise<void> {
 }
 
 onMounted(async () => {
+  console.log('🚀 App.vue mounted - starting splash sequence')
+  console.log('Route:', route.path)
+  console.log('CurrentLayout:', CurrentLayout.value)
+
   const splashStartedAt = performance.now()
 
   await Promise.race([
@@ -84,7 +88,13 @@ onMounted(async () => {
 
   const elapsed = performance.now() - splashStartedAt
   const remaining = Math.max(0, MIN_SPLASH_MS - elapsed)
+
+  console.log(
+    `⏱️ Splash timing: elapsed=${elapsed.toFixed(0)}ms, waiting ${remaining.toFixed(0)}ms more`
+  )
+
   setTimeout(() => {
+    console.log('✅ Hiding splash screen')
     showSplash.value = false
   }, remaining)
 

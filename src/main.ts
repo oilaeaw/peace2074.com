@@ -18,6 +18,23 @@ let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App);
 
+// Global error handler for debugging black screen issues
+app.config.errorHandler = (err, instance, info) => {
+  console.error('❌ Vue Error:', err)
+  console.error('Component:', instance)
+  console.error('Info:', info)
+  // Show alert on iOS for immediate debugging
+  if (isClient) {
+    alert(`Vue Error: ${err instanceof Error ? err.message : String(err)}\n\nInfo: ${info}`)
+  }
+}
+
+// Global warning handler
+app.config.warnHandler = (msg, instance, trace) => {
+  console.warn('⚠️ Vue Warning:', msg)
+  console.warn('Trace:', trace)
+}
+
 initFaLibrary();
 
 app.use(pinia);

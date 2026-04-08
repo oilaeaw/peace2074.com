@@ -3,10 +3,5 @@
 	"appName": "Peace2074",
 	"webDir": "dist",
 	"bundledWebRuntime": false,
-	"server": {
-		"androidScheme": "http",
-		"url": "http://localhost:4000",
-		"cleartext": true
-	},
 	"packageClassList": []
 }
