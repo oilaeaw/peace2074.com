@@ -458,7 +458,7 @@ if (isClient) {
   */
 
   // Custom OAuth is now active - no need for Netlify Identity widget
-  app.mount("#app")
-} else {
-  app.mount("#app")
 }
+
+// Mount the app once (removed duplicate mounts)
+app.mount("#app")

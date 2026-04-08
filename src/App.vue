@@ -4,13 +4,15 @@ import { useRoute } from 'vue-router'
 import AppShell from '@/layouts/AppShell.vue'
 import PlainLayout from '@/layouts/plain.vue'
 
-const ThreeBackground = defineAsyncComponent(() => import('@/components/common/ThreeBackground.vue'))
+const ThreeBackground = defineAsyncComponent(
+  () => import('@/components/common/ThreeBackground.vue')
+)
 
 const route = useRoute()
 const showBackground = ref(false)
 const showSplash = ref(true)
-const MIN_SPLASH_MS = 500
-const MAX_SPLASH_MS = 2600
+const MIN_SPLASH_MS = 300
+const MAX_SPLASH_MS = 1200
 
 // Detect Safari browser
 const isSafari = computed(() => {
@@ -45,7 +47,7 @@ const usePlainLayout = computed(() => {
   // User preference override
   if (layoutPreference.value === 'plain') return true
   if (layoutPreference.value === 'full') return false
-  
+
   // Auto: Use plain layout for all Quran detail pages (better for Reader Mode)
   return isQuranPage.value
 })
@@ -62,7 +64,7 @@ function waitForInitialPaint(): Promise<void> {
   })
 }
 
-function waitForFontsReady(timeoutMs = 1400): Promise<void> {
+function waitForFontsReady(timeoutMs = 800): Promise<void> {
   const fonts = (document as any)?.fonts
   if (!fonts?.ready) return Promise.resolve()
 
@@ -86,7 +88,9 @@ onMounted(async () => {
     showSplash.value = false
   }, remaining)
 
-  const idle = (window as any).requestIdleCallback as ((cb: () => void) => number) | undefined
+  const idle = (window as any).requestIdleCallback as
+    | ((cb: () => void) => number)
+    | undefined
   if (typeof idle === 'function') {
     idle(() => {
       showBackground.value = true
@@ -95,16 +99,16 @@ onMounted(async () => {
   }
   setTimeout(() => {
     showBackground.value = true
-  }, 1200)
+  }, 400)
 })
 
 // Expose for debugging
 if (typeof window !== 'undefined') {
-  (window as any).__debugLayout = {
+  ;(window as any).__debugLayout = {
     isSafari,
     isQuranPage,
     usePlainLayout,
-    layoutPreference
+    layoutPreference,
   }
 }
 </script>
@@ -112,7 +116,12 @@ if (typeof window !== 'undefined') {
 <template>
   <div class="app-container">
     <Transition name="splash-fade">
-      <div v-if="showSplash" class="app-splash" role="status" aria-live="polite">
+      <div
+        v-if="showSplash"
+        class="app-splash"
+        role="status"
+        aria-live="polite"
+      >
         <div class="app-splash__inner">
           <img src="/logo.svg" alt="PEACE2074" class="app-splash__logo" />
           <div class="app-splash__title">PEACE2074</div>
