@@ -161,6 +161,14 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/deploy',
+    redirect: '/deploys',
+  },
+  {
+    path: '/depoy',
+    redirect: '/deploys',
+  },
+  {
     path: '/deploys',
     name: 'Deploys',
     component: () => import('@/pages/deploys.vue'),
