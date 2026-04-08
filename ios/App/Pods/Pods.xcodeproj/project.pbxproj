@@ -699,6 +699,11 @@
 			knownRegions = (
 				Base,
 				en,
+				ar,
+				he,
+				ru,
+				de,
+				tr,
 			);
 			mainGroup = CF1408CF629C7361332E53B88F7BD30C;
 			productRefGroup = 3BDBF50EC94D03B79F62C5742162999F /* Products */;
