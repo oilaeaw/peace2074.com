@@ -1,5 +1,5 @@
 import { defineEventHandler, sendRedirect, setCookie } from 'h3'
-import { generateState } from 'arctic'
+import { generateState, generateCodeVerifier } from 'arctic'
 import { getGoogleOAuth } from '../../utils/oauth'
 import { applyCors } from '../../utils/cors'
 
@@ -9,19 +9,21 @@ export default defineEventHandler(async (event) => {
     try {
         const google = getGoogleOAuth()
         const state = generateState()
+        const codeVerifier = generateCodeVerifier()
 
-        // Store state in cookie for CSRF protection
-        setCookie(event, 'google_oauth_state', state, {
+        const cookieOpts = {
             httpOnly: true,
             secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
+            sameSite: 'lax' as const,
             maxAge: 60 * 10, // 10 minutes
             path: '/'
-        })
+        }
 
-        const url = await google.createAuthorizationURL(state, {
-            scopes: ['openid', 'profile', 'email']
-        })
+        // Store state + PKCE verifier in cookies for CSRF protection
+        setCookie(event, 'google_oauth_state', state, cookieOpts)
+        setCookie(event, 'google_code_verifier', codeVerifier, cookieOpts)
+
+        const url = google.createAuthorizationURL(state, codeVerifier, ['openid', 'profile', 'email'])
 
         return sendRedirect(event, url.toString())
     } catch (error: any) {

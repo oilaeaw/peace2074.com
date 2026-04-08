@@ -22,27 +22,29 @@ export default defineEventHandler(async (event) => {
         const state = query.state as string
 
         const storedState = getCookie(event, 'google_oauth_state')
+        const storedCodeVerifier = getCookie(event, 'google_code_verifier')
 
         // Validate state for CSRF protection
-        if (!code || !state || !storedState || state !== storedState) {
+        if (!code || !state || !storedState || state !== storedState || !storedCodeVerifier) {
             throw createError({
                 statusCode: 400,
                 statusMessage: 'Invalid OAuth state'
             })
         }
 
-        // Clear the state cookie
+        // Clear the auth cookies
         deleteCookie(event, 'google_oauth_state')
+        deleteCookie(event, 'google_code_verifier')
 
         const google = getGoogleOAuth()
 
-        // Exchange code for tokens
-        const tokens = await google.validateAuthorizationCode(code)
+        // Exchange code for tokens (Arctic v3 requires PKCE code verifier)
+        const tokens = await google.validateAuthorizationCode(code, storedCodeVerifier)
 
         // Fetch user info from Google
         const userResponse = await fetch('https://openidconnect.googleapis.com/v1/userinfo', {
             headers: {
-                Authorization: `Bearer ${tokens.accessToken}`
+                Authorization: `Bearer ${tokens.accessToken()}`
             }
         })
 
