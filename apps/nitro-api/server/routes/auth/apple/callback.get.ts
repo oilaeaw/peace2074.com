@@ -1,9 +1,9 @@
 import { defineEventHandler, getQuery, getCookie, deleteCookie, sendRedirect, createError } from 'h3'
 import { OAuth2RequestError, decodeIdToken } from 'arctic'
-import { getAppleOAuth, type OAuthUserInfo } from '../../utils/oauth'
-import { createSession } from '../../utils/auth'
-import { findOrCreateOAuthUser } from '../../utils/users'
-import { applyCors } from '../../utils/cors'
+import { getAppleOAuth, type OAuthUserInfo } from '../../../utils/oauth'
+import { createSession } from '../../../utils/auth'
+import { findOrCreateOAuthUser } from '../../../utils/users'
+import { applyCors } from '../../../utils/cors'
 
 interface AppleIdTokenClaims {
     sub: string

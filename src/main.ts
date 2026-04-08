@@ -386,6 +386,11 @@ if (isClient) {
     return '/'
   }
 
+  // NOTE: Netlify Identity has been replaced with custom OAuth (Google/Apple)
+  // See: apps/nitro-api/server/routes/auth/*
+  // If you need to re-enable Netlify Identity, uncomment the code below
+  // and disable the custom OAuth routes.
+  /*
   const initNetlifyIdentity = () => {
     import('netlify-identity-widget').then(({ default: netlifyIdentity }) => {
       netlifyIdentity.init()
@@ -450,6 +455,10 @@ if (isClient) {
       window.setTimeout(() => initNetlifyIdentity(), 2000)
     }
   })
+  */
+
+  // Custom OAuth is now active - no need for Netlify Identity widget
+  app.mount("#app")
 } else {
   app.mount("#app")
 }

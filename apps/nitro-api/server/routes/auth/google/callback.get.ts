@@ -1,9 +1,9 @@
 import { defineEventHandler, getQuery, getCookie, deleteCookie, sendRedirect, createError } from 'h3'
 import { OAuth2RequestError } from 'arctic'
-import { getGoogleOAuth, type OAuthUserInfo } from '../../utils/oauth'
-import { createSession } from '../../utils/auth'
-import { findUserByEmail, findOrCreateOAuthUser } from '../../utils/users'
-import { applyCors } from '../../utils/cors'
+import { getGoogleOAuth, type OAuthUserInfo } from '../../../utils/oauth'
+import { createSession } from '../../../utils/auth'
+import { findUserByEmail, findOrCreateOAuthUser } from '../../../utils/users'
+import { applyCors } from '../../../utils/cors'
 
 interface GoogleUserResponse {
     sub: string
