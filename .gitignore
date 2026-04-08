@@ -33,3 +33,8 @@ ios/App/fastlane/.env
 ios/App/fastlane/AuthKey*.p8
 ios/App/fastlane/build/
 ios/App/Gemfile.lock
+
+# Xcode user-specific files
+ios/App/App.xcworkspace/xcuserdata/
+ios/App/*.xcworkspace/xcuserdata/
+*.xcuserstate

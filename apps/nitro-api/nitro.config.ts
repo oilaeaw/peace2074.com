@@ -35,6 +35,15 @@ export default defineNitroConfig({
         netlifyWebhookSecret: "",
         authPasscode: "",
         authSecret: "",
+        // OAuth credentials
+        googleClientId: "",
+        googleClientSecret: "",
+        googleRedirectUri: "",
+        appleClientId: "",
+        appleTeamId: "",
+        appleKeyId: "",
+        applePrivateKey: "",
+        appleRedirectUri: "",
     },
     // Cache headers for static assets and API responses
     headers: {
