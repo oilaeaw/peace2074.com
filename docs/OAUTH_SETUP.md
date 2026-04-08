@@ -182,6 +182,7 @@ MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
 -----END PRIVATE KEY-----"
 APPLE_REDIRECT_URI=http://localhost:3000/api/auth/apple/callback
 
+# NO DEVELOPMENT JUST PRODUCTION KEYS AND REDIRECTS!!!!!!!!!!!!!!!!!!!!!!!S
 # Netlify (Production)
 APPLE_CLIENT_ID=com.peace2074.auth
 APPLE_TEAM_ID=ABCDE12345
