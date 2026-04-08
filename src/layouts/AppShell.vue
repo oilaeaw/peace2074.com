@@ -503,7 +503,7 @@ const {
 const appVersionRaw = __APP_VERSION__ || '0.0.0'
 const appVersion =
   appVersionRaw.split('.').length >= 2
-    ? appVersionRaw.split('.').slice(-2).join('.')
+    ? appVersionRaw.split('.').slice(0, 2).join('.')
     : appVersionRaw
 
 function goToResult(item: any) {

@@ -23,7 +23,9 @@
             <span>{{ t('appShell.nav.quran') }}</span>
           </RouterLink>
           <div class="lang">
-            <label for="lang" class="q-mr-xs">{{ t('general.languages') }}:</label>
+            <label for="lang" class="q-mr-xs"
+              >{{ t('general.languages') }}:</label
+            >
             <select id="lang" @change="onLangChange($event)" :value="locale">
               <option v-for="l in langs" :key="l.value" :value="l.value">
                 {{ l.flag }} {{ t(`general.languageNames.${l.value}`) }}
@@ -42,13 +44,25 @@
       <div class="footer-inner">
         <div class="footer-brand">
           <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
-          <span>© {{ currentYear }} {{ t("general.SiteTitle") }} · v{{ appVersion }}</span>
+          <span
+            >© {{ currentYear }} {{ t('general.SiteTitle') }} · v{{
+              appVersion
+            }}</span
+          >
         </div>
         <nav class="footer-links" aria-label="Footer links">
-          <RouterLink to="/quran" class="footer-link">{{ t('appShell.nav.quran') }}</RouterLink>
-          <RouterLink to="/terms" class="footer-link">{{ t('terms_and_conditions') }}</RouterLink>
-          <RouterLink to="/privacy" class="footer-link">{{ t('privacy_policy') }}</RouterLink>
-          <RouterLink to="/contact" class="footer-link">{{ t('appShell.nav.contact') }}</RouterLink>
+          <RouterLink to="/quran" class="footer-link">{{
+            t('appShell.nav.quran')
+          }}</RouterLink>
+          <RouterLink to="/terms" class="footer-link">{{
+            t('terms_and_conditions')
+          }}</RouterLink>
+          <RouterLink to="/privacy" class="footer-link">{{
+            t('privacy_policy')
+          }}</RouterLink>
+          <RouterLink to="/contact" class="footer-link">{{
+            t('appShell.nav.contact')
+          }}</RouterLink>
         </nav>
       </div>
     </q-footer>
@@ -56,19 +70,20 @@
 </template>
 
 <script setup lang="ts">
-import { computed } from "vue";
-import { useI18n } from "vue-i18n";
-const { locale, t } = useI18n({ useScope: "global" });
+import { computed } from 'vue'
+import { useI18n } from 'vue-i18n'
+const { locale, t } = useI18n({ useScope: 'global' })
 
-declare const __APP_VERSION__: string;
+declare const __APP_VERSION__: string
 
-const appVersionRaw = __APP_VERSION__ || "0.0.0";
-const appVersion = appVersionRaw.split('.').length >= 2
-  ? appVersionRaw.split('.').slice(-2).join('.')
-  : appVersionRaw;
-const currentYear = new Date().getFullYear();
+const appVersionRaw = __APP_VERSION__ || '0.0.0'
+const appVersion =
+  appVersionRaw.split('.').length >= 2
+    ? appVersionRaw.split('.').slice(0, 2).join('.')
+    : appVersionRaw
+const currentYear = new Date().getFullYear()
 
-const languageCodes = ["en", "ar", "de", "ru", "he", "tr"] as const;
+const languageCodes = ['en', 'ar', 'de', 'ru', 'he', 'tr'] as const
 
 const languageFlags: Record<string, string> = {
   en: '🇺🇸',
@@ -77,20 +92,20 @@ const languageFlags: Record<string, string> = {
   ru: '🇷🇺',
   he: '🇮🇱',
   tr: '🇹🇷',
-};
+}
 
 const langs = computed(() => {
-  locale.value;
+  locale.value
   return languageCodes.map((code) => ({
     value: code,
     label: `${languageFlags[code] || ''} ${t(`general.languageNames.${code}`)}`,
     flag: languageFlags[code],
-  }));
-});
+  }))
+})
 
 function onLangChange(e: Event) {
-  const val = (e.target as HTMLSelectElement).value;
-  locale.value = val;
+  const val = (e.target as HTMLSelectElement).value
+  locale.value = val
   if (typeof window !== 'undefined' && window.localStorage) {
     try {
       window.localStorage.setItem('app-locale', val)
