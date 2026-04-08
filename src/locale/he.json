@@ -662,7 +662,8 @@
         "passkeyCreatePromptMessage": "השתמשו בביומטריה של המכשיר או במנהל הסיסמאות כדי להתחבר מהר יותר בפעם הבאה.",
         "passkeyCreatePromptConfirm": "שמור מפתח גישה",
         "signInWithGitHub": "התחבר עם GitHub",
-        "signInWithNetlify": "התחבר עם Netlify Identity"
+        "signInWithNetlify": "התחבר עם Netlify Identity",
+        "appleSignInUnavailable": "התחברות עם Apple אינה זמינה כעת."
     },
     "login": "התחברות",
     "signup": "הרשמה",

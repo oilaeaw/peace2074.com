@@ -644,6 +644,7 @@
         "passkeyCreatePromptConfirm": "Geçiş anahtarını kaydet",
         "signInWithGitHub": "GitHub ile giriş yap",
         "signInWithNetlify": "Netlify Identity ile giriş yap",
+        "appleSignInUnavailable": "Apple ile giriş şu anda kullanılamıyor.",
         "welcomeBack": "Tekrar hoş geldiniz",
         "forgotPassword": "Şifrenizi mi unuttunuz?",
         "resetPassword": "Şifreyi Sıfırla",

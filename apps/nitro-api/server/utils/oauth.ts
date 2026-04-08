@@ -16,8 +16,19 @@ interface OAuthConfig {
     }
 }
 
+function normalizeConfigValue(value: unknown): string {
+    return typeof value === 'string' ? value.trim() : ''
+}
+
+function normalizeApplePrivateKey(value: unknown): string {
+    return normalizeConfigValue(value)
+        .replace(/\\n/g, '\n')
+        .replace(/\r\n/g, '\n')
+}
+
 function getOAuthConfig(): OAuthConfig {
     const config = useRuntimeConfig()
+    const publicUrl = normalizeConfigValue(process.env.PUBLIC_URL) || 'https://peace2074.com'
 
     // Google OAuth
     const googleClientId =
@@ -36,7 +47,7 @@ function getOAuthConfig(): OAuthConfig {
         (config as any).googleRedirectUri ||
         process.env.GOOGLE_REDIRECT_URI ||
         process.env.NITRO_GOOGLE_REDIRECT_URI ||
-        `${process.env.PUBLIC_URL || 'https://peace2074.com'}/api/auth/google/callback`
+        `${publicUrl}/api/auth/google/callback`
 
     // Apple OAuth
     const appleClientId =
@@ -67,21 +78,35 @@ function getOAuthConfig(): OAuthConfig {
         (config as any).appleRedirectUri ||
         process.env.APPLE_REDIRECT_URI ||
         process.env.NITRO_APPLE_REDIRECT_URI ||
-        `${process.env.PUBLIC_URL || 'https://peace2074.com'}/api/auth/apple/callback`
+        `${publicUrl}/api/auth/apple/callback`
 
     return {
         google: {
-            clientId: googleClientId,
-            clientSecret: googleClientSecret,
-            redirectUri: googleRedirectUri
+            clientId: normalizeConfigValue(googleClientId),
+            clientSecret: normalizeConfigValue(googleClientSecret),
+            redirectUri: normalizeConfigValue(googleRedirectUri)
         },
         apple: {
-            clientId: appleClientId,
-            teamId: appleTeamId,
-            keyId: appleKeyId,
-            privateKey: applePrivateKey,
-            redirectUri: appleRedirectUri
+            clientId: normalizeConfigValue(appleClientId),
+            teamId: normalizeConfigValue(appleTeamId),
+            keyId: normalizeConfigValue(appleKeyId),
+            privateKey: normalizeApplePrivateKey(applePrivateKey),
+            redirectUri: normalizeConfigValue(appleRedirectUri)
         }
+    }
+}
+
+export function getOAuthAvailability() {
+    const config = getOAuthConfig()
+
+    return {
+        google: Boolean(config.google.clientId && config.google.clientSecret),
+        apple: Boolean(
+            config.apple.clientId
+            && config.apple.teamId
+            && config.apple.keyId
+            && config.apple.privateKey
+        )
     }
 }
 

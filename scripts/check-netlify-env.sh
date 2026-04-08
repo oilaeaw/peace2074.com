@@ -45,6 +45,30 @@ if [ -f .env ]; then
     else
         echo "❌ AUTH_PASSCODE missing in .env"
     fi
+
+    if grep -q "APPLE_CLIENT_ID" .env; then
+        echo "✅ APPLE_CLIENT_ID found in .env"
+    else
+        echo "⚠️  APPLE_CLIENT_ID missing in .env"
+    fi
+
+    if grep -q "APPLE_TEAM_ID" .env; then
+        echo "✅ APPLE_TEAM_ID found in .env"
+    else
+        echo "⚠️  APPLE_TEAM_ID missing in .env"
+    fi
+
+    if grep -q "APPLE_KEY_ID" .env; then
+        echo "✅ APPLE_KEY_ID found in .env"
+    else
+        echo "⚠️  APPLE_KEY_ID missing in .env"
+    fi
+
+    if grep -q "APPLE_PRIVATE_KEY" .env; then
+        echo "✅ APPLE_PRIVATE_KEY found in .env"
+    else
+        echo "⚠️  APPLE_PRIVATE_KEY missing in .env"
+    fi
 else
     echo "❌ .env file not found"
 fi
@@ -82,6 +106,30 @@ if grep -q "DEEPSEEK_API_KEY" /tmp/netlify-env.txt; then
     echo "✅ DEEPSEEK_API_KEY is set in Netlify"
 else
     echo "ℹ️  DEEPSEEK_API_KEY not set (optional for AI features)"
+fi
+
+if grep -q "APPLE_CLIENT_ID" /tmp/netlify-env.txt; then
+    echo "✅ APPLE_CLIENT_ID is set in Netlify"
+else
+    echo "⚠️  APPLE_CLIENT_ID NOT set in Netlify"
+fi
+
+if grep -q "APPLE_TEAM_ID" /tmp/netlify-env.txt; then
+    echo "✅ APPLE_TEAM_ID is set in Netlify"
+else
+    echo "⚠️  APPLE_TEAM_ID NOT set in Netlify"
+fi
+
+if grep -q "APPLE_KEY_ID" /tmp/netlify-env.txt; then
+    echo "✅ APPLE_KEY_ID is set in Netlify"
+else
+    echo "⚠️  APPLE_KEY_ID NOT set in Netlify"
+fi
+
+if grep -q "APPLE_PRIVATE_KEY" /tmp/netlify-env.txt; then
+    echo "✅ APPLE_PRIVATE_KEY is set in Netlify"
+else
+    echo "⚠️  APPLE_PRIVATE_KEY NOT set in Netlify"
 fi
 
 rm /tmp/netlify-env.txt

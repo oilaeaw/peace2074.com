@@ -1,8 +1,10 @@
 import { defineEventHandler } from 'h3'
+import { getOAuthAvailability } from '../../utils/oauth'
 import { getUserStorageDiagnostics } from '../../utils/users'
 
 export default defineEventHandler(async () => {
     const config = useRuntimeConfig()
+    const oauth = getOAuthAvailability()
 
     const authSecret =
         (config as any).authSecret
@@ -26,6 +28,7 @@ export default defineEventHandler(async () => {
             hasAuthPasscode: Boolean(authPasscode),
             hasDatabaseUrl: Boolean(databaseUrl),
         },
+        oauth,
         users,
         timestamp: new Date().toISOString(),
     }

@@ -698,7 +698,8 @@
     "passkeyCreatePromptMessage": "استخدم بصمة الجهاز أو مدير كلمات المرور لتسجيل دخول أسرع في المرة القادمة.",
     "passkeyCreatePromptConfirm": "حفظ مفتاح المرور",
     "signInWithGitHub": "تسجيل الدخول عبر GitHub",
-    "signInWithNetlify": "تسجيل الدخول عبر Netlify Identity"
+    "signInWithNetlify": "تسجيل الدخول عبر Netlify Identity",
+    "appleSignInUnavailable": "تسجيل الدخول عبر Apple غير متاح حالياً."
   },
   "password_required": "كلمة المرور مطلوبة",
   "resend_verification_email": "إعادة إرسال رسالة التحقق",

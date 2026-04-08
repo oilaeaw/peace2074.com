@@ -644,6 +644,7 @@
     "passkeyCreatePromptConfirm": "Save passkey",
     "signInWithGitHub": "Sign in with GitHub",
     "signInWithNetlify": "Sign in with Netlify Identity",
+    "appleSignInUnavailable": "Sign in with Apple is currently unavailable.",
     "welcomeBack": "Welcome back",
     "forgotPassword": "Forgot password?",
     "resetPassword": "Reset Password",

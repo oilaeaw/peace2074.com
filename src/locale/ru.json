@@ -693,7 +693,8 @@
     "passkeyCreatePromptMessage": "Используйте биометрию устройства или менеджер паролей, чтобы входить быстрее в следующий раз.",
     "passkeyCreatePromptConfirm": "Сохранить passkey",
     "signInWithGitHub": "Войти через GitHub",
-    "signInWithNetlify": "Войти через Netlify Identity"
+    "signInWithNetlify": "Войти через Netlify Identity",
+    "appleSignInUnavailable": "Вход через Apple сейчас недоступен."
   },
   "password_required": "Требуется пароль",
   "resend_verification_email": "Отправить проверочное письмо повторно",

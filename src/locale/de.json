@@ -662,7 +662,8 @@
     "passkeyCreatePromptMessage": "Verwende die Biometrie deines Geräts oder deinen Passwortmanager für eine schnellere Anmeldung beim nächsten Mal.",
     "passkeyCreatePromptConfirm": "Passkey speichern",
     "signInWithGitHub": "Mit GitHub anmelden",
-    "signInWithNetlify": "Mit Netlify Identity anmelden"
+    "signInWithNetlify": "Mit Netlify Identity anmelden",
+    "appleSignInUnavailable": "Anmelden mit Apple ist derzeit nicht verfügbar."
   },
   "login": "Anmelden",
   "signup": "Registrieren",

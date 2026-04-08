@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { computed, ref } from 'vue'
+import { computed, onMounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
@@ -21,6 +21,13 @@ type ErrorWithMessage = {
   message?: string
 }
 
+type AuthHealthResponse = {
+  oauth?: {
+    google?: boolean
+    apple?: boolean
+  }
+}
+
 const { t } = useI18n()
 const router = useRouter()
 const route = useRoute()
@@ -36,6 +43,7 @@ const showForgotDialog = ref(false)
 const resetEmail = ref('')
 const sendingReset = ref(false)
 const passkeyLoading = ref(false)
+const appleConfigured = ref<boolean | null>(null)
 
 // Compute Nitro API base URL
 const env = (import.meta as ImportMeta & { env?: LoginViewEnv }).env || {}
@@ -91,6 +99,8 @@ const passkeysSupported = computed(() => {
   )
 })
 
+const appleAvailable = computed(() => appleConfigured.value !== false)
+
 function getErrorMessage(err: unknown) {
   if (err && typeof err === 'object' && 'message' in err) {
     return String((err as ErrorWithMessage).message || '')
@@ -116,6 +126,12 @@ async function loginRequest(base: string) {
       username: username.value,
       password: password.value,
     }),
+  })
+}
+
+async function authHealthRequest(base: string) {
+  return fetch(`${base}/auth/health`, {
+    credentials: 'include',
   })
 }
 
@@ -350,7 +366,61 @@ function getPostLoginPath() {
   return '/'
 }
 
+async function loadAuthAvailability() {
+  try {
+    let response: Response
+
+    try {
+      response = await authHealthRequest(NITRO_BASE)
+    } catch (err: unknown) {
+      if (
+        isCapacitorLikeRuntime() &&
+        NITRO_BASE !== DEFAULT_MOBILE_API_BASE &&
+        isNetworkLikeError(err)
+      ) {
+        response = await authHealthRequest(DEFAULT_MOBILE_API_BASE)
+      } else {
+        throw err
+      }
+    }
+
+    if (!response.ok) return
+
+    const data = (await response.json().catch(() => ({}))) as AuthHealthResponse
+
+    if (typeof data?.oauth?.apple === 'boolean') {
+      appleConfigured.value = data.oauth.apple
+    }
+  } catch (err: unknown) {
+    console.warn('Failed to load OAuth availability:', err)
+  }
+}
+
+async function handleOAuthErrorFromRoute() {
+  const oauthError = String(route.query.oauthError || '').trim()
+  if (oauthError !== 'apple-not-configured') return
+
+  $q.notify({
+    type: 'warning',
+    message: t('auth.appleSignInUnavailable'),
+    position: 'top',
+  })
+
+  const nextQuery = { ...route.query }
+  delete nextQuery.oauthError
+  await router.replace({ query: nextQuery })
+}
+
 function openSocialLogin(provider: 'google' | 'apple') {
+  if (provider === 'apple' && !appleAvailable.value) {
+    $q.notify({
+      type: 'warning',
+      message: t('auth.appleSignInUnavailable'),
+      position: 'top',
+    })
+    return
+  }
+
   // Redirect to OAuth endpoint
   const oauthUrl = `${NITRO_BASE}/auth/${provider}`
   window.location.href = oauthUrl
@@ -467,6 +537,11 @@ async function handleResetRequest() {
     sendingReset.value = false
   }
 }
+
+onMounted(() => {
+  void loadAuthAvailability()
+  void handleOAuthErrorFromRoute()
+})
 </script>
 
 <template>
@@ -613,12 +688,19 @@ async function handleResetRequest() {
                 color="dark"
                 class="full-width q-mt-sm"
                 size="md"
-                :disable="loading"
+                :disable="loading || !appleAvailable"
                 @click="handleAppleLogin"
               >
                 <q-icon name="fab fa-apple" size="20px" class="q-mr-sm" />
                 {{ t('auth.signInWithApple', 'Sign in with Apple') }}
               </q-btn>
+
+              <div
+                v-if="!appleAvailable"
+                class="text-caption text-negative q-mt-xs"
+              >
+                {{ t('auth.appleSignInUnavailable') }}
+              </div>
             </div>
 
             <div class="text-center q-mt-md">
