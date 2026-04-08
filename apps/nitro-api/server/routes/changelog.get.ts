@@ -1,6 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { readFile } from 'fs/promises'
-import { join } from 'path'
+import { join, dirname } from 'path'
+import { fileURLToPath } from 'url'
 
 interface Deploy {
     version: string
@@ -15,9 +16,26 @@ interface Deploy {
 
 export default defineEventHandler(async () => {
     try {
-        // Read CHANGELOG.md from project root
-        const changelogPath = join(process.cwd(), '../../CHANGELOG.md')
-        const content = await readFile(changelogPath, 'utf-8')
+        // Try multiple paths: bundled alongside the route file, then project root fallbacks
+        const candidates = [
+            join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'CHANGELOG.md'), // project root from server/routes/
+            join(dirname(fileURLToPath(import.meta.url)), 'CHANGELOG.md'),   // bundled next to this file
+            join(process.cwd(), 'CHANGELOG.md'),                             // cwd = nitro-api in some envs
+            join(process.cwd(), '..', '..', 'CHANGELOG.md'),                 // cwd = nitro-api, up 2
+        ]
+
+        let content = ''
+        for (const p of candidates) {
+            try {
+                content = await readFile(p, 'utf-8')
+                break
+            } catch { /* try next */ }
+        }
+
+        if (!content) {
+            console.error('CHANGELOG.md not found in any candidate path:', candidates)
+            return { ok: false, deploys: [] }
+        }
 
         const deploys: Deploy[] = []
         const versionRegex = /## (\d+\.\d+\.\d+) \((\d{4}-\d{2}-\d{2})\)/g

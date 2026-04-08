@@ -4,7 +4,7 @@
 
 [build]
   # Build frontend, then Nitro API, then rename entry point for Netlify detection
-  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && bash scripts/netlify-prisma-setup.sh && cp netlify/functions/server/main.mjs netlify/functions/server/server.mjs"
+  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && bash scripts/netlify-prisma-setup.sh && cp netlify/functions/server/main.mjs netlify/functions/server/server.mjs && cp CHANGELOG.md netlify/functions/server/CHANGELOG.md"
   publish = "dist"
   functions = "netlify/functions"
 
