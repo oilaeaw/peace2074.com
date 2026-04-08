@@ -32,14 +32,10 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         // Called when the user discards a scene session.
     }
 
-    func application(
-        _ app: UIApplication,
-        open url: URL,
-        options: [UIApplication.OpenURLOptionsKey: Any] = [:]
-    ) -> Bool {
-        return ApplicationDelegateProxy.shared.application(app, open: url, options: options)
-    }
-
+    // MARK: - Universal Links and Deep Links
+    // Note: URL opening is handled by SceneDelegate.scene(_:openURLContexts:)
+    // for iOS 13+ scene-based lifecycle
+    
     func application(
         _ application: UIApplication,
         continue userActivity: NSUserActivity,
