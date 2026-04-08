@@ -174,6 +174,15 @@ async function ask() {
       messages: [{ role: 'user', content }],
     })
 
+    // Check if response contains an error field (API error with 200 OK)
+    if (res?.error) {
+      const errorMsg =
+        res.error.message ||
+        res.error.data ||
+        (typeof res.error === 'string' ? res.error : 'API error')
+      throw new Error(errorMsg)
+    }
+
     // Extract text from various possible response structures
     let text =
       res?.message?.content ||

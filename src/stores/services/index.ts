@@ -158,7 +158,14 @@ export async function sendDeepSeekChat(payload: DeepSeekPayload) {
     });
     if (!res.ok) {
       const errPayload = await res.json().catch(() => ({}));
-      throw new Error(errPayload?.error || `DeepSeek request failed (${res.status})`);
+      // Extract message from error object to avoid "[object Object]"
+      const errorMessage =
+        errPayload?.error?.message ||
+        errPayload?.error?.data ||
+        errPayload?.statusMessage ||
+        (typeof errPayload?.error === 'string' ? errPayload.error : null) ||
+        `DeepSeek request failed (${res.status})`;
+      throw new Error(errorMessage);
     }
     return await res.json();
   } catch (e) {

@@ -17,7 +17,9 @@ const errorMessage = ref<string | null>(null)
 
 const systemPrompt = `You are the PEACE2074 AI assistant. Use the Quran corpus available in the app (chapters, ayat, metadata) and guide users to relevant sections such as /quran or specific surah cards. Keep replies concise (<= 120 words).`
 
-const canSubmit = computed(() => userPrompt.value.trim().length > 4 && !isLoading.value)
+const canSubmit = computed(
+  () => userPrompt.value.trim().length > 4 && !isLoading.value
+)
 const promptExamples = computed<string[]>(() => {
   const raw = tm('pages.home.ai.examples') as unknown
   if (Array.isArray(raw)) return raw as string[]
@@ -26,34 +28,51 @@ const promptExamples = computed<string[]>(() => {
 })
 
 async function askPeaceAI() {
-    if (!canSubmit.value) return
+  if (!canSubmit.value) return
 
-    isLoading.value = true
-    errorMessage.value = null
+  isLoading.value = true
+  errorMessage.value = null
 
-    try {
-        const response = await sendDeepSeekChat({
-            messages: [
-                { role: 'system', content: systemPrompt },
-                { role: 'user', content: userPrompt.value.trim() },
-            ],
-        })
+  try {
+    const response = await sendDeepSeekChat({
+      messages: [
+        { role: 'system', content: systemPrompt },
+        { role: 'user', content: userPrompt.value.trim() },
+      ],
+    })
 
-        aiResponse.value = response?.message?.content ?? t('pages.home.ai.noReply')
-    } catch (error: any) {
-        errorMessage.value = error?.message || t('pages.home.ai.requestFailed')
-    } finally {
-        isLoading.value = false
+    // Check for API error
+    if (response?.error) {
+      const errorMsg =
+        response.error.message ||
+        response.error.data ||
+        (typeof response.error === 'string' ? response.error : 'API error')
+      throw new Error(errorMsg)
     }
+
+    // Extract text content from response
+    const text =
+      response?.message?.content ||
+      response?.choices?.[0]?.message?.content ||
+      response?.raw?.[0]?.message?.content ||
+      (typeof response?.message === 'string' ? response.message : null)
+
+    aiResponse.value = text || t('pages.home.ai.noReply')
+  } catch (error: any) {
+    errorMessage.value =
+      error?.message || String(error) || t('pages.home.ai.requestFailed')
+  } finally {
+    isLoading.value = false
+  }
 }
 
 function setPromptExample() {
-    if (isLoading.value) return
+  if (isLoading.value) return
   const example = promptExamples.value[0]
   if (!example) return
-    userPrompt.value = example
-    aiResponse.value = null
-    errorMessage.value = null
+  userPrompt.value = example
+  aiResponse.value = null
+  errorMessage.value = null
 }
 </script>
 
@@ -74,7 +93,9 @@ function setPromptExample() {
           <RouterLink to="/holynames" class="tile">
             <div class="tile-inner">
               <span class="tile-title">{{ t('appShell.nav.holynames') }}</span>
-              <span class="tile-sub">{{ t('The 99 Holy Names of Allah') }}</span>
+              <span class="tile-sub">{{
+                t('The 99 Holy Names of Allah')
+              }}</span>
             </div>
           </RouterLink>
           <RouterLink to="/tasbeeh" class="tile">
@@ -98,7 +119,9 @@ function setPromptExample() {
         </div>
 
         <form class="ai-form" @submit.prevent="askPeaceAI">
-          <label class="sr-only" for="peace-ai-input">{{ t('pages.home.ai.title') }}</label>
+          <label class="sr-only" for="peace-ai-input">{{
+            t('pages.home.ai.title')
+          }}</label>
           <textarea
             id="peace-ai-input"
             v-model="userPrompt"
@@ -134,7 +157,11 @@ function setPromptExample() {
   place-items: center;
   text-align: center;
 }
-.logo { width: 96px; height: auto; margin-bottom: 0.6rem; }
+.logo {
+  width: 96px;
+  height: auto;
+  margin-bottom: 0.6rem;
+}
 .title {
   font-size: 2.2rem;
   margin: 0.2rem 0;
@@ -159,8 +186,13 @@ function setPromptExample() {
   border-radius: 12px;
   padding: 1rem;
 }
-.tile-title { font-weight: 600; }
-.tile-sub { color: #6c757d; font-size: 0.9rem; }
+.tile-title {
+  font-weight: 600;
+}
+.tile-sub {
+  color: #6c757d;
+  font-size: 0.9rem;
+}
 
 .ai-card {
   border: 1px solid #e4e6eb;

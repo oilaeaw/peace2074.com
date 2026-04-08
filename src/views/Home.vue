@@ -334,16 +334,40 @@ const askPeaceAI = async () => {
         { role: 'user', content: userPrompt.value },
       ],
     })
-    aiResponse.value = res
+
+    // Check for API error
+    if (res?.error) {
+      const errorMsg =
+        res.error.message ||
+        res.error.data ||
+        (typeof res.error === 'string' ? res.error : 'API error')
+      throw new Error(errorMsg)
+    }
+
+    // Extract text content from response
+    let text =
+      res?.message?.content ||
+      res?.choices?.[0]?.message?.content ||
+      res?.raw?.[0]?.message?.content ||
+      (typeof res?.message === 'string' ? res.message : '')
+
+    // Ensure text is always a string
+    if (!text) {
+      text = typeof res === 'string' ? res : JSON.stringify(res, null, 2)
+    } else if (typeof text !== 'string') {
+      text = JSON.stringify(text, null, 2)
+    }
+
+    aiResponse.value = text
     history.value.unshift({
       id: Date.now().toString(),
       prompt: userPrompt.value,
-      response: res,
+      response: text,
       ts: Date.now(),
     })
     userPrompt.value = ''
   } catch (err: any) {
-    errorMessage.value = err.message || 'AI request failed'
+    errorMessage.value = err.message || String(err) || 'AI request failed'
   } finally {
     isLoading.value = false
   }
