@@ -1,8 +1,7 @@
 import UIKit
-import Capacitor
+@preconcurrency import Capacitor
 
 @main
-@MainActor
 class AppDelegate: UIResponder, UIApplicationDelegate {
 
     func application(
