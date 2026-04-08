@@ -13,6 +13,14 @@ export interface User {
     email: string
     role: string
     permissions?: any[]
+    google_id?: string
+    apple_id?: string
+    first_name?: string
+    last_name?: string
+    avatar_url?: string
+    github_id?: string
+    tasbeeh?: any[]
+    bookmarks?: any[]
 }
 
 const DEFAULT_USERS: User[] = [
@@ -130,6 +138,8 @@ function toAppUser(user: any): User {
         bookmarks: Array.isArray(user.bookmarks) ? user.bookmarks : [],
         avatar_url: user.avatar_url || undefined,
         github_id: user.github_id || undefined,
+        google_id: user.google_id || undefined,
+        apple_id: user.apple_id || undefined,
         permissions: Array.isArray(user.permissions) ? user.permissions : [],
     }
 }
@@ -147,6 +157,8 @@ function normalizeUser(input: Partial<User>): User {
         bookmarks: Array.isArray(input.bookmarks) ? input.bookmarks : [],
         avatar_url: input.avatar_url,
         github_id: input.github_id,
+        google_id: input.google_id,
+        apple_id: input.apple_id,
         permissions: Array.isArray(input.permissions) ? input.permissions : [],
     }
 }
@@ -403,3 +415,104 @@ export async function getUserStorageDiagnostics(): Promise<{
         prismaReachable: false,
     }
 }
+
+export async function findOrCreateOAuthUser(oauthInfo: {
+    provider: 'google' | 'apple'
+    providerId: string
+    email: string
+    name: string
+    picture?: string
+}): Promise<User> {
+    const { provider, providerId, email, name, picture } = oauthInfo
+    const providerField = provider === 'google' ? 'google_id' : 'apple_id'
+
+    // Try to find existing user by provider ID
+    if (await isPrismaReady()) {
+        try {
+            // Check by provider ID first
+            const existingByProvider = await (prisma.user as any).findFirst({
+                where: { [providerField]: providerId }
+            })
+
+            if (existingByProvider) {
+                return toAppUser(existingByProvider)
+            }
+
+            // Check by email (link existing account)
+            const existingByEmail = await prisma.user.findUnique({
+                where: { email }
+            })
+
+            if (existingByEmail) {
+                // Link OAuth provider to existing account
+                const updated = await prisma.user.update({
+                    where: { id: existingByEmail.id },
+                    data: {
+                        [providerField]: providerId,
+                        avatar_url: picture || existingByEmail.avatar_url
+                    }
+                })
+                return toAppUser(updated)
+            }
+
+            // Create new user
+            const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7)
+            const newUser = await prisma.user.create({
+                data: {
+                    id: providerId,
+                    username,
+                    email,
+                    password: '', // OAuth users don't need password
+                    role: 'user',
+                    first_name: name,
+                    avatar_url: picture || null,
+                    [providerField]: providerId,
+                    permissions: []
+                }
+            })
+
+            return toAppUser(newUser)
+        } catch (error) {
+            console.error('[findOrCreateOAuthUser] Prisma error:', error)
+            markPrismaUnavailable(error)
+        }
+    }
+
+    // Fallback storage
+    const users = await loadFallbackUsers()
+
+    // Check by provider ID
+    let user = users.find((u: any) => u[providerField] === providerId)
+    if (user) return user
+
+    // Check by email
+    user = users.find((u) => u.email === email)
+    if (user) {
+        // Link OAuth provider
+        (user as any)[providerField] = providerId
+        if (picture && !user.avatar_url) {
+            user.avatar_url = picture
+        }
+        await saveFallbackUsers(users)
+        return user
+    }
+
+    // Create new user
+    const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7)
+    const newUser: User = {
+        id: providerId,
+        username,
+        email,
+        password: '', // OAuth users don't need password
+        role: 'user',
+        first_name: name,
+        avatar_url: picture,
+        [providerField]: providerId,
+        permissions: []
+    }
+
+    users.push(newUser)
+    await saveFallbackUsers(users)
+    return newUser
+}
+

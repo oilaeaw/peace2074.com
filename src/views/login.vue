@@ -351,25 +351,9 @@ function getPostLoginPath() {
 }
 
 function openSocialLogin(provider: 'google' | 'apple') {
-  // Social login is handled by Netlify Identity in this app.
-  const identity =
-    typeof window !== 'undefined'
-      ? (window as IdentityWindow).netlifyIdentity
-      : undefined
-
-  if (identity) {
-    identity.open('login')
-    return
-  }
-
-  $q.notify({
-    type: 'warning',
-    message:
-      provider === 'google'
-        ? 'Google login is currently unavailable.'
-        : 'Apple login is currently unavailable.',
-    position: 'top',
-  })
+  // Redirect to OAuth endpoint
+  const oauthUrl = `${NITRO_BASE}/auth/${provider}`
+  window.location.href = oauthUrl
 }
 
 function handleGoogleLogin() {

@@ -238,6 +238,46 @@ All UI copy must exist in ALL 6 locale files:
   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
   - `SMTP_FROM`, `CONTACT_TO`
 
+### OAuth Authentication (Google & Apple)
+
+**Google OAuth:**
+
+- `GOOGLE_CLIENT_ID` - Google Cloud Console OAuth 2.0 Client ID
+- `GOOGLE_CLIENT_SECRET` - Google Cloud Console OAuth 2.0 Client Secret
+- `GOOGLE_REDIRECT_URI` - Callback URL (default: `{PUBLIC_URL}/api/auth/google/callback`)
+
+**Apple OAuth:**
+
+- `APPLE_CLIENT_ID` - Apple Developer Services ID
+- `APPLE_TEAM_ID` - Apple Team ID (10-character string)
+- `APPLE_KEY_ID` - Apple Sign In key ID
+- `APPLE_PRIVATE_KEY` - Apple Sign In private key (.p8 file contents)
+- `APPLE_REDIRECT_URI` - Callback URL (default: `{PUBLIC_URL}/api/auth/apple/callback`)
+
+**General:**
+
+- `PUBLIC_URL` - Your app's public URL (e.g., `https://peace2074.com`)
+
+#### Setting up Google OAuth:
+
+1. Go to [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select existing
+3. Enable "Google+ API"
+4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
+5. Add authorized redirect URIs: `https://peace2074.com/api/auth/google/callback`
+6. Copy Client ID and Client Secret
+7. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Netlify env vars
+
+#### Setting up Apple Sign In:
+
+1. Go to [Apple Developer](https://developer.apple.com/)
+2. Create a Services ID (bundle identifier format)
+3. Enable "Sign In with Apple"
+4. Configure domains and redirect URLs
+5. Create a Sign In with Apple key
+6. Download the .p8 key file
+7. Set `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY` (full .p8 contents) in Netlify env vars
+
 ### Security Rules
 
 - **NEVER** commit secrets to `.env` file
