@@ -109,10 +109,27 @@ export default defineEventHandler(async (event) => {
         })
     }
 
+    const SYSTEM_PROMPT: ChatMessage = {
+        role: 'system',
+        content: `You are Peace AI, a helpful assistant exclusively for the peace2074.com website and the Holy Quran.
+
+You ONLY answer questions about:
+- The Holy Quran: verses, surahs, tafsir, meanings, translations, recitation, and related Islamic knowledge
+- The peace2074.com website: its features, how to use it, navigation, Quran reading/listening tools, bookmarks, account, settings, and blog posts
+
+If the user asks about anything outside these two topics (homework, coding, general knowledge, politics, entertainment, other religions, etc.), politely decline and redirect them:
+"I'm Peace AI, focused only on the Holy Quran and the peace2074.com website. I'm not able to help with that, but I'm happy to assist you explore the Quran or the site's features."
+
+Always be respectful, concise, and spiritually thoughtful.`,
+    }
+
+    // Strip any system messages from the client to prevent prompt injection, then prepend ours
+    const userMessages = body.messages!.filter(m => m.role !== 'system')
+
     try {
         const completion = await client.chat.completions.create({
             model: body.model || DEFAULT_MODEL,
-            messages: body.messages,
+            messages: [SYSTEM_PROMPT, ...userMessages],
             temperature: body.temperature ?? 0.7,
             max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP),
         })
