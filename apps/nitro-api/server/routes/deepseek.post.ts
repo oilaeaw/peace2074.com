@@ -1,6 +1,7 @@
-import { createError, defineEventHandler, readBody, setResponseStatus } from 'h3'
+import { createError, defineEventHandler, getHeader, readBody, setResponseStatus } from 'h3'
 import OpenAI from 'openai'
 import { applyCors } from '../utils/cors'
+import { readSession } from '../utils/auth'
 
 type ChatMessage = {
     role: 'system' | 'user' | 'assistant'
@@ -15,9 +16,61 @@ type DeepSeekRequestBody = {
 }
 
 const DEFAULT_MODEL = 'deepseek-chat'
+const MAX_TOKENS_CAP = 800
+const RATE_LIMIT_MAX = 15       // requests per window per IP
+const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
+
+// In-memory rate limit store (best-effort; resets on cold start)
+const ipHits = new Map<string, { count: number; windowStart: number }>()
+
+function getClientIp(event: ReturnType<typeof defineEventHandler> extends (e: infer E) => any ? E : never): string {
+    const forwarded = getHeader(event as any, 'x-forwarded-for') || ''
+    return (forwarded.split(',')[0] || 'unknown').trim().toLowerCase()
+}
+
+function isRateLimited(ip: string): boolean {
+    const now = Date.now()
+    const entry = ipHits.get(ip)
+    if (!entry || now - entry.windowStart > RATE_LIMIT_WINDOW_MS) {
+        ipHits.set(ip, { count: 1, windowStart: now })
+        return false
+    }
+    entry.count++
+    return entry.count > RATE_LIMIT_MAX
+}
+
+function getBlacklist(envVar: string): Set<string> {
+    const raw = process.env[envVar] || ''
+    return new Set(raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean))
+}
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
+
+    const clientIp = getClientIp(event as any)
+
+    // IP blacklist check
+    const ipBlacklist = getBlacklist('DEEPSEEK_IP_BLACKLIST')
+    if (ipBlacklist.has(clientIp)) {
+        throw createError({ statusCode: 403, statusMessage: 'Access denied.' })
+    }
+
+    // Session / user blacklist check
+    const session = readSession(event as any)
+    const userBlacklist = getBlacklist('DEEPSEEK_USER_BLACKLIST')
+    if (session?.id && userBlacklist.has(session.id.toLowerCase())) {
+        throw createError({ statusCode: 403, statusMessage: 'Access denied.' })
+    }
+
+    // Require login if env flag set
+    if (process.env.DEEPSEEK_REQUIRE_AUTH === 'true' && !session) {
+        throw createError({ statusCode: 401, statusMessage: 'Login required to use Ask AI.' })
+    }
+
+    // Rate limit by IP
+    if (isRateLimited(clientIp)) {
+        throw createError({ statusCode: 429, statusMessage: `Too many requests. Limit is ${RATE_LIMIT_MAX} per hour.` })
+    }
     const config = useRuntimeConfig()
 
     const apiKey = (config as any).deepseekApiKey
@@ -61,7 +114,7 @@ export default defineEventHandler(async (event) => {
             model: body.model || DEFAULT_MODEL,
             messages: body.messages,
             temperature: body.temperature ?? 0.7,
-            max_tokens: body.max_tokens,
+            max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP),
         })
 
         const message = completion.choices?.[0]?.message
