@@ -19,9 +19,7 @@ export default defineEventHandler(async (event) => {
             path: '/'
         })
 
-        const url = await apple.createAuthorizationURL(state, {
-            scopes: ['name', 'email']
-        })
+        const url = await apple.createAuthorizationURL(state, ['name', 'email'])
 
         return sendRedirect(event, url.toString())
     } catch (error: any) {

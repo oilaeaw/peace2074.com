@@ -142,7 +142,7 @@ PUBLIC_URL=https://peace2074.com
 1. Click "+" to create new identifier
 2. Select "Services IDs" → Continue
 3. Description: "Peace2074 Web Auth"
-4. Identifier: `com.peace2074.auth` (must be different from App ID)
+4. Identifier: `com.peace2074.web` (must be different from App ID)
 5. Check "Sign In with Apple"
 6. Click "Configure":
    - Primary App ID: Select your App ID from Step 2
@@ -173,7 +173,7 @@ PUBLIC_URL=https://peace2074.com
 
 ```bash
 # .env (Development)
-APPLE_CLIENT_ID=com.peace2074.auth
+APPLE_CLIENT_ID=com.peace2074.web
 APPLE_TEAM_ID=ABCDE12345
 APPLE_KEY_ID=XYZ9876543
 APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----
@@ -184,7 +184,7 @@ APPLE_REDIRECT_URI=http://localhost:3000/api/auth/apple/callback
 
 # NO DEVELOPMENT JUST PRODUCTION KEYS AND REDIRECTS!!!!!!!!!!!!!!!!!!!!!!!S
 # Netlify (Production)
-APPLE_CLIENT_ID=com.peace2074.auth
+APPLE_CLIENT_ID=com.peace2074.web
 APPLE_TEAM_ID=ABCDE12345
 APPLE_KEY_ID=XYZ9876543
 APPLE_PRIVATE_KEY="-----BEGIN PRIVATE KEY-----\nMIGTAgEA...-----END PRIVATE KEY-----"
