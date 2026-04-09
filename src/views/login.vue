@@ -99,7 +99,7 @@ const passkeysSupported = computed(() => {
   )
 })
 
-const appleAvailable = computed(() => appleConfigured.value !== false)
+const appleAvailable = computed(() => appleConfigured.value === true)
 
 function getErrorMessage(err: unknown) {
   if (err && typeof err === 'object' && 'message' in err) {
