@@ -4,6 +4,7 @@ import { CaslActionE, CaslSubjectE } from '@shared/types'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 import { useQuasar } from 'quasar'
 
+const isClient = typeof window !== 'undefined'
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
