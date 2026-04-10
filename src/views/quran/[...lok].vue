@@ -4,6 +4,7 @@ import { useQuasar } from 'quasar';
 import { useBookmarksStore } from "@/stores/bookmarks.pinia";
 import * as ThreeBackground from '@/components/common/ThreeBackground.vue';
 
+const isClient = typeof window !== 'undefined';
 const $q = useQuasar();
 const q2p = useQ2P();
 const { t } = useI18n();
