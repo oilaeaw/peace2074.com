@@ -1,5 +1,5 @@
 import { Google, Apple } from 'arctic'
-import { createError } from 'h3'
+import { createError, getHeader, setResponseHeader, type H3Event } from 'h3'
 
 interface OAuthConfig {
     google: {
@@ -154,4 +154,31 @@ export interface OAuthUserInfo {
     email: string
     name: string
     picture?: string
+}
+
+function isCapacitorLikeOrigin(origin: string) {
+    return origin.startsWith('capacitor:') || origin.startsWith('ionic:') || origin.startsWith('app:')
+}
+
+export function getOAuthCookieOptions(event: H3Event) {
+    const origin = String(getHeader(event, 'origin') || '').toLowerCase()
+    const referer = String(getHeader(event, 'referer') || '').toLowerCase()
+    const useCrossSiteCookie =
+        process.env.NODE_ENV === 'production'
+        || isCapacitorLikeOrigin(origin)
+        || isCapacitorLikeOrigin(referer)
+
+    return {
+        httpOnly: true,
+        secure: useCrossSiteCookie,
+        sameSite: (useCrossSiteCookie ? 'none' : 'lax') as 'none' | 'lax',
+        maxAge: 60 * 10,
+        path: '/'
+    }
+}
+
+export function setOAuthNoStoreHeaders(event: H3Event) {
+    setResponseHeader(event, 'Cache-Control', 'no-store, no-cache, max-age=0, must-revalidate')
+    setResponseHeader(event, 'Pragma', 'no-cache')
+    setResponseHeader(event, 'Expires', '0')
 }

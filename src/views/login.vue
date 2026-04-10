@@ -398,13 +398,21 @@ async function loadAuthAvailability() {
 
 async function handleOAuthErrorFromRoute() {
   const oauthError = String(route.query.oauthError || '').trim()
-  if (oauthError !== 'apple-not-configured') return
+  if (!oauthError) return
 
-  $q.notify({
-    type: 'warning',
-    message: t('auth.appleSignInUnavailable'),
-    position: 'top',
-  })
+  if (oauthError === 'apple-not-configured') {
+    $q.notify({
+      type: 'warning',
+      message: t('auth.appleSignInUnavailable'),
+      position: 'top',
+    })
+  } else {
+    $q.notify({
+      type: 'negative',
+      message: t('auth.loginError'),
+      position: 'top',
+    })
+  }
 
   const nextQuery = { ...route.query }
   delete nextQuery.oauthError

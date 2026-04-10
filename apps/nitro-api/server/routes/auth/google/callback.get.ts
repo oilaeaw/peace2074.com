@@ -1,6 +1,6 @@
 import { defineEventHandler, getQuery, getCookie, deleteCookie, sendRedirect, createError } from 'h3'
 import { OAuth2RequestError } from 'arctic'
-import { getGoogleOAuth, type OAuthUserInfo } from '../../../utils/oauth'
+import { getGoogleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders, type OAuthUserInfo } from '../../../utils/oauth'
 import { createSession } from '../../../utils/auth'
 import { findUserByEmail, findOrCreateOAuthUser } from '../../../utils/users'
 import { applyCors } from '../../../utils/cors'
@@ -15,26 +15,34 @@ interface GoogleUserResponse {
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
+    setOAuthNoStoreHeaders(event)
 
     try {
         const query = getQuery(event)
         const code = query.code as string
         const state = query.state as string
+        const redirectUrl = process.env.PUBLIC_URL || 'https://peace2074.com'
+        const cookieOptions = getOAuthCookieOptions(event)
 
         const storedState = getCookie(event, 'google_oauth_state')
         const storedCodeVerifier = getCookie(event, 'google_code_verifier')
 
         // Validate state for CSRF protection
         if (!code || !state || !storedState || state !== storedState || !storedCodeVerifier) {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Invalid OAuth state'
+            console.warn('[auth/google/callback] Invalid OAuth state', {
+                hasCode: Boolean(code),
+                hasState: Boolean(state),
+                hasStoredState: Boolean(storedState),
+                hasStoredCodeVerifier: Boolean(storedCodeVerifier),
+                stateMatches: Boolean(state && storedState && state === storedState),
             })
+
+            return sendRedirect(event, `${redirectUrl}/login?oauthError=oauth-state-invalid`)
         }
 
         // Clear the auth cookies
-        deleteCookie(event, 'google_oauth_state')
-        deleteCookie(event, 'google_code_verifier')
+        deleteCookie(event, 'google_oauth_state', cookieOptions)
+        deleteCookie(event, 'google_code_verifier', cookieOptions)
 
         const google = getGoogleOAuth()
 
@@ -83,7 +91,6 @@ export default defineEventHandler(async (event) => {
         })
 
         // Redirect to app
-        const redirectUrl = process.env.PUBLIC_URL || 'https://peace2074.com'
         return sendRedirect(event, `${redirectUrl}/`)
 
     } catch (error: any) {

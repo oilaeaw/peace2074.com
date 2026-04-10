@@ -1,6 +1,6 @@
 import { defineEventHandler, getQuery, getCookie, deleteCookie, sendRedirect, createError } from 'h3'
 import { OAuth2RequestError, decodeIdToken } from 'arctic'
-import { getAppleOAuth, type OAuthUserInfo } from '../../../utils/oauth'
+import { getAppleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders, type OAuthUserInfo } from '../../../utils/oauth'
 import { createSession } from '../../../utils/auth'
 import { findOrCreateOAuthUser } from '../../../utils/users'
 import { applyCors } from '../../../utils/cors'
@@ -13,24 +13,31 @@ interface AppleIdTokenClaims {
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
+    setOAuthNoStoreHeaders(event)
 
     try {
         const query = getQuery(event)
         const code = query.code as string
         const state = query.state as string
+        const redirectUrl = process.env.PUBLIC_URL || 'https://peace2074.com'
+        const cookieOptions = getOAuthCookieOptions(event)
 
         const storedState = getCookie(event, 'apple_oauth_state')
 
         // Validate state for CSRF protection
         if (!code || !state || !storedState || state !== storedState) {
-            throw createError({
-                statusCode: 400,
-                statusMessage: 'Invalid OAuth state'
+            console.warn('[auth/apple/callback] Invalid OAuth state', {
+                hasCode: Boolean(code),
+                hasState: Boolean(state),
+                hasStoredState: Boolean(storedState),
+                stateMatches: Boolean(state && storedState && state === storedState),
             })
+
+            return sendRedirect(event, `${redirectUrl}/login?oauthError=oauth-state-invalid`)
         }
 
         // Clear the state cookie
-        deleteCookie(event, 'apple_oauth_state')
+        deleteCookie(event, 'apple_oauth_state', cookieOptions)
 
         const apple = getAppleOAuth()
 
@@ -69,7 +76,6 @@ export default defineEventHandler(async (event) => {
         })
 
         // Redirect to app
-        const redirectUrl = process.env.PUBLIC_URL || 'https://peace2074.com'
         return sendRedirect(event, `${redirectUrl}/`)
 
     } catch (error: any) {

@@ -1,23 +1,18 @@
 import { createError, defineEventHandler, getRequestHeader, sendRedirect, setCookie } from 'h3'
 import { generateState } from 'arctic'
-import { getAppleOAuth } from '../../utils/oauth'
+import { getAppleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders } from '../../utils/oauth'
 import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
+    setOAuthNoStoreHeaders(event)
 
     try {
         const apple = getAppleOAuth()
         const state = generateState()
 
         // Store state in cookie for CSRF protection
-        setCookie(event, 'apple_oauth_state', state, {
-            httpOnly: true,
-            secure: process.env.NODE_ENV === 'production',
-            sameSite: 'lax',
-            maxAge: 60 * 10, // 10 minutes
-            path: '/'
-        })
+        setCookie(event, 'apple_oauth_state', state, getOAuthCookieOptions(event))
 
         const url = await apple.createAuthorizationURL(state, ['name', 'email'])
 
