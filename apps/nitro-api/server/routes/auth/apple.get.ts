@@ -1,6 +1,11 @@
 import { createError, defineEventHandler, getRequestHeader, sendRedirect, setCookie } from 'h3'
 import { generateState } from 'arctic'
-import { getAppleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders } from '../../utils/oauth'
+import {
+    getAppleOAuth,
+    getCanonicalOAuthStartUrl,
+    getOAuthCookieOptions,
+    setOAuthNoStoreHeaders,
+} from '../../utils/oauth'
 import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler(async (event) => {
@@ -8,6 +13,11 @@ export default defineEventHandler(async (event) => {
     setOAuthNoStoreHeaders(event)
 
     try {
+        const canonicalUrl = getCanonicalOAuthStartUrl(event, 'apple')
+        if (canonicalUrl) {
+            return sendRedirect(event, canonicalUrl)
+        }
+
         const apple = getAppleOAuth()
         const state = generateState()
 

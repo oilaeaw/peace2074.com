@@ -1,6 +1,11 @@
 import { defineEventHandler, sendRedirect, setCookie } from 'h3'
 import { generateState, generateCodeVerifier } from 'arctic'
-import { getGoogleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders } from '../../utils/oauth'
+import {
+    getCanonicalOAuthStartUrl,
+    getGoogleOAuth,
+    getOAuthCookieOptions,
+    setOAuthNoStoreHeaders,
+} from '../../utils/oauth'
 import { applyCors } from '../../utils/cors'
 
 export default defineEventHandler(async (event) => {
@@ -8,6 +13,11 @@ export default defineEventHandler(async (event) => {
     setOAuthNoStoreHeaders(event)
 
     try {
+        const canonicalUrl = getCanonicalOAuthStartUrl(event, 'google')
+        if (canonicalUrl) {
+            return sendRedirect(event, canonicalUrl)
+        }
+
         const google = getGoogleOAuth()
         const state = generateState()
         const codeVerifier = generateCodeVerifier()

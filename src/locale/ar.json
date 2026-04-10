@@ -699,7 +699,10 @@
     "passkeyCreatePromptConfirm": "حفظ مفتاح المرور",
     "signInWithGitHub": "تسجيل الدخول عبر GitHub",
     "signInWithNetlify": "تسجيل الدخول عبر Netlify Identity",
-    "appleSignInUnavailable": "تسجيل الدخول عبر Apple غير متاح حالياً."
+    "appleSignInUnavailable": "تسجيل الدخول عبر Apple غير متاح حالياً.",
+    "socialSignInExpired": "انتهت مهلة تسجيل الدخول أو تمت مقاطعته. حاول مرة أخرى.",
+    "googleSignInExpired": "انتهت مهلة تسجيل الدخول عبر Google أو تمت مقاطعته. حاول مرة أخرى.",
+    "appleSignInExpired": "انتهت مهلة تسجيل الدخول عبر Apple أو تمت مقاطعته. حاول مرة أخرى."
   },
   "password_required": "كلمة المرور مطلوبة",
   "resend_verification_email": "إعادة إرسال رسالة التحقق",

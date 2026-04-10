@@ -33,7 +33,7 @@ export default defineEventHandler(async (event) => {
                 stateMatches: Boolean(state && storedState && state === storedState),
             })
 
-            return sendRedirect(event, `${redirectUrl}/login?oauthError=oauth-state-invalid`)
+            return sendRedirect(event, `${redirectUrl}/login?oauthError=apple-state-invalid`)
         }
 
         // Clear the state cookie

@@ -406,6 +406,24 @@ async function handleOAuthErrorFromRoute() {
       message: t('auth.appleSignInUnavailable'),
       position: 'top',
     })
+  } else if (oauthError === 'google-state-invalid') {
+    $q.notify({
+      type: 'negative',
+      message: t('auth.googleSignInExpired'),
+      position: 'top',
+    })
+  } else if (oauthError === 'apple-state-invalid') {
+    $q.notify({
+      type: 'negative',
+      message: t('auth.appleSignInExpired'),
+      position: 'top',
+    })
+  } else if (oauthError === 'oauth-state-invalid') {
+    $q.notify({
+      type: 'negative',
+      message: t('auth.socialSignInExpired'),
+      position: 'top',
+    })
   } else {
     $q.notify({
       type: 'negative',

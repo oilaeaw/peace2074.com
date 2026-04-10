@@ -663,7 +663,10 @@
         "passkeyCreatePromptConfirm": "שמור מפתח גישה",
         "signInWithGitHub": "התחבר עם GitHub",
         "signInWithNetlify": "התחבר עם Netlify Identity",
-        "appleSignInUnavailable": "התחברות עם Apple אינה זמינה כעת."
+        "appleSignInUnavailable": "התחברות עם Apple אינה זמינה כעת.",
+        "socialSignInExpired": "תהליך ההתחברות פג תוקף או הופרע. נסו שוב.",
+        "googleSignInExpired": "ההתחברות עם Google פגה תוקף או הופרעה. נסו שוב.",
+        "appleSignInExpired": "ההתחברות עם Apple פגה תוקף או הופרעה. נסו שוב."
     },
     "login": "התחברות",
     "signup": "הרשמה",

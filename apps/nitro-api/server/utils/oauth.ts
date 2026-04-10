@@ -1,5 +1,11 @@
 import { Google, Apple } from 'arctic'
-import { createError, getHeader, setResponseHeader, type H3Event } from 'h3'
+import {
+    createError,
+    getHeader,
+    getRequestURL,
+    setResponseHeader,
+    type H3Event,
+} from 'h3'
 
 interface OAuthConfig {
     google: {
@@ -158,6 +164,41 @@ export interface OAuthUserInfo {
 
 function isCapacitorLikeOrigin(origin: string) {
     return origin.startsWith('capacitor:') || origin.startsWith('ionic:') || origin.startsWith('app:')
+}
+
+function getOAuthCallbackOrigin(provider: 'google' | 'apple') {
+    const config = getOAuthConfig()
+    const redirectUri = provider === 'google'
+        ? config.google.redirectUri
+        : config.apple.redirectUri
+
+    try {
+        return new URL(redirectUri).origin
+    } catch {
+        return null
+    }
+}
+
+export function getCanonicalOAuthStartUrl(
+    event: H3Event,
+    provider: 'google' | 'apple'
+) {
+    const callbackOrigin = getOAuthCallbackOrigin(provider)
+    if (!callbackOrigin) return null
+
+    const requestUrl = getRequestURL(event, {
+        xForwardedHost: true,
+        xForwardedProto: true,
+    })
+
+    if (requestUrl.origin === callbackOrigin) {
+        return null
+    }
+
+    return new URL(
+        `${requestUrl.pathname}${requestUrl.search}`,
+        callbackOrigin
+    ).toString()
 }
 
 export function getOAuthCookieOptions(event: H3Event) {

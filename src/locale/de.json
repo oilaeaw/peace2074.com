@@ -663,7 +663,10 @@
     "passkeyCreatePromptConfirm": "Passkey speichern",
     "signInWithGitHub": "Mit GitHub anmelden",
     "signInWithNetlify": "Mit Netlify Identity anmelden",
-    "appleSignInUnavailable": "Anmelden mit Apple ist derzeit nicht verfügbar."
+    "appleSignInUnavailable": "Anmelden mit Apple ist derzeit nicht verfügbar.",
+    "socialSignInExpired": "Die Anmeldung ist abgelaufen oder wurde unterbrochen. Bitte versuchen Sie es erneut.",
+    "googleSignInExpired": "Die Google-Anmeldung ist abgelaufen oder wurde unterbrochen. Bitte versuchen Sie es erneut.",
+    "appleSignInExpired": "Die Apple-Anmeldung ist abgelaufen oder wurde unterbrochen. Bitte versuchen Sie es erneut."
   },
   "login": "Anmelden",
   "signup": "Registrieren",
