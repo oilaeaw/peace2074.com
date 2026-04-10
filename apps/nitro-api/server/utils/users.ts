@@ -23,6 +23,74 @@ export interface User {
     bookmarks?: any[]
 }
 
+export interface UserPermission {
+    action: string
+    subject: string
+}
+
+const DEFAULT_USER_PERMISSIONS: UserPermission[] = [
+    { action: 'read', subject: 'category' },
+    { action: 'read', subject: 'post' },
+    { action: 'create', subject: 'user' },
+    { action: 'read', subject: 'user' },
+    { action: 'update', subject: 'user' },
+    { action: 'read', subject: 'chat' },
+]
+
+const ADMIN_EXTRA_PERMISSIONS: UserPermission[] = [
+    { action: 'manage', subject: 'admin' },
+    { action: 'manage', subject: 'chat' },
+]
+
+const EDITOR_EXTRA_PERMISSIONS: UserPermission[] = [
+    { action: 'update', subject: 'post' },
+]
+
+function clonePermissions(permissions: UserPermission[]) {
+    return permissions.map((permission) => ({ ...permission }))
+}
+
+function isPermissionEntry(permission: unknown): permission is UserPermission {
+    if (!permission || typeof permission !== 'object') return false
+
+    const candidate = permission as UserPermission
+    return typeof candidate.action === 'string' && typeof candidate.subject === 'string'
+}
+
+function dedupePermissions(permissions: UserPermission[]) {
+    const seen = new Set<string>()
+
+    return permissions.filter((permission) => {
+        const key = `${permission.action}:${permission.subject}`
+        if (seen.has(key)) return false
+        seen.add(key)
+        return true
+    })
+}
+
+export function getRolePermissions(role: string = 'user') {
+    const permissions = clonePermissions(DEFAULT_USER_PERMISSIONS)
+
+    if (role === 'admin') {
+        permissions.push(...clonePermissions(ADMIN_EXTRA_PERMISSIONS))
+    } else if (role === 'editor') {
+        permissions.push(...clonePermissions(EDITOR_EXTRA_PERMISSIONS))
+    }
+
+    return dedupePermissions(permissions)
+}
+
+export function resolveUserPermissions(user?: Pick<User, 'role' | 'permissions'> | null) {
+    const storedPermissions = Array.isArray(user?.permissions)
+        ? user.permissions.filter(isPermissionEntry).map((permission) => ({ ...permission }))
+        : []
+
+    return dedupePermissions([
+        ...getRolePermissions(user?.role || 'user'),
+        ...storedPermissions,
+    ])
+}
+
 const DEFAULT_USERS: User[] = [
     {
         id: 'waelio',
@@ -30,16 +98,7 @@ const DEFAULT_USERS: User[] = [
         password: 'gLHVHtMcSY8Sum+H',
         email: 'wael@peace2074.com',
         role: 'admin',
-        permissions: [
-            { action: 'read', subject: 'category' },
-            { action: 'read', subject: 'post' },
-            { action: 'create', subject: 'user' },
-            { action: 'read', subject: 'user' },
-            { action: 'update', subject: 'user' },
-            { action: 'manage', subject: 'admin' },
-            { action: 'manage', subject: 'chat' },
-            { action: 'read', subject: 'chat' },
-        ]
+        permissions: getRolePermissions('admin')
     }
 ]
 
@@ -140,7 +199,10 @@ function toAppUser(user: any): User {
         github_id: user.github_id || undefined,
         google_id: user.google_id || undefined,
         apple_id: user.apple_id || undefined,
-        permissions: Array.isArray(user.permissions) ? user.permissions : [],
+        permissions: resolveUserPermissions({
+            role: user.role,
+            permissions: Array.isArray(user.permissions) ? user.permissions : [],
+        }),
     }
 }
 
@@ -159,7 +221,10 @@ function normalizeUser(input: Partial<User>): User {
         github_id: input.github_id,
         google_id: input.google_id,
         apple_id: input.apple_id,
-        permissions: Array.isArray(input.permissions) ? input.permissions : [],
+        permissions: resolveUserPermissions({
+            role: String(input.role || 'user'),
+            permissions: Array.isArray(input.permissions) ? input.permissions : [],
+        }),
     }
 }
 
@@ -196,7 +261,7 @@ async function upsertByIdentity(user: User) {
         bookmarks: user.bookmarks || [],
         avatar_url: user.avatar_url || null,
         github_id: user.github_id || null,
-        permissions: user.permissions || [],
+        permissions: resolveUserPermissions(user),
     }
 
     if (existing) {
@@ -467,7 +532,7 @@ export async function findOrCreateOAuthUser(oauthInfo: {
                     first_name: name,
                     avatar_url: picture || null,
                     [providerField]: providerId,
-                    permissions: []
+                    permissions: getRolePermissions('user')
                 }
             })
 
@@ -508,7 +573,7 @@ export async function findOrCreateOAuthUser(oauthInfo: {
         first_name: name,
         avatar_url: picture,
         [providerField]: providerId,
-        permissions: []
+        permissions: getRolePermissions('user')
     }
 
     users.push(newUser)

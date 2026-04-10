@@ -70,7 +70,7 @@ export default defineEventHandler(async (event) => {
 
         // Redirect to app
         const redirectUrl = process.env.PUBLIC_URL || 'https://peace2074.com'
-        return sendRedirect(event, `${redirectUrl}/dashboard`)
+        return sendRedirect(event, `${redirectUrl}/`)
 
     } catch (error: any) {
         console.error('[auth/apple/callback] OAuth error:', error)
