@@ -1,6 +1,10 @@
 // Use local storage shim to avoid GunDB auto-initialization from @waelio/ustore
-import type { Ref } from 'vue'
-import { localStorage, sessionStorage, memoryStorage } from '@/utils/storage-shim'
+import { getCurrentScope, onScopeDispose, ref, watch, type Ref } from 'vue'
+import {
+    localStorage as localStorageDriver,
+    sessionStorage as sessionStorageDriver,
+    memoryStorage as memoryStorageDriver,
+} from '@/utils/storage-shim'
 import { _encrypt, _decrypt } from 'waelio-utils'
 
 /**
@@ -17,6 +21,23 @@ interface StoreOptions {
     namespace?: string
 }
 
+type StorageKind = 'local' | 'session' | 'memory'
+
+type StorageAdapter = Pick<
+    typeof localStorageDriver,
+    'get' | 'set' | 'remove' | 'has' | 'clear'
+>
+
+type StoredValue = Parameters<StorageAdapter['set']>[1]
+
+interface StorageController {
+    set: <T extends StoredValue>(key: string, value: T, options?: StoreOptions) => void
+    get: <T>(key: string, fallback?: T, options?: StoreOptions) => T | undefined
+    remove: (key: string, namespace?: string) => void
+    has: (key: string, namespace?: string) => boolean
+    clear: (namespace?: string) => void
+}
+
 /**
  * Namespace a key to avoid collisions
  */
@@ -24,158 +45,146 @@ function ns(key: string, namespace = NAMESPACE_PREFIX): string {
     return `${namespace}:${key}`
 }
 
+function getStorageLabel(kind: StorageKind): string {
+    return kind === 'local'
+        ? 'localStorage'
+        : kind === 'session'
+            ? 'sessionStorage'
+            : 'memoryStorage'
+}
+
+function clearBrowserNamespace(kind: Exclude<StorageKind, 'memory'>, namespace: string) {
+    if (typeof window === 'undefined') {
+        return
+    }
+
+    const target = kind === 'local' ? window.localStorage : window.sessionStorage
+    const prefix = `${namespace}:`
+    const keysToRemove: string[] = []
+
+    for (let index = 0; index < target.length; index += 1) {
+        const key = target.key(index)
+
+        if (typeof key === 'string' && key.startsWith(prefix)) {
+            keysToRemove.push(key)
+        }
+    }
+
+    for (const key of keysToRemove) {
+        target.removeItem(key)
+    }
+}
+
+function encryptValue<T extends StoredValue>(
+    value: T,
+    key: string,
+    options: StoreOptions,
+    label: string,
+): T | string {
+    const { encrypt = false, salt } = options
+
+    if (!encrypt || !salt) {
+        return value
+    }
+
+    try {
+        const encrypted = _encrypt(value, salt)
+        return `${ENC_PREFIX}${encrypted}`
+    }
+    catch (err) {
+        console.warn(`[${label}] Encryption failed for "${key}"`, err)
+        return value
+    }
+}
+
+function decryptValue<T>(
+    raw: unknown,
+    key: string,
+    fallback: T | undefined,
+    options: StoreOptions,
+    label: string,
+): T | undefined {
+    const { encrypt = false, salt } = options
+
+    if (raw === null || raw === undefined) {
+        return fallback
+    }
+
+    if (!encrypt || !salt || typeof raw !== 'string' || !raw.startsWith(ENC_PREFIX)) {
+        return raw as T
+    }
+
+    try {
+        return _decrypt(raw.slice(ENC_PREFIX.length), salt) as T
+    }
+    catch (err) {
+        console.warn(`[${label}] Decryption failed for "${key}"`, err)
+        return fallback
+    }
+}
+
+function createStorageController(kind: StorageKind, storage: StorageAdapter): StorageController {
+    const label = getStorageLabel(kind)
+
+    return {
+        set: <T extends StoredValue>(key: string, value: T, options: StoreOptions = {}) => {
+            const scopedKey = ns(key, options.namespace)
+            storage.set(scopedKey, encryptValue(value, key, options, label))
+        },
+
+        get: <T>(key: string, fallback?: T, options: StoreOptions = {}): T | undefined => {
+            const scopedKey = ns(key, options.namespace)
+            const raw = storage.get(scopedKey)
+            return decryptValue(raw, key, fallback, options, label)
+        },
+
+        remove: (key: string, namespace?: string) => {
+            storage.remove(ns(key, namespace))
+        },
+
+        has: (key: string, namespace?: string): boolean => {
+            return storage.has(ns(key, namespace))
+        },
+
+        clear: (namespace = NAMESPACE_PREFIX) => {
+            if (kind === 'memory') {
+                storage.clear()
+                return
+            }
+
+            if (typeof window === 'undefined') {
+                storage.clear()
+                return
+            }
+
+            clearBrowserNamespace(kind, namespace)
+        },
+    }
+}
+
+const localStorageController = createStorageController('local', localStorageDriver)
+const sessionStorageController = createStorageController('session', sessionStorageDriver)
+const memoryStorageController = createStorageController('memory', memoryStorageDriver)
+
 /**
  * Set value in localStorage with optional encryption
  */
 export function useLocalStorage() {
-    return {
-        set: <T>(key: string, value: T, options: StoreOptions = {}) => {
-            const { encrypt = false, salt, namespace } = options
-            const scopedKey = ns(key, namespace)
-
-            if (encrypt && salt) {
-                try {
-                    const encrypted = _encrypt(value as any, salt)
-                    localStorage.set(scopedKey, `${ENC_PREFIX}${encrypted}`)
-                } catch (err) {
-                    console.warn(`[localStorage] Encryption failed for "${key}"`, err)
-                    localStorage.set(scopedKey, value as any)
-                }
-            } else {
-                localStorage.set(scopedKey, value as any)
-            }
-        },
-
-        get: <T>(key: string, fallback?: T, options: StoreOptions = {}): T | undefined => {
-            const { encrypt = false, salt, namespace } = options
-            const scopedKey = ns(key, namespace)
-            const raw = localStorage.get(scopedKey) as any
-
-            if (raw === null || raw === undefined) return fallback
-
-            if (encrypt && salt && typeof raw === 'string' && raw.startsWith(ENC_PREFIX)) {
-                try {
-                    return _decrypt(raw.slice(ENC_PREFIX.length), salt) as T
-                } catch (err) {
-                    console.warn(`[localStorage] Decryption failed for "${key}"`, err)
-                    return fallback
-                }
-            }
-
-            return raw as T
-        },
-
-        remove: (key: string, namespace?: string) => {
-            const scopedKey = ns(key, namespace)
-            if (typeof localStorage.remove === 'function') {
-                localStorage.remove(scopedKey)
-            }
-        },
-
-        has: (key: string, namespace?: string): boolean => {
-            const scopedKey = ns(key, namespace)
-            return localStorage.get(scopedKey) !== null
-        },
-
-        clear: () => {
-            // uStore localStorage doesn't expose clear directly
-            // Use native localStorage.clear() if needed
-            if (typeof window !== 'undefined') {
-                window.localStorage.clear()
-            }
-        }
-    }
+    return localStorageController
 }
 
 /**
  * Set value in sessionStorage with optional encryption
  */
 export function useSessionStorage() {
-    return {
-        set: <T>(key: string, value: T, options: StoreOptions = {}) => {
-            const { encrypt = false, salt, namespace } = options
-            const scopedKey = ns(key, namespace)
-
-            if (encrypt && salt) {
-                try {
-                    const encrypted = _encrypt(value as any, salt)
-                    sessionStorage.set(scopedKey, `${ENC_PREFIX}${encrypted}`)
-                } catch (err) {
-                    console.warn(`[sessionStorage] Encryption failed for "${key}"`, err)
-                    sessionStorage.set(scopedKey, value as any)
-                }
-            } else {
-                sessionStorage.set(scopedKey, value as any)
-            }
-        },
-
-        get: <T>(key: string, fallback?: T, options: StoreOptions = {}): T | undefined => {
-            const { encrypt = false, salt, namespace } = options
-            const scopedKey = ns(key, namespace)
-            const raw = sessionStorage.get(scopedKey) as any
-
-            if (raw === null || raw === undefined) return fallback
-
-            if (encrypt && salt && typeof raw === 'string' && raw.startsWith(ENC_PREFIX)) {
-                try {
-                    return _decrypt(raw.slice(ENC_PREFIX.length), salt) as T
-                } catch (err) {
-                    console.warn(`[sessionStorage] Decryption failed for "${key}"`, err)
-                    return fallback
-                }
-            }
-
-            return raw as T
-        },
-
-        remove: (key: string, namespace?: string) => {
-            const scopedKey = ns(key, namespace)
-            if (typeof sessionStorage.remove === 'function') {
-                sessionStorage.remove(scopedKey)
-            }
-        },
-
-        has: (key: string, namespace?: string): boolean => {
-            const scopedKey = ns(key, namespace)
-            return sessionStorage.get(scopedKey) !== null
-        },
-
-        clear: () => {
-            if (typeof window !== 'undefined') {
-                window.sessionStorage.clear()
-            }
-        }
-    }
+    return sessionStorageController
 }
 
 /**
  * Use memory storage (no persistence, useful for SSR)
  */
 export function useMemoryStorage() {
-    return {
-        set: <T>(key: string, value: T, options: StoreOptions = {}) => {
-            const scopedKey = ns(key, options.namespace)
-            memoryStorage.set(scopedKey, value as any)
-        },
-
-        get: <T>(key: string, fallback?: T, options: StoreOptions = {}): T | undefined => {
-            const scopedKey = ns(key, options.namespace)
-            const raw = memoryStorage.get(scopedKey) as any
-            return raw === null || raw === undefined ? fallback : (raw as T)
-        },
-
-        remove: (key: string, namespace?: string) => {
-            const scopedKey = ns(key, namespace)
-            if (typeof memoryStorage.remove === 'function') {
-                memoryStorage.remove(scopedKey)
-            }
-        },
-
-        has: (key: string, namespace?: string): boolean => {
-            const scopedKey = ns(key, namespace)
-            return memoryStorage.get(scopedKey) !== null
-        }
-    }
+    return memoryStorageController
 }
 
 /**
@@ -183,9 +192,9 @@ export function useMemoryStorage() {
  */
 export function useUStore() {
     return {
-        local: useLocalStorage(),
-        session: useSessionStorage(),
-        memory: useMemoryStorage(),
+        local: localStorageController,
+        session: sessionStorageController,
+        memory: memoryStorageController,
         raw: null, // Direct access disabled (avoids @waelio/ustore side effects)
     }
 }
@@ -193,7 +202,7 @@ export function useUStore() {
 /**
  * Reactive storage with Vue refs (composable pattern)
  */
-export function useStorageRef<T>(
+export function useStorageRef<T extends StoredValue>(
     key: string,
     defaultValue: T,
     storage: 'local' | 'session' | 'memory' = 'local',
@@ -206,31 +215,58 @@ export function useStorageRef<T>(
 } {
     const stores = useUStore()
     const storageAPI = stores[storage]
-
-    const value = ref<T>(storageAPI.get<T>(key, defaultValue, options) as T) as Ref<T>
+    const scopedKey = ns(key, options.namespace)
+    const initialValue = storageAPI.get<T>(key, defaultValue, options) ?? defaultValue
+    const value = ref<T>(initialValue) as Ref<T>
+    let skipNextPersist = false
 
     const setValue = (newValue: T) => {
         value.value = newValue
-        storageAPI.set(key, newValue, options)
     }
 
     const removeValue = () => {
-        value.value = defaultValue
+        skipNextPersist = true
         storageAPI.remove(key, options.namespace)
+        value.value = defaultValue
     }
+
+    watch(value, (newValue) => {
+        if (skipNextPersist) {
+            skipNextPersist = false
+            return
+        }
+
+        storageAPI.set(key, newValue, options)
+    }, { deep: true })
 
     // Auto-sync on storage events (cross-tab sync for localStorage)
     if (storage === 'local' && typeof window !== 'undefined') {
-        window.addEventListener('storage', (e: StorageEvent) => {
-            const fullKey = options.namespace ? `${options.namespace}:${key}` : key
-            if (e.key === fullKey && e.newValue !== null) {
-                try {
-                    value.value = JSON.parse(e.newValue) as T
-                } catch {
-                    value.value = e.newValue as unknown as T
-                }
+        const syncFromStorage = (e: StorageEvent) => {
+            if (e.storageArea !== window.localStorage) {
+                return
             }
-        })
+
+            if (e.key !== null && e.key !== scopedKey) {
+                return
+            }
+
+            skipNextPersist = true
+
+            if (e.key === null || e.newValue === null) {
+                value.value = defaultValue
+                return
+            }
+
+            value.value = storageAPI.get<T>(key, defaultValue, options) ?? defaultValue
+        }
+
+        window.addEventListener('storage', syncFromStorage)
+
+        if (getCurrentScope()) {
+            onScopeDispose(() => {
+                window.removeEventListener('storage', syncFromStorage)
+            })
+        }
     }
 
     return {

@@ -1,5 +1,5 @@
 import type { PiniaPlugin, PiniaPluginContext } from 'pinia'
-import { useLocalStorage } from '@/composables/useUStore'
+import { useLocalStorage, useSessionStorage } from '@/composables/useUStore'
 
 /**
  * Pinia plugin for automatic persistence using @waelio/ustore
@@ -14,7 +14,7 @@ import { useLocalStorage } from '@/composables/useUStore'
 interface PersistOptions {
     key?: string
     paths?: string[]
-    storage?: 'local' | 'session' | Storage
+    storage?: 'local' | 'session'
     encrypt?: boolean
     salt?: string
     serializer?: {
@@ -29,20 +29,76 @@ declare module 'pinia' {
     }
 }
 
-function pick(obj: any, paths: string[]): any {
-    return paths.reduce((result, path) => {
-        const value = path.split('.').reduce((o, k) => o?.[k], obj)
-        if (value !== undefined) {
-            const keys = path.split('.')
-            let current = result
-            for (let i = 0; i < keys.length - 1; i++) {
-                if (!current[keys[i]]) current[keys[i]] = {}
-                current = current[keys[i]]
-            }
-            current[keys[keys.length - 1]] = value
+type PersistedState = Record<string, unknown>
+
+function isRecord(value: unknown): value is PersistedState {
+    return typeof value === 'object' && value !== null && !Array.isArray(value)
+}
+
+function getPathValue(source: PersistedState, path: string): unknown {
+    return path.split('.').reduce<unknown>((current, key) => {
+        if (!isRecord(current)) {
+            return undefined
         }
+
+        return current[key]
+    }, source)
+}
+
+function setPathValue(target: PersistedState, path: string, value: unknown) {
+    const keys = path.split('.')
+    let current = target
+
+    for (let index = 0; index < keys.length - 1; index += 1) {
+        const segment = keys[index]
+        const nextValue = current[segment]
+
+        if (!isRecord(nextValue)) {
+            current[segment] = {}
+        }
+
+        current = current[segment] as PersistedState
+    }
+
+    current[keys[keys.length - 1]] = value
+}
+
+function pick(source: PersistedState, paths: string[]): PersistedState {
+    return paths.reduce<PersistedState>((result, path) => {
+        const value = getPathValue(source, path)
+
+        if (value !== undefined) {
+            setPathValue(result, path, value)
+        }
+
         return result
-    }, {} as any)
+    }, {})
+}
+
+function deserializePersistedState(raw: string, serializer?: PersistOptions['serializer']) {
+    try {
+        if (typeof serializer?.deserialize === 'function') {
+            return serializer.deserialize(raw)
+        }
+
+        return JSON.parse(raw) as unknown
+    }
+    catch {
+        return null
+    }
+}
+
+function serializePersistedState(value: unknown, serializer?: PersistOptions['serializer']) {
+    try {
+        if (typeof serializer?.serialize === 'function') {
+            return serializer.serialize(value)
+        }
+
+        return JSON.stringify(value)
+    }
+    catch {
+        return null
+    }
 }
 
 export function createUStorePiniaPlugin(): PiniaPlugin {
@@ -56,34 +112,56 @@ export function createUStorePiniaPlugin(): PiniaPlugin {
             : options.persist
 
         const {
-            key = `pinia:${store.$id}`,
+            key = store.$id,
             paths,
             storage = 'local',
             encrypt = false,
-            salt
+            salt,
+            serializer,
         } = persist
 
-        const localStorage = useLocalStorage()
-
-        // Hydrate store from storage
-        const saved = localStorage.get(key, null, {
+        const storageApi = storage === 'session'
+            ? useSessionStorage()
+            : useLocalStorage()
+        const storageOptions = {
             encrypt,
             salt,
-            namespace: 'pinia'
-        })
+            namespace: 'pinia',
+        }
 
-        if (saved && typeof saved === 'object') {
-            store.$patch(saved)
+        // Hydrate store from storage
+        const saved = serializer
+            ? (() => {
+                const raw = storageApi.get<string | null>(key, null, storageOptions)
+
+                if (typeof raw !== 'string') {
+                    return null
+                }
+
+                return deserializePersistedState(raw, serializer)
+            })()
+            : storageApi.get<unknown>(key, null, storageOptions)
+
+        if (isRecord(saved)) {
+            store.$patch(saved as typeof store.$state)
         }
 
         // Subscribe to changes and persist
-        store.$subscribe((_mutation: any, state: any) => {
-            const toPersist = paths ? pick(state, paths) : state
-            localStorage.set(key, toPersist, {
-                encrypt,
-                salt,
-                namespace: 'pinia'
-            })
+        store.$subscribe((_mutation, state) => {
+            const sourceState = state as PersistedState
+            const toPersist = paths ? pick(sourceState, paths) : sourceState
+
+            if (serializer) {
+                const serialized = serializePersistedState(toPersist, serializer)
+
+                if (typeof serialized === 'string') {
+                    storageApi.set(key, serialized, storageOptions)
+                }
+
+                return
+            }
+
+            storageApi.set(key, toPersist, storageOptions)
         }, { detached: true })
     }
 }

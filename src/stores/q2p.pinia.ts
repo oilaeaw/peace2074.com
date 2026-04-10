@@ -144,7 +144,7 @@ export const useQ2P = defineStore('q2p', {
   }),
   persist: {
     key: 'q2p-store',
-    storage: typeof window !== 'undefined' ? localStorage : undefined,
+    storage: 'local',
     serializer: {
       deserialize: (value: string) => {
         try {
@@ -155,7 +155,7 @@ export const useQ2P = defineStore('q2p', {
           return null
         }
       },
-      serialize: (value: any) => {
+      serialize: (value: unknown) => {
         try {
           return JSON.stringify(value)
         }
