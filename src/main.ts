@@ -1,9 +1,11 @@
-import { createApp, watch, nextTick } from 'vue'
+import { createApp, watch } from 'vue'
+import type { RouteLocationNormalizedLoaded } from 'vue-router'
 import App from './App.vue'
 import router from '@/router'
 import { initFaLibrary, FontAwesomeIcon } from '@/plugins/font-awesome'
 import pinia from '@/plugins/pinia'
 import i18n from './i18n'
+import localeMessages from './locale'
 import registerQuasar from '@/plugins/quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { Dark } from 'quasar'
@@ -11,13 +13,31 @@ import { useLocalStorage } from '@/composables/useUStore'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
-const env = (import.meta as ImportMeta & { env?: { VITE_NITRO_BASE?: string } }).env || {}
+
+type MainImportMeta = ImportMeta & {
+  readonly env: {
+    VITE_NITRO_BASE?: string
+  }
+}
+
+type ThemeMode = 'system' | 'light' | 'dark'
+type ThemeModeChangedDetail = {
+  mode?: ThemeMode
+}
+type RouteMetaKey = 'title' | 'titleKey'
+type GtagParams = Record<string, string | number | boolean | undefined>
+type GtagFunction = (
+  command: 'event',
+  eventName: string,
+  params?: GtagParams
+) => void
+
+const env = (import.meta as MainImportMeta).env
 const localStore = useLocalStorage()
 const THEME_MODE_KEY = 'pref-theme-mode'
-const DARK_MODE_KEY = 'pref-dark-mode'
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
-type ThemeMode = 'system' | 'light' | 'dark'
+const AVAILABLE_LOCALES = Object.keys(localeMessages)
 let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App)
@@ -28,7 +48,7 @@ app.use(router)
 app.use(i18n)
 
 // Register Quasar via centralized plugin
-registerQuasar(app as any)
+registerQuasar(app)
 
 function computeNitroBase() {
   if (!isClient) return '/api'
@@ -129,40 +149,18 @@ if (isClient) {
     // Always default to light mode
     Dark.set(false)
   }
-  window.addEventListener('theme-mode-changed', ((event: Event) => {
-    const detail = (event as CustomEvent).detail || {}
-    const mode = (detail.mode as ThemeMode) || 'system'
+  window.addEventListener('theme-mode-changed', (event: Event) => {
+    const detail = (event as CustomEvent<ThemeModeChangedDetail>).detail
+    const mode = detail?.mode || 'system'
     applyThemeMode(mode)
-  }) as EventListener)
+  })
 }
 
 const LOCALE_STORAGE_KEY = 'app-locale'
 const DEFAULT_LOCALE = 'en'
 
 function getAvailableLocales(): string[] {
-  try {
-    const globalI18n: any = i18n.global as any
-
-    if (
-      Array.isArray(globalI18n?.availableLocales) &&
-      globalI18n.availableLocales.length
-    ) {
-      return globalI18n.availableLocales.map((locale: string) =>
-        String(locale).toLowerCase()
-      )
-    }
-
-    const messages = globalI18n?.messages
-    if (messages && typeof messages === 'object') {
-      const keys = Object.keys(messages)
-      if (keys.length) {
-        return keys.map((locale: string) => String(locale).toLowerCase())
-      }
-    }
-  } catch {
-    /* noop */
-  }
-  return [DEFAULT_LOCALE]
+  return [...AVAILABLE_LOCALES]
 }
 
 function normalizeLocale(
@@ -205,11 +203,10 @@ function resolveInitialLocale(): string {
       return normalizedPersisted
     }
 
-    const preferredList =
-      Array.isArray(window.navigator.languages) &&
-        window.navigator.languages.length
-        ? window.navigator.languages
-        : [window.navigator.language]
+    const preferredLanguages = window.navigator.languages
+    const preferredList = preferredLanguages.length
+      ? preferredLanguages
+      : [window.navigator.language]
 
     for (const lang of preferredList) {
       const normalized = normalizeLocale(lang, availableLocales)
@@ -217,27 +214,16 @@ function resolveInitialLocale(): string {
         return normalized
       }
     }
-  } catch (e) {
+  } catch {
     /* noop */
   }
   return DEFAULT_LOCALE
 }
 
 const targetLocale = resolveInitialLocale()
-try {
-  const globalLocale: any = i18n.global.locale
-  if (
-    globalLocale &&
-    typeof globalLocale === 'object' &&
-    'value' in globalLocale
-  ) {
-    globalLocale.value = targetLocale
-  } else {
-    ; (i18n.global as any).locale = targetLocale
-  }
-} catch {
-  /* noop */
-}
+const globalLocale = i18n.global.locale
+
+globalLocale.value = targetLocale
 persistLocale(targetLocale)
 
 function applyDirFromLocale(localeValue: string) {
@@ -256,14 +242,23 @@ applyDirFromLocale(targetLocale)
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 
 // Dynamic document.title from route meta and i18n
-function updateTitleForRoute(to: any) {
+function getStringRouteMeta(
+  to: RouteLocationNormalizedLoaded,
+  key: RouteMetaKey
+) {
+  const value = to.meta[key]
+  return typeof value === 'string' ? value : undefined
+}
+
+function updateTitleForRoute(to: RouteLocationNormalizedLoaded) {
   const base = 'PEACE2074'
-  const metaTitle = (to.meta && (to.meta as any).title) as string | undefined
-  const titleKey = (to.meta && (to.meta as any).titleKey) as string | undefined
+  const metaTitle = getStringRouteMeta(to, 'title')
+  const titleKey = getStringRouteMeta(to, 'titleKey')
   let title = base
+
   if (titleKey) {
     try {
-      const translated = (i18n.global as any).t(titleKey)
+      const translated = i18n.global.t(titleKey)
       if (translated && typeof translated === 'string') {
         title = `${translated} | ${base}`
       }
@@ -285,17 +280,27 @@ let lastTrackedPageView = {
   at: 0,
 }
 
+function getGtag(): GtagFunction | null {
+  if (!isClient) return null
+
+  const gtagCandidate: unknown = window.gtag
+  return typeof gtagCandidate === 'function'
+    ? (gtagCandidate as GtagFunction)
+    : null
+}
+
 function isQuranDetailPath(path: string): boolean {
   return /^\/quran\/\d+$/.test(path)
 }
 
 function trackPageViewForRoute(
-  to: any,
+  to: RouteLocationNormalizedLoaded,
   source: 'router_after_each' | 'router_ready'
 ) {
   if (!isClient) return
-  const gtag = (window as any)?.gtag
-  if (typeof gtag !== 'function') return
+
+  const gtag = getGtag()
+  if (!gtag) return
 
   const pagePath = `${to?.path || window.location.pathname}${window.location.search || ''}`
   // Quran detail pages emit richer, component-level page views with real sura names.
@@ -347,17 +352,18 @@ function upsertCanonical(href: string) {
     link.setAttribute('rel', 'canonical')
     document.head.appendChild(link)
   }
+
   link.setAttribute('href', href)
 }
 
-function resolveCanonical(to: any): string {
+function resolveCanonical(to: RouteLocationNormalizedLoaded): string {
   const path = (to.fullPath || to.path || '/').split('#')[0].split('?')[0]
   const normalizedPath =
     path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
   return `${SEO_BASE_URL}${normalizedPath || '/'}`
 }
 
-function updateSeoMetaForRoute(to: any) {
+function updateSeoMetaForRoute(to: RouteLocationNormalizedLoaded) {
   const currentTitle = document.title || 'PEACE2074'
   const canonical = resolveCanonical(to)
   const section = currentTitle.replace(/\s*\|\s*PEACE2074\s*$/i, '').trim()
@@ -413,25 +419,20 @@ router.isReady().then(() => {
 })
 
 // Update title immediately on locale change
-try {
-  const localeRef: any = (i18n.global as any).locale
-  if (localeRef && typeof localeRef === 'object' && 'value' in localeRef) {
-    watch(localeRef, () => {
-      const normalized =
-        normalizeLocale(localeRef.value, getAvailableLocales()) ||
-        DEFAULT_LOCALE
-      if (normalized !== localeRef.value) {
-        localeRef.value = normalized
-      }
-      persistLocale(normalized)
-      updateTitleForRoute(router.currentRoute.value)
-      updateSeoMetaForRoute(router.currentRoute.value)
-      applyDirFromLocale(normalized)
-    })
+watch(globalLocale, () => {
+  const normalized =
+    normalizeLocale(globalLocale.value, getAvailableLocales()) || DEFAULT_LOCALE
+
+  if (normalized !== globalLocale.value) {
+    globalLocale.value = normalized
+    return
   }
-} catch (e) {
-  /* noop */
-}
+
+  persistLocale(normalized)
+  updateTitleForRoute(router.currentRoute.value)
+  updateSeoMetaForRoute(router.currentRoute.value)
+  applyDirFromLocale(normalized)
+})
 
 // Register PWA Service Worker and prompt user to refresh when update is available
 if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
@@ -486,115 +487,8 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
     })
 }
 
-// Initialize Netlify Identity after DOM is ready
-if (isClient) {
-  const getPostLoginPath = () => {
-    const redirect = String(
-      router.currentRoute.value?.query?.redirect || ''
-    ).trim()
-    if (
-      redirect.startsWith('/') &&
-      !redirect.startsWith('//') &&
-      redirect !== '/login' &&
-      redirect !== '/signup'
-    ) {
-      return redirect
-    }
-
-    if (window.document?.referrer) {
-      try {
-        const ref = new URL(window.document.referrer)
-        if (ref.origin === window.location.origin) {
-          const refPath = `${ref.pathname}${ref.search}${ref.hash}`
-          if (
-            refPath.startsWith('/') &&
-            refPath !== '/login' &&
-            refPath !== '/signup'
-          ) {
-            return refPath
-          }
-        }
-      } catch {
-        /* noop */
-      }
-    }
-
-    return '/'
-  }
-
-  // NOTE: Netlify Identity has been replaced with custom OAuth (Google/Apple)
-  // See: apps/nitro-api/server/routes/auth/*
-  // If you need to re-enable Netlify Identity, uncomment the code below
-  // and disable the custom OAuth routes.
-  /*
-  const initNetlifyIdentity = () => {
-    import('netlify-identity-widget').then(({ default: netlifyIdentity }) => {
-      netlifyIdentity.init()
-      // Modal will be injected into document.body by default
-
-      // Sync auth state with Pinia store
-      netlifyIdentity.on('init', (user: any) => {
-        if (user) {
-          const authStore = (pinia as any)._s.get('auth')
-          if (authStore) {
-            authStore.setUser({
-              id: user.id,
-              email: user.email,
-              username: user.user_metadata?.full_name || user.email?.split('@')[0],
-              role: user.app_metadata?.roles?.[0] || 'user',
-              first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
-              last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
-            })
-          }
-        }
-      })
-
-      netlifyIdentity.on('login', (user: any) => {
-        const authStore = (pinia as any)._s.get('auth')
-        if (authStore && user) {
-          authStore.setUser({
-            id: user.id,
-            email: user.email,
-            username: user.user_metadata?.full_name || user.email?.split('@')[0],
-            role: user.app_metadata?.roles?.[0] || 'user',
-            first_name: user.user_metadata?.full_name?.split(' ')[0] || '',
-            last_name: user.user_metadata?.full_name?.split(' ').slice(1).join(' ') || ''
-          })
-        }
-        router.push(getPostLoginPath())
-        netlifyIdentity.close()
-      })
-
-      netlifyIdentity.on('logout', () => {
-        const authStore = (pinia as any)._s.get('auth')
-        if (authStore) {
-          authStore.logout()
-        }
-      })
-    }).catch((error) => {
-      console.warn('Netlify Identity initialization skipped', error)
-    })
-  }
-
-  // Call after app mount to ensure DOM is ready
-  app.mount("#app")
-
-  // Defer non-critical auth widget init to idle time to reduce startup work.
-  nextTick(() => {
-    const schedule = (window as any).requestIdleCallback as
-      | ((cb: () => void, options?: { timeout: number }) => number)
-      | undefined
-
-    if (typeof schedule === 'function') {
-      schedule(() => initNetlifyIdentity(), { timeout: 2500 })
-    } else {
-      window.setTimeout(() => initNetlifyIdentity(), 2000)
-    }
-  })
-  */
-
-  // Custom OAuth is now active - no need for Netlify Identity widget
-}
+// Netlify Identity has been replaced with custom OAuth (Google/Apple).
+// See: apps/nitro-api/server/routes/auth/*
 
 // Mount the app once (removed duplicate mounts)
 void bootstrapAuthState().then((shouldMount) => {
