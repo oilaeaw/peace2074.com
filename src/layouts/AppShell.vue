@@ -135,6 +135,23 @@
 
               <q-item
                 v-if="isAuthenticated"
+                v-close-popup
+                v-ripple
+                clickable
+                @click="$router.push('/profile')"
+              >
+                <q-item-section avatar>
+                  <q-icon name="account_circle" />
+                </q-item-section>
+                <q-item-section>
+                  <q-item-label>{{
+                    t('pages.preferences.profile.title')
+                  }}</q-item-label>
+                </q-item-section>
+              </q-item>
+
+              <q-item
+                v-if="isAuthenticated"
                 v-ripple
                 clickable
                 @click="handleLogout"

@@ -134,6 +134,16 @@ export const routes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/profile',
+    name: 'Profile',
+    component: () => import('@/views/preferences.vue'),
+    meta: {
+      title: 'Profile',
+      titleKey: 'pages.preferences.profile.title',
+      requiresAuth: true,
+    },
+  },
+  {
     path: '/login',
     name: 'Login',
     component: () => import('@/views/login.vue'),
