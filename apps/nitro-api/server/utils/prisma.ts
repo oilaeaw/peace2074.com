@@ -51,6 +51,8 @@ export async function getPrisma() {
             console.log('✅ PrismaClient instance created successfully')
             console.log('🔌 Connecting Prisma Client...')
             await prismaClient.$connect()
+            globalForPrisma.__peace2074Prisma = prismaClient
+            _prisma = prismaClient
             console.log('✅ Prisma Client connected successfully')
         } catch (error) {
             console.error('❌ Prisma initialization failed:')
