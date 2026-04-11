@@ -1,4 +1,18 @@
 <template>
+  <Teleport to="body">
+    <div class="offline-recitation-manager-teleport">
+      <q-btn
+        unelevated
+        rounded
+        color="primary"
+        icon="arrow_back"
+        :label="backButtonLabel"
+        :aria-label="backButtonLabel"
+        @click="closeManager"
+      />
+    </div>
+  </Teleport>
+
   <q-card class="offline-recitation-manager">
     <q-card-section class="bg-primary text-white">
       <div class="text-h6">
@@ -129,6 +143,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   qualityChanged: [quality: RecitationQuality]
   downloadComplete: [suraId: number]
+  close: []
 }>()
 
 const { t } = useI18n()
@@ -142,7 +157,6 @@ const {
   downloadedSuras,
   qualityInfo,
   totalDownloadedSuras,
-  isAnySuraDownloading,
   QUALITY_INFO,
   downloadSura,
   clearAllCache,
@@ -171,6 +185,13 @@ const activeDownloads = computed(() => {
   )
 })
 
+const backButtonLabel = computed(() => {
+  const translated = t('common.close')
+  return translated && translated !== 'common.close'
+    ? translated
+    : 'Back to Quran'
+})
+
 const downloadPercentage = computed(() => {
   return totalDownloadedSuras.value / 114
 })
@@ -189,6 +210,10 @@ async function updateCacheSize() {
 
 function onQualityChange(newQuality: RecitationQuality) {
   emit('qualityChanged', newQuality)
+}
+
+function closeManager() {
+  emit('close')
 }
 
 async function downloadCurrentSura() {
@@ -338,6 +363,13 @@ export default {
 </script>
 
 <style scoped lang="scss">
+.offline-recitation-manager-teleport {
+  position: fixed;
+  top: calc(env(safe-area-inset-top, 0px) + 16px);
+  left: 16px;
+  z-index: 7000;
+}
+
 .offline-recitation-manager {
   max-width: 600px;
   margin: 0 auto;

@@ -879,6 +879,11 @@ async function handleBookmarkNavigate(
   }
 
   if (!entry) return
+
+  if (isRecitationSessionLocked.value) {
+    return
+  }
+
   selectedBookmark.value = `id_${entry.normalized}`
 
   const playVerseAfterLoad = async () => {
@@ -945,6 +950,10 @@ async function navigateToQuickAccess(
   if (event) {
     event.preventDefault()
     event.stopPropagation()
+  }
+
+  if (isRecitationSessionLocked.value) {
+    return
   }
 
   // Use tree for efficient lookup (preload context)
@@ -1300,10 +1309,10 @@ async function startAudioRecitation(
   index: number,
   opts: { withIntro?: boolean } = {}
 ) {
-  // Prevent concurrent starts from rapid clicks
-  if (isStartingRecitation.value) {
+  // Prevent concurrent starts from rapid clicks and block repeat starts
+  if (isRecitationSessionLocked.value) {
     console.debug(
-      '[Audio] Already starting recitation, ignoring duplicate call'
+      '[Audio] Recitation session already active, ignoring duplicate call'
     )
     return
   }
@@ -1440,10 +1449,10 @@ function playAyah(index: number) {
 }
 
 async function startSuraAudio() {
-  // Prevent concurrent starts from rapid clicks
-  if (isStartingRecitation.value) {
+  // Prevent concurrent starts from rapid clicks and block repeat starts
+  if (isRecitationSessionLocked.value) {
     console.debug(
-      '[Audio] Already starting sura audio, ignoring duplicate call'
+      '[Audio] Sura audio session already active, ignoring duplicate call'
     )
     return
   }
@@ -1557,6 +1566,10 @@ async function restorePlaybackPosition() {
 }
 
 function togglePauseResume() {
+  if (isStartingRecitation.value) {
+    return
+  }
+
   if (!audioEl.value) {
     const verse = Number(hoverWidgetVerse.value || 0)
     if (verse > 0) {
@@ -1622,6 +1635,10 @@ async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
 
+  if (isRecitationSessionLocked.value) {
+    return
+  }
+
   hideHoverWidget()
   await nextTick()
   await startAudioRecitation(verse - 1, { withIntro: true })
@@ -1630,6 +1647,10 @@ async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
 async function restartSura(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
+
+  if (isRecitationSessionLocked.value) {
+    return
+  }
 
   hideHoverWidget()
   await nextTick()
@@ -1689,6 +1710,10 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   // Check if this verse is currently playing
   const isThisVersePlaying =
     isPlayingAudio.value && currentAyahIndex.value === verseIndex
+
+  if (isRecitationSessionLocked.value && !isThisVersePlaying) {
+    return
+  }
 
   if (isThisVersePlaying) {
     // If this verse is already playing, stop it
@@ -1899,6 +1924,22 @@ const isPaused = computed(() => {
   }
 })
 
+const isRecitationSessionLocked = computed(() => {
+  if (isStartingRecitation.value) {
+    return true
+  }
+
+  if (readerMode.value === 'tts') {
+    return isTTSPlaying.value || currentAyahIndex.value >= 0
+  }
+
+  return audioEl.value !== null
+})
+
+function isRecitationTriggerDisabled(isCurrentTarget = false) {
+  return isRecitationSessionLocked.value && !isCurrentTarget
+}
+
 // Current playback status for display
 const playbackStatus = computed(() => {
   if (isReading.value) {
@@ -1945,19 +1986,36 @@ const recitationVerseDisplay = computed(() => {
   return playbackStatus.value.verse > 0 ? playbackStatus.value.verse : 1
 })
 
-const recitationPrimaryLabel = computed(() => {
-  if (playbackStatus.value.state === 'playing') {
-    return t('pages.quran.pause')
+const isRecitationSwitchOn = computed(
+  () => playbackStatus.value.state !== 'stopped' || isStartingRecitation.value
+)
+
+const recitationSwitchLabel = computed(() => {
+  if (isStartingRecitation.value) {
+    return t('pages.quran.playing') || 'Starting recitation'
   }
-  if (playbackStatus.value.state === 'paused') {
-    return t('pages.quran.resume')
-  }
-  return t('pages.quran.playRecitation')
+
+  return isRecitationSwitchOn.value
+    ? t('pages.quran.stopRecitation')
+    : t('pages.quran.playRecitation')
 })
 
-const recitationPrimaryIcon = computed(() => {
-  return playbackStatus.value.state === 'playing' ? 'pause' : 'play_arrow'
-})
+function handleRecitationSwitchChange(enabled: boolean) {
+  if (isStartingRecitation.value) {
+    return
+  }
+
+  if (enabled) {
+    if (playbackStatus.value.state === 'stopped') {
+      startReading()
+    }
+    return
+  }
+
+  if (playbackStatus.value.state !== 'stopped') {
+    stopReading()
+  }
+}
 
 function pauseAudio() {
   if (audioEl.value && !audioEl.value.paused) {
@@ -2355,21 +2413,23 @@ watch(
           </div>
         </div>
         <template v-slot:action>
-          <q-btn
-            flat
-            :label="recitationPrimaryLabel"
-            color="primary"
-            :icon="recitationPrimaryIcon"
-            @click.prevent="startReading"
-          />
-          <q-btn
-            v-if="playbackStatus.state !== 'stopped'"
-            flat
-            :label="t('pages.quran.stopRecitation')"
-            color="negative"
-            icon="stop"
-            @click.prevent="stopReading"
-          />
+          <div class="recitation-switch-wrap">
+            <span class="recitation-switch-label">{{
+              recitationSwitchLabel
+            }}</span>
+            <q-toggle
+              :model-value="isRecitationSwitchOn"
+              checked-icon="volume_up"
+              unchecked-icon="play_arrow"
+              color="primary"
+              keep-color
+              :disable="
+                (readerMode === 'audio' && !audioList.length) ||
+                isStartingRecitation
+              "
+              @update:model-value="handleRecitationSwitchChange"
+            />
+          </div>
         </template>
       </q-banner>
     </Transition>
@@ -2419,34 +2479,38 @@ watch(
               </div>
             </template>
           </q-btn-toggle>
-          <q-btn
-            :icon="isReading ? 'pause' : isPaused ? 'play_arrow' : 'play_arrow'"
-            color="primary"
-            flat
-            dense
-            @click.prevent="startReading"
-            :disable="
-              (readerMode === 'audio' && !audioList.length) ||
-              isStartingRecitation
-            "
-            :loading="isStartingRecitation"
-            :label="
-              isReading
-                ? t('pages.quran.pause')
-                : isPaused
-                  ? t('pages.quran.resume')
-                  : t('pages.quran.playRecitation')
-            "
-          />
-          <q-btn
-            v-if="isReading || isPaused"
-            icon="stop"
-            color="negative"
-            flat
-            dense
-            @click.prevent="stopReading"
-            :label="t('pages.quran.stopRecitation')"
-          />
+          <div class="recitation-header-controls">
+            <q-btn
+              v-if="isReading || isPaused"
+              :icon="isReading ? 'pause' : 'play_arrow'"
+              color="primary"
+              flat
+              dense
+              @click.prevent="startReading"
+              :disable="isStartingRecitation"
+              :label="
+                isReading ? t('pages.quran.pause') : t('pages.quran.resume')
+              "
+            />
+
+            <div class="recitation-switch-wrap recitation-switch-wrap--header">
+              <span class="recitation-switch-label">{{
+                recitationSwitchLabel
+              }}</span>
+              <q-toggle
+                :model-value="isRecitationSwitchOn"
+                checked-icon="volume_up"
+                unchecked-icon="play_arrow"
+                color="primary"
+                keep-color
+                :disable="
+                  (readerMode === 'audio' && !audioList.length) ||
+                  isStartingRecitation
+                "
+                @update:model-value="handleRecitationSwitchChange"
+              />
+            </div>
+          </div>
 
           <!-- Auto-continue toggle -->
           <q-toggle
@@ -2551,6 +2615,9 @@ watch(
                   v-for="qa in quickAccessVerses"
                   :key="qa.id"
                   clickable
+                  :disable="
+                    isRecitationTriggerDisabled(isQuickAccessPlaying(qa))
+                  "
                   @click.prevent="navigateToQuickAccess(qa)"
                 >
                   <q-item-section avatar>
@@ -2572,6 +2639,9 @@ watch(
                         :icon="isQuickAccessPlaying(qa) ? 'stop' : 'play_arrow'"
                         :color="
                           isQuickAccessPlaying(qa) ? 'negative' : 'primary'
+                        "
+                        :disable="
+                          isRecitationTriggerDisabled(isQuickAccessPlaying(qa))
                         "
                         @click.stop.prevent="
                           isQuickAccessPlaying(qa)
@@ -2628,6 +2698,9 @@ watch(
                   v-for="entry in bookmarkEntries"
                   :key="entry.key"
                   clickable
+                  :disable="
+                    isRecitationTriggerDisabled(isBookmarkPlaying(entry))
+                  "
                   @click.prevent="handleBookmarkNavigate(entry)"
                 >
                   <q-item-section>
@@ -2651,6 +2724,9 @@ watch(
                         :icon="isBookmarkPlaying(entry) ? 'stop' : 'play_arrow'"
                         :color="
                           isBookmarkPlaying(entry) ? 'negative' : 'primary'
+                        "
+                        :disable="
+                          isRecitationTriggerDisabled(isBookmarkPlaying(entry))
                         "
                         @click.stop.prevent="
                           isBookmarkPlaying(entry)
@@ -2945,6 +3021,7 @@ watch(
                   :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
                   color="primary"
                   @click="togglePauseResume"
+                  :disable="isStartingRecitation"
                   :title="
                     isPlayingAudio
                       ? t('pages.quran.pause')
@@ -2965,6 +3042,7 @@ watch(
                   icon="replay"
                   color="secondary"
                   @click="restartFromVerse(hoverWidgetVerse!)"
+                  :disable="isRecitationSessionLocked"
                   :title="t('pages.quran.restart') || 'Restart verse'"
                 />
                 <q-btn
@@ -3073,6 +3151,13 @@ watch(
   flex-wrap: wrap;
 }
 
+.recitation-header-controls {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
 .view-toggle {
   display: flex;
   align-items: center;
@@ -3134,6 +3219,24 @@ watch(
   color: #6a481d;
   padding: 2px 6px;
   border-radius: 999px;
+}
+
+.recitation-switch-wrap {
+  display: inline-flex;
+  align-items: center;
+  gap: 10px;
+}
+
+.recitation-switch-wrap--header {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: rgba(35, 75, 42, 0.08);
+}
+
+.recitation-switch-label {
+  font-size: 0.9rem;
+  font-weight: 600;
+  color: #234b2a;
 }
 
 .reader-layout .arabic-block {
