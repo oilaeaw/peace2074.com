@@ -4,6 +4,14 @@ Disallow: /api/
 Disallow: /.netlify/
 Disallow: /admin
 Disallow: /blog-editor
+Disallow: /chat
+Disallow: /login
+Disallow: /profile
+Disallow: /preferences
+Disallow: /settings
+Disallow: /signup
+Sitemap: https://peace2074.com/sitemap.xml
+Disallow: /blog-editor
 Disallow: /settings
 Disallow: /preferences
 Disallow: /login
