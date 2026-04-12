@@ -1164,9 +1164,6 @@ async function loadSuraById(id: number) {
   try {
     await q2p.init(id, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
-    // Load audio from alquran.cloud (per-verse) and timings from qurancdn (word segments)
-    await loadAudioAndTimings(id)
-    await nextTick()
 
     // Check for query params (autoplay and mode)
     const shouldAutoplay =
@@ -1188,8 +1185,20 @@ async function loadSuraById(id: number) {
       })
     }
 
-    // Enable autoplay if query param or hash is present (shared verse link)
+    // Render the sura text as soon as the bundled Quran data is ready.
+    // Audio/timing metadata can take longer because it depends on remote APIs,
+    // and the reading UI should not stay blocked behind that network work.
+    loading.value = false
+    await nextTick()
+
     const normalizedHash = String(route.hash || '').replace(/^#/, '')
+    await scrollToHash(route.hash)
+    applyQuranDetailTitle(true)
+
+    // Load audio from remote services after the verse content is already visible.
+    await loadAudioAndTimings(id)
+
+    // Enable autoplay if query param or hash is present (shared verse link)
     await scrollToHash(route.hash, { autoplay: shouldAutoplay })
 
     // For auto-continue to next sura (`?autoplay=true`) with no verse hash,
@@ -1197,7 +1206,6 @@ async function loadSuraById(id: number) {
     if (shouldAutoplay && !normalizedHash) {
       await autoplayCurrentSuraFromStart()
     }
-    applyQuranDetailTitle(true)
   } catch (e: any) {
     error.value = e?.message || 'Failed to load sura'
     $q.notify({ type: 'negative', message: error.value })
