@@ -227,6 +227,10 @@
     },
     "miracles": {
       "pageTitle": "صفحة المعجزات",
+      "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
+      "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
+      "clear": "[UNTRANSLATED] Clear",
+      "saveDrawing": "[UNTRANSLATED] Save Drawing",
       "visualTab": "الأنماط البصرية",
       "linguisticTab": "التحليل اللغوي",
       "linguisticPilotTitle": "التحليل اللغوي التجريبي",

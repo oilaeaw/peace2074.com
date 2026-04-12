@@ -239,6 +239,10 @@
     },
     "miracles": {
       "pageTitle": "Miracles Page",
+      "drawingPadTitle": "Quran Miracles Drawing Pad",
+      "drawingPadSubtitle": "Draw the pattern for Surah 1",
+      "clear": "Clear",
+      "saveDrawing": "Save Drawing",
       "visualTab": "Visual Patterns",
       "linguisticTab": "Linguistic Analysis",
       "linguisticPilotTitle": "Linguistic Pilot",
