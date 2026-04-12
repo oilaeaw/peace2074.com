@@ -31,13 +31,14 @@ type GtagFunction = (
   eventName: string,
   params?: GtagParams
 ) => void
+type AppLocale = keyof typeof localeMessages
 
 const env = (import.meta as MainImportMeta).env
 const localStore = useLocalStorage()
 const THEME_MODE_KEY = 'pref-theme-mode'
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
-const AVAILABLE_LOCALES = Object.keys(localeMessages)
+const AVAILABLE_LOCALES = Object.keys(localeMessages) as AppLocale[]
 let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App)
@@ -157,16 +158,16 @@ if (isClient) {
 }
 
 const LOCALE_STORAGE_KEY = 'app-locale'
-const DEFAULT_LOCALE = 'en'
+const DEFAULT_LOCALE: AppLocale = 'en'
 
-function getAvailableLocales(): string[] {
+function getAvailableLocales(): AppLocale[] {
   return [...AVAILABLE_LOCALES]
 }
 
 function normalizeLocale(
   localeValue: string | null | undefined,
-  availableLocales: string[]
-): string | null {
+  availableLocales: AppLocale[]
+): AppLocale | null {
   if (!localeValue) return null
 
   const normalized = String(localeValue).trim().toLowerCase().replace('_', '-')
@@ -181,10 +182,12 @@ function normalizeLocale(
 
   const normalizedBase = normalized.split('-')[0]
   const mapped = legacyMap[normalizedBase] || normalizedBase
-  return availableLocales.includes(mapped) ? mapped : null
+  return availableLocales.includes(mapped as AppLocale)
+    ? (mapped as AppLocale)
+    : null
 }
 
-function persistLocale(localeValue: string) {
+function persistLocale(localeValue: AppLocale) {
   if (!isClient || !localeValue) return
   try {
     window.localStorage?.setItem(LOCALE_STORAGE_KEY, localeValue)
@@ -193,7 +196,7 @@ function persistLocale(localeValue: string) {
   }
 }
 
-function resolveInitialLocale(): string {
+function resolveInitialLocale(): AppLocale {
   if (!isClient) return DEFAULT_LOCALE
   try {
     const availableLocales = getAvailableLocales()

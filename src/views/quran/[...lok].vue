@@ -33,8 +33,8 @@ function getLokFromRoute() {
   console.warn("Extracted directly:", result);
   return result;
 }
-const Quran = computed(() => q2p.GetQ);
-const sura = computed(() => q2p.GetSura);
+const Quran = q2p.GetQ;
+const sura = q2p.GetSura;
 const PageTite = computed(
   () => `${appName.value} - ${sura.value?.id || ""}:${sura.value?.name || ""}`
 );
