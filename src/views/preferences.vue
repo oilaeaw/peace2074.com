@@ -15,7 +15,7 @@ const THEME_MODE_KEY = 'pref-theme-mode'
 const DARK_MODE_KEY = 'pref-dark-mode'
 type ThemeMode = 'system' | 'light' | 'dark'
 
-const themeModeStore = useStorageRef<ThemeMode>(THEME_MODE_KEY, 'system')
+const themeModeStore = useStorageRef<ThemeMode>(THEME_MODE_KEY, 'light')
 const themeMode = computed<ThemeMode>({
   get: () => themeModeStore.value.value,
   set: (mode) => themeModeStore.set(mode),
@@ -63,9 +63,12 @@ const themeModeOptions = computed(() => [
 ])
 
 function applyThemeMode(mode: ThemeMode) {
+  // Keep this behavior aligned with the app bootstrap in src/main.ts.
+  // The app currently treats "system" as the light fallback instead of
+  // following OS dark mode automatically.
   if (mode === 'system') {
-    const prefersDark = themeMediaQuery.value?.matches ?? false
-    $q.dark.set(prefersDark)
+    $q.dark.set(false)
+    darkModeStore.set(false)
     return
   }
   const isDark = mode === 'dark'
@@ -73,9 +76,10 @@ function applyThemeMode(mode: ThemeMode) {
   darkModeStore.set(isDark)
 }
 
-function handleSystemThemeChange(event: MediaQueryListEvent) {
+function handleSystemThemeChange() {
   if (themeMode.value !== 'system') return
-  $q.dark.set(event.matches)
+  $q.dark.set(false)
+  darkModeStore.set(false)
 }
 
 onMounted(() => {
@@ -222,7 +226,7 @@ async function handleChangePassword() {
   <q-page class="q-pa-md prefs-page">
     <div class="page-header q-mb-md">
       <h1 class="text-h4 q-mb-xs">{{ pageTitle }}</h1>
-      <div class="text-subtitle2 text-grey-6">
+      <div class="text-subtitle2 page-subtitle">
         {{ t('pages.preferences.subtitle') }}
       </div>
     </div>
@@ -242,13 +246,7 @@ async function handleChangePassword() {
             color="primary"
             :label="t('pages.preferences.profile.emailUpdates')"
           />
-          <q-banner
-            dense
-            rounded
-            class="q-mt-sm"
-            color="grey-3"
-            text-color="grey-8"
-          >
+          <q-banner dense rounded class="q-mt-sm hint-banner">
             {{ t('pages.preferences.profile.hint') }}
           </q-banner>
         </q-card-section>
@@ -267,13 +265,7 @@ async function handleChangePassword() {
             color="primary"
             :label="t('pages.preferences.quran.remember')"
           />
-          <q-banner
-            dense
-            rounded
-            class="q-mt-sm"
-            color="grey-3"
-            text-color="grey-8"
-          >
+          <q-banner dense rounded class="q-mt-sm hint-banner">
             {{ t('pages.preferences.quran.hint') }}
           </q-banner>
         </q-card-section>
@@ -292,13 +284,7 @@ async function handleChangePassword() {
             unelevated
             outline
           />
-          <q-banner
-            dense
-            rounded
-            class="q-mt-sm"
-            color="grey-3"
-            text-color="grey-8"
-          >
+          <q-banner dense rounded class="q-mt-sm hint-banner">
             {{ t('pages.preferences.appearance.hint') }}
           </q-banner>
         </q-card-section>
@@ -376,13 +362,7 @@ async function handleChangePassword() {
             :disable="!currentPassword || !newPassword || !confirmPassword"
           />
 
-          <q-banner
-            dense
-            rounded
-            class="q-mt-sm"
-            color="grey-3"
-            text-color="grey-8"
-          >
+          <q-banner dense rounded class="q-mt-sm hint-banner">
             {{ t('pages.preferences.security.hint') }}
           </q-banner>
         </q-card-section>
@@ -396,15 +376,50 @@ async function handleChangePassword() {
   max-width: 1100px;
   margin: 0 auto;
 }
+
+.page-subtitle {
+  color: #5f6b7a;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
 }
+
 .glassy-card {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  color: #1f2937;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
+}
+
+.hint-banner {
+  background: rgba(15, 23, 42, 0.04);
+  color: #475569;
+  border: 1px solid rgba(148, 163, 184, 0.26);
+}
+
+:global(body.body--dark) .prefs-page .page-subtitle {
+  color: #cbd5e1;
+}
+
+:global(body.body--dark) .prefs-page .glassy-card {
+  background: rgba(17, 24, 39, 0.88);
+  border-color: rgba(148, 163, 184, 0.18);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
+  color: #e5e7eb;
+}
+
+:global(body.body--dark) .prefs-page .hint-banner {
+  background: rgba(148, 163, 184, 0.12);
+  color: #e2e8f0;
+  border-color: rgba(148, 163, 184, 0.2);
 }
 </style>
