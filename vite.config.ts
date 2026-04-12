@@ -95,7 +95,7 @@ export default defineConfig({
       includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
-        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js'],
+        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js', '**/data/quran.json'],
       },
       manifest: {
         name: "Peace2074 - Islamic Knowledge Platform",
@@ -144,6 +144,7 @@ export default defineConfig({
       },
       workbox: {
         globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
+        globIgnores: ['**/data/quran.json'],
         navigateFallbackDenylist: [/^\/auth\//, /^\/api\//],
         cleanupOutdatedCaches: true,
         clientsClaim: true,
@@ -170,7 +171,7 @@ export default defineConfig({
             urlPattern: /quran|\/data\/.*/i,
             handler: "CacheFirst",
             options: {
-              cacheName: "quran-data-v1",
+              cacheName: "quran-data-v2",
               expiration: {
                 maxEntries: 500,
                 maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days

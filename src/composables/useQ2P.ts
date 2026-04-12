@@ -83,34 +83,39 @@ async function buildLocalData() {
     if (localDataPromise) return localDataPromise
 
     localDataPromise = (async () => {
-        if (!chaptersCache) {
-            chaptersCache = await import('@/shared/data/chapters/en.json').then(m => m.default as any[])
-        }
-        if (!quranCache) {
-            quranCache = await loadPublicQuranData()
-        }
+        try {
+            if (!chaptersCache) {
+                chaptersCache = await import('@/shared/data/chapters/en.json').then(m => m.default as any[])
+            }
+            if (!quranCache) {
+                quranCache = await loadPublicQuranData()
+            }
 
-        const ready: Sura[] = []
-        const chapters = Array.isArray(chaptersCache) ? chaptersCache : []
+            const ready: Sura[] = []
+            const chapters = Array.isArray(chaptersCache) ? chaptersCache : []
 
-        chapters.forEach((chapter: any) => {
-            const chapterId = chapter.id || chapter.number
-            const versesForChapter = (quranCache as any)[String(chapterId)] || []
+            chapters.forEach((chapter: any) => {
+                const chapterId = chapter.id || chapter.number
+                const versesForChapter = (quranCache as any)[String(chapterId)] || []
 
-            ready.push({
-                id: chapterId,
-                name: chapter.name || '',
-                e_name: chapter.translation || chapter.transliteration || '',
-                type: chapter.type || '',
-                total_verses: versesForChapter.length,
-                ayat: versesForChapter.map((v: any) => ({
-                    verse: v.verse,
-                    text: v.text,
-                    translation: v.translation,
-                })),
+                ready.push({
+                    id: chapterId,
+                    name: chapter.name || '',
+                    e_name: chapter.translation || chapter.transliteration || '',
+                    type: chapter.type || '',
+                    total_verses: versesForChapter.length,
+                    ayat: versesForChapter.map((v: any) => ({
+                        verse: v.verse,
+                        text: v.text,
+                        translation: v.translation,
+                    })),
+                })
             })
-        })
-        return ready
+            return ready
+        } catch (error) {
+            localDataPromise = null
+            throw error
+        }
     })()
 
     return localDataPromise

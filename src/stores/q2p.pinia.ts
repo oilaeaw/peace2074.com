@@ -42,32 +42,37 @@ async function loadLocalQuran(): Promise<any[]> {
   if (readyPromise) return readyPromise
 
   readyPromise = (async () => {
-    const [hdetails, hbook] = await Promise.all([
-      import('@shared/data/chapters/en.json').then(m => m.default as any),
-      loadPublicQuranData(),
-    ])
+    try {
+      const [hdetails, hbook] = await Promise.all([
+        import('@shared/data/chapters/en.json').then(m => m.default as any),
+        loadPublicQuranData(),
+      ])
 
-    const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
-    const assembled: any[] = []
+      const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)
+      const assembled: any[] = []
 
-    chapters.forEach((metaSample: any) => {
-      const id = Number(metaSample?.id || metaSample?.number || 0)
-      if (!id) return
-      const qr = ((hbook as any)[String(id)] || []) as QSDT[]
-      if (Array.isArray(qr)) {
-        assembled.push({
-          id,
-          name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
-          e_name: String(metaSample?.translation || metaSample?.suraName || ''),
-          type: String(metaSample?.type || ''),
-          total_verses: qr.length,
-          ayat: qr,
-        })
-      }
-    })
+      chapters.forEach((metaSample: any) => {
+        const id = Number(metaSample?.id || metaSample?.number || 0)
+        if (!id) return
+        const qr = ((hbook as any)[String(id)] || []) as QSDT[]
+        if (Array.isArray(qr)) {
+          assembled.push({
+            id,
+            name: String(metaSample?.suraName || metaSample?.name || metaSample?.transliteration || ''),
+            e_name: String(metaSample?.translation || metaSample?.suraName || ''),
+            type: String(metaSample?.type || ''),
+            total_verses: qr.length,
+            ayat: qr,
+          })
+        }
+      })
 
-    readyCache = assembled
-    return assembled
+      readyCache = assembled
+      return assembled
+    } catch (error) {
+      readyPromise = null
+      throw error
+    }
   })()
 
   return readyPromise
