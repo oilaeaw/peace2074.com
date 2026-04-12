@@ -2,6 +2,21 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.1.0 (2026-04-12)
+
+### Features
+
+- activate the public `/chat` route so community messaging is directly reachable
+- update chat route metadata and locale copy to reflect that live chat, rooms, and history are active
+
+### Documentation
+
+- document the Quran ayah hover/tap action menu as a supported interaction contract
+
+### Chores
+
+- bump root and Nitro API package versions to `3.1.0`
+
 ## 3.0.0 (2026-04-03)
 
 ### Features
