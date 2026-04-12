@@ -466,7 +466,12 @@
             "subtitle": "Traccia le nostre versioni e aggiornamenti nel tempo",
             "features": "Funzionalità",
             "fixes": "Correzioni bug",
-            "chores": "Attività di manutenzione"
+            "documentation": "Documentazione",
+            "chores": "Attività di manutenzione",
+            "like": "Mi piace",
+            "unlike": "Rimuovi Mi piace",
+            "liked": "❤️ Mi piace!",
+            "unliked": "Mi piace rimosso"
         }
     },
     "offline": {

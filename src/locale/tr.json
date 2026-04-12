@@ -466,7 +466,12 @@
             "subtitle": "Sürümlerimizi ve özellik güncellemelerimizi zaman içinde takip edin",
             "features": "Özellikler",
             "fixes": "Hata Düzeltmeleri",
-            "chores": "Bakım Çalışmaları"
+            "documentation": "Dokümantasyon",
+            "chores": "Bakım Çalışmaları",
+            "like": "Beğen",
+            "unlike": "Beğeniyi kaldır",
+            "liked": "❤️ Beğenildi!",
+            "unliked": "Beğeni kaldırıldı"
         }
     },
     "offline": {

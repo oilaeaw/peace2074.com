@@ -11,6 +11,7 @@ interface Deploy {
     color?: string
     features?: string[]
     fixes?: string[]
+    documentation?: string[]
     chores?: string[]
 }
 
@@ -73,6 +74,15 @@ export default defineEventHandler(async () => {
                     .map(line => line.replace(/^-\s*/, '').trim())
                 : []
 
+            // Extract documentation
+            const documentationMatch = section.match(/### Documentation\n\n([\s\S]*?)(?=\n### |\n## |$)/)
+            const documentation = documentationMatch
+                ? documentationMatch[1]
+                    .split('\n')
+                    .filter(line => line.trim().startsWith('-'))
+                    .map(line => line.replace(/^-\s*/, '').trim())
+                : []
+
             // Extract chores  
             const choresMatch = section.match(/### Chores\n\n([\s\S]*?)(?=\n### |\n## |$)/)
             const chores = choresMatch
@@ -92,7 +102,7 @@ export default defineEventHandler(async () => {
                 if (firstFeature.includes('auto-continue') || firstFeature.includes('quran')) {
                     icon = 'auto_awesome'
                     color = 'positive'
-                    message = features[0].split('-')[0].trim()
+                    message = features[0].split(/\s[-–—]\s/)[0].trim()
                 } else if (firstFeature.includes('sign up') || firstFeature.includes('registration')) {
                     icon = 'person_add'
                     color = 'secondary'
@@ -105,7 +115,21 @@ export default defineEventHandler(async () => {
                     icon = 'translate'
                     color = 'info'
                     message = 'Turkish locale and Quran improvements'
+                } else {
+                    message = features[0].split(/\s[-–—]\s/)[0].trim()
                 }
+            } else if (fixes.length > 0) {
+                icon = 'bug_report'
+                color = 'info'
+                message = fixes[0].split(/\s[-–—]\s/)[0].trim()
+            } else if (documentation.length > 0) {
+                icon = 'article'
+                color = 'primary'
+                message = documentation[0].split(/\s[-–—]\s/)[0].trim()
+            } else if (chores.length > 0) {
+                icon = 'build'
+                color = 'grey-7'
+                message = chores[0].split(/\s[-–—]\s/)[0].trim()
             }
 
             deploys.push({
@@ -116,6 +140,7 @@ export default defineEventHandler(async () => {
                 color,
                 features: features.length > 0 ? features : undefined,
                 fixes: fixes.length > 0 ? fixes : undefined,
+                documentation: documentation.length > 0 ? documentation : undefined,
                 chores: chores.length > 0 ? chores : undefined,
             })
         }

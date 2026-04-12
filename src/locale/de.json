@@ -431,7 +431,12 @@
       "subtitle": "Verfolgen Sie unsere Releases und Feature-Updates über die Zeit",
       "features": "Funktionen",
       "fixes": "Fehlerbehebungen",
-      "chores": "Wartungsarbeiten"
+      "documentation": "Dokumentation",
+      "chores": "Wartungsarbeiten",
+      "like": "Gefällt mir",
+      "unlike": "Gefällt mir nicht mehr",
+      "liked": "❤️ Gefällt mir!",
+      "unliked": "Gefällt mir entfernt"
     }
   },
   "offline": {

@@ -3,7 +3,9 @@
     <div class="page-container">
       <div class="page-header q-mb-lg">
         <h1 class="text-h3 q-mb-sm">{{ t('pages.deploys.title') }}</h1>
-        <p class="text-subtitle1 text-grey-7">{{ t('pages.deploys.subtitle') }}</p>
+        <p class="text-subtitle1 text-grey-7">
+          {{ t('pages.deploys.subtitle') }}
+        </p>
       </div>
 
       <div v-if="loading" class="flex flex-center q-py-xl">
@@ -34,7 +36,11 @@
                 @click.stop="toggleLike(deploy.version)"
               >
                 <q-tooltip>
-                  {{ isLiked(deploy.version) ? (t('pages.deploys.unlike') || 'Unlike') : (t('pages.deploys.like') || 'Like') }}
+                  {{
+                    isLiked(deploy.version)
+                      ? t('pages.deploys.unlike') || 'Unlike'
+                      : t('pages.deploys.like') || 'Like'
+                  }}
                 </q-tooltip>
                 <q-badge
                   v-if="getLikeCount(deploy.version) > 0"
@@ -44,8 +50,11 @@
                 />
               </q-btn>
             </div>
-            
-            <div v-if="deploy.features && deploy.features.length > 0" class="deploy-features q-mb-sm">
+
+            <div
+              v-if="deploy.features && deploy.features.length > 0"
+              class="deploy-features q-mb-sm"
+            >
               <div class="text-weight-medium text-positive q-mb-xs">
                 <q-icon name="fiber_new" size="sm" class="q-mr-xs" />
                 {{ t('pages.deploys.features') }}
@@ -57,7 +66,10 @@
               </ul>
             </div>
 
-            <div v-if="deploy.fixes && deploy.fixes.length > 0" class="deploy-fixes q-mb-sm">
+            <div
+              v-if="deploy.fixes && deploy.fixes.length > 0"
+              class="deploy-fixes q-mb-sm"
+            >
               <div class="text-weight-medium text-info q-mb-xs">
                 <q-icon name="bug_report" size="sm" class="q-mr-xs" />
                 {{ t('pages.deploys.fixes') }}
@@ -69,7 +81,25 @@
               </ul>
             </div>
 
-            <div v-if="deploy.chores && deploy.chores.length > 0" class="deploy-chores">
+            <div
+              v-if="deploy.documentation && deploy.documentation.length > 0"
+              class="deploy-documentation q-mb-sm"
+            >
+              <div class="text-weight-medium text-primary q-mb-xs">
+                <q-icon name="article" size="sm" class="q-mr-xs" />
+                {{ t('pages.deploys.documentation') }}
+              </div>
+              <ul class="feature-list">
+                <li v-for="(entry, idx) in deploy.documentation" :key="idx">
+                  {{ entry }}
+                </li>
+              </ul>
+            </div>
+
+            <div
+              v-if="deploy.chores && deploy.chores.length > 0"
+              class="deploy-chores"
+            >
               <div class="text-weight-medium text-grey-7 q-mb-xs">
                 <q-icon name="build" size="sm" class="q-mr-xs" />
                 {{ t('pages.deploys.chores') }}
@@ -91,7 +121,11 @@
 import { ref, onMounted, computed } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
-import { sendDeployLike, fetchDeployLikes, fetchChangelog } from '@/stores/services'
+import {
+  sendDeployLike,
+  fetchDeployLikes,
+  fetchChangelog,
+} from '@/stores/services'
 
 const { t } = useI18n()
 const $q = useQuasar()
@@ -104,6 +138,7 @@ interface Deploy {
   color?: string
   features?: string[]
   fixes?: string[]
+  documentation?: string[]
   chores?: string[]
 }
 
@@ -129,7 +164,7 @@ async function loadChangelog() {
     $q.notify({
       type: 'warning',
       message: 'Failed to load deployment history',
-      timeout: 2500
+      timeout: 2500,
     })
   }
 }
@@ -161,7 +196,7 @@ async function toggleLike(version: string) {
 
   try {
     const response = await sendDeployLike(version)
-    
+
     if (response.authRequired) {
       $q.notify({
         type: 'warning',
@@ -174,9 +209,9 @@ async function toggleLike(version: string) {
             color: 'white',
             handler: () => {
               window.location.href = '/login'
-            }
-          }
-        ]
+            },
+          },
+        ],
       })
       return
     }
@@ -186,24 +221,24 @@ async function toggleLike(version: string) {
       if (response.liked) {
         userLiked.value.push(version)
       } else {
-        userLiked.value = userLiked.value.filter(v => v !== version)
+        userLiked.value = userLiked.value.filter((v) => v !== version)
       }
       likeCounts.value[version] = response.count || 0
-      
+
       // Track deploy interaction
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'deploy_interaction', {
           action: response.liked ? 'like' : 'unlike',
           version: version,
-          page_path: '/deploys'
+          page_path: '/deploys',
         })
       }
 
       $q.notify({
         type: 'positive',
-        message: response.liked 
-          ? (t('pages.deploys.liked') || '❤️ Liked!')
-          : (t('pages.deploys.unliked') || 'Unliked'),
+        message: response.liked
+          ? t('pages.deploys.liked') || '❤️ Liked!'
+          : t('pages.deploys.unliked') || 'Unliked',
         position: 'top',
         timeout: 1500,
       })

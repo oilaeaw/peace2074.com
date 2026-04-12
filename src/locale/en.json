@@ -466,7 +466,12 @@
       "subtitle": "Track our releases and feature updates over time",
       "features": "Features",
       "fixes": "Bug Fixes",
-      "chores": "Chores"
+      "documentation": "Documentation",
+      "chores": "Chores",
+      "like": "Like",
+      "unlike": "Unlike",
+      "liked": "❤️ Liked!",
+      "unliked": "Like removed"
     }
   },
   "offline": {
