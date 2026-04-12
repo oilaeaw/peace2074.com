@@ -100,24 +100,42 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useQuasar } from 'quasar'
+import { trackAnalyticsEvent } from '@/utils/analytics'
+import {
+  applySeoMeta,
+  buildBreadcrumbStructuredData,
+  buildPageStructuredData,
+  SEO_BASE_URL,
+} from '@/utils/seo'
 import {
   fetchBlogLikes,
   toggleBlogLike,
   resolveNitroUrl,
 } from '@/stores/services'
 
-const { t } = useI18n()
+type BlogPostSummary = {
+  slug: string
+  title: string
+  excerpt?: string
+  date: string
+  tags: string[]
+}
+
+const BLOG_CANONICAL_PATH = '/blog'
+const BLOG_KEYWORDS = ['Islamic blog', 'Quran reflections', 'PEACE2074 updates']
+
+const { t, locale } = useI18n()
 const router = useRouter()
 const authStore = useAuthStore()
 const $q = useQuasar()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
-const posts = ref<any[]>([])
+const posts = ref<BlogPostSummary[]>([])
 const loading = ref(true)
 const likeCounts = ref<Record<string, number>>({})
 const userLiked = ref<string[]>([])
@@ -137,6 +155,11 @@ async function loadPosts() {
     const data = await res.json()
     if (data.ok && data.posts) {
       posts.value = data.posts
+      trackAnalyticsEvent('blog_list_view', {
+        posts_count: data.posts.length,
+        page_path: BLOG_CANONICAL_PATH,
+        locale: String(locale.value || 'en'),
+      })
     }
   } catch (err) {
     console.error('[Blog] Load error:', err)
@@ -186,6 +209,16 @@ async function handleLike(slug: string, event: Event) {
       } else {
         userLiked.value = userLiked.value.filter((s) => s !== slug)
       }
+
+      trackAnalyticsEvent('blog_post_like', {
+        action: result.liked ? 'like' : 'unlike',
+        slug,
+        page_path:
+          typeof window !== 'undefined'
+            ? window.location.pathname
+            : BLOG_CANONICAL_PATH,
+        locale: String(locale.value || 'en'),
+      })
     }
   } catch (err) {
     console.error('[Blog] Like error:', err)
@@ -221,10 +254,54 @@ function formatDate(date: string) {
   }
 }
 
+function applyBlogListSeo() {
+  const title = `${String(t('pages.blog.title') || 'Blog')} | PEACE2074`
+  const description = String(
+    t('pages.blog.subtitle') ||
+      'Read updates, product notes, and reflections from the PEACE2074 blog.'
+  )
+
+  applySeoMeta({
+    title,
+    description,
+    canonical: BLOG_CANONICAL_PATH,
+    keywords: BLOG_KEYWORDS,
+    locale: String(locale.value || 'en'),
+    structuredData: [
+      buildPageStructuredData({
+        type: 'CollectionPage',
+        title: String(t('pages.blog.title') || 'Blog'),
+        description,
+        canonical: BLOG_CANONICAL_PATH,
+        locale: String(locale.value || 'en'),
+        keywords: BLOG_KEYWORDS,
+      }),
+      buildBreadcrumbStructuredData([
+        {
+          name: String(t('appShell.nav.home') || 'Home'),
+          item: SEO_BASE_URL,
+        },
+        {
+          name: String(t('pages.blog.title') || 'Blog'),
+          item: `${SEO_BASE_URL}${BLOG_CANONICAL_PATH}`,
+        },
+      ]),
+    ],
+  })
+}
+
 onMounted(async () => {
   await loadPosts()
   await loadLikes()
 })
+
+watch(
+  [posts, locale],
+  () => {
+    applyBlogListSeo()
+  },
+  { immediate: true }
+)
 </script>
 
 <style scoped>

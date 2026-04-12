@@ -24,6 +24,16 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Home',
       titleKey: 'pages.home.title',
+      description:
+        'Read Quran online, explore Islamic guidance, daily reminders, Tasbeeh, holy names, and supportive tools on PEACE2074.',
+      keywords: [
+        'Quran online',
+        'Islamic knowledge platform',
+        'Tasbeeh app',
+        'daily Islamic reminders',
+      ],
+      contentGroup: 'home',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -33,6 +43,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Tasbeeh',
       titleKey: 'pages.tasbeeh',
+      description:
+        'Use digital Tasbeeh beads to keep dhikr counts and stay focused with a clean Islamic prayer counter.',
+      keywords: ['Tasbeeh online', 'dhikr counter', 'Islamic prayer beads'],
+      contentGroup: 'tasbeeh',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -42,6 +57,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Holy Names',
       titleKey: 'pages.titles.holynames',
+      description:
+        'Browse and reflect on the holy names with a calm, searchable PEACE2074 reading experience.',
+      keywords: ['Holy names', '99 names', 'Islamic reflection'],
+      contentGroup: 'holy_names',
+      schemaType: 'CollectionPage',
     },
   },
   {
@@ -51,6 +71,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Quran',
       titleKey: 'pages.quran.title',
+      description:
+        'Browse all 114 surahs and read Quran online with bookmarks, verse sharing, and multiple reading modes.',
+      keywords: ['Read Quran online', 'surah list', 'Quran reader'],
+      contentGroup: 'quran',
+      schemaType: 'CollectionPage',
     },
   },
   {
@@ -78,6 +103,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Quran',
       titleKey: 'pages.quran.detail',
+      description:
+        'Open a specific surah with recitation, verse sharing, bookmarks, and reading controls on PEACE2074.',
+      keywords: ['Quran surah', 'Quran recitation', 'verse sharing'],
+      contentGroup: 'quran',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -94,6 +124,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Quran',
       titleKey: 'pages.quran.detail',
+      description:
+        'Read Quran surahs with translation, recitation, bookmarks, and verse sharing on PEACE2074.',
+      keywords: ['Quran detail', 'Quran translation', 'Quran bookmarks'],
+      contentGroup: 'quran',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -104,6 +139,12 @@ export const routes: Array<RouteRecordRaw> = [
       title: 'Chat',
       titleKey: 'pages.chat.title',
       requiresAuth: true,
+      description:
+        'Ask PEACE AI for guidance about chapters, reflections, and app usage in a private chat flow.',
+      keywords: ['Islamic AI chat', 'PEACE AI support'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'chat',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -113,6 +154,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Support',
       titleKey: 'pages.support.title',
+      description:
+        'Get help with PEACE2074, including Quran reading, Tasbeeh, account support, and spiritual tools.',
+      keywords: ['PEACE2074 support', 'Quran app help', 'Islamic support'],
+      contentGroup: 'support',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -122,6 +168,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Settings',
       titleKey: 'pages.settings.title',
+      description: 'Manage app settings for PEACE2074.',
+      keywords: ['app settings'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'settings',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -131,6 +182,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Preferences',
       titleKey: 'pages.preferences.title',
+      description: 'Manage your personal reading and app defaults on PEACE2074.',
+      keywords: ['reading preferences'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'preferences',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -141,6 +197,11 @@ export const routes: Array<RouteRecordRaw> = [
       title: 'Profile',
       titleKey: 'pages.preferences.profile.title',
       requiresAuth: true,
+      description: 'Manage your PEACE2074 account profile.',
+      keywords: ['account profile'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'profile',
+      schemaType: 'ProfilePage',
     },
   },
   {
@@ -150,6 +211,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Login',
       titleKey: 'appShell.nav.login',
+      description:
+        'Sign in to sync bookmarks, progress, and personalized PEACE2074 features.',
+      keywords: ['PEACE2074 login'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'auth',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -159,6 +226,12 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Sign Up',
       titleKey: 'auth.signUp',
+      description:
+        'Create a PEACE2074 account to save progress, bookmarks, and personalized preferences.',
+      keywords: ['PEACE2074 signup'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'auth',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -168,6 +241,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Contact',
       titleKey: 'contact.help',
+      description:
+        'Contact PEACE2074 for project questions, support requests, and collaboration inquiries.',
+      keywords: ['contact PEACE2074', 'support request'],
+      contentGroup: 'contact',
+      schemaType: 'ContactPage',
     },
   },
   {
@@ -185,6 +263,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Deploys',
       titleKey: 'pages.deploys.title',
+      description:
+        'Track PEACE2074 releases, deployment history, and feature updates over time.',
+      keywords: ['release notes', 'deployment history', 'feature updates'],
+      contentGroup: 'deploys',
+      schemaType: 'CollectionPage',
     },
   },
   {
@@ -193,6 +276,11 @@ export const routes: Array<RouteRecordRaw> = [
     component: () => import('@/views/admin.vue'),
     meta: {
       title: 'Admin Panel',
+      description: 'Internal PEACE2074 administration area.',
+      keywords: ['admin'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'admin',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -202,6 +290,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Blog',
       titleKey: 'pages.blog.title',
+      description:
+        'Read updates, product notes, and reflections from the PEACE2074 blog.',
+      keywords: ['Islamic blog', 'Quran reflections', 'PEACE2074 updates'],
+      contentGroup: 'blog',
+      schemaType: 'CollectionPage',
     },
   },
   {
@@ -211,6 +304,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Blog',
       titleKey: 'pages.blog.title',
+      description:
+        'Read a PEACE2074 blog post with reflections, updates, and practical guidance.',
+      keywords: ['blog post', 'Islamic reflections', 'PEACE2074 article'],
+      contentGroup: 'blog',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -220,6 +318,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Blog Editor',
       titleKey: 'pages.blog.editor.title',
+      description: 'Create or edit PEACE2074 blog posts.',
+      keywords: ['blog editor'],
+      robots: 'noindex,nofollow,noarchive',
+      contentGroup: 'blog_editor',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -229,6 +332,11 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Miracles',
       titleKey: 'pages.miracles.pageTitle',
+      description:
+        'Explore the miracles drawing pad and visual pattern experience inspired by Quran reflections.',
+      keywords: ['miracles drawing', 'Quran patterns', 'interactive canvas'],
+      contentGroup: 'miracles',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -238,6 +346,10 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Privacy',
       titleKey: 'navigation.PrivacyPageTitle',
+      description: 'Read the PEACE2074 privacy policy and data handling commitments.',
+      keywords: ['privacy policy', 'data privacy'],
+      contentGroup: 'legal',
+      schemaType: 'WebPage',
     },
   },
   {
@@ -247,6 +359,10 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Terms',
       titleKey: 'navigation.TermsPageTitle',
+      description: 'Review the PEACE2074 terms of service and usage guidelines.',
+      keywords: ['terms of service', 'usage guidelines'],
+      contentGroup: 'legal',
+      schemaType: 'WebPage',
     },
   },
 ];

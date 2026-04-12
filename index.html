@@ -85,16 +85,29 @@
     <script type="application/ld+json">
       {
         "@context": "https://schema.org",
-        "@type": "WebSite",
-        "name": "PEACE2074",
-        "url": "https://peace2074.com/",
-        "description": "Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more",
-        "inLanguage": ["en", "ar", "de", "ru", "he"],
-        "potentialAction": {
-          "@type": "SearchAction",
-          "target": "https://peace2074.com/quran?search={search_term_string}",
-          "query-input": "required name=search_term_string"
-        }
+        "@graph": [
+          {
+            "@type": "WebSite",
+            "name": "PEACE2074",
+            "url": "https://peace2074.com/",
+            "description": "Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more",
+            "inLanguage": ["en", "ar", "de", "es", "ru", "he", "it", "tr"],
+            "potentialAction": {
+              "@type": "SearchAction",
+              "target": "https://peace2074.com/quran?search={search_term_string}",
+              "query-input": "required name=search_term_string"
+            }
+          },
+          {
+            "@type": "Organization",
+            "name": "PEACE2074",
+            "url": "https://peace2074.com/",
+            "logo": {
+              "@type": "ImageObject",
+              "url": "https://peace2074.com/android-chrome-512x512.png"
+            }
+          }
+        ]
       }
     </script>
 
@@ -159,6 +172,7 @@
             ad_storage: 'granted',
             analytics_storage: 'granted',
           })
+          window.dispatchEvent(new CustomEvent('analytics-consent-granted'))
         }
       } else {
         // Keep API shape for callers in local development.

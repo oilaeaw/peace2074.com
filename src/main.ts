@@ -10,6 +10,15 @@ import registerQuasar from '@/plugins/quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { Dark } from 'quasar'
 import { useLocalStorage } from '@/composables/useUStore'
+import { trackAnalyticsPageView } from '@/utils/analytics'
+import {
+  applySeoMeta,
+  buildPageStructuredData,
+  DEFAULT_DESCRIPTION,
+  DEFAULT_ROBOTS,
+  DEFAULT_SEO_KEYWORDS,
+  resolveCanonicalUrl,
+} from '@/utils/seo'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
@@ -24,13 +33,16 @@ type ThemeMode = 'system' | 'light' | 'dark'
 type ThemeModeChangedDetail = {
   mode?: ThemeMode
 }
-type RouteMetaKey = 'title' | 'titleKey'
-type GtagParams = Record<string, string | number | boolean | undefined>
-type GtagFunction = (
-  command: 'event',
-  eventName: string,
-  params?: GtagParams
-) => void
+type StringRouteMetaKey =
+  | 'title'
+  | 'titleKey'
+  | 'description'
+  | 'robots'
+  | 'schemaType'
+  | 'contentGroup'
+  | 'ogType'
+  | 'image'
+type ArrayRouteMetaKey = 'keywords'
 type AppLocale = keyof typeof localeMessages
 
 const env = (import.meta as MainImportMeta).env
@@ -244,13 +256,31 @@ applyDirFromLocale(targetLocale)
 
 app.component('FontAwesomeIcon', FontAwesomeIcon)
 
-// Dynamic document.title from route meta and i18n
 function getStringRouteMeta(
   to: RouteLocationNormalizedLoaded,
-  key: RouteMetaKey
+  key: StringRouteMetaKey
 ) {
   const value = to.meta[key]
   return typeof value === 'string' ? value : undefined
+}
+
+function getStringArrayRouteMeta(
+  to: RouteLocationNormalizedLoaded,
+  key: ArrayRouteMetaKey
+) {
+  const value = to.meta[key]
+  return Array.isArray(value)
+    ? value.filter(
+      (entry): entry is string =>
+        typeof entry === 'string' && entry.trim().length > 0
+    )
+    : undefined
+}
+
+function stripSiteName(title: string) {
+  return String(title || '')
+    .replace(/\s*\|\s*PEACE2074\s*$/i, '')
+    .trim()
 }
 
 function updateTitleForRoute(to: RouteLocationNormalizedLoaded) {
@@ -274,26 +304,62 @@ function updateTitleForRoute(to: RouteLocationNormalizedLoaded) {
   document.title = title
 }
 
-const SEO_BASE_URL = 'https://peace2074.com'
-const DEFAULT_DESCRIPTION =
-  'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more'
-const PAGEVIEW_DEDUPE_MS = 1200
-let lastTrackedPageView = {
-  key: '',
-  at: 0,
-}
-
-function getGtag(): GtagFunction | null {
-  if (!isClient) return null
-
-  const gtagCandidate: unknown = window.gtag
-  return typeof gtagCandidate === 'function'
-    ? (gtagCandidate as GtagFunction)
-    : null
+if (isClient) {
+  window.addEventListener('analytics-consent-granted', () => {
+    trackPageViewForRoute(router.currentRoute.value, 'consent_granted')
+  })
 }
 
 function isQuranDetailPath(path: string): boolean {
   return /^\/quran\/\d+$/.test(path)
+}
+
+function resolveCanonical(to: RouteLocationNormalizedLoaded): string {
+  const path = (to.fullPath || to.path || '/').split('#')[0].split('?')[0]
+  const normalizedPath =
+    path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
+  return resolveCanonicalUrl(normalizedPath || '/')
+}
+
+function buildDescriptionForRoute(
+  to: RouteLocationNormalizedLoaded,
+  currentTitle: string
+) {
+  const routeDescription = getStringRouteMeta(to, 'description')
+  if (routeDescription) {
+    return routeDescription
+  }
+
+  const section = stripSiteName(currentTitle)
+  return section && section !== 'PEACE2074'
+    ? `${section} on PEACE2074 — ${DEFAULT_DESCRIPTION}`
+    : DEFAULT_DESCRIPTION
+}
+
+function buildKeywordsForRoute(to: RouteLocationNormalizedLoaded) {
+  return Array.from(
+    new Set([
+      ...(getStringArrayRouteMeta(to, 'keywords') || []),
+      ...DEFAULT_SEO_KEYWORDS,
+    ])
+  )
+}
+
+function buildStructuredDataForRoute(
+  to: RouteLocationNormalizedLoaded,
+  currentTitle: string,
+  description: string,
+  canonical: string,
+  keywords: string[]
+) {
+  return buildPageStructuredData({
+    type: getStringRouteMeta(to, 'schemaType') || 'WebPage',
+    title: stripSiteName(currentTitle) || 'PEACE2074',
+    description,
+    canonical,
+    locale: String(globalLocale.value || DEFAULT_LOCALE),
+    keywords,
+  })
 }
 
 function trackPageViewForRoute(
@@ -302,111 +368,45 @@ function trackPageViewForRoute(
 ) {
   if (!isClient) return
 
-  const gtag = getGtag()
-  if (!gtag) return
-
   const pagePath = `${to?.path || window.location.pathname}${window.location.search || ''}`
   // Quran detail pages emit richer, component-level page views with real sura names.
   if (isQuranDetailPath(to?.path || window.location.pathname)) return
 
   const pageTitle = document.title || 'PEACE2074'
-  const dedupeKey = `${pagePath}|${pageTitle}`
-  const now = Date.now()
-  if (
-    lastTrackedPageView.key === dedupeKey &&
-    now - lastTrackedPageView.at < PAGEVIEW_DEDUPE_MS
-  ) {
-    return
-  }
-
-  lastTrackedPageView = { key: dedupeKey, at: now }
-
-  gtag('event', 'page_view', {
-    page_title: pageTitle,
-    page_location: window.location.href,
-    page_path: pagePath,
+  trackAnalyticsPageView({
+    pageTitle,
+    pagePath,
+    pageLocation: window.location.href,
     source,
+    locale: String(globalLocale.value || DEFAULT_LOCALE),
+    content_group: getStringRouteMeta(to, 'contentGroup'),
+    route_name: typeof to.name === 'string' ? to.name : undefined,
   })
-}
-
-function upsertMetaTag(
-  attr: 'name' | 'property',
-  key: string,
-  content: string
-) {
-  if (!isClient || !content) return
-  const selector = `meta[${attr}="${key}"]`
-  let tag = document.head.querySelector(selector) as HTMLMetaElement | null
-  if (!tag) {
-    tag = document.createElement('meta')
-    tag.setAttribute(attr, key)
-    document.head.appendChild(tag)
-  }
-  tag.setAttribute('content', content)
-}
-
-function upsertCanonical(href: string) {
-  if (!isClient || !href) return
-  let link = document.head.querySelector(
-    'link[rel="canonical"]'
-  ) as HTMLLinkElement | null
-  if (!link) {
-    link = document.createElement('link')
-    link.setAttribute('rel', 'canonical')
-    document.head.appendChild(link)
-  }
-
-  link.setAttribute('href', href)
-}
-
-function resolveCanonical(to: RouteLocationNormalizedLoaded): string {
-  const path = (to.fullPath || to.path || '/').split('#')[0].split('?')[0]
-  const normalizedPath =
-    path.length > 1 && path.endsWith('/') ? path.slice(0, -1) : path
-  return `${SEO_BASE_URL}${normalizedPath || '/'}`
 }
 
 function updateSeoMetaForRoute(to: RouteLocationNormalizedLoaded) {
   const currentTitle = document.title || 'PEACE2074'
   const canonical = resolveCanonical(to)
-  const section = currentTitle.replace(/\s*\|\s*PEACE2074\s*$/i, '').trim()
-  const description =
-    section && section !== 'PEACE2074'
-      ? `${section} on PEACE2074 — ${DEFAULT_DESCRIPTION}`
-      : DEFAULT_DESCRIPTION
+  const description = buildDescriptionForRoute(to, currentTitle)
+  const keywords = buildKeywordsForRoute(to)
 
-  upsertMetaTag('name', 'description', description)
-  upsertMetaTag('name', 'robots', 'index,follow,max-image-preview:large')
-  upsertMetaTag(
-    'name',
-    'googlebot',
-    'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
-  )
-  upsertMetaTag(
-    'name',
-    'bingbot',
-    'index,follow,max-image-preview:large,max-snippet:-1,max-video-preview:-1'
-  )
-  upsertMetaTag('property', 'og:type', 'website')
-  upsertMetaTag('property', 'og:site_name', 'PEACE2074')
-  upsertMetaTag('property', 'og:title', currentTitle)
-  upsertMetaTag('property', 'og:description', description)
-  upsertMetaTag('property', 'og:url', canonical)
-  upsertMetaTag(
-    'property',
-    'og:image',
-    `${SEO_BASE_URL}/android-chrome-512x512.png`
-  )
-  upsertMetaTag('property', 'og:image:alt', 'PEACE2074 logo')
-  upsertMetaTag('name', 'twitter:card', 'summary_large_image')
-  upsertMetaTag('name', 'twitter:title', currentTitle)
-  upsertMetaTag('name', 'twitter:description', description)
-  upsertMetaTag(
-    'name',
-    'twitter:image',
-    `${SEO_BASE_URL}/android-chrome-512x512.png`
-  )
-  upsertCanonical(canonical)
+  applySeoMeta({
+    title: currentTitle,
+    description,
+    canonical,
+    keywords,
+    robots: getStringRouteMeta(to, 'robots') || DEFAULT_ROBOTS,
+    ogType: getStringRouteMeta(to, 'ogType') || 'website',
+    image: getStringRouteMeta(to, 'image'),
+    locale: String(globalLocale.value || DEFAULT_LOCALE),
+    structuredData: buildStructuredDataForRoute(
+      to,
+      currentTitle,
+      description,
+      canonical,
+      keywords
+    ),
+  })
 }
 
 router.afterEach((to) => {

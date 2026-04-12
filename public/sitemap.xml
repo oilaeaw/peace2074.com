@@ -167,6 +167,13 @@
   </url>
 
   <url>
+    <loc>https://peace2074.com/deploys</loc>
+    <lastmod>2026-02-13T00:00:00+00:00</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>0.6</priority>
+  </url>
+
+  <url>
     <loc>https://peace2074.com/contact</loc>
     <lastmod>2026-02-13T00:00:00+00:00</lastmod>
     <changefreq>monthly</changefreq>

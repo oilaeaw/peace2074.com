@@ -51,25 +51,46 @@ import { useRoute, useRouter } from 'vue-router'
 import { useI18n } from 'vue-i18n'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useQuasar } from 'quasar'
+import { trackAnalyticsEvent } from '@/utils/analytics'
+import {
+  applySeoMeta,
+  buildBlogPostingStructuredData,
+  buildBreadcrumbStructuredData,
+  buildPageStructuredData,
+  SEO_BASE_URL,
+} from '@/utils/seo'
 import {
   toggleBlogLike,
   fetchBlogLikes,
   resolveNitroUrl,
 } from '@/stores/services'
 
+type BlogPostDetail = {
+  slug: string
+  title: string
+  excerpt?: string
+  content?: string
+  tags?: string[]
+  date?: string
+  author?: string
+  createdAt?: string
+  updatedAt?: string
+}
+
 const route = useRoute()
 const router = useRouter()
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const authStore = useAuthStore()
 const $q = useQuasar()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
-const post = ref<any>(null)
+const post = ref<BlogPostDetail | null>(null)
 const loading = ref(true)
 const likeCount = ref(0)
 const isLiked = ref(false)
+let lastTrackedBlogViewKey = ''
 
-const SEO_BASE_URL = 'https://peace2074.com'
+const BLOG_KEYWORDS = ['Islamic blog', 'Quran reflections', 'PEACE2074 updates']
 
 function toCanonicalSlug(value: string) {
   return String(value || '')
@@ -79,54 +100,126 @@ function toCanonicalSlug(value: string) {
     .replace(/-+/g, '-')
 }
 
-function upsertMetaTag(
-  attr: 'name' | 'property',
-  key: string,
-  content: string
-) {
-  if (!content || typeof document === 'undefined') return
-  const selector = `meta[${attr}="${key}"]`
-  let tag = document.head.querySelector(selector) as HTMLMetaElement | null
-  if (!tag) {
-    tag = document.createElement('meta')
-    tag.setAttribute(attr, key)
-    document.head.appendChild(tag)
+function buildExcerpt(postData: BlogPostDetail) {
+  const excerpt = String(postData.excerpt || '').trim()
+  if (excerpt) {
+    return excerpt
   }
-  tag.setAttribute('content', content)
+
+  const content = String(postData.content || '')
+    .replace(/\s+/g, ' ')
+    .trim()
+  if (!content) {
+    return `${String(postData.title || t('pages.blog.title')).trim()} — ${String(
+      t('pages.blog.subtitle') || ''
+    ).trim()}`
+  }
+
+  return content.length > 160 ? `${content.slice(0, 157).trimEnd()}…` : content
 }
 
-function upsertCanonical(href: string) {
-  if (!href || typeof document === 'undefined') return
-  let link = document.head.querySelector(
-    'link[rel="canonical"]'
-  ) as HTMLLinkElement | null
-  if (!link) {
-    link = document.createElement('link')
-    link.setAttribute('rel', 'canonical')
-    document.head.appendChild(link)
-  }
-  link.setAttribute('href', href)
+function applyMissingBlogSeo() {
+  const slug = String(route.params.slug || '')
+  const title = `${String(t('pages.blog.notFound') || 'Post not found')} | PEACE2074`
+  const description = String(t('pages.blog.notFound') || 'Blog post not found.')
+
+  applySeoMeta({
+    title,
+    description,
+    canonical: `/blog/${encodeURIComponent(slug)}`,
+    robots: 'noindex,nofollow,noarchive',
+    locale: String(locale.value || 'en'),
+    structuredData: buildPageStructuredData({
+      type: 'WebPage',
+      title: String(t('pages.blog.notFound') || 'Post not found'),
+      description,
+      canonical: `/blog/${encodeURIComponent(slug)}`,
+      locale: String(locale.value || 'en'),
+      keywords: BLOG_KEYWORDS,
+    }),
+  })
 }
 
-function applyBlogSeo(postData: any) {
+function applyBlogSeo(postData: BlogPostDetail) {
   if (!postData || typeof document === 'undefined') return
   const title = String(postData.title || t('pages.blog.title')).trim()
-  const excerpt = String(postData.excerpt || '').trim()
+  const excerpt = buildExcerpt(postData)
   const canonicalSlug = toCanonicalSlug(
     String(postData.slug || route.params.slug || '')
   )
   const canonicalUrl = `${SEO_BASE_URL}/blog/${encodeURIComponent(canonicalSlug)}`
   const docTitle = `${title} | PEACE2074`
+  const tags = Array.isArray(postData.tags)
+    ? postData.tags.filter((tag): tag is string =>
+        Boolean(String(tag || '').trim())
+      )
+    : []
+  const author = String(postData.author || 'PEACE2074').trim()
+  const publishedTime = String(postData.date || postData.createdAt || '').trim()
+  const modifiedTime = String(postData.updatedAt || postData.date || '').trim()
   const description = excerpt || `${title} — ${t('pages.blog.subtitle')}`
 
-  document.title = docTitle
-  upsertMetaTag('name', 'description', description)
-  upsertMetaTag('property', 'og:title', docTitle)
-  upsertMetaTag('property', 'og:description', description)
-  upsertMetaTag('property', 'og:url', canonicalUrl)
-  upsertMetaTag('name', 'twitter:title', docTitle)
-  upsertMetaTag('name', 'twitter:description', description)
-  upsertCanonical(canonicalUrl)
+  applySeoMeta({
+    title: docTitle,
+    description,
+    canonical: canonicalUrl,
+    keywords: [...BLOG_KEYWORDS, ...tags],
+    locale: String(locale.value || 'en'),
+    ogType: 'article',
+    article: {
+      publishedTime: publishedTime || undefined,
+      modifiedTime: modifiedTime || undefined,
+      authors: author ? [author] : undefined,
+      tags,
+      section: String(t('pages.blog.title') || 'Blog'),
+    },
+    structuredData: [
+      buildBlogPostingStructuredData({
+        title,
+        description,
+        canonical: canonicalUrl,
+        locale: String(locale.value || 'en'),
+        author,
+        publishedTime: publishedTime || undefined,
+        modifiedTime: modifiedTime || undefined,
+        tags,
+      }),
+      buildBreadcrumbStructuredData([
+        {
+          name: String(t('appShell.nav.home') || 'Home'),
+          item: SEO_BASE_URL,
+        },
+        {
+          name: String(t('pages.blog.title') || 'Blog'),
+          item: `${SEO_BASE_URL}/blog`,
+        },
+        {
+          name: title,
+          item: canonicalUrl,
+        },
+      ]),
+    ],
+  })
+}
+
+function trackBlogView(postData: BlogPostDetail) {
+  const slug = toCanonicalSlug(String(postData.slug || route.params.slug || ''))
+  const trackingKey = `${slug}|${String(locale.value || 'en')}`
+
+  if (!slug || lastTrackedBlogViewKey === trackingKey) {
+    return
+  }
+
+  lastTrackedBlogViewKey = trackingKey
+
+  trackAnalyticsEvent('blog_post_view', {
+    slug,
+    author: postData.author,
+    tags: postData.tags || [],
+    published_date: postData.date,
+    page_path: `/blog/${slug}`,
+    locale: String(locale.value || 'en'),
+  })
 }
 
 async function loadPost(slug: string) {
@@ -151,14 +244,16 @@ async function loadPost(slug: string) {
       }
 
       applyBlogSeo(data.post)
-      await loadLikes(slug)
+      trackBlogView(data.post)
+      await loadLikes(targetCanonical || slug)
     } else {
       post.value = null
-      document.title = `${t('pages.blog.notFound')} | PEACE2074`
+      applyMissingBlogSeo()
     }
   } catch (err) {
     console.error('[Blog Detail] Load error:', err)
     post.value = null
+    applyMissingBlogSeo()
   } finally {
     loading.value = false
   }
@@ -200,6 +295,13 @@ async function handleLike() {
     if (result.ok) {
       likeCount.value = result.count
       isLiked.value = result.liked
+
+      trackAnalyticsEvent('blog_post_like', {
+        action: result.liked ? 'like' : 'unlike',
+        slug,
+        page_path: `/blog/${slug}`,
+        locale: String(locale.value || 'en'),
+      })
     }
   } catch (err) {
     console.error('[Blog Detail] Like error:', err)
@@ -239,6 +341,15 @@ watch(
     }
   }
 )
+
+watch(locale, () => {
+  if (post.value) {
+    applyBlogSeo(post.value)
+    return
+  }
+
+  applyMissingBlogSeo()
+})
 </script>
 
 <style scoped>

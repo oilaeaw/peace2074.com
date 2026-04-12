@@ -10,6 +10,12 @@ onMounted(() => {
   try {
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem(CONSENT_KEY)
+      if (saved === 'accepted') {
+        window.allConsentGranted?.()
+        show.value = false
+        return
+      }
+
       if (saved === null) {
         show.value = true
       }

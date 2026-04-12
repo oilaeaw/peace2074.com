@@ -8,6 +8,11 @@ import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
 import {
+  applySeoMeta,
+  buildBreadcrumbStructuredData,
+  buildPageStructuredData,
+} from '@/utils/seo'
+import {
   useOfflineRecitation,
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
@@ -255,6 +260,12 @@ let lastTrackedQuranDetailKey = ''
 let lastTrackedQuranDetailAt = 0
 const API_5XX_DEDUPE_MS = 15000
 const recentApi5xxEvents = new Map<string, number>()
+const QURAN_DETAIL_KEYWORDS = [
+  'Quran surah',
+  'Quran recitation',
+  'verse sharing',
+  'Quran bookmarks',
+]
 
 function trackPageView(pageTitle: string) {
   if (typeof window === 'undefined') return
@@ -341,10 +352,74 @@ function buildQuranDetailTitle() {
   return `${quranLabel} ${id}: ${names} | PEACE2074`
 }
 
+function buildQuranDetailDescription() {
+  const id = Number(sura.value?.id || route.params.id || 0)
+  const enName = String(sura.value?.e_name || '').trim()
+  const arName = String(sura.value?.name || '').trim()
+  const versesCount = Number(sura.value?.total_verses || 0)
+  const displayName = [enName, arName].filter(Boolean).join(' / ')
+
+  if (!id) {
+    return 'Read Quran surah details with recitation, verse sharing, and bookmarks on PEACE2074.'
+  }
+
+  if (displayName) {
+    return `Read Surah ${id} (${displayName}) with ${versesCount || 'full'} ayat, recitation, verse sharing, and bookmarks on PEACE2074.`
+  }
+
+  return `Read Quran Surah ${id} with recitation, verse sharing, and bookmarks on PEACE2074.`
+}
+
 function applyQuranDetailTitle(sendPageView = false) {
   if (typeof document === 'undefined') return
   const title = buildQuranDetailTitle()
-  document.title = title
+  const description = buildQuranDetailDescription()
+  const suraId = Number(sura.value?.id || route.params.id || 0)
+  const canonicalPath = suraId ? `/quran/${suraId}` : '/quran'
+  const suraKeywords = [
+    String(sura.value?.e_name || '').trim(),
+    String(sura.value?.name || '').trim(),
+  ].filter(Boolean)
+  const keywords = Array.from(
+    new Set([...QURAN_DETAIL_KEYWORDS, ...suraKeywords])
+  )
+  const schemaTitle = title.replace(/\s*\|\s*PEACE2074\s*$/i, '').trim()
+
+  applySeoMeta({
+    title,
+    description,
+    canonical: canonicalPath,
+    keywords,
+    locale: String(locale.value || 'en'),
+    structuredData: [
+      buildPageStructuredData({
+        type: 'WebPage',
+        title: schemaTitle,
+        description,
+        canonical: canonicalPath,
+        locale: String(locale.value || 'en'),
+        keywords,
+      }),
+      buildBreadcrumbStructuredData([
+        {
+          name: String(t('pages.home.title') || 'Home'),
+          item: '/',
+        },
+        {
+          name: String(t('pages.quran.title') || 'Quran'),
+          item: '/quran',
+        },
+        {
+          name:
+            [String(sura.value?.e_name || ''), String(sura.value?.name || '')]
+              .filter(Boolean)
+              .join(' — ') || `Surah ${suraId}`,
+          item: canonicalPath,
+        },
+      ]),
+    ],
+  })
+
   if (sendPageView) {
     trackPageView(title)
   }
