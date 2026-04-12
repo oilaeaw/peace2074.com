@@ -2037,6 +2037,9 @@ const playbackStatus = computed(() => {
 })
 
 const recitationStatusTitle = computed(() => {
+  if (isStartingRecitation.value) {
+    return t('pages.quran.startingRecitation') || 'Starting recitation'
+  }
   if (playbackStatus.value.state === 'playing') {
     return t('pages.quran.playing') || 'Recitation playing'
   }
@@ -2056,7 +2059,7 @@ const isRecitationSwitchOn = computed(
 
 const recitationSwitchLabel = computed(() => {
   if (isStartingRecitation.value) {
-    return t('pages.quran.playing') || 'Starting recitation'
+    return t('pages.quran.startingRecitation') || 'Starting recitation'
   }
 
   return isRecitationSwitchOn.value
