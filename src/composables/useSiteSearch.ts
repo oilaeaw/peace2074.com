@@ -1,6 +1,7 @@
 import { computed, ref } from "vue";
 import i18n from "@/i18n";
 import chaptersEn from "@/shared/data/chapters/en.json";
+import chaptersEs from "@/shared/data/chapters/es.json";
 import chaptersRu from "@/shared/data/chapters/ru.json";
 import chaptersTr from "@/shared/data/chapters/tr.json";
 
@@ -14,6 +15,7 @@ export type SearchResult = {
 
 const chaptersByLocale: Record<string, typeof chaptersEn> = {
     en: chaptersEn,
+    es: chaptersEs,
     ru: chaptersRu,
     tr: chaptersTr,
 };

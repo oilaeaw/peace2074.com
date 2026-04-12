@@ -83,14 +83,16 @@ const appVersion =
     : appVersionRaw
 const currentYear = new Date().getFullYear()
 
-const languageCodes = ['en', 'ar', 'de', 'ru', 'he', 'tr'] as const
+const languageCodes = ['en', 'ar', 'de', 'es', 'ru', 'he', 'it', 'tr'] as const
 
 const languageFlags: Record<string, string> = {
   en: '🇺🇸',
   ar: '🇸🇦',
   de: '🇩🇪',
+  es: '🇪🇸',
   ru: '🇷🇺',
   he: '🇮🇱',
+  it: '🇮🇹',
   tr: '🇹🇷',
 }
 

@@ -7,6 +7,7 @@ import chaptersHe from '../../../../../src/shared/data/chapters/he.json'
 
 import quranData from '../../../../../src/shared/data/quran.json'
 import editionsEn from '../../../../../src/shared/data/editions/en.json'
+import editionsEs from '../../../../../src/shared/data/editions/es.json'
 import editionsRu from '../../../../../src/shared/data/editions/ru.json'
 import editionsTr from '../../../../../src/shared/data/editions/tr.json'
 import editionsDe from '../../../../../src/shared/data/editions/de.json'
@@ -38,6 +39,7 @@ export default defineEventHandler((event) => {
     const book = quranData as Record<string, any[]>
     const editionsByLocale: Record<string, Record<string, any[]>> = {
         en: editionsEn as Record<string, any[]>,
+        es: editionsEs as Record<string, any[]>,
         ru: editionsRu as Record<string, any[]>,
         tr: editionsTr as Record<string, any[]>,
         de: editionsDe as Record<string, any[]>,

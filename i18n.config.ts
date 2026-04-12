@@ -1,41 +1,65 @@
-import { ar, de, en, ru } from "./app/locale";
+import { ar, de, en, es, he, it, ru, tr } from './src/locale'
 
 export interface LocaleT {
-  code: string;
-  name?: string;
-  messages?: string[];
+  code: string
+  name?: string
+  messages?: Record<string, unknown>
 }
-export type LocalesT = Locale[];
+export type LocalesT = LocaleT[]
 
 export default defineI18nConfig(() => ({
   legacy: false,
-  locale: "en",
+  locale: 'en',
   locales: [
     {
-      code: "en",
-      name: "English",
+      code: 'en',
+      name: 'English',
       messages: en,
     },
     {
-      code: "ar",
-      name: "Arabic",
+      code: 'ar',
+      name: 'Arabic',
       messages: ar,
     },
     {
-      code: "de",
-      name: "Deutsch",
+      code: 'de',
+      name: 'Deutsch',
       messages: de,
     },
     {
-      code: "ru",
-      name: "Русский",
+      code: 'es',
+      name: 'Español',
+      messages: es,
+    },
+    {
+      code: 'ru',
+      name: 'Русский',
       messages: ru,
+    },
+    {
+      code: 'he',
+      name: 'עברית',
+      messages: he,
+    },
+    {
+      code: 'it',
+      name: 'Italiano',
+      messages: it,
+    },
+    {
+      code: 'tr',
+      name: 'Türkçe',
+      messages: tr,
     },
   ],
   messages: {
     en,
     ar,
     de,
+    es,
     ru,
+    he,
+    it,
+    tr,
   },
-}));
+}))

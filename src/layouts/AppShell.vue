@@ -364,7 +364,7 @@ const router = useRouter()
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const authUser = computed(() => authStore._user)
-const languageCodes = ['en', 'ar', 'de', 'ru', 'he', 'tr'] as const
+const languageCodes = ['en', 'ar', 'de', 'es', 'ru', 'he', 'it', 'tr'] as const
 
 const localeModel = computed({
   get: () => locale.value,
@@ -389,8 +389,10 @@ const languageFlags: Record<string, string> = {
   en: '🇺🇸',
   ar: '🇸🇦',
   de: '🇩🇪',
+  es: '🇪🇸',
   ru: '🇷🇺',
   he: '🇮🇱',
+  it: '🇮🇹',
   tr: '🇹🇷',
 }
 
