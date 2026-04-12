@@ -1,4 +1,5 @@
 import type { QuranI, SuraI } from '@shared/types'
+import { loadPublicQuranData } from '@shared/utils/quran-data-loader'
 import { acceptHMRUpdate, defineStore } from 'pinia'
 
 interface QSDT {
@@ -43,7 +44,7 @@ async function loadLocalQuran(): Promise<any[]> {
   readyPromise = (async () => {
     const [hdetails, hbook] = await Promise.all([
       import('@shared/data/chapters/en.json').then(m => m.default as any),
-      import('@shared/data/quran.json').then(m => m.default as any),
+      loadPublicQuranData(),
     ])
 
     const chapters = Array.isArray(hdetails) ? hdetails : Object.values(hdetails as any)

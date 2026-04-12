@@ -1,4 +1,8 @@
 import { ref, computed } from 'vue'
+import {
+    loadPublicQuranData,
+    type QuranDataPayload,
+} from '@/shared/utils/quran-data-loader'
 
 type Aya = { verse: number; text: string; translation?: string }
 type Sura = { id: number; name: string; e_name?: string; total_verses?: number; type?: string; ayat?: Aya[] }
@@ -11,7 +15,7 @@ const API_BASE = (typeof window !== 'undefined'
     : 'http://127.0.0.1:3000').replace(/\/$/, '')
 
 let chaptersCache: any[] | null = null
-let quranCache: Record<string, any[]> | null = null
+let quranCache: QuranDataPayload | null = null
 let localDataPromise: Promise<Sura[]> | null = null
 const API_5XX_DEDUPE_MS = 15000
 const recentApi5xxEvents = new Map<string, number>()
@@ -83,7 +87,7 @@ async function buildLocalData() {
             chaptersCache = await import('@/shared/data/chapters/en.json').then(m => m.default as any[])
         }
         if (!quranCache) {
-            quranCache = await import('@/shared/data/quran.json').then(m => m.default as Record<string, any[]>)
+            quranCache = await loadPublicQuranData()
         }
 
         const ready: Sura[] = []

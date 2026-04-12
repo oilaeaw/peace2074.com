@@ -6,6 +6,8 @@
  * The ID is sortable for range queries and traversal
  */
 
+import { loadPublicQuranData } from './quran-data-loader'
+
 // Node colors
 const RED = true
 const BLACK = false
@@ -343,8 +345,7 @@ export function getQuranVerseTree(): QuranVerseTree {
 export async function initQuranVerseTree(): Promise<QuranVerseTree> {
     const tree = getQuranVerseTree()
     if (tree.isEmpty()) {
-        // Lazy-load Quran data
-        const quranData = await import('@/shared/data/quran.json').then(m => m.default)
+        const quranData = await loadPublicQuranData()
         tree.loadFromQuranData(quranData as any)
     }
     return tree

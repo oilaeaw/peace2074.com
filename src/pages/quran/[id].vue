@@ -1,7 +1,6 @@
 <script setup lang="ts">
 import { useRoute, useRouter } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
-import { useQuranTree } from '@/composables/useQuranTree'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
@@ -253,8 +252,6 @@ const layoutMode = computed<'reader' | 'mushaf' | 'native'>({
   },
 })
 
-// Quran verse tree for O(log n) verse lookup
-const quranTree = useQuranTree()
 const PAGEVIEW_DEDUPE_MS = 1500
 let lastTrackedQuranDetailKey = ''
 let lastTrackedQuranDetailAt = 0
@@ -1029,14 +1026,6 @@ async function navigateToQuickAccess(
 
   if (isRecitationSessionLocked.value) {
     return
-  }
-
-  // Use tree for efficient lookup (preload context)
-  const verseData = await quranTree.getVerse(qaVerse.suraId, qaVerse.verse)
-  if (verseData) {
-    console.debug(
-      `[QuranTree] Found verse ${verseData.id}: ${verseData.text.slice(0, 50)}...`
-    )
   }
 
   selectedBookmark.value = `id_${qaVerse.id}`
