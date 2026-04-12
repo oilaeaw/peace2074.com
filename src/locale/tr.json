@@ -286,8 +286,8 @@
             "communityBody": "Sureler, tefekkürler ve uygulama ipuçları konuşmak için açık odalara katılın.",
             "devTitle": "Geliştiriciler",
             "devBody": "Katkı yapmak ister misiniz? Açık konularda bizimle iletişime geçin.",
-            "todoTitle": "Yol haritası",
-            "todoBody": "waelio-messaging ile canlı sohbet, odalar ve geçmiş ekliyoruz.",
+            "todoTitle": "Canlı durum",
+            "todoBody": "Canlı sohbet, odalar ve mesaj geçmişi artık waelio-messaging ile aktif.",
             "live": {
                 "title": "Canlı Sohbet",
                 "adminBadge": "Yönetici",

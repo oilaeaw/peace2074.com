@@ -138,10 +138,9 @@ export const routes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Chat',
       titleKey: 'pages.chat.title',
-      requiresAuth: true,
       description:
-        'Ask PEACE AI for guidance about chapters, reflections, and app usage in a private chat flow.',
-      keywords: ['Islamic AI chat', 'PEACE AI support'],
+        'Join the live PEACE2074 community chat for support, reflections, and real-time conversation.',
+      keywords: ['Islamic community chat', 'live support chat', 'PEACE2074 chat'],
       robots: 'noindex,nofollow,noarchive',
       contentGroup: 'chat',
       schemaType: 'WebPage',

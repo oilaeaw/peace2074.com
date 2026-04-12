@@ -286,8 +286,8 @@
             "communityBody": "Únete a salas abiertas para discutir surahs, reflexiones y consejos.",
             "devTitle": "Desarrolladores",
             "devBody": "¿Quieres contribuir? Contáctanos y trabaja con nosotros.",
-            "todoTitle": "Hoja de ruta",
-            "todoBody": "Estamos añadiendo chat en vivo, salas e historial.",
+            "todoTitle": "Estado en vivo",
+            "todoBody": "El chat en vivo, las salas y el historial de mensajes ya están activos con waelio-messaging.",
             "live": {
                 "title": "Chat en Vivo",
                 "adminBadge": "Admin",

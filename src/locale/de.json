@@ -343,8 +343,8 @@
       "communityBody": "Tritt offenen Räumen bei, um über Suren, Reflexionen und App-Tipps zu sprechen.",
       "devTitle": "Entwickler",
       "devBody": "Möchtest du beitragen? Melde dich und arbeite mit uns an offenen Issues.",
-      "todoTitle": "Roadmap",
-      "todoBody": "Wir fügen bald Live-Chat, Räume und Verlauf mit waelio-messaging hinzu.",
+      "todoTitle": "Live-Status",
+      "todoBody": "Live-Chat, Räume und Nachrichtenverlauf sind jetzt mit waelio-messaging aktiv.",
       "live": {
         "title": "Live-Chat",
         "adminBadge": "Admin",

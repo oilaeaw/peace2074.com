@@ -286,8 +286,8 @@
       "communityBody": "Join open rooms to discuss surahs, reflections, and app tips.",
       "devTitle": "Developers",
       "devBody": "Want to contribute? Reach out and pair with us on open issues.",
-      "todoTitle": "Roadmap",
-      "todoBody": "We are adding live chat, rooms, and history with waelio-messaging.",
+      "todoTitle": "Live status",
+      "todoBody": "Live chat, rooms, and message history are active with waelio-messaging.",
       "live": {
         "title": "Live Chat",
         "adminBadge": "Admin",

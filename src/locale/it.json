@@ -286,8 +286,8 @@
             "communityBody": "Unisciti a stanze aperte per discutere surah, riflessioni e suggerimenti.",
             "devTitle": "Sviluppatori",
             "devBody": "Vuoi contribuire? Contattaci e collabora con noi.",
-            "todoTitle": "Roadmap",
-            "todoBody": "Stiamo aggiungendo chat live, stanze e cronologia.",
+            "todoTitle": "Stato live",
+            "todoBody": "La chat live, le stanze e la cronologia dei messaggi sono ora attive con waelio-messaging.",
             "live": {
                 "title": "Chat Live",
                 "adminBadge": "Admin",

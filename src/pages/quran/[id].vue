@@ -514,7 +514,10 @@ const autoContinueEnabled = computed({
   set: (enabled) => autoContinueStore.set(enabled),
 })
 
-// Hover widget state
+// Ayah action hover/tap widget state.
+// This is a supported Quran reading interaction and should not be removed
+// without providing an equivalent verse-actions UX and updating
+// docs/QURAN_AYAH_HOVER_MENU.md.
 const hoverWidgetVisible = ref(false)
 const hoverWidgetVerse = ref<number | null>(null)
 const hoverTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
@@ -3068,7 +3071,11 @@ watch(
         </article>
       </div>
 
-      <!-- Audio Control Hover Widget -->
+      <!--
+        Ayah action hover/tap widget.
+        Keep this feature available for verse-level actions; if interaction
+        mechanics change, update docs/QURAN_AYAH_HOVER_MENU.md as well.
+      -->
       <Teleport to="body">
         <Transition name="fade">
           <div
