@@ -14,7 +14,16 @@ type BlogSeedPost = {
     author?: string
     createdAt?: string
     updatedAt?: string
+    notifySubscribers?: boolean
+    notificationTitle?: string
+    notificationBody?: string
+    notificationUrl?: string
 }
+
+type PublicBlogSeedPost = Omit<
+    BlogSeedPost,
+    'notifySubscribers' | 'notificationTitle' | 'notificationBody' | 'notificationUrl'
+>
 
 function buildSlugVariants(slug?: string) {
     const raw = String(slug || '').trim()
@@ -42,10 +51,25 @@ function toCanonicalSlug(value?: string) {
         .replace(/-+/g, '-')
 }
 
-function loadSeedPosts(): BlogSeedPost[] {
+function toPublicSeedPost(post: BlogSeedPost): PublicBlogSeedPost {
+    return {
+        id: post.id,
+        slug: post.slug,
+        title: post.title,
+        excerpt: post.excerpt,
+        content: post.content,
+        tags: post.tags,
+        date: post.date,
+        author: post.author,
+        createdAt: post.createdAt,
+        updatedAt: post.updatedAt,
+    }
+}
+
+function loadSeedPosts(): PublicBlogSeedPost[] {
     try {
         // Import the JSON directly so it gets bundled
-        return Array.isArray(blogSeedData) ? blogSeedData : []
+        return Array.isArray(blogSeedData) ? blogSeedData.map(toPublicSeedPost) : []
     } catch (error) {
         console.warn('[Blog GET] Seed fallback load failed:', error instanceof Error ? error.message : 'unknown')
         return []

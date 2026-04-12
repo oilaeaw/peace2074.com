@@ -1,4 +1,22 @@
 import { getPrisma } from '../utils/prisma'
+import { sendBlogPostNotification } from '../utils/blog-notifications'
+
+type SeedBlogPost = {
+    id: string
+    slug: string
+    title: string
+    excerpt?: string
+    content: string
+    tags?: string[]
+    date: string
+    author: string
+    createdAt?: string
+    updatedAt?: string
+    notifySubscribers?: boolean
+    notificationTitle?: string
+    notificationBody?: string
+    notificationUrl?: string
+}
 
 /**
  * Nitro plugin that seeds blog posts on server startup
@@ -21,7 +39,7 @@ export default defineNitroPlugin(async () => {
         }
 
         // Import seed data
-        const seedData = await import('../data/blog-seed.json').then(m => m.default)
+        const seedData = await import('../data/blog-seed.json').then(m => m.default as SeedBlogPost[])
 
         // Check which posts need to be seeded
         let seededCount = 0
@@ -47,6 +65,27 @@ export default defineNitroPlugin(async () => {
                 await prisma.blogPost.create({ data: postData })
                 seededCount++
                 console.log(`[Blog Seed] ✓ Seeded: ${post.title}`)
+
+                if (post.notifySubscribers === true) {
+                    try {
+                        const notificationResult = await sendBlogPostNotification({
+                            slug: post.slug,
+                            title: post.title,
+                            notificationTitle: post.notificationTitle,
+                            notificationBody: post.notificationBody,
+                            notificationUrl: post.notificationUrl,
+                        })
+
+                        console.log(
+                            `[Blog Seed] Notification ${notificationResult.ok ? 'sent' : 'skipped'} for: ${post.title} (${notificationResult.reason})`
+                        )
+                    } catch (error: any) {
+                        console.error(
+                            `[Blog Seed] Failed to notify subscribers for ${post.title}:`,
+                            error?.message || error
+                        )
+                    }
+                }
             }
         }
 

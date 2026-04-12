@@ -55,9 +55,15 @@ Edit `apps/nitro-api/server/data/blog-seed.json`:
   "date": "2026-02-23",
   "author": "Your Name",
   "createdAt": "2026-02-23T00:00:00.000Z",
-  "updatedAt": "2026-02-23T00:00:00.000Z"
+  "updatedAt": "2026-02-23T00:00:00.000Z",
+  "notifySubscribers": true,
+  "notificationTitle": "🌍 PEACE2074 blog update",
+  "notificationBody": "New posts are now live in Spanish and Italian.",
+  "notificationUrl": "/blog"
 }
 ```
+
+Optional notification fields are only used during server startup seeding. If `notifySubscribers` is `true`, the app sends a push notification **only when that seeded post is inserted for the first time** and blog notifications are enabled.
 
 ### Option 2: Export from local database
 

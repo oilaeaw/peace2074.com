@@ -1,8 +1,8 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
 import { getPrisma } from '../utils/prisma'
-import { getVapidConfig } from '../utils/vapid'
 import { createDatoCmsBlogPost } from '../utils/datocms'
+import { sendBlogPostNotification } from '../utils/blog-notifications'
 
 function toCanonicalSlug(value: string) {
     return String(value || '')
@@ -82,47 +82,12 @@ export default defineEventHandler(async (event) => {
                 console.warn('[Blog POST] Prisma write succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
             }
 
-            // Optional: Send push notification to all subscribers
-            // TODO: Migrate push subscriptions to Prisma/MongoDB
-            if (process.env.ENABLE_BLOG_NOTIFICATIONS === 'true') {
-                try {
-                    const webpush = await import('web-push')
-                    const vapid = getVapidConfig()
-                    const { getCollection } = await import('../utils/kv-db')
-
-                    if (vapid) {
-                        webpush.default.setVapidDetails(vapid.subject, vapid.publicKey, vapid.privateKey)
-
-                        const Subscriptions = await getCollection('push_subscriptions')
-                        const subscriptions = await Subscriptions.find({}).toArray()
-
-                        const payload = JSON.stringify({
-                            title: '📝 New Blog Post',
-                            body: normalizedTitle,
-                            icon: '/android-chrome-192x192.png',
-                            badge: '/android-chrome-192x192.png',
-                            data: {
-                                url: `/blog/${normalizedSlug}`,
-                            },
-                        })
-
-                        // Send notifications in background (don't wait)
-                        Promise.allSettled(
-                            subscriptions.map(async (sub) => {
-                                try {
-                                    await webpush.default.sendNotification(sub.subscription, payload)
-                                } catch (err: any) {
-                                    if (err.statusCode === 410) {
-                                        await Subscriptions.deleteOne({ endpoint: sub.endpoint })
-                                    }
-                                }
-                            })
-                        ).catch(() => { })
-                    }
-                } catch (err) {
-                    console.error('[Blog] Failed to send push notifications:', err)
-                }
-            }
+            void sendBlogPostNotification({
+                slug: normalizedSlug,
+                title: normalizedTitle,
+            }).catch((err) => {
+                console.error('[Blog] Failed to send push notifications:', err)
+            })
 
             return {
                 ok: true,
