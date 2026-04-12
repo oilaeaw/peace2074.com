@@ -318,11 +318,11 @@ function editPost() {
   router.push(`/blog-editor?slug=${encodeURIComponent(slug)}`)
 }
 
-function formatDate(date: string) {
+function formatDate(date?: string) {
   try {
-    return new Date(date).toLocaleDateString()
+    return date ? new Date(date).toLocaleDateString() : ''
   } catch {
-    return date
+    return date || ''
   }
 }
 

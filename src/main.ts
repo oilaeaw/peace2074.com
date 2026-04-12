@@ -364,7 +364,7 @@ function buildStructuredDataForRoute(
 
 function trackPageViewForRoute(
   to: RouteLocationNormalizedLoaded,
-  source: 'router_after_each' | 'router_ready'
+  source: 'router_after_each' | 'router_ready' | 'consent_granted'
 ) {
   if (!isClient) return
 
