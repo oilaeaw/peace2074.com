@@ -1,6 +1,7 @@
 // Prisma-backed user storage.
-// Performs one-time sync from legacy Nitro KV storage (db:users) when DB is empty.
+// Development can fall back to Nitro KV storage, but production requires Prisma.
 
+import { createDatabaseRequiredError, isFallbackAuthStorageAllowed } from './database-mode'
 import { getPrisma } from './prisma'
 
 // Cached Prisma client after successful initialization
@@ -137,6 +138,10 @@ function repairUsers(users: User[]) {
 }
 
 async function loadFallbackUsers(): Promise<User[]> {
+    if (!isFallbackAuthStorageAllowed()) {
+        throw createDatabaseRequiredError()
+    }
+
     if (memoryUsers && memoryUsers.length > 0) {
         const repaired = repairUsers(memoryUsers)
         if (repaired.changed) {
@@ -175,6 +180,10 @@ async function loadFallbackUsers(): Promise<User[]> {
 }
 
 async function saveFallbackUsers(users: User[]) {
+    if (!isFallbackAuthStorageAllowed()) {
+        throw createDatabaseRequiredError()
+    }
+
     memoryUsers = users
     try {
         const storage = useStorage('data')
@@ -255,10 +264,10 @@ async function upsertByIdentity(user: User) {
         password: user.password,
         email: user.email,
         role: user.role,
+        google_id: user.google_id || null,
+        apple_id: user.apple_id || null,
         first_name: user.first_name || null,
         last_name: user.last_name || null,
-        tasbeeh: user.tasbeeh || [],
-        bookmarks: user.bookmarks || [],
         avatar_url: user.avatar_url || null,
         github_id: user.github_id || null,
         permissions: resolveUserPermissions(user),
@@ -437,6 +446,12 @@ export async function addUser(user: User) {
                     password: normalized.password,
                     email: normalized.email,
                     role: normalized.role,
+                    google_id: normalized.google_id || null,
+                    apple_id: normalized.apple_id || null,
+                    first_name: normalized.first_name || null,
+                    last_name: normalized.last_name || null,
+                    avatar_url: normalized.avatar_url || null,
+                    github_id: normalized.github_id || null,
                     permissions: normalized.permissions || [],
                 },
             })
@@ -454,11 +469,13 @@ export async function addUser(user: User) {
 
 
 export async function getUserStorageDiagnostics(): Promise<{
-    source: 'prisma' | 'fallback'
+    source: 'prisma' | 'fallback' | 'database-required'
     usersCount: number
     prismaReachable: boolean
+    fallbackAllowed: boolean
 }> {
     const prismaReachable = await isPrismaReady()
+    const fallbackAllowed = isFallbackAuthStorageAllowed()
 
     if (prismaReachable) {
         try {
@@ -467,9 +484,19 @@ export async function getUserStorageDiagnostics(): Promise<{
                 source: 'prisma',
                 usersCount,
                 prismaReachable: true,
+                fallbackAllowed,
             }
         } catch (error) {
             markPrismaUnavailable(error)
+        }
+    }
+
+    if (!fallbackAllowed) {
+        return {
+            source: 'database-required',
+            usersCount: 0,
+            prismaReachable: false,
+            fallbackAllowed: false,
         }
     }
 
@@ -478,6 +505,7 @@ export async function getUserStorageDiagnostics(): Promise<{
         source: 'fallback',
         usersCount: users.length,
         prismaReachable: false,
+        fallbackAllowed: true,
     }
 }
 

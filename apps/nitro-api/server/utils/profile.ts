@@ -1,3 +1,4 @@
+import { createDatabaseRequiredError, isDatabaseRequired } from './database-mode'
 import { getPrisma } from './prisma'
 
 let prisma: any = null
@@ -20,6 +21,9 @@ export interface Profile {
 async function isPrismaReady(): Promise<boolean> {
     if (prisma) return true
     prisma = await getPrisma()
+    if (!prisma && isDatabaseRequired()) {
+        throw createDatabaseRequiredError()
+    }
     return !!prisma
 }
 
@@ -32,6 +36,7 @@ export async function getProfile(userId: string): Promise<Profile | null> {
             return profile
         } catch (e) {
             console.error('Failed to get profile from Prisma:', e)
+            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
         }
     }
     return null
@@ -55,6 +60,7 @@ export async function createProfile(profile: Profile): Promise<Profile | null> {
             return created
         } catch (e) {
             console.error('Failed to create profile:', e)
+            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
         }
     }
     return null
@@ -70,6 +76,7 @@ export async function updateProfile(userId: string, updates: Partial<Profile>): 
             return updated
         } catch (e) {
             console.error('Failed to update profile:', e)
+            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
         }
     }
     return null

@@ -14,7 +14,8 @@ import {
   type WebAuthnCredential,
 } from '@simplewebauthn/server'
 
-import { getProfile, updateProfile } from './profile'
+import { createDatabaseRequiredError, isFallbackAuthStorageAllowed } from './database-mode'
+import { createProfile, getProfile, updateProfile } from './profile'
 import {
   findUserById,
   findUserByUsername,
@@ -83,7 +84,7 @@ function normalizePasskeys(input: unknown): StoredPasskey[] {
           : undefined,
         deviceType:
           value.deviceType === 'singleDevice' ||
-          value.deviceType === 'multiDevice'
+            value.deviceType === 'multiDevice'
             ? value.deviceType
             : undefined,
         backedUp: Boolean(value.backedUp),
@@ -98,13 +99,67 @@ function normalizePasskeys(input: unknown): StoredPasskey[] {
     .filter((item): item is StoredPasskey => Boolean(item))
 }
 
+async function readLegacyPasskeysFromStorage(
+  userId: string
+): Promise<StoredPasskey[]> {
+  try {
+    const storage = getStorage()
+    const stored = await storage.getItem<StoredPasskey[]>(getPasskeysKey(userId))
+    return normalizePasskeys(stored)
+  } catch {
+    return []
+  }
+}
+
+async function syncPasskeysToProfile(
+  userId: string,
+  passkeys: StoredPasskey[],
+  existingProfile: Awaited<ReturnType<typeof getProfile>>
+) {
+  const settings = {
+    ...(existingProfile?.settings || {}),
+    passkeys,
+  }
+
+  if (!existingProfile) {
+    const created = await createProfile({
+      userId,
+      settings,
+      tasbeeh_summary: { total: 0, sessions: 0 },
+    })
+
+    if (!created) {
+      throw createDatabaseRequiredError(
+        'Profile not found for passkey persistence'
+      )
+    }
+
+    return created
+  }
+
+  const updated = await updateProfile(userId, { settings })
+  if (!updated) {
+    throw createDatabaseRequiredError(
+      'Failed to persist passkeys to the database'
+    )
+  }
+
+  return updated
+}
+
 async function loadFallbackPasskeys(userId: string): Promise<StoredPasskey[]> {
-  const storage = getStorage()
-  const stored = await storage.getItem<StoredPasskey[]>(getPasskeysKey(userId))
-  return normalizePasskeys(stored)
+  if (!isFallbackAuthStorageAllowed()) {
+    return []
+  }
+
+  return readLegacyPasskeysFromStorage(userId)
 }
 
 async function saveFallbackPasskeys(userId: string, passkeys: StoredPasskey[]) {
+  if (!isFallbackAuthStorageAllowed()) {
+    throw createDatabaseRequiredError()
+  }
+
   const storage = getStorage()
   await storage.setItem(getPasskeysKey(userId), normalizePasskeys(passkeys))
 }
@@ -116,11 +171,28 @@ export async function getUserPasskeys(
   const profilePasskeys = normalizePasskeys(profile?.settings?.passkeys)
 
   if (profilePasskeys.length > 0) {
-    await saveFallbackPasskeys(userId, profilePasskeys)
+    if (isFallbackAuthStorageAllowed()) {
+      await saveFallbackPasskeys(userId, profilePasskeys)
+    }
     return profilePasskeys
   }
 
-  return loadFallbackPasskeys(userId)
+  const legacyPasskeys = await readLegacyPasskeysFromStorage(userId)
+  if (legacyPasskeys.length > 0) {
+    await syncPasskeysToProfile(userId, legacyPasskeys, profile)
+
+    if (isFallbackAuthStorageAllowed()) {
+      await saveFallbackPasskeys(userId, legacyPasskeys)
+    }
+
+    return legacyPasskeys
+  }
+
+  if (!isFallbackAuthStorageAllowed()) {
+    return []
+  }
+
+  return []
 }
 
 export async function saveUserPasskeys(
@@ -128,6 +200,12 @@ export async function saveUserPasskeys(
   passkeys: StoredPasskey[]
 ): Promise<void> {
   const normalized = normalizePasskeys(passkeys)
+
+  if (!isFallbackAuthStorageAllowed()) {
+    await syncPasskeysToProfile(userId, normalized, await getProfile(userId))
+    return
+  }
+
   await saveFallbackPasskeys(userId, normalized)
 
   const profile = await getProfile(userId)

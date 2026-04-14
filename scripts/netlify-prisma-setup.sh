@@ -11,6 +11,12 @@ echo "🔧 Setting up Prisma for Netlify Functions..."
 # Ensure Prisma client is generated
 echo "📦 Generating Prisma Client..."
 cd apps/nitro-api
+if [ -n "$DATABASE_URL" ]; then
+  echo "🗄️ Syncing Prisma schema to the database..."
+  pnpm exec prisma db push --schema ./prisma/schema.prisma
+else
+  echo "⚠️  DATABASE_URL not set; skipping prisma db push"
+fi
 pnpm exec prisma generate --schema ./prisma/schema.prisma
 cd ../..
 
