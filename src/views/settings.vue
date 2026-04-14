@@ -316,7 +316,7 @@ async function ensureNotificationsPermission(): Promise<boolean> {
       message: t('pages.settings.notifications.denied'),
     })
     return false
-  } catch (e) {
+  } catch {
     $q.notify?.({
       type: 'negative',
       message: t('pages.settings.notifications.error'),
@@ -349,7 +349,6 @@ async function showTestNotification(): Promise<boolean> {
       Notification.permission === 'granted'
     ) {
       // Fallback to immediate notification in supported desktop browsers
-      // eslint-disable-next-line no-new
       new Notification(t('pages.settings.notifications.testTitle'), {
         body: t('pages.settings.notifications.testBody'),
         icon: '/android-chrome-192x192.png',
@@ -600,18 +599,18 @@ async function reloadApp() {
     <q-pull-to-refresh @refresh="onPullRefresh">
       <div class="page-header q-mb-md">
         <h1 class="text-h4 q-mb-xs">{{ t('pages.settings.title') }}</h1>
-        <div class="text-subtitle2 text-grey-6">
+        <div class="text-subtitle2 page-subtitle">
           {{ t('pages.settings.subtitle') }}
         </div>
       </div>
 
       <div class="grid">
         <q-card class="glassy-card">
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.display.title') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mb-md">
+            <div class="text-body2 section-desc q-mb-md">
               {{ t('pages.settings.display.desc') }}
             </div>
             <div class="setting-row">
@@ -619,7 +618,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.display.compact') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.display.compactHint') }}
                 </div>
               </div>
@@ -635,7 +634,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.display.motion') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.display.motionHint') }}
                 </div>
               </div>
@@ -651,7 +650,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.display.darkMode') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.display.darkModeHint') }}
                 </div>
               </div>
@@ -667,7 +666,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.display.translation') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.display.translationHint') }}
                 </div>
               </div>
@@ -681,11 +680,11 @@ async function reloadApp() {
         </q-card>
 
         <q-card class="glassy-card">
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.accessibility.title') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mb-md">
+            <div class="text-body2 section-desc q-mb-md">
               {{ t('pages.settings.accessibility.desc') }}
             </div>
             <div class="setting-row">
@@ -693,7 +692,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.accessibility.fontSize') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.accessibility.fontSizeHint') }}
                 </div>
               </div>
@@ -718,7 +717,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.accessibility.highContrast') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.accessibility.highContrastHint') }}
                 </div>
               </div>
@@ -732,11 +731,11 @@ async function reloadApp() {
         </q-card>
 
         <q-card class="glassy-card">
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.navigation.title') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mb-md">
+            <div class="text-body2 section-desc q-mb-md">
               {{ t('pages.settings.navigation.desc') }}
             </div>
             <div class="setting-row">
@@ -744,7 +743,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.navigation.enableOrdering') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.navigation.enableOrderingHint') }}
                 </div>
               </div>
@@ -760,7 +759,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.navigation.drawerDefault') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.navigation.drawerDefaultHint') }}
                 </div>
               </div>
@@ -774,11 +773,11 @@ async function reloadApp() {
         </q-card>
 
         <q-card class="glassy-card">
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.notifications.title') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mb-md">
+            <div class="text-body2 section-desc q-mb-md">
               {{ t('pages.settings.notifications.desc') }}
             </div>
             <div class="setting-row">
@@ -786,7 +785,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.notifications.enable') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.notifications.enableHint') }}
                 </div>
               </div>
@@ -799,9 +798,8 @@ async function reloadApp() {
             <q-banner
               dense
               rounded
-              class="q-mt-md"
-              color="green-1"
-              text-color="positive"
+              class="q-mt-md hint-banner settings-status-banner"
+              :class="{ 'is-enabled': enableNotifications }"
             >
               {{
                 enableNotifications
@@ -813,11 +811,11 @@ async function reloadApp() {
         </q-card>
 
         <q-card class="glassy-card">
-          <q-card-section>
+          <q-card-section class="q-gutter-md">
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.audio.title') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mb-md">
+            <div class="text-body2 section-desc q-mb-md">
               {{ t('pages.settings.audio.desc') }}
             </div>
             <div class="setting-row">
@@ -825,7 +823,7 @@ async function reloadApp() {
                 <div class="text-subtitle1">
                   {{ t('pages.settings.audio.autoPlay') }}
                 </div>
-                <div class="text-caption text-grey-6">
+                <div class="text-caption setting-hint">
                   {{ t('pages.settings.audio.autoPlayHint') }}
                 </div>
               </div>
@@ -843,7 +841,7 @@ async function reloadApp() {
             <div class="text-h6 q-mb-sm">
               {{ t('pages.settings.refresh.title') }}
             </div>
-            <div class="text-body2 text-grey-7">
+            <div class="text-body2 section-desc">
               {{ t('pages.settings.refresh.desc') }}
             </div>
             <q-btn
@@ -863,22 +861,103 @@ async function reloadApp() {
 .settings-page {
   max-width: 1100px;
   margin: 0 auto;
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease;
 }
+
+.page-subtitle {
+  color: #5f6b7a;
+}
+
+.section-desc {
+  color: #5f6b7a;
+}
+
+.setting-hint {
+  color: #64748b;
+}
+
 .grid {
   display: grid;
   grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
   gap: 16px;
 }
+
 .glassy-card {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(10px);
   border: 1px solid rgba(255, 255, 255, 0.25);
   box-shadow: 0 12px 32px rgba(0, 0, 0, 0.12);
+  color: #1f2937;
+  transition:
+    background-color 0.2s ease,
+    border-color 0.2s ease,
+    box-shadow 0.2s ease,
+    color 0.2s ease;
 }
+
+.hint-banner {
+  background: rgba(148, 163, 184, 0.12);
+  color: #475569;
+  border: 1px solid rgba(148, 163, 184, 0.2);
+}
+
+.settings-status-banner.is-enabled {
+  background: rgba(22, 163, 74, 0.12);
+  color: #166534;
+  border-color: rgba(22, 163, 74, 0.24);
+}
+
 .setting-row {
   display: flex;
   align-items: center;
   justify-content: space-between;
   gap: 12px;
+}
+
+:global(body.body--dark) .settings-page .page-subtitle,
+:global(body.body--dark) .settings-page .section-desc,
+:global(body.body--dark) .settings-page .setting-hint {
+  color: rgba(255, 255, 255, 0.76) !important;
+}
+
+:global(body.body--dark) .settings-page {
+  background: #000;
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.06);
+  border-radius: 24px;
+}
+
+:global(body.body--dark) .settings-page .text-h4,
+:global(body.body--dark) .settings-page .text-h6,
+:global(body.body--dark) .settings-page .text-subtitle1,
+:global(body.body--dark) .settings-page .text-body2,
+:global(body.body--dark) .settings-page .text-caption {
+  color: inherit;
+}
+
+:global(body.body--dark) .settings-page .glassy-card {
+  background: rgba(5, 5, 5, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 20px 40px rgba(0, 0, 0, 0.58);
+  color: #fff;
+}
+
+:global(body.body--dark) .settings-page .hint-banner {
+  background: rgba(255, 255, 255, 0.06);
+  color: #fff;
+  border-color: rgba(255, 255, 255, 0.12);
+}
+
+:global(body.body--dark) .settings-page .settings-status-banner.is-enabled {
+  background: rgba(34, 197, 94, 0.18);
+  color: #dcfce7;
+  border-color: rgba(34, 197, 94, 0.28);
+}
+
+:global(body.body--dark) .settings-page :deep(.q-separator) {
+  background: rgba(255, 255, 255, 0.12);
 }
 </style>
