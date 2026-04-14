@@ -171,6 +171,9 @@
       "verses": "аяты",
       "invalidSuraRange": "Недопустимый номер суры. Пожалуйста, выберите суру от 1 до 114.",
       "apiHint": "Если содержимое не загружается, убедитесь, что сервер API /api/quran запущен.",
+      "loadSuraError": "Не удалось загрузить суру",
+      "loadChaptersError": "Не удалось загрузить суры",
+      "loadingAudio": "Загрузка аудио…",
       "sura": {
         "name": "Название суры",
         "id": "Номер суры",
@@ -198,7 +201,9 @@
         "confirmRemoveMessage": "Вы уверены, что хотите удалить эту закладку?",
         "alreadySaved": "Уже добавлено в закладки",
         "error": "Не удалось сохранить закладку",
-        "current": "эта сура"
+        "current": "эта сура",
+        "bookmarkSura": "Добавить суру в закладки",
+        "removeSura": "Удалить закладку"
       },
       "quickAccess": {
         "menu": "Быстро",
@@ -223,10 +228,31 @@
         "suraIncomplete": "Сура {sura} отмечена как незавершенная",
         "progressReset": "Прогресс сброшен",
         "registerToSync": "Зарегистрируйтесь, чтобы сохранить свой прогресс в облаке и получить к нему доступ с любого устройства!",
-        "register": "Регистрация"
+        "register": "Регистрация",
+        "viewProgress": "Показать прогресс",
+        "markComplete": "Отметить завершённой",
+        "markIncomplete": "Отметить незавершённой"
       },
       "autoContinue": "Автопродолжение к следующей суре",
-      "autoContinueAnnouncement": "Доступна новая функция! Включите 'Автопродолжение', чтобы автоматически переходить ко всем 114 сурам во время чтения."
+      "autoContinueAnnouncement": "Доступна новая функция! Включите 'Автопродолжение', чтобы автоматически переходить ко всем 114 сурам во время чтения.",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "Воспроизводится аят {verse} - {reciter}",
+        "playingSuraFromVerse": "Воспроизводится сура {sura} с аята {verse}",
+        "startingSura": "Запуск суры {sura}...",
+        "stoppedVerse": "Аят {verse} остановлен",
+        "playingVerse": "Воспроизводится аят {verse}",
+        "nextSura": "→ Следующая сура",
+        "previousSura": "← Предыдущая сура"
+      },
+      "share": {
+        "text": "Читать Коран {suraName} {reference}",
+        "action": "Поделиться {reference}",
+        "verseAction": "Поделиться аятом {reference}",
+        "shared": "Поделились {label}",
+        "linkCopied": "Ссылка скопирована: {text}"
+      },
+      "dismissAnnouncement": "Скрыть объявление"
     },
     "settings": {
       "title": "Настройки",
@@ -334,10 +360,10 @@
     },
     "miracles": {
       "pageTitle": "Страница чудес",
-      "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
-      "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
-      "clear": "[UNTRANSLATED] Clear",
-      "saveDrawing": "[UNTRANSLATED] Save Drawing",
+      "drawingPadTitle": "Планшет для рисования чудес Корана",
+      "drawingPadSubtitle": "Нарисуйте узор для суры 1",
+      "clear": "Очистить",
+      "saveDrawing": "Сохранить рисунок",
       "visualTab": "Визуальные узоры",
       "linguisticTab": "Лингвистический анализ",
       "linguisticPilotTitle": "Лингвистический пилот",
@@ -393,6 +419,7 @@
         "disconnected": "Отключено",
         "directMessage": "Прямое сообщение",
         "broadcastMessage": "Сообщение всем",
+        "messageToRoom": "Сообщение в #{room}",
         "loginRequiredToSend": "Пожалуйста, войдите, чтобы отправлять сообщения.",
         "createRoomTitle": "Создать новую комнату",
         "roomNameLabel": "Название комнаты",
@@ -432,6 +459,9 @@
       "empty": "Пока нет записей.",
       "notFound": "Запись не найдена",
       "newPost": "Новая запись",
+      "likeSingle": "{count} лайк",
+      "likePlural": "{count} лайков",
+      "likeUpdateError": "Не удалось обновить лайк",
       "editor": {
         "newPost": "Новая запись",
         "editPost": "Редактировать запись",
@@ -471,7 +501,10 @@
       "like": "Нравится",
       "unlike": "Убрать лайк",
       "liked": "❤️ Понравилось!",
-      "unliked": "Лайк убран"
+      "unliked": "Лайк убран",
+      "loadError": "Не удалось загрузить историю развертываний",
+      "loginRequiredToLike": "Войдите, чтобы поставить лайк развертываниям",
+      "toggleLikeError": "Не удалось переключить лайк"
     }
   },
   "offline": {
@@ -541,6 +574,9 @@
     "download": "Скачать",
     "cancel": "Отмена",
     "delete": "Удалить",
+    "edit": "Редактировать",
+    "share": "Поделиться",
+    "undo": "Отменить",
     "updateAvailable": "Доступна новая версия!",
     "update": "Обновить сейчас",
     "later": "Позже",
@@ -589,7 +625,11 @@
     },
     "success": "Сообщение зафиксировано. Мы ответим в ближайшее время.",
     "error": "Не удалось отправить сообщение. Пожалуйста, попробуйте еще раз.",
-    "contactTitle": "Контактная информация"
+    "contactTitle": "Контактная информация",
+    "reachDirectly": "Свяжитесь с нами напрямую:",
+    "socialTitle": "Соцсети",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
   },
   "about": {
     "title": "Waelio",

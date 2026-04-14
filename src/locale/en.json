@@ -183,6 +183,9 @@
       "verses": "verses",
       "invalidSuraRange": "Invalid surah number. Please choose a surah between 1 and 114.",
       "apiHint": "If content doesn't load, ensure the server API /api/quran is running.",
+      "loadSuraError": "Failed to load sura",
+      "loadChaptersError": "Failed to load chapters",
+      "loadingAudio": "Loading audio…",
       "sura": {
         "name": "sura's Name",
         "id": "sura number",
@@ -210,7 +213,9 @@
         "confirmRemoveMessage": "Are you sure you want to remove this bookmark?",
         "alreadySaved": "Already bookmarked",
         "error": "Could not save bookmark",
-        "current": "this sura"
+        "current": "this sura",
+        "bookmarkSura": "Bookmark sura",
+        "removeSura": "Remove bookmark"
       },
       "quickAccess": {
         "menu": "Quick",
@@ -235,10 +240,31 @@
         "suraIncomplete": "Sura {sura} marked as incomplete",
         "progressReset": "Progress reset",
         "registerToSync": "Sign up to save your progress to the cloud and access it from any device!",
-        "register": "Sign Up"
+        "register": "Sign Up",
+        "viewProgress": "View progress",
+        "markComplete": "Mark complete",
+        "markIncomplete": "Mark incomplete"
       },
       "autoContinue": "Auto-continue to next sura",
-      "autoContinueAnnouncement": "A new feature is now available! Enable 'Auto-continue' to automatically progress through all 114 suras during recitation."
+      "autoContinueAnnouncement": "A new feature is now available! Enable 'Auto-continue' to automatically progress through all 114 suras during recitation.",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "Playing verse {verse} - {reciter}",
+        "playingSuraFromVerse": "Playing Sura {sura} from verse {verse}",
+        "startingSura": "Starting Sura {sura}...",
+        "stoppedVerse": "Stopped verse {verse}",
+        "playingVerse": "Playing verse {verse}",
+        "nextSura": "→ Next Sura",
+        "previousSura": "← Previous Sura"
+      },
+      "share": {
+        "text": "Read Quran {suraName} {reference}",
+        "action": "Share {reference}",
+        "verseAction": "Share verse {reference}",
+        "shared": "Shared {label}",
+        "linkCopied": "Link copied: {text}"
+      },
+      "dismissAnnouncement": "Dismiss announcement"
     },
     "miracles": {
       "pageTitle": "Miracles Page",
@@ -301,6 +327,7 @@
         "disconnected": "Disconnected",
         "directMessage": "Direct message",
         "broadcastMessage": "Message to all",
+        "messageToRoom": "Message #{room}",
         "loginRequiredToSend": "Please log in to send messages.",
         "createRoomTitle": "Create New Room",
         "roomNameLabel": "Room name",
@@ -432,6 +459,9 @@
       "empty": "No posts yet.",
       "notFound": "Post not found",
       "newPost": "New Post",
+      "likeSingle": "{count} Like",
+      "likePlural": "{count} Likes",
+      "likeUpdateError": "Failed to update like",
       "editor": {
         "newPost": "New Post",
         "editPost": "Edit Post",
@@ -471,7 +501,10 @@
       "like": "Like",
       "unlike": "Unlike",
       "liked": "❤️ Liked!",
-      "unliked": "Like removed"
+      "unliked": "Like removed",
+      "loadError": "Failed to load deployment history",
+      "loginRequiredToLike": "Please log in to like deployments",
+      "toggleLikeError": "Failed to toggle like"
     }
   },
   "offline": {
@@ -520,6 +553,9 @@
     "download": "Download",
     "cancel": "Cancel",
     "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "undo": "Undo",
     "languageNames": {
       "en": "English",
       "ar": "Arabic",
@@ -589,7 +625,11 @@
     },
     "success": "Message recorded. We will reply soon.",
     "error": "Failed to send message. Please try again.",
-    "contactTitle": "Contact Info"
+    "contactTitle": "Contact Info",
+    "reachDirectly": "Reach us directly:",
+    "socialTitle": "Social",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
   },
   "about": {
     "title": "Waelio",

@@ -22,7 +22,7 @@
         <q-btn
           :icon="isLiked ? 'favorite' : 'favorite_border'"
           :color="isLiked ? 'red' : 'grey'"
-          :label="`${likeCount} ${likeCount === 1 ? 'Like' : 'Likes'}`"
+          :label="blogLikeLabel"
           outline
           @click="handleLike"
         />
@@ -89,6 +89,12 @@ const loading = ref(true)
 const likeCount = ref(0)
 const isLiked = ref(false)
 let lastTrackedBlogViewKey = ''
+
+const blogLikeLabel = computed(() =>
+  likeCount.value === 1
+    ? t('pages.blog.likeSingle', { count: likeCount.value })
+    : t('pages.blog.likePlural', { count: likeCount.value })
+)
 
 const BLOG_KEYWORDS = ['Islamic blog', 'Quran reflections', 'PEACE2074 updates']
 
@@ -307,7 +313,7 @@ async function handleLike() {
     console.error('[Blog Detail] Like error:', err)
     $q.notify({
       type: 'negative',
-      message: 'Failed to update like',
+      message: t('pages.blog.likeUpdateError'),
       icon: 'error',
     })
   }

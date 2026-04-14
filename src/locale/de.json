@@ -163,7 +163,9 @@
         "confirmRemoveMessage": "Möchten Sie dieses Lesezeichen wirklich entfernen?",
         "alreadySaved": "Bereits als Lesezeichen gesetzt",
         "error": "Lesezeichen konnte nicht gespeichert werden",
-        "current": "diese Sure"
+        "current": "diese Sure",
+        "bookmarkSura": "Sure als Lesezeichen",
+        "removeSura": "Lesezeichen entfernen"
       },
       "quickAccess": {
         "menu": "Schnell",
@@ -188,10 +190,34 @@
         "suraIncomplete": "Sure {sura} als unvollständig markiert",
         "progressReset": "Fortschritt zurückgesetzt",
         "registerToSync": "Melden Sie sich an, um Ihren Fortschritt in der Cloud zu speichern und von jedem Gerät darauf zuzugreifen!",
-        "register": "Registrieren"
+        "register": "Registrieren",
+        "viewProgress": "Fortschritt anzeigen",
+        "markComplete": "Als abgeschlossen markieren",
+        "markIncomplete": "Als unvollständig markieren"
       },
       "autoContinue": "Automatisch zur nächsten Sure fortfahren",
-      "autoContinueAnnouncement": "Eine neue Funktion ist jetzt verfügbar! Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren."
+      "autoContinueAnnouncement": "Eine neue Funktion ist jetzt verfügbar! Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren.",
+      "loadSuraError": "Sure konnte nicht geladen werden",
+      "loadChaptersError": "Suren konnten nicht geladen werden",
+      "loadingAudio": "Audio wird geladen…",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "Vers {verse} wird abgespielt - {reciter}",
+        "playingSuraFromVerse": "Sure {sura} wird ab Vers {verse} abgespielt",
+        "startingSura": "Sure {sura} wird gestartet...",
+        "stoppedVerse": "Vers {verse} gestoppt",
+        "playingVerse": "Vers {verse} wird abgespielt",
+        "nextSura": "→ Nächste Sure",
+        "previousSura": "← Vorherige Sure"
+      },
+      "share": {
+        "text": "Lies Quran {suraName} {reference}",
+        "action": "{reference} teilen",
+        "verseAction": "Vers {reference} teilen",
+        "shared": "{label} geteilt",
+        "linkCopied": "Link kopiert: {text}"
+      },
+      "dismissAnnouncement": "Hinweis schließen"
     },
     "settings": {
       "title": "Einstellungen",
@@ -299,10 +325,10 @@
     },
     "miracles": {
       "pageTitle": "Wunderseite",
-      "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
-      "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
-      "clear": "[UNTRANSLATED] Clear",
-      "saveDrawing": "[UNTRANSLATED] Save Drawing",
+      "drawingPadTitle": "Zeichenfläche für Quran-Wunder",
+      "drawingPadSubtitle": "Zeichne das Muster für Sure 1",
+      "clear": "Löschen",
+      "saveDrawing": "Zeichnung speichern",
       "visualTab": "Visuelle Muster",
       "linguisticTab": "Sprachliche Analyse",
       "linguisticPilotTitle": "Sprachlicher Pilot",
@@ -358,6 +384,7 @@
         "disconnected": "Getrennt",
         "directMessage": "Direktnachricht",
         "broadcastMessage": "Nachricht an alle",
+        "messageToRoom": "Nachricht an #{room}",
         "loginRequiredToSend": "Bitte melde dich an, um Nachrichten zu senden.",
         "createRoomTitle": "Neuen Raum erstellen",
         "roomNameLabel": "Raumname",
@@ -397,6 +424,9 @@
       "empty": "Noch keine Beiträge.",
       "notFound": "Beitrag nicht gefunden",
       "newPost": "Neuer Beitrag",
+      "likeSingle": "{count} Like",
+      "likePlural": "{count} Likes",
+      "likeUpdateError": "Like konnte nicht aktualisiert werden",
       "editor": {
         "newPost": "Neuer Beitrag",
         "editPost": "Beitrag bearbeiten",
@@ -436,7 +466,10 @@
       "like": "Gefällt mir",
       "unlike": "Gefällt mir nicht mehr",
       "liked": "❤️ Gefällt mir!",
-      "unliked": "Gefällt mir entfernt"
+      "unliked": "Gefällt mir entfernt",
+      "loadError": "Bereitstellungsverlauf konnte nicht geladen werden",
+      "loginRequiredToLike": "Bitte melde dich an, um Bereitstellungen zu liken",
+      "toggleLikeError": "Gefällt mir konnte nicht umgeschaltet werden"
     }
   },
   "offline": {
@@ -501,6 +534,9 @@
     "download": "Herunterladen",
     "cancel": "Abbrechen",
     "delete": "Löschen",
+    "edit": "Bearbeiten",
+    "share": "Teilen",
+    "undo": "Rückgängig",
     "holdState": "Immer geöffnet",
     "swipeToChange": "Wischen zum ändern",
     "pause": "Pause",
@@ -554,7 +590,11 @@
     },
     "success": "Nachricht aufgezeichnet. Wir antworten bald.",
     "error": "Nachricht konnte nicht gesendet werden. Bitte versuche es erneut.",
-    "contactTitle": "Kontaktinformationen"
+    "contactTitle": "Kontaktinformationen",
+    "reachDirectly": "Direkt erreichbar:",
+    "socialTitle": "Soziale Netzwerke",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
   },
   "navigation": {
     "Profile": "Mein Profil",

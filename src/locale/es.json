@@ -183,6 +183,9 @@
             "verses": "versículos",
             "invalidSuraRange": "Número de surah inválido. Por favor elige una surah entre 1 y 114.",
             "apiHint": "Si el contenido no carga, asegúrate de que el servidor API /api/quran esté funcionando.",
+            "loadSuraError": "No se pudo cargar la surah",
+            "loadChaptersError": "No se pudieron cargar las surahs",
+            "loadingAudio": "Cargando audio…",
             "sura": {
                 "name": "Nombre de la surah",
                 "id": "Número de surah",
@@ -210,7 +213,9 @@
                 "confirmRemoveMessage": "¿Estás seguro de que quieres eliminar este marcador?",
                 "alreadySaved": "Ya está marcado",
                 "error": "No se pudo guardar el marcador",
-                "current": "esta surah"
+                "current": "esta surah",
+                "bookmarkSura": "Guardar surah",
+                "removeSura": "Quitar marcador"
             },
             "quickAccess": {
                 "menu": "Acceso rápido",
@@ -235,10 +240,28 @@
                 "suraIncomplete": "Surah {sura} marcada como incompleta",
                 "progressReset": "Progreso restablecido",
                 "registerToSync": "¡Regístrate para guardar tu progreso en la nube!",
-                "register": "Registrarse"
+                "register": "Registrarse",
+                "viewProgress": "Ver progreso",
+                "markComplete": "Marcar como completada",
+                "markIncomplete": "Marcar como incompleta"
             },
             "autoContinue": "Continuar automáticamente con la siguiente surah",
-            "autoContinueAnnouncement": "¡Nueva función disponible! Activa 'Continuar automáticamente' para avanzar por las 114 surahs."
+            "autoContinueAnnouncement": "¡Nueva función disponible! Activa 'Continuar automáticamente' para avanzar por las 114 surahs.",
+            "notifications": {
+                "playingSelectionWithReciter": "{label} - {reciter}",
+                "playingVerseWithReciter": "Reproduciendo versículo {verse} - {reciter}",
+                "playingSuraFromVerse": "Reproduciendo surah {sura} desde el versículo {verse}",
+                "startingSura": "Iniciando surah {sura}...",
+                "stoppedVerse": "Versículo {verse} detenido",
+                "playingVerse": "Reproduciendo versículo {verse}",
+                "nextSura": "→ Siguiente surah",
+                "previousSura": "← Surah anterior"
+            },
+            "share": {
+                "text": "Leer Corán {suraName} {reference}",
+                "shared": "{label} compartido",
+                "linkCopied": "Enlace copiado: {text}"
+            }
         },
         "miracles": {
             "pageTitle": "Página de Milagros",
@@ -301,6 +324,7 @@
                 "disconnected": "Desconectado",
                 "directMessage": "Mensaje directo",
                 "broadcastMessage": "Mensaje a todos",
+                "messageToRoom": "Mensaje a #{room}",
                 "loginRequiredToSend": "Por favor inicia sesión para enviar mensajes.",
                 "createRoomTitle": "Crear nueva sala",
                 "roomNameLabel": "Nombre de la sala",
@@ -471,7 +495,10 @@
             "like": "Me gusta",
             "unlike": "Quitar me gusta",
             "liked": "❤️ ¡Me gusta!",
-            "unliked": "Me gusta eliminado"
+            "unliked": "Me gusta eliminado",
+            "loadError": "No se pudo cargar el historial de despliegues",
+            "loginRequiredToLike": "Inicia sesión para dar me gusta a los despliegues",
+            "toggleLikeError": "No se pudo cambiar el me gusta"
         }
     },
     "offline": {
@@ -520,6 +547,7 @@
         "download": "Descargar",
         "cancel": "Cancelar",
         "delete": "Eliminar",
+        "undo": "Deshacer",
         "languageNames": {
             "en": "Inglés",
             "ar": "Árabe",

@@ -98,7 +98,7 @@
                     </div>
                   </div>
                   <div class="text-caption chat-meta-secondary">
-                    {{ msg.type }}
+                    {{ messageTypeLabel(msg.type) }}
                     <span v-if="msg.to"> → {{ msg.to }}</span>
                     <span v-if="msg.room"> · {{ msg.room }}</span>
                   </div>
@@ -204,7 +204,12 @@
           />
         </q-card-section>
         <q-card-actions align="right">
-          <q-btn flat :label="t('cancel')" color="primary" v-close-popup />
+          <q-btn
+            flat
+            :label="t('general.cancel')"
+            color="primary"
+            v-close-popup
+          />
           <q-btn
             unelevated
             :label="t('pages.chat.live.createRoomAction')"
@@ -245,11 +250,13 @@
 
 <script setup lang="ts">
 import { computed, onBeforeUnmount, onMounted, ref } from 'vue'
+import { useQuasar } from 'quasar'
 import { useMessagingStore } from '@/stores/messaging.pinia'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { CaslSubjectE, CaslActionE } from '@shared/types'
 
 const { t } = useI18n()
+const $q = useQuasar()
 const messaging = useMessagingStore()
 const authStore = useAuthStore()
 const draft = ref('')
@@ -329,7 +336,7 @@ const statusColor = computed(() => {
 
 const inputPlaceholder = computed(() => {
   if (selectedUser.value) return t('pages.chat.live.directMessage')
-  return `Message #${currentRoom.value}`
+  return t('pages.chat.live.messageToRoom', { room: currentRoom.value })
 })
 
 function createRoom() {
@@ -365,6 +372,12 @@ function displayText(msg: any) {
   if (typeof msg?.payload === 'string') return msg.payload
   if (msg?.payload) return JSON.stringify(msg.payload)
   return ''
+}
+
+function messageTypeLabel(type: string) {
+  if (type === 'direct') return String(t('pages.chat.live.directMessage'))
+  if (type === 'broadcast') return String(t('pages.chat.live.broadcastMessage'))
+  return type
 }
 
 function formatTs(ts: number) {

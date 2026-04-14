@@ -183,6 +183,9 @@
             "verses": "ayet",
             "invalidSuraRange": "Geçersiz sure numarası. Lütfen 1 ile 114 arasında bir sure seçin.",
             "apiHint": "İçerik yüklenmezse sunucu API'sinin /api/quran çalıştığından emin olun.",
+            "loadSuraError": "Sure yüklenemedi",
+            "loadChaptersError": "Sureler yüklenemedi",
+            "loadingAudio": "Ses yükleniyor…",
             "sura": {
                 "name": "surenin adı",
                 "id": "sure numarası",
@@ -210,7 +213,9 @@
                 "confirmRemoveMessage": "Bu yer imini kaldırmak istediğinizden emin misiniz?",
                 "alreadySaved": "Zaten yer imlerinde",
                 "error": "Yer imi kaydedilemedi",
-                "current": "bu sure"
+                "current": "bu sure",
+                "bookmarkSura": "Sureyi yer imlerine ekle",
+                "removeSura": "Yer imini kaldır"
             },
             "quickAccess": {
                 "menu": "Hızlı",
@@ -235,17 +240,35 @@
                 "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
                 "progressReset": "İlerleme sıfırlandı",
                 "registerToSync": "Kaydınızı buluta kaydetmek ve herhangi bir cihazdan erişmek için kayıt olun!",
-                "register": "Kayıt Ol"
+                "register": "Kayıt Ol",
+                "viewProgress": "İlerlemeyi görüntüle",
+                "markComplete": "Tamamlandı olarak işaretle",
+                "markIncomplete": "Tamamlanmadı olarak işaretle"
             },
             "autoContinue": "Otomatik olarak sonraki sureye devam et",
-            "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin."
+            "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin.",
+            "notifications": {
+                "playingSelectionWithReciter": "{label} - {reciter}",
+                "playingVerseWithReciter": "{verse}. ayet oynatılıyor - {reciter}",
+                "playingSuraFromVerse": "{sura}. sure {verse}. ayetten oynatılıyor",
+                "startingSura": "{sura}. sure başlatılıyor...",
+                "stoppedVerse": "{verse}. ayet durduruldu",
+                "playingVerse": "{verse}. ayet oynatılıyor",
+                "nextSura": "→ Sonraki Sure",
+                "previousSura": "← Önceki Sure"
+            },
+            "share": {
+                "text": "Kur'an oku {suraName} {reference}",
+                "shared": "{label} paylaşıldı",
+                "linkCopied": "Bağlantı kopyalandı: {text}"
+            }
         },
         "miracles": {
             "pageTitle": "Mucizeler Sayfası",
-            "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
-            "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
-            "clear": "[UNTRANSLATED] Clear",
-            "saveDrawing": "[UNTRANSLATED] Save Drawing",
+            "drawingPadTitle": "Kur'an Mucizeleri Çizim Tahtası",
+            "drawingPadSubtitle": "1. Sure için deseni çiz",
+            "clear": "Temizle",
+            "saveDrawing": "Çizimi kaydet",
             "visualTab": "Görsel Desenler",
             "linguisticTab": "Dilbilimsel Analiz",
             "linguisticPilotTitle": "Dilbilimsel Pilot",
@@ -301,6 +324,7 @@
                 "disconnected": "Bağlantı kesildi",
                 "directMessage": "Doğrudan mesaj",
                 "broadcastMessage": "Herkese mesaj",
+                "messageToRoom": "#{room} odasına mesaj",
                 "loginRequiredToSend": "Mesaj göndermek için lütfen giriş yapın.",
                 "createRoomTitle": "Yeni Oda Oluştur",
                 "roomNameLabel": "Oda adı",
@@ -471,7 +495,10 @@
             "like": "Beğen",
             "unlike": "Beğeniyi kaldır",
             "liked": "❤️ Beğenildi!",
-            "unliked": "Beğeni kaldırıldı"
+            "unliked": "Beğeni kaldırıldı",
+            "loadError": "Dağıtım geçmişi yüklenemedi",
+            "loginRequiredToLike": "Dağıtımları beğenmek için lütfen giriş yapın",
+            "toggleLikeError": "Beğeni değiştirilemedi"
         }
     },
     "offline": {
@@ -541,6 +568,7 @@
         "download": "İndir",
         "cancel": "İptal",
         "delete": "Sil",
+        "undo": "Geri al",
         "updateAvailable": "Yeni bir sürüm mevcut!",
         "update": "Şimdi Güncelle",
         "later": "Sonra",

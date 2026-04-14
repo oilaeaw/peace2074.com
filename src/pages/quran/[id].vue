@@ -263,6 +263,7 @@ const QURAN_DETAIL_KEYWORDS = [
   'verse sharing',
   'Quran bookmarks',
 ]
+const QURAN_RECITER_NAME = 'Mishary Al-Afasy'
 
 function trackPageView(pageTitle: string) {
   if (typeof window === 'undefined') return
@@ -681,6 +682,14 @@ const isVerseBookmarked = (verse: number | string) => {
 const bookmarkActionLabel = (verse: number | string) =>
   t('pages.quran.bookmarks.add', { verse })
 
+const shareActionLabel = (reference: string) =>
+  t('pages.quran.share.action', { reference })
+
+const shareVerseActionLabel = (verse: number | string) =>
+  t('pages.quran.share.verseAction', {
+    reference: `${currentSuraId.value}:${verse}`,
+  })
+
 // Mark sura as read in localStorage
 const READ_KEY = 'quran-read-suras'
 function markSuraAsRead(suraId: number) {
@@ -722,7 +731,7 @@ function markSuraAsCompleted(suraId: number) {
         position: 'top',
         actions: [
           {
-            label: t('pages.quran.backToList') || 'View Progress',
+            label: t('pages.quran.ramadanProgress.viewProgress'),
             color: 'white',
             handler: () => {
               router.push('/quran')
@@ -750,7 +759,7 @@ async function bookmarkVerse(
   if (isVerseBookmarked(verse)) {
     notify({
       type: 'info',
-      message: t('pages.quran.bookmarks.alreadySaved') || 'Already bookmarked',
+      message: t('pages.quran.bookmarks.alreadySaved'),
       tag: 'bookmark',
       icon: 'info',
       group: 'bookmark-duplicate',
@@ -780,7 +789,7 @@ async function bookmarkVerse(
       announce: true,
       actions: [
         {
-          label: t('general.undo') || 'Undo',
+          label: t('general.undo'),
           color: 'white',
           handler: () =>
             removeBookmark({
@@ -873,7 +882,12 @@ async function shareVerseLink(
   // Get sura name for better share text
   const suraName = sura.value?.e_name || `Sura ${suraId}`
   const shareTitle = `${suraName} ${verse}`
-  const shareText = `Read Quran ${suraName} ${suraId}:${verse}`
+  const shareText = String(
+    t('pages.quran.share.text', {
+      suraName,
+      reference: `${suraId}:${verse}`,
+    })
+  )
 
   try {
     if (
@@ -887,7 +901,7 @@ async function shareVerseLink(
       })
       notify({
         type: 'positive',
-        message: `Shared ${label}`,
+        message: t('pages.quran.share.shared', { label }),
         tag: 'share',
         icon: 'share',
         group: 'share-success',
@@ -904,7 +918,7 @@ async function shareVerseLink(
       await navigator.clipboard.writeText(url)
       notify({
         type: 'positive',
-        message: `Link copied: ${shareText}`,
+        message: t('pages.quran.share.linkCopied', { text: shareText }),
         tag: 'clipboard',
         icon: 'content_copy',
         caption: url,
@@ -993,7 +1007,10 @@ async function handleBookmarkNavigate(
       await startAudioRecitation(verseIndex, { withIntro: true })
       $q.notify({
         type: 'positive',
-        message: `${entry.label} - Mishary Al-Afasy`,
+        message: t('pages.quran.notifications.playingSelectionWithReciter', {
+          label: entry.label,
+          reciter: QURAN_RECITER_NAME,
+        }),
         icon: 'play_arrow',
         timeout: 2000,
       })
@@ -1065,7 +1082,10 @@ async function navigateToQuickAccess(
       await startAudioRecitation(verseIndex, { withIntro: true })
       $q.notify({
         type: 'positive',
-        message: `${t(qaVerse.nameKey)} - Mishary Al-Afasy`,
+        message: t('pages.quran.notifications.playingSelectionWithReciter', {
+          label: t(qaVerse.nameKey),
+          reciter: QURAN_RECITER_NAME,
+        }),
         icon: 'play_arrow',
         timeout: 2000,
       })
@@ -1124,7 +1144,10 @@ async function scrollToHash(
       await startAudioRecitation(verseIndex, { withIntro: true })
       $q.notify({
         type: 'positive',
-        message: `Playing verse ${versePart} - Mishary Al-Afasy`,
+        message: t('pages.quran.notifications.playingVerseWithReciter', {
+          verse: versePart,
+          reciter: QURAN_RECITER_NAME,
+        }),
         icon: 'play_arrow',
         timeout: 2500,
       })
@@ -1145,7 +1168,10 @@ async function autoplayCurrentSuraFromStart() {
     await startAudioRecitation(0, { withIntro: true })
     $q.notify({
       type: 'positive',
-      message: `Playing Sura ${currentSuraId.value} from verse 1`,
+      message: t('pages.quran.notifications.playingSuraFromVerse', {
+        sura: currentSuraId.value,
+        verse: 1,
+      }),
       icon: 'play_arrow',
       timeout: 2000,
     })
@@ -1207,7 +1233,7 @@ async function loadSuraById(id: number) {
       await autoplayCurrentSuraFromStart()
     }
   } catch (e: any) {
-    error.value = e?.message || 'Failed to load sura'
+    error.value = e?.message || String(t('pages.quran.loadSuraError'))
     $q.notify({ type: 'negative', message: error.value })
   } finally {
     loading.value = false
@@ -1491,7 +1517,9 @@ function playAyah(index: number) {
           const nextSuraId = currentSuraId.value + 1
           $q.notify({
             type: 'info',
-            message: `Starting Sura ${nextSuraId}...`,
+            message: t('pages.quran.notifications.startingSura', {
+              sura: nextSuraId,
+            }),
             icon: 'skip_next',
             timeout: 2000,
             position: 'top',
@@ -1538,7 +1566,7 @@ async function startSuraAudio() {
   if (!audioList.value.length) {
     notify({
       type: 'warning',
-      message: t('general.fetchingUpdates') || 'Loading audio…',
+      message: t('pages.quran.loadingAudio'),
       tag: 'audio',
       icon: 'downloading',
       group: 'audio-loading',
@@ -1627,7 +1655,7 @@ async function restorePlaybackPosition() {
         },
       },
       {
-        label: t('pages.quran.restart') || 'Start Over',
+        label: t('pages.quran.restartSura'),
         color: 'white',
         handler: () => {
           clearPlaybackPosition()
@@ -1795,7 +1823,7 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
     stopAudio()
     $q.notify({
       type: 'info',
-      message: `Stopped verse ${verse}`,
+      message: t('pages.quran.notifications.stoppedVerse', { verse }),
       icon: 'stop',
       timeout: 1500,
       position: 'top',
@@ -1806,7 +1834,7 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
     await startAudioRecitation(verseIndex, { withIntro: true })
     $q.notify({
       type: 'positive',
-      message: `Playing verse ${verse}`,
+      message: t('pages.quran.notifications.playingVerse', { verse }),
       icon: 'play_arrow',
       timeout: 1500,
       position: 'top',
@@ -1841,7 +1869,10 @@ function handleTouchEnd() {
     router.push(`/quran/${nextId}`)
     $q.notify({
       type: 'info',
-      message: swipeDistance < 0 ? '→ Next Sura' : '← Previous Sura',
+      message:
+        swipeDistance < 0
+          ? t('pages.quran.notifications.nextSura')
+          : t('pages.quran.notifications.previousSura'),
       timeout: 1000,
       position: 'top',
     })
@@ -2333,14 +2364,12 @@ onMounted(async () => {
     setTimeout(() => {
       notify({
         type: 'info',
-        message:
-          t('pages.quran.autoContinueAnnouncement') ||
-          '🎉 New Feature: Enable Auto-continue to automatically progress through all 114 suras!',
+        message: t('pages.quran.autoContinueAnnouncement'),
         icon: 'auto_awesome',
         announce: true,
         actions: [
           {
-            label: t('common.close') || 'Close',
+            label: t('general.close'),
             color: 'white',
             handler: () => {
               localStorage.setItem(FEATURE_ANNOUNCEMENT_KEY, 'true')
@@ -2455,7 +2484,7 @@ watch(
             flat
             icon="close"
             @click.prevent="dismissAnnouncement"
-            aria-label="Dismiss"
+            :aria-label="t('pages.quran.dismissAnnouncement')"
           />
         </template>
       </q-banner>
@@ -2480,7 +2509,7 @@ watch(
         <div class="paused-info">
           <div class="text-weight-bold">{{ recitationStatusTitle }}</div>
           <div class="text-caption">
-            {{ t('pages.quran.sura.name') }} {{ currentSuraId }} •
+            {{ t('pages.quran.sura.id') }} {{ currentSuraId }} •
             {{ t('pages.quran.verses') }}
             {{ recitationVerseDisplay }} / {{ sura?.total_verses || 0 }} •
             {{
@@ -2512,7 +2541,7 @@ watch(
       </q-banner>
     </Transition>
 
-    <div v-if="loading" class="status">Loading…</div>
+    <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
       <div class="sura-heading">
@@ -2526,8 +2555,9 @@ watch(
             {{ sura?.e_name }} — {{ sura?.name }}
           </div>
           <div class="text-caption q-mt-xs">
-            ID: {{ sura?.id }} • {{ sura?.type }} •
-            {{ sura?.total_verses }} ayat
+            {{ t('pages.quran.sura.id') }}: {{ sura?.id }} • {{ sura?.type }} •
+            {{ sura?.total_verses }}
+            {{ t('pages.quran.verses') }}
           </div>
         </div>
         <div class="heading-actions">
@@ -2593,7 +2623,7 @@ watch(
           <!-- Auto-continue toggle -->
           <q-toggle
             v-model="autoContinueEnabled"
-            :label="t('pages.quran.autoContinue') || 'Auto-continue'"
+            :label="t('pages.quran.autoContinue')"
             color="secondary"
             dense
             class="q-ml-sm"
@@ -2910,8 +2940,8 @@ watch(
                       `${currentSuraId}:${a.verse}`
                     )
                   "
-                  :aria-label="`Share verse ${currentSuraId}:${a.verse}`"
-                  :title="`Share ${currentSuraId}:${a.verse}`"
+                  :aria-label="shareVerseActionLabel(a.verse)"
+                  :title="shareActionLabel(`${currentSuraId}:${a.verse}`)"
                 >
                   <q-icon name="share" size="18px" />
                 </button>
@@ -2956,7 +2986,8 @@ watch(
             <div class="mushaf-header">
               <div class="mushaf-title">{{ sura?.name }}</div>
               <div class="mushaf-meta">
-                {{ sura?.type }} • {{ sura?.total_verses }} ayat
+                {{ sura?.type }} • {{ sura?.total_verses }}
+                {{ t('pages.quran.verses') }}
               </div>
             </div>
             <div class="mushaf-body">
@@ -3043,8 +3074,8 @@ watch(
                     `${currentSuraId}:${a.verse}`
                   )
                 "
-                :aria-label="`Share ${currentSuraId}:${a.verse}`"
-                :title="`Share ${currentSuraId}:${a.verse}`"
+                :aria-label="shareVerseActionLabel(a.verse)"
+                :title="shareActionLabel(`${currentSuraId}:${a.verse}`)"
               >
                 <q-icon name="share" size="18px" />
               </button>
@@ -3147,7 +3178,9 @@ watch(
                   icon="share"
                   color="teal"
                   @click="shareHoverVerse"
-                  :title="`Share ${currentSuraId}:${hoverWidgetVerse}`"
+                  :title="
+                    shareActionLabel(`${currentSuraId}:${hoverWidgetVerse}`)
+                  "
                 />
                 <q-btn
                   round
@@ -3171,7 +3204,7 @@ watch(
                   icon="close"
                   color="grey-7"
                   @click="hideHoverWidget"
-                  :title="t('common.close') || 'Close'"
+                  :title="t('general.close')"
                 />
               </q-card-actions>
             </q-card>

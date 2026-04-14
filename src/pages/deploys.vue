@@ -118,7 +118,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted, computed } from 'vue'
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import {
@@ -148,6 +148,17 @@ const likeCounts = ref<Record<string, number>>({})
 const userLiked = ref<string[]>([])
 const likingInProgress = ref<Record<string, boolean>>({})
 
+function resolveToggleLikeErrorMessage(message?: unknown) {
+  if (typeof message === 'string' && message.trim()) {
+    if (/^Failed to toggle like(?: \(\d+\))?$/.test(message.trim())) {
+      return String(t('pages.deploys.toggleLikeError'))
+    }
+    return message
+  }
+
+  return String(t('pages.deploys.toggleLikeError'))
+}
+
 onMounted(async () => {
   await Promise.all([loadChangelog(), loadLikes()])
   loading.value = false
@@ -163,7 +174,7 @@ async function loadChangelog() {
     console.error('Failed to load changelog:', error)
     $q.notify({
       type: 'warning',
-      message: 'Failed to load deployment history',
+      message: t('pages.deploys.loadError'),
       timeout: 2500,
     })
   }
@@ -200,12 +211,12 @@ async function toggleLike(version: string) {
     if (response.authRequired) {
       $q.notify({
         type: 'warning',
-        message: t('auth.loginRequired') || 'Please login to like deployments',
+        message: t('pages.deploys.loginRequiredToLike'),
         position: 'top',
         timeout: 2500,
         actions: [
           {
-            label: t('appShell.nav.login') || 'Login',
+            label: t('appShell.nav.login'),
             color: 'white',
             handler: () => {
               window.location.href = '/login'
@@ -237,19 +248,21 @@ async function toggleLike(version: string) {
       $q.notify({
         type: 'positive',
         message: response.liked
-          ? t('pages.deploys.liked') || '❤️ Liked!'
-          : t('pages.deploys.unliked') || 'Unliked',
+          ? t('pages.deploys.liked')
+          : t('pages.deploys.unliked'),
         position: 'top',
         timeout: 1500,
       })
     } else {
-      throw new Error(response.error || 'Failed to toggle like')
+      throw new Error(
+        response.error || String(t('pages.deploys.toggleLikeError'))
+      )
     }
   } catch (error: any) {
     console.error('Failed to toggle like:', error)
     $q.notify({
       type: 'negative',
-      message: error?.message || 'Failed to toggle like',
+      message: resolveToggleLikeErrorMessage(error?.message),
       position: 'top',
       timeout: 2500,
     })

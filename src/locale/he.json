@@ -171,6 +171,9 @@
             "verses": "פסוקים",
             "invalidSuraRange": "מספר סורה לא תקין. אנא בחר סורה בין 1 ל-114.",
             "apiHint": "אם התוכן לא נטען, וודא שה-API של השרת /api/quran פועל.",
+            "loadSuraError": "לא ניתן לטעון את הסורה",
+            "loadChaptersError": "לא ניתן לטעון את הסורות",
+            "loadingAudio": "טוען אודיו…",
             "sura": {
                 "name": "שם הסורה",
                 "id": "מספר הסורה",
@@ -198,7 +201,9 @@
                 "confirmRemoveMessage": "האם אתה בטוח שברצונך להסיר סימניה זו?",
                 "alreadySaved": "כבר נשמר בסימניות",
                 "error": "לא ניתן לשמור סימניה",
-                "current": "סורה זו"
+                "current": "סורה זו",
+                "bookmarkSura": "הוסף סימנייה לסורה",
+                "removeSura": "הסר סימנייה"
             },
             "quickAccess": {
                 "menu": "מהיר",
@@ -223,17 +228,35 @@
                 "suraIncomplete": "סורה {sura} סומנה כלא הושלמה",
                 "progressReset": "ההתקדמות אופסה",
                 "registerToSync": "הירשם כדי לשמור את ההתקדמות שלך בענן ולגשת אליו מכל מכשיר!",
-                "register": "הירשם"
+                "register": "הירשם",
+                "viewProgress": "הצג התקדמות",
+                "markComplete": "סמן כהושלמה",
+                "markIncomplete": "סמן כלא הושלמה"
             },
             "autoContinue": "המשך אוטומטי לסורה הבאה",
-            "autoContinueAnnouncement": "תכונה חדשה זמינה כעת! הפעל 'המשך אוטומטי' כדי להתקדם אוטומטית דרך כל 114 הסורות במהלך הקריאה."
+            "autoContinueAnnouncement": "תכונה חדשה זמינה כעת! הפעל 'המשך אוטומטי' כדי להתקדם אוטומטית דרך כל 114 הסורות במהלך הקריאה.",
+            "notifications": {
+                "playingSelectionWithReciter": "{label} - {reciter}",
+                "playingVerseWithReciter": "מנגן פסוק {verse} - {reciter}",
+                "playingSuraFromVerse": "מנגן סורה {sura} מהפסוק {verse}",
+                "startingSura": "מתחיל את הסורה {sura}...",
+                "stoppedVerse": "הפסוק {verse} נעצר",
+                "playingVerse": "מנגן פסוק {verse}",
+                "nextSura": "→ הסורה הבאה",
+                "previousSura": "← הסורה הקודמת"
+            },
+            "share": {
+                "text": "קרא את הקוראן {suraName} {reference}",
+                "shared": "{label} שותף",
+                "linkCopied": "הקישור הועתק: {text}"
+            }
         },
         "miracles": {
             "pageTitle": "עמוד הניסים",
-            "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
-            "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
-            "clear": "[UNTRANSLATED] Clear",
-            "saveDrawing": "[UNTRANSLATED] Save Drawing",
+            "drawingPadTitle": "לוח ציור לניסי הקוראן",
+            "drawingPadSubtitle": "צייר את הדפוס עבור סורה 1",
+            "clear": "נקה",
+            "saveDrawing": "שמור ציור",
             "visualTab": "דפוסים חזותיים",
             "linguisticTab": "ניתוח לשוני",
             "linguisticPilotTitle": "פילוט לשוני",
@@ -289,6 +312,7 @@
                 "disconnected": "מנותק",
                 "directMessage": "הודעה ישירה",
                 "broadcastMessage": "הודעה לכולם",
+                "messageToRoom": "הודעה אל #{room}",
                 "loginRequiredToSend": "אנא התחבר כדי לשלוח הודעות.",
                 "createRoomTitle": "צור חדר חדש",
                 "roomNameLabel": "שם החדר",
@@ -471,7 +495,10 @@
             "like": "לייק",
             "unlike": "הסר לייק",
             "liked": "❤️ אהבתי!",
-            "unliked": "הלייק הוסר"
+            "unliked": "הלייק הוסר",
+            "loadError": "טעינת היסטוריית הפריסות נכשלה",
+            "loginRequiredToLike": "יש להתחבר כדי לעשות לייק לפריסות",
+            "toggleLikeError": "לא ניתן לשנות את הלייק"
         }
     },
     "offline": {
@@ -541,6 +568,7 @@
         "download": "הורד",
         "cancel": "ביטול",
         "delete": "מחק",
+        "undo": "בטל",
         "updateAvailable": "גרסה חדשה זמינה!",
         "update": "עדכן עכשיו",
         "later": "מאוחר יותר",

@@ -171,6 +171,9 @@
       "verses": "آيات",
       "invalidSuraRange": "رقم السورة غير صالح. يرجى اختيار سورة بين 1 و 114.",
       "apiHint": "إذا لم يتم تحميل المحتوى، تأكد من تشغيل الخادم /api/quran.",
+      "loadSuraError": "تعذر تحميل السورة",
+      "loadChaptersError": "تعذر تحميل السور",
+      "loadingAudio": "جارٍ تحميل الصوت…",
       "holynames": "الأسماء الحسنى",
       "modes": {
         "reader": "وضع القراءة",
@@ -191,7 +194,9 @@
         "confirmRemoveMessage": "هل أنت متأكد من إزالة هذه العلامة؟",
         "alreadySaved": "محفوظة بالفعل",
         "error": "تعذر حفظ العلامة",
-        "current": "هذه السورة"
+        "current": "هذه السورة",
+        "bookmarkSura": "احفظ السورة",
+        "removeSura": "إزالة العلامة"
       },
       "quickAccess": {
         "menu": "سريع",
@@ -216,10 +221,31 @@
         "suraIncomplete": "السورة {sura} محددة كغير مكتملة",
         "progressReset": "تم إعادة تعيين التقدم",
         "registerToSync": "سجل لحفظ تقدمك في السحابة والوصول إليه من أي جهاز!",
-        "register": "التسجيل"
+        "register": "التسجيل",
+        "viewProgress": "عرض التقدم",
+        "markComplete": "تحديد كمكتملة",
+        "markIncomplete": "تحديد كغير مكتملة"
       },
       "autoContinue": "الاستمرار التلقائي إلى السورة التالية",
       "autoContinueAnnouncement": "متوفر الآن ميزة جديدة! فعّل 'الاستمرار التلقائي' للانتقال تلقائياً عبر جميع السور الـ 114 أثناء التلاوة.",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "يتم تشغيل الآية {verse} - {reciter}",
+        "playingSuraFromVerse": "يتم تشغيل السورة {sura} بدءًا من الآية {verse}",
+        "startingSura": "جارٍ بدء السورة {sura}...",
+        "stoppedVerse": "تم إيقاف الآية {verse}",
+        "playingVerse": "يتم تشغيل الآية {verse}",
+        "nextSura": "→ السورة التالية",
+        "previousSura": "← السورة السابقة"
+      },
+      "share": {
+        "text": "اقرأ القرآن {suraName} {reference}",
+        "action": "مشاركة {reference}",
+        "verseAction": "مشاركة الآية {reference}",
+        "shared": "تمت مشاركة {label}",
+        "linkCopied": "تم نسخ الرابط: {text}"
+      },
+      "dismissAnnouncement": "إغلاق الإعلان",
       "sura": {
         "name": "اسم السورة",
         "id": "رقم السورة",
@@ -230,10 +256,10 @@
     },
     "miracles": {
       "pageTitle": "صفحة المعجزات",
-      "drawingPadTitle": "[UNTRANSLATED] Quran Miracles Drawing Pad",
-      "drawingPadSubtitle": "[UNTRANSLATED] Draw the pattern for Surah 1",
-      "clear": "[UNTRANSLATED] Clear",
-      "saveDrawing": "[UNTRANSLATED] Save Drawing",
+      "drawingPadTitle": "لوحة رسم معجزات القرآن",
+      "drawingPadSubtitle": "ارسم النمط للسورة 1",
+      "clear": "مسح",
+      "saveDrawing": "حفظ الرسم",
       "visualTab": "الأنماط البصرية",
       "linguisticTab": "التحليل اللغوي",
       "linguisticPilotTitle": "التحليل اللغوي التجريبي",
@@ -393,6 +419,7 @@
         "disconnected": "غير متصل",
         "directMessage": "رسالة مباشرة",
         "broadcastMessage": "رسالة للجميع",
+        "messageToRoom": "رسالة إلى #{room}",
         "loginRequiredToSend": "يرجى تسجيل الدخول لإرسال الرسائل.",
         "createRoomTitle": "إنشاء غرفة جديدة",
         "roomNameLabel": "اسم الغرفة",
@@ -432,6 +459,9 @@
       "empty": "لا توجد مقالات بعد.",
       "notFound": "المقال غير موجود",
       "newPost": "منشور جديد",
+      "likeSingle": "{count} إعجاب",
+      "likePlural": "{count} إعجابات",
+      "likeUpdateError": "تعذر تحديث الإعجاب",
       "editor": {
         "newPost": "منشور جديد",
         "editPost": "تعديل المنشور",
@@ -471,7 +501,10 @@
       "like": "إعجاب",
       "unlike": "إزالة الإعجاب",
       "liked": "❤️ تم تسجيل الإعجاب!",
-      "unliked": "تم إلغاء الإعجاب"
+      "unliked": "تم إلغاء الإعجاب",
+      "loadError": "تعذر تحميل سجل النشر",
+      "loginRequiredToLike": "يرجى تسجيل الدخول للإعجاب بعمليات النشر",
+      "toggleLikeError": "تعذر تبديل الإعجاب"
     }
   },
   "offline": {
@@ -541,6 +574,9 @@
     "download": "تحميل",
     "cancel": "إلغاء",
     "delete": "حذف",
+    "edit": "تعديل",
+    "share": "مشاركة",
+    "undo": "تراجع",
     "updateAvailable": "توجد نسخة جديدة!",
     "update": "تحديث الآن",
     "later": "لاحقاً",
@@ -589,7 +625,11 @@
     },
     "success": "تم تسجيل الرسالة. سنرد قريبًا.",
     "error": "فشل إرسال الرسالة. يرجى المحاولة مرة أخرى.",
-    "contactTitle": "معلومات الاتصال"
+    "contactTitle": "معلومات الاتصال",
+    "reachDirectly": "تواصل معنا مباشرة:",
+    "socialTitle": "وسائل التواصل",
+    "socialX": "إكس / تويتر",
+    "socialGitHub": "GitHub"
   },
   "login": "تسجيل الدخول",
   "signup": "تسجيل حساب جديد",

@@ -37,54 +37,74 @@ const isRamadan = computed(() => {
 })
 
 // Simple Gregorian to Hijri converter
-function gregorianToHijri(date: Date): { year: number; month: number; day: number } {
+function gregorianToHijri(date: Date): {
+  year: number
+  month: number
+  day: number
+} {
   // Hijri epoch: July 16, 622 CE (Julian calendar)
   const hijriEpoch = 1948439.5 // Julian Day Number
   const gregorianEpoch = 1721425.5
-  
+
   // Convert to Julian Day Number
   const year = date.getFullYear()
   const month = date.getMonth() + 1
   const day = date.getDate()
-  
+
   let a = Math.floor((14 - month) / 12)
   let y = year + 4800 - a
   let m = month + 12 * a - 3
-  let jdn = day + Math.floor((153 * m + 2) / 5) + 365 * y + Math.floor(y / 4) - Math.floor(y / 100) + Math.floor(y / 400) - 32045
-  
+  let jdn =
+    day +
+    Math.floor((153 * m + 2) / 5) +
+    365 * y +
+    Math.floor(y / 4) -
+    Math.floor(y / 100) +
+    Math.floor(y / 400) -
+    32045
+
   // Convert JDN to Hijri
   let l = jdn - hijriEpoch + 10632
   let n = Math.floor((l - 1) / 10631)
   l = l - 10631 * n + 354
-  let j = Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) + Math.floor(l / 5670) * Math.floor((43 * l) / 15238)
-  l = l - Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) - Math.floor(j / 16) * Math.floor((15238 * j) / 43) + 29
+  let j =
+    Math.floor((10985 - l) / 5316) * Math.floor((50 * l) / 17719) +
+    Math.floor(l / 5670) * Math.floor((43 * l) / 15238)
+  l =
+    l -
+    Math.floor((30 - j) / 15) * Math.floor((17719 * j) / 50) -
+    Math.floor(j / 16) * Math.floor((15238 * j) / 43) +
+    29
   const hMonth = Math.floor((24 * l) / 709)
   const hDay = l - Math.floor((709 * hMonth) / 24)
   const hYear = 30 * n + j - 30
-  
+
   return { year: hYear, month: hMonth, day: hDay }
 }
 
 // Load progress from database (if authenticated) or localStorage
 const loadProgress = async () => {
   const userId = authStore.user?.id || authStore.user?._id
-  
+
   if (userId) {
     // Authenticated: load from database
     try {
       const response = await fetchQuranProgress()
       if (response.ok && Array.isArray(response.completedSuras)) {
         completedSuras.value = new Set(response.completedSuras)
-        
+
         // Also sync to localStorage as backup
-        localStorage.setItem(PROGRESS_KEY, JSON.stringify(response.completedSuras))
+        localStorage.setItem(
+          PROGRESS_KEY,
+          JSON.stringify(response.completedSuras)
+        )
         return
       }
     } catch (e) {
       console.error('Failed to load progress from database:', e)
     }
   }
-  
+
   // Guest or DB fetch failed: load from localStorage
   try {
     const stored = localStorage.getItem(PROGRESS_KEY)
@@ -101,26 +121,26 @@ const loadProgress = async () => {
 const saveProgress = async () => {
   const userId = authStore.user?.id || authStore.user?._id
   const data = Array.from(completedSuras.value)
-  
+
   // Always save to localStorage as backup
   try {
     localStorage.setItem(PROGRESS_KEY, JSON.stringify(data))
   } catch (e) {
     console.error('Failed to save to localStorage:', e)
   }
-  
+
   // If authenticated, also save to database
   if (userId) {
     try {
       await saveQuranProgress(data)
-      
+
       // Track progress sync to database
       if (typeof window !== 'undefined' && window.gtag) {
         window.gtag('event', 'quran_progress', {
           action: 'synced_db',
           completed_count: completedSuras.value.size,
           is_authenticated: true,
-          page_path: '/quran'
+          page_path: '/quran',
         })
       }
     } catch (e) {
@@ -133,7 +153,7 @@ const saveProgress = async () => {
         action: 'saved_local',
         completed_count: completedSuras.value.size,
         is_authenticated: false,
-        page_path: '/quran'
+        page_path: '/quran',
       })
     }
   }
@@ -143,14 +163,16 @@ const saveProgress = async () => {
 const toggleCompletion = async (suraId: number, event: Event) => {
   event.preventDefault()
   event.stopPropagation()
-  
+
   if (completedSuras.value.has(suraId)) {
     completedSuras.value.delete(suraId)
     $q.notify({
       type: 'info',
-      message: t('pages.quran.ramadanProgress.suraIncomplete', { sura: suraId }),
+      message: t('pages.quran.ramadanProgress.suraIncomplete', {
+        sura: suraId,
+      }),
       icon: 'radio_button_unchecked',
-      timeout: 1500
+      timeout: 1500,
     })
   } else {
     completedSuras.value.add(suraId)
@@ -158,7 +180,7 @@ const toggleCompletion = async (suraId: number, event: Event) => {
       type: 'positive',
       message: t('pages.quran.ramadanProgress.suraCompleted', { sura: suraId }),
       icon: 'check_circle',
-      timeout: 2000
+      timeout: 2000,
     })
   }
   await saveProgress()
@@ -171,6 +193,20 @@ const completionStats = computed(() => {
   const percentage = Math.round((completed / total) * 100)
   return { total, completed, percentage }
 })
+
+const bookmarkButtonLabel = (isBookmarked: boolean) =>
+  t(
+    isBookmarked
+      ? 'pages.quran.bookmarks.removeSura'
+      : 'pages.quran.bookmarks.bookmarkSura'
+  )
+
+const completionButtonLabel = (isCompleted: boolean) =>
+  t(
+    isCompleted
+      ? 'pages.quran.ramadanProgress.markIncomplete'
+      : 'pages.quran.ramadanProgress.markComplete'
+  )
 
 // Find next incomplete sura
 const nextIncompleteSura = computed(() => {
@@ -193,7 +229,7 @@ const resetProgress = () => {
     title: t('pages.quran.ramadanProgress.resetConfirm'),
     message: t('pages.quran.ramadanProgress.resetConfirmMessage'),
     cancel: true,
-    persistent: true
+    persistent: true,
   }).onOk(() => {
     completedSuras.value.clear()
     saveProgress()
@@ -201,7 +237,7 @@ const resetProgress = () => {
       type: 'warning',
       message: t('pages.quran.ramadanProgress.progressReset'),
       icon: 'restart_alt',
-      timeout: 2000
+      timeout: 2000,
     })
   })
 }
@@ -211,7 +247,7 @@ const loadBookmarks = () => {
   try {
     const bookmarkStrings = bookmarksStore.bookmarkStrings || []
     const suraIds = new Set<number>()
-    
+
     for (const bmStr of bookmarkStrings) {
       // Extract sura ID from bookmark string (format: "1" or "1_5" or "/quran/1")
       const match = bmStr.match(/\/?quran\/(\d+)|^(\d+)(?:_|$)/)
@@ -222,7 +258,7 @@ const loadBookmarks = () => {
         }
       }
     }
-    
+
     bookmarkedSuras.value = suraIds
   } catch (e) {
     console.error('Failed to load bookmarks:', e)
@@ -233,10 +269,10 @@ const loadBookmarks = () => {
 const toggleBookmark = async (suraId: number, event: Event) => {
   event.preventDefault()
   event.stopPropagation()
-  
+
   const bookmarkStr = String(suraId)
   const isCurrentlyBookmarked = bookmarkedSuras.value.has(suraId)
-  
+
   try {
     if (isCurrentlyBookmarked) {
       // Track confirmation dialog shown
@@ -244,66 +280,77 @@ const toggleBookmark = async (suraId: number, event: Event) => {
         window.gtag('event', 'bookmark_delete_dialog', {
           action: 'shown',
           sura_id: suraId,
-          page_path: '/quran'
+          page_path: '/quran',
         })
       }
-      
+
       // Show confirmation dialog before removing
       $q.dialog({
         title: t('pages.quran.bookmarks.confirmRemove') || 'Remove Bookmark?',
-        message: t('pages.quran.bookmarks.confirmRemoveMessage') || 'Are you sure you want to remove this bookmark?',
+        message:
+          t('pages.quran.bookmarks.confirmRemoveMessage') ||
+          'Are you sure you want to remove this bookmark?',
         persistent: false,
         ok: {
           label: t('pages.blog.editor.delete') || 'Remove',
           color: 'negative',
-          flat: true
+          flat: true,
         },
         cancel: {
-          label: t('cancel') || 'Cancel',
+          label: t('general.cancel'),
           color: 'grey',
-          flat: true
-        }
+          flat: true,
+        },
       }).onOk(async () => {
         // Find and remove bookmark
         const bookmarksList = bookmarksStore.myBookmarks || []
         const toRemove = bookmarksList.find((bm: any) => {
-          const bmStr = typeof bm === 'string' ? bm : (bm?.bookmark || '')
-          return bmStr === bookmarkStr || bmStr.startsWith(`${suraId}_`) || bmStr === `/quran/${suraId}`
+          const bmStr = typeof bm === 'string' ? bm : bm?.bookmark || ''
+          return (
+            bmStr === bookmarkStr ||
+            bmStr.startsWith(`${suraId}_`) ||
+            bmStr === `/quran/${suraId}`
+          )
         })
-        
+
         if (toRemove) {
-          const bookmarkId = typeof toRemove === 'string' ? toRemove : (toRemove?._id || toRemove?.id)
+          const bookmarkId =
+            typeof toRemove === 'string'
+              ? toRemove
+              : toRemove?._id || toRemove?.id
           await bookmarksStore.deleteBookmark(bookmarkId)
-          
+
           // Reload to sync with store state
           loadBookmarks()
-          
+
           // Track bookmark deletion
           if (typeof window !== 'undefined' && window.gtag) {
-            const suraName = surahs.value.find((s: any) => s.id === suraId)?.e_name
+            const suraName = surahs.value.find(
+              (s: any) => s.id === suraId
+            )?.e_name
             window.gtag('event', 'bookmark_action', {
               action: 'delete_confirmed',
               sura_id: suraId,
               sura_name_en: suraName,
-              page_path: '/quran'
+              page_path: '/quran',
             })
           }
-          
+
           $q.notify({
             type: 'info',
-            message: t('pages.quran.bookmarks.removed') || 'Bookmark removed',
+            message: t('pages.quran.bookmarks.removed'),
             icon: 'bookmark_border',
-            timeout: 1500
+            timeout: 1500,
           })
         }
       })
     } else {
       // Add bookmark
       await bookmarksStore.createBookmark(bookmarkStr)
-      
+
       // Reload to sync with store state
       loadBookmarks()
-      
+
       // Track bookmark creation
       if (typeof window !== 'undefined' && window.gtag) {
         const suraName = surahs.value.find((s: any) => s.id === suraId)?.e_name
@@ -311,24 +358,24 @@ const toggleBookmark = async (suraId: number, event: Event) => {
           action: 'create',
           sura_id: suraId,
           sura_name_en: suraName,
-          page_path: '/quran'
+          page_path: '/quran',
         })
       }
-      
+
       $q.notify({
         type: 'positive',
-        message: t('pages.quran.bookmarks.saved') || 'Sura bookmarked!',
+        message: t('pages.quran.bookmarks.saved'),
         icon: 'bookmark',
-        timeout: 2000
+        timeout: 2000,
       })
     }
   } catch (error: any) {
     console.error('Failed to toggle bookmark:', error)
     $q.notify({
       type: 'negative',
-      message: error?.message || 'Failed to save bookmark',
+      message: error?.message || t('pages.quran.bookmarks.error'),
       icon: 'error',
-      timeout: 2500
+      timeout: 2500,
     })
   }
 }
@@ -349,7 +396,7 @@ watch(shouldShowRegistrationBanner, (shouldShow) => {
       window.gtag('event', 'registration_prompt', {
         trigger: 'quran_progress',
         completed_suras: completionStats.value.completed,
-        page_path: '/quran'
+        page_path: '/quran',
       })
       registrationBannerShown.value = true
     }
@@ -363,7 +410,7 @@ const handleRegisterClick = () => {
     window.gtag('event', 'registration_intent', {
       source: 'progress_banner',
       completed_suras: completionStats.value.completed,
-      page_path: '/quran'
+      page_path: '/quran',
     })
   }
   router.push('/profile')
@@ -371,7 +418,7 @@ const handleRegisterClick = () => {
 
 onMounted(async () => {
   loadProgress()
-  
+
   // Initialize bookmarks store and load bookmarked suras
   try {
     await bookmarksStore.init()
@@ -379,7 +426,7 @@ onMounted(async () => {
   } catch (e) {
     console.error('Failed to initialize bookmarks:', e)
   }
-  
+
   if (route.query.invalidSura === '1') {
     invalidSuraNotice.value = true
     $q.notify({
@@ -395,7 +442,7 @@ onMounted(async () => {
     // Populate store from bundled data; API fetch (if any) can be done in detail page
     await store.init(1)
   } catch (e: any) {
-    error.value = e?.message || 'Failed to load chapters'
+    error.value = e?.message || String(t('pages.quran.loadChaptersError'))
     $q.notify({ type: 'negative', message: error.value })
   } finally {
     loading.value = false
@@ -405,33 +452,40 @@ onMounted(async () => {
 
 <template>
   <q-page class="q-pa-md">
-    <h1 class="text-h4 q-mb-md">{{ t('pages.quran.title') || 'Quran Surahs' }}</h1>
+    <h1 class="text-h4 q-mb-md">{{ t('pages.quran.title') }}</h1>
 
     <!-- Ramadan Progress Card -->
-    <q-card 
-      class="ramadan-progress q-mb-lg" 
+    <q-card
+      class="ramadan-progress q-mb-lg"
       :class="{ 'is-ramadan': isRamadan }"
-      flat 
+      flat
       bordered
     >
       <q-card-section>
         <div class="row items-center q-gutter-md">
-          <q-icon 
-            :name="isRamadan ? 'nights_stay' : 'auto_stories'" 
-            size="42px" 
-            :color="isRamadan ? 'amber-8' : 'primary'" 
+          <q-icon
+            :name="isRamadan ? 'nights_stay' : 'auto_stories'"
+            size="42px"
+            :color="isRamadan ? 'amber-8' : 'primary'"
           />
           <div class="col">
             <div class="text-h6">
-              <span v-if="isRamadan" class="ramadan-badge">🌙 {{ t('pages.quran.ramadanProgress.badge') }}</span>
+              <span v-if="isRamadan" class="ramadan-badge"
+                >🌙 {{ t('pages.quran.ramadanProgress.badge') }}</span
+              >
               {{ t('pages.quran.ramadanProgress.title') }}
             </div>
-            <div class="text-subtitle2" :class="isRamadan ? 'ramadan-subtitle' : 'text-grey-7'">
-              {{ t('pages.quran.ramadanProgress.completed', { 
-                completed: completionStats.completed, 
-                total: completionStats.total, 
-                percentage: completionStats.percentage 
-              }) }}
+            <div
+              class="text-subtitle2"
+              :class="isRamadan ? 'ramadan-subtitle' : 'text-grey-7'"
+            >
+              {{
+                t('pages.quran.ramadanProgress.completed', {
+                  completed: completionStats.completed,
+                  total: completionStats.total,
+                  percentage: completionStats.percentage,
+                })
+              }}
             </div>
             <q-linear-progress
               :value="completionStats.percentage / 100"
@@ -453,7 +507,11 @@ onMounted(async () => {
         <q-btn
           color="primary"
           icon="play_arrow"
-          :label="completionStats.completed === 114 ? t('pages.quran.ramadanProgress.restart') : t('pages.quran.ramadanProgress.continueReading')"
+          :label="
+            completionStats.completed === 114
+              ? t('pages.quran.ramadanProgress.restart')
+              : t('pages.quran.ramadanProgress.continueReading')
+          "
           unelevated
           @click="continueReading"
         />
@@ -479,12 +537,12 @@ onMounted(async () => {
       </template>
       {{ t('pages.quran.ramadanProgress.registerToSync') }}
       <template #action>
-        <q-btn 
-          flat 
-          dense 
-          color="white" 
-          :label="t('pages.quran.ramadanProgress.register')" 
-          @click="handleRegisterClick" 
+        <q-btn
+          flat
+          dense
+          color="white"
+          :label="t('pages.quran.ramadanProgress.register')"
+          @click="handleRegisterClick"
         />
       </template>
     </q-banner>
@@ -497,19 +555,21 @@ onMounted(async () => {
     >
       {{ t('pages.quran.invalidSuraRange') }}
       <template #action>
-        <q-btn flat dense color="black" :label="t('button.close')" @click="invalidSuraNotice = false" />
+        <q-btn
+          flat
+          dense
+          color="black"
+          :label="t('button.close')"
+          @click="invalidSuraNotice = false"
+        />
       </template>
     </q-banner>
-    
+
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
-    
+
     <div v-else class="surahs-grid">
-      <div
-        v-for="s in surahs"
-        :key="s?.id"
-        class="sura-card-wrapper"
-      >
+      <div v-for="s in surahs" :key="s?.id" class="sura-card-wrapper">
         <RouterLink
           :to="`/quran/${s?.id}`"
           class="sura-card q-card q-pa-sm"
@@ -518,7 +578,9 @@ onMounted(async () => {
           <div class="sura-content">
             <div class="text-subtitle1">{{ s.id }}. {{ s.e_name || '' }}</div>
             <div class="text-body2">{{ s.name }}</div>
-            <div class="text-caption">{{ s.total_verses }} {{ t('pages.quran.verses') }} • {{ s.type }}</div>
+            <div class="text-caption">
+              {{ s.total_verses }} {{ t('pages.quran.verses') }} • {{ s.type }}
+            </div>
           </div>
           <div class="sura-actions">
             <q-btn
@@ -529,10 +591,10 @@ onMounted(async () => {
               :icon="bookmarkedSuras.has(s.id) ? 'bookmark' : 'bookmark_border'"
               :color="bookmarkedSuras.has(s.id) ? 'amber' : 'grey-5'"
               @click="toggleBookmark(s.id, $event)"
-              :aria-label="bookmarkedSuras.has(s.id) ? 'Remove bookmark' : 'Bookmark'"
+              :aria-label="bookmarkButtonLabel(bookmarkedSuras.has(s.id))"
             >
               <q-tooltip>
-                {{ bookmarkedSuras.has(s.id) ? 'Remove bookmark' : 'Bookmark sura' }}
+                {{ bookmarkButtonLabel(bookmarkedSuras.has(s.id)) }}
               </q-tooltip>
             </q-btn>
             <q-btn
@@ -540,21 +602,27 @@ onMounted(async () => {
               dense
               flat
               class="completion-btn"
-              :icon="completedSuras.has(s.id) ? 'check_circle' : 'radio_button_unchecked'"
+              :icon="
+                completedSuras.has(s.id)
+                  ? 'check_circle'
+                  : 'radio_button_unchecked'
+              "
               :color="completedSuras.has(s.id) ? 'positive' : 'grey-5'"
               @click="toggleCompletion(s.id, $event)"
-              :aria-label="completedSuras.has(s.id) ? 'Mark incomplete' : 'Mark complete'"
+              :aria-label="completionButtonLabel(completedSuras.has(s.id))"
             >
               <q-tooltip>
-                {{ completedSuras.has(s.id) ? 'Mark as incomplete' : 'Mark as complete' }}
+                {{ completionButtonLabel(completedSuras.has(s.id)) }}
               </q-tooltip>
             </q-btn>
           </div>
         </RouterLink>
       </div>
     </div>
-    
-    <footer class="hint q-mt-md text-caption text-grey-6">{{ t('pages.quran.apiHint') }}</footer>
+
+    <footer class="hint q-mt-md text-caption text-grey-6">
+      {{ t('pages.quran.apiHint') }}
+    </footer>
   </q-page>
 </template>
 
@@ -578,7 +646,11 @@ onMounted(async () => {
 }
 
 body.body--dark .ramadan-progress.is-ramadan {
-  background: linear-gradient(135deg, rgba(251, 191, 36, 0.15) 0%, rgba(245, 158, 11, 0.1) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(251, 191, 36, 0.15) 0%,
+    rgba(245, 158, 11, 0.1) 100%
+  );
   border-color: #fbbf24;
 }
 
@@ -600,8 +672,13 @@ body.body--dark .ramadan-badge {
 }
 
 @keyframes glow {
-  0%, 100% { box-shadow: 0 0 8px rgba(251, 191, 36, 0.4); }
-  50% { box-shadow: 0 0 16px rgba(251, 191, 36, 0.6); }
+  0%,
+  100% {
+    box-shadow: 0 0 8px rgba(251, 191, 36, 0.4);
+  }
+  50% {
+    box-shadow: 0 0 16px rgba(251, 191, 36, 0.6);
+  }
 }
 
 .ramadan-subtitle {
@@ -653,19 +730,19 @@ body.body--dark .ramadan-message .text-subtitle2 {
   .surahs-grid {
     gap: 0.5rem;
   }
-  
+
   .sura-card {
     padding: 0.5rem !important;
   }
-  
+
   .sura-card .text-subtitle1 {
     font-size: 0.85rem;
   }
-  
+
   .sura-card .text-body2 {
     font-size: 0.9rem;
   }
-  
+
   .sura-card .text-caption {
     font-size: 0.65rem;
   }
@@ -722,12 +799,20 @@ body.body--dark .sura-card.is-completed {
   position: absolute;
   inset: 0;
   border-radius: 8px;
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.1) 0%, rgba(22, 163, 74, 0.05) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.1) 0%,
+    rgba(22, 163, 74, 0.05) 100%
+  );
   pointer-events: none;
 }
 
 body.body--dark .sura-card.is-completed::before {
-  background: linear-gradient(135deg, rgba(34, 197, 94, 0.15) 0%, rgba(22, 163, 74, 0.08) 100%);
+  background: linear-gradient(
+    135deg,
+    rgba(34, 197, 94, 0.15) 0%,
+    rgba(22, 163, 74, 0.08) 100%
+  );
 }
 
 .sura-content {
@@ -812,5 +897,3 @@ body.body--dark .sura-card .text-caption {
   text-align: center;
 }
 </style>
-
-
