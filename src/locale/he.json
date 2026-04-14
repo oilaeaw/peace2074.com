@@ -247,12 +247,15 @@
             },
             "share": {
                 "text": "קרא את הקוראן {suraName} {reference}",
+                "action": "שתף {reference}",
+                "verseAction": "שתף פסוק {reference}",
                 "shared": "{label} שותף",
                 "linkCopied": "הקישור הועתק: {text}"
-            }
+            },
+            "dismissAnnouncement": "סגור הכרזה"
         },
         "miracles": {
-            "pageTitle": "עמוד הניסים",
+            "pageTitle": "ניסי הקוראן",
             "drawingPadTitle": "לוח ציור לניסי הקוראן",
             "drawingPadSubtitle": "צייר את הדפוס עבור סורה 1",
             "clear": "נקה",
@@ -456,6 +459,9 @@
             "empty": "עדיין אין פוסטים.",
             "notFound": "הפוסט לא נמצא",
             "newPost": "פוסט חדש",
+            "likeSingle": "{count} לייק",
+            "likePlural": "{count} לייקים",
+            "likeUpdateError": "לא ניתן היה לעדכן את הלייק",
             "editor": {
                 "newPost": "פוסט חדש",
                 "editPost": "עריכת פוסט",
@@ -568,6 +574,8 @@
         "download": "הורד",
         "cancel": "ביטול",
         "delete": "מחק",
+        "edit": "ערוך",
+        "share": "שתף",
         "undo": "בטל",
         "updateAvailable": "גרסה חדשה זמינה!",
         "update": "עדכן עכשיו",
@@ -617,7 +625,11 @@
         },
         "success": "ההודעה נרשמה. נענה בקרוב.",
         "error": "שליחת ההודעה נכשלה. אנא נסה שוב.",
-        "contactTitle": "מידע ליצירת קשר"
+        "contactTitle": "מידע ליצירת קשר",
+        "reachDirectly": "צרו איתנו קשר ישירות:",
+        "socialTitle": "רשתות חברתיות",
+        "socialX": "X / טוויטר",
+        "socialGitHub": "GitHub"
     },
     "about": {
         "title": "וואליו",

@@ -259,12 +259,15 @@
             },
             "share": {
                 "text": "Kur'an oku {suraName} {reference}",
+                "action": "{reference} paylaş",
+                "verseAction": "{reference} ayetini paylaş",
                 "shared": "{label} paylaşıldı",
                 "linkCopied": "Bağlantı kopyalandı: {text}"
-            }
+            },
+            "dismissAnnouncement": "Duyuruyu kapat"
         },
         "miracles": {
-            "pageTitle": "Mucizeler Sayfası",
+            "pageTitle": "Kur'an Mucizeleri",
             "drawingPadTitle": "Kur'an Mucizeleri Çizim Tahtası",
             "drawingPadSubtitle": "1. Sure için deseni çiz",
             "clear": "Temizle",
@@ -456,6 +459,9 @@
             "empty": "Henüz yazı yok.",
             "notFound": "Yazı bulunamadı",
             "newPost": "Yeni Yazı",
+            "likeSingle": "{count} Beğeni",
+            "likePlural": "{count} Beğeni",
+            "likeUpdateError": "Beğeni güncellenemedi",
             "editor": {
                 "newPost": "Yeni Yazı",
                 "editPost": "Yazıyı Düzenle",
@@ -568,6 +574,8 @@
         "download": "İndir",
         "cancel": "İptal",
         "delete": "Sil",
+        "edit": "Düzenle",
+        "share": "Paylaş",
         "undo": "Geri al",
         "updateAvailable": "Yeni bir sürüm mevcut!",
         "update": "Şimdi Güncelle",
@@ -617,7 +625,11 @@
         },
         "success": "Mesaj kaydedildi. Yakında cevap vereceğiz.",
         "error": "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
-        "contactTitle": "İletişim Bilgileri"
+        "contactTitle": "İletişim Bilgileri",
+        "reachDirectly": "Doğrudan bize ulaşın:",
+        "socialTitle": "Sosyal",
+        "socialX": "X / Twitter",
+        "socialGitHub": "GitHub"
     },
     "about": {
         "title": "Waelio",

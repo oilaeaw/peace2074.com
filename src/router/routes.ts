@@ -329,11 +329,11 @@ export const routes: Array<RouteRecordRaw> = [
     name: 'Miracles',
     component: () => import('@/views/miracles.vue'),
     meta: {
-      title: 'Miracles',
+      title: 'Quran Miracles',
       titleKey: 'pages.miracles.pageTitle',
       description:
-        'Explore the miracles drawing pad and visual pattern experience inspired by Quran reflections.',
-      keywords: ['miracles drawing', 'Quran patterns', 'interactive canvas'],
+        'Explore commonly cited numerical patterns and mathematical reflections in the Qur\'an.',
+      keywords: ['Quran miracles', 'numerical patterns', 'mathematical reflections'],
       contentGroup: 'miracles',
       schemaType: 'WebPage',
     },

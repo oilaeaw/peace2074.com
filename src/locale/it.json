@@ -259,12 +259,15 @@
             },
             "share": {
                 "text": "Leggi il Corano {suraName} {reference}",
+                "action": "Condividi {reference}",
+                "verseAction": "Condividi versetto {reference}",
                 "shared": "{label} condiviso",
                 "linkCopied": "Link copiato: {text}"
-            }
+            },
+            "dismissAnnouncement": "Chiudi annuncio"
         },
         "miracles": {
-            "pageTitle": "Pagina dei Miracoli",
+            "pageTitle": "Miracoli del Corano",
             "drawingPadTitle": "Blocco da disegno dei miracoli del Corano",
             "drawingPadSubtitle": "Disegna il pattern per la Surah 1",
             "clear": "Cancella",
@@ -456,6 +459,9 @@
             "empty": "Nessun post ancora.",
             "notFound": "Post non trovato",
             "newPost": "Nuovo post",
+            "likeSingle": "{count} Mi piace",
+            "likePlural": "{count} Mi piace",
+            "likeUpdateError": "Impossibile aggiornare il Mi piace",
             "editor": {
                 "newPost": "Nuovo post",
                 "editPost": "Modifica post",
@@ -547,6 +553,8 @@
         "download": "Scarica",
         "cancel": "Annulla",
         "delete": "Elimina",
+        "edit": "Modifica",
+        "share": "Condividi",
         "undo": "Annulla",
         "languageNames": {
             "en": "Inglese",
@@ -617,7 +625,11 @@
         },
         "success": "Messaggio registrato. Ti risponderemo presto.",
         "error": "Impossibile inviare il messaggio. Riprova.",
-        "contactTitle": "Informazioni di contatto"
+        "contactTitle": "Informazioni di contatto",
+        "reachDirectly": "Contattaci direttamente:",
+        "socialTitle": "Social",
+        "socialX": "X / Twitter",
+        "socialGitHub": "GitHub"
     },
     "about": {
         "title": "Waelio",
