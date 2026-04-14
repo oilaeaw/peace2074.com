@@ -481,6 +481,7 @@ const playbackRate = ref<number>(1)
 const wordTimings = ref<Record<number, Array<{ start: number; end: number }>>>(
   {}
 )
+const syncedVerseWords = ref<Record<number, string[]>>({})
 const stopRequested = ref(false)
 const isStartingRecitation = ref(false)
 
@@ -689,6 +690,48 @@ const shareVerseActionLabel = (verse: number | string) =>
   t('pages.quran.share.verseAction', {
     reference: `${currentSuraId.value}:${verse}`,
   })
+
+const QURAN_PAUSE_MARKS_RE = /\s+([ۖۗۘۙۚۛۜ۝])/gu
+
+function normalizeTimedWordText(text: string) {
+  return String(text || '')
+    .replace(/\s+/g, ' ')
+    .replace(QURAN_PAUSE_MARKS_RE, '$1')
+    .trim()
+}
+
+function splitVerseWords(text: string) {
+  return String(text || '')
+    .trim()
+    .split(/\s+/)
+    .map((word) => normalizeTimedWordText(word))
+    .filter(Boolean)
+}
+
+function getSyncedVerseWords(verseNumber: number) {
+  return syncedVerseWords.value[verseNumber - 1] || []
+}
+
+function hasTimingMatchedWords(verseNumber: number) {
+  const idx = verseNumber - 1
+  const words = syncedVerseWords.value[idx] || []
+  const timings = wordTimings.value[idx] || []
+  return (
+    words.length > 0 && timings.length > 0 && words.length === timings.length
+  )
+}
+
+function isActiveAyah(verseNumber: number) {
+  return currentAyahIndex.value === verseNumber - 1
+}
+
+function isActiveWord(verseNumber: number, wordIndex: number) {
+  return (
+    hasTimingMatchedWords(verseNumber) &&
+    isActiveAyah(verseNumber) &&
+    currentWordIndex.value === wordIndex
+  )
+}
 
 // Mark sura as read in localStorage
 const READ_KEY = 'quran-read-suras'
@@ -1251,6 +1294,7 @@ async function loadAudioFromCache(id: number): Promise<boolean> {
     isLoadingFromCache.value = true
     audioList.value = []
     wordTimings.value = {} // Word timings not available offline
+    syncedVerseWords.value = {}
 
     // Load each verse from cache
     for (let verse = 1; verse <= suraData.total_verses; verse++) {
@@ -1298,6 +1342,7 @@ async function loadAudioFromCache(id: number): Promise<boolean> {
 async function loadAudioAndTimings(id: number) {
   audioList.value = []
   wordTimings.value = {}
+  syncedVerseWords.value = {}
   currentAyahIndex.value = -1
 
   // Check if sura is cached offline
@@ -1316,7 +1361,7 @@ async function loadAudioAndTimings(id: number) {
 
   try {
     // Fetch verses with audio segments for reciter 7 (Al-Afasy)
-    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&per_page=300`
+    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&words=true&word_fields=text_uthmani&per_page=300`
     const res = await fetch(sourceUrl)
     if (!res.ok) {
       trackApi5xx('quran_com_verses', res.status, sourceUrl)
@@ -1343,15 +1388,31 @@ async function loadAudioAndTimings(id: number) {
       // Extract word timings from segments
       // Segment format: [char_start, char_end, start_ms, end_ms]
       const segments: number[][] = verse?.audio?.segments || []
-      if (segments.length > 0) {
-        const timings = segments
-          .filter((seg: number[]) => seg.length >= 4)
-          .map((seg: number[]) => ({
-            start: (seg[2] ?? 0) / 1000,
-            end: (seg[3] ?? 0) / 1000,
-          }))
-        if (timings.length > 0) {
-          wordTimings.value[verseNum - 1] = timings
+      const timings = segments
+        .filter((seg: number[]) => seg.length >= 4)
+        .map((seg: number[]) => ({
+          start: (seg[2] ?? 0) / 1000,
+          end: (seg[3] ?? 0) / 1000,
+        }))
+
+      const words = Array.isArray(verse?.words)
+        ? verse.words
+            .filter((word: any) => word?.char_type_name === 'word')
+            .map((word: any) =>
+              normalizeTimedWordText(
+                word?.text_uthmani ||
+                  word?.text_uthmani_simple ||
+                  word?.text ||
+                  ''
+              )
+            )
+            .filter(Boolean)
+        : []
+
+      if (timings.length > 0) {
+        wordTimings.value[verseNum - 1] = timings
+        if (words.length === timings.length) {
+          syncedVerseWords.value[verseNum - 1] = words
         }
       }
     })
@@ -1360,7 +1421,7 @@ async function loadAudioAndTimings(id: number) {
     audioList.value = audioList.value.filter(Boolean)
 
     console.debug(
-      `[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets for sura ${id}`
+      `[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets and ${Object.keys(syncedVerseWords.value).length} synced word maps for sura ${id}`
     )
   } catch (err) {
     console.error('[Quran Audio] Failed to load from quran.com:', err)
@@ -2199,6 +2260,13 @@ function resumeTTS() {
 function updateCurrentWord(time: number) {
   const idx = currentAyahIndex.value
   if (idx < 0) return
+  if (!hasTimingMatchedWords(idx + 1)) {
+    if (currentWordIndex.value !== -1) {
+      currentWordIndex.value = -1
+    }
+    return
+  }
+
   const timings = wordTimings.value[idx] || []
   if (!timings.length) return
   const found = timings.findIndex((seg) => time >= seg.start && time <= seg.end)
@@ -2212,6 +2280,8 @@ function updateCurrentWord(time: number) {
 }
 
 function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
+  if (typeof window === 'undefined') return
+
   // Try to find the word element based on current layout mode
   const verseNum = ayahIndex + 1
   let wordId: string
@@ -2226,6 +2296,16 @@ function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
 
   const el = document.getElementById(wordId)
   if (el) {
+    const rect = el.getBoundingClientRect()
+    const verticalMargin = Math.min(window.innerHeight * 0.18, 140)
+    const isWithinViewport =
+      rect.top >= verticalMargin &&
+      rect.bottom <= window.innerHeight - verticalMargin
+
+    if (isWithinViewport) {
+      return
+    }
+
     el.scrollIntoView({
       behavior: 'smooth',
       block: 'center',
@@ -2907,7 +2987,10 @@ watch(
             :key="a.verse"
             :id="getVerseElementId(a.verse)"
             class="verse-row q-mb-md"
-            :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            :class="{
+              'is-selected': isVerseSelected(a.verse),
+              'is-current-ayah': isActiveAyah(a.verse),
+            }"
             @click="handleVerseTap($event, a.verse)"
             @dblclick="handleVerseDoubleClick($event, a.verse)"
             @mouseenter="onVerseMouseEnter($event, a.verse)"
@@ -2947,17 +3030,15 @@ watch(
                 </button>
               </div>
               <div class="arabic-text">
-                <template v-if="wordTimings[a.verse - 1]?.length">
+                <template v-if="hasTimingMatchedWords(a.verse)">
                   <template
-                    v-for="(word, wIdx) in a.text.split(' ')"
+                    v-for="(word, wIdx) in getSyncedVerseWords(a.verse)"
                     :key="`${a.verse}-${wIdx}`"
                   >
                     <span
                       :id="`word-${a.verse}-${wIdx}`"
                       :class="{
-                        'is-current-word':
-                          currentAyahIndex === a.verse - 1 &&
-                          currentWordIndex === wIdx,
+                        'is-current-word': isActiveWord(a.verse, wIdx),
                       }"
                       >{{ word }}</span
                     >{{ ' ' }}
@@ -2997,20 +3078,21 @@ watch(
                   :key="`m-${a.verse}`"
                   :id="getVerseElementId(a.verse)"
                   class="mushaf-ayah-inline"
-                  :class="{ 'is-selected': isVerseSelected(a.verse) }"
+                  :class="{
+                    'is-selected': isVerseSelected(a.verse),
+                    'is-current-ayah': isActiveAyah(a.verse),
+                  }"
                   @click="handleVerseTap($event, a.verse)"
                 >
-                  <template v-if="wordTimings[a.verse - 1]?.length">
+                  <template v-if="hasTimingMatchedWords(a.verse)">
                     <template
-                      v-for="(word, wIdx) in a.text.split(' ')"
+                      v-for="(word, wIdx) in getSyncedVerseWords(a.verse)"
                       :key="`m-${a.verse}-${wIdx}`"
                     >
                       <span
                         :id="`word-mushaf-${a.verse}-${wIdx}`"
                         :class="{
-                          'is-current-word':
-                            currentAyahIndex === a.verse - 1 &&
-                            currentWordIndex === wIdx,
+                          'is-current-word': isActiveWord(a.verse, wIdx),
                         }"
                         >{{ word }}</span
                       >{{ ' ' }}
@@ -3042,7 +3124,10 @@ watch(
             :key="`n-${a.verse}`"
             :id="getVerseElementId(a.verse)"
             class="verse-paragraph"
-            :class="{ 'is-selected': isVerseSelected(a.verse) }"
+            :class="{
+              'is-selected': isVerseSelected(a.verse),
+              'is-current-ayah': isActiveAyah(a.verse),
+            }"
             @click="handleVerseTap($event, a.verse)"
             @dblclick="handleVerseDoubleClick($event, a.verse)"
             @mouseenter="onVerseMouseEnter($event, a.verse)"
@@ -3081,17 +3166,15 @@ watch(
               </button>
             </span>
             <span class="verse-text-arabic">
-              <template v-if="wordTimings[a.verse - 1]?.length">
+              <template v-if="hasTimingMatchedWords(a.verse)">
                 <template
-                  v-for="(word, wIdx) in a.text.split(' ')"
+                  v-for="(word, wIdx) in getSyncedVerseWords(a.verse)"
                   :key="`n-${a.verse}-${wIdx}`"
                 >
                   <span
                     :id="`word-native-${a.verse}-${wIdx}`"
                     :class="{
-                      'is-current-word':
-                        currentAyahIndex === a.verse - 1 &&
-                        currentWordIndex === wIdx,
+                      'is-current-word': isActiveWord(a.verse, wIdx),
                     }"
                     >{{ word }}</span
                   >{{ ' ' }}
@@ -3391,6 +3474,12 @@ watch(
   box-shadow: 0 2px 8px rgba(255, 193, 7, 0.2);
 }
 
+.verse-row.is-current-ayah {
+  background: rgba(76, 175, 80, 0.08);
+  border-radius: 14px;
+  box-shadow: inset 0 0 0 1px rgba(46, 125, 50, 0.22);
+}
+
 .arabic-text {
   font-feature-settings:
     'rlig' 1,
@@ -3619,6 +3708,11 @@ watch(
   border-radius: 6px;
 }
 
+.mushaf-ayah-inline.is-current-ayah {
+  background: rgba(76, 175, 80, 0.12);
+  border-radius: 6px;
+}
+
 .heading-actions {
   display: flex;
   align-items: center;
@@ -3775,6 +3869,12 @@ watch(
   transform: translateX(4px);
 }
 
+.verse-paragraph.is-current-ayah {
+  background: rgba(76, 175, 80, 0.1);
+  border-inline-end-color: #2e7d32;
+  box-shadow: 0 2px 8px rgba(46, 125, 50, 0.18);
+}
+
 .native-layout.is-ios-native .verse-paragraph.is-selected {
   background: rgba(10, 132, 255, 0.1);
   border: 1px solid rgba(10, 132, 255, 0.35);
@@ -3904,6 +4004,11 @@ body.body--dark .verse-row:hover {
   background: rgba(255, 255, 255, 0.05);
 }
 
+body.body--dark .verse-row.is-current-ayah {
+  background: rgba(102, 187, 106, 0.16);
+  border-color: rgba(129, 199, 132, 0.3);
+}
+
 body.body--dark .verse-translation {
   color: #b0b0b0;
 }
@@ -3969,6 +4074,10 @@ body.body--dark .mushaf-ayah-inline.is-selected {
   background: rgba(255, 193, 7, 0.18);
 }
 
+body.body--dark .mushaf-ayah-inline.is-current-ayah {
+  background: rgba(102, 187, 106, 0.2);
+}
+
 body.body--dark .native-layout {
   background: linear-gradient(135deg, #1a2e1f 0%, #1e1e1e 100%);
   border-color: #4caf50;
@@ -3995,6 +4104,12 @@ body.body--dark .native-layout.is-ios-native .verse-paragraph.is-selected {
   background: rgba(10, 132, 255, 0.16);
   border-color: rgba(10, 132, 255, 0.46);
   box-shadow: 0 0 0 2px rgba(10, 132, 255, 0.2);
+}
+
+body.body--dark .verse-paragraph.is-current-ayah {
+  background: rgba(102, 187, 106, 0.18);
+  border-inline-end-color: rgba(129, 199, 132, 0.8);
+  box-shadow: 0 2px 8px rgba(129, 199, 132, 0.18);
 }
 
 body.body--dark .verse-paragraph:hover {
