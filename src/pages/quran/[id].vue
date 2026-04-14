@@ -3979,8 +3979,8 @@ watch(
 
 /* Dark mode overrides */
 body.body--dark .sura-card {
-  background: #1e1e1e;
-  color: #e0e0e0;
+  background: #000000;
+  color: #f2f2f2;
 }
 
 body.body--dark .sura-title-swipeable {
@@ -3988,8 +3988,8 @@ body.body--dark .sura-title-swipeable {
 }
 
 body.body--dark .reader-layout .arabic-block {
-  background: #2a2a2a;
-  border-color: rgba(255, 255, 255, 0.1);
+  background: #000000;
+  border-color: rgba(255, 255, 255, 0.14);
 }
 
 body.body--dark .arabic-text {
@@ -4001,7 +4001,7 @@ body.body--dark .verse-row {
 }
 
 body.body--dark .verse-row:hover {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(255, 255, 255, 0.03);
 }
 
 body.body--dark .verse-row.is-current-ayah {
@@ -4014,9 +4014,9 @@ body.body--dark .verse-translation {
 }
 
 body.body--dark .verse-num {
-  background: #3a3a3a;
-  color: #e0e0e0;
-  border-color: #555;
+  background: #050505;
+  color: #f2f2f2;
+  border-color: #262626;
 }
 
 body.body--dark .bookmark-empty {
@@ -4029,19 +4029,19 @@ body.body--dark .bookmark-chip {
 }
 
 body.body--dark .mushaf-layout {
-  background: linear-gradient(135deg, #2a2520 0%, #1e1e1e 100%);
+  background: linear-gradient(135deg, #080808 0%, #000000 100%);
 }
 
 body.body--dark .mushaf-page {
-  background: #2a2a2a;
-  box-shadow: inset 0 0 0 2px rgba(255, 193, 7, 0.15);
+  background: #000000;
+  box-shadow: inset 0 0 0 2px rgba(255, 193, 7, 0.12);
 }
 
 body.body--dark .page-border {
   border-color: rgba(255, 193, 7, 0.25);
   background-image: radial-gradient(
     circle at top,
-    rgba(255, 193, 7, 0.1),
+    rgba(255, 193, 7, 0.08),
     transparent 50%
   );
 }
@@ -4059,7 +4059,7 @@ body.body--dark .mushaf-ayah-inline {
 }
 
 body.body--dark .ayah-inline-number {
-  background: rgba(42, 42, 42, 0.95);
+  background: rgba(0, 0, 0, 0.96);
   color: #d4af37;
   border-color: #d4af37;
 }
@@ -4079,23 +4079,23 @@ body.body--dark .mushaf-ayah-inline.is-current-ayah {
 }
 
 body.body--dark .native-layout {
-  background: linear-gradient(135deg, #1a2e1f 0%, #1e1e1e 100%);
+  background: linear-gradient(135deg, #061108 0%, #000000 100%);
   border-color: #4caf50;
 }
 
 body.body--dark .native-layout.is-ios-native {
-  background: linear-gradient(180deg, #161618 0%, #1c1c1e 100%);
+  background: linear-gradient(180deg, #050505 0%, #000000 100%);
   border-color: rgba(255, 255, 255, 0.14);
   box-shadow: 0 10px 28px rgba(0, 0, 0, 0.42);
 }
 
 body.body--dark .verse-paragraph {
-  background: rgba(42, 42, 42, 0.7);
-  color: #e0e0e0;
+  background: rgba(0, 0, 0, 0.82);
+  color: #f0f0f0;
 }
 
 body.body--dark .native-layout.is-ios-native .verse-paragraph {
-  background: rgba(44, 44, 46, 0.82);
+  background: rgba(0, 0, 0, 0.88);
   border-color: rgba(255, 255, 255, 0.12);
   color: #f2f2f7;
 }
@@ -4113,11 +4113,11 @@ body.body--dark .verse-paragraph.is-current-ayah {
 }
 
 body.body--dark .verse-paragraph:hover {
-  background: rgba(42, 42, 42, 0.95);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 body.body--dark .native-layout.is-ios-native .verse-paragraph:hover {
-  background: rgba(58, 58, 60, 0.9);
+  background: rgba(255, 255, 255, 0.05);
 }
 
 body.body--dark .verse-text-arabic {
@@ -4125,18 +4125,18 @@ body.body--dark .verse-text-arabic {
 }
 
 body.body--dark .native-layout.is-ios-native .verse-marker {
-  background: rgba(58, 58, 60, 0.95);
+  background: rgba(0, 0, 0, 0.94);
   border-color: rgba(255, 255, 255, 0.2);
   color: #f2f2f7;
 }
 
 body.body--dark .native-layout.is-ios-native .verse-marker:hover {
-  background: rgba(72, 72, 74, 0.95);
+  background: rgba(255, 255, 255, 0.08);
   border-color: rgba(255, 255, 255, 0.28);
 }
 
 body.body--dark .native-layout.is-ios-native .native-trigger {
-  background: rgba(58, 58, 60, 0.82);
+  background: rgba(0, 0, 0, 0.84);
   border-color: rgba(255, 255, 255, 0.14);
 }
 
@@ -4188,7 +4188,7 @@ body.body--dark .native-layout.is-ios-native .verse-translation-native {
   }
 
   body.body--dark .verse-translation {
-    background: rgba(255, 255, 255, 0.05);
+    background: rgba(255, 255, 255, 0.03);
   }
 
   /* Keep mushaf in one full-width flow in landscape */
