@@ -8,126 +8,128 @@ const router = useRouter()
 const $q = useQuasar()
 
 // Reactive state
-const currentCount = ref(0);
-const targetCount = ref(33);
-const selectedTasbeeh = ref(0);
-const showSettings = ref(false);
-const completedSets = ref(0);
-const swipeTransition = ref('');
-const isTransitioning = ref(false);
+const currentCount = ref(0)
+const targetCount = ref(33)
+const selectedTasbeeh = ref(0)
+const showSettings = ref(false)
+const completedSets = ref(0)
+const swipeTransition = ref('')
+const isTransitioning = ref(false)
 
 // Settings
 const settings = ref({
   vibration: true,
   sound: true,
   autoNext: false,
-});
+})
 
 // Target count options
 const targetOptions = [
-  { label: "33", value: 33 },
-  { label: "99", value: 99 },
-  { label: "100", value: 100 },
-  { label: "∞", value: 999999 },
-];
+  { label: '33', value: 33 },
+  { label: '99', value: 99 },
+  { label: '100', value: 100 },
+  { label: '∞', value: 999999 },
+]
 
 // Tasbeeh phrases
 const tasbeehList = computed(() => [
   {
-    arabic: "سُبْحَانَ اللّٰهِ",
-    transliteration: "SubhanAllah",
+    arabic: 'سُبْحَانَ اللّٰهِ',
+    transliteration: 'SubhanAllah',
     translation: t('tasbeeh.phrases.subhanallah'),
   },
   {
-    arabic: "الْحَمْدُ لِلّٰهِ",
-    transliteration: "Alhamdulillah",
+    arabic: 'الْحَمْدُ لِلّٰهِ',
+    transliteration: 'Alhamdulillah',
     translation: t('tasbeeh.phrases.alhamdulillah'),
   },
   {
-    arabic: "اللّٰهُ أَكْبَرُ",
-    transliteration: "Allahu Akbar",
+    arabic: 'اللّٰهُ أَكْبَرُ',
+    transliteration: 'Allahu Akbar',
     translation: t('tasbeeh.phrases.allahu_akbar'),
   },
   {
-    arabic: "لَا إِلٰهَ إِلَّا اللّٰهُ",
-    transliteration: "La ilaha illa Allah",
+    arabic: 'لَا إِلٰهَ إِلَّا اللّٰهُ',
+    transliteration: 'La ilaha illa Allah',
     translation: t('tasbeeh.phrases.la_ilaha_illa_allah'),
   },
   {
-    arabic: "أَسْتَغْفِرُ اللّٰهَ",
-    transliteration: "Astaghfirullah",
+    arabic: 'أَسْتَغْفِرُ اللّٰهَ',
+    transliteration: 'Astaghfirullah',
     translation: t('tasbeeh.phrases.astaghfirullah'),
   },
   {
-    arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ",
-    transliteration: "La hawla wa la quwwata illa billah",
+    arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ',
+    transliteration: 'La hawla wa la quwwata illa billah',
     translation: t('tasbeeh.phrases.la_hawla'),
   },
-]);
+])
 
 // Computed properties
-const currentTasbeeh = computed(() => tasbeehList.value[selectedTasbeeh.value]);
-const progressPercentage = computed(() => (currentCount.value / targetCount.value) * 100);
+const currentTasbeeh = computed(() => tasbeehList.value[selectedTasbeeh.value])
+const progressPercentage = computed(
+  () => (currentCount.value / targetCount.value) * 100
+)
 
 // Today's statistics
 const todayStats = ref({
   total: 0,
   sessions: 0,
   date: new Date().toDateString(),
-});
+})
 
 // Functions
 function incrementCount() {
-  currentCount.value++;
+  currentCount.value++
 
   // Vibration feedback
   if (settings.value.vibration && navigator.vibrate) {
-    navigator.vibrate(50);
+    navigator.vibrate(50)
   }
 
   // Sound feedback
   if (settings.value.sound) {
     // Could add audio feedback here
     $q.notify({
-      message: "",
+      message: '',
       timeout: 100,
-      position: "center",
-      color: "transparent",
-    });
+      position: 'center',
+      color: 'transparent',
+    })
   }
 
   // Check if target reached
   if (currentCount.value >= targetCount.value && targetCount.value !== 999999) {
-    onTargetReached();
+    onTargetReached()
   }
 
   // Update today's stats
-  updateTodayStats();
+  updateTodayStats()
 }
 
 function onTargetReached() {
-  completedSets.value++;
+  completedSets.value++
 
   $q.notify({
-    message: t("tasbeeh.completed"),
-    type: "positive",
-    position: "center",
+    message: t('tasbeeh.completed'),
+    type: 'positive',
+    position: 'center',
     timeout: 2000,
     actions: [
       {
-        label: t("tasbeeh.continue"),
-        color: "white",
+        label: t('tasbeeh.continue'),
+        color: 'white',
         handler: () => resetCount(),
       },
     ],
-  });
+  })
 
   // Auto next phrase
   if (settings.value.autoNext) {
     setTimeout(() => {
-      nextTasbeeh();
-      resetCount();
-    }, 2000);
+      nextTasbeeh()
+      resetCount()
+    }, 2000)
   }
 
   // If authenticated, send session to server
@@ -138,59 +140,62 @@ function onTargetReached() {
       target: targetCount.value,
     },
     date: new Date().toDateString(),
-  });
+  })
 }
 
 function resetCount() {
-  currentCount.value = 0;
+  currentCount.value = 0
 }
 
 function selectTasbeeh(index: number) {
-  selectedTasbeeh.value = index;
-  resetCount();
+  selectedTasbeeh.value = index
+  resetCount()
 }
 
 function nextTasbeeh() {
-  if (isTransitioning.value) return;
-  isTransitioning.value = true;
-  swipeTransition.value = 'slide-left';
-  
+  if (isTransitioning.value) return
+  isTransitioning.value = true
+  swipeTransition.value = 'slide-left'
+
   setTimeout(() => {
-    selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.value.length;
-    resetCount();
+    selectedTasbeeh.value =
+      (selectedTasbeeh.value + 1) % tasbeehList.value.length
+    resetCount()
     setTimeout(() => {
-      swipeTransition.value = '';
-      isTransitioning.value = false;
-    }, 50);
-  }, 150);
+      swipeTransition.value = ''
+      isTransitioning.value = false
+    }, 50)
+  }, 150)
 }
 
 function previousTasbeeh() {
-  if (isTransitioning.value) return;
-  isTransitioning.value = true;
-  swipeTransition.value = 'slide-right';
-  
+  if (isTransitioning.value) return
+  isTransitioning.value = true
+  swipeTransition.value = 'slide-right'
+
   setTimeout(() => {
-    selectedTasbeeh.value = (selectedTasbeeh.value - 1 + tasbeehList.value.length) % tasbeehList.value.length;
-    resetCount();
+    selectedTasbeeh.value =
+      (selectedTasbeeh.value - 1 + tasbeehList.value.length) %
+      tasbeehList.value.length
+    resetCount()
     setTimeout(() => {
-      swipeTransition.value = '';
-      isTransitioning.value = false;
-    }, 50);
-  }, 150);
+      swipeTransition.value = ''
+      isTransitioning.value = false
+    }, 50)
+  }, 150)
 }
 
 function handleSwipe(evt: any) {
-  const direction = evt.direction;
+  const direction = evt.direction
   if (direction === 'left') {
-    nextTasbeeh();
+    nextTasbeeh()
   } else if (direction === 'right') {
-    previousTasbeeh();
+    previousTasbeeh()
   }
 }
 
 function updateTodayStats() {
-  const today = new Date().toDateString();
+  const today = new Date().toDateString()
 
   // Reset if new day
   if (todayStats.value.date !== today) {
@@ -198,33 +203,35 @@ function updateTodayStats() {
       total: 0,
       sessions: 0,
       date: today,
-    };
+    }
   }
 
-  todayStats.value.total++;
+  todayStats.value.total++
 
   // Save to persistent core storage (fire-and-forget)
-  try { void useCore().set('tasbeeh_stats', todayStats.value) } catch {}
+  try {
+    void useCore().set('tasbeeh_stats', todayStats.value)
+  } catch {}
 
   // Send incremental update to server if authenticated
   sendStatsToServer({
     date: todayStats.value.date,
     total: todayStats.value.total,
     sessions: todayStats.value.sessions,
-  });
+  })
 }
 
 async function sendStatsToServer(payload: any) {
   try {
-    await fetch("/api/tasbeeh", {
-      method: "POST",
+    await fetch('/api/tasbeeh', {
+      method: 'POST',
       body: JSON.stringify(payload),
-      credentials: "include",
+      credentials: 'include',
       headers: { 'Content-Type': 'application/json' },
-    });
+    })
   } catch (e) {
     // ignore network errors — keep local copy
-    console.warn("Failed to persist tasbeeh to server", e);
+    console.warn('Failed to persist tasbeeh to server', e)
   }
 }
 
@@ -234,25 +241,27 @@ onMounted(async () => {
   try {
     const saved = await useCore().get('tasbeeh_stats')
     if (saved) {
-      const parsed = typeof saved === 'string' ? JSON.parse(saved as string) : saved
+      const parsed =
+        typeof saved === 'string' ? JSON.parse(saved as string) : saved
       if (parsed && parsed.date === new Date().toDateString()) {
         todayStats.value = parsed
       }
     }
-  }
-  catch {}
+  } catch {}
 
   // Load settings
   try {
     const savedSettings = await useCore().get('tasbeeh_settings')
     if (savedSettings) {
-      const parsed = typeof savedSettings === 'string' ? JSON.parse(savedSettings as string) : savedSettings
+      const parsed =
+        typeof savedSettings === 'string'
+          ? JSON.parse(savedSettings as string)
+          : savedSettings
       settings.value = { ...settings.value, ...parsed }
     }
-  }
-  catch {}
+  } catch {}
 
-    // If authenticated, try to fetch server-side stored stats
+  // If authenticated, try to fetch server-side stored stats
   try {
     const res = await fetch('/api/tasbeeh', { credentials: 'include' })
     if (res && res.ok) {
@@ -271,18 +280,20 @@ onMounted(async () => {
       }
     }
   } catch (e) {
-    console.warn("Failed to fetch remote tasbeeh data", e)
+    console.warn('Failed to fetch remote tasbeeh data', e)
   }
-});
+})
 
 // Watch settings changes
 watch(
   settings,
   (newSettings) => {
-    try { void useCore().set('tasbeeh_settings', newSettings) } catch {}
+    try {
+      void useCore().set('tasbeeh_settings', newSettings)
+    } catch {}
   },
   { deep: true }
-);
+)
 
 // Page meta
 // useHead and definePageMeta removed — titles handled centrally in main.ts
@@ -300,21 +311,18 @@ watch(
           class="back-btn"
           @click="router.push('/')"
         >
-          {{ t("back") }}
+          {{ t('back') }}
         </q-btn>
         <h1 class="page-title">
-          {{ t("tasbeeh.title") }}
+          {{ t('tasbeeh.title') }}
         </h1>
         <p class="page-subtitle">
-          {{ t("tasbeeh.subtitle") }}
+          {{ t('tasbeeh.subtitle') }}
         </p>
       </div>
 
       <!-- Current Tasbeeh Display -->
-      <div 
-        class="current-tasbeeh"
-        v-touch-swipe.mouse.left.right="handleSwipe"
-      >
+      <div class="current-tasbeeh" v-touch-swipe.mouse.left.right="handleSwipe">
         <div class="tasbeeh-card" :class="swipeTransition">
           <div class="arabic-text">
             {{ currentTasbeeh?.arabic }}
@@ -365,7 +373,7 @@ watch(
           <q-icon name="touch_app" size="48px" />
         </q-btn>
         <p class="tap-instruction">
-          {{ t("tasbeeh.tapToCount") }}
+          {{ t('tasbeeh.tapToCount') }}
         </p>
       </div>
 
@@ -400,7 +408,7 @@ watch(
 
       <!-- Tasbeeh Selection -->
       <div class="tasbeeh-selection">
-        <h3>{{ t("tasbeeh.selectPhrase") }}</h3>
+        <h3>{{ t('tasbeeh.selectPhrase') }}</h3>
         <div class="tasbeeh-grid">
           <div
             v-for="(item, index) in tasbeehList"
@@ -421,14 +429,14 @@ watch(
 
       <!-- Statistics -->
       <div class="stats-section">
-        <h3>{{ t("tasbeeh.todayStats") }}</h3>
+        <h3>{{ t('tasbeeh.todayStats') }}</h3>
         <div class="stats-grid">
           <div class="stat-item">
             <div class="stat-number">
               {{ todayStats.total }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.total") }}
+              {{ t('tasbeeh.total') }}
             </div>
           </div>
           <div class="stat-item">
@@ -436,7 +444,7 @@ watch(
               {{ todayStats.sessions }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.sessions") }}
+              {{ t('tasbeeh.sessions') }}
             </div>
           </div>
           <div class="stat-item">
@@ -444,7 +452,7 @@ watch(
               {{ completedSets }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.completed") }}
+              {{ t('tasbeeh.completed') }}
             </div>
           </div>
         </div>
@@ -456,7 +464,7 @@ watch(
       <q-card class="settings-card">
         <q-card-section>
           <div class="text-h6">
-            {{ t("tasbeeh.settings") }}
+            {{ t('tasbeeh.settings') }}
           </div>
         </q-card-section>
 
@@ -479,7 +487,12 @@ watch(
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn v-close-popup flat :label="t('general.close')" color="primary" />
+          <q-btn
+            v-close-popup
+            flat
+            :label="t('general.close')"
+            color="primary"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -514,7 +527,7 @@ watch(
   }
 
   .page-title {
-    font-family: "Scheherazade", "Amiri", serif;
+    font-family: 'Scheherazade', 'Amiri', serif;
     font-size: 2.5rem;
     color: var(--title-color);
     margin: 0;
@@ -546,11 +559,11 @@ watch(
     font-size: 0.75rem;
     color: #6c757d;
     opacity: 0.6;
-    
+
     @media (hover: hover) {
       opacity: 0.4;
       transition: opacity 0.3s;
-      
+
       &:hover {
         opacity: 0.8;
       }
@@ -575,7 +588,7 @@ watch(
     }
 
     .arabic-text {
-      font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
       font-size: 2.5rem;
       color: #155724;
       margin-bottom: 1rem;
@@ -714,7 +727,7 @@ watch(
     }
 
     .item-arabic {
-      font-family: "Noto Naskh Arabic", "Amiri", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', serif;
       font-size: 1.4rem;
       color: #155724;
       margin-bottom: 0.25rem;
@@ -770,12 +783,12 @@ watch(
 :global(body.body--dark) .tasbeeh-page .tasbeeh-card,
 :global(body.body--dark) .tasbeeh-page .tasbeeh-item,
 :global(body.body--dark) .tasbeeh-page .stat-item {
-  background: #333;
-  color: #e0e0e0;
+  background: #000;
+  color: #f2f2f2;
 }
 
 :global(body.body--dark) .tasbeeh-page .tasbeeh-item.active {
-  background: #444;
+  background: rgba(34, 197, 94, 0.12);
 }
 
 // Mobile responsiveness

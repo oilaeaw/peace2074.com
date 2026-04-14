@@ -1,138 +1,147 @@
 <script lang="ts" setup>
-import { ref, computed, watch, onMounted } from "vue";
-import { useRouter } from "vue-router";
-import { useI18n } from "vue-i18n";
-import { useQuasar } from "quasar";
-import { useAthanPlayer } from "@/composables/useAthanPlayer";
-import useCore from "~/composables/useCore";
-import { useAuthStore } from "@/stores/auth.pinia";
-const { t } = useI18n();
-const router = useRouter();
-const $q = useQuasar();
-const authStore = useAuthStore();
+import { ref, computed, watch, onMounted } from 'vue'
+import { useRouter } from 'vue-router'
+import { useI18n } from 'vue-i18n'
+import { useQuasar } from 'quasar'
+import { useAthanPlayer } from '@/composables/useAthanPlayer'
+import useCore from '~/composables/useCore'
+import { useAuthStore } from '@/stores/auth.pinia'
+const { t } = useI18n()
+const router = useRouter()
+const $q = useQuasar()
+const authStore = useAuthStore()
 
 // Athan audio controls (shared across app)
-const { toggle: toggleAthan, stop: stopAthan, isPlaying: isAthanPlaying } = useAthanPlayer();
+const {
+  toggle: toggleAthan,
+  stop: stopAthan,
+  isPlaying: isAthanPlaying,
+} = useAthanPlayer()
 
 // Reactive state
-const currentCount = ref(0);
-const targetCount = ref(33);
-const selectedTasbeeh = ref(0);
-const showSettings = ref(false);
-const completedSets = ref(0);
+const currentCount = ref(0)
+const targetCount = ref(33)
+const selectedTasbeeh = ref(0)
+const showSettings = ref(false)
+const completedSets = ref(0)
 
 // Settings
 const settings = ref({
   vibration: true,
   sound: true,
   autoNext: false,
-});
+})
 
 // Target count options
 const targetOptions = [
-  { label: "33", value: 33 },
-  { label: "99", value: 99 },
-  { label: "100", value: 100 },
-  { label: "∞", value: 999999 },
-];
+  { label: '33', value: 33 },
+  { label: '99', value: 99 },
+  { label: '100', value: 100 },
+  { label: '∞', value: 999999 },
+]
 
 // Tasbeeh phrases
 const tasbeehList = [
   {
-    arabic: "سُبْحَانَ اللّٰهِ",
-    transliteration: "SubhanAllah",
-    translation: "Glory be to Allah",
+    arabic: 'سُبْحَانَ اللّٰهِ',
+    transliteration: 'SubhanAllah',
+    translation: 'Glory be to Allah',
   },
   {
-    arabic: "الْحَمْدُ لِلّٰهِ",
-    transliteration: "Alhamdulillah",
-    translation: "Praise be to Allah",
+    arabic: 'الْحَمْدُ لِلّٰهِ',
+    transliteration: 'Alhamdulillah',
+    translation: 'Praise be to Allah',
   },
   {
-    arabic: "اللّٰهُ أَكْبَرُ",
-    transliteration: "Allahu Akbar",
-    translation: "Allah is Greatest",
+    arabic: 'اللّٰهُ أَكْبَرُ',
+    transliteration: 'Allahu Akbar',
+    translation: 'Allah is Greatest',
   },
   {
-    arabic: "لَا إِلٰهَ إِلَّا اللّٰهُ",
-    transliteration: "La ilaha illa Allah",
-    translation: "There is no god but Allah",
+    arabic: 'لَا إِلٰهَ إِلَّا اللّٰهُ',
+    transliteration: 'La ilaha illa Allah',
+    translation: 'There is no god but Allah',
   },
   {
-    arabic: "أَسْتَغْفِرُ اللّٰهَ",
-    transliteration: "Astaghfirullah",
-    translation: "I seek forgiveness from Allah",
+    arabic: 'أَسْتَغْفِرُ اللّٰهَ',
+    transliteration: 'Astaghfirullah',
+    translation: 'I seek forgiveness from Allah',
   },
   {
-    arabic: "لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ",
-    transliteration: "La hawla wa la quwwata illa billah",
-    translation: "There is no power except with Allah",
+    arabic: 'لَا حَوْلَ وَلَا قُوَّةَ إِلَّا بِاللّٰهِ',
+    transliteration: 'La hawla wa la quwwata illa billah',
+    translation: 'There is no power except with Allah',
   },
-];
+]
 
 // Computed properties
-const currentTasbeeh = computed(() => tasbeehList[selectedTasbeeh.value]);
-const progressPercentage = computed(() => (currentCount.value / targetCount.value) * 100);
+const currentTasbeeh = computed(() => tasbeehList[selectedTasbeeh.value])
+const progressPercentage = computed(
+  () => (currentCount.value / targetCount.value) * 100
+)
 
 // Today's statistics
 const todayStats = ref({
   total: 0,
   sessions: 0,
   date: new Date().toDateString(),
-});
+})
 
 // Functions
 function incrementCount() {
-  currentCount.value++;
+  currentCount.value++
 
   // Vibration feedback
   if (settings.value.vibration && navigator.vibrate) {
-    navigator.vibrate(50);
+    navigator.vibrate(50)
   }
 
   // Sound feedback
   if (settings.value.sound) {
     // Could add audio feedback here
     $q.notify({
-      message: "",
+      message: '',
       timeout: 100,
-      position: "center",
-      color: "transparent",
-    });
+      position: 'center',
+      color: 'transparent',
+    })
   }
 
   // Check if target reached exactly - notify but let user continue
-  if (currentCount.value === targetCount.value && targetCount.value !== 999999) {
-    onTargetReached();
+  if (
+    currentCount.value === targetCount.value &&
+    targetCount.value !== 999999
+  ) {
+    onTargetReached()
   }
 
   // Update today's stats
-  updateTodayStats();
+  updateTodayStats()
 }
 
 function onTargetReached() {
-  completedSets.value++;
+  completedSets.value++
 
   $q.notify({
-    message: t("tasbeeh.completed"),
-    type: "positive",
-    position: "center",
+    message: t('tasbeeh.completed'),
+    type: 'positive',
+    position: 'center',
     timeout: 2000,
     actions: [
       {
-        label: t("tasbeeh.continue"),
-        color: "white",
+        label: t('tasbeeh.continue'),
+        color: 'white',
         handler: () => resetCount(),
       },
     ],
-  });
+  })
 
   // Auto next phrase
   if (settings.value.autoNext) {
     setTimeout(() => {
-      nextTasbeeh();
-      resetCount();
-    }, 2000);
+      nextTasbeeh()
+      resetCount()
+    }, 2000)
   }
 
   // If authenticated, send session to server
@@ -140,24 +149,24 @@ function onTargetReached() {
     date: new Date().toDateString(),
     total: currentCount.value,
     sessions: completedSets.value,
-  });
+  })
 }
 
 function resetCount() {
-  currentCount.value = 0;
+  currentCount.value = 0
 }
 
 function selectTasbeeh(index: number) {
-  selectedTasbeeh.value = index;
-  resetCount();
+  selectedTasbeeh.value = index
+  resetCount()
 }
 
 function nextTasbeeh() {
-  selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.length;
+  selectedTasbeeh.value = (selectedTasbeeh.value + 1) % tasbeehList.length
 }
 
 function updateTodayStats() {
-  const today = new Date().toDateString();
+  const today = new Date().toDateString()
 
   // Reset if new day
   if (todayStats.value.date !== today) {
@@ -165,14 +174,14 @@ function updateTodayStats() {
       total: 0,
       sessions: 0,
       date: today,
-    };
+    }
   }
 
-  todayStats.value.total++;
+  todayStats.value.total++
 
   // Save to persistent core storage (fire-and-forget)
   try {
-    void useCore().set("tasbeeh_stats", todayStats.value);
+    void useCore().set('tasbeeh_stats', todayStats.value)
   } catch {}
 
   // Send incremental update to server if authenticated
@@ -180,24 +189,24 @@ function updateTodayStats() {
     date: todayStats.value.date,
     total: todayStats.value.total,
     sessions: todayStats.value.sessions,
-  });
+  })
 }
 
 async function sendStatsToServer(payload: any) {
   // Only sync to server if user is authenticated
   if (!authStore.isAuthenticated) {
-    return;
+    return
   }
   try {
-    await fetch("/api/tasbeeh", {
-      method: "POST",
+    await fetch('/api/tasbeeh', {
+      method: 'POST',
       body: JSON.stringify(payload),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+    })
   } catch (e) {
     // ignore network errors — keep local copy
-    console.warn("Failed to persist tasbeeh to server", e);
+    console.warn('Failed to persist tasbeeh to server', e)
   }
 }
 
@@ -205,60 +214,61 @@ async function sendStatsToServer(payload: any) {
 onMounted(async () => {
   // Load saved stats from core storage first
   try {
-    const saved = await useCore().get("tasbeeh_stats");
+    const saved = await useCore().get('tasbeeh_stats')
     if (saved) {
-      const parsed = typeof saved === "string" ? JSON.parse(saved as string) : saved;
+      const parsed =
+        typeof saved === 'string' ? JSON.parse(saved as string) : saved
       if (parsed && parsed.date === new Date().toDateString()) {
-        todayStats.value = parsed;
+        todayStats.value = parsed
       }
     }
   } catch {}
 
   // Load settings
   try {
-    const savedSettings = await useCore().get("tasbeeh_settings");
+    const savedSettings = await useCore().get('tasbeeh_settings')
     if (savedSettings) {
       const parsed =
-        typeof savedSettings === "string"
+        typeof savedSettings === 'string'
           ? JSON.parse(savedSettings as string)
-          : savedSettings;
-      settings.value = { ...settings.value, ...parsed };
+          : savedSettings
+      settings.value = { ...settings.value, ...parsed }
     }
   } catch {}
 
   // If authenticated, try to fetch server-side stored stats
   try {
-    const res = await fetch("/api/tasbeeh", { credentials: "include" });
+    const res = await fetch('/api/tasbeeh', { credentials: 'include' })
     if (res && res.ok) {
-      const json = await res.json();
-      const remote = json?.data;
+      const json = await res.json()
+      const remote = json?.data
       if (remote && remote.daily && Array.isArray(remote.daily)) {
-        const today = new Date().toDateString();
-        const rec = remote.daily.find((d: any) => d.date === today);
+        const today = new Date().toDateString()
+        const rec = remote.daily.find((d: any) => d.date === today)
         if (rec) {
           todayStats.value = {
             total: rec.total || 0,
             sessions: rec.sessions || 0,
             date: rec.date,
-          };
+          }
         }
       }
     }
   } catch (e) {
-    console.warn("Failed to fetch remote tasbeeh data", e);
+    console.warn('Failed to fetch remote tasbeeh data', e)
   }
-});
+})
 
 // Watch settings changes
 watch(
   settings,
   (newSettings) => {
     try {
-      void useCore().set("tasbeeh_settings", newSettings);
+      void useCore().set('tasbeeh_settings', newSettings)
     } catch {}
   },
   { deep: true }
-);
+)
 
 // Page meta
 // useHead and definePageMeta removed — titles handled centrally in main.ts
@@ -276,13 +286,13 @@ watch(
           class="back-btn"
           @click="router.push('/')"
         >
-          {{ t("back") }}
+          {{ t('back') }}
         </q-btn>
         <h1 class="page-title">
-          {{ t("tasbeeh.title") }}
+          {{ t('tasbeeh.title') }}
         </h1>
         <p class="page-subtitle">
-          {{ t("tasbeeh.subtitle") }}
+          {{ t('tasbeeh.subtitle') }}
         </p>
         <div class="athan-controls">
           <q-btn
@@ -351,7 +361,7 @@ watch(
           <q-icon name="touch_app" size="48px" />
         </q-btn>
         <p class="tap-instruction">
-          {{ t("tasbeeh.tapToCount") }}
+          {{ t('tasbeeh.tapToCount') }}
         </p>
       </div>
 
@@ -386,7 +396,7 @@ watch(
 
       <!-- Tasbeeh Selection -->
       <div class="tasbeeh-selection">
-        <h3>{{ t("tasbeeh.selectPhrase") }}</h3>
+        <h3>{{ t('tasbeeh.selectPhrase') }}</h3>
         <div class="tasbeeh-grid">
           <div
             v-for="(item, index) in tasbeehList"
@@ -407,14 +417,14 @@ watch(
 
       <!-- Statistics -->
       <div class="stats-section">
-        <h3>{{ t("tasbeeh.todayStats") }}</h3>
+        <h3>{{ t('tasbeeh.todayStats') }}</h3>
         <div class="stats-grid">
           <div class="stat-item">
             <div class="stat-number">
               {{ todayStats.total }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.total") }}
+              {{ t('tasbeeh.total') }}
             </div>
           </div>
           <div class="stat-item">
@@ -422,7 +432,7 @@ watch(
               {{ todayStats.sessions }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.sessions") }}
+              {{ t('tasbeeh.sessions') }}
             </div>
           </div>
           <div class="stat-item">
@@ -430,7 +440,7 @@ watch(
               {{ completedSets }}
             </div>
             <div class="stat-label">
-              {{ t("tasbeeh.completed") }}
+              {{ t('tasbeeh.completed') }}
             </div>
           </div>
         </div>
@@ -442,7 +452,7 @@ watch(
       <q-card class="settings-card">
         <q-card-section>
           <div class="text-h6">
-            {{ t("tasbeeh.settings") }}
+            {{ t('tasbeeh.settings') }}
           </div>
         </q-card-section>
 
@@ -465,7 +475,12 @@ watch(
         </q-card-section>
 
         <q-card-actions align="right">
-          <q-btn v-close-popup flat :label="t('general.close')" color="primary" />
+          <q-btn
+            v-close-popup
+            flat
+            :label="t('general.close')"
+            color="primary"
+          />
         </q-card-actions>
       </q-card>
     </q-dialog>
@@ -500,7 +515,7 @@ watch(
   }
 
   .page-title {
-    font-family: "Scheherazade", "Amiri", serif;
+    font-family: 'Scheherazade', 'Amiri', serif;
     font-size: 2.5rem;
     color: var(--title-color);
     margin: 0;
@@ -524,7 +539,7 @@ watch(
     border: 3px solid #d6b76e;
 
     .arabic-text {
-      font-family: "Noto Naskh Arabic", "Amiri", "Scheherazade", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', 'Scheherazade', serif;
       font-size: 2.5rem;
       color: #155724;
       margin-bottom: 1rem;
@@ -652,7 +667,7 @@ watch(
     }
 
     .item-arabic {
-      font-family: "Noto Naskh Arabic", "Amiri", serif;
+      font-family: 'Noto Naskh Arabic', 'Amiri', serif;
       font-size: 1.4rem;
       color: #155724;
       margin-bottom: 0.25rem;
@@ -708,12 +723,12 @@ watch(
 :global(body.body--dark) .tasbeeh-page .tasbeeh-card,
 :global(body.body--dark) .tasbeeh-page .tasbeeh-item,
 :global(body.body--dark) .tasbeeh-page .stat-item {
-  background: #333;
-  color: #e0e0e0;
+  background: #000;
+  color: #f2f2f2;
 }
 
 :global(body.body--dark) .tasbeeh-page .tasbeeh-item.active {
-  background: #444;
+  background: rgba(34, 197, 94, 0.12);
 }
 
 // Mobile responsiveness
@@ -759,45 +774,45 @@ watch(
     align-items: center;
     padding: 1rem;
   }
-  
+
   .page-header {
     grid-column: 1 / -1;
     padding: 12px 0;
   }
-  
+
   .page-title {
     font-size: 1.5rem;
     margin-bottom: 4px;
   }
-  
+
   .page-subtitle {
     font-size: 0.9rem;
   }
-  
+
   .current-tasbeeh,
   .counter-section {
     grid-column: 1;
   }
-  
+
   .action-section,
   .controls-section {
     grid-column: 2;
   }
-  
+
   /* Bigger counter in landscape */
   .counter-display .count-number {
     font-size: 5rem;
   }
-  
+
   .progress-ring :global(.progress-circle) {
     font-size: 240px;
   }
-  
+
   .tasbeeh-button {
     width: 140px;
     height: 140px;
   }
-  
+
   .tasbeeh-button :global(.q-icon) {
     font-size: 64px;
   }
@@ -808,7 +823,7 @@ watch(
   .tasbeeh-selection {
     margin-top: 16px;
   }
-  
+
   .tasbeeh-grid {
     grid-template-columns: repeat(auto-fit, minmax(140px, 1fr));
     gap: 12px;

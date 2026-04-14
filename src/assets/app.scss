@@ -47,12 +47,12 @@ body.body--light {
   --logo-filter: drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
 body.body--dark {
-  color: white;
-  background-color: var(--q-dark);
-  background-image: var(--background-pattern);
-  background-size: 600px 600px;
-  background-repeat: repeat;
-  background-attachment: fixed;
+  color: #f5f5f5;
+  background-color: #000;
+  background-image: none;
+  background-size: auto;
+  background-repeat: no-repeat;
+  background-attachment: scroll;
   overflow-x: hidden;
   --logo-filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
@@ -109,26 +109,30 @@ body.body--dark {
   --title-color: #14492e;
   --subtitle-color: #6c757d;
   --card-bg: #fbfbf8;
+  --card-bg-hover: #ffffff;
+  --surface-border: rgba(17, 24, 39, 0.08);
   --page-max-width: 1200px;
 }
 
 body.body--dark {
-  --background-pattern: url('~/assets/patterns/islamic-pattern-dark.svg');
-  --text-color: #e0e0e0;
-  --title-color: #e0e0e0;
-  --subtitle-color: #b0b0b0;
-  --card-bg: #333;
+  --background-pattern: none;
+  --text-color: #f2f2f2;
+  --title-color: #fafafa;
+  --subtitle-color: #c7c7c7;
+  --card-bg: #000;
+  --card-bg-hover: #050505;
+  --surface-border: rgba(255, 255, 255, 0.08);
   --page-max-width: 1200px;
 
   /* Fix grey text visibility in dark mode */
   .text-grey-6,
   .text-grey-7 {
-    color: #b0b0b0 !important;
+    color: #c7c7c7 !important;
   }
 
   .text-subtitle2,
   .text-caption {
-    color: #b0b0b0 !important;
+    color: #c7c7c7 !important;
   }
 }
 
@@ -137,6 +141,77 @@ html,
 body {
   max-width: 100vw;
   width: 100%;
+  font-family:
+    'DM Sans',
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    sans-serif;
+}
+
+body.body--dark .q-page-container,
+body.body--dark .q-page,
+body.body--dark main {
+  background-color: #000;
+  color: var(--text-color);
+}
+
+body.body--dark .q-card,
+body.body--dark .search-dialog-card,
+body.body--dark .offline-recitation-manager,
+body.body--dark .glassy-card,
+body.body--dark .tasbeeh-card,
+body.body--dark .tasbeeh-item,
+body.body--dark .stat-item,
+body.body--dark .chat-surface,
+body.body--dark .chat-info-card,
+body.body--dark .chat-dialog-card,
+body.body--dark .manifesto-card,
+body.body--dark .ai-card,
+body.body--dark .blog-card,
+body.body--dark .form-card,
+body.body--dark .info-card,
+body.body--dark .settings-card,
+body.body--dark .login-card,
+body.body--dark .signup-card,
+body.body--dark .my-card,
+body.body--dark .sura-card,
+body.body--dark .glory-card {
+  background: var(--card-bg) !important;
+  background-color: var(--card-bg) !important;
+  color: var(--text-color) !important;
+  border-color: var(--surface-border) !important;
+  box-shadow:
+    0 12px 28px rgba(0, 0, 0, 0.48),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+}
+
+body.body--dark .q-card:hover,
+body.body--dark .search-dialog-card:hover,
+body.body--dark .glassy-card:hover,
+body.body--dark .tasbeeh-card:hover,
+body.body--dark .tasbeeh-item:hover,
+body.body--dark .stat-item:hover,
+body.body--dark .manifesto-card:hover,
+body.body--dark .ai-card:hover,
+body.body--dark .blog-card:hover,
+body.body--dark .form-card:hover,
+body.body--dark .info-card:hover,
+body.body--dark .settings-card:hover,
+body.body--dark .login-card:hover,
+body.body--dark .signup-card:hover,
+body.body--dark .my-card:hover,
+body.body--dark .sura-card:hover,
+body.body--dark .glory-card:hover {
+  background: var(--card-bg-hover) !important;
+  background-color: var(--card-bg-hover) !important;
+}
+
+body.body--dark .tasbeeh-item.active,
+body.body--dark .sura-card.is-completed {
+  background: rgba(34, 197, 94, 0.12) !important;
+  background-color: rgba(34, 197, 94, 0.12) !important;
+  border-color: rgba(74, 222, 128, 0.45) !important;
 }
 
 /* Compact layout: tighter paddings and gaps when enabled via body.is-compact */

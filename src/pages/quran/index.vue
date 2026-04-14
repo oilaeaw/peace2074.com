@@ -700,7 +700,7 @@ body.body--dark .ramadan-subtitle {
 }
 
 body.body--dark .ramadan-message {
-  background: rgba(255, 255, 255, 0.05);
+  background: rgba(0, 0, 0, 0.72);
   border-color: rgba(245, 158, 11, 0.4);
 }
 
@@ -770,7 +770,7 @@ body.body--dark .ramadan-message .text-subtitle2 {
 }
 
 body.body--dark .sura-card {
-  background: #1e1e1e;
+  background: #000;
   border-color: rgba(255, 255, 255, 0.12);
 }
 
@@ -862,18 +862,18 @@ body.body--dark .ramadan-progress {
 }
 
 body.body--dark .sura-card {
-  background: #1e1e1e;
+  background: #000;
   border-color: rgba(255, 255, 255, 0.1);
 }
 
 body.body--dark .sura-card:hover {
-  background: #2a2a2a;
+  background: #050505;
   border-color: var(--q-primary);
   box-shadow: 0 4px 16px rgba(0, 0, 0, 0.4);
 }
 
 body.body--dark .sura-card.is-completed {
-  background: #1a2e1a;
+  background: rgba(34, 197, 94, 0.12);
   border-color: #22c55e;
 }
 
