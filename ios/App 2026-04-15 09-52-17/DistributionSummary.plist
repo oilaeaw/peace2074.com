@@ -1,0 +1,114 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>App.ipa</key>
+	<array>
+		<dict>
+			<key>architectures</key>
+			<array>
+				<string>arm64</string>
+			</array>
+			<key>buildNumber</key>
+			<string>1</string>
+			<key>certificate</key>
+			<dict>
+				<key>SHA1</key>
+				<string>1806A6B6AFE04E07F3995D9AD2C06AD1747B7FED</string>
+				<key>dateExpires</key>
+				<string>29/03/2027</string>
+				<key>type</key>
+				<string>Cloud Managed Apple Distribution</string>
+			</dict>
+			<key>embeddedBinaries</key>
+			<array>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>1806A6B6AFE04E07F3995D9AD2C06AD1747B7FED</string>
+						<key>dateExpires</key>
+						<string>29/03/2027</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>Capacitor.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>5CY5WTPYKZ</string>
+						<key>name</key>
+						<string>Wael Wahbeh</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>7.5.0</string>
+				</dict>
+				<dict>
+					<key>architectures</key>
+					<array>
+						<string>arm64</string>
+					</array>
+					<key>buildNumber</key>
+					<string>1</string>
+					<key>certificate</key>
+					<dict>
+						<key>SHA1</key>
+						<string>1806A6B6AFE04E07F3995D9AD2C06AD1747B7FED</string>
+						<key>dateExpires</key>
+						<string>29/03/2027</string>
+						<key>type</key>
+						<string>Cloud Managed Apple Distribution</string>
+					</dict>
+					<key>name</key>
+					<string>Cordova.framework</string>
+					<key>team</key>
+					<dict>
+						<key>id</key>
+						<string>5CY5WTPYKZ</string>
+						<key>name</key>
+						<string>Wael Wahbeh</string>
+					</dict>
+					<key>versionNumber</key>
+					<string>7.5.0</string>
+				</dict>
+			</array>
+			<key>entitlements</key>
+			<dict>
+				<key>application-identifier</key>
+				<string>5CY5WTPYKZ.com.peace2074.app</string>
+				<key>com.apple.developer.team-identifier</key>
+				<string>5CY5WTPYKZ</string>
+				<key>get-task-allow</key>
+				<false/>
+			</dict>
+			<key>name</key>
+			<string>App.app</string>
+			<key>profile</key>
+			<dict>
+				<key>UUID</key>
+				<string>42c816d3-4302-4b28-99f1-e3cdd45c2ffc</string>
+				<key>dateExpires</key>
+				<string>29/03/2027</string>
+				<key>name</key>
+				<string>iOS Team Ad Hoc Provisioning Profile: com.peace2074.app</string>
+			</dict>
+			<key>team</key>
+			<dict>
+				<key>id</key>
+				<string>5CY5WTPYKZ</string>
+				<key>name</key>
+				<string>Wael Wahbeh</string>
+			</dict>
+			<key>versionNumber</key>
+			<string>3.0.0</string>
+		</dict>
+	</array>
+</dict>
+</plist>
