@@ -10,13 +10,18 @@ const router = createRouter({
 // Global navigation guard for authentication
 router.beforeEach(async (to) => {
   const authStore = useAuthStore();
+  const requiresAuth = Boolean(to.meta.requiresAuth)
 
   if (!authStore.hydrated) {
-    await authStore.hydrateSession();
+    if (requiresAuth) {
+      await authStore.hydrateSession();
+    } else {
+      void authStore.hydrateSession();
+    }
   }
 
   // Check if route requires authentication
-  if (to.meta.requiresAuth && !authStore.isAuthenticated) {
+  if (requiresAuth && !authStore.isAuthenticated) {
     // Redirect to login with return path
     return { path: "/login", query: { redirect: to.fullPath } };
   }

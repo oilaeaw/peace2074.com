@@ -8,6 +8,17 @@ const isClient = typeof window !== 'undefined'
 const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
+const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
+const NATIVE_AUTH_TIMEOUT_MS = 2500
+const WEB_AUTH_TIMEOUT_MS = 6000
+
+function isNativeRuntime() {
+  if (typeof window === 'undefined') {
+    return false
+  }
+
+  return NATIVE_PROTOCOLS.has(String(window.location.protocol || ''))
+}
 
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
@@ -18,7 +29,7 @@ function computeNitroBase() {
       return configured.replace(/\/$/, '')
     }
 
-    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
+    if (NATIVE_PROTOCOLS.has(protocol)) {
       return DEFAULT_MOBILE_API_BASE
     }
 
@@ -212,9 +223,20 @@ export const useAuthStore = defineStore('auth', () => {
     }
 
     hydratePromise = (async () => {
+      let timeoutId: ReturnType<typeof setTimeout> | undefined
+      const controller =
+        typeof AbortController !== 'undefined'
+          ? new AbortController()
+          : null
+
       try {
+        timeoutId = setTimeout(() => {
+          controller?.abort()
+        }, isNativeRuntime() ? NATIVE_AUTH_TIMEOUT_MS : WEB_AUTH_TIMEOUT_MS)
+
         const response = await fetch(resolveNitroUrl('/auth/me'), {
           credentials: 'include',
+          ...(controller ? { signal: controller.signal } : {}),
         })
 
         if (response.status === 401) {
@@ -244,6 +266,9 @@ export const useAuthStore = defineStore('auth', () => {
         return _user.value
       }
       finally {
+        if (timeoutId) {
+          clearTimeout(timeoutId)
+        }
         hydrated.value = true
         hydratePromise = null
       }

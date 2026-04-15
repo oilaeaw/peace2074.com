@@ -122,8 +122,7 @@ function forwardGoogleOAuthRedirectIfNeeded() {
 }
 
 async function bootstrapAuthState() {
-  if (!isClient) return true
-  if (forwardGoogleOAuthRedirectIfNeeded()) return false
+  if (!isClient) return
 
   try {
     const authStore = useAuthStore()
@@ -136,8 +135,6 @@ async function bootstrapAuthState() {
   } catch (error) {
     console.error('Auth bootstrap failed; continuing app mount', error)
   }
-
-  return true
 }
 
 function applyThemeMode(mode: ThemeMode) {
@@ -504,14 +501,11 @@ if (
 // Netlify Identity has been replaced with custom OAuth (Google/Apple).
 // See: apps/nitro-api/server/routes/auth/*
 
-// Mount the app once (removed duplicate mounts)
-void bootstrapAuthState()
-  .then((shouldMount) => {
-    if (shouldMount) {
-      app.mount('#app')
-    }
+// Mount immediately so native runtimes don't sit on a blank screen while
+// session hydration waits on network I/O.
+if (!forwardGoogleOAuthRedirectIfNeeded()) {
+  app.mount('#app')
+  void bootstrapAuthState().catch((error) => {
+    console.error('Auth bootstrap failed after mount', error)
   })
-  .catch((error) => {
-    console.error('App bootstrap failed; mounting fallback app shell', error)
-    app.mount('#app')
-  })
+}
