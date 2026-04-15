@@ -17,6 +17,14 @@ const HIGH_CONTRAST_KEY = 'pref-high-contrast'
 const { t } = useI18n()
 const $q = useQuasar()
 
+function isNativeRuntime(): boolean {
+  if (typeof window === 'undefined') return false
+  const protocol = String(window.location.protocol || '')
+  return (
+    protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
+  )
+}
+
 const enableNotifications = ref(readNotificationsPreference())
 const navOrderingEnabled = ref(readNavOrderingEnabled())
 const drawerOpenByDefault = ref(readDrawerOpenPreference())
@@ -101,6 +109,14 @@ onMounted(async () => {
 })
 
 async function activateNotifications(): Promise<boolean> {
+  if (isNativeRuntime()) {
+    $q.notify?.({
+      type: 'warning',
+      message: t('pages.settings.notifications.unavailable'),
+    })
+    return false
+  }
+
   const granted = await ensureNotificationsPermission()
   if (!granted) {
     return false
@@ -327,6 +343,7 @@ async function ensureNotificationsPermission(): Promise<boolean> {
 
 async function showTestNotification(): Promise<boolean> {
   if (typeof window === 'undefined') return false
+  if (isNativeRuntime()) return false
 
   try {
     if ('serviceWorker' in navigator) {
@@ -369,6 +386,13 @@ type PushSubscriptionResult = {
 }
 
 async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
+  if (isNativeRuntime()) {
+    return {
+      ok: false,
+      error: t('pages.settings.notifications.unavailable'),
+    }
+  }
+
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
     console.warn('[Push] Service Worker not supported')
     return {
@@ -458,6 +482,10 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
 }
 
 async function unsubscribeFromPushNotifications(): Promise<boolean> {
+  if (isNativeRuntime()) {
+    return true
+  }
+
   if (typeof window === 'undefined' || !('serviceWorker' in navigator)) {
     return true
   }
@@ -580,7 +608,7 @@ async function reloadApp() {
     }
 
     // Update service workers
-    if ('serviceWorker' in navigator) {
+    if (!isNativeRuntime() && 'serviceWorker' in navigator) {
       const regs = await navigator.serviceWorker.getRegistrations()
       await Promise.all(regs.map((r) => r.update().catch(() => {})))
       console.log('[Settings] Updated service workers')

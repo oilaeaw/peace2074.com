@@ -51,6 +51,7 @@ const THEME_MODE_KEY = 'pref-theme-mode'
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 const AVAILABLE_LOCALES = Object.keys(localeMessages) as AppLocale[]
+const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
 let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App)
@@ -63,6 +64,11 @@ app.use(i18n)
 // Register Quasar via centralized plugin
 registerQuasar(app)
 
+function isNativeRuntime() {
+  if (!isClient) return false
+  return NATIVE_PROTOCOLS.has(String(window.location.protocol || ''))
+}
+
 function computeNitroBase() {
   if (!isClient) return '/api'
 
@@ -73,11 +79,7 @@ function computeNitroBase() {
     return configured.replace(/\/$/, '')
   }
 
-  if (
-    protocol === 'capacitor:' ||
-    protocol === 'ionic:' ||
-    protocol === 'app:'
-  ) {
+  if (NATIVE_PROTOCOLS.has(protocol)) {
     return DEFAULT_MOBILE_API_BASE
   }
 
@@ -123,12 +125,16 @@ async function bootstrapAuthState() {
   if (!isClient) return true
   if (forwardGoogleOAuthRedirectIfNeeded()) return false
 
-  const authStore = useAuthStore()
-  await authStore.hydrateSession()
+  try {
+    const authStore = useAuthStore()
+    await authStore.hydrateSession()
 
-  const currentPath = window.location.pathname.replace(/\/+$/, '') || '/'
-  if (currentPath === '/dashboard') {
-    await router.replace('/')
+    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/'
+    if (currentPath === '/dashboard') {
+      await router.replace('/')
+    }
+  } catch (error) {
+    console.error('Auth bootstrap failed; continuing app mount', error)
   }
 
   return true
@@ -438,7 +444,12 @@ watch(globalLocale, () => {
 })
 
 // Register PWA Service Worker and prompt user to refresh when update is available
-if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
+if (
+  isClient &&
+  !isNativeRuntime() &&
+  'serviceWorker' in navigator &&
+  import.meta.env.PROD
+) {
   import('virtual:pwa-register')
     .then(({ registerSW }) => {
       const updateSW = registerSW({
@@ -494,8 +505,13 @@ if (isClient && 'serviceWorker' in navigator && import.meta.env.PROD) {
 // See: apps/nitro-api/server/routes/auth/*
 
 // Mount the app once (removed duplicate mounts)
-void bootstrapAuthState().then((shouldMount) => {
-  if (shouldMount) {
+void bootstrapAuthState()
+  .then((shouldMount) => {
+    if (shouldMount) {
+      app.mount('#app')
+    }
+  })
+  .catch((error) => {
+    console.error('App bootstrap failed; mounting fallback app shell', error)
     app.mount('#app')
-  }
-})
+  })

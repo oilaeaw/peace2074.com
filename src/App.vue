@@ -13,6 +13,13 @@ const showBackground = ref(false)
 const showSplash = ref(true)
 const MIN_SPLASH_MS = 300
 const MAX_SPLASH_MS = 1200
+const isNativeRuntime = computed(() => {
+  if (typeof window === 'undefined') return false
+  const protocol = String(window.location.protocol || '')
+  return (
+    protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
+  )
+})
 
 // Detect Safari browser
 const isSafari = computed(() => {
@@ -89,18 +96,20 @@ onMounted(async () => {
     showSplash.value = false
   }, remaining)
 
-  const idle = (window as any).requestIdleCallback as
-    | ((cb: () => void) => number)
-    | undefined
-  if (typeof idle === 'function') {
-    idle(() => {
+  if (!isNativeRuntime.value) {
+    const idle = (window as any).requestIdleCallback as
+      | ((cb: () => void) => number)
+      | undefined
+    if (typeof idle === 'function') {
+      idle(() => {
+        showBackground.value = true
+      })
+      return
+    }
+    setTimeout(() => {
       showBackground.value = true
-    })
-    return
+    }, 400)
   }
-  setTimeout(() => {
-    showBackground.value = true
-  }, 400)
 })
 
 // Expose for debugging
@@ -110,6 +119,7 @@ if (typeof window !== 'undefined') {
     isQuranPage,
     usePlainLayout,
     layoutPreference,
+    isNativeRuntime,
   }
 }
 </script>
@@ -130,7 +140,7 @@ if (typeof window !== 'undefined') {
         </div>
       </div>
     </Transition>
-    <ThreeBackground v-if="showBackground" />
+    <ThreeBackground v-if="showBackground && !isNativeRuntime" />
     <component :is="CurrentLayout" />
   </div>
 </template>
