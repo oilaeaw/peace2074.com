@@ -2522,7 +2522,7 @@ watch(
 </script>
 
 <template>
-  <div class="q-pa-md">
+  <div class="q-pa-md quran-detail-page">
     <q-btn
       flat
       class="q-mb-md"
@@ -2648,7 +2648,8 @@ watch(
             rounded
             dense
             toggle-color="secondary"
-            color="white"
+            :color="$q.dark.isActive ? 'grey-10' : 'white'"
+            :text-color="$q.dark.isActive ? 'grey-3' : 'grey-8'"
             unelevated
             size="sm"
             class="q-mr-sm reader-mode-toggle"
@@ -2714,6 +2715,7 @@ watch(
             v-if="readerMode === 'audio'"
             dense
             outlined
+            :dark="$q.dark.isActive"
             hide-dropdown-icon
             v-model="playbackRate"
             :options="[
@@ -2736,6 +2738,7 @@ watch(
             v-if="readerMode === 'tts'"
             dense
             outlined
+            :dark="$q.dark.isActive"
             hide-dropdown-icon
             v-model="ttsRate"
             :options="[
@@ -2754,6 +2757,7 @@ watch(
             v-if="readerMode === 'tts' && availableVoices.length > 1"
             dense
             outlined
+            :dark="$q.dark.isActive"
             v-model="ttsVoice"
             :options="availableVoices"
             :option-label="(v) => v?.name || 'Default'"
@@ -2767,8 +2771,8 @@ watch(
               rounded
               glossy
               toggle-color="primary"
-              color="white"
-              text-color="grey-8"
+              :color="$q.dark.isActive ? 'grey-10' : 'white'"
+              :text-color="$q.dark.isActive ? 'grey-3' : 'grey-8'"
               unelevated
               size="sm"
               class="mode-toggle-buttons"
@@ -3316,6 +3320,11 @@ watch(
 .status.error {
   color: #b00020;
 }
+
+.quran-detail-page {
+  color: #111827;
+}
+
 .sura-card {
   background: #fdfbf6;
 }
@@ -3983,6 +3992,28 @@ body.body--dark .sura-card {
   color: #f2f2f2;
 }
 
+body.body--dark .quran-detail-page {
+  color: #f3f4f6;
+}
+
+body.body--dark .reader-mode-toggle :deep(.q-btn) {
+  background: #050505;
+  color: #e5e7eb;
+  border-color: rgba(255, 255, 255, 0.1);
+}
+
+body.body--dark .reader-mode-toggle :deep(.q-btn--active) {
+  color: #111827;
+}
+
+body.body--dark .recitation-switch-wrap--header {
+  background: rgba(255, 255, 255, 0.08);
+}
+
+body.body--dark .recitation-switch-label {
+  color: #f3f4f6;
+}
+
 body.body--dark .sura-title-swipeable {
   color: #e0e0e0;
 }
@@ -4026,6 +4057,13 @@ body.body--dark .bookmark-empty {
 body.body--dark .bookmark-chip {
   background: rgba(255, 193, 7, 0.2);
   color: #ffd54f;
+}
+
+body.body--dark .ayah-action-card {
+  background: rgba(0, 0, 0, 0.96);
+  border-color: rgba(255, 255, 255, 0.12);
+  color: #f3f4f6;
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.42);
 }
 
 body.body--dark .mushaf-layout {

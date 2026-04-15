@@ -1,5 +1,5 @@
 <template>
-  <q-layout view="hHh LpR fFf">
+  <q-layout view="hHh LpR fFf" class="app-layout">
     <q-header elevated :reveal="!isNativeRuntime" class="app-header text-white">
       <q-toolbar class="app-toolbar">
         <q-btn
@@ -796,6 +796,19 @@ const orderedNavItems = computed(() => {
 </script>
 
 <style scoped>
+.app-layout {
+  background:
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.08), transparent 34%),
+    linear-gradient(180deg, #f8fafc 0%, #eef2f7 100%);
+  color: #0f172a;
+}
+
+.app-layout :deep(.q-page-container),
+.app-layout :deep(.q-page) {
+  background: transparent;
+  color: inherit;
+}
+
 .app-header {
   background: radial-gradient(circle at top, #1f2937, #0b1120 60%);
   border-bottom: 1px solid rgba(255, 255, 255, 0.08);
@@ -879,6 +892,13 @@ const orderedNavItems = computed(() => {
 .locale-select {
   max-width: 160px;
   min-width: 120px;
+}
+
+:global(body.body--dark) .app-layout {
+  background:
+    radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 34%),
+    linear-gradient(180deg, #030712 0%, #000000 100%);
+  color: #f8fafc;
 }
 
 @media (max-width: 760px) {

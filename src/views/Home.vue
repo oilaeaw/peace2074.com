@@ -107,6 +107,7 @@
             type="textarea"
             autogrow
             outlined
+            :dark="$q.dark.isActive"
             :disable="isLoading"
             :label="t('pages.home.hero.aiLabel')"
             :placeholder="t('pages.home.ai.placeholder')"
@@ -668,11 +669,31 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   animation: slideUp 0.8s ease-out 0.8s both;
 }
 
+.blog-card {
+  background: #ffffff;
+  border: 1px solid #e0e6ed;
+  border-radius: 16px;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+  animation: slideUp 0.8s ease-out 1s both;
+}
+
 .ai-header {
   display: flex;
   justify-content: space-between;
   align-items: flex-start;
   margin-bottom: 1rem;
+}
+
+.ai-header small,
+.blog-header small {
+  color: #64748b;
+}
+
+.blog-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 1rem;
 }
 
 .ai-title {
@@ -686,6 +707,16 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   display: flex;
   flex-direction: column;
   gap: 1rem;
+}
+
+.ai-card :deep(.q-field__control) {
+  background: rgba(248, 250, 252, 0.96);
+}
+
+.response {
+  background: rgba(248, 250, 252, 0.9);
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
 }
 
 .blog-title {
@@ -774,7 +805,9 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 }
 
 :deep(body.body--dark) .ai-card,
-.body--dark .ai-card {
+.body--dark .ai-card,
+:deep(body.body--dark) .blog-card,
+.body--dark .blog-card {
   background: #2a2f3d;
   border-color: #3a3f4d;
 }
@@ -784,6 +817,33 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 :deep(body.body--dark) .blog-title,
 .body--dark .blog-title {
   color: #f1f5f9;
+}
+
+:deep(body.body--dark) .ai-header small,
+.body--dark .ai-header small,
+:deep(body.body--dark) .blog-header small,
+.body--dark .blog-header small {
+  color: #94a3b8;
+}
+
+:deep(body.body--dark) .ai-card :deep(.q-field__control),
+.body--dark .ai-card :deep(.q-field__control) {
+  background: rgba(255, 255, 255, 0.04);
+}
+
+:deep(body.body--dark) .ai-card :deep(.q-field__native),
+.body--dark .ai-card :deep(.q-field__native),
+:deep(body.body--dark) .ai-card :deep(.q-field__input),
+.body--dark .ai-card :deep(.q-field__input),
+:deep(body.body--dark) .ai-card :deep(.q-field__label),
+.body--dark .ai-card :deep(.q-field__label) {
+  color: #e2e8f0;
+}
+
+:deep(body.body--dark) .response,
+.body--dark .response {
+  background: rgba(255, 255, 255, 0.04);
+  border-color: rgba(148, 163, 184, 0.22);
 }
 
 :deep(body.body--dark) .blog-excerpt,
