@@ -1,6 +1,6 @@
 <template>
   <q-layout view="hHh LpR fFf">
-    <q-header elevated reveal class="app-header text-white">
+    <q-header elevated :reveal="!isNativeRuntime" class="app-header text-white">
       <q-toolbar class="app-toolbar">
         <q-btn
           flat
@@ -169,7 +169,7 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawer" show-if-above bordered>
+    <q-drawer v-model="leftDrawer" :show-if-above="!isNativeRuntime" bordered>
       <q-list>
         <q-item
           v-for="item in orderedNavItems"
@@ -295,7 +295,7 @@
     <SupportAIWidget v-if="showLazyWidgets" />
     <ConsentBanner v-if="showLazyWidgets" />
 
-    <q-footer class="app-footer q-pa-sm" elevated reveal>
+    <q-footer class="app-footer q-pa-sm" elevated :reveal="!isNativeRuntime">
       <div class="footer-inner">
         <div class="footer-brand">
           <img class="decor" src="/assets/decor-bottom.svg" alt="decor" />
@@ -434,6 +434,12 @@ const compactLayout = ref(readCompactPreference())
 const reduceMotion = ref(readReduceMotionPreference())
 const autoPlayAthan = ref(readAutoplayPreference())
 const currentYear = new Date().getFullYear()
+const isNativeRuntime =
+  typeof window !== 'undefined'
+    ? ['capacitor:', 'ionic:', 'app:'].includes(
+        String(window.location.protocol || '')
+      )
+    : false
 
 const searchDialogOpen = ref(false)
 const showLazyWidgets = ref(false)

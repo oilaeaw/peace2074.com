@@ -52,6 +52,10 @@ const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 const AVAILABLE_LOCALES = Object.keys(localeMessages) as AppLocale[]
 const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
+const RESIZE_OBSERVER_ERROR_PATTERNS = [
+  /ResizeObserver loop limit exceeded/i,
+  /ResizeObserver loop completed with undelivered notifications/i,
+]
 let themeMediaQuery: MediaQueryList | null = null
 
 const app = createApp(App)
@@ -67,6 +71,57 @@ registerQuasar(app)
 function isNativeRuntime() {
   if (!isClient) return false
   return NATIVE_PROTOCOLS.has(String(window.location.protocol || ''))
+}
+
+function extractErrorMessage(value: unknown) {
+  if (typeof value === 'string') return value
+  if (value instanceof Error) return value.message
+  if (
+    value &&
+    typeof value === 'object' &&
+    'message' in value &&
+    typeof (value as { message?: unknown }).message === 'string'
+  ) {
+    return (value as { message: string }).message
+  }
+  return ''
+}
+
+function isBenignResizeObserverError(value: unknown) {
+  const message = extractErrorMessage(value)
+  return RESIZE_OBSERVER_ERROR_PATTERNS.some((pattern) => pattern.test(message))
+}
+
+function installStartupErrorFilters() {
+  if (!isClient || !isNativeRuntime()) return
+
+  window.addEventListener(
+    'error',
+    (event) => {
+      if (
+        !isBenignResizeObserverError(event.message) &&
+        !isBenignResizeObserverError(event.error)
+      ) {
+        return
+      }
+
+      event.preventDefault()
+      event.stopImmediatePropagation()
+    },
+    { capture: true }
+  )
+
+  window.addEventListener(
+    'unhandledrejection',
+    (event) => {
+      if (!isBenignResizeObserverError(event.reason)) {
+        return
+      }
+
+      event.preventDefault()
+    },
+    { capture: true }
+  )
 }
 
 function computeNitroBase() {
@@ -158,6 +213,8 @@ function applyThemeMode(mode: ThemeMode) {
 
 // Initialize theme mode (system/light/dark) with fallback to legacy dark toggle
 if (isClient) {
+  installStartupErrorFilters()
+
   const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'light')
   if (storedMode && storedMode !== 'system') {
     applyThemeMode(storedMode)
