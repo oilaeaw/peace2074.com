@@ -55,6 +55,23 @@
           color="positive"
           class="q-mt-sm"
         />
+
+        <q-banner
+          rounded
+          dense
+          class="q-mt-md offline-readiness-banner"
+          :class="
+            offlineStatus?.currentSuraAvailable
+              ? 'bg-positive text-white'
+              : 'bg-warning text-dark'
+          "
+        >
+          <template v-slot:avatar>
+            <q-icon :name="offlineAvailabilityIcon" color="white" />
+          </template>
+          <div class="text-weight-bold">{{ offlineAvailabilityTitle }}</div>
+          <div class="text-caption">{{ offlineAvailabilityMessage }}</div>
+        </q-banner>
       </div>
 
       <q-separator class="q-my-md" />
@@ -130,6 +147,7 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import {
   useOfflineRecitation,
+  type OfflineRecitationStatus,
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
 import { useQ2P } from '@/stores/q2p.pinia'
@@ -143,6 +161,7 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   qualityChanged: [quality: RecitationQuality]
   downloadComplete: [suraId: number]
+  offlineStateChanged: []
   close: []
 }>()
 
@@ -161,10 +180,14 @@ const {
   downloadSura,
   clearAllCache,
   getCacheSize,
+  getOfflineRecitationStatus,
   loadCachedSurasList,
+  loadCachedSurasListForQuality,
+  setSelectedQualityPreference,
 } = useOfflineRecitation()
 
 const cacheSize = ref(0)
+const offlineStatus = ref<OfflineRecitationStatus | null>(null)
 
 const qualityOptions = computed(() => [
   {
@@ -196,6 +219,34 @@ const downloadPercentage = computed(() => {
   return totalDownloadedSuras.value / 114
 })
 
+const offlineAvailabilityIcon = computed(() => {
+  return offlineStatus.value?.currentSuraAvailable ? 'offline_pin' : 'cloud_off'
+})
+
+const offlineAvailabilityTitle = computed(() => {
+  if (offlineStatus.value?.fullQuranAvailable) {
+    return t('offline.fullLibraryReady')
+  }
+
+  if (offlineStatus.value?.currentSuraAvailable) {
+    return t('offline.currentSuraReady')
+  }
+
+  return t('offline.internetRequired')
+})
+
+const offlineAvailabilityMessage = computed(() => {
+  if (offlineStatus.value?.fullQuranAvailable) {
+    return t('offline.fullLibraryReadyHint')
+  }
+
+  if (offlineStatus.value?.currentSuraAvailable) {
+    return t('offline.currentSuraReadyHint')
+  }
+
+  return t('offline.internetRequiredHint')
+})
+
 function formatBytes(bytes: number): string {
   if (bytes === 0) return '0 Bytes'
   const k = 1024
@@ -208,8 +259,20 @@ async function updateCacheSize() {
   cacheSize.value = await getCacheSize()
 }
 
-function onQualityChange(newQuality: RecitationQuality) {
+async function refreshOfflineStatus() {
+  offlineStatus.value = await getOfflineRecitationStatus(
+    props.currentSuraId,
+    selectedQuality.value
+  )
+}
+
+async function onQualityChange(newQuality: RecitationQuality) {
+  setSelectedQualityPreference(newQuality)
+  await loadCachedSurasListForQuality(newQuality)
+  await updateCacheSize()
+  await refreshOfflineStatus()
   emit('qualityChanged', newQuality)
+  emit('offlineStateChanged')
 }
 
 function closeManager() {
@@ -239,6 +302,8 @@ async function downloadCurrentSura() {
   )
 
   if (success) {
+    await loadCachedSurasList()
+    await refreshOfflineStatus()
     $q.notify({
       type: 'positive',
       message: t('offline.downloadComplete'),
@@ -246,6 +311,7 @@ async function downloadCurrentSura() {
       position: 'top',
     })
     emit('downloadComplete', props.currentSuraId)
+    emit('offlineStateChanged')
     await updateCacheSize()
   } else {
     $q.notify({
@@ -313,6 +379,10 @@ async function downloadAllQuran() {
     position: 'top',
     timeout: 5000,
   })
+
+  await loadCachedSurasList()
+  await refreshOfflineStatus()
+  emit('offlineStateChanged')
 }
 
 function confirmClearCache() {
@@ -331,13 +401,16 @@ function confirmClearCache() {
   }).onOk(async () => {
     const success = await clearAllCache()
     if (success) {
-      cacheSize.value = 0
+      await loadCachedSurasList()
+      await updateCacheSize()
+      await refreshOfflineStatus()
       $q.notify({
         type: 'positive',
         message: t('offline.cacheCleared'),
         icon: 'check_circle',
         position: 'top',
       })
+      emit('offlineStateChanged')
     }
   })
 }
@@ -345,12 +418,14 @@ function confirmClearCache() {
 onMounted(async () => {
   await loadCachedSurasList()
   await updateCacheSize()
+  await refreshOfflineStatus()
 })
 
 watch(
   downloadedSuras,
   async () => {
     await updateCacheSize()
+    await refreshOfflineStatus()
   },
   { deep: true }
 )

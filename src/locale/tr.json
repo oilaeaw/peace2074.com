@@ -529,6 +529,13 @@
         "downloadAllComplete": "{completed} sure indirildi. {failed} başarısız.",
         "cacheCleared": "Tüm çevrimdışı sesler temizlendi",
         "qualityChanged": "Kalite değiştirildi. Çevrimdışı ses kullanmak için yeniden yükleyin.",
+        "listenWithoutInternet": "İnternetsiz dinle",
+        "currentSuraReady": "Bu sure çevrimdışı hazır",
+        "currentSuraReadyHint": "Bu kıraati internet olmadan dinleyebilirsiniz. İndirilen ses, mevcut olduğunda otomatik olarak tercih edilir.",
+        "fullLibraryReady": "Tüm Kur'an çevrimdışı hazır",
+        "fullLibraryReadyHint": "Tüm kıraatler indirildi. Uygulama, internet kullanımını azaltmak için mümkün olduğunda cihazdaki sesi tercih eder.",
+        "internetRequired": "Şu anda internet gerekiyor",
+        "internetRequiredHint": "İnternetsiz dinlemek için bu sureyi veya tüm Kur'an'ı indirin.",
         "confirmDownloadAll": {
             "title": "Tüm Kuran İndirilsin mi?",
             "message": "Bu, {quality} kalitesinde yaklaşık {size} ses verisi indirecektir. Yeterli depolamanız ve kararlı bir bağlantınız olduğundan emin olun."

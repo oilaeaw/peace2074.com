@@ -18,6 +18,19 @@ interface DownloadProgress {
 
 export type RecitationQuality = 'regular' | 'hiq'
 
+export interface OfflineRecitationStatus {
+    fullQuranAvailable: boolean
+    currentSuraAvailable: boolean
+    preferredQuality: RecitationQuality | null
+    fullQuranQuality: RecitationQuality | null
+    currentSuraQuality: RecitationQuality | null
+}
+
+export const TOTAL_QURAN_SURAS = 114
+const RECITATION_QUALITIES: RecitationQuality[] = ['regular', 'hiq']
+const OFFLINE_RECITATION_QUALITY_STORAGE_KEY =
+    'quran-offline-recitation-quality'
+
 interface RecitationQualityInfo {
     bitrate: string
     estimatedSizePerSura: string
@@ -45,13 +58,112 @@ const CACHE_NAME_PREFIX = 'quran-audio-offline'
 const getCacheName = (quality: RecitationQuality) =>
     `${CACHE_NAME_PREFIX}-${quality}-v1`
 
+function readStoredSelectedQuality(): RecitationQuality {
+    if (typeof window === 'undefined') return 'regular'
+
+    const stored = window.localStorage.getItem(
+        OFFLINE_RECITATION_QUALITY_STORAGE_KEY
+    )
+
+    return stored === 'hiq' ? 'hiq' : 'regular'
+}
+
+function getPreferredQualityOrder(preferredQuality: RecitationQuality) {
+    return [
+        preferredQuality,
+        ...RECITATION_QUALITIES.filter((quality) => quality !== preferredQuality),
+    ]
+}
+
+function extractSuraIdsFromRequests(requests: readonly Request[]): Set<number> {
+    const suraIds = new Set<number>()
+
+    requests.forEach((req) => {
+        const match = req.url.match(/\/(\d{3})\d{3}\.mp3/)
+        if (match) {
+            suraIds.add(parseInt(match[1], 10))
+        }
+    })
+
+    return suraIds
+}
+
+export function resolveOfflineRecitationStatus({
+    suraId,
+    preferredQuality,
+    cachedSurasByQuality,
+    totalSuras = TOTAL_QURAN_SURAS,
+}: {
+    suraId?: number
+    preferredQuality: RecitationQuality
+    cachedSurasByQuality: Record<RecitationQuality, Iterable<number>>
+    totalSuras?: number
+}): OfflineRecitationStatus {
+    const normalizedSurasByQuality = RECITATION_QUALITIES.reduce(
+        (acc, quality) => {
+            acc[quality] = new Set(cachedSurasByQuality[quality] || [])
+            return acc
+        },
+        {} as Record<RecitationQuality, Set<number>>
+    )
+
+    const preferredOrder = getPreferredQualityOrder(preferredQuality)
+
+    const fullQuranQualities = preferredOrder.filter(
+        (quality) => normalizedSurasByQuality[quality].size >= totalSuras
+    )
+
+    const currentSuraQualities =
+        typeof suraId === 'number' && suraId > 0
+            ? preferredOrder.filter((quality) =>
+                normalizedSurasByQuality[quality].has(suraId)
+            )
+            : []
+
+    const fullQuranQuality = fullQuranQualities[0] || null
+    const currentSuraQuality = currentSuraQualities[0] || null
+
+    return {
+        fullQuranAvailable: fullQuranQuality !== null,
+        currentSuraAvailable: currentSuraQuality !== null,
+        preferredQuality: fullQuranQuality || currentSuraQuality,
+        fullQuranQuality,
+        currentSuraQuality,
+    }
+}
+
 export function useOfflineRecitation() {
     const $q = useQuasar()
 
-    const selectedQuality = ref<RecitationQuality>('regular')
+    const selectedQuality = ref<RecitationQuality>(readStoredSelectedQuality())
     const downloadProgress = ref<Map<number, DownloadProgress>>(new Map())
     const isDownloading = ref(false)
     const downloadedSuras = ref<Set<number>>(new Set())
+
+    function setSelectedQualityPreference(quality: RecitationQuality) {
+        selectedQuality.value = quality
+
+        if (typeof window !== 'undefined') {
+            window.localStorage.setItem(
+                OFFLINE_RECITATION_QUALITY_STORAGE_KEY,
+                quality
+            )
+        }
+    }
+
+    async function getCachedSurasForQuality(
+        quality: RecitationQuality
+    ): Promise<Set<number>> {
+        if (!('caches' in window)) return new Set()
+
+        try {
+            const cache = await caches.open(getCacheName(quality))
+            const keys = await cache.keys()
+            return extractSuraIdsFromRequests(keys)
+        } catch {
+            return new Set()
+        }
+    }
 
     /**
      * Check if a sura is cached offline
@@ -60,20 +172,8 @@ export function useOfflineRecitation() {
         suraId: number,
         quality: RecitationQuality
     ): Promise<boolean> {
-        if (!('caches' in window)) return false
-
-        try {
-            const cache = await caches.open(getCacheName(quality))
-            const keys = await cache.keys()
-            // URL format: https://everyayah.com/data/Alafasy_128kbps/001001.mp3
-            const paddedSura = String(suraId).padStart(3, '0')
-            return keys.some((req) => {
-                const match = req.url.match(/\/(\d{3})\d{3}\.mp3/)
-                return match && match[1] === paddedSura
-            })
-        } catch {
-            return false
-        }
+        const cachedSuras = await getCachedSurasForQuality(quality)
+        return cachedSuras.has(suraId)
     }
 
     /**
@@ -199,7 +299,9 @@ export function useOfflineRecitation() {
             }
 
             if (failCount === 0) {
-                downloadedSuras.value.add(suraId)
+                const nextDownloadedSuras = new Set(downloadedSuras.value)
+                nextDownloadedSuras.add(suraId)
+                downloadedSuras.value = nextDownloadedSuras
                 return true
             } else {
                 console.warn(
@@ -243,7 +345,9 @@ export function useOfflineRecitation() {
             }
 
             if (deletedCount > 0) {
-                downloadedSuras.value.delete(suraId)
+                const nextDownloadedSuras = new Set(downloadedSuras.value)
+                nextDownloadedSuras.delete(suraId)
+                downloadedSuras.value = nextDownloadedSuras
                 downloadProgress.value.delete(suraId)
                 console.log(`[Offline Audio] Deleted ${deletedCount} verses for sura ${suraId}`)
             }
@@ -266,7 +370,7 @@ export function useOfflineRecitation() {
                 caches.delete(getCacheName('regular')),
                 caches.delete(getCacheName('hiq')),
             ])
-            downloadedSuras.value.clear()
+            downloadedSuras.value = new Set()
             downloadProgress.value.clear()
             return true
         } catch (err) {
@@ -305,25 +409,43 @@ export function useOfflineRecitation() {
      * Load cached suras list on initialization
      */
     async function loadCachedSurasList(): Promise<void> {
-        if (!('caches' in window)) return
+        await loadCachedSurasListForQuality(selectedQuality.value)
+    }
 
+    async function loadCachedSurasListForQuality(
+        quality: RecitationQuality
+    ): Promise<Set<number>> {
         try {
-            const cache = await caches.open(getCacheName(selectedQuality.value))
-            const keys = await cache.keys()
+            const suraIds = await getCachedSurasForQuality(quality)
 
-            // Extract unique sura IDs from cache keys
-            const suraIds = new Set<number>()
-            keys.forEach((req) => {
-                const match = req.url.match(/\/(\d{3})\d{3}\.mp3/)
-                if (match) {
-                    suraIds.add(parseInt(match[1], 10))
-                }
-            })
+            if (quality === selectedQuality.value) {
+                downloadedSuras.value = suraIds
+            }
 
-            downloadedSuras.value = suraIds
+            return suraIds
         } catch (err) {
             console.error('[Offline Audio] Load cached suras error:', err)
+            return new Set()
         }
+    }
+
+    async function getOfflineRecitationStatus(
+        suraId?: number,
+        preferredQuality: RecitationQuality = selectedQuality.value
+    ): Promise<OfflineRecitationStatus> {
+        const [regularSuras, hiqSuras] = await Promise.all([
+            getCachedSurasForQuality('regular'),
+            getCachedSurasForQuality('hiq'),
+        ])
+
+        return resolveOfflineRecitationStatus({
+            suraId,
+            preferredQuality,
+            cachedSurasByQuality: {
+                regular: regularSuras,
+                hiq: hiqSuras,
+            },
+        })
     }
 
     // Computed properties
@@ -345,6 +467,7 @@ export function useOfflineRecitation() {
         downloadedSuras,
 
         // Methods
+        setSelectedQualityPreference,
         isSuraCached,
         getCachedAudioUrl,
         downloadSura,
@@ -352,6 +475,8 @@ export function useOfflineRecitation() {
         clearAllCache,
         getCacheSize,
         loadCachedSurasList,
+        loadCachedSurasListForQuality,
+        getOfflineRecitationStatus,
 
         // Computed
         qualityInfo,

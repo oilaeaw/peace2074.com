@@ -529,6 +529,13 @@
         "downloadAllComplete": "{completed} סורות הורדו. {failed} נכשלו.",
         "cacheCleared": "כל האודיו הלא מקוון נוקה",
         "qualityChanged": "האיכות שונתה. טען מחדש כדי להשתמש באודיו לא מקוון.",
+        "listenWithoutInternet": "האזן בלי אינטרנט",
+        "currentSuraReady": "הסורה הזו מוכנה לאופליין",
+        "currentSuraReadyHint": "אפשר להאזין לקריאה הזו ללא אינטרנט. האודיו שהורד יקבל עדיפות אוטומטית כשהוא זמין.",
+        "fullLibraryReady": "כל הקוראן מוכן לאופליין",
+        "fullLibraryReadyHint": "כל הקריאות הורדו. האפליקציה תעדיף אודיו מקומי כשאפשר כדי להפחית את השימוש באינטרנט.",
+        "internetRequired": "כרגע נדרש אינטרנט",
+        "internetRequiredHint": "הורד את הסורה הזו או את כל הקוראן כדי להאזין ללא אינטרנט.",
         "confirmDownloadAll": {
             "title": "להוריד את כל הקוראן?",
             "message": "זה יוריד כ-{size} של נתוני אודיו באיכות {quality}. וודא שיש לך מספיק מקום וחיבור יציב."

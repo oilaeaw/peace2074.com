@@ -494,6 +494,13 @@
     "downloadAllComplete": "{completed} Suren heruntergeladen. {failed} fehlgeschlagen.",
     "cacheCleared": "Alle Offline-Audios gelöscht",
     "qualityChanged": "Qualität geändert. Neu laden, um Offline-Audio zu verwenden.",
+    "listenWithoutInternet": "Ohne Internet anhören",
+    "currentSuraReady": "Diese Sure ist offline verfügbar",
+    "currentSuraReadyHint": "Sie können diese Rezitation ohne Internet anhören. Heruntergeladenes Audio wird automatisch bevorzugt, wenn es verfügbar ist.",
+    "fullLibraryReady": "Der ganze Quran ist offline verfügbar",
+    "fullLibraryReadyHint": "Alle Rezitationen wurden heruntergeladen. Die App bevorzugt nach Möglichkeit lokale Audiodateien, um die Internetnutzung zu reduzieren.",
+    "internetRequired": "Internet derzeit erforderlich",
+    "internetRequiredHint": "Laden Sie diese Sure oder den ganzen Quran herunter, um ohne Internet zu hören.",
     "confirmDownloadAll": {
       "title": "Gesamten Quran herunterladen?",
       "message": "Dies lädt etwa {size} an Audiodaten in {quality}-Qualität herunter. Stellen Sie sicher, dass Sie genügend Speicher und eine stabile Verbindung haben."

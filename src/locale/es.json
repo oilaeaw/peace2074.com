@@ -529,6 +529,13 @@
         "downloadAllComplete": "{completed} surahs descargadas. {failed} fallidas.",
         "cacheCleared": "Todo el audio sin conexión eliminado",
         "qualityChanged": "Calidad cambiada. Recarga para usar audio sin conexión.",
+        "listenWithoutInternet": "Escuchar sin internet",
+        "currentSuraReady": "Esta sura está lista sin conexión",
+        "currentSuraReadyHint": "Puedes escuchar esta recitación sin internet. El audio descargado se preferirá automáticamente cuando esté disponible.",
+        "fullLibraryReady": "Todo el Corán está listo sin conexión",
+        "fullLibraryReadyHint": "Todas las recitaciones están descargadas. La aplicación preferirá el audio almacenado en el dispositivo cuando sea posible para reducir el uso de internet.",
+        "internetRequired": "Actualmente se necesita internet",
+        "internetRequiredHint": "Descarga esta sura o todo el Corán para escuchar sin internet.",
         "confirmDownloadAll": {
             "title": "¿Descargar todo el Corán?",
             "message": "Esto descargará aproximadamente {size} de datos de audio a calidad {quality}."

@@ -13,6 +13,7 @@ import {
 } from '@/utils/seo'
 import {
   useOfflineRecitation,
+  type OfflineRecitationStatus,
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
 import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
@@ -489,11 +490,13 @@ const isStartingRecitation = ref(false)
 const showOfflineManager = ref(false)
 const {
   getCachedAudioUrl,
-  selectedQuality,
-  isSuraCached,
+  getOfflineRecitationStatus,
   loadCachedSurasList,
+  setSelectedQualityPreference,
+  selectedQuality,
 } = useOfflineRecitation()
 const isLoadingFromCache = ref(false)
+const offlineRecitationStatus = ref<OfflineRecitationStatus | null>(null)
 
 // Persistent playback position
 interface PlaybackPosition {
@@ -526,6 +529,7 @@ const hoverTimeout = ref<ReturnType<typeof setTimeout> | null>(null)
 const hoverWidgetPosition = ref({ top: 0, left: 0 })
 const lastDoubleClickTime = ref(0)
 const DOUBLE_CLICK_DEBOUNCE = 500 // ms
+const AYAH_ACTION_CARD_HOVER_DELAY_MS = 800
 
 function isTouchPointerDevice() {
   if (typeof window === 'undefined') return false
@@ -540,6 +544,88 @@ function shouldDockAyahActionCard() {
   if (typeof window === 'undefined') return false
   return isTouchPointerDevice() && window.innerWidth <= 640
 }
+
+function supportsAyahActionCardHover() {
+  if (typeof window === 'undefined') return false
+  const hoverMediaQuery = window.matchMedia?.(
+    '(hover: hover) and (pointer: fine)'
+  )
+  if (typeof hoverMediaQuery?.matches === 'boolean') {
+    return hoverMediaQuery.matches
+  }
+  return !isTouchPointerDevice()
+}
+
+function clearHoverWidgetTimeout() {
+  if (!hoverTimeout.value) return
+  clearTimeout(hoverTimeout.value)
+  hoverTimeout.value = null
+}
+
+function showHoverWidgetAtPosition(
+  position: { top: number; left: number },
+  verse: number
+) {
+  hoverWidgetPosition.value = position
+  hoverWidgetVerse.value = verse
+  hoverWidgetVisible.value = true
+}
+
+function showHoverWidgetForVerseEvent(event: MouseEvent, verse: number) {
+  showHoverWidgetAtPosition(
+    {
+      top: event.clientY,
+      left: event.clientX,
+    },
+    verse
+  )
+}
+
+const getAyahHoverTargetTestId = (
+  layout: 'reader' | 'mushaf' | 'native',
+  verse: number | string
+) => `ayah-${layout}-${verse}`
+
+function getHoverWidgetVerseNumber() {
+  return Number(hoverWidgetVerse.value || 0)
+}
+
+function switchHoverRecitationToAudio() {
+  if (readerMode.value === 'tts') {
+    stopTTS()
+    readerMode.value = 'audio'
+  }
+}
+
+const isOfflineRecitationReady = computed(() =>
+  Boolean(offlineRecitationStatus.value?.currentSuraAvailable)
+)
+
+const offlineRecitationChipLabel = computed(() =>
+  isOfflineRecitationReady.value
+    ? t('offline.listenWithoutInternet')
+    : t('offline.internetRequired')
+)
+
+const offlineRecitationChipHint = computed(() => {
+  if (offlineRecitationStatus.value?.fullQuranAvailable) {
+    return t('offline.fullLibraryReadyHint')
+  }
+
+  if (offlineRecitationStatus.value?.currentSuraAvailable) {
+    return t('offline.currentSuraReadyHint')
+  }
+
+  return t('offline.internetRequiredHint')
+})
+
+const offlineRecitationChipColor = computed(() =>
+  isOfflineRecitationReady.value ? 'positive' : 'warning'
+)
+
+const offlineRecitationChipIcon = computed(() =>
+  isOfflineRecitationReady.value ? 'offline_pin' : 'cloud_off'
+)
 
 function readShowTranslationPreference(): boolean {
   if (typeof window === 'undefined') return true
@@ -1261,6 +1347,7 @@ async function loadSuraById(id: number) {
     await nextTick()
 
     const normalizedHash = String(route.hash || '').replace(/^#/, '')
+    await refreshOfflineRecitationStatus(id)
     await scrollToHash(route.hash)
     applyQuranDetailTitle(true)
 
@@ -1287,6 +1374,13 @@ async function loadSuraById(id: number) {
  * Load audio from offline cache
  */
 async function loadAudioFromCache(id: number): Promise<boolean> {
+  return loadAudioFromCacheWithQuality(id, selectedQuality.value)
+}
+
+async function loadAudioFromCacheWithQuality(
+  id: number,
+  quality: RecitationQuality
+): Promise<boolean> {
   try {
     const suraData = sura.value
     if (!suraData) return false
@@ -1298,11 +1392,7 @@ async function loadAudioFromCache(id: number): Promise<boolean> {
 
     // Load each verse from cache
     for (let verse = 1; verse <= suraData.total_verses; verse++) {
-      const cachedUrl = await getCachedAudioUrl(
-        id,
-        verse,
-        selectedQuality.value
-      )
+      const cachedUrl = await getCachedAudioUrl(id, verse, quality)
       if (cachedUrl) {
         audioList.value[verse - 1] = cachedUrl
       } else {
@@ -1345,12 +1435,17 @@ async function loadAudioAndTimings(id: number) {
   syncedVerseWords.value = {}
   currentAyahIndex.value = -1
 
-  // Check if sura is cached offline
-  const hasCached = await isSuraCached(id, selectedQuality.value)
+  await refreshOfflineRecitationStatus(id)
 
-  if (hasCached) {
-    // Try loading from offline cache first
-    const loadedFromCache = await loadAudioFromCache(id)
+  const preferredOfflineQuality =
+    offlineRecitationStatus.value?.preferredQuality || null
+
+  if (preferredOfflineQuality) {
+    // Prefer downloaded/on-device audio to reduce internet dependency.
+    const loadedFromCache = await loadAudioFromCacheWithQuality(
+      id,
+      preferredOfflineQuality
+    )
     if (loadedFromCache) {
       return // Successfully loaded from cache
     }
@@ -1432,6 +1527,20 @@ async function loadAudioAndTimings(id: number) {
 async function ensureBismillahIntroUrl() {
   if (bismillahIntroUrl.value) return bismillahIntroUrl.value
 
+  const offlineIntroStatus = await getOfflineRecitationStatus(
+    1,
+    selectedQuality.value
+  )
+  const offlineIntroQuality = offlineIntroStatus.preferredQuality
+
+  if (offlineIntroQuality) {
+    const cachedIntroUrl = await getCachedAudioUrl(1, 1, offlineIntroQuality)
+    if (cachedIntroUrl) {
+      bismillahIntroUrl.value = cachedIntroUrl
+      return bismillahIntroUrl.value
+    }
+  }
+
   try {
     const sourceUrl = 'https://api.quran.com/api/v4/verses/by_key/1:1?audio=7'
     const res = await fetch(sourceUrl)
@@ -1451,6 +1560,18 @@ async function ensureBismillahIntroUrl() {
   }
 
   return null
+}
+
+async function refreshOfflineRecitationStatus(suraId = currentSuraId.value) {
+  if (!suraId) {
+    offlineRecitationStatus.value = null
+    return
+  }
+
+  offlineRecitationStatus.value = await getOfflineRecitationStatus(
+    suraId,
+    selectedQuality.value
+  )
 }
 
 async function playBismillahIntro(): Promise<void> {
@@ -1729,24 +1850,60 @@ async function restorePlaybackPosition() {
   return true
 }
 
-function togglePauseResume() {
+function canStartHoveredVerse(verse: number) {
+  return verse > 0 && audioList.value.length >= verse
+}
+
+function isHoveredVerseCurrentlyPlaying(verse: number) {
+  const verseIndex = verse - 1
+  return (
+    verseIndex >= 0 &&
+    isPlayingAudio.value &&
+    currentAyahIndex.value === verseIndex
+  )
+}
+
+async function startReadingFromVerse(verse: number) {
+  if (!canStartHoveredVerse(verse)) return false
+
+  switchHoverRecitationToAudio()
+  await nextTick()
+  await startAudioRecitation(verse - 1, { withIntro: true })
+  return true
+}
+
+async function restartReadingFromVerse(verse: number) {
+  if (!canStartHoveredVerse(verse)) return false
+
+  switchHoverRecitationToAudio()
+  await nextTick()
+
+  if (audioEl.value) {
+    stopAudio()
+    await nextTick()
+  }
+
+  await startAudioRecitation(verse - 1, { withIntro: true })
+  return true
+}
+
+async function togglePauseResume() {
   if (isStartingRecitation.value) {
     return
   }
 
   if (!audioEl.value) {
-    const verse = Number(hoverWidgetVerse.value || 0)
+    const verse = getHoverWidgetVerseNumber()
     if (verse > 0) {
-      void startAudioRecitation(verse - 1, { withIntro: true })
+      await startReadingFromVerse(verse)
     }
     return
   }
+
   if (audioEl.value.paused) {
-    audioEl.value.play()
-    isPlayingAudio.value = true
+    resumeAudio()
   } else {
-    audioEl.value.pause()
-    isPlayingAudio.value = false
+    pauseAudio()
   }
 }
 
@@ -1761,33 +1918,21 @@ function handleVerseTap(event: MouseEvent, verse: number) {
     return
   }
 
-  hoverWidgetPosition.value = {
-    top: event.clientY,
-    left: event.clientX,
-  }
-  hoverWidgetVerse.value = verse
-  hoverWidgetVisible.value = true
+  showHoverWidgetForVerseEvent(event, verse)
 }
 
 // Hover widget functions
 function onVerseMouseEnter(event: MouseEvent, verse: number) {
-  if (hoverTimeout.value) clearTimeout(hoverTimeout.value)
+  if (!supportsAyahActionCardHover()) return
+
+  clearHoverWidgetTimeout()
   hoverTimeout.value = setTimeout(() => {
-    // Position widget near the cursor location
-    hoverWidgetPosition.value = {
-      top: event.clientY,
-      left: event.clientX,
-    }
-    hoverWidgetVerse.value = verse
-    hoverWidgetVisible.value = true
-  }, 800) // 800ms long hover
+    showHoverWidgetForVerseEvent(event, verse)
+  }, AYAH_ACTION_CARD_HOVER_DELAY_MS)
 }
 
 function onVerseMouseLeave() {
-  if (hoverTimeout.value) {
-    clearTimeout(hoverTimeout.value)
-    hoverTimeout.value = null
-  }
+  clearHoverWidgetTimeout()
 }
 
 function hideHoverWidget() {
@@ -1799,13 +1944,13 @@ async function restartFromVerse(verse: number, event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
 
-  if (isRecitationSessionLocked.value) {
+  if (!canStartHoveredVerse(verse)) {
     return
   }
 
   hideHoverWidget()
   await nextTick()
-  await startAudioRecitation(verse - 1, { withIntro: true })
+  await restartReadingFromVerse(verse)
 }
 
 async function restartSura(event?: MouseEvent | Event) {
@@ -1841,11 +1986,6 @@ function pauseFromHover(event?: MouseEvent | Event) {
   event?.preventDefault()
   event?.stopPropagation()
 
-  if (readerMode.value === 'tts') {
-    pauseTTS()
-    return
-  }
-
   pauseAudio()
 }
 
@@ -1862,26 +2002,24 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
   lastDoubleClickTime.value = now
 
   // Show hover widget at double-click location
-  hoverWidgetPosition.value = {
-    top: event.clientY,
-    left: event.clientX,
-  }
-  hoverWidgetVerse.value = verse
-  hoverWidgetVisible.value = true
+  clearHoverWidgetTimeout()
+  showHoverWidgetForVerseEvent(event, verse)
 
   const verseIndex = verse - 1
+  const isThisVerseCurrent = currentAyahIndex.value === verseIndex
+  const isAudioSessionLocked =
+    isStartingRecitation.value || audioEl.value !== null
 
   // Check if this verse is currently playing
-  const isThisVersePlaying =
-    isPlayingAudio.value && currentAyahIndex.value === verseIndex
+  const isThisVersePlaying = isHoveredVerseCurrentlyPlaying(verse)
 
-  if (isRecitationSessionLocked.value && !isThisVersePlaying) {
+  if (isAudioSessionLocked && !isThisVerseCurrent) {
     return
   }
 
   if (isThisVersePlaying) {
     // If this verse is already playing, stop it
-    stopAudio()
+    stopReading()
     $q.notify({
       type: 'info',
       message: t('pages.quran.notifications.stoppedVerse', { verse }),
@@ -1889,10 +2027,9 @@ async function handleVerseDoubleClick(event: MouseEvent, verse: number) {
       timeout: 1500,
       position: 'top',
     })
-  } else if (verseIndex >= 0 && verseIndex < audioList.value.length) {
+  } else if (await restartReadingFromVerse(verse)) {
     // If it's not playing or a different verse is playing, start this verse
     stopRequested.value = false
-    await startAudioRecitation(verseIndex, { withIntro: true })
     $q.notify({
       type: 'positive',
       message: t('pages.quran.notifications.playingVerse', { verse }),
@@ -2089,6 +2226,47 @@ const isPaused = computed(() => {
   } else {
     return audioEl.value?.paused && currentAyahIndex.value >= 0
   }
+})
+
+const isHoverAudioPaused = computed(
+  () => Boolean(audioEl.value?.paused) && currentAyahIndex.value >= 0
+)
+
+const canPauseHoverAudio = computed(() => {
+  const audio = audioEl.value
+  return audio ? !audio.paused : false
+})
+
+const canRestartHoveredVerse = computed(() =>
+  canStartHoveredVerse(getHoverWidgetVerseNumber())
+)
+
+const canUseHoverPrimaryAction = computed(() => {
+  if (isStartingRecitation.value) {
+    return false
+  }
+
+  if (isHoverAudioPaused.value) {
+    return true
+  }
+
+  return canRestartHoveredVerse.value
+})
+
+const hoverPrimaryActionIcon = computed(() =>
+  isPlayingAudio.value ? 'pause' : 'play_arrow'
+)
+
+const hoverPrimaryActionTitle = computed(() => {
+  if (isPlayingAudio.value) {
+    return t('pages.quran.pause')
+  }
+
+  if (isHoverAudioPaused.value) {
+    return t('pages.quran.resume')
+  }
+
+  return t('pages.quran.play')
 })
 
 const isRecitationSessionLocked = computed(() => {
@@ -2367,7 +2545,11 @@ function getHoverWidgetStyle() {
 }
 
 // Offline quality handlers
-function handleOfflineQualityChanged(quality: RecitationQuality) {
+async function handleOfflineQualityChanged(quality: RecitationQuality) {
+  setSelectedQualityPreference(quality)
+  await loadCachedSurasList()
+  await refreshOfflineRecitationStatus(currentSuraId.value)
+
   // Reload audio if currently playing to use new quality
   if (isPlayingAudio.value || isReading.value) {
     stopReading()
@@ -2381,13 +2563,29 @@ function handleOfflineQualityChanged(quality: RecitationQuality) {
     })
   }
   // Reload audio list to check new quality cache
-  loadAudioAndTimings(currentSuraId.value)
+  await loadAudioAndTimings(currentSuraId.value)
 }
 
-function handleSuraDownloaded(suraId: number) {
+async function handleSuraDownloaded(suraId: number) {
+  await loadCachedSurasList()
+  await refreshOfflineRecitationStatus(currentSuraId.value)
+
   // Reload audio to use cached version if it's the current sura
   if (suraId === currentSuraId.value) {
-    loadAudioAndTimings(suraId)
+    await loadAudioAndTimings(suraId)
+  }
+}
+
+async function handleOfflineStateChanged() {
+  await loadCachedSurasList()
+  await refreshOfflineRecitationStatus(currentSuraId.value)
+
+  if (
+    offlineRecitationStatus.value?.currentSuraAvailable &&
+    !isReading.value &&
+    currentAyahIndex.value < 0
+  ) {
+    await loadAudioAndTimings(currentSuraId.value)
   }
 }
 
@@ -2971,6 +3169,20 @@ watch(
             </q-menu>
           </q-btn>
 
+          <q-chip
+            v-if="offlineRecitationStatus"
+            data-testid="offline-recitation-status"
+            :data-offline-ready="isOfflineRecitationReady ? 'true' : 'false'"
+            dense
+            :icon="offlineRecitationChipIcon"
+            :color="offlineRecitationChipColor"
+            :text-color="isOfflineRecitationReady ? 'white' : 'dark'"
+            class="offline-recitation-chip"
+          >
+            {{ offlineRecitationChipLabel }}
+            <q-tooltip>{{ offlineRecitationChipHint }}</q-tooltip>
+          </q-chip>
+
           <!-- Offline Recitation Manager Button -->
           <q-btn
             outline
@@ -2990,6 +3202,7 @@ watch(
             v-for="a in sura?.ayat || []"
             :key="a.verse"
             :id="getVerseElementId(a.verse)"
+            :data-testid="getAyahHoverTargetTestId('reader', a.verse)"
             class="verse-row q-mb-md"
             :class="{
               'is-selected': isVerseSelected(a.verse),
@@ -3081,12 +3294,16 @@ watch(
                   v-for="a in sura?.ayat || []"
                   :key="`m-${a.verse}`"
                   :id="getVerseElementId(a.verse)"
+                  :data-testid="getAyahHoverTargetTestId('mushaf', a.verse)"
                   class="mushaf-ayah-inline"
                   :class="{
                     'is-selected': isVerseSelected(a.verse),
                     'is-current-ayah': isActiveAyah(a.verse),
                   }"
                   @click="handleVerseTap($event, a.verse)"
+                  @dblclick="handleVerseDoubleClick($event, a.verse)"
+                  @mouseenter="onVerseMouseEnter($event, a.verse)"
+                  @mouseleave="onVerseMouseLeave"
                 >
                   <template v-if="hasTimingMatchedWords(a.verse)">
                     <template
@@ -3127,6 +3344,7 @@ watch(
             v-for="a in sura?.ayat || []"
             :key="`n-${a.verse}`"
             :id="getVerseElementId(a.verse)"
+            :data-testid="getAyahHoverTargetTestId('native', a.verse)"
             class="verse-paragraph"
             :class="{
               'is-selected': isVerseSelected(a.verse),
@@ -3207,6 +3425,11 @@ watch(
           <div
             v-if="hoverWidgetVisible && hoverWidgetVerse !== null"
             class="audio-hover-widget"
+            data-testid="ayah-action-card"
+            data-feature="protected-ayah-action-card"
+            data-recitation-source="audio"
+            :data-verse="String(hoverWidgetVerse)"
+            :data-layout-mode="layoutMode"
             :style="getHoverWidgetStyle()"
             @mouseleave="hideHoverWidget"
           >
@@ -3218,15 +3441,11 @@ watch(
                 <q-btn
                   round
                   dense
-                  :icon="isPlayingAudio ? 'pause' : 'play_arrow'"
+                  :icon="hoverPrimaryActionIcon"
                   color="primary"
                   @click="togglePauseResume"
-                  :disable="isStartingRecitation"
-                  :title="
-                    isPlayingAudio
-                      ? t('pages.quran.pause')
-                      : t('pages.quran.play')
-                  "
+                  :disable="!canUseHoverPrimaryAction"
+                  :title="hoverPrimaryActionTitle"
                 />
                 <q-btn
                   round
@@ -3234,6 +3453,7 @@ watch(
                   icon="pause"
                   color="orange"
                   @click="pauseFromHover"
+                  :disable="!canPauseHoverAudio"
                   :title="t('pages.quran.pause')"
                 />
                 <q-btn
@@ -3242,7 +3462,7 @@ watch(
                   icon="replay"
                   color="secondary"
                   @click="restartFromVerse(hoverWidgetVerse!)"
-                  :disable="isRecitationSessionLocked"
+                  :disable="!canRestartHoveredVerse"
                   :title="t('pages.quran.restart') || 'Restart verse'"
                 />
                 <q-btn
@@ -3307,6 +3527,7 @@ watch(
         :current-sura-total-verses="sura?.total_verses"
         @quality-changed="handleOfflineQualityChanged"
         @download-complete="handleSuraDownloaded"
+        @offline-state-changed="handleOfflineStateChanged"
         @close="showOfflineManager = false"
       />
     </q-dialog>
@@ -3397,6 +3618,10 @@ watch(
 }
 
 .bookmark-menu-btn {
+  white-space: nowrap;
+}
+
+.offline-recitation-chip {
   white-space: nowrap;
 }
 
@@ -3710,6 +3935,7 @@ watch(
   display: inline;
   direction: rtl;
   cursor: text;
+  transition: background 0.2s ease;
 }
 
 .mushaf-ayah-inline.is-selected {
@@ -3720,6 +3946,21 @@ watch(
 .mushaf-ayah-inline.is-current-ayah {
   background: rgba(76, 175, 80, 0.12);
   border-radius: 6px;
+}
+
+@media (hover: hover) and (pointer: fine) {
+  .mushaf-ayah-inline {
+    cursor: pointer;
+  }
+
+  .mushaf-ayah-inline:hover {
+    background: rgba(212, 175, 55, 0.08);
+    border-radius: 6px;
+  }
+
+  body.body--dark .mushaf-ayah-inline:hover {
+    background: rgba(255, 193, 7, 0.1);
+  }
 }
 
 .heading-actions {

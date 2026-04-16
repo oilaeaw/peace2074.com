@@ -7,6 +7,7 @@
 export {}
 declare global {
   const EffectScope: typeof import('vue').EffectScope
+  const TOTAL_QURAN_SURAS: typeof import('../composables/useOfflineRecitation').TOTAL_QURAN_SURAS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
   const asyncComputed: typeof import('@vueuse/core')['asyncComputed']
   const authStore: typeof import('../stores/auth.pinia').authStore
@@ -109,6 +110,7 @@ declare global {
   const refWithControl: typeof import('@vueuse/core')['refWithControl']
   const registerCache: typeof import('../composables/useCache').registerCache
   const resolveComponent: typeof import('vue').resolveComponent
+  const resolveOfflineRecitationStatus: typeof import('../composables/useOfflineRecitation').resolveOfflineRecitationStatus
   const resolveRef: typeof import('@vueuse/core')['resolveRef']
   const resolveUnref: typeof import('@vueuse/core')['resolveUnref']
   const setActivePinia: typeof import('pinia').setActivePinia
@@ -340,7 +342,7 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { RecitationQuality } from '../composables/useOfflineRecitation'
+  export type { RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
   import('../composables/useOfflineRecitation')
   // @ts-ignore
   export type { QuranVerse } from '../composables/useQuranTree'
@@ -356,6 +358,7 @@ declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
+    readonly TOTAL_QURAN_SURAS: UnwrapRef<typeof import('../composables/useOfflineRecitation')['TOTAL_QURAN_SURAS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
     readonly clearAllCaches: UnwrapRef<typeof import('../composables/useCache')['clearAllCaches']>
     readonly computed: UnwrapRef<typeof import('vue')['computed']>
@@ -407,6 +410,7 @@ declare module 'vue' {
     readonly ref: UnwrapRef<typeof import('vue')['ref']>
     readonly registerCache: UnwrapRef<typeof import('../composables/useCache')['registerCache']>
     readonly resolveComponent: UnwrapRef<typeof import('vue')['resolveComponent']>
+    readonly resolveOfflineRecitationStatus: UnwrapRef<typeof import('../composables/useOfflineRecitation')['resolveOfflineRecitationStatus']>
     readonly setActivePinia: UnwrapRef<typeof import('pinia')['setActivePinia']>
     readonly setMapStoreSuffix: UnwrapRef<typeof import('pinia')['setMapStoreSuffix']>
     readonly shallowReactive: UnwrapRef<typeof import('vue')['shallowReactive']>
