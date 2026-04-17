@@ -62,7 +62,7 @@ export default defineEventHandler(async (event) => {
         const tokens = await apple.validateAuthorizationCode(code)
 
         // Decode ID token to get user info
-        const idTokenClaims = decodeIdToken(tokens.idToken) as AppleIdTokenClaims
+        const idTokenClaims = decodeIdToken(tokens.idToken()) as AppleIdTokenClaims
 
         if (!idTokenClaims.email_verified || idTokenClaims.email_verified === 'false') {
             throw createError({
