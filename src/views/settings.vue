@@ -2,6 +2,7 @@
 import { onMounted, ref, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
+import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -35,6 +36,7 @@ const showQuranTranslation = ref(readQuranTranslationPreference())
 const darkMode = ref(readDarkModePreference())
 const fontSize = ref(readFontSizePreference())
 const highContrast = ref(readHighContrastPreference())
+const showOfflineRecitationManager = ref(false)
 
 watch(navOrderingEnabled, (val) => {
   persistNavOrdering(val)
@@ -861,6 +863,24 @@ async function reloadApp() {
                 :aria-label="t('pages.settings.audio.autoPlay')"
               />
             </div>
+            <q-separator spaced />
+            <div class="setting-row">
+              <div>
+                <div class="text-subtitle1">
+                  {{ t('offline.title') }}
+                </div>
+                <div class="text-caption setting-hint">
+                  {{ t('offline.subtitle') }}
+                </div>
+              </div>
+              <q-btn
+                color="primary"
+                outline
+                icon="download"
+                :label="t('offline.title')"
+                @click="showOfflineRecitationManager = true"
+              />
+            </div>
           </q-card-section>
         </q-card>
 
@@ -881,6 +901,12 @@ async function reloadApp() {
           </q-card-section>
         </q-card>
       </div>
+
+      <q-dialog v-model="showOfflineRecitationManager" maximized>
+        <OfflineRecitationManager
+          @close="showOfflineRecitationManager = false"
+        />
+      </q-dialog>
     </q-pull-to-refresh>
   </q-page>
 </template>

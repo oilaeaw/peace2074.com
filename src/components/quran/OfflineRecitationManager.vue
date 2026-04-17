@@ -25,6 +25,21 @@
     </q-card-section>
 
     <q-card-section>
+      <q-banner
+        v-if="managerNotice"
+        data-testid="offline-download-notification"
+        rounded
+        dense
+        class="q-mb-md"
+        :class="`bg-${managerNotice.type} text-white`"
+      >
+        <template #avatar>
+          <q-icon :name="managerNotice.icon" color="white" />
+        </template>
+        <div class="text-weight-bold">{{ managerNotice.title }}</div>
+        <div class="text-caption">{{ managerNotice.message }}</div>
+      </q-banner>
+
       <!-- Quality Selection -->
       <div class="q-mb-md">
         <div class="text-subtitle2 q-mb-sm">
@@ -66,7 +81,7 @@
               : 'bg-warning text-dark'
           "
         >
-          <template v-slot:avatar>
+          <template #avatar>
             <q-icon :name="offlineAvailabilityIcon" color="white" />
           </template>
           <div class="text-weight-bold">{{ offlineAvailabilityTitle }}</div>
@@ -128,6 +143,9 @@
                 {{ progress.current }} / {{ progress.total }}
                 {{ t('offline.verses') }}
               </q-item-label>
+              <q-item-label caption>
+                {{ getDownloadPercentage(progress) }}%
+              </q-item-label>
               <q-linear-progress
                 :value="progress.current / progress.total"
                 color="primary"
@@ -147,6 +165,7 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import {
   useOfflineRecitation,
+  type RecitationDownloadProgress,
   type OfflineRecitationStatus,
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
@@ -161,6 +180,15 @@ const props = defineProps<Props>()
 const emit = defineEmits<{
   qualityChanged: [quality: RecitationQuality]
   downloadComplete: [suraId: number]
+  downloadStatus: [
+    status: {
+      scope: 'current' | 'all'
+      status: 'started' | 'completed' | 'failed'
+      percent: number
+      completed?: number
+      total?: number
+    },
+  ]
   offlineStateChanged: []
   close: []
 }>()
@@ -188,6 +216,12 @@ const {
 
 const cacheSize = ref(0)
 const offlineStatus = ref<OfflineRecitationStatus | null>(null)
+const managerNotice = ref<{
+  type: 'positive' | 'warning' | 'negative' | 'info'
+  title: string
+  message: string
+  icon: string
+} | null>(null)
 
 const qualityOptions = computed(() => [
   {
@@ -255,6 +289,25 @@ function formatBytes(bytes: number): string {
   return Math.round((bytes / Math.pow(k, i)) * 100) / 100 + ' ' + sizes[i]
 }
 
+function getDownloadPercentage(progress: RecitationDownloadProgress) {
+  if (!progress.total) return 0
+  return Math.round((progress.current / progress.total) * 100)
+}
+
+function setManagerNotice(
+  type: 'positive' | 'warning' | 'negative' | 'info',
+  title: string,
+  message: string,
+  icon: string
+) {
+  managerNotice.value = {
+    type,
+    title,
+    message,
+    icon,
+  }
+}
+
 async function updateCacheSize() {
   cacheSize.value = await getCacheSize()
 }
@@ -295,6 +348,17 @@ async function downloadCurrentSura() {
     icon: 'downloading',
     position: 'top',
   })
+  setManagerNotice(
+    'info',
+    t('offline.downloading'),
+    t('offline.downloadingStarted'),
+    'downloading'
+  )
+  emit('downloadStatus', {
+    scope: 'current',
+    status: 'started',
+    percent: 0,
+  })
 
   const success = await downloadSura(
     props.currentSuraId,
@@ -310,6 +374,19 @@ async function downloadCurrentSura() {
       icon: 'check_circle',
       position: 'top',
     })
+    setManagerNotice(
+      'positive',
+      t('offline.downloadComplete'),
+      `${t('offline.downloadComplete')} (100%)`,
+      'check_circle'
+    )
+    emit('downloadStatus', {
+      scope: 'current',
+      status: 'completed',
+      percent: 100,
+      completed: 1,
+      total: 1,
+    })
     emit('downloadComplete', props.currentSuraId)
     emit('offlineStateChanged')
     await updateCacheSize()
@@ -319,6 +396,19 @@ async function downloadCurrentSura() {
       message: t('offline.downloadFailed'),
       icon: 'error',
       position: 'top',
+    })
+    setManagerNotice(
+      'negative',
+      t('offline.downloadFailed'),
+      t('offline.downloadFailed'),
+      'error'
+    )
+    emit('downloadStatus', {
+      scope: 'current',
+      status: 'failed',
+      percent: 0,
+      completed: 0,
+      total: 1,
     })
   }
 }
@@ -346,13 +436,35 @@ function confirmDownloadAll() {
 
 async function downloadAllQuran() {
   isDownloading.value = true
+  managerNotice.value = null
 
   // Get all 114 suras with their verse counts
   await q2pStore.init()
   const allSuras = q2pStore.Book
+  const surasToDownload = allSuras.filter(
+    (sura) => !downloadedSuras.value.has(sura.id)
+  )
+  const totalTargets = surasToDownload.length
+
+  if (totalTargets > 0) {
+    emit('downloadStatus', {
+      scope: 'all',
+      status: 'started',
+      percent: 0,
+      completed: 0,
+      total: totalTargets,
+    })
+    setManagerNotice(
+      'info',
+      t('offline.downloading'),
+      `${t('offline.surasDownloaded')}: 0 / ${totalTargets} (0%)`,
+      'downloading'
+    )
+  }
 
   let completed = 0
   let failed = 0
+  let processed = 0
 
   for (const sura of allSuras) {
     if (downloadedSuras.value.has(sura.id)) {
@@ -365,6 +477,17 @@ async function downloadAllQuran() {
     } else {
       failed++
     }
+    processed++
+
+    const percent = totalTargets
+      ? Math.round((processed / totalTargets) * 100)
+      : 100
+    setManagerNotice(
+      success ? 'info' : 'warning',
+      t('offline.downloading'),
+      `${t('offline.surasDownloaded')}: ${processed} / ${totalTargets} (${percent}%)`,
+      success ? 'downloading' : 'warning'
+    )
 
     // Update UI between downloads
     await updateCacheSize()
@@ -378,6 +501,23 @@ async function downloadAllQuran() {
     icon: 'check_circle',
     position: 'top',
     timeout: 5000,
+  })
+
+  const finalPercent = totalTargets
+    ? Math.round((completed / totalTargets) * 100)
+    : 100
+  setManagerNotice(
+    completed > 0 ? 'positive' : 'warning',
+    t('offline.downloadAllComplete', { completed, failed }),
+    `${t('offline.surasDownloaded')}: ${completed} / ${totalTargets} (${finalPercent}%)`,
+    completed > 0 ? 'check_circle' : 'warning'
+  )
+  emit('downloadStatus', {
+    scope: 'all',
+    status: completed > 0 ? 'completed' : 'failed',
+    percent: finalPercent,
+    completed,
+    total: totalTargets,
   })
 
   await loadCachedSurasList()
@@ -426,6 +566,24 @@ watch(
   async () => {
     await updateCacheSize()
     await refreshOfflineStatus()
+  },
+  { deep: true }
+)
+
+watch(
+  downloadProgress,
+  () => {
+    if (!props.currentSuraId) return
+    const progress = downloadProgress.value.get(props.currentSuraId)
+    if (!progress || progress.status !== 'downloading') return
+
+    emit('downloadStatus', {
+      scope: 'current',
+      status: 'started',
+      percent: getDownloadPercentage(progress),
+      completed: progress.current,
+      total: progress.total,
+    })
   },
   { deep: true }
 )

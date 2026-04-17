@@ -488,6 +488,15 @@ const isStartingRecitation = ref(false)
 
 // Offline recitation manager
 const showOfflineManager = ref(false)
+const offlineDownloadStatus = ref<{
+  scope: 'current' | 'all'
+  status: 'idle' | 'started' | 'completed' | 'failed'
+  percent: number
+}>({
+  scope: 'current',
+  status: 'idle',
+  percent: 0,
+})
 const {
   getCachedAudioUrl,
   getOfflineRecitationStatus,
@@ -626,6 +635,58 @@ const offlineRecitationChipColor = computed(() =>
 const offlineRecitationChipIcon = computed(() =>
   isOfflineRecitationReady.value ? 'offline_pin' : 'cloud_off'
 )
+
+const offlineManagerButtonLabel = computed(() => {
+  if (offlineDownloadStatus.value.status === 'started') {
+    const safePercent = Math.max(
+      0,
+      Math.min(100, offlineDownloadStatus.value.percent || 0)
+    )
+    return `${t('offline.downloading')} ${safePercent}%`
+  }
+
+  if (offlineDownloadStatus.value.status === 'completed') {
+    return `${t('offline.title')} ✓`
+  }
+
+  if (offlineDownloadStatus.value.status === 'failed') {
+    return `${t('offline.title')} !`
+  }
+
+  return t('offline.title')
+})
+
+const offlineManagerButtonIcon = computed(() => {
+  if (offlineDownloadStatus.value.status === 'started') {
+    return 'downloading'
+  }
+
+  if (offlineDownloadStatus.value.status === 'completed') {
+    return 'check_circle'
+  }
+
+  if (offlineDownloadStatus.value.status === 'failed') {
+    return 'error'
+  }
+
+  return 'download'
+})
+
+const offlineManagerButtonColor = computed(() => {
+  if (offlineDownloadStatus.value.status === 'started') {
+    return 'warning'
+  }
+
+  if (offlineDownloadStatus.value.status === 'completed') {
+    return 'positive'
+  }
+
+  if (offlineDownloadStatus.value.status === 'failed') {
+    return 'negative'
+  }
+
+  return 'primary'
+})
 
 function readShowTranslationPreference(): boolean {
   if (typeof window === 'undefined') return true
@@ -2589,6 +2650,26 @@ async function handleOfflineStateChanged() {
   }
 }
 
+function handleOfflineDownloadStatus(status: {
+  scope: 'current' | 'all'
+  status: 'started' | 'completed' | 'failed'
+  percent: number
+}) {
+  offlineDownloadStatus.value = {
+    ...offlineDownloadStatus.value,
+    ...status,
+  }
+
+  if (status.status === 'completed') {
+    notify({
+      type: 'positive',
+      message: t('offline.downloadComplete'),
+      icon: 'check_circle',
+      announce: true,
+    })
+  }
+}
+
 onMounted(async () => {
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
@@ -3186,9 +3267,18 @@ watch(
           <!-- Offline Recitation Manager Button -->
           <q-btn
             outline
-            icon="download"
+            data-testid="offline-recitation-manager-button"
+            :data-download-status="offlineDownloadStatus.status"
+            :data-download-percent="String(offlineDownloadStatus.percent)"
+            :icon="offlineManagerButtonIcon"
             class="q-ml-sm"
-            :label="t('offline.title')"
+            :class="{
+              'offline-download-working':
+                offlineDownloadStatus.status === 'started',
+            }"
+            :loading="offlineDownloadStatus.status === 'started'"
+            :color="offlineManagerButtonColor"
+            :label="offlineManagerButtonLabel"
             @click="showOfflineManager = true"
           >
             <q-tooltip>{{ t('offline.subtitle') }}</q-tooltip>
@@ -3527,6 +3617,7 @@ watch(
         :current-sura-total-verses="sura?.total_verses"
         @quality-changed="handleOfflineQualityChanged"
         @download-complete="handleSuraDownloaded"
+        @download-status="handleOfflineDownloadStatus"
         @offline-state-changed="handleOfflineStateChanged"
         @close="showOfflineManager = false"
       />
@@ -3623,6 +3714,22 @@ watch(
 
 .offline-recitation-chip {
   white-space: nowrap;
+}
+
+.offline-download-working {
+  animation: pulse-download 1s ease-in-out infinite;
+}
+
+@keyframes pulse-download {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+  100% {
+    transform: scale(1);
+  }
 }
 
 .bookmark-list {

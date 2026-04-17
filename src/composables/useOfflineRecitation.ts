@@ -7,7 +7,7 @@
 import { ref, computed } from 'vue'
 import { useQuasar } from 'quasar'
 
-interface DownloadProgress {
+export interface RecitationDownloadProgress {
     suraId: number
     current: number
     total: number
@@ -136,7 +136,7 @@ export function useOfflineRecitation() {
     const $q = useQuasar()
 
     const selectedQuality = ref<RecitationQuality>(readStoredSelectedQuality())
-    const downloadProgress = ref<Map<number, DownloadProgress>>(new Map())
+    const downloadProgress = ref<Map<number, RecitationDownloadProgress>>(new Map())
     const isDownloading = ref(false)
     const downloadedSuras = ref<Set<number>>(new Set())
 

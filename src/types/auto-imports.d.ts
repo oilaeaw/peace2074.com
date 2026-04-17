@@ -342,7 +342,7 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
-  export type { RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
+  export type { RecitationDownloadProgress, RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
   import('../composables/useOfflineRecitation')
   // @ts-ignore
   export type { QuranVerse } from '../composables/useQuranTree'
