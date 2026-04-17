@@ -1,4 +1,10 @@
-import { createError, defineEventHandler, getRequestHeader, sendRedirect, setCookie } from 'h3'
+import {
+    createError,
+    defineEventHandler,
+    getRequestHeader,
+    sendRedirect,
+    setCookie,
+} from 'h3'
 import { generateState } from 'arctic'
 import {
     getAppleOAuth,
@@ -38,16 +44,21 @@ export default defineEventHandler(async (event) => {
     } catch (error: any) {
         console.error('[auth/apple] OAuth initiation error:', error)
 
-        const errorMessage = String(error?.message || error?.statusMessage || 'unknown')
+        const errorMessage = String(
+            error?.message || error?.statusMessage || 'unknown'
+        )
         const acceptHeader = String(getRequestHeader(event, 'accept') || '')
 
-        if (/Apple OAuth not configured/i.test(errorMessage) && acceptHeader.includes('text/html')) {
+        if (
+            /Apple OAuth not configured/i.test(errorMessage) &&
+            acceptHeader.includes('text/html')
+        ) {
             return sendRedirect(event, '/login?oauthError=apple-not-configured')
         }
 
         throw createError({
             statusCode: Number(error?.statusCode || 500),
-            statusMessage: `Apple OAuth error: ${errorMessage}`
+            statusMessage: `Apple OAuth error: ${errorMessage}`,
         })
     }
 })
