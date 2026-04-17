@@ -448,7 +448,7 @@ function openSocialLogin(provider: 'google' | 'apple') {
   }
 
   // Redirect to OAuth endpoint
-  const oauthUrl = `${NITRO_BASE}/auth/${provider}`
+  const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${Date.now()}`
   window.location.href = oauthUrl
 }
 
