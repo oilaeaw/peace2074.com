@@ -50,7 +50,7 @@ platform :ios do
       workspace:       "App.xcworkspace",
       configuration:   "Release",
       export_method:   "app-store",
-      output_directory: "./build",
+      output_directory: "./fastlane/artifacts",
     )
 
     deliver(
