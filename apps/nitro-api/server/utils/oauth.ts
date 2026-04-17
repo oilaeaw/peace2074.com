@@ -204,14 +204,18 @@ export function getCanonicalOAuthStartUrl(
 export function getOAuthCookieOptions(event: H3Event) {
     const origin = String(getHeader(event, 'origin') || '').toLowerCase()
     const referer = String(getHeader(event, 'referer') || '').toLowerCase()
+    const requestUrl = getRequestURL(event, {
+        xForwardedHost: true,
+        xForwardedProto: true,
+    })
+    const isSecureRequest = requestUrl.protocol === 'https:'
     const useCrossSiteCookie =
-        process.env.NODE_ENV === 'production'
-        || isCapacitorLikeOrigin(origin)
+        isCapacitorLikeOrigin(origin)
         || isCapacitorLikeOrigin(referer)
 
     return {
         httpOnly: true,
-        secure: useCrossSiteCookie,
+        secure: isSecureRequest,
         sameSite: (useCrossSiteCookie ? 'none' : 'lax') as 'none' | 'lax',
         maxAge: 60 * 10,
         path: '/'
