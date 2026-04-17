@@ -10,6 +10,8 @@ interface GoogleUserResponse {
     name: string
     email: string
     email_verified: boolean
+    given_name?: string
+    family_name?: string
     picture?: string
 }
 
@@ -77,6 +79,8 @@ export default defineEventHandler(async (event) => {
             providerId: googleUser.sub,
             email: googleUser.email,
             name: googleUser.name,
+            firstName: googleUser.given_name,
+            lastName: googleUser.family_name,
             picture: googleUser.picture
         }
 

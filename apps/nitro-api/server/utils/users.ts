@@ -3,6 +3,8 @@
 
 import { createDatabaseRequiredError, isFallbackAuthStorageAllowed } from './database-mode'
 import { getPrisma } from './prisma'
+import { createProfile, getProfile, updateProfile } from './profile'
+import { isCloudinaryAssetUrl, isLikelyOAuthAvatarUrl, resolveOAuthAvatarUrl } from './cloudinary'
 
 // Cached Prisma client after successful initialization
 let prisma: any = null
@@ -234,6 +236,154 @@ function normalizeUser(input: Partial<User>): User {
             role: String(input.role || 'user'),
             permissions: Array.isArray(input.permissions) ? input.permissions : [],
         }),
+    }
+}
+
+function normalizeOptionalText(value: unknown): string | undefined {
+    if (typeof value !== 'string') return undefined
+
+    const normalized = value.trim()
+    return normalized || undefined
+}
+
+function splitDisplayName(name: string) {
+    const normalized = name.trim().replace(/\s+/g, ' ')
+    if (!normalized) {
+        return {
+            firstName: undefined,
+            lastName: undefined,
+        }
+    }
+
+    const [firstName, ...rest] = normalized.split(' ')
+    return {
+        firstName: firstName || undefined,
+        lastName: rest.join(' ').trim() || undefined,
+    }
+}
+
+function getOAuthNameParts(oauthInfo: {
+    email: string
+    name: string
+    firstName?: string
+    lastName?: string
+}) {
+    const explicitFirstName = normalizeOptionalText(oauthInfo.firstName)
+    const explicitLastName = normalizeOptionalText(oauthInfo.lastName)
+    const splitName = splitDisplayName(oauthInfo.name || '')
+    const emailUsername = normalizeOptionalText(oauthInfo.email.split('@')[0]) || 'user'
+
+    return {
+        firstName: explicitFirstName || splitName.firstName || emailUsername,
+        lastName: explicitLastName || splitName.lastName,
+    }
+}
+
+function shouldAttemptAvatarRefresh(currentAvatar: string | undefined, nextAvatar: string | undefined) {
+    const current = normalizeOptionalText(currentAvatar)
+    const next = normalizeOptionalText(nextAvatar)
+
+    if (!next) return false
+    if (!current) return true
+    if (current === next) return true
+    return isLikelyOAuthAvatarUrl(current)
+}
+
+function shouldPersistAvatar(currentAvatar: string | undefined, nextAvatar: string | undefined) {
+    const current = normalizeOptionalText(currentAvatar)
+    const next = normalizeOptionalText(nextAvatar)
+
+    if (!next) return false
+    if (!current) return true
+    if (current === next) return false
+    if (!isCloudinaryAssetUrl(current) && isCloudinaryAssetUrl(next)) return true
+    return isLikelyOAuthAvatarUrl(current)
+}
+
+function createOAuthUsername(email: string) {
+    return `${email.split('@')[0]}_${Math.random().toString(36).substring(7)}`
+}
+
+function getOAuthProviderField(provider: 'google' | 'apple' | 'github') {
+    if (provider === 'google') return 'google_id'
+    if (provider === 'apple') return 'apple_id'
+    return 'github_id'
+}
+
+function createOAuthUserId(provider: 'google' | 'apple' | 'github', providerId: string) {
+    return provider === 'github' ? `github_${providerId}` : providerId
+}
+
+async function resolvePersistedOAuthAvatar(
+    oauthInfo: {
+        provider: 'google' | 'apple' | 'github'
+        providerId: string
+        picture?: string
+    },
+    currentAvatar?: string
+) {
+    if (!shouldAttemptAvatarRefresh(currentAvatar, oauthInfo.picture)) {
+        return undefined
+    }
+
+    return await resolveOAuthAvatarUrl({
+        provider: oauthInfo.provider,
+        providerId: oauthInfo.providerId,
+        imageUrl: oauthInfo.picture,
+    })
+}
+
+async function syncOAuthProfile(userId: string, oauthInfo: {
+    provider: 'google' | 'apple' | 'github'
+    providerId: string
+    email: string
+    name: string
+    firstName?: string
+    lastName?: string
+}, avatarUrl?: string) {
+    const { firstName, lastName } = getOAuthNameParts(oauthInfo)
+
+    try {
+        const profile = await getProfile(userId)
+
+        if (!profile) {
+            await createProfile({
+                userId,
+                first_name: firstName,
+                last_name: lastName,
+                avatar_url: avatarUrl,
+                github_id: oauthInfo.provider === 'github' ? oauthInfo.providerId : undefined,
+            })
+            return
+        }
+
+        const updates: Record<string, any> = {}
+
+        if (!profile.first_name && firstName) {
+            updates.first_name = firstName
+        }
+
+        if (!profile.last_name && lastName) {
+            updates.last_name = lastName
+        }
+
+        if (shouldPersistAvatar(profile.avatar_url || undefined, avatarUrl)) {
+            updates.avatar_url = avatarUrl
+        }
+
+        if (oauthInfo.provider === 'github' && !profile.github_id) {
+            updates.github_id = oauthInfo.providerId
+        }
+
+        if (Object.keys(updates).length > 0) {
+            await updateProfile(userId, updates)
+        }
+    } catch (error) {
+        console.warn('[findOrCreateOAuthUser] Profile sync failed', {
+            userId,
+            provider: oauthInfo.provider,
+            error,
+        })
     }
 }
 
@@ -510,14 +660,17 @@ export async function getUserStorageDiagnostics(): Promise<{
 }
 
 export async function findOrCreateOAuthUser(oauthInfo: {
-    provider: 'google' | 'apple'
+    provider: 'google' | 'apple' | 'github'
     providerId: string
     email: string
     name: string
+    firstName?: string
+    lastName?: string
     picture?: string
 }): Promise<User> {
-    const { provider, providerId, email, name, picture } = oauthInfo
-    const providerField = provider === 'google' ? 'google_id' : 'apple_id'
+    const { provider, providerId, email, picture } = oauthInfo
+    const { firstName, lastName } = getOAuthNameParts(oauthInfo)
+    const providerField = getOAuthProviderField(provider)
 
     // Try to find existing user by provider ID
     if (await isPrismaReady()) {
@@ -528,7 +681,30 @@ export async function findOrCreateOAuthUser(oauthInfo: {
             })
 
             if (existingByProvider) {
-                return toAppUser(existingByProvider)
+                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, existingByProvider.avatar_url || undefined)
+                const updates: Record<string, any> = {}
+
+                if (!existingByProvider.first_name && firstName) {
+                    updates.first_name = firstName
+                }
+
+                if (!existingByProvider.last_name && lastName) {
+                    updates.last_name = lastName
+                }
+
+                if (shouldPersistAvatar(existingByProvider.avatar_url || undefined, persistedAvatar)) {
+                    updates.avatar_url = persistedAvatar
+                }
+
+                const userRecord = Object.keys(updates).length > 0
+                    ? await prisma.user.update({
+                        where: { id: existingByProvider.id },
+                        data: updates,
+                    })
+                    : existingByProvider
+
+                await syncOAuthProfile(userRecord.id, oauthInfo, persistedAvatar || userRecord.avatar_url || undefined)
+                return toAppUser(userRecord)
             }
 
             // Check by email (link existing account)
@@ -537,33 +713,52 @@ export async function findOrCreateOAuthUser(oauthInfo: {
             })
 
             if (existingByEmail) {
+                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, existingByEmail.avatar_url || undefined)
+                const updates: Record<string, any> = {
+                    [providerField]: providerId,
+                }
+
+                if (!existingByEmail.first_name && firstName) {
+                    updates.first_name = firstName
+                }
+
+                if (!existingByEmail.last_name && lastName) {
+                    updates.last_name = lastName
+                }
+
+                if (shouldPersistAvatar(existingByEmail.avatar_url || undefined, persistedAvatar)) {
+                    updates.avatar_url = persistedAvatar
+                }
+
                 // Link OAuth provider to existing account
                 const updated = await prisma.user.update({
                     where: { id: existingByEmail.id },
-                    data: {
-                        [providerField]: providerId,
-                        avatar_url: picture || existingByEmail.avatar_url
-                    }
+                    data: updates
                 })
+
+                await syncOAuthProfile(updated.id, oauthInfo, persistedAvatar || updated.avatar_url || undefined)
                 return toAppUser(updated)
             }
 
             // Create new user
-            const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7)
+            const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo)
+            const username = createOAuthUsername(email)
             const newUser = await prisma.user.create({
                 data: {
-                    id: providerId,
+                    id: createOAuthUserId(provider, providerId),
                     username,
                     email,
                     password: '', // OAuth users don't need password
                     role: 'user',
-                    first_name: name,
-                    avatar_url: picture || null,
+                    first_name: firstName || null,
+                    last_name: lastName || null,
+                    avatar_url: persistedAvatar || picture || null,
                     [providerField]: providerId,
                     permissions: getRolePermissions('user')
                 }
             })
 
+            await syncOAuthProfile(newUser.id, oauthInfo, persistedAvatar || picture)
             return toAppUser(newUser)
         } catch (error) {
             console.error('[findOrCreateOAuthUser] Prisma error:', error)
@@ -576,14 +771,32 @@ export async function findOrCreateOAuthUser(oauthInfo: {
 
     // Check by provider ID
     let user = users.find((u: any) => u[providerField] === providerId)
-    if (user) return user
+    if (user) {
+        if (!user.first_name && firstName) {
+            user.first_name = firstName
+        }
+        if (!user.last_name && lastName) {
+            user.last_name = lastName
+        }
+        if (shouldPersistAvatar(user.avatar_url, picture)) {
+            user.avatar_url = picture
+        }
+        await saveFallbackUsers(users)
+        return user
+    }
 
     // Check by email
     user = users.find((u) => u.email === email)
     if (user) {
         // Link OAuth provider
         (user as any)[providerField] = providerId
-        if (picture && !user.avatar_url) {
+        if (!user.first_name && firstName) {
+            user.first_name = firstName
+        }
+        if (!user.last_name && lastName) {
+            user.last_name = lastName
+        }
+        if (shouldPersistAvatar(user.avatar_url, picture)) {
             user.avatar_url = picture
         }
         await saveFallbackUsers(users)
@@ -591,14 +804,15 @@ export async function findOrCreateOAuthUser(oauthInfo: {
     }
 
     // Create new user
-    const username = email.split('@')[0] + '_' + Math.random().toString(36).substring(7)
+    const username = createOAuthUsername(email)
     const newUser: User = {
-        id: providerId,
+        id: createOAuthUserId(provider, providerId),
         username,
         email,
         password: '', // OAuth users don't need password
         role: 'user',
-        first_name: name,
+        first_name: firstName,
+        last_name: lastName,
         avatar_url: picture,
         [providerField]: providerId,
         permissions: getRolePermissions('user')

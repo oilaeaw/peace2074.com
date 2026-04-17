@@ -187,10 +187,12 @@ export function getAppleOAuth(): Apple {
 }
 
 export interface OAuthUserInfo {
-    provider: 'google' | 'apple'
+    provider: 'google' | 'apple' | 'github'
     providerId: string
     email: string
     name: string
+    firstName?: string
+    lastName?: string
     picture?: string
 }
 

@@ -1,11 +1,10 @@
 import { createError, defineEventHandler, getQuery, sendRedirect } from 'h3'
 import { createSession } from '../../../utils/auth'
-import { findUserByUsername, addUser } from '../../../utils/users'
+import { findOrCreateOAuthUser } from '../../../utils/users'
 
 export default defineEventHandler(async (event) => {
     const query = getQuery(event)
     const code = query.code as string
-    const state = query.state as string
 
     if (!code) {
         return sendRedirect(event, '/login?error=github_auth_failed')
@@ -70,23 +69,15 @@ export default defineEventHandler(async (event) => {
         }
 
         // Find or create user
-        let user = await findUserByUsername(githubUser.login)
-
-        if (!user) {
-            // Create new user from GitHub profile
-            user = {
-                id: `github_${githubUser.id}`,
-                username: githubUser.login,
-                email: email || `${githubUser.login}@github.user`,
-                password: randomBytes(32).toString('hex'), // Random password, won't be used
-                role: 'user',
-                first_name: githubUser.name?.split(' ')[0] || githubUser.login,
-                last_name: githubUser.name?.split(' ').slice(1).join(' ') || '',
-                avatar_url: githubUser.avatar_url,
-                github_id: githubUser.id
-            }
-            await addUser(user)
-        }
+        const user = await findOrCreateOAuthUser({
+            provider: 'github',
+            providerId: String(githubUser.id),
+            email: email || `${githubUser.login}@github.user`,
+            name: githubUser.name || githubUser.login,
+            firstName: githubUser.name?.split(' ')[0] || githubUser.login,
+            lastName: githubUser.name?.split(' ').slice(1).join(' ') || undefined,
+            picture: githubUser.avatar_url,
+        })
 
         // Create session
         const sessionUser = {
@@ -105,12 +96,3 @@ export default defineEventHandler(async (event) => {
         return sendRedirect(event, '/login?error=github_auth_error')
     }
 })
-
-function randomBytes(size: number): Buffer {
-    if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
-        const bytes = new Uint8Array(size)
-        crypto.getRandomValues(bytes)
-        return Buffer.from(bytes)
-    }
-    return require('crypto').randomBytes(size)
-}

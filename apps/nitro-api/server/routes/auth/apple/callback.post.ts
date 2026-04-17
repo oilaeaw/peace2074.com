@@ -20,12 +20,35 @@ import { applyCors } from '../../../utils/cors'
 interface AppleCallbackBody {
     code?: string
     state?: string
+    user?: string | AppleUserPayload
+}
+
+interface AppleUserPayload {
+    email?: string
+    name?: {
+        firstName?: string
+        lastName?: string
+    }
 }
 
 interface AppleIdTokenClaims {
     sub: string
     email: string
     email_verified: boolean | string
+}
+
+function parseAppleUserPayload(value?: string | AppleUserPayload) {
+    if (!value) return null
+
+    if (typeof value === 'string') {
+        try {
+            return JSON.parse(value) as AppleUserPayload
+        } catch {
+            return null
+        }
+    }
+
+    return value
 }
 
 export default defineEventHandler(async (event) => {
@@ -71,15 +94,22 @@ export default defineEventHandler(async (event) => {
             })
         }
 
-        // Apple doesn't provide name in ID token consistently
-        // We'll use email username as fallback
+        const postedUser = parseAppleUserPayload(body.user)
+        const postedFirstName = String(postedUser?.name?.firstName || '').trim() || undefined
+        const postedLastName = String(postedUser?.name?.lastName || '').trim() || undefined
+
+        // Apple doesn't provide name in the ID token consistently.
+        // The posted `user` payload is only present on first consent, so keep the email fallback too.
         const emailUsername = idTokenClaims.email.split('@')[0]
+        const resolvedName = [postedFirstName, postedLastName].filter(Boolean).join(' ').trim() || emailUsername
 
         const oauthInfo: OAuthUserInfo = {
             provider: 'apple',
             providerId: idTokenClaims.sub,
             email: idTokenClaims.email,
-            name: emailUsername,
+            name: resolvedName,
+            firstName: postedFirstName,
+            lastName: postedLastName,
         }
 
         // Find or create user
