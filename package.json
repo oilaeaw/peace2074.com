@@ -53,10 +53,12 @@
     "mobile:android": "pnpm build && ./node_modules/.bin/cap sync android && ./node_modules/.bin/cap open android",
     "mobile:ios": "pnpm build && pnpm ios:sync && ./node_modules/.bin/cap open ios",
     "ios:open": "./node_modules/.bin/cap open ios",
+    "ios:lanes": "cd ios/App && (bundle check || bundle install) && bundle exec fastlane lanes",
     "ios:sync:native": "node --experimental-strip-types scripts/ensure-ios-firebase-analytics.ts",
     "ios:sync": "pnpm sync:branding && ./node_modules/.bin/cap sync ios && pnpm ios:sync:native",
     "ios:dev": "pnpm ios:sync && ./node_modules/.bin/cap open ios",
     "ios:build": "pnpm build && pnpm ios:sync && ./node_modules/.bin/cap open ios",
+    "ios:release": "pnpm build && pnpm ios:sync && cd ios/App && (bundle check || bundle install) && bundle exec fastlane ios release",
     "ios:archive": "xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive | xcpretty || xcodebuild -workspace ios/App/App.xcworkspace -scheme App -configuration Release -destination 'generic/platform=iOS' -archivePath ios/build/Peace2074.xcarchive archive",
     "demo:datocms": "node --env-file=.env scripts/demo-datocms-cma.mjs",
     "create:datocms:post": "node --env-file=.env scripts/create-datocms-post.mjs"
