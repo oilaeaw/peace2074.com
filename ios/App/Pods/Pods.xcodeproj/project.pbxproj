@@ -3565,6 +3565,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = E9F2F58495C6A6BC0111C9CC67150D03 /* FirebaseCoreInternal.release.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
@@ -4107,6 +4108,7 @@
 			isa = XCBuildConfiguration;
 			baseConfigurationReference = C0162404D40C4B7190A888F3B2B1D0D1 /* FirebaseCoreInternal.debug.xcconfig */;
 			buildSettings = {
+				BUILD_LIBRARY_FOR_DISTRIBUTION = YES;
 				CLANG_ENABLE_OBJC_WEAK = NO;
 				"CODE_SIGN_IDENTITY[sdk=appletvos*]" = "";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "";
