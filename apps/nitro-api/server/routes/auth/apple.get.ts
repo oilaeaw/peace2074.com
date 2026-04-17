@@ -25,6 +25,8 @@ export default defineEventHandler(async (event) => {
         setCookie(event, 'apple_oauth_state', state, getOAuthCookieOptions(event))
 
         const url = await apple.createAuthorizationURL(state, ['name', 'email'])
+        // Apple requires form_post when requesting name/email scopes.
+        url.searchParams.set('response_mode', 'form_post')
 
         return sendRedirect(event, url.toString())
     } catch (error: any) {
