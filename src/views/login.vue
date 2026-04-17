@@ -400,6 +400,14 @@ async function handleOAuthErrorFromRoute() {
   const oauthError = String(route.query.oauthError || '').trim()
   if (!oauthError) return
 
+  const sessionUser = await authStore.hydrateSession()
+  if (sessionUser || authStore.isAuthenticated) {
+    const nextQuery = { ...route.query }
+    delete nextQuery.oauthError
+    await router.replace({ path: '/', query: nextQuery })
+    return
+  }
+
   if (oauthError === 'apple-not-configured') {
     $q.notify({
       type: 'warning',
