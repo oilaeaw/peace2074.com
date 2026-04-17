@@ -1,4 +1,5 @@
 import { Google, Apple } from 'arctic'
+import { Buffer } from 'node:buffer'
 import {
     createError,
     getHeader,
@@ -17,7 +18,7 @@ interface OAuthConfig {
         clientId: string
         teamId: string
         keyId: string
-        privateKey: string
+        privateKey: Uint8Array
         redirectUri: string
     }
 }
@@ -26,10 +27,43 @@ function normalizeConfigValue(value: unknown): string {
     return typeof value === 'string' ? value.trim() : ''
 }
 
-function normalizeApplePrivateKey(value: unknown): string {
-    return normalizeConfigValue(value)
+function decodeBase64ToUint8Array(value: string): Uint8Array {
+    const normalized = value.replace(/\s+/g, '')
+
+    if (!normalized) {
+        return new Uint8Array()
+    }
+
+    return Uint8Array.from(Buffer.from(normalized, 'base64'))
+}
+
+function normalizeApplePrivateKey(value: unknown): Uint8Array {
+    if (value instanceof Uint8Array) {
+        return value
+    }
+
+    if (value instanceof ArrayBuffer) {
+        return new Uint8Array(value)
+    }
+
+    const normalized = normalizeConfigValue(value)
+        .replace(/^(['"])([\s\S]*)\1$/, '$2')
         .replace(/\\n/g, '\n')
         .replace(/\r\n/g, '\n')
+
+    if (!normalized) {
+        return new Uint8Array()
+    }
+
+    const pemMatch = normalized.match(
+        /-----BEGIN PRIVATE KEY-----([\s\S]+?)-----END PRIVATE KEY-----/
+    )
+
+    if (pemMatch) {
+        return decodeBase64ToUint8Array(pemMatch[1] || '')
+    }
+
+    return decodeBase64ToUint8Array(normalized)
 }
 
 function getOAuthConfig(): OAuthConfig {
@@ -111,7 +145,7 @@ export function getOAuthAvailability() {
             config.apple.clientId
             && config.apple.teamId
             && config.apple.keyId
-            && config.apple.privateKey
+            && config.apple.privateKey.byteLength > 0
         )
     }
 }
@@ -136,7 +170,7 @@ export function getGoogleOAuth(): Google {
 export function getAppleOAuth(): Apple {
     const config = getOAuthConfig()
 
-    if (!config.apple.clientId || !config.apple.teamId || !config.apple.keyId || !config.apple.privateKey) {
+    if (!config.apple.clientId || !config.apple.teamId || !config.apple.keyId || config.apple.privateKey.byteLength === 0) {
         throw createError({
             statusCode: 500,
             statusMessage: 'Apple OAuth not configured. Set APPLE_CLIENT_ID, APPLE_TEAM_ID, APPLE_KEY_ID, and APPLE_PRIVATE_KEY'
