@@ -10,7 +10,11 @@ import registerQuasar from '@/plugins/quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { Dark } from 'quasar'
 import { useLocalStorage } from '@/composables/useUStore'
-import { trackAnalyticsPageView } from '@/utils/analytics'
+import {
+  installAnalyticsBridge,
+  syncAnalyticsConsentState,
+  trackAnalyticsPageView,
+} from '@/utils/analytics'
 import {
   applySeoMeta,
   buildPageStructuredData,
@@ -214,6 +218,8 @@ function applyThemeMode(mode: ThemeMode) {
 // Initialize theme mode (system/light/dark) with fallback to legacy dark toggle
 if (isClient) {
   installStartupErrorFilters()
+  installAnalyticsBridge()
+  void syncAnalyticsConsentState()
 
   const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'light')
   if (storedMode && storedMode !== 'system') {

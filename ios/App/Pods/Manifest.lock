@@ -2,21 +2,30 @@ PODS:
   - Capacitor (7.5.0):
     - CapacitorCordova
   - CapacitorCordova (7.5.0)
+  - CapacitorFirebaseAnalytics (7.5.0):
+    - Capacitor
+    - CapacitorFirebaseAnalytics/Lite (= 7.5.0)
+  - CapacitorFirebaseAnalytics/Lite (7.5.0):
+    - Capacitor
 
 DEPENDENCIES:
   - "Capacitor (from `../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios`)"
   - "CapacitorCordova (from `../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios`)"
+  - "CapacitorFirebaseAnalytics (from `../../node_modules/.pnpm/@capacitor-firebase+analytics@7.5.0_@capacitor+core@7.5.0_firebase@11.10.0/node_modules/@capacitor-firebase/analytics`)"
 
 EXTERNAL SOURCES:
   Capacitor:
     :path: "../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios"
   CapacitorCordova:
     :path: "../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios"
+  CapacitorFirebaseAnalytics:
+    :path: "../../node_modules/.pnpm/@capacitor-firebase+analytics@7.5.0_@capacitor+core@7.5.0_firebase@11.10.0/node_modules/@capacitor-firebase/analytics"
 
 SPEC CHECKSUMS:
   Capacitor: 0a78ec6b54580fa055c11744a4e83cd7942d98ca
   CapacitorCordova: ae35646a9b46cfd00d637f195509c86594026aad
+  CapacitorFirebaseAnalytics: 27ad621b8f41c2cd2b2169f2db6f476cdac49011
 
-PODFILE CHECKSUM: 2cef072fe0377175444dcddfed2aa899a203806d
+PODFILE CHECKSUM: 743b64767df103cae1acfc75a9ae409710592e69
 
 COCOAPODS: 1.16.2

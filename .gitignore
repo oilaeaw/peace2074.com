@@ -33,6 +33,7 @@ ios/App/fastlane/.env
 ios/App/fastlane/AuthKey*.p8
 ios/App/fastlane/build/
 ios/App/Gemfile.lock
+ios/App/App/GoogleService-Info.plist
 
 # Xcode user-specific files
 ios/App/**/*.xcodeproj/xcuserdata/

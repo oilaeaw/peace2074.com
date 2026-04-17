@@ -3,5 +3,7 @@
 	"appName": "Peace2074",
 	"webDir": "dist",
 	"bundledWebRuntime": false,
-	"packageClassList": []
+	"packageClassList": [
+		"FirebaseAnalyticsPlugin"
+	]
 }
