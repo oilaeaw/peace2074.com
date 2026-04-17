@@ -21,8 +21,14 @@ export default defineEventHandler(async (event) => {
         const apple = getAppleOAuth()
         const state = generateState()
 
-        // Store state in cookie for CSRF protection
-        setCookie(event, 'apple_oauth_state', state, getOAuthCookieOptions(event))
+        // Apple form_post is a cross-site POST: SameSite=Lax cookies are NOT sent.
+        // Must use SameSite=None;Secure so the state cookie is included when Apple POSTs back.
+        const baseOpts = getOAuthCookieOptions(event)
+        setCookie(event, 'apple_oauth_state', state, {
+            ...baseOpts,
+            sameSite: 'none',
+            secure: true,
+        })
 
         const url = await apple.createAuthorizationURL(state, ['name', 'email'])
         // Apple requires form_post when requesting name/email scopes.
