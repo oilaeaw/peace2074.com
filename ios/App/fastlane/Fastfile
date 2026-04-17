@@ -2,9 +2,16 @@ default_platform(:ios)
 
 platform :ios do
 
+  private_lane :reset_xcode_build_service do
+    UI.message("Resetting Xcode build services to avoid stuck PIF transfer sessions...")
+    sh("killall SWBBuildService XCBBuildService xcodebuild 2>/dev/null || true")
+    sleep(2)
+  end
+
   # ─── screenshots ────────────────────────────────────────────────────────────
   desc "Take App Store screenshots on all required device sizes"
   lane :screenshots do
+    reset_xcode_build_service
     snapshot
   end
 
@@ -30,6 +37,8 @@ platform :ios do
   # ─── full submit ────────────────────────────────────────────────────────────
   desc "Build, upload and submit for review"
   lane :release do
+    reset_xcode_build_service
+
     # Bump build number to match CI build counter if provided
     increment_build_number(
       build_number: ENV.fetch("BUILD_NUMBER", Time.now.strftime("%Y%m%d%H%M")),
