@@ -144,12 +144,10 @@ export function getAppleOAuth(): Apple {
     }
 
     return new Apple(
-        {
-            clientId: config.apple.clientId,
-            teamId: config.apple.teamId,
-            keyId: config.apple.keyId,
-            certificate: config.apple.privateKey
-        },
+        config.apple.clientId,
+        config.apple.teamId,
+        config.apple.keyId,
+        config.apple.privateKey,
         config.apple.redirectUri
     )
 }
