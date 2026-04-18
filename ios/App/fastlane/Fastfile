@@ -8,6 +8,41 @@ platform :ios do
     sleep(2)
   end
 
+  private_lane :app_store_connect_api_auth do
+    key_id = ENV["APP_STORE_CONNECT_API_KEY_ID"].to_s.strip
+    issuer_id = ENV["APP_STORE_CONNECT_API_ISSUER_ID"].to_s.strip
+    key_path = ENV["APP_STORE_CONNECT_API_KEY_PATH"].to_s.strip
+    key_content = ENV["APP_STORE_CONNECT_API_KEY_CONTENT"].to_s.strip
+    in_house = ENV.fetch("APP_STORE_CONNECT_API_IN_HOUSE", "false").to_s.strip.downcase == "true"
+
+    if key_id.empty? || issuer_id.empty?
+      UI.message("App Store Connect API key env vars not set; falling back to Apple ID login.")
+      nil
+    elsif key_path.empty? && key_content.empty?
+      UI.message("App Store Connect API key content/path missing; falling back to Apple ID login.")
+      nil
+    else
+      api_key_options = {
+        key_id: key_id,
+        issuer_id: issuer_id,
+        duration: 1200,
+        in_house: in_house,
+      }
+
+      unless key_path.empty?
+        expanded_key_path = File.expand_path(key_path, Dir.pwd)
+        UI.user_error!("App Store Connect API key file not found at #{expanded_key_path}") unless File.exist?(expanded_key_path)
+        api_key_options[:key_filepath] = expanded_key_path
+      else
+        normalized_key_content = key_content.include?("\\n") ? key_content.gsub("\\n", "\n") : key_content
+        api_key_options[:key_content] = normalized_key_content
+      end
+
+      UI.message("Using App Store Connect API key authentication.")
+      app_store_connect_api_key(**api_key_options)
+    end
+  end
+
   # ─── screenshots ────────────────────────────────────────────────────────────
   desc "Take App Store screenshots on all required device sizes"
   lane :screenshots do
@@ -18,26 +53,37 @@ platform :ios do
   # ─── metadata ───────────────────────────────────────────────────────────────
   desc "Upload metadata (no screenshots, no binary)"
   lane :metadata do
-    deliver(
+    api_key = app_store_connect_api_auth
+
+    deliver_options = {
       skip_binary_upload: true,
       skip_screenshots:   true,
       force:              true,
-    )
+    }
+    deliver_options[:api_key] = api_key if api_key
+
+    deliver(**deliver_options)
   end
 
   # ─── screenshots + metadata ─────────────────────────────────────────────────
   desc "Upload screenshots + metadata (no binary)"
   lane :store_assets do
-    deliver(
+    api_key = app_store_connect_api_auth
+
+    deliver_options = {
       skip_binary_upload: true,
       force:              true,
-    )
+    }
+    deliver_options[:api_key] = api_key if api_key
+
+    deliver(**deliver_options)
   end
 
   # ─── full submit ────────────────────────────────────────────────────────────
   desc "Build, upload and submit for review"
   lane :release do
     reset_xcode_build_service
+    api_key = app_store_connect_api_auth
 
     # Bump build number to match CI build counter if provided
     increment_build_number(
@@ -53,12 +99,15 @@ platform :ios do
       output_directory: "./fastlane/artifacts",
     )
 
-    deliver(
+    deliver_options = {
       skip_metadata:    false,
       skip_screenshots: false,
       submit_for_review: true,
       automatic_release: false,
       force:             true,
-    )
+    }
+    deliver_options[:api_key] = api_key if api_key
+
+    deliver(**deliver_options)
   end
 end

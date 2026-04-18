@@ -1,0 +1,10 @@
+languages([
+  "en-US",
+  "ar-SA",
+  "de-DE",
+  "es-ES",
+  "ru",
+  "he",
+  "it",
+  "tr",
+])
