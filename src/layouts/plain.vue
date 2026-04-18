@@ -93,9 +93,7 @@ const pageTitle = computed(() => {
 }
 
 :global(body.body--dark) .plain-container {
-  background:
-    radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 34%),
-    linear-gradient(180deg, #030712 0%, #000000 100%);
+  background: #000;
   color: #f3f4f6;
 }
 

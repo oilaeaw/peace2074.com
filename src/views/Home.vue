@@ -748,13 +748,13 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 /* Dark theme support */
 :deep(body.body--dark) .home-hero,
 .body--dark .home-hero {
-  background: #1a1d26;
+  background: #000;
 }
 
 :deep(body.body--dark) .daily-banner,
 .body--dark .daily-banner {
-  background: #2a2f3d;
-  border-color: #3a3f4d;
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 :deep(body.body--dark) .daily-banner-inner,
@@ -779,8 +779,8 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 
 :deep(body.body--dark) .manifesto-card,
 .body--dark .manifesto-card {
-  background: #2a2f3d;
-  border-color: #3a3f4d;
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 :deep(body.body--dark) .verse-arabic,
@@ -818,8 +818,8 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 .body--dark .ai-card,
 :deep(body.body--dark) .blog-card,
 .body--dark .blog-card {
-  background: #2a2f3d;
-  border-color: #3a3f4d;
+  background: #050505;
+  border-color: rgba(255, 255, 255, 0.08);
 }
 
 :deep(body.body--dark) .ai-title,

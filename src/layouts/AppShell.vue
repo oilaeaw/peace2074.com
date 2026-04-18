@@ -908,9 +908,7 @@ const orderedNavItems = computed(() => {
 }
 
 :global(body.body--dark) .app-layout {
-  background:
-    radial-gradient(circle at top, rgba(16, 185, 129, 0.12), transparent 34%),
-    linear-gradient(180deg, #030712 0%, #000000 100%);
+  background: #000;
   color: #f8fafc;
 }
 

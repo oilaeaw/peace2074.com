@@ -960,4 +960,13 @@ onMounted(() => {
     font-size: 48px;
   }
 }
+
+body.body--dark .login-background {
+  background: #000;
+}
+
+body.body--dark .login-card {
+  background: #050505 !important;
+  color: #f5f5f5;
+}
 </style>

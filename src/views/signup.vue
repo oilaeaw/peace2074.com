@@ -420,4 +420,13 @@ async function handleSignup() {
     transform: scale(1.05);
   }
 }
+
+body.body--dark .signup-background {
+  background: #000;
+}
+
+body.body--dark .signup-card {
+  background: #050505 !important;
+  color: #f5f5f5;
+}
 </style>

@@ -628,9 +628,9 @@ async function handleChangePassword() {
 }
 
 :global(body.body--dark) .prefs-page .glassy-card {
-  background: rgba(17, 24, 39, 0.88);
-  border-color: rgba(148, 163, 184, 0.18);
-  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.42);
+  background: rgba(5, 5, 5, 0.96);
+  border-color: rgba(255, 255, 255, 0.1);
+  box-shadow: 0 18px 38px rgba(0, 0, 0, 0.55);
   color: #e5e7eb;
 }
 

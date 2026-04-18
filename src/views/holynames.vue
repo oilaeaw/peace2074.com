@@ -1013,54 +1013,7 @@ const holynames: HolyNameI[] = [
 }
 
 :global(body.body--dark) .holynames-page {
-  background:
-    radial-gradient(
-      circle at 12% 10%,
-      rgba(53, 133, 85, 0.22) 0%,
-      transparent 28%
-    ),
-    radial-gradient(
-      circle at 88% 18%,
-      rgba(191, 161, 74, 0.18) 0%,
-      transparent 24%
-    ),
-    linear-gradient(180deg, #040404 0%, #000000 100%);
-}
-
-:global(body.body--dark) .holynames-page::before,
-:global(body.body--dark) .holynames-page::after {
-  content: '';
-  position: absolute;
-  pointer-events: none;
-  z-index: 0;
-}
-
-:global(body.body--dark) .holynames-page::before {
-  width: 460px;
-  height: 460px;
-  left: -180px;
-  top: -120px;
-  background: radial-gradient(
-    circle,
-    rgba(53, 133, 85, 0.18) 0%,
-    rgba(53, 133, 85, 0.08) 35%,
-    transparent 72%
-  );
-  filter: blur(16px);
-}
-
-:global(body.body--dark) .holynames-page::after {
-  width: 380px;
-  height: 380px;
-  right: -140px;
-  top: 90px;
-  background: radial-gradient(
-    circle,
-    rgba(191, 161, 74, 0.16) 0%,
-    rgba(191, 161, 74, 0.07) 40%,
-    transparent 72%
-  );
-  filter: blur(14px);
+  background: linear-gradient(180deg, #040404 0%, #000000 100%);
 }
 
 :global(body.body--dark) .holynames-page .sparkle-layer {

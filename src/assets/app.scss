@@ -17,6 +17,12 @@
   }
 }
 
+/* Override Quasar's built-in dark colors at :root level — this wins over quasar.css */
+:root {
+  --q-dark-page: #000000;
+  --q-dark: #000000;
+}
+
 @supports not (-webkit-touch-callout: none) {
   /* CSS for other than iOS devices */
 }
@@ -48,11 +54,7 @@ body.body--light {
 }
 body.body--dark {
   color: #f5f5f5;
-  background-color: #000;
-  background-image: none;
-  background-size: auto;
-  background-repeat: no-repeat;
-  background-attachment: scroll;
+  background: #000000 !important;
   overflow-x: hidden;
   --logo-filter: invert(1) drop-shadow(0 2px 4px rgba(0, 0, 0, 0.35));
 }
@@ -62,16 +64,6 @@ body.body--dark {
 }
 .vue-scroll-picker-layer-bottom {
   background-color: greenyellow !important;
-}
-.holynames-page {
-  height: max-content;
-  width: max-content;
-  display: flex;
-  flex-wrap: wrap;
-  align-content: center;
-  justify-content: space-evenly;
-  align-items: stretch;
-  background-color: white;
 }
 @font-face {
   font-family: 'DM Sans';
@@ -151,8 +143,11 @@ body {
 
 body.body--dark .q-page-container,
 body.body--dark .q-page,
+body.body--dark .q-drawer,
+body.body--dark .q-drawer__content,
 body.body--dark main {
-  background-color: #000;
+  background: linear-gradient(180deg, #0d0d0d 0%, #000000 100%) !important;
+  background-color: #000 !important;
   color: var(--text-color);
 }
 
@@ -212,6 +207,23 @@ body.body--dark .sura-card.is-completed {
   background: rgba(34, 197, 94, 0.12) !important;
   background-color: rgba(34, 197, 94, 0.12) !important;
   border-color: rgba(74, 222, 128, 0.45) !important;
+}
+
+/* ---------------------------------------------------------------
+   Global dark mode: ensure all page-level wrappers stay near-black
+--------------------------------------------------------------- */
+body.body--dark .home-hero,
+body.body--dark .daily-banner,
+body.body--dark .manifesto-card,
+body.body--dark .ai-card,
+body.body--dark .blog-card {
+  background: #050505 !important;
+  background-color: #050505 !important;
+}
+
+body.body--dark .login-background,
+body.body--dark .signup-background {
+  background: #000 !important;
 }
 
 /* Compact layout: tighter paddings and gaps when enabled via body.is-compact */
