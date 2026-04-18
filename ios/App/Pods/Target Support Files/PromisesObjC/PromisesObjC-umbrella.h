@@ -10,26 +10,26 @@
 #endif
 #endif
 
-#import "FBLPromise+All.h"
-#import "FBLPromise+Always.h"
-#import "FBLPromise+Any.h"
-#import "FBLPromise+Async.h"
-#import "FBLPromise+Await.h"
-#import "FBLPromise+Catch.h"
-#import "FBLPromise+Delay.h"
-#import "FBLPromise+Do.h"
-#import "FBLPromise+Race.h"
-#import "FBLPromise+Recover.h"
-#import "FBLPromise+Reduce.h"
-#import "FBLPromise+Retry.h"
-#import "FBLPromise+Testing.h"
-#import "FBLPromise+Then.h"
-#import "FBLPromise+Timeout.h"
-#import "FBLPromise+Validate.h"
-#import "FBLPromise+Wrap.h"
-#import "FBLPromise.h"
-#import "FBLPromiseError.h"
-#import "FBLPromises.h"
+#import <PromisesObjC/FBLPromise+All.h>
+#import <PromisesObjC/FBLPromise+Always.h>
+#import <PromisesObjC/FBLPromise+Any.h>
+#import <PromisesObjC/FBLPromise+Async.h>
+#import <PromisesObjC/FBLPromise+Await.h>
+#import <PromisesObjC/FBLPromise+Catch.h>
+#import <PromisesObjC/FBLPromise+Delay.h>
+#import <PromisesObjC/FBLPromise+Do.h>
+#import <PromisesObjC/FBLPromise+Race.h>
+#import <PromisesObjC/FBLPromise+Recover.h>
+#import <PromisesObjC/FBLPromise+Reduce.h>
+#import <PromisesObjC/FBLPromise+Retry.h>
+#import <PromisesObjC/FBLPromise+Testing.h>
+#import <PromisesObjC/FBLPromise+Then.h>
+#import <PromisesObjC/FBLPromise+Timeout.h>
+#import <PromisesObjC/FBLPromise+Validate.h>
+#import <PromisesObjC/FBLPromise+Wrap.h>
+#import <PromisesObjC/FBLPromise.h>
+#import <PromisesObjC/FBLPromiseError.h>
+#import <PromisesObjC/FBLPromises.h>
 
 FOUNDATION_EXPORT double FBLPromisesVersionNumber;
 FOUNDATION_EXPORT const unsigned char FBLPromisesVersionString[];
