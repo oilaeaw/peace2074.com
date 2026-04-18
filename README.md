@@ -65,10 +65,10 @@ Example payload:
 ```ts
 await sendDeepSeekChat({
   messages: [
-    { role: "system", content: "You are a helpful assistant." },
-    { role: "user", content: "Provide a short reflection on patience." },
+    { role: 'system', content: 'You are a helpful assistant.' },
+    { role: 'user', content: 'Provide a short reflection on patience.' },
   ],
-});
+})
 ```
 
 ## Quran links, recitation, and bookmarks
