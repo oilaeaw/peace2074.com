@@ -164,6 +164,15 @@ async function saveFallbackPasskeys(userId: string, passkeys: StoredPasskey[]) {
   await storage.setItem(getPasskeysKey(userId), normalizePasskeys(passkeys))
 }
 
+export async function deleteUserPasskeyStorage(userId: string): Promise<void> {
+  try {
+    const storage = getStorage()
+    await storage.removeItem(getPasskeysKey(userId))
+  } catch {
+    // noop - best-effort cleanup for legacy/fallback passkey storage
+  }
+}
+
 export async function getUserPasskeys(
   userId: string
 ): Promise<StoredPasskey[]> {

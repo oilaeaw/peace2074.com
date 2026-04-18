@@ -433,11 +433,26 @@
                 "passwordChanged": "Şifre başarıyla değiştirildi",
                 "passwordGenerated": "Güçlü şifre oluşturuldu ve alanlara eklendi",
                 "hint": "Şifre en az 8 karakter olmalıdır.",
+                "deleteAccount": {
+                    "title": "Hesabı sil",
+                    "warningTitle": "Kalıcı işlem",
+                    "warningBody": "Bu işlem hesabınızı, profilinizi, kayıtlı ilerlemenizi, beğenilerinizi, geçiş anahtarlarınızı ve aktif oturumunuzu kalıcı olarak siler. Bu işlem geri alınamaz.",
+                    "confirmLabel": "Kullanıcı adı veya e-posta",
+                    "confirmHint": "Hesap silmeyi onaylamak için {identifier} yazın.",
+                    "currentPasswordHint": "Şifreli hesaplar için gereklidir. Yalnızca Apple veya Google ile giriş yapıyorsanız bu alanı boş bırakabilirsiniz.",
+                    "action": "Hesabı sil",
+                    "confirmDialogTitle": "Hesap kalıcı olarak silinsin mi?",
+                    "confirmDialogMessage": "Hesabınız ve ilişkili verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz.",
+                    "success": "Hesap başarıyla silindi"
+                },
                 "errors": {
                     "allFieldsRequired": "Tüm alanlar zorunludur",
                     "passwordMismatch": "Yeni şifreler eşleşmiyor",
                     "passwordTooShort": "Şifre en az 8 karakter olmalı",
-                    "changeFailed": "Şifre değiştirilemedi"
+                    "changeFailed": "Şifre değiştirilemedi",
+                    "confirmationRequired": "Onaylamak için lütfen kullanıcı adınızı veya e-posta adresinizi yazın",
+                    "confirmationMismatch": "Onay metni hesabınızla eşleşmiyor",
+                    "deleteFailed": "Hesap silinemedi"
                 }
             }
         },

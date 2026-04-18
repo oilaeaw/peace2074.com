@@ -584,6 +584,34 @@ export async function updateUserPassword(userId: string, newPassword: string) {
     return true
 }
 
+export async function deleteUserById(userId: string) {
+    if (await isPrismaReady()) {
+        try {
+            await prisma.readerStats.deleteMany({ where: { userId } })
+            await prisma.deployLike.deleteMany({ where: { userId } })
+            await prisma.blogLike.deleteMany({ where: { userId } })
+            await prisma.quranProgress.deleteMany({ where: { userId } })
+            await prisma.tasbeeh.deleteMany({ where: { userId } })
+            await prisma.profile.deleteMany({ where: { userId } })
+
+            const deletedUser = await prisma.user.deleteMany({ where: { id: userId } })
+            return deletedUser.count > 0
+        } catch (error) {
+            markPrismaUnavailable(error)
+        }
+    }
+
+    const users = await loadFallbackUsers()
+    const nextUsers = users.filter((u) => u.id !== userId)
+
+    if (nextUsers.length === users.length) {
+        return false
+    }
+
+    await saveFallbackUsers(nextUsers)
+    return true
+}
+
 export async function addUser(user: User) {
     const normalized = normalizeUser(user)
 

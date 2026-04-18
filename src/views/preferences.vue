@@ -4,12 +4,13 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useStorageRef } from '@/composables/useUStore'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
 const $q = useQuasar()
 const authStore = useAuthStore()
 const route = useRoute()
+const router = useRouter()
 
 const THEME_MODE_KEY = 'pref-theme-mode'
 const DARK_MODE_KEY = 'pref-dark-mode'
@@ -30,6 +31,15 @@ const pageTitle = computed(() =>
     ? t('pages.preferences.profile.title')
     : t('pages.preferences.title')
 )
+const accountDeletionUsername = computed(() =>
+  String(authStore.user?.username || '').trim()
+)
+const accountDeletionEmail = computed(() =>
+  String(authStore.user?.email || '').trim()
+)
+const accountDeletionIdentifier = computed(
+  () => accountDeletionUsername.value || accountDeletionEmail.value
+)
 
 const displayName = ref('')
 const rememberLastPage = ref(true)
@@ -44,6 +54,10 @@ const showCurrentPassword = ref(false)
 const showNewPassword = ref(false)
 const showConfirmPassword = ref(false)
 const isChangingPassword = ref(false)
+const deleteAccountConfirm = ref('')
+const deleteAccountPassword = ref('')
+const showDeletePassword = ref(false)
+const isDeletingAccount = ref(false)
 
 // Production always uses /api, dev can use local Nitro
 const NITRO_BASE = import.meta.env.DEV
@@ -148,6 +162,128 @@ function suggestPassword() {
     position: 'top',
     timeout: 2000,
   })
+}
+
+async function getResponseErrorMessage(response: Response, fallback: string) {
+  const raw = await response.text().catch(() => '')
+
+  if (!raw) {
+    return fallback
+  }
+
+  try {
+    const parsed = JSON.parse(raw)
+    return parsed?.statusMessage || parsed?.message || fallback
+  } catch {
+    return raw
+  }
+}
+
+function confirmAccountDeletion() {
+  return new Promise<boolean>((resolve) => {
+    let settled = false
+    const finish = (value: boolean) => {
+      if (settled) return
+      settled = true
+      resolve(value)
+    }
+
+    $q.dialog({
+      title: t('pages.preferences.security.deleteAccount.confirmDialogTitle'),
+      message: t(
+        'pages.preferences.security.deleteAccount.confirmDialogMessage'
+      ),
+      ok: {
+        label: t('pages.preferences.security.deleteAccount.action'),
+        color: 'negative',
+        unelevated: true,
+      },
+      cancel: {
+        label: t('cancel'),
+        flat: true,
+      },
+    })
+      .onOk(() => finish(true))
+      .onCancel(() => finish(false))
+      .onDismiss(() => finish(false))
+  })
+}
+
+async function handleDeleteAccount() {
+  const confirmText = deleteAccountConfirm.value.trim()
+
+  if (!confirmText) {
+    $q.notify({
+      type: 'negative',
+      message: t('pages.preferences.security.errors.confirmationRequired'),
+      position: 'top',
+    })
+    return
+  }
+
+  if (
+    confirmText !== accountDeletionUsername.value &&
+    confirmText !== accountDeletionEmail.value
+  ) {
+    $q.notify({
+      type: 'negative',
+      message: t('pages.preferences.security.errors.confirmationMismatch'),
+      position: 'top',
+    })
+    return
+  }
+
+  const confirmed = await confirmAccountDeletion()
+  if (!confirmed) {
+    return
+  }
+
+  isDeletingAccount.value = true
+
+  try {
+    const response = await fetch(`${NITRO_BASE}/auth/delete-account`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      credentials: 'include',
+      body: JSON.stringify({
+        confirmText,
+        currentPassword: deleteAccountPassword.value.trim(),
+      }),
+    })
+
+    if (!response.ok) {
+      throw new Error(
+        await getResponseErrorMessage(
+          response,
+          t('pages.preferences.security.errors.deleteFailed')
+        )
+      )
+    }
+
+    authStore.clearUserState({ notify: false })
+    deleteAccountConfirm.value = ''
+    deleteAccountPassword.value = ''
+    showDeletePassword.value = false
+
+    $q.notify({
+      type: 'positive',
+      message: t('pages.preferences.security.deleteAccount.success'),
+      position: 'top',
+    })
+
+    await router.replace('/')
+  } catch (error: any) {
+    $q.notify({
+      type: 'negative',
+      message:
+        error.message || t('pages.preferences.security.errors.deleteFailed'),
+      position: 'top',
+    })
+  } finally {
+    isDeletingAccount.value = false
+  }
 }
 
 async function handleChangePassword() {
@@ -367,6 +503,73 @@ async function handleChangePassword() {
           </q-banner>
         </q-card-section>
       </q-card>
+
+      <q-card class="glassy-card danger-card" v-if="isAuthenticated">
+        <q-card-section class="q-gutter-md">
+          <div class="text-h6">
+            {{ t('pages.preferences.security.deleteAccount.title') }}
+          </div>
+
+          <q-banner dense rounded class="danger-banner">
+            <strong>
+              {{ t('pages.preferences.security.deleteAccount.warningTitle') }}
+            </strong>
+            <div class="q-mt-xs">
+              {{ t('pages.preferences.security.deleteAccount.warningBody') }}
+            </div>
+          </q-banner>
+
+          <q-input
+            v-model="deleteAccountConfirm"
+            :label="t('pages.preferences.security.deleteAccount.confirmLabel')"
+            outlined
+            dense
+          />
+
+          <div
+            v-if="accountDeletionIdentifier"
+            class="text-caption deletion-hint"
+          >
+            {{
+              t('pages.preferences.security.deleteAccount.confirmHint', {
+                identifier: accountDeletionIdentifier,
+              })
+            }}
+          </div>
+
+          <q-input
+            v-model="deleteAccountPassword"
+            :type="showDeletePassword ? 'text' : 'password'"
+            :label="t('pages.preferences.security.currentPassword')"
+            outlined
+            dense
+          >
+            <template v-slot:append>
+              <q-icon
+                :name="showDeletePassword ? 'visibility_off' : 'visibility'"
+                class="cursor-pointer"
+                @click="showDeletePassword = !showDeletePassword"
+              />
+            </template>
+          </q-input>
+
+          <div class="text-caption deletion-hint">
+            {{
+              t('pages.preferences.security.deleteAccount.currentPasswordHint')
+            }}
+          </div>
+
+          <q-btn
+            color="negative"
+            unelevated
+            icon="delete_forever"
+            :label="t('pages.preferences.security.deleteAccount.action')"
+            @click="handleDeleteAccount"
+            :loading="isDeletingAccount"
+            :disable="!deleteAccountConfirm.trim() || isDeletingAccount"
+          />
+        </q-card-section>
+      </q-card>
     </div>
   </q-page>
 </template>
@@ -406,6 +609,20 @@ async function handleChangePassword() {
   border: 1px solid rgba(148, 163, 184, 0.26);
 }
 
+.danger-card {
+  border-color: rgba(239, 68, 68, 0.24);
+}
+
+.danger-banner {
+  background: rgba(239, 68, 68, 0.12);
+  color: #991b1b;
+  border: 1px solid rgba(239, 68, 68, 0.24);
+}
+
+.deletion-hint {
+  color: #64748b;
+}
+
 :global(body.body--dark) .prefs-page .page-subtitle {
   color: #cbd5e1;
 }
@@ -421,5 +638,19 @@ async function handleChangePassword() {
   background: rgba(148, 163, 184, 0.12);
   color: #e2e8f0;
   border-color: rgba(148, 163, 184, 0.2);
+}
+
+:global(body.body--dark) .prefs-page .danger-card {
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+:global(body.body--dark) .prefs-page .danger-banner {
+  background: rgba(127, 29, 29, 0.38);
+  color: #fecaca;
+  border-color: rgba(248, 113, 113, 0.3);
+}
+
+:global(body.body--dark) .prefs-page .deletion-hint {
+  color: #cbd5e1;
 }
 </style>

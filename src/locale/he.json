@@ -433,11 +433,26 @@
                 "passwordChanged": "הסיסמה שונתה בהצלחה",
                 "passwordGenerated": "סיסמה חזקה נוצרה והוכנסה",
                 "hint": "הסיסמה חייבת להכיל לפחות 8 תווים.",
+                "deleteAccount": {
+                    "title": "מחיקת חשבון",
+                    "warningTitle": "פעולה קבועה",
+                    "warningBody": "פעולה זו תמחק לצמיתות את החשבון, הפרופיל, ההתקדמות השמורה, הלייקים, מפתחות הגישה וההפעלה הפעילה שלך. אי אפשר לבטל פעולה זו.",
+                    "confirmLabel": "שם משתמש או אימייל",
+                    "confirmHint": "הקלד/י {identifier} כדי לאשר את מחיקת החשבון.",
+                    "currentPasswordHint": "נדרש עבור חשבונות עם סיסמה. אם את/ה משתמש/ת רק בכניסה עם Apple או Google, אפשר להשאיר שדה זה ריק.",
+                    "action": "מחיקת חשבון",
+                    "confirmDialogTitle": "למחוק את החשבון לצמיתות?",
+                    "confirmDialogMessage": "החשבון והנתונים המשויכים אליו יימחקו לצמיתות. אי אפשר לבטל פעולה זו.",
+                    "success": "החשבון נמחק בהצלחה"
+                },
                 "errors": {
                     "allFieldsRequired": "כל השדות נדרשים",
                     "passwordMismatch": "הסיסמאות החדשות אינן תואמות",
                     "passwordTooShort": "הסיסמה חייבת להכיל לפחות 8 תווים",
-                    "changeFailed": "שינוי הסיסמה נכשל"
+                    "changeFailed": "שינוי הסיסמה נכשל",
+                    "confirmationRequired": "נא להקליד את שם המשתמש או האימייל כדי לאשר",
+                    "confirmationMismatch": "טקסט האישור אינו תואם לחשבון שלך",
+                    "deleteFailed": "מחיקת החשבון נכשלה"
                 }
             }
         },

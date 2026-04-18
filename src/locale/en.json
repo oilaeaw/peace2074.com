@@ -433,11 +433,26 @@
         "passwordChanged": "Password changed successfully",
         "passwordGenerated": "Strong password generated and filled in",
         "hint": "Password must be at least 8 characters long.",
+        "deleteAccount": {
+          "title": "Delete account",
+          "warningTitle": "Permanent action",
+          "warningBody": "This permanently deletes your account, profile, saved progress, likes, passkeys, and active session. This cannot be undone.",
+          "confirmLabel": "Username or email",
+          "confirmHint": "Type {identifier} to confirm account deletion.",
+          "currentPasswordHint": "Required for password accounts. If you only use Apple or Google sign-in, you can leave this blank.",
+          "action": "Delete account",
+          "confirmDialogTitle": "Delete account permanently?",
+          "confirmDialogMessage": "Your account and associated data will be permanently deleted. This action cannot be undone.",
+          "success": "Account deleted successfully"
+        },
         "errors": {
           "allFieldsRequired": "All fields are required",
           "passwordMismatch": "New passwords do not match",
           "passwordTooShort": "Password must be at least 8 characters",
-          "changeFailed": "Failed to change password"
+          "changeFailed": "Failed to change password",
+          "confirmationRequired": "Please type your username or email to confirm",
+          "confirmationMismatch": "Confirmation text does not match your account",
+          "deleteFailed": "Failed to delete account"
         }
       }
     },

@@ -433,11 +433,26 @@
                 "passwordChanged": "Password cambiata con successo",
                 "passwordGenerated": "Password sicura generata e inserita",
                 "hint": "La password deve essere di almeno 8 caratteri.",
+                "deleteAccount": {
+                    "title": "Elimina account",
+                    "warningTitle": "Azione permanente",
+                    "warningBody": "Questo elimina definitivamente il tuo account, il profilo, i progressi salvati, i Mi piace, le passkey e la sessione attiva. L'azione non può essere annullata.",
+                    "confirmLabel": "Nome utente o email",
+                    "confirmHint": "Digita {identifier} per confermare l'eliminazione dell'account.",
+                    "currentPasswordHint": "Obbligatoria per gli account con password. Se usi solo l'accesso con Apple o Google, puoi lasciare questo campo vuoto.",
+                    "action": "Elimina account",
+                    "confirmDialogTitle": "Eliminare definitivamente l'account?",
+                    "confirmDialogMessage": "Il tuo account e i dati associati verranno eliminati definitivamente. Questa azione non può essere annullata.",
+                    "success": "Account eliminato con successo"
+                },
                 "errors": {
                     "allFieldsRequired": "Tutti i campi sono obbligatori",
                     "passwordMismatch": "Le nuove password non coincidono",
                     "passwordTooShort": "La password deve essere di almeno 8 caratteri",
-                    "changeFailed": "Impossibile cambiare la password"
+                    "changeFailed": "Impossibile cambiare la password",
+                    "confirmationRequired": "Digita il tuo nome utente o indirizzo email per confermare",
+                    "confirmationMismatch": "Il testo di conferma non corrisponde al tuo account",
+                    "deleteFailed": "Impossibile eliminare l'account"
                 }
             }
         },
