@@ -194,9 +194,14 @@ async function bootstrapAuthState() {
     const authStore = useAuthStore()
     await authStore.hydrateSession()
 
-    const currentPath = window.location.pathname.replace(/\/+$/, '') || '/'
+    const explicitLocale = extractLocaleFromPath(window.location.pathname)
+    const currentPath = stripLocalePrefix(window.location.pathname)
     if (currentPath === '/dashboard') {
-      await router.replace('/')
+      await router.replace(
+        buildLocalePath('/', explicitLocale, {
+          forcePrefix: Boolean(explicitLocale),
+        })
+      )
     }
   } catch (error) {
     console.error('Auth bootstrap failed; continuing app mount', error)
@@ -306,15 +311,10 @@ function getStringRouteMeta(
   const value = to.meta[key]
   return typeof value === 'string' ? value : undefined
 }
-const explicitLocale = extractLocaleFromPath(window.location.pathname)
-const currentPath = stripLocalePrefix(window.location.pathname)
+
 function getStringArrayRouteMeta(
-  await router.replace(
-    buildLocalePath('/', explicitLocale, {
-      forcePrefix: Boolean(explicitLocale),
-    })
-  )
-key: ArrayRouteMetaKey
+  to: RouteLocationNormalizedLoaded,
+  key: ArrayRouteMetaKey
 ) {
   const value = to.meta[key]
   return Array.isArray(value)

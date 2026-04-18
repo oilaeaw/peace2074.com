@@ -39,8 +39,8 @@ function withLocaleAlias(route: RouteRecordRaw): RouteRecordRaw {
   return {
     ...route,
     alias: Array.from(new Set([...aliases, buildLocaleAlias(route.path)])),
-    children: route.children?.map(withLocaleAlias),
-  }
+    ...(route.children ? { children: route.children.map(withLocaleAlias) } : {}),
+  } as RouteRecordRaw
 }
 
 // Routes
