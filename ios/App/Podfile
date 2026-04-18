@@ -158,4 +158,22 @@ post_install do |installer|
 
     user_project.save
   end
+
+  # Fix nanopb umbrella header: double-quoted includes must be angle-bracketed in framework headers
+  nanopb_dir = File.join(installer.sandbox.root, 'nanopb')
+  umbrella = File.join(installer.sandbox.root, 'Target Support Files/nanopb/nanopb-umbrella.h')
+  if File.exist?(umbrella)
+    File.write(umbrella, File.read(umbrella).gsub(/#import "([^"]+)"/, '#import <nanopb/\1>'))
+    puts "✓ Fixed nanopb-umbrella.h angle-bracket imports"
+  end
+  ['pb_decode.h', 'pb_encode.h', 'pb_common.h'].each do |f|
+    path = File.join(nanopb_dir, f)
+    next unless File.exist?(path)
+    content = File.read(path)
+    patched = content.gsub('#include "pb.h"', '#include <nanopb/pb.h>')
+    if patched != content
+      File.write(path, patched)
+      puts "✓ Fixed #{f} angle-bracket include"
+    end
+  end
 end
