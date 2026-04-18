@@ -25,16 +25,16 @@ Edit `capacitor.config.ts` to point to your local dev server:
 
 ```typescript
 const config: CapacitorConfig = {
-  appId: "com.peace2074.app",
-  appName: "Peace2074",
-  webDir: "dist",
+  appId: 'com.peace2074.app',
+  appName: 'Peace2074',
+  webDir: 'dist',
   bundledWebRuntime: false,
   server: {
-    androidScheme: "https",
-    url: "http://localhost:4000", // ← Local dev server
+    androidScheme: 'https',
+    url: 'http://localhost:4000', // ← Local dev server
     cleartext: true,
   },
-};
+}
 ```
 
 ### 3. Build and Open Xcode
@@ -64,6 +64,40 @@ npx cap open ios
 2. **Select "App" scheme** (dropdown at top left)
 3. **Choose simulator** (e.g., iPhone 16 Pro)
 4. **Click ▶️** to build and run
+
+### Xcode Cloud Shared Environment Variables
+
+If you build the iOS app in Xcode Cloud and want reusable configuration across multiple workflows, create the variable once and apply it to every workflow that should use the production API.
+
+Recommended shared variable for this project:
+
+```text
+VITE_NITRO_BASE=https://peace2074.com/api
+```
+
+Use these Apple form values:
+
+| Field               | Value                       |
+| ------------------- | --------------------------- |
+| Name                | `VITE_NITRO_BASE`           |
+| Value               | `https://peace2074.com/api` |
+| Secret              | `No`                        |
+| Keep value redacted | `Off`                       |
+
+How to configure and reuse it:
+
+1. Open **Xcode Cloud** in Xcode or App Store Connect.
+2. Go to **Shared Environment Variables**.
+3. Add `VITE_NITRO_BASE` with the value `https://peace2074.com/api`.
+4. Leave redaction/secret mode **off** because this value is public.
+5. Select every iOS workflow that should use the production API.
+6. Save once; future edits to the shared variable can then be reused by all attached workflows.
+
+Notes:
+
+- This value is **not a secret**, so it does not need redaction.
+- This is for **native iOS/Xcode Cloud builds**, not for the Netlify web deployment.
+- The repo also keeps a production mobile fallback to `https://peace2074.com/api`, but setting the variable makes the intended build-time config explicit.
 
 ---
 
@@ -252,7 +286,7 @@ pod install
 - Use `localhost` (not `127.0.0.1`) for iOS simulator
 - For physical device, use your Mac's IP:
   ```typescript
-  url: "http://192.168.1.100:4000"; // Your Mac's IP
+  url: 'http://192.168.1.100:4000' // Your Mac's IP
   ```
 
 ---
