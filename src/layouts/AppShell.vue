@@ -334,11 +334,17 @@ import {
   defineAsyncComponent,
 } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRouter } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
 import { useSiteSearch } from '@/composables/useSiteSearch'
 import { useAuthStore } from '@/stores/auth.pinia'
+import {
+  AVAILABLE_LOCALES,
+  buildLocalePath,
+  normalizeLocale,
+  persistLocale,
+} from '@/utils/locale-routing'
 const SupportAIWidget = defineAsyncComponent(
   () => import('@/components/common/SupportAIWidget.vue')
 )
@@ -348,7 +354,6 @@ const ConsentBanner = defineAsyncComponent(
 
 declare const __APP_VERSION__: string
 
-const LOCALE_STORAGE_KEY = 'app-locale'
 const NAV_STORAGE_KEY = 'nav-items-v1'
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -361,27 +366,35 @@ const search = ref('')
 const { locale, t } = useI18n({ useScope: 'global' })
 const $q = useQuasar()
 const router = useRouter()
+const route = useRoute()
 const authStore = useAuthStore()
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const authUser = computed(() => authStore._user)
-const languageCodes = ['en', 'ar', 'de', 'es', 'ru', 'he', 'it', 'tr'] as const
+const languageCodes = AVAILABLE_LOCALES
 
 const localeModel = computed({
   get: () => locale.value,
   set: (value: string) => {
     if (!value) return
-    const normalized = String(value).trim().toLowerCase().split('-')[0]
-    if (!languageCodes.includes(normalized as (typeof languageCodes)[number]))
-      return
+    const normalized = normalizeLocale(value, languageCodes)
+    if (!normalized) return
+
     locale.value = normalized
-    if (
-      typeof window !== 'undefined' &&
-      typeof window.localStorage !== 'undefined'
-    ) {
-      try {
-        window.localStorage.setItem(LOCALE_STORAGE_KEY, normalized)
-      } catch {}
-    }
+    persistLocale(normalized)
+
+    const localizedPath = buildLocalePath(route.path, normalized, {
+      forcePrefix: true,
+    })
+
+    if (localizedPath === route.path) return
+
+    void router
+      .replace({
+        path: localizedPath,
+        query: route.query,
+        hash: route.hash,
+      })
+      .catch(() => {})
   },
 })
 

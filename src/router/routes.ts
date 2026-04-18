@@ -1,5 +1,7 @@
 import { RouteRecordRaw } from "vue-router";
 
+import { buildLocaleAlias, buildLocalePath, normalizeLocale } from '@/utils/locale-routing'
+
 // Type definitions
 export const ROUTE_PATHS = {
   Home: "/",
@@ -15,8 +17,34 @@ export const ROUTE_NAMES = {
 type RouteNameKey = keyof typeof ROUTE_NAMES;
 export type RouteName = (typeof ROUTE_NAMES)[RouteNameKey];
 
+function resolveLocaleParam(localeParam: unknown) {
+  return normalizeLocale(
+    Array.isArray(localeParam) ? localeParam[0] : typeof localeParam === 'string' ? localeParam : null
+  )
+}
+
+function buildRoutePath(path: string, localeParam: unknown) {
+  return buildLocalePath(path, resolveLocaleParam(localeParam), {
+    forcePrefix: Boolean(resolveLocaleParam(localeParam)),
+  })
+}
+
+function withLocaleAlias(route: RouteRecordRaw): RouteRecordRaw {
+  const aliases = Array.isArray(route.alias)
+    ? route.alias
+    : route.alias
+      ? [route.alias]
+      : []
+
+  return {
+    ...route,
+    alias: Array.from(new Set([...aliases, buildLocaleAlias(route.path)])),
+    children: route.children?.map(withLocaleAlias),
+  }
+}
+
 // Routes
-export const routes: Array<RouteRecordRaw> = [
+const baseRoutes: Array<RouteRecordRaw> = [
   {
     path: ROUTE_PATHS.Home,
     name: ROUTE_NAMES.Home,
@@ -88,12 +116,16 @@ export const routes: Array<RouteRecordRaw> = [
       const verse = Number.parseInt(verseRaw, 10)
 
       if (!Number.isInteger(sura) || sura < 1 || sura > 114 || !Number.isInteger(verse) || verse < 1) {
-        return { path: '/quran', query: { invalidSura: '1' }, replace: true }
+        return {
+          path: buildRoutePath('/quran', to.params.locale),
+          query: { invalidSura: '1' },
+          replace: true,
+        }
       }
 
       // Preserve query parameters (autoplay, mode, etc.)
       return {
-        path: `/quran/${sura}`,
+        path: buildRoutePath(`/quran/${sura}`, to.params.locale),
         hash: `#${sura}_${verse}`,
         query: to.query,
         replace: true,
@@ -117,7 +149,11 @@ export const routes: Array<RouteRecordRaw> = [
     beforeEnter: (to) => {
       const id = Number.parseInt(String(to.params.id), 10)
       if (!Number.isInteger(id) || id < 1 || id > 114) {
-        return { path: '/quran', query: { invalidSura: '1' }, replace: true }
+        return {
+          path: buildRoutePath('/quran', to.params.locale),
+          query: { invalidSura: '1' },
+          replace: true,
+        }
       }
       return true
     },
@@ -249,11 +285,11 @@ export const routes: Array<RouteRecordRaw> = [
   },
   {
     path: '/deploy',
-    redirect: '/deploys',
+    redirect: (to) => buildRoutePath('/deploys', to.params.locale),
   },
   {
     path: '/depoy',
-    redirect: '/deploys',
+    redirect: (to) => buildRoutePath('/deploys', to.params.locale),
   },
   {
     path: '/deploys',
@@ -364,4 +400,6 @@ export const routes: Array<RouteRecordRaw> = [
       schemaType: 'WebPage',
     },
   },
-];
+]
+
+export const routes: Array<RouteRecordRaw> = baseRoutes.map(withLocaleAlias)

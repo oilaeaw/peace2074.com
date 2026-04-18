@@ -23,6 +23,16 @@ import {
   DEFAULT_SEO_KEYWORDS,
   resolveCanonicalUrl,
 } from '@/utils/seo'
+import {
+  AVAILABLE_LOCALES,
+  buildLocalePath,
+  DEFAULT_LOCALE,
+  extractLocaleFromPath,
+  normalizeLocale,
+  persistLocale,
+  stripLocalePrefix,
+  type AppLocale,
+} from '@/utils/locale-routing'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
@@ -47,14 +57,11 @@ type StringRouteMetaKey =
   | 'ogType'
   | 'image'
 type ArrayRouteMetaKey = 'keywords'
-type AppLocale = keyof typeof localeMessages
-
 const env = (import.meta as MainImportMeta).env
 const localStore = useLocalStorage()
 const THEME_MODE_KEY = 'pref-theme-mode'
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
-const AVAILABLE_LOCALES = Object.keys(localeMessages) as AppLocale[]
 const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
 const RESIZE_OBSERVER_ERROR_PATTERNS = [
   /ResizeObserver loop limit exceeded/i,
@@ -235,50 +242,20 @@ if (isClient) {
   })
 }
 
-const LOCALE_STORAGE_KEY = 'app-locale'
-const DEFAULT_LOCALE: AppLocale = 'en'
-
 function getAvailableLocales(): AppLocale[] {
   return [...AVAILABLE_LOCALES]
-}
-
-function normalizeLocale(
-  localeValue: string | null | undefined,
-  availableLocales: AppLocale[]
-): AppLocale | null {
-  if (!localeValue) return null
-
-  const normalized = String(localeValue).trim().toLowerCase().replace('_', '-')
-  if (!normalized) return null
-
-  // Legacy language codes used by some browsers
-  const legacyMap: Record<string, string> = {
-    iw: 'he',
-    in: 'id',
-    ji: 'yi',
-  }
-
-  const normalizedBase = normalized.split('-')[0]
-  const mapped = legacyMap[normalizedBase] || normalizedBase
-  return availableLocales.includes(mapped as AppLocale)
-    ? (mapped as AppLocale)
-    : null
-}
-
-function persistLocale(localeValue: AppLocale) {
-  if (!isClient || !localeValue) return
-  try {
-    window.localStorage?.setItem(LOCALE_STORAGE_KEY, localeValue)
-  } catch {
-    /* noop */
-  }
 }
 
 function resolveInitialLocale(): AppLocale {
   if (!isClient) return DEFAULT_LOCALE
   try {
     const availableLocales = getAvailableLocales()
-    const persisted = window.localStorage?.getItem(LOCALE_STORAGE_KEY)
+    const explicitLocale = extractLocaleFromPath(window.location.pathname)
+    if (explicitLocale) {
+      return explicitLocale
+    }
+
+    const persisted = window.localStorage?.getItem('app-locale')
     const normalizedPersisted = normalizeLocale(persisted, availableLocales)
     if (normalizedPersisted) {
       return normalizedPersisted
@@ -329,10 +306,15 @@ function getStringRouteMeta(
   const value = to.meta[key]
   return typeof value === 'string' ? value : undefined
 }
-
+const explicitLocale = extractLocaleFromPath(window.location.pathname)
+const currentPath = stripLocalePrefix(window.location.pathname)
 function getStringArrayRouteMeta(
-  to: RouteLocationNormalizedLoaded,
-  key: ArrayRouteMetaKey
+  await router.replace(
+    buildLocalePath('/', explicitLocale, {
+      forcePrefix: Boolean(explicitLocale),
+    })
+  )
+key: ArrayRouteMetaKey
 ) {
   const value = to.meta[key]
   return Array.isArray(value)
@@ -377,7 +359,7 @@ if (isClient) {
 }
 
 function isQuranDetailPath(path: string): boolean {
-  return /^\/quran\/\d+$/.test(path)
+  return /^\/quran\/\d+$/.test(stripLocalePrefix(path))
 }
 
 function resolveCanonical(to: RouteLocationNormalizedLoaded): string {

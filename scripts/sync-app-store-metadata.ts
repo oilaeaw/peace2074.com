@@ -16,6 +16,23 @@ const repoRoot = path.resolve(__dirname, '..')
 const metadataRoot = path.join(repoRoot, 'ios', 'App', 'fastlane', 'metadata')
 const defaultDir = path.join(metadataRoot, 'default')
 const primaryLocaleDir = path.join(metadataRoot, 'en-US')
+const localeSpecificUrlPaths = {
+    'privacy_url.txt': '/privacy',
+    'support_url.txt': '/contact',
+    'marketing_url.txt': '/',
+} as const
+const appLocaleByStoreLocale: Record<AppStoreLocale, string> = {
+    'en-US': 'en',
+    'ar-SA': 'ar',
+    'de-DE': 'de',
+    'es-ES': 'es',
+    ru: 'ru',
+    he: 'he',
+    it: 'it',
+    tr: 'tr',
+}
+
+type LocaleSpecificUrlFile = keyof typeof localeSpecificUrlPaths
 
 async function listTxtFiles(dirPath: string) {
     const entries = await readdir(dirPath, { withFileTypes: true })
@@ -64,19 +81,49 @@ function isLocalizableMetadataFile(fileName: string): fileName is LocalizableMet
     return localizableMetadataFiles.includes(fileName as LocalizableMetadataFile)
 }
 
+function isLocaleSpecificUrlFile(fileName: string): fileName is LocaleSpecificUrlFile {
+    return fileName in localeSpecificUrlPaths
+}
+
+function buildLocalizedUrl(
+    fileName: LocaleSpecificUrlFile,
+    locale: AppStoreLocale,
+    sourceContent: string,
+) {
+    const trimmedSource = sourceContent.trim()
+    const localizedUrl = new URL(trimmedSource)
+    const localizedRoutePath = localeSpecificUrlPaths[fileName]
+    const appLocale = appLocaleByStoreLocale[locale]
+
+    localizedUrl.pathname = localizedRoutePath === '/'
+        ? `/${appLocale}`
+        : `/${appLocale}${localizedRoutePath}`
+    localizedUrl.search = ''
+    localizedUrl.hash = ''
+
+    return sourceContent.endsWith('\n')
+        ? `${localizedUrl.toString()}\n`
+        : localizedUrl.toString()
+}
+
 function getLocalizedContent(
     locale: AppStoreLocale | 'default',
     fileName: string,
+    sourceContent: string,
 ) {
-    if (!isLocalizableMetadataFile(fileName)) {
+    if (isLocalizableMetadataFile(fileName)) {
+        if (locale === 'default') {
+            return localizedMetadata['en-US'][fileName]
+        }
+
+        return localizedMetadata[locale][fileName]
+    }
+
+    if (!isLocaleSpecificUrlFile(fileName) || locale === 'default') {
         return null
     }
 
-    if (locale === 'default') {
-        return localizedMetadata['en-US'][fileName]
-    }
-
-    return localizedMetadata[locale][fileName]
+    return buildLocalizedUrl(fileName, locale, sourceContent)
 }
 
 async function main() {
@@ -99,8 +146,9 @@ async function main() {
 
         for (const fileName of fileNames) {
             const targetPath = path.join(localeDir, fileName)
-            const localizedContent = getLocalizedContent(locale, fileName)
-            const desiredContent = localizedContent ?? await getSourceContent(fileName)
+            const sourceContent = await getSourceContent(fileName)
+            const localizedContent = getLocalizedContent(locale, fileName, sourceContent)
+            const desiredContent = localizedContent ?? sourceContent
             const currentContent = await readIfExists(targetPath)
 
             if (currentContent === desiredContent) {

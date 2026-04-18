@@ -72,7 +72,17 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute, useRouter } from 'vue-router'
+import {
+  AVAILABLE_LOCALES,
+  buildLocalePath,
+  normalizeLocale,
+  persistLocale,
+} from '@/utils/locale-routing'
+
 const { locale, t } = useI18n({ useScope: 'global' })
+const route = useRoute()
+const router = useRouter()
 
 declare const __APP_VERSION__: string
 
@@ -83,7 +93,7 @@ const appVersion =
     : appVersionRaw
 const currentYear = new Date().getFullYear()
 
-const languageCodes = ['en', 'ar', 'de', 'es', 'ru', 'he', 'it', 'tr'] as const
+const languageCodes = AVAILABLE_LOCALES
 
 const languageFlags: Record<string, string> = {
   en: '🇺🇸',
@@ -107,12 +117,19 @@ const langs = computed(() => {
 
 function onLangChange(e: Event) {
   const val = (e.target as HTMLSelectElement).value
-  locale.value = val
-  if (typeof window !== 'undefined' && window.localStorage) {
-    try {
-      window.localStorage.setItem('app-locale', val)
-    } catch {}
-  }
+  const normalized = normalizeLocale(val, languageCodes)
+  if (!normalized) return
+
+  locale.value = normalized
+  persistLocale(normalized)
+
+  void router
+    .replace({
+      path: buildLocalePath(route.path, normalized, { forcePrefix: true }),
+      query: route.query,
+      hash: route.hash,
+    })
+    .catch(() => {})
 }
 </script>
 
