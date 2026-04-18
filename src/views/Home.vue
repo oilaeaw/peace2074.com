@@ -27,6 +27,15 @@
             class="q-mr-sm"
           />
           <q-btn to="/tasbeeh" flat :label="t('pages.home.hero.ctaTasbeeh')" />
+          <q-btn
+            :href="IOS_APP_STORE_URL"
+            :label="t('pages.home.hero.ctaIos')"
+            icon="phone_iphone"
+            color="primary"
+            outline
+            target="_blank"
+            rel="noopener noreferrer"
+          />
         </div>
       </div>
 
@@ -248,6 +257,7 @@ import dailyMessagesData from '@/app/data/daily-messages.json'
 const { t, tm, locale } = useI18n()
 const $q = useQuasar()
 const router = useRouter()
+const IOS_APP_STORE_URL = 'https://apps.apple.com/app/id6761300696'
 
 const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)

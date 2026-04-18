@@ -39,6 +39,12 @@ Notes:
 - Capacitor config is in `capacitor.config.ts`.
 - In mobile runtime (`capacitor:`), API calls use `VITE_NITRO_BASE` (or fallback to `https://peace2074.com/api`).
 
+### iOS distribution
+
+- App Store listing: `https://apps.apple.com/app/id6761300696`
+- The App Store page becomes publicly installable once Apple approves and releases the listing.
+- The web homepage includes an iOS App Store button for quick access to the native app listing.
+
 ## Deployment to Netlify
 
 This project is configured for deployment to Netlify. See:
