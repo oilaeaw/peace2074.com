@@ -1,1 +1,1 @@
-Initial iOS release of Peace2074. Read the full Quran in 8 languages, explore the 99 Holy Names, track Tasbeeh, and use the AI Islamic guide.
+Localized App Store document links, cleaner iOS submission settings, and release-readiness improvements across the app and metadata.

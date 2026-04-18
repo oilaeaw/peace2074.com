@@ -52,7 +52,7 @@ Peace2074 supports RTL for Arabic and Hebrew and feels natural in every supporte
 Download Peace2074 and keep the Quran with you wherever you go.`,
         'keywords.txt': 'quran,islam,muslim,tasbeeh,athan,dhikr,prayer,holy names,islamic guide',
         'promotional_text.txt': 'Read the complete Quran in 8 languages, explore the 99 Holy Names, track Tasbeeh, and chat with an AI Islamic guide — all in one app.',
-        'release_notes.txt': 'Initial iOS release of Peace2074. Read the full Quran in 8 languages, explore the 99 Holy Names, track Tasbeeh, and use the AI Islamic guide.',
+        'release_notes.txt': 'Localized App Store document links, cleaner iOS submission settings, and release-readiness improvements across the app and metadata.',
     },
     'ar-SA': {
         'name.txt': 'Peace2074',
@@ -80,7 +80,7 @@ Download Peace2074 and keep the Quran with you wherever you go.`,
 حمّل Peace2074 وابقَ على صلة بالقرآن أينما كنت.`,
         'keywords.txt': 'القرآن,إسلام,مسلم,تسبيح,أذان,ذكر,صلاة,أسماء الله',
         'promotional_text.txt': 'اقرأ القرآن كاملًا بـ8 لغات، واستكشف أسماء الله الحسنى الـ99، وتتبع تسبيحك، وتحدث مع مرشد إسلامي بالذكاء الاصطناعي — كل ذلك في تطبيق واحد.',
-        'release_notes.txt': 'الإصدار الأول من Peace2074 على iOS. اقرأ القرآن كاملًا بـ8 لغات، واستكشف أسماء الله الحسنى، وتتبع تسبيحك، واستخدم المرشد الإسلامي بالذكاء الاصطناعي.',
+        'release_notes.txt': 'روابط محلية لوثائق App Store، وإعدادات أوضح لتقديم iOS، وتحسينات لجاهزية الإصدار عبر التطبيق والبيانات الوصفية.',
     },
     'de-DE': {
         'name.txt': 'Peace2074',
@@ -108,7 +108,7 @@ Peace2074 unterstützt RTL für Arabisch und Hebräisch und fühlt sich in jeder
 Lade Peace2074 herunter und trage den Koran überall mit dir.`,
         'keywords.txt': 'koran,islam,muslim,tasbeeh,adhan,dhikr,gebet,99 namen',
         'promotional_text.txt': 'Lies den vollständigen Koran in 8 Sprachen, entdecke die 99 Namen Allahs, zähle dein Tasbeeh und nutze einen islamischen KI-Begleiter — alles in einer App.',
-        'release_notes.txt': 'Erste iOS-Version von Peace2074. Lies den vollständigen Koran in 8 Sprachen, entdecke die 99 Namen Allahs, zähle Tasbeeh und nutze den islamischen KI-Begleiter.',
+        'release_notes.txt': 'Lokalisierte App-Store-Dokumentlinks, sauberere iOS-Einreichungseinstellungen und Verbesserungen für die Release-Bereitschaft in App und Metadaten.',
     },
     'es-ES': {
         'name.txt': 'Peace2074',
@@ -136,7 +136,7 @@ Peace2074 ofrece soporte RTL para árabe y hebreo y se siente natural en cada id
 Descarga Peace2074 y lleva el Corán contigo donde vayas.`,
         'keywords.txt': 'coran,islam,musulman,tasbeeh,adhan,dhikr,oracion,99 nombres',
         'promotional_text.txt': 'Lee el Corán completo en 8 idiomas, explora los 99 nombres de Allah, sigue tu Tasbeeh y usa una guía islámica con IA — todo en una sola app.',
-        'release_notes.txt': 'Lanzamiento inicial de Peace2074 para iOS. Lee el Corán completo en 8 idiomas, explora los 99 nombres de Allah, sigue tu Tasbeeh y usa la guía islámica con IA.',
+        'release_notes.txt': 'Enlaces localizados para documentos de App Store, ajustes más claros para el envío de iOS y mejoras de preparación de lanzamiento en la app y sus metadatos.',
     },
     'ru': {
         'name.txt': 'Peace2074',
@@ -164,7 +164,7 @@ Peace2074 поддерживает RTL для арабского и иврита
 Скачайте Peace2074 и носите Коран с собой везде.`,
         'keywords.txt': 'коран,ислам,мусульманин,тасбих,азан,зикр,намаз,99 имен',
         'promotional_text.txt': 'Читайте Коран полностью на 8 языках, изучайте 99 имен Аллаха, считайте тасбих и пользуйтесь исламским помощником с ИИ — в одном приложении.',
-        'release_notes.txt': 'Первый релиз Peace2074 для iOS. Читайте Коран полностью на 8 языках, изучайте 99 имен Аллаха, считайте тасбих и пользуйтесь исламским помощником с ИИ.',
+        'release_notes.txt': 'Локализованные ссылки на документы App Store, более чистые настройки отправки iOS и улучшения готовности релиза в приложении и метаданных.',
     },
     'he': {
         'name.txt': 'Peace2074',
@@ -192,7 +192,7 @@ Peace2074 תומך ב-RTL לערבית ולעברית ומרגיש טבעי בכ
 הורידו את Peace2074 ושאו את הקוראן איתכם לכל מקום.`,
         'keywords.txt': 'קוראן,אסלאם,מוסלמי,תסביח,אדאן,דיכר,תפילה,99 שמות',
         'promotional_text.txt': 'קראו את הקוראן המלא ב-8 שפות, גלו את 99 שמותיו של אללה, עקבו אחר התסביח והשתמשו במדריך אסלאמי עם בינה מלאכותית — הכל באפליקציה אחת.',
-        'release_notes.txt': 'גרסת iOS הראשונה של Peace2074. קראו את הקוראן המלא ב-8 שפות, גלו את 99 שמותיו של אללה, עקבו אחר התסביח והשתמשו במדריך האסלאמי עם בינה מלאכותית.',
+        'release_notes.txt': 'קישורים מקומיים למסמכי App Store, הגדרות נקיות יותר להגשת iOS ושיפורי מוכנות לשחרור באפליקציה ובמטא-דאטה.',
     },
     'it': {
         'name.txt': 'Peace2074',
@@ -220,7 +220,7 @@ Peace2074 supporta RTL per arabo ed ebraico e risulta naturale in ogni lingua su
 Scarica Peace2074 e porta il Corano con te ovunque.`,
         'keywords.txt': 'corano,islam,musulmano,tasbeeh,adhan,dhikr,preghiera,99 nomi',
         'promotional_text.txt': 'Leggi il Corano completo in 8 lingue, scopri i 99 nomi di Allah, tieni il conto del Tasbeeh e usa una guida islamica con IA — tutto in un’unica app.',
-        'release_notes.txt': 'Prima versione iOS di Peace2074. Leggi il Corano completo in 8 lingue, scopri i 99 nomi di Allah, tieni il conto del Tasbeeh e usa la guida islamica con IA.',
+        'release_notes.txt': 'Link localizzati ai documenti dell’App Store, impostazioni più pulite per l’invio iOS e miglioramenti di preparazione al rilascio nell’app e nei metadati.',
     },
     'tr': {
         'name.txt': 'Peace2074',
@@ -248,6 +248,6 @@ Peace2074, Arapça ve İbranice için RTL desteği sunar ve her desteklenen dild
 Peace2074'ü indirin ve Kur'an'ı her yere yanınızda taşıyın.`,
         'keywords.txt': 'kuran,islam,musluman,tesbih,ezan,zikir,namaz,99 isim',
         'promotional_text.txt': `Kur'an'ın tamamını 8 dilde okuyun, Allah'ın 99 ismini keşfedin, tesbihinizi takip edin ve yapay zekâ destekli İslami rehberi kullanın — hepsi tek uygulamada.`,
-        'release_notes.txt': `Peace2074'ün iOS için ilk sürümü. Kur'an'ın tamamını 8 dilde okuyun, Allah'ın 99 ismini keşfedin, tesbihinizi takip edin ve yapay zekâ destekli İslami rehberi kullanın.`,
+        'release_notes.txt': `App Store belgeleri için yerelleştirilmiş bağlantılar, daha temiz iOS gönderim ayarları ve uygulama ile meta veriler genelinde sürüm hazırlığı iyileştirmeleri.`,
     },
 }

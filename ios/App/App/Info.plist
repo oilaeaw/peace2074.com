@@ -9,8 +9,10 @@
 		<string>en</string>
 		<string>ar</string>
 		<string>de</string>
+		<string>es</string>
 		<string>ru</string>
 		<string>he</string>
+		<string>it</string>
 		<string>tr</string>
 	</array>
 	<key>CFBundleDisplayName</key>
@@ -28,7 +30,7 @@
 	<key>CFBundleShortVersionString</key>
 	<string>$(MARKETING_VERSION)</string>
 	<key>CFBundleVersion</key>
-	<string>202604180113</string>
+	<string>202604181555</string>
 	<key>ITSAppUsesNonExemptEncryption</key>
 	<false/>
 	<key>FIREBASE_ANALYTICS_COLLECTION_ENABLED</key>

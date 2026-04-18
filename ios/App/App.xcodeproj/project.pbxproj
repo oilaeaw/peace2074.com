@@ -144,8 +144,10 @@
 				en,
 				ar,
 				de,
+				es,
 				ru,
 				he,
+				it,
 				tr,
 				Base,
 			);
@@ -397,7 +399,7 @@
 				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202604180113;
+				CURRENT_PROJECT_VERSION = 202604181555;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 5CY5WTPYKZ;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -409,7 +411,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.1.1;
 				OTHER_SWIFT_FLAGS = "$(inherited) \"-D\" \"COCOAPODS\" \"-DDEBUG\"";
 				PRODUCT_BUNDLE_IDENTIFIER = com.peace2074.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -431,7 +433,7 @@
 				CLANG_USE_OPTIMIZATION_PROFILE = YES;
 				"CODE_SIGN_IDENTITY[sdk=macosx*]" = "Apple Development";
 				CODE_SIGN_STYLE = Automatic;
-				CURRENT_PROJECT_VERSION = 202604180113;
+				CURRENT_PROJECT_VERSION = 202604181555;
 				DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER = YES;
 				DEVELOPMENT_TEAM = 5CY5WTPYKZ;
 				ENABLE_USER_SCRIPT_SANDBOXING = NO;
@@ -443,7 +445,7 @@
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-				MARKETING_VERSION = 3.0.0;
+				MARKETING_VERSION = 3.1.1;
 				PRODUCT_BUNDLE_IDENTIFIER = com.peace2074.app;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SUPPORTED_PLATFORMS = "iphonesimulator iphoneos";

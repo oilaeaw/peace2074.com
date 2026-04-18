@@ -2,6 +2,22 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.1.1 (2026-04-18)
+
+### Features
+
+- add locale-prefixed public document URLs so privacy, support, and storefront links resolve per supported language
+- refresh localized App Store metadata and release notes for the latest iOS submission-readiness batch
+
+### Bug Fixes
+
+- mark the iOS app as using only exempt encryption for the current standard-crypto configuration
+
+### Chores
+
+- bump root and Nitro API package versions to `3.1.1`
+- align iOS marketing/build versions with the current release batch and native sync
+
 ## 3.1.0 (2026-04-12)
 
 ### Features

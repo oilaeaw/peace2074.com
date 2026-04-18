@@ -1,6 +1,6 @@
 {
   "name": "peace2074",
-  "version": "3.1.0",
+  "version": "3.1.1",
   "type": "module",
   "engines": {
     "node": ">=22.12.0"

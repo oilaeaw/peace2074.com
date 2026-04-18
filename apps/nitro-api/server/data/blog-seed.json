@@ -1,5 +1,23 @@
 [
     {
+        "id": "peace2074-release-progress-april-2026",
+        "slug": "peace2074-release-progress-april-2026",
+        "title": "Peace2074 release progress: localized storefront links, iOS sync, and submission cleanup",
+        "excerpt": "A quick accomplishment report covering locale-aware public URLs, App Store metadata improvements, cleaner iOS export compliance, and native release prep.",
+        "content": "Assalamu alaikum,\n\nHere is a quick progress report from the latest Peace2074 release batch. We wanted this update to make the app easier to ship, easier to review, and easier to understand across languages.\n\nWhat we completed\n- Locale-aware public URLs for review-facing pages such as privacy and support, so links can be shared per language\n- Localized App Store metadata and refreshed release notes across our 8 supported storefront languages\n- Cleaner iOS export compliance configuration for the current standard-encryption setup\n- Native iOS version/build alignment and sync preparation for the next submission cycle\n\nWhy this matters\nThese updates reduce friction during App Store submission, make public documentation clearer for reviewers and users, and keep our mobile release process more predictable.\n\nWhat comes next\n- Finish the dedicated age suitability page\n- Add the final App Store review-facing document links\n- Continue polishing multilingual content and mobile release readiness\n\nThank you for following the journey. Every release gets us a little closer to a calmer, clearer, and more reliable experience for readers across languages.\n\nJazakum Allahu khayran.",
+        "tags": [
+            "release",
+            "ios",
+            "localization",
+            "app-store",
+            "accomplishment"
+        ],
+        "date": "2026-04-18",
+        "author": "Peace2074 Team",
+        "createdAt": "2026-04-18T15:55:00.000Z",
+        "updatedAt": "2026-04-18T15:55:00.000Z"
+    },
+    {
         "id": "peace2074-ahora-en-espanol-e-italiano",
         "slug": "peace2074-ahora-en-espanol-e-italiano",
         "title": "PEACE2074 ahora está en español e italiano",
