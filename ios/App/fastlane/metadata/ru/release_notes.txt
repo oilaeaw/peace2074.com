@@ -1,1 +1,1 @@
-Initial release of Peace2074 for iOS. Read the full Quran in 5 languages, count your Tasbeeh, explore the 99 Holy Names, and chat with an AI Islamic guide.
+Первый релиз Peace2074 для iOS. Читайте Коран полностью на 8 языках, изучайте 99 имен Аллаха, считайте тасбих и пользуйтесь исламским помощником с ИИ.
