@@ -14,7 +14,7 @@
  limitations under the License.
  */
 
-#import <PromisesObjC/FBLPromise+Testing.h>
+#import "FBLPromise+Testing.h"
 
 NS_ASSUME_NONNULL_BEGIN
 

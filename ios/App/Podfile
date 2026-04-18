@@ -177,16 +177,8 @@ post_install do |installer|
     end
   end
 
-  # Fix PromisesObjC: double-quoted FBL includes must be angle-bracketed in framework headers
-  promises_include = File.join(installer.sandbox.root, 'PromisesObjC/Sources/FBLPromises/include')
-  promises_umbrella = File.join(installer.sandbox.root, 'Target Support Files/PromisesObjC/PromisesObjC-umbrella.h')
-  ([promises_umbrella] + Dir.glob(File.join(promises_include, '*.h'))).each do |path|
-    next unless File.exist?(path)
-    content = File.read(path)
-    patched = content.gsub(/#import "(FBL[^"]+)"/, '#import <PromisesObjC/\1>')
-    if patched != content
-      File.write(path, patched)
-      puts "✓ Fixed PromisesObjC header: #{File.basename(path)}"
-    end
-  end
+  # PromisesObjC: source headers use relative "FBL*.h" imports — leave them as-is.
+  # The xcconfig already sets CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO
+  # to suppress the warning. Converting to <PromisesObjC/FBL*.h> breaks compilation
+  # because the framework doesn't exist yet when its own sources are being compiled.
 end
