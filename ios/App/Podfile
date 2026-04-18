@@ -116,6 +116,11 @@ post_install do |installer|
   installer.pods_project.targets.each do |target|
     target.build_configurations.each do |config|
       config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
+      # Xcode 16/17 module verification is stricter than many vendored pod
+      # headers/module maps (Firebase, GoogleUtilities, PromisesObjC, etc.).
+      # Disable VerifyModule for pod frameworks to avoid third-party header
+      # validation failures and missing private module map errors.
+      config.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
       # Silence "double-quoted include in framework header" for all pod targets.
       # Many vendored pods (PromisesObjC, nanopb, Firebase, etc.) use relative
       # imports internally; this is harmless and already off in their xcconfigs,
