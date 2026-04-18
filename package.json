@@ -55,6 +55,7 @@
     "ios:open": "./node_modules/.bin/cap open ios",
     "ios:lanes": "cd ios/App && if bundle exec fastlane --version >/dev/null 2>&1; then bundle exec fastlane lanes; else fastlane lanes; fi",
     "ios:screenshots:generate": "node --experimental-strip-types scripts/generate-ios-store-screenshots.ts",
+    "ios:metadata:sync": "node --experimental-strip-types scripts/sync-app-store-metadata.ts",
     "ios:prepare": "node --experimental-strip-types scripts/prepare-ios-fastlane-artifacts.ts",
     "ios:sync:native": "node --experimental-strip-types scripts/ensure-ios-firebase-analytics.ts",
     "ios:sync": "pnpm sync:branding && pnpm ios:prepare && ./node_modules/.bin/cap sync ios && pnpm ios:sync:native",
