@@ -11,7 +11,9 @@ type ScreenshotTarget = {
 }
 
 type DeviceConfig = {
-    name: keyof typeof devices
+    label: string
+    profileName: keyof typeof devices
+    outputPrefix: string
     width: number
     height: number
 }
@@ -25,8 +27,20 @@ const candidateBaseUrls = configuredBaseUrl
 const outputDir = path.join(repoRoot, 'ios', 'App', 'fastlane', 'screenshots', 'en-US')
 
 const deviceConfigs: DeviceConfig[] = [
-    { name: 'iPhone 14 Plus', width: 428, height: 926 },
-    { name: 'iPhone 11 Pro Max', width: 414, height: 896 },
+    {
+        label: '6.5-inch iPhone',
+        profileName: 'iPhone 14 Plus',
+        outputPrefix: 'APP_IPHONE_65',
+        width: 428,
+        height: 926,
+    },
+    {
+        label: '13-inch iPad',
+        profileName: 'iPad Pro 11',
+        outputPrefix: 'IPAD_PRO_3GEN_129',
+        width: 1032,
+        height: 1376,
+    },
 ]
 
 const screenshotTargets: ScreenshotTarget[] = [
@@ -66,10 +80,12 @@ async function main() {
 
     try {
         for (const deviceConfig of deviceConfigs) {
-            const device = devices[deviceConfig.name]
+            const device = devices[deviceConfig.profileName]
             if (!device) {
-                throw new Error(`Missing Playwright device profile: ${deviceConfig.name}`)
+                throw new Error(`Missing Playwright device profile: ${deviceConfig.profileName}`)
             }
+
+            console.log(`capturing ${deviceConfig.label} via ${deviceConfig.profileName}`)
 
             const context = await browser.newContext({
                 ...device,
@@ -113,7 +129,7 @@ async function main() {
                     await page.evaluate(() => window.scrollTo(0, 0))
                     await page.waitForTimeout(target.delayMs)
 
-                    const outputPath = path.join(outputDir, `${deviceConfig.name}-${target.slug}.png`)
+                    const outputPath = path.join(outputDir, `${deviceConfig.outputPrefix}-${target.slug}.png`)
                     await page.screenshot({ path: outputPath, fullPage: false })
                     console.log(`saved ${path.relative(repoRoot, outputPath)}`)
                 }
