@@ -9,6 +9,7 @@ const iosAppDir = path.join(repoRoot, 'ios', 'App');
 const podfilePath = path.join(iosAppDir, 'Podfile');
 const podfileLockPath = path.join(iosAppDir, 'Podfile.lock');
 const appProjectPath = path.join(iosAppDir, 'App.xcodeproj', 'project.pbxproj');
+const podsProjectPath = path.join(iosAppDir, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
 
 const analyticsPodPattern = /^([ \t]*)pod 'CapacitorFirebaseAnalytics(?:\/AnalyticsWithoutAdIdSupport)?', :path => '([^']+@capacitor-firebase\/analytics)'$/m;
 
@@ -31,6 +32,15 @@ function appProjectHasNativePodBuildFixes(projectText: string) {
     return (
         projectText.includes('ENABLE_MODULE_VERIFIER = NO;') &&
         projectText.includes('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
+    );
+}
+
+function podsProjectHasNativePodBuildFixes(projectText: string) {
+    return (
+        projectText.includes('ENABLE_MODULE_VERIFIER = NO;') &&
+        projectText.includes('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;') &&
+        !projectText.includes('ENABLE_MODULE_VERIFIER = YES;') &&
+        !projectText.includes('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;')
     );
 }
 
@@ -74,7 +84,12 @@ function main() {
     const existingProject = fs.existsSync(appProjectPath)
         ? fs.readFileSync(appProjectPath, 'utf8')
         : '';
-    const needsNativePodBuildFixes = !appProjectHasNativePodBuildFixes(existingProject);
+    const existingPodsProject = fs.existsSync(podsProjectPath)
+        ? fs.readFileSync(podsProjectPath, 'utf8')
+        : '';
+    const needsNativePodBuildFixes =
+        !appProjectHasNativePodBuildFixes(existingProject) ||
+        !podsProjectHasNativePodBuildFixes(existingPodsProject);
 
     if (podfileWasPatched || !lockfileHasNativeAnalytics(existingLockfile) || needsNativePodBuildFixes) {
         console.log('Running pod install to refresh native iOS CocoaPods configuration...');
@@ -83,6 +98,7 @@ function main() {
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
+    const updatedPodsProject = readText(podsProjectPath);
 
     if (!lockfileHasNativeAnalytics(updatedLockfile)) {
         throw new Error(
@@ -93,6 +109,12 @@ function main() {
     if (!appProjectHasNativePodBuildFixes(updatedProject)) {
         throw new Error(
             'App.xcodeproj is still missing CocoaPods-applied quoted-include/module-verifier fixes after pod install.'
+        );
+    }
+
+    if (!podsProjectHasNativePodBuildFixes(updatedPodsProject)) {
+        throw new Error(
+            'Pods.xcodeproj still contains quoted-include/module-verifier settings that can re-enable VerifyModule after pod install.'
         );
     }
 
