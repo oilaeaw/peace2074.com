@@ -8,6 +8,7 @@ const repoRoot = path.resolve(scriptDir, '..');
 const iosAppDir = path.join(repoRoot, 'ios', 'App');
 const podfilePath = path.join(iosAppDir, 'Podfile');
 const podfileLockPath = path.join(iosAppDir, 'Podfile.lock');
+const appProjectPath = path.join(iosAppDir, 'App.xcodeproj', 'project.pbxproj');
 
 const analyticsPodPattern = /^([ \t]*)pod 'CapacitorFirebaseAnalytics(?:\/AnalyticsWithoutAdIdSupport)?', :path => '([^']+@capacitor-firebase\/analytics)'$/m;
 
@@ -23,6 +24,13 @@ function lockfileHasNativeAnalytics(lockfileText: string) {
     return (
         lockfileText.includes('CapacitorFirebaseAnalytics/AnalyticsWithoutAdIdSupport') ||
         lockfileText.includes('FirebaseAnalytics/WithoutAdIdSupport')
+    );
+}
+
+function appProjectHasNativePodBuildFixes(projectText: string) {
+    return (
+        projectText.includes('ENABLE_MODULE_VERIFIER = NO;') &&
+        projectText.includes('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
     );
 }
 
@@ -63,13 +71,18 @@ function main() {
     const existingLockfile = fs.existsSync(podfileLockPath)
         ? fs.readFileSync(podfileLockPath, 'utf8')
         : '';
+    const existingProject = fs.existsSync(appProjectPath)
+        ? fs.readFileSync(appProjectPath, 'utf8')
+        : '';
+    const needsNativePodBuildFixes = !appProjectHasNativePodBuildFixes(existingProject);
 
-    if (podfileWasPatched || !lockfileHasNativeAnalytics(existingLockfile)) {
-        console.log('Running pod install to refresh native iOS analytics dependencies...');
+    if (podfileWasPatched || !lockfileHasNativeAnalytics(existingLockfile) || needsNativePodBuildFixes) {
+        console.log('Running pod install to refresh native iOS CocoaPods configuration...');
         runPodInstall();
     }
 
     const updatedLockfile = readText(podfileLockPath);
+    const updatedProject = readText(appProjectPath);
 
     if (!lockfileHasNativeAnalytics(updatedLockfile)) {
         throw new Error(
@@ -77,7 +90,13 @@ function main() {
         );
     }
 
-    console.log('iOS Firebase Analytics is configured with AnalyticsWithoutAdIdSupport.');
+    if (!appProjectHasNativePodBuildFixes(updatedProject)) {
+        throw new Error(
+            'App.xcodeproj is still missing CocoaPods-applied quoted-include/module-verifier fixes after pod install.'
+        );
+    }
+
+    console.log('iOS Firebase Analytics and CocoaPods build fixes are configured.');
 }
 
 main();
