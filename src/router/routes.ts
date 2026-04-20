@@ -1,25 +1,33 @@
-import { RouteRecordRaw } from "vue-router";
+import { RouteRecordRaw } from 'vue-router'
 
-import { buildLocaleAlias, buildLocalePath, normalizeLocale } from '@/utils/locale-routing'
+import {
+  buildLocaleAlias,
+  buildLocalePath,
+  normalizeLocale,
+} from '@/utils/locale-routing'
 
 // Type definitions
 export const ROUTE_PATHS = {
-  Home: "/",
-} as const;
+  Home: '/',
+} as const
 
-type RoutePathKey = keyof typeof ROUTE_PATHS;
-export type RoutePath = (typeof ROUTE_PATHS)[RoutePathKey];
+type RoutePathKey = keyof typeof ROUTE_PATHS
+export type RoutePath = (typeof ROUTE_PATHS)[RoutePathKey]
 
 export const ROUTE_NAMES = {
-  Home: "Home",
-} as const satisfies Record<RoutePathKey, string>;
+  Home: 'Home',
+} as const satisfies Record<RoutePathKey, string>
 
-type RouteNameKey = keyof typeof ROUTE_NAMES;
-export type RouteName = (typeof ROUTE_NAMES)[RouteNameKey];
+type RouteNameKey = keyof typeof ROUTE_NAMES
+export type RouteName = (typeof ROUTE_NAMES)[RouteNameKey]
 
 function resolveLocaleParam(localeParam: unknown) {
   return normalizeLocale(
-    Array.isArray(localeParam) ? localeParam[0] : typeof localeParam === 'string' ? localeParam : null
+    Array.isArray(localeParam)
+      ? localeParam[0]
+      : typeof localeParam === 'string'
+        ? localeParam
+        : null
   )
 }
 
@@ -39,7 +47,9 @@ function withLocaleAlias(route: RouteRecordRaw): RouteRecordRaw {
   return {
     ...route,
     alias: Array.from(new Set([...aliases, buildLocaleAlias(route.path)])),
-    ...(route.children ? { children: route.children.map(withLocaleAlias) } : {}),
+    ...(route.children
+      ? { children: route.children.map(withLocaleAlias) }
+      : {}),
   } as RouteRecordRaw
 }
 
@@ -72,8 +82,13 @@ const baseRoutes: Array<RouteRecordRaw> = [
       title: 'About',
       titleKey: 'pages.about.title',
       description:
-        'Learn about PEACE2074, a calm multilingual Quran and reflection experience built around clarity, remembrance, and supportive spiritual tools.',
-      keywords: ['about PEACE2074', 'Quran reading app', 'Islamic reflection platform'],
+        'Learn about PEACE2074, a calm multilingual Quran experience across web and iOS with offline recitation, route-aware SEO, and supportive spiritual tools.',
+      keywords: [
+        'about PEACE2074',
+        'iOS Quran app',
+        'multilingual Islamic app',
+        'offline Quran recitation',
+      ],
       contentGroup: 'about',
       schemaType: 'AboutPage',
     },
@@ -129,7 +144,13 @@ const baseRoutes: Array<RouteRecordRaw> = [
       const sura = Number.parseInt(suraRaw, 10)
       const verse = Number.parseInt(verseRaw, 10)
 
-      if (!Number.isInteger(sura) || sura < 1 || sura > 114 || !Number.isInteger(verse) || verse < 1) {
+      if (
+        !Number.isInteger(sura) ||
+        sura < 1 ||
+        sura > 114 ||
+        !Number.isInteger(verse) ||
+        verse < 1
+      ) {
         return {
           path: buildRoutePath('/quran', to.params.locale),
           query: { invalidSura: '1' },
@@ -190,7 +211,11 @@ const baseRoutes: Array<RouteRecordRaw> = [
       titleKey: 'pages.chat.title',
       description:
         'Join the live PEACE2074 community chat for support, reflections, and real-time conversation.',
-      keywords: ['Islamic community chat', 'live support chat', 'PEACE2074 chat'],
+      keywords: [
+        'Islamic community chat',
+        'live support chat',
+        'PEACE2074 chat',
+      ],
       robots: 'noindex,nofollow,noarchive',
       contentGroup: 'chat',
       schemaType: 'WebPage',
@@ -231,7 +256,8 @@ const baseRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Preferences',
       titleKey: 'pages.preferences.title',
-      description: 'Manage your personal reading and app defaults on PEACE2074.',
+      description:
+        'Manage your personal reading and app defaults on PEACE2074.',
       keywords: ['reading preferences'],
       robots: 'noindex,nofollow,noarchive',
       contentGroup: 'preferences',
@@ -382,8 +408,12 @@ const baseRoutes: Array<RouteRecordRaw> = [
       title: 'Quran Miracles',
       titleKey: 'pages.miracles.pageTitle',
       description:
-        'Explore commonly cited numerical patterns and mathematical reflections in the Qur\'an.',
-      keywords: ['Quran miracles', 'numerical patterns', 'mathematical reflections'],
+        "Explore commonly cited numerical patterns and mathematical reflections in the Qur'an.",
+      keywords: [
+        'Quran miracles',
+        'numerical patterns',
+        'mathematical reflections',
+      ],
       contentGroup: 'miracles',
       schemaType: 'WebPage',
     },
@@ -395,7 +425,8 @@ const baseRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Privacy',
       titleKey: 'navigation.PrivacyPageTitle',
-      description: 'Read the PEACE2074 privacy policy and data handling commitments.',
+      description:
+        'Read the PEACE2074 privacy policy and data handling commitments.',
       keywords: ['privacy policy', 'data privacy'],
       contentGroup: 'legal',
       schemaType: 'WebPage',
@@ -408,7 +439,8 @@ const baseRoutes: Array<RouteRecordRaw> = [
     meta: {
       title: 'Terms',
       titleKey: 'navigation.TermsPageTitle',
-      description: 'Review the PEACE2074 terms of service and usage guidelines.',
+      description:
+        'Review the PEACE2074 terms of service and usage guidelines.',
       keywords: ['terms of service', 'usage guidelines'],
       contentGroup: 'legal',
       schemaType: 'WebPage',

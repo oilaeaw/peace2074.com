@@ -422,6 +422,10 @@ const analyticsPoints = computed<HighlightItem[]>(() => [
     icon: 'monitoring',
     text: t('pages.about.analytics.pointReader'),
   },
+  {
+    icon: 'search',
+    text: t('pages.about.analytics.pointSeo'),
+  },
 ])
 
 const analyticsLinks = computed<ExternalLink[]>(() => [

@@ -122,7 +122,7 @@
                 },
                 "experience": {
                     "value": "1",
-                    "label": "web ve iPhone'da sakin deneyim"
+                    "label": "web ve iOS'ta sakin deneyim"
                 }
             },
             "story": {
@@ -180,17 +180,17 @@
                 "body": "Deneyim; odak, çok dilli erişim ve hem tefekküre hem rutine saygı duyan sakin bir görsel ritim etrafında şekillendi.",
                 "one": "Okumayı merkeze alan temiz bir arayüz",
                 "two": "Arapça ve İbranice için RTL destekli yerelleştirme",
-                "three": "Çevrimdışı tilavet ve web ile iPhone'da destekleyici araçlar"
+                "three": "Çevrimdışı tilavet ve web ile iOS'ta destekleyici araçlar"
             },
             "build": {
                 "eyebrow": "Açık geliştiriliyor",
-                "title": "İnceleyebileceğiniz kod, anlayabileceğiniz analitik",
-                "lead": "PEACE2074 herkese açık deposunu paylaşır ve güvenilirliği, okuma yolculuklarını ve daha bilinçli ürün kararlarını iyileştirmeye yardımcı olan analitiği belgeler."
+                "title": "Açık kod, iOS özeni ve SEO'ya hazır temeller",
+                "lead": "PEACE2074 herkese açık deposunu paylaşır, Capacitor üzerinden sakin bir iOS deneyimi sunar ve rota tabanlı SEO ile yapılandırılmış veriler sayesinde önemli sayfaları keşfedilebilir tutar."
             },
             "repo": {
                 "eyebrow": "Herkese açık depo",
                 "title": "Projeyi gerçek zamanlı takip edin",
-                "body": "Kod tabanı GitHub'da herkese açıktır; issue'lar, katkı geçmişi ve workflow çalıştırmaları görünür olduğu için iyileştirmeler şeffaf kalır.",
+                "body": "Kod tabanı GitHub'da herkese açıktır ve aynı temel; issue'lar, katkı geçmişi ve workflow çalıştırmaları görünürken hem web deneyimini hem iOS uygulamasını güçlendirir.",
                 "links": {
                     "code": "Kodu görüntüle",
                     "issues": "Issue'lar",
@@ -201,10 +201,11 @@
             "analytics": {
                 "eyebrow": "Düşünceli analitik",
                 "title": "Tahminle değil, izinle ölçülür",
-                "body": "Analitik; izne saygı duymak, ürün sağlığını izlemek ve web ile yerel deneyimlerde okuyuculara en çok neyin yardımcı olduğunu anlamak için bağlanmıştır.",
+                "body": "Analitik; izne saygı duyar, ürün sağlığını izler ve deneyimin ölçülebilir ve keşfedilebilir kalması için canonical URL'ler, meta etiketler ve yapılandırılmış verilerle birlikte çalışır.",
                 "pointConsent": "Onay ayarları, etkinlikler gönderilmeden önce analitik toplamayı kontrol eder.",
                 "pointGa4": "GA4 ve yerel Firebase Analytics; sayfa görüntülemeleri, yer imleri ve temel ürün etkileşimleri gibi akışları yakalar.",
                 "pointReader": "Okuyucu analitiği, oturum açmış kullanıcılar için sure ilerlemesini ve okuma örüntülerini özetler.",
+                "pointSeo": "Rota meta verileri, canonical URL'ler, Open Graph etiketleri ve yapılandırılmış veriler önemli sayfaların arama dostu kalmasına yardımcı olur.",
                 "links": {
                     "playbook": "GA4 kılavuzu",
                     "readerStats": "Okuyucu istatistikleri belgeleri"

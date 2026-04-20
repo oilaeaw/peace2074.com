@@ -87,7 +87,7 @@
         },
         "experience": {
           "value": "1",
-          "label": "ruhiges Erlebnis auf Web und iPhone"
+          "label": "ruhiges Erlebnis auf Web und iOS"
         }
       },
       "story": {
@@ -145,17 +145,17 @@
         "body": "Das Erlebnis ist auf Fokus, mehrsprachigen Zugang und einen ruhigen visuellen Rhythmus ausgerichtet, der sowohl Reflexion als auch Routine respektiert.",
         "one": "Eine klare Oberfläche mit Lesen im Mittelpunkt",
         "two": "Lokalisierung mit RTL-Unterstützung für Arabisch und Hebräisch",
-        "three": "Offline-Rezitation und unterstützende Werkzeuge auf Web und iPhone"
+        "three": "Offline-Rezitation und unterstützende Werkzeuge auf Web und iOS"
       },
       "build": {
         "eyebrow": "Offen entwickelt",
-        "title": "Code zum Prüfen, Analytics zum Verstehen",
-        "lead": "PEACE2074 teilt sein öffentliches Repository und dokumentiert die Analytics, die Zuverlässigkeit, Lesewege und durchdachte Produktentscheidungen verbessern."
+        "title": "Offener Code, iOS-Feinschliff und SEO-starke Grundlagen",
+        "lead": "PEACE2074 teilt sein öffentliches Repository, liefert über Capacitor ein ruhiges iOS-Erlebnis und hält wichtige Seiten mit routenbewusstem SEO und strukturierten Daten auffindbar."
       },
       "repo": {
         "eyebrow": "Öffentliches Repository",
         "title": "Projekt in Echtzeit verfolgen",
-        "body": "Die Codebasis ist öffentlich auf GitHub, mit sichtbaren Issues, Beitragsverlauf und Workflow-Läufen, damit Verbesserungen transparent bleiben.",
+        "body": "Die Codebasis ist öffentlich auf GitHub, und dieselbe Grundlage trägt das Web-Erlebnis und die iOS-App – mit transparenten Issues, Beitragsverlauf und Workflow-Läufen.",
         "links": {
           "code": "Code ansehen",
           "issues": "Issues",
@@ -166,10 +166,11 @@
       "analytics": {
         "eyebrow": "Sorgsame Analytics",
         "title": "Mit Zustimmung gemessen, nicht geraten",
-        "body": "Analytics sind so eingebunden, dass Zustimmung respektiert wird, die Produktgesundheit sichtbar wird und klar wird, was Leserinnen und Lesern auf Web und nativ am meisten hilft.",
+        "body": "Analytics respektieren die Einwilligung, verfolgen die Produktgesundheit und arbeiten mit Canonical-URLs, Meta-Tags und strukturierten Daten zusammen, damit das Erlebnis messbar und auffindbar bleibt.",
         "pointConsent": "Einwilligungseinstellungen steuern die Datenerfassung, bevor Ereignisse gesendet werden.",
         "pointGa4": "GA4 und natives Firebase Analytics erfassen Wege wie Seitenaufrufe, Lesezeichen und wichtige Produktinteraktionen.",
         "pointReader": "Lese-Analytics fassen Suren-Fortschritt und Lesemuster für angemeldete Nutzer zusammen.",
+        "pointSeo": "Routen-Metadaten, Canonical-URLs, Open-Graph-Tags und strukturierte Daten helfen wichtigen Seiten, suchfreundlich zu bleiben.",
         "links": {
           "playbook": "GA4-Playbook",
           "readerStats": "Reader-Stats-Doku"

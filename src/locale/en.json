@@ -122,7 +122,7 @@
         },
         "experience": {
           "value": "1",
-          "label": "calm experience across web and iPhone"
+          "label": "calm experience across web and iOS"
         }
       },
       "story": {
@@ -180,17 +180,17 @@
         "body": "The experience is shaped around focus, multilingual access, and a calm visual rhythm that respects both reflection and routine.",
         "one": "A clean, reading-first interface",
         "two": "Localization with RTL support for Arabic and Hebrew",
-        "three": "Offline recitation and supportive tools across web and iPhone"
+        "three": "Offline recitation and supportive tools across web and iOS"
       },
       "build": {
         "eyebrow": "Built in the open",
-        "title": "Code you can inspect, analytics you can understand",
-        "lead": "PEACE2074 shares its public repository and documents the analytics that help improve reliability, reader journeys, and thoughtful product decisions."
+        "title": "Open code, iOS polish, and SEO-ready foundations",
+        "lead": "PEACE2074 shares its public repository, ships a calm iOS experience through Capacitor, and keeps key pages discoverable with route-aware SEO and structured data."
       },
       "repo": {
         "eyebrow": "Public repository",
         "title": "Follow the project in real time",
-        "body": "The codebase is public on GitHub, with issues, contributor history, and workflow runs visible so improvements stay transparent.",
+        "body": "The codebase is public on GitHub, and the same foundation powers the web experience and the iOS app with transparent issues, contributor history, and workflow runs.",
         "links": {
           "code": "View code",
           "issues": "Issues",
@@ -201,10 +201,11 @@
       "analytics": {
         "eyebrow": "Thoughtful analytics",
         "title": "Measured with consent, not guesswork",
-        "body": "Analytics are wired to respect consent, track product health, and understand what helps readers most across web and native experiences.",
+        "body": "Analytics are wired to respect consent, track product health, and pair with canonical URLs, meta tags, and structured data so the experience stays measurable and discoverable.",
         "pointConsent": "Consent settings control analytics collection before events are sent.",
         "pointGa4": "GA4 and native Firebase analytics capture journeys like page views, bookmarks, and key product interactions.",
         "pointReader": "Reader analytics summarize surah progress and reading patterns for signed-in users.",
+        "pointSeo": "Route metadata, canonical URLs, Open Graph tags, and structured data help key pages stay search-friendly.",
         "links": {
           "playbook": "GA4 playbook",
           "readerStats": "Reader stats docs"

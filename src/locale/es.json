@@ -122,7 +122,7 @@
                 },
                 "experience": {
                     "value": "1",
-                    "label": "experiencia serena en web y iPhone"
+                    "label": "experiencia serena en web y iOS"
                 }
             },
             "story": {
@@ -180,17 +180,17 @@
                 "body": "La experiencia está construida alrededor del enfoque, el acceso multilingüe y un ritmo visual sereno que respeta tanto la reflexión como la rutina.",
                 "one": "Una interfaz limpia centrada en la lectura",
                 "two": "Localización con soporte RTL para árabe y hebreo",
-                "three": "Recitación sin conexión y herramientas de apoyo en web y iPhone"
+                "three": "Recitación sin conexión y herramientas de apoyo en web y iOS"
             },
             "build": {
                 "eyebrow": "Desarrollado en abierto",
-                "title": "Código que puedes revisar, analítica que puedes entender",
-                "lead": "PEACE2074 comparte su repositorio público y documenta la analítica que ayuda a mejorar la fiabilidad, los recorridos de lectura y decisiones de producto más meditadas."
+                "title": "Código abierto, pulido para iOS y bases listas para SEO",
+                "lead": "PEACE2074 comparte su repositorio público, ofrece una experiencia serena en iOS mediante Capacitor y mantiene las páginas clave descubribles con SEO por rutas y datos estructurados."
             },
             "repo": {
                 "eyebrow": "Repositorio público",
                 "title": "Sigue el proyecto en tiempo real",
-                "body": "La base de código es pública en GitHub, con issues, historial de contribuciones y ejecuciones de flujos visibles para que las mejoras sigan siendo transparentes.",
+                "body": "La base de código es pública en GitHub, y la misma base impulsa la experiencia web y la app iOS con issues, historial de contribuciones y ejecuciones de flujos visibles.",
                 "links": {
                     "code": "Ver código",
                     "issues": "Issues",
@@ -201,10 +201,11 @@
             "analytics": {
                 "eyebrow": "Analítica consciente",
                 "title": "Medido con consentimiento, no con suposiciones",
-                "body": "La analítica está conectada para respetar el consentimiento, vigilar la salud del producto y entender qué ayuda más a los lectores en web y experiencias nativas.",
+                "body": "La analítica respeta el consentimiento, sigue la salud del producto y se combina con URLs canónicas, metaetiquetas y datos estructurados para que la experiencia siga siendo medible y descubrible.",
                 "pointConsent": "La configuración de consentimiento controla la recogida analítica antes de enviar eventos.",
                 "pointGa4": "GA4 y Firebase Analytics nativo capturan recorridos como vistas de página, marcadores e interacciones clave del producto.",
                 "pointReader": "La analítica del lector resume el progreso por surah y los patrones de lectura de usuarios autenticados.",
+                "pointSeo": "Los metadatos de rutas, las URL canónicas, las etiquetas Open Graph y los datos estructurados ayudan a que las páginas clave sigan siendo fáciles de encontrar.",
                 "links": {
                     "playbook": "Guía de GA4",
                     "readerStats": "Docs de estadísticas de lectura"
