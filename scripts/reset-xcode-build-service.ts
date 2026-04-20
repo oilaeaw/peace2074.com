@@ -48,7 +48,23 @@ function maybeQuitXcode() {
 
     if (quitResult.status !== 0) {
         const reason = (quitResult.stderr || quitResult.stdout || 'unknown error').trim();
-        throw new Error(`Failed to quit Xcode.app cleanly: ${reason}`);
+
+        console.warn(
+            `⚠️  Xcode.app did not quit cleanly via AppleScript (${reason}). Falling back to killall Xcode...`
+        );
+
+        const forceQuitResult = spawnSync('killall', ['Xcode'], {
+            encoding: 'utf8',
+        });
+
+        if (forceQuitResult.status !== 0) {
+            const forceQuitReason = (forceQuitResult.stderr || forceQuitResult.stdout || 'unknown error').trim();
+            throw new Error(
+                `Failed to quit Xcode.app cleanly: ${reason}. Fallback force quit also failed: ${forceQuitReason}`
+            );
+        }
+
+        console.log(`• Xcode.app: force-quit ${formatCount(xcodePids.length, 'process')}.`);
     }
 
     return true;
