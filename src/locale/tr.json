@@ -180,7 +180,35 @@
                 "body": "Deneyim; odak, çok dilli erişim ve hem tefekküre hem rutine saygı duyan sakin bir görsel ritim etrafında şekillendi.",
                 "one": "Okumayı merkeze alan temiz bir arayüz",
                 "two": "Arapça ve İbranice için RTL destekli yerelleştirme",
-                "three": "Web ve iPhone'da destekleyici hissettiren araçlar"
+                "three": "Çevrimdışı tilavet ve web ile iPhone'da destekleyici araçlar"
+            },
+            "build": {
+                "eyebrow": "Açık geliştiriliyor",
+                "title": "İnceleyebileceğiniz kod, anlayabileceğiniz analitik",
+                "lead": "PEACE2074 herkese açık deposunu paylaşır ve güvenilirliği, okuma yolculuklarını ve daha bilinçli ürün kararlarını iyileştirmeye yardımcı olan analitiği belgeler."
+            },
+            "repo": {
+                "eyebrow": "Herkese açık depo",
+                "title": "Projeyi gerçek zamanlı takip edin",
+                "body": "Kod tabanı GitHub'da herkese açıktır; issue'lar, katkı geçmişi ve workflow çalıştırmaları görünür olduğu için iyileştirmeler şeffaf kalır.",
+                "links": {
+                    "code": "Kodu görüntüle",
+                    "issues": "Issue'lar",
+                    "contributors": "Katkıda bulunanlar",
+                    "actions": "CI ve Actions"
+                }
+            },
+            "analytics": {
+                "eyebrow": "Düşünceli analitik",
+                "title": "Tahminle değil, izinle ölçülür",
+                "body": "Analitik; izne saygı duymak, ürün sağlığını izlemek ve web ile yerel deneyimlerde okuyuculara en çok neyin yardımcı olduğunu anlamak için bağlanmıştır.",
+                "pointConsent": "Onay ayarları, etkinlikler gönderilmeden önce analitik toplamayı kontrol eder.",
+                "pointGa4": "GA4 ve yerel Firebase Analytics; sayfa görüntülemeleri, yer imleri ve temel ürün etkileşimleri gibi akışları yakalar.",
+                "pointReader": "Okuyucu analitiği, oturum açmış kullanıcılar için sure ilerlemesini ve okuma örüntülerini özetler.",
+                "links": {
+                    "playbook": "GA4 kılavuzu",
+                    "readerStats": "Okuyucu istatistikleri belgeleri"
+                }
             },
             "cta": {
                 "eyebrow": "Nazikçe içeri girin",

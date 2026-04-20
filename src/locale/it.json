@@ -180,7 +180,35 @@
                 "body": "L'esperienza è modellata attorno alla concentrazione, all'accesso multilingue e a un ritmo visivo calmo che rispetta sia la riflessione sia la routine.",
                 "one": "Un'interfaccia pulita con la lettura al centro",
                 "two": "Localizzazione con supporto RTL per arabo ed ebraico",
-                "three": "Strumenti che risultano di supporto su web e iPhone"
+                "three": "Recitazione offline e strumenti di supporto su web e iPhone"
+            },
+            "build": {
+                "eyebrow": "Sviluppato in pubblico",
+                "title": "Codice da ispezionare, analytics da capire",
+                "lead": "PEACE2074 condivide il suo repository pubblico e documenta le analytics che aiutano a migliorare affidabilità, percorsi di lettura e decisioni di prodotto più consapevoli."
+            },
+            "repo": {
+                "eyebrow": "Repository pubblico",
+                "title": "Segui il progetto in tempo reale",
+                "body": "La codebase è pubblica su GitHub, con issue, cronologia dei contributi ed esecuzioni dei workflow visibili così che i miglioramenti restino trasparenti.",
+                "links": {
+                    "code": "Vedi codice",
+                    "issues": "Issue",
+                    "contributors": "Contributori",
+                    "actions": "CI e azioni"
+                }
+            },
+            "analytics": {
+                "eyebrow": "Analytics consapevoli",
+                "title": "Misurato con consenso, non a intuito",
+                "body": "Le analytics sono configurate per rispettare il consenso, monitorare la salute del prodotto e capire cosa aiuta di più i lettori tra web ed esperienze native.",
+                "pointConsent": "Le impostazioni di consenso controllano la raccolta analytics prima che gli eventi vengano inviati.",
+                "pointGa4": "GA4 e Firebase Analytics nativo catturano percorsi come visualizzazioni di pagina, segnalibri e interazioni chiave del prodotto.",
+                "pointReader": "Le analytics del lettore riassumono progressi nelle surah e modelli di lettura per gli utenti autenticati.",
+                "links": {
+                    "playbook": "Playbook GA4",
+                    "readerStats": "Doc statistiche lettore"
+                }
             },
             "cta": {
                 "eyebrow": "Entra con dolcezza",

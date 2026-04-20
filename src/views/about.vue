@@ -153,6 +153,77 @@
       </q-card>
     </section>
 
+    <section class="shell content-section">
+      <div class="section-heading centered">
+        <div class="section-kicker">{{ t('pages.about.build.eyebrow') }}</div>
+        <h2 class="section-title">{{ t('pages.about.build.title') }}</h2>
+        <p class="section-lead">{{ t('pages.about.build.lead') }}</p>
+      </div>
+
+      <div class="ecosystem-grid">
+        <q-card flat class="glass-panel ecosystem-card">
+          <div class="section-kicker">{{ t('pages.about.repo.eyebrow') }}</div>
+          <h3 class="card-title">{{ t('pages.about.repo.title') }}</h3>
+          <p class="card-body">{{ t('pages.about.repo.body') }}</p>
+
+          <div class="repo-link-grid">
+            <q-btn
+              v-for="link in repoLinks"
+              :key="link.href"
+              outline
+              no-caps
+              color="primary"
+              class="resource-link"
+              :icon="link.icon"
+              :label="link.label"
+              :href="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </div>
+        </q-card>
+
+        <q-card flat class="glass-panel ecosystem-card">
+          <div class="section-kicker">
+            {{ t('pages.about.analytics.eyebrow') }}
+          </div>
+          <h3 class="card-title">{{ t('pages.about.analytics.title') }}</h3>
+          <p class="card-body">{{ t('pages.about.analytics.body') }}</p>
+
+          <q-list dense class="analytics-list">
+            <q-item
+              v-for="item in analyticsPoints"
+              :key="item.text"
+              class="analytics-item"
+            >
+              <q-item-section avatar top>
+                <div class="analytics-icon-wrap">
+                  <q-icon :name="item.icon" size="18px" />
+                </div>
+              </q-item-section>
+              <q-item-section>{{ item.text }}</q-item-section>
+            </q-item>
+          </q-list>
+
+          <div class="repo-link-grid analytics-link-grid">
+            <q-btn
+              v-for="link in analyticsLinks"
+              :key="link.href"
+              flat
+              no-caps
+              color="primary"
+              class="resource-link analytics-doc-link"
+              :icon="link.icon"
+              :label="link.label"
+              :href="link.href"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </div>
+        </q-card>
+      </div>
+    </section>
+
     <section class="shell cta-section">
       <q-card flat class="cta-panel">
         <div class="cta-copy">
@@ -220,6 +291,24 @@ type PromiseCard = {
   icon: string
   text: string
 }
+
+type ExternalLink = {
+  href: string
+  label: string
+  icon: string
+}
+
+type HighlightItem = {
+  icon: string
+  text: string
+}
+
+const REPO_URL = 'https://github.com/Islam2074/peace2074.com'
+const REPO_ISSUES_URL = `${REPO_URL}/issues`
+const REPO_CONTRIBUTORS_URL = `${REPO_URL}/graphs/contributors`
+const REPO_ACTIONS_URL = `${REPO_URL}/actions`
+const GA4_PLAYBOOK_URL = `${REPO_URL}/blob/one/docs/GA4_ANALYTICS_PLAYBOOK.md`
+const READER_STATS_DOC_URL = `${REPO_URL}/blob/one/docs/READER_STATS.md`
 
 const heroTags = computed(() => [
   t('pages.about.hero.tags.read'),
@@ -292,8 +381,59 @@ const promises = computed<PromiseCard[]>(() => [
     text: t('pages.about.promise.two'),
   },
   {
-    icon: 'devices',
+    icon: 'offline_bolt',
     text: t('pages.about.promise.three'),
+  },
+])
+
+const repoLinks = computed<ExternalLink[]>(() => [
+  {
+    href: REPO_URL,
+    label: t('pages.about.repo.links.code'),
+    icon: 'code',
+  },
+  {
+    href: REPO_ISSUES_URL,
+    label: t('pages.about.repo.links.issues'),
+    icon: 'error_outline',
+  },
+  {
+    href: REPO_CONTRIBUTORS_URL,
+    label: t('pages.about.repo.links.contributors'),
+    icon: 'groups',
+  },
+  {
+    href: REPO_ACTIONS_URL,
+    label: t('pages.about.repo.links.actions'),
+    icon: 'play_circle',
+  },
+])
+
+const analyticsPoints = computed<HighlightItem[]>(() => [
+  {
+    icon: 'verified_user',
+    text: t('pages.about.analytics.pointConsent'),
+  },
+  {
+    icon: 'insights',
+    text: t('pages.about.analytics.pointGa4'),
+  },
+  {
+    icon: 'monitoring',
+    text: t('pages.about.analytics.pointReader'),
+  },
+])
+
+const analyticsLinks = computed<ExternalLink[]>(() => [
+  {
+    href: GA4_PLAYBOOK_URL,
+    label: t('pages.about.analytics.links.playbook'),
+    icon: 'description',
+  },
+  {
+    href: READER_STATS_DOC_URL,
+    label: t('pages.about.analytics.links.readerStats'),
+    icon: 'query_stats',
   },
 ])
 </script>
@@ -757,6 +897,68 @@ const promises = computed<PromiseCard[]>(() => [
   border: 1px solid rgba(148, 163, 184, 0.18);
 }
 
+.ecosystem-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 24px;
+}
+
+.ecosystem-card {
+  padding: 30px;
+}
+
+.repo-link-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+  margin-top: 20px;
+}
+
+.resource-link {
+  width: 100%;
+  min-height: 48px;
+  justify-content: flex-start;
+}
+
+.analytics-list {
+  margin-top: 18px;
+  padding: 8px;
+  border-radius: 22px;
+  background: rgba(255, 255, 255, 0.62);
+  border: 1px solid rgba(148, 163, 184, 0.18);
+}
+
+.analytics-item {
+  border-radius: 18px;
+}
+
+.analytics-item + .analytics-item {
+  margin-top: 4px;
+}
+
+.analytics-icon-wrap {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  border-radius: 12px;
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.12),
+    rgba(56, 189, 248, 0.18)
+  );
+  color: #2563eb;
+}
+
+.analytics-link-grid {
+  margin-top: 16px;
+}
+
+.analytics-doc-link {
+  justify-content: flex-start;
+}
+
 .promise-icon-wrap {
   width: 46px;
   height: 46px;
@@ -818,6 +1020,7 @@ const promises = computed<PromiseCard[]>(() => [
     display: grid;
   }
 
+  .ecosystem-grid,
   .stats-grid,
   .pillar-grid,
   .journey-grid,
@@ -857,8 +1060,13 @@ const promises = computed<PromiseCard[]>(() => [
     align-items: stretch;
   }
 
+  .repo-link-grid {
+    grid-template-columns: 1fr;
+  }
+
   .hero-actions .q-btn,
-  .cta-actions .q-btn {
+  .cta-actions .q-btn,
+  .repo-link-grid .q-btn {
     width: 100%;
   }
 }
@@ -939,10 +1147,21 @@ const promises = computed<PromiseCard[]>(() => [
 
 :deep(body.body--dark) .stat-card,
 :deep(body.body--dark) .promise-item,
+.body--dark .analytics-list,
 .body--dark .stat-card,
 .body--dark .promise-item {
   background: rgba(15, 23, 42, 0.72);
   border-color: rgba(148, 163, 184, 0.14);
+}
+
+:deep(body.body--dark) .analytics-icon-wrap,
+.body--dark .analytics-icon-wrap {
+  background: linear-gradient(
+    135deg,
+    rgba(56, 189, 248, 0.14),
+    rgba(37, 99, 235, 0.2)
+  );
+  color: #7dd3fc;
 }
 
 :deep(body.body--dark) .step-badge,

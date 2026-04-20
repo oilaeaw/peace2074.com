@@ -180,7 +180,35 @@
         "body": "The experience is shaped around focus, multilingual access, and a calm visual rhythm that respects both reflection and routine.",
         "one": "A clean, reading-first interface",
         "two": "Localization with RTL support for Arabic and Hebrew",
-        "three": "Tools that feel supportive on web and iPhone"
+        "three": "Offline recitation and supportive tools across web and iPhone"
+      },
+      "build": {
+        "eyebrow": "Built in the open",
+        "title": "Code you can inspect, analytics you can understand",
+        "lead": "PEACE2074 shares its public repository and documents the analytics that help improve reliability, reader journeys, and thoughtful product decisions."
+      },
+      "repo": {
+        "eyebrow": "Public repository",
+        "title": "Follow the project in real time",
+        "body": "The codebase is public on GitHub, with issues, contributor history, and workflow runs visible so improvements stay transparent.",
+        "links": {
+          "code": "View code",
+          "issues": "Issues",
+          "contributors": "Contributors",
+          "actions": "CI & actions"
+        }
+      },
+      "analytics": {
+        "eyebrow": "Thoughtful analytics",
+        "title": "Measured with consent, not guesswork",
+        "body": "Analytics are wired to respect consent, track product health, and understand what helps readers most across web and native experiences.",
+        "pointConsent": "Consent settings control analytics collection before events are sent.",
+        "pointGa4": "GA4 and native Firebase analytics capture journeys like page views, bookmarks, and key product interactions.",
+        "pointReader": "Reader analytics summarize surah progress and reading patterns for signed-in users.",
+        "links": {
+          "playbook": "GA4 playbook",
+          "readerStats": "Reader stats docs"
+        }
       },
       "cta": {
         "eyebrow": "Come in gently",
