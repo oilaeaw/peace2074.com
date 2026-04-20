@@ -6,6 +6,7 @@
 - https://peace2074.com/
 
 ## Primary Content Areas
+- About: https://peace2074.com/about
 - Quran index: https://peace2074.com/quran
 - Quran sura pages: https://peace2074.com/quran/{id} (valid id range: 1-114)
 - Holy Names: https://peace2074.com/holynames

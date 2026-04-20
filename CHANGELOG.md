@@ -4,6 +4,11 @@ All notable changes to this project will be documented in this file. See [standa
 
 ## 3.1.2 (2026-04-20)
 
+### Features
+
+- add a public `/about` page that introduces PEACE2074, its mission, and the core reading and reflection experience
+- include the new About page in public discovery metadata used by the sitemap and AI-facing content index
+
 ### Bug Fixes
 
 - update the GitHub releases `/repos` fetch in the admin view to use the current `Islam2074/peace2074.com` repository owner
