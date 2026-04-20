@@ -39,6 +39,7 @@
         },
         "nav": {
             "home": "Ana Sayfa",
+            "about": "Hakkında",
             "quran": "Kur'an",
             "holynames": "Kutsal İsimler",
             "tasbeeh": "Tesbih",
@@ -90,6 +91,106 @@
         "AdminPage": "Yönetim Sayfası"
     },
     "pages": {
+        "about": {
+            "title": "PEACE2074 Hakkında",
+            "hero": {
+                "eyebrow": "PEACE2074 Hakkında",
+                "title": "Okumak, hatırlamak ve geri dönmek için aydınlık bir yer.",
+                "lead": "PEACE2074, Kur'an ve tefekkür için çok dilli bir alandır; tek bir ayet, tek bir sakin nefes ya da daha uzun bir yolculuk için açsanız da huzurlu, güzel ve gerçekten kullanışlı hissettirmek üzere tasarlandı.",
+                "primaryCta": "Kur'an'ı Aç",
+                "secondaryCta": "Kutsal İsimleri Keşfet",
+                "tags": {
+                    "read": "Kur'an okuma",
+                    "remember": "Zikir ve tesbih",
+                    "reflect": "Kutsal İsimler ve tefekkür",
+                    "connect": "Destek ve topluluk"
+                }
+            },
+            "spotlight": {
+                "label": "Nazik odak için tasarlandı",
+                "title": "Gürültüyü azaltıp huzurlu farkındalığı artırmak için yapıldı.",
+                "body": "Her ekranın açık, destekleyici ve manevi olarak dengeli hissettirmesi amaçlandı; sure okuma ve ayet paylaşımından yer imlerine, çevrimdışı dinlemeye ve günlük tefekküre kadar."
+            },
+            "stats": {
+                "languages": {
+                    "value": "8",
+                    "label": "desteklenen dil"
+                },
+                "suras": {
+                    "value": "114",
+                    "label": "keşfe hazır sure"
+                },
+                "experience": {
+                    "value": "1",
+                    "label": "web ve iPhone'da sakin deneyim"
+                }
+            },
+            "story": {
+                "eyebrow": "Neden var",
+                "title": "İman araçları bunaltıcı olmadan da güçlü olabilir.",
+                "body": "PEACE2074, Kur'an okumayı, zikri, düşünceli keşfi ve pratik desteği tek bir yerde toplar. Amaç basit: daha az sürtünme ve daha çok güzellikle sizi önemli olana geri döndürmek.",
+                "cardTitle": "Daha sakin bir dijital ritim",
+                "cardBody": "Dağınık araçlar ve gürültülü arayüzler yerine PEACE2074 okuma, tilavet, tesbih, Kutsal İsimler, tefekkürler ve desteği tek bir huzur akışında buluşturur."
+            },
+            "verse": {
+                "label": "Yol gösteren ruh",
+                "quote": "Huzur yalnızca aradığınız bir şey değildir. Sayfa sayfa, dua dua, dönüş dönüş uyguladığınız bir şeydir.",
+                "source": "PEACE2074 ruhu"
+            },
+            "pillars": {
+                "eyebrow": "Onu özel yapan şey",
+                "title": "Deneyimi üç sütun şekillendirir",
+                "lead": "Uygulamanın her parçası yoğun bir günde faydalı, sakin bir anda ise güzel hissettirmek için tasarlandı.",
+                "read": {
+                    "title": "Berraklıkla oku",
+                    "body": "Kur'an'ı odaklı okuma modları, ayet paylaşımı, yer imleri ve yolunuza çıkmayan bir tilavetle keşfedin."
+                },
+                "remember": {
+                    "title": "Varlıkla hatırla",
+                    "body": "Dijital tesbih, Kutsal İsimler ve baskı kurmadan istikrarı destekleyen nazik yönlendirmelerle zikri yakın tutun."
+                },
+                "connect": {
+                    "title": "Destekle bağlantı kur",
+                    "body": "Daha fazla gürültüye değil, yön duygusuna ihtiyaç duyduğunuzda sohbet, iletişim ve düşünceli rehberlik yoluyla yardım bulun."
+                }
+            },
+            "journey": {
+                "eyebrow": "Rehberli bir yolculuk",
+                "title": "Meraktan istikrara",
+                "lead": "İster arayarak, ister düşünerek, ister bir alışkanlığı yeniden kurarak gelin; PEACE2074 sizi bulunduğunuz yerde karşılar.",
+                "discover": {
+                    "step": "01",
+                    "title": "Keşfet",
+                    "body": "Bir sure, bir ayet ya da bir soruyla başlayın ve uygulamanın sonraki adımı görünür kılmasına izin verin."
+                },
+                "reflect": {
+                    "step": "02",
+                    "title": "Tefekkür et",
+                    "body": "Anlamla biraz daha uzun kalmak için tilavet, çeviriler, hatırlatmalar ve manevi araçlardan yararlanın."
+                },
+                "return": {
+                    "step": "03",
+                    "title": "Geri dön",
+                    "body": "Yer imlerinize, rutinlerinize ve huzurlu ivmenize istediğiniz zaman geri dönün; yeniden başlamak yorucu olmak zorunda değil."
+                }
+            },
+            "promise": {
+                "eyebrow": "Koruduğumuz şey",
+                "title": "Varsayılan olarak güzel, faydalı ve saygılı",
+                "body": "Deneyim; odak, çok dilli erişim ve hem tefekküre hem rutine saygı duyan sakin bir görsel ritim etrafında şekillendi.",
+                "one": "Okumayı merkeze alan temiz bir arayüz",
+                "two": "Arapça ve İbranice için RTL destekli yerelleştirme",
+                "three": "Web ve iPhone'da destekleyici hissettiren araçlar"
+            },
+            "cta": {
+                "eyebrow": "Nazikçe içeri girin",
+                "title": "İhtiyacınız kadar kalın.",
+                "body": "Kur'an'ı açın, Kutsal İsimleri keşfedin ya da yolculuğunuzu şekillendirmek için yardım istiyorsanız bizimle iletişime geçin.",
+                "primary": "Okumaya başla",
+                "secondary": "Kutsal İsimleri keşfet",
+                "tertiary": "PEACE2074 ile iletişime geç"
+            }
+        },
         "support": {
             "title": "Destek",
             "subtitle": "Yardıma mı ihtiyacınız var? Dinlemek ve yardımcı olmak için buradayız.",

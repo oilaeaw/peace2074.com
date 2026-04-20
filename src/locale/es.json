@@ -39,6 +39,7 @@
         },
         "nav": {
             "home": "Inicio",
+            "about": "Acerca de",
             "quran": "Corán",
             "holynames": "Nombres Santos",
             "tasbeeh": "Tasbeeh",
@@ -90,6 +91,106 @@
         "AdminPage": "Página de Administración"
     },
     "pages": {
+        "about": {
+            "title": "Acerca de PEACE2074",
+            "hero": {
+                "eyebrow": "Acerca de PEACE2074",
+                "title": "Un lugar luminoso para leer, recordar y volver.",
+                "lead": "PEACE2074 es un espacio multilingüe para el Corán y la reflexión, diseñado para sentirse sereno, hermoso y profundamente útil, ya sea que lo abras por un solo ayah, un solo respiro o un viaje más largo.",
+                "primaryCta": "Abrir Corán",
+                "secondaryCta": "Explorar Nombres Santos",
+                "tags": {
+                    "read": "Lectura del Corán",
+                    "remember": "Dhikr y Tasbeeh",
+                    "reflect": "Nombres Santos y reflexión",
+                    "connect": "Soporte y comunidad"
+                }
+            },
+            "spotlight": {
+                "label": "Diseñado para un enfoque sereno",
+                "title": "Creado para bajar el ruido y elevar la presencia.",
+                "body": "Cada pantalla busca sentirse clara, útil y espiritualmente centrada, desde la lectura de surahs y el compartir versículos hasta marcadores, escucha sin conexión y reflexión diaria."
+            },
+            "stats": {
+                "languages": {
+                    "value": "8",
+                    "label": "idiomas compatibles"
+                },
+                "suras": {
+                    "value": "114",
+                    "label": "surahs listas para explorar"
+                },
+                "experience": {
+                    "value": "1",
+                    "label": "experiencia serena en web y iPhone"
+                }
+            },
+            "story": {
+                "eyebrow": "Por qué existe",
+                "title": "Las herramientas de fe pueden ser poderosas sin volverse abrumadoras.",
+                "body": "PEACE2074 reúne lectura del Corán, recuerdo, exploración reflexiva y apoyo práctico en un solo lugar. El objetivo es simple: ayudarte a volver a lo importante con menos fricción y más belleza.",
+                "cardTitle": "Un ritmo digital más tranquilo",
+                "cardBody": "En lugar de utilidades dispersas e interfaces ruidosas, PEACE2074 reúne lectura, recitación, Tasbeeh, Nombres Santos, reflexiones y apoyo en un solo flujo de paz."
+            },
+            "verse": {
+                "label": "Espíritu que guía",
+                "quote": "La paz no es solo algo que buscas. Es algo que practicas, página a página, oración a oración, regreso tras regreso.",
+                "source": "Espíritu de PEACE2074"
+            },
+            "pillars": {
+                "eyebrow": "Lo que lo hace especial",
+                "title": "Tres pilares dan forma a la experiencia",
+                "lead": "Cada parte de la app está pensada para sentirse útil en un día agitado y hermosa en un momento de calma.",
+                "read": {
+                    "title": "Leer con claridad",
+                    "body": "Explora el Corán con modos de lectura enfocados, compartir versículos, marcadores y una recitación que no se interpone en tu camino."
+                },
+                "remember": {
+                    "title": "Recordar con presencia",
+                    "body": "Mantén el dhikr cerca mediante Tasbeeh digital, Nombres Santos y sugerencias suaves que apoyan la constancia sin presión."
+                },
+                "connect": {
+                    "title": "Conectar con apoyo",
+                    "body": "Encuentra ayuda mediante chat, contacto y guía reflexiva cuando necesites dirección, no más ruido."
+                }
+            },
+            "journey": {
+                "eyebrow": "Un recorrido guiado",
+                "title": "Del interés a la constancia",
+                "lead": "Tanto si llegas buscando, reflexionando o reconstruyendo un hábito, PEACE2074 te encuentra donde estás.",
+                "discover": {
+                    "step": "01",
+                    "title": "Descubrir",
+                    "body": "Empieza con una surah, un versículo o una pregunta, y deja que la app haga evidente el siguiente paso."
+                },
+                "reflect": {
+                    "step": "02",
+                    "title": "Reflexionar",
+                    "body": "Usa recitación, traducciones, recordatorios y herramientas espirituales para permanecer un poco más con el significado."
+                },
+                "return": {
+                    "step": "03",
+                    "title": "Volver",
+                    "body": "Regresa cuando quieras a tus marcadores, rutinas y ritmo de paz, sin una reentrada pesada."
+                }
+            },
+            "promise": {
+                "eyebrow": "Lo que protegemos",
+                "title": "Hermoso, útil y respetuoso por defecto",
+                "body": "La experiencia está construida alrededor del enfoque, el acceso multilingüe y un ritmo visual sereno que respeta tanto la reflexión como la rutina.",
+                "one": "Una interfaz limpia centrada en la lectura",
+                "two": "Localización con soporte RTL para árabe y hebreo",
+                "three": "Herramientas que se sienten de apoyo en web y iPhone"
+            },
+            "cta": {
+                "eyebrow": "Entra con suavidad",
+                "title": "Quédate el tiempo que necesites.",
+                "body": "Abre el Corán, explora los Nombres Santos o contáctanos si quieres ayuda para dar forma a tu camino.",
+                "primary": "Empezar a leer",
+                "secondary": "Explorar Nombres Santos",
+                "tertiary": "Contactar a PEACE2074"
+            }
+        },
         "support": {
             "title": "Soporte",
             "subtitle": "¿Necesitas ayuda? Estamos aquí para escucharte y asistirte.",

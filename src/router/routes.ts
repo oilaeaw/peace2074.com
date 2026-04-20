@@ -65,6 +65,20 @@ const baseRoutes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/about',
+    name: 'About',
+    component: () => import('@/views/about.vue'),
+    meta: {
+      title: 'About',
+      titleKey: 'pages.about.title',
+      description:
+        'Learn about PEACE2074, a calm multilingual Quran and reflection experience built around clarity, remembrance, and supportive spiritual tools.',
+      keywords: ['about PEACE2074', 'Quran reading app', 'Islamic reflection platform'],
+      contentGroup: 'about',
+      schemaType: 'AboutPage',
+    },
+  },
+  {
     path: '/tasbeeh',
     name: 'Tasbeeh',
     component: () => import('@/pages/tasbeeh.vue'),

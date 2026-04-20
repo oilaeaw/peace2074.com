@@ -306,6 +306,9 @@
           >
         </div>
         <nav class="footer-links" aria-label="Footer links">
+          <RouterLink to="/about" class="footer-link">{{
+            t('appShell.nav.about')
+          }}</RouterLink>
           <RouterLink to="/quran" class="footer-link">{{
             t('appShell.nav.quran')
           }}</RouterLink>
@@ -420,6 +423,7 @@ const langs = computed(() => {
 
 const defaultNavItems = [
   { key: 'home', labelKey: 'appShell.nav.home', to: '/' },
+  { key: 'about', labelKey: 'appShell.nav.about', to: '/about' },
   { key: 'quran', labelKey: 'appShell.nav.quran', to: '/quran' },
   { key: 'holynames', labelKey: 'appShell.nav.holynames', to: '/holynames' },
   { key: 'tasbeeh', labelKey: 'appShell.nav.tasbeeh', to: '/tasbeeh' },

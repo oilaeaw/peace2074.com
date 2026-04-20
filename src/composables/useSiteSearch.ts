@@ -28,6 +28,12 @@ const basePages = [
         subtitleKey: "pages.home.hero.lead",
     },
     {
+        id: "about",
+        path: "/about",
+        titleKey: "pages.about.title",
+        subtitleKey: "pages.about.hero.lead",
+    },
+    {
         id: "quran",
         path: "/quran",
         titleKey: "pages.quran.pageTitle",

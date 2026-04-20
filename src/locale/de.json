@@ -39,6 +39,7 @@
     },
     "nav": {
       "home": "Startseite",
+      "about": "Über",
       "quran": "Koran",
       "holynames": "Heilige Namen",
       "tasbeeh": "Tasbeeh",
@@ -55,6 +56,106 @@
     }
   },
   "pages": {
+    "about": {
+      "title": "Über PEACE2074",
+      "hero": {
+        "eyebrow": "Über PEACE2074",
+        "title": "Ein leuchtender Ort zum Lesen, Erinnern und Zurückkehren.",
+        "lead": "PEACE2074 ist ein mehrsprachiger Raum für Koran und Reflexion, gestaltet, damit er ruhig, schön und wirklich hilfreich wirkt – egal ob du ihn für einen Vers, einen stillen Atemzug oder eine längere Reise öffnest.",
+        "primaryCta": "Koran öffnen",
+        "secondaryCta": "Heilige Namen entdecken",
+        "tags": {
+          "read": "Koran lesen",
+          "remember": "Dhikr & Tasbeeh",
+          "reflect": "Heilige Namen & Reflexion",
+          "connect": "Support & Gemeinschaft"
+        }
+      },
+      "spotlight": {
+        "label": "Für sanften Fokus gestaltet",
+        "title": "Entwickelt, um Lärm zu senken und Präsenz zu stärken.",
+        "body": "Jeder Bildschirm soll klar, unterstützend und spirituell geerdet wirken – vom Lesen der Suren und Teilen von Versen bis zu Lesezeichen, Offline-Hören und täglicher Reflexion."
+      },
+      "stats": {
+        "languages": {
+          "value": "8",
+          "label": "unterstützte Sprachen"
+        },
+        "suras": {
+          "value": "114",
+          "label": "Suren zum Entdecken"
+        },
+        "experience": {
+          "value": "1",
+          "label": "ruhiges Erlebnis auf Web und iPhone"
+        }
+      },
+      "story": {
+        "eyebrow": "Warum es existiert",
+        "title": "Werkzeuge für den Glauben können stark sein, ohne zu überfordern.",
+        "body": "PEACE2074 vereint Koranlesen, Dhikr, achtsame Erkundung und praktische Unterstützung an einem Ort. Das Ziel ist einfach: dir helfen, mit weniger Reibung und mehr Schönheit zu dem zurückzukehren, was zählt.",
+        "cardTitle": "Ein ruhigerer digitaler Rhythmus",
+        "cardBody": "Statt verstreuter Hilfsmittel und lauter Oberflächen bündelt PEACE2074 Lesen, Rezitation, Tasbeeh, Heilige Namen, Reflexionen und Support zu einem friedlichen Fluss."
+      },
+      "verse": {
+        "label": "Leitgedanke",
+        "quote": "Frieden ist nicht nur etwas, das du suchst. Es ist etwas, das du übst – Seite für Seite, Gebet für Gebet, Rückkehr für Rückkehr.",
+        "source": "PEACE2074-Ethos"
+      },
+      "pillars": {
+        "eyebrow": "Was es besonders macht",
+        "title": "Drei Säulen tragen das Erlebnis",
+        "lead": "Jeder Teil der App soll an hektischen Tagen nützlich und in stillen Momenten schön sein.",
+        "read": {
+          "title": "Klar lesen",
+          "body": "Erkunde den Koran mit fokussierten Lesemodi, Versfreigabe, Lesezeichen und Rezitation, die dir nicht im Weg steht."
+        },
+        "remember": {
+          "title": "Mit Präsenz gedenken",
+          "body": "Halte Dhikr nah bei dir – mit digitalem Tasbeeh, Heiligen Namen und sanften Impulsen, die Beständigkeit ohne Druck unterstützen."
+        },
+        "connect": {
+          "title": "Mit Unterstützung verbunden bleiben",
+          "body": "Finde Hilfe über Chat, Kontaktwege und durchdachte Begleitung, wenn du Orientierung brauchst – nicht noch mehr Lärm."
+        }
+      },
+      "journey": {
+        "eyebrow": "Eine geführte Reise",
+        "title": "Von Neugier zu Beständigkeit",
+        "lead": "Ob du suchst, reflektierst oder eine Gewohnheit neu aufbaust – PEACE2074 begegnet dir dort, wo du gerade bist.",
+        "discover": {
+          "step": "01",
+          "title": "Entdecken",
+          "body": "Beginne mit einer Sure, einem Vers oder einer Frage und lass die App den nächsten Schritt klar machen."
+        },
+        "reflect": {
+          "step": "02",
+          "title": "Reflektieren",
+          "body": "Nutze Rezitation, Übersetzungen, Erinnerungen und spirituelle Werkzeuge, um etwas länger beim Sinn zu verweilen."
+        },
+        "return": {
+          "step": "03",
+          "title": "Zurückkehren",
+          "body": "Kehre jederzeit zu deinen Lesezeichen, Routinen und deinem friedlichen Schwung zurück – ganz ohne steilen Wiedereinstieg."
+        }
+      },
+      "promise": {
+        "eyebrow": "Was wir schützen",
+        "title": "Schön, nützlich und respektvoll – als Standard",
+        "body": "Das Erlebnis ist auf Fokus, mehrsprachigen Zugang und einen ruhigen visuellen Rhythmus ausgerichtet, der sowohl Reflexion als auch Routine respektiert.",
+        "one": "Eine klare Oberfläche mit Lesen im Mittelpunkt",
+        "two": "Lokalisierung mit RTL-Unterstützung für Arabisch und Hebräisch",
+        "three": "Werkzeuge, die sich auf Web und iPhone unterstützend anfühlen"
+      },
+      "cta": {
+        "eyebrow": "Komm sanft herein",
+        "title": "Bleib so lange, wie du brauchst.",
+        "body": "Öffne den Koran, entdecke die Heiligen Namen oder melde dich, wenn du Hilfe beim Gestalten deiner Reise möchtest.",
+        "primary": "Jetzt lesen",
+        "secondary": "Heilige Namen entdecken",
+        "tertiary": "PEACE2074 kontaktieren"
+      }
+    },
     "home": {
       "title": "Startseite",
       "hero": {
