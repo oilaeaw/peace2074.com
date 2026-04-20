@@ -59,6 +59,7 @@
     "ios:metadata:sync": "node --experimental-strip-types scripts/sync-app-store-metadata.ts",
     "ios:prepare": "node --experimental-strip-types scripts/prepare-ios-fastlane-artifacts.ts",
     "ios:patch:capacitor": "node --experimental-strip-types scripts/patch-capacitor-ios-eval.ts",
+    "ios:reset:xcode": "node --experimental-strip-types scripts/reset-xcode-build-service.ts",
     "ios:sync:native": "pnpm ios:patch:capacitor && node --experimental-strip-types scripts/ensure-ios-firebase-analytics.ts",
     "ios:sync": "pnpm sync:branding && pnpm ios:prepare && ./node_modules/.bin/cap sync ios && pnpm ios:sync:native",
     "ios:dev": "pnpm ios:sync && ./node_modules/.bin/cap open ios",
