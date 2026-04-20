@@ -12,13 +12,6 @@
   </url>
 
   <url>
-    <loc>https://peace2074.com/about</loc>
-    <lastmod>2026-04-20T00:00:00+00:00</lastmod>
-    <changefreq>weekly</changefreq>
-    <priority>0.8</priority>
-  </url>
-
-  <url>
     <loc>https://peace2074.com/quran</loc>
     <lastmod>2026-02-13T00:00:00+00:00</lastmod>
     <changefreq>daily</changefreq>
@@ -175,7 +168,7 @@
 
   <url>
     <loc>https://peace2074.com/deploys</loc>
-    <lastmod>2026-04-20T00:00:00+00:00</lastmod>
+    <lastmod>2026-02-13T00:00:00+00:00</lastmod>
     <changefreq>weekly</changefreq>
     <priority>0.6</priority>
   </url>
