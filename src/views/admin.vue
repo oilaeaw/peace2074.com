@@ -36,7 +36,12 @@
       <q-separator />
 
       <q-card-section>
-        <q-banner v-if="error" rounded dense class="bg-red-1 text-negative q-mb-md">
+        <q-banner
+          v-if="error"
+          rounded
+          dense
+          class="bg-red-1 text-negative q-mb-md"
+        >
           {{ error }}
         </q-banner>
 
@@ -57,7 +62,9 @@
               </q-item-label>
             </q-item-section>
             <q-item-section side>
-              <q-item-label caption>{{ formatDate(release.publishedAt) }}</q-item-label>
+              <q-item-label caption>
+                {{ formatDate(release.publishedAt) }}
+              </q-item-label>
             </q-item-section>
           </q-item>
 
@@ -99,6 +106,12 @@ interface Release {
   publishedAt: string
 }
 
+interface GitHubReleaseItem {
+  tag_name?: unknown
+  name?: unknown
+  published_at?: unknown
+}
+
 const releases = ref<Release[]>([])
 
 function normalizeTag(tag: string): string {
@@ -134,21 +147,23 @@ async function loadReleases() {
   error.value = ''
 
   try {
-    const response = await fetch('https://api.github.com/repos/peace2074/peace2074.com/releases?per_page=100')
+    const response = await fetch(
+      'https://api.github.com/repos/Islam2074/peace2074.com/releases?per_page=100'
+    )
     if (!response.ok) {
       throw new Error(`GitHub API error: ${response.status}`)
     }
 
-    const data = await response.json()
+    const data: unknown = await response.json()
     releases.value = (Array.isArray(data) ? data : [])
-      .map((item: any) => ({
+      .map((item: GitHubReleaseItem) => ({
         tagName: String(item.tag_name || '').trim(),
         name: String(item.name || '').trim(),
         publishedAt: String(item.published_at || '').trim(),
       }))
       .filter((r) => !!r.tagName)
-  } catch (e: any) {
-    error.value = e?.message || t('pages.admin.loadFailed')
+  } catch (e: unknown) {
+    error.value = e instanceof Error ? e.message : t('pages.admin.loadFailed')
     releases.value = []
   } finally {
     loading.value = false

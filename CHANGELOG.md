@@ -2,6 +2,17 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.1.2 (2026-04-20)
+
+### Bug Fixes
+
+- update the GitHub releases `/repos` fetch in the admin view to use the current `Islam2074/peace2074.com` repository owner
+
+### Chores
+
+- bump root and Nitro API package versions to `3.1.2`
+- align iOS marketing/build versions with the `3.1.2` release batch before native sync
+
 ## 3.1.1 (2026-04-18)
 
 ### Features
