@@ -16,7 +16,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "GULApplication.h"
+#import <GoogleUtilities/GULApplication.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

@@ -43,6 +43,123 @@ function ensureProjectBuildFixes(projectPath: string, projectLabel: string) {
     return true;
 }
 
+function ensureWritable(filePath: string) {
+    fs.chmodSync(filePath, 0o644);
+}
+
+function listFilesRecursive(dirPath: string): string[] {
+    if (!fs.existsSync(dirPath)) {
+        return [];
+    }
+
+    const entries = fs.readdirSync(dirPath, { withFileTypes: true });
+    const files: string[] = [];
+
+    for (const entry of entries) {
+        const entryPath = path.join(dirPath, entry.name);
+        if (entry.isDirectory()) {
+            files.push(...listFilesRecursive(entryPath));
+            continue;
+        }
+
+        files.push(entryPath);
+    }
+
+    return files;
+}
+
+function normalizeGoogleUtilitiesFrameworkHeader(text: string) {
+    return text.replace(
+        /^#import "(GUL[^"]+\.h)"$/gm,
+        '#import <GoogleUtilities/$1>'
+    );
+}
+
+function ensureGoogleUtilitiesFrameworkHeaderFixes() {
+    const googleUtilitiesRoot = path.join(iosAppDir, 'Pods', 'GoogleUtilities', 'GoogleUtilities');
+    const googleUtilitiesUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'GoogleUtilities',
+        'GoogleUtilities-umbrella.h'
+    );
+
+    let patchedHeaderCount = 0;
+
+    for (const filePath of listFilesRecursive(googleUtilitiesRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        const publicHeaderSegment = `${path.sep}Public${path.sep}GoogleUtilities${path.sep}`;
+        if (!filePath.includes(publicHeaderSegment)) {
+            continue;
+        }
+
+        const currentText = readText(filePath);
+        const normalizedText = normalizeGoogleUtilitiesFrameworkHeader(currentText);
+        if (normalizedText === currentText) {
+            continue;
+        }
+
+        ensureWritable(filePath);
+        fs.writeFileSync(filePath, normalizedText);
+        patchedHeaderCount += 1;
+    }
+
+    let patchedUmbrella = false;
+    if (fs.existsSync(googleUtilitiesUmbrellaPath)) {
+        const currentUmbrella = readText(googleUtilitiesUmbrellaPath);
+        const normalizedUmbrella = normalizeGoogleUtilitiesFrameworkHeader(currentUmbrella);
+        if (normalizedUmbrella !== currentUmbrella) {
+            ensureWritable(googleUtilitiesUmbrellaPath);
+            fs.writeFileSync(googleUtilitiesUmbrellaPath, normalizedUmbrella);
+            patchedUmbrella = true;
+        }
+    }
+
+    if (patchedHeaderCount > 0 || patchedUmbrella) {
+        console.log(
+            `Patched GoogleUtilities framework header imports (${patchedHeaderCount} public headers${patchedUmbrella ? ' + umbrella header' : ''}).`
+        );
+    }
+
+    return patchedHeaderCount > 0 || patchedUmbrella;
+}
+
+function googleUtilitiesFrameworkHeadersPatched() {
+    const googleUtilitiesRoot = path.join(iosAppDir, 'Pods', 'GoogleUtilities', 'GoogleUtilities');
+    const googleUtilitiesUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'GoogleUtilities',
+        'GoogleUtilities-umbrella.h'
+    );
+
+    for (const filePath of listFilesRecursive(googleUtilitiesRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        const publicHeaderSegment = `${path.sep}Public${path.sep}GoogleUtilities${path.sep}`;
+        if (!filePath.includes(publicHeaderSegment)) {
+            continue;
+        }
+
+        if (/#import "GUL[^"]+\.h"/m.test(readText(filePath))) {
+            return false;
+        }
+    }
+
+    if (fs.existsSync(googleUtilitiesUmbrellaPath)) {
+        return !/#import "GUL[^"]+\.h"/m.test(readText(googleUtilitiesUmbrellaPath));
+    }
+
+    return true;
+}
+
 function lockfileHasNativeAnalytics(lockfileText: string) {
     return (
         lockfileText.includes('CapacitorFirebaseAnalytics/AnalyticsWithoutAdIdSupport') ||
@@ -120,6 +237,7 @@ function main() {
 
     ensureProjectBuildFixes(appProjectPath, 'ios/App/App.xcodeproj');
     ensureProjectBuildFixes(podsProjectPath, 'ios/App/Pods/Pods.xcodeproj');
+    ensureGoogleUtilitiesFrameworkHeaderFixes();
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
@@ -140,6 +258,12 @@ function main() {
     if (!podsProjectHasNativePodBuildFixes(updatedPodsProject)) {
         throw new Error(
             'Pods.xcodeproj still contains quoted-include/module-verifier settings that can re-enable VerifyModule after pod install.'
+        );
+    }
+
+    if (!googleUtilitiesFrameworkHeadersPatched()) {
+        throw new Error(
+            'GoogleUtilities public framework headers still contain double-quoted imports after native fix-up.'
         );
     }
 

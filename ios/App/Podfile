@@ -240,6 +240,40 @@ post_install do |installer|
     end
   end
 
+  # GoogleUtilities public headers are framework-facing and live under a stable
+  # `Public/GoogleUtilities` include path, so framework-style imports are safe
+  # during pod compilation and prevent Xcode from re-flagging them as invalid
+  # framework headers in clean or indexed builds.
+  google_utilities_public_headers = Dir.glob(
+    File.join(installer.sandbox.root, 'GoogleUtilities', 'GoogleUtilities', '**', 'Public', 'GoogleUtilities', '*.h')
+  )
+  google_utilities_patched_headers = 0
+  google_utilities_public_headers.each do |header|
+    next unless File.exist?(header)
+
+    content = File.read(header)
+    patched = content.gsub(/#import "(GUL[^"]+\.h)"/, '#import <GoogleUtilities/\1>')
+    next if patched == content
+
+    File.chmod(0644, header) unless File.writable?(header)
+    File.write(header, patched)
+    google_utilities_patched_headers += 1
+  end
+  if google_utilities_patched_headers.positive?
+    puts "✓ Fixed GoogleUtilities public framework header imports (#{google_utilities_patched_headers} files)"
+  end
+
+  google_utilities_umbrella = File.join(installer.sandbox.root, 'Target Support Files', 'GoogleUtilities', 'GoogleUtilities-umbrella.h')
+  if File.exist?(google_utilities_umbrella)
+    umbrella_content = File.read(google_utilities_umbrella)
+    patched_umbrella_content = umbrella_content.gsub(/#import "(GUL[^"]+\.h)"/, '#import <GoogleUtilities/\1>')
+    if patched_umbrella_content != umbrella_content
+      File.chmod(0644, google_utilities_umbrella) unless File.writable?(google_utilities_umbrella)
+      File.write(google_utilities_umbrella, patched_umbrella_content)
+      puts '✓ Fixed GoogleUtilities-umbrella.h angle-bracket imports'
+    end
+  end
+
   # PromisesObjC: source headers use relative "FBL*.h" imports — leave them as-is.
   # We disable quoted-include warnings + module verification in both the Pods
   # project and the user app project so Xcode does not re-flag vendored headers

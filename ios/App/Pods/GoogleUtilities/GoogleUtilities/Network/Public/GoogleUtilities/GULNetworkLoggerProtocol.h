@@ -16,7 +16,7 @@
 
 #import <Foundation/Foundation.h>
 
-#import "GULNetworkMessageCode.h"
+#import <GoogleUtilities/GULNetworkMessageCode.h>
 
 NS_ASSUME_NONNULL_BEGIN
 

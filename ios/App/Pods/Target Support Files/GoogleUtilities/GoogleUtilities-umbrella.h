@@ -10,26 +10,26 @@
 #endif
 #endif
 
-#import "GULAppDelegateSwizzler.h"
-#import "GULApplication.h"
-#import "GULSceneDelegateSwizzler.h"
-#import "GULAppEnvironmentUtil.h"
-#import "GULKeychainStorage.h"
-#import "GULKeychainUtils.h"
-#import "GULNetworkInfo.h"
-#import "GULLogger.h"
-#import "GULLoggerLevel.h"
-#import "GULOriginalIMPConvenienceMacros.h"
-#import "GULSwizzler.h"
-#import "GULNSData+zlib.h"
-#import "GULMutableDictionary.h"
-#import "GULNetwork.h"
-#import "GULNetworkConstants.h"
-#import "GULNetworkLoggerProtocol.h"
-#import "GULNetworkMessageCode.h"
-#import "GULNetworkURLSession.h"
-#import "GULReachabilityChecker.h"
-#import "GULUserDefaults.h"
+#import <GoogleUtilities/GULAppDelegateSwizzler.h>
+#import <GoogleUtilities/GULApplication.h>
+#import <GoogleUtilities/GULSceneDelegateSwizzler.h>
+#import <GoogleUtilities/GULAppEnvironmentUtil.h>
+#import <GoogleUtilities/GULKeychainStorage.h>
+#import <GoogleUtilities/GULKeychainUtils.h>
+#import <GoogleUtilities/GULNetworkInfo.h>
+#import <GoogleUtilities/GULLogger.h>
+#import <GoogleUtilities/GULLoggerLevel.h>
+#import <GoogleUtilities/GULOriginalIMPConvenienceMacros.h>
+#import <GoogleUtilities/GULSwizzler.h>
+#import <GoogleUtilities/GULNSData+zlib.h>
+#import <GoogleUtilities/GULMutableDictionary.h>
+#import <GoogleUtilities/GULNetwork.h>
+#import <GoogleUtilities/GULNetworkConstants.h>
+#import <GoogleUtilities/GULNetworkLoggerProtocol.h>
+#import <GoogleUtilities/GULNetworkMessageCode.h>
+#import <GoogleUtilities/GULNetworkURLSession.h>
+#import <GoogleUtilities/GULReachabilityChecker.h>
+#import <GoogleUtilities/GULUserDefaults.h>
 
 FOUNDATION_EXPORT double GoogleUtilitiesVersionNumber;
 FOUNDATION_EXPORT const unsigned char GoogleUtilitiesVersionString[];

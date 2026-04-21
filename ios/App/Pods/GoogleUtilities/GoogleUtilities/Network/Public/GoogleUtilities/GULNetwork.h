@@ -16,9 +16,9 @@
 
 #import <Foundation/Foundation.h>
 
-#import "GULNetworkConstants.h"
-#import "GULNetworkLoggerProtocol.h"
-#import "GULNetworkURLSession.h"
+#import <GoogleUtilities/GULNetworkConstants.h>
+#import <GoogleUtilities/GULNetworkLoggerProtocol.h>
+#import <GoogleUtilities/GULNetworkURLSession.h>
 
 NS_ASSUME_NONNULL_BEGIN
 
