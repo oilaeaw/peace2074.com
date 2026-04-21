@@ -9,6 +9,8 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
         _ application: UIApplication,
         didFinishLaunchingWithOptions launchOptions: [UIApplication.LaunchOptionsKey: Any]?
     ) -> Bool {
+        // Activate Watch bridge so verse updates are relayed to Apple Watch
+        _ = PhoneWatchBridge.shared
         return true
     }
     
