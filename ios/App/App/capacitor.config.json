@@ -4,8 +4,8 @@
 	"webDir": "dist",
 	"bundledWebRuntime": false,
 	"ios": {
-		"contentInset": "automatic",
-		"scrollEnabled": false,
+		"contentInset": "never",
+		"scrollEnabled": true,
 		"allowsLinkPreview": false,
 		"limitsNavigationsToAppBoundDomains": true
 	},

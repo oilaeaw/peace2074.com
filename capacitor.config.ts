@@ -17,8 +17,8 @@ const config: CapacitorConfig = {
     bundledWebRuntime: false,
     ...(serverConfig ? { server: serverConfig } : {}),
     ios: {
-        contentInset: 'automatic',
-        scrollEnabled: false,
+        contentInset: 'never',
+        scrollEnabled: true,
         allowsLinkPreview: false,
         limitsNavigationsToAppBoundDomains: true,
     },
