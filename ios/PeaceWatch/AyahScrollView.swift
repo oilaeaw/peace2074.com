@@ -59,14 +59,6 @@ struct AyahRow: View {
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
-            if isActive {
-                HStack {
-                    Spacer()
-                    Image(systemName: "speaker.wave.2.fill")
-                        .font(.system(size: 10, weight: .semibold))
-                        .foregroundStyle(.green)
-                }
-            }
             Text(ayah.text)
                 .font(.system(size: 14, weight: .regular))
                 .multilineTextAlignment(.trailing)
@@ -74,15 +66,26 @@ struct AyahRow: View {
                 .environment(\.layoutDirection, .rightToLeft)
                 .lineSpacing(3)
 
-            Text("\(ayah.verse)")
-                .font(.system(size: 10, weight: .light))
-                .foregroundStyle(.secondary)
-                .frame(maxWidth: .infinity, alignment: .trailing)
+            HStack(alignment: .center, spacing: 4) {
+                if isActive {
+                    Image(systemName: "speaker.wave.2.fill")
+                        .font(.system(size: 12, weight: .semibold))
+                        .foregroundStyle(.green)
+                }
+                Spacer()
+                Text("\(ayah.verse)")
+                    .font(.system(size: 10, weight: .light))
+                    .foregroundStyle(isActive ? .green : .secondary)
+            }
         }
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(isActive ? Color.green.opacity(0.15) : Color.white.opacity(0.06))
+                .fill(isActive ? Color.green.opacity(0.18) : Color.white.opacity(0.06))
+        )
+        .overlay(
+            RoundedRectangle(cornerRadius: 8)
+                .stroke(isActive ? Color.green.opacity(0.6) : Color.clear, lineWidth: 1)
         )
     }
 }
