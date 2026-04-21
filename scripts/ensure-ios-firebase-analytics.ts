@@ -95,6 +95,12 @@ function normalizeFirebaseCoreFrameworkHeader(text: string) {
         .replace(/^#import "(FirebaseCore\.h)"$/gm, '#import <FirebaseCore/$1>');
 }
 
+function normalizeFirebaseInstallationsFrameworkHeader(text: string) {
+    return text
+        .replace(/^#import "(FIR[^"]+\.h)"$/gm, '#import <FirebaseInstallations/$1>')
+        .replace(/^#import "(FirebaseInstallations\.h)"$/gm, '#import <FirebaseInstallations/$1>');
+}
+
 function ensureGoogleUtilitiesFrameworkHeaderFixes() {
     const googleUtilitiesRoot = path.join(iosAppDir, 'Pods', 'GoogleUtilities', 'GoogleUtilities');
     const googleUtilitiesUmbrellaPath = path.join(
@@ -289,6 +295,98 @@ function ensureFirebaseCoreFrameworkHeaderFixes() {
     return patchedHeaderCount > 0 || patchedUmbrella;
 }
 
+function ensureFirebaseInstallationsFrameworkHeaderFixes() {
+    const firebaseInstallationsRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'FirebaseInstallations',
+        'FirebaseInstallations',
+        'Source',
+        'Library',
+        'Public',
+        'FirebaseInstallations'
+    );
+    const firebaseInstallationsUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'FirebaseInstallations',
+        'FirebaseInstallations-umbrella.h'
+    );
+
+    let patchedHeaderCount = 0;
+    for (const filePath of listFilesRecursive(firebaseInstallationsRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        const currentText = readText(filePath);
+        const normalizedText = normalizeFirebaseInstallationsFrameworkHeader(currentText);
+        if (normalizedText === currentText) {
+            continue;
+        }
+
+        ensureWritable(filePath);
+        fs.writeFileSync(filePath, normalizedText);
+        patchedHeaderCount += 1;
+    }
+
+    let patchedUmbrella = false;
+    if (fs.existsSync(firebaseInstallationsUmbrellaPath)) {
+        const currentUmbrella = readText(firebaseInstallationsUmbrellaPath);
+        const normalizedUmbrella = normalizeFirebaseInstallationsFrameworkHeader(currentUmbrella);
+        if (normalizedUmbrella !== currentUmbrella) {
+            ensureWritable(firebaseInstallationsUmbrellaPath);
+            fs.writeFileSync(firebaseInstallationsUmbrellaPath, normalizedUmbrella);
+            patchedUmbrella = true;
+        }
+    }
+
+    if (patchedHeaderCount > 0 || patchedUmbrella) {
+        console.log(
+            `Patched FirebaseInstallations framework header imports (${patchedHeaderCount} headers${patchedUmbrella ? ' + umbrella header' : ''}).`
+        );
+    }
+
+    return patchedHeaderCount > 0 || patchedUmbrella;
+}
+
+function firebaseInstallationsFrameworkHeadersPatched() {
+    const firebaseInstallationsRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'FirebaseInstallations',
+        'FirebaseInstallations',
+        'Source',
+        'Library',
+        'Public',
+        'FirebaseInstallations'
+    );
+    const firebaseInstallationsUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'FirebaseInstallations',
+        'FirebaseInstallations-umbrella.h'
+    );
+
+    for (const filePath of listFilesRecursive(firebaseInstallationsRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        if (/#import "(?:FIR|FirebaseInstallations)[^"]+\.h"/m.test(readText(filePath))) {
+            return false;
+        }
+    }
+
+    if (fs.existsSync(firebaseInstallationsUmbrellaPath)) {
+        return !/#import "(?:FIR|FirebaseInstallations)[^"]+\.h"/m.test(readText(firebaseInstallationsUmbrellaPath));
+    }
+
+    return true;
+}
+
 function firebaseCoreFrameworkHeadersPatched() {
     const firebaseCoreRoot = path.join(
         iosAppDir,
@@ -438,6 +536,7 @@ function main() {
     ensureGoogleUtilitiesFrameworkHeaderFixes();
     ensurePromisesFrameworkHeaderFixes();
     ensureFirebaseCoreFrameworkHeaderFixes();
+    ensureFirebaseInstallationsFrameworkHeaderFixes();
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
@@ -476,6 +575,12 @@ function main() {
     if (!firebaseCoreFrameworkHeadersPatched()) {
         throw new Error(
             'FirebaseCore framework headers still contain double-quoted imports after native fix-up.'
+        );
+    }
+
+    if (!firebaseInstallationsFrameworkHeadersPatched()) {
+        throw new Error(
+            'FirebaseInstallations framework headers still contain double-quoted imports after native fix-up.'
         );
     }
 
