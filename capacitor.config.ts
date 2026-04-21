@@ -16,6 +16,12 @@ const config: CapacitorConfig = {
     webDir: 'dist',
     bundledWebRuntime: false,
     ...(serverConfig ? { server: serverConfig } : {}),
+    ios: {
+        contentInset: 'automatic',
+        scrollEnabled: false,
+        allowsLinkPreview: false,
+        limitsNavigationsToAppBoundDomains: true,
+    },
 }
 
 export default config
