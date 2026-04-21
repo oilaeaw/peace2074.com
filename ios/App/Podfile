@@ -123,6 +123,11 @@ post_install do |installer|
       # Disable VerifyModule for pod frameworks to avoid third-party header
       # validation failures and missing private module map errors.
       config.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
+      # Removing MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS prevents Xcode
+      # from running VerifyModule even if ENABLE_MODULE_VERIFIER somehow reverts
+      # to YES after project regeneration (e.g. CapacitorApp, CapacitorBrowser
+      # and Firebase pods that import sibling frameworks like Capacitor).
+      config.build_settings.delete('MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS')
       # Silence "double-quoted include in framework header" for all pod targets.
       # Many vendored pods (PromisesObjC, nanopb, Firebase, etc.) use relative
       # imports internally; this is harmless and already off in their xcconfigs,
@@ -171,6 +176,7 @@ post_install do |installer|
 
     object.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
     object.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
+    object.build_settings.delete('MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS')
     object.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
   end
 
@@ -224,15 +230,17 @@ post_install do |installer|
     project_text = File.read(project_file)
     verifier_hits = project_text.scan('ENABLE_MODULE_VERIFIER = YES;').size
     quoted_include_hits = project_text.scan('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;').size
+    standards_hits = project_text.scan(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/).size
 
     patched_project_text = project_text
       .gsub('ENABLE_MODULE_VERIFIER = YES;', 'ENABLE_MODULE_VERIFIER = NO;')
       .gsub('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;', 'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
+      .gsub(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/, '')
 
     next if patched_project_text == project_text
 
     File.write(project_file, patched_project_text)
-    puts "✓ Forced verifier/header settings off in #{File.basename(File.dirname(project_file))} (#{verifier_hits} module verifier, #{quoted_include_hits} quoted-include overrides)"
+    puts "✓ Forced verifier/header settings off in #{File.basename(File.dirname(project_file))} (#{verifier_hits} module verifier, #{quoted_include_hits} quoted-include, #{standards_hits} standards-key overrides)"
   end
 
   # Fix nanopb umbrella header: double-quoted includes must be angle-bracketed in framework headers

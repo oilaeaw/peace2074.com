@@ -28,6 +28,10 @@ function normalizeProjectBuildFixes(projectText: string) {
             /CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;/g,
             'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;'
         )
+        // Remove MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS so Xcode cannot
+        // run VerifyModule even if ENABLE_MODULE_VERIFIER somehow reverts to YES
+        // after a pod install regeneration (e.g. CapacitorApp, CapacitorBrowser).
+        .replace(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/gm, '')
         .split('\n')
         .map((line) =>
             line.includes('FBLPromisePrivate.h in Headers')
