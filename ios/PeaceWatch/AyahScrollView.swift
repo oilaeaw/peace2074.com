@@ -25,9 +25,12 @@ struct AyahScrollView: View {
                         Divider().padding(.top, 4)
                     }
 
-                    ForEach(sura.ayahs) { ayah in
-                        AyahRow(ayah: ayah)
-                            .id(ayah.id)
+                    ForEach(Array(sura.ayahs.enumerated()), id: \.element.id) { index, ayah in
+                        AyahRow(
+                            ayah: ayah,
+                            isActive: store.selectedSura.id == sura.id && index == store.selectedAyahIndex
+                        )
+                        .id(ayah.id)
                     }
                 }
                 .padding(.horizontal, 4)
@@ -52,9 +55,18 @@ struct AyahScrollView: View {
 
 struct AyahRow: View {
     let ayah: Ayah
+    var isActive: Bool = false
 
     var body: some View {
         VStack(alignment: .trailing, spacing: 4) {
+            if isActive {
+                HStack {
+                    Spacer()
+                    Image(systemName: "speaker.wave.2.fill")
+                        .font(.system(size: 10, weight: .semibold))
+                        .foregroundStyle(.green)
+                }
+            }
             Text(ayah.text)
                 .font(.system(size: 14, weight: .regular))
                 .multilineTextAlignment(.trailing)
@@ -70,7 +82,7 @@ struct AyahRow: View {
         .padding(8)
         .background(
             RoundedRectangle(cornerRadius: 8)
-                .fill(Color.white.opacity(0.06))
+                .fill(isActive ? Color.green.opacity(0.15) : Color.white.opacity(0.06))
         )
     }
 }
