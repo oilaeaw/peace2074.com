@@ -1,4 +1,4 @@
-import { defineEventHandler, sendRedirect, setCookie } from 'h3'
+import { createError, defineEventHandler, getQuery, sendRedirect, setCookie } from 'h3'
 import { generateState, generateCodeVerifier } from 'arctic'
 import {
     getCanonicalOAuthStartUrl,
@@ -18,6 +18,9 @@ export default defineEventHandler(async (event) => {
             return sendRedirect(event, canonicalUrl)
         }
 
+        const query = getQuery(event)
+        const isNative = query.native === '1'
+
         const google = getGoogleOAuth()
         const state = generateState()
         const codeVerifier = generateCodeVerifier()
@@ -26,6 +29,11 @@ export default defineEventHandler(async (event) => {
         // Store state + PKCE verifier in cookies for CSRF protection
         setCookie(event, 'google_oauth_state', state, cookieOpts)
         setCookie(event, 'google_code_verifier', codeVerifier, cookieOpts)
+
+        // Track native app requests so the callback can redirect to the custom URL scheme
+        if (isNative) {
+            setCookie(event, 'oauth_from_native', '1', { ...cookieOpts, maxAge: 600 })
+        }
 
         const url = google.createAuthorizationURL(state, codeVerifier, ['openid', 'profile', 'email'])
 

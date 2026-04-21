@@ -63,6 +63,8 @@ export default defineEventHandler(async (event) => {
         const cookieOptions = getOAuthCookieOptions(event)
 
         const storedState = getCookie(event, 'apple_oauth_state')
+        const isNative = getCookie(event, 'oauth_from_native') === '1'
+        const nativeBase = 'peace2074://auth/callback'
 
         // Validate state for CSRF protection
         if (!code || !state || !storedState || state !== storedState) {
@@ -73,11 +75,14 @@ export default defineEventHandler(async (event) => {
                 stateMatches: Boolean(state && storedState && state === storedState),
             })
 
-            return sendRedirect(event, `${redirectUrl}/login?oauthError=apple-state-invalid`)
+            return sendRedirect(event, isNative
+                ? `${nativeBase}?oauthError=apple-state-invalid`
+                : `${redirectUrl}/login?oauthError=apple-state-invalid`)
         }
 
         // Clear the state cookie
         deleteCookie(event, 'apple_oauth_state', cookieOptions)
+        if (isNative) deleteCookie(event, 'oauth_from_native', cookieOptions)
 
         const apple = getAppleOAuth()
 
@@ -122,8 +127,8 @@ export default defineEventHandler(async (event) => {
             name: user.first_name || user.username,
         })
 
-        // Redirect to app
-        return sendRedirect(event, `${redirectUrl}/`)
+        // Redirect to app (native gets a deep link; web gets the normal URL)
+        return sendRedirect(event, isNative ? `${nativeBase}?authComplete=1` : `${redirectUrl}/`)
     } catch (error: any) {
         console.error('[auth/apple/callback:post] OAuth error:', error)
 

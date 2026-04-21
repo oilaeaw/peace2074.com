@@ -28,6 +28,8 @@ export default defineEventHandler(async (event) => {
 
         const storedState = getCookie(event, 'google_oauth_state')
         const storedCodeVerifier = getCookie(event, 'google_code_verifier')
+        const isNative = getCookie(event, 'oauth_from_native') === '1'
+        const nativeBase = 'peace2074://auth/callback'
 
         // Validate state for CSRF protection
         if (!code || !state || !storedState || state !== storedState || !storedCodeVerifier) {
@@ -39,12 +41,15 @@ export default defineEventHandler(async (event) => {
                 stateMatches: Boolean(state && storedState && state === storedState),
             })
 
-            return sendRedirect(event, `${redirectUrl}/login?oauthError=google-state-invalid`)
+            return sendRedirect(event, isNative
+                ? `${nativeBase}?oauthError=google-state-invalid`
+                : `${redirectUrl}/login?oauthError=google-state-invalid`)
         }
 
         // Clear the auth cookies
         deleteCookie(event, 'google_oauth_state', cookieOptions)
         deleteCookie(event, 'google_code_verifier', cookieOptions)
+        if (isNative) deleteCookie(event, 'oauth_from_native', cookieOptions)
 
         const google = getGoogleOAuth()
 
@@ -94,8 +99,8 @@ export default defineEventHandler(async (event) => {
             name: user.first_name || user.username
         })
 
-        // Redirect to app
-        return sendRedirect(event, `${redirectUrl}/`)
+        // Redirect to app (native gets a deep link; web gets the normal URL)
+        return sendRedirect(event, isNative ? `${nativeBase}?authComplete=1` : `${redirectUrl}/`)
 
     } catch (error: any) {
         console.error('[auth/google/callback] OAuth error:', error)

@@ -1,6 +1,7 @@
 import {
     createError,
     defineEventHandler,
+    getQuery,
     getRequestHeader,
     sendRedirect,
     setCookie,
@@ -24,6 +25,9 @@ export default defineEventHandler(async (event) => {
             return sendRedirect(event, canonicalUrl)
         }
 
+        const query = getQuery(event)
+        const isNative = query.native === '1'
+
         const apple = getAppleOAuth()
         const state = generateState()
 
@@ -35,6 +39,16 @@ export default defineEventHandler(async (event) => {
             sameSite: 'none',
             secure: true,
         })
+
+        // Track native app requests so the callback can redirect to the custom URL scheme
+        if (isNative) {
+            setCookie(event, 'oauth_from_native', '1', {
+                ...baseOpts,
+                maxAge: 600,
+                sameSite: 'none',
+                secure: true,
+            })
+        }
 
         const url = await apple.createAuthorizationURL(state, ['name', 'email'])
         // Apple requires form_post when requesting name/email scopes.

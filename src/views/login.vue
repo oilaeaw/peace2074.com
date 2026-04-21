@@ -1,8 +1,11 @@
 <script setup lang="ts">
-import { computed, onMounted, ref } from 'vue'
+import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
+import { Browser } from '@capacitor/browser'
+import { App as CapApp } from '@capacitor/app'
+import type { PluginListenerHandle } from '@capacitor/core'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useI18n } from 'vue-i18n'
 
@@ -44,6 +47,7 @@ const resetEmail = ref('')
 const sendingReset = ref(false)
 const passkeyLoading = ref(false)
 const appleConfigured = ref<boolean | null>(null)
+let appUrlOpenHandle: PluginListenerHandle | null = null
 
 // Compute Nitro API base URL
 const env = (import.meta as ImportMeta & { env?: LoginViewEnv }).env || {}
@@ -455,9 +459,47 @@ function openSocialLogin(provider: 'google' | 'apple') {
     return
   }
 
-  // Redirect to OAuth endpoint
-  const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${Date.now()}`
-  window.location.href = oauthUrl
+  const ts = Date.now()
+
+  if (isCapacitorLikeRuntime()) {
+    // On iOS native, use SFSafariViewController (in-app browser) as required by Apple Guideline 4.
+    // The ?native=1 param tells the server callback to redirect back via the peace2074:// deep link
+    // instead of https://peace2074.com/, which would take the user out of the native app.
+    const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}&native=1`
+    void Browser.open({ url: oauthUrl, presentationStyle: 'popover' })
+  } else {
+    const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}`
+    window.location.href = oauthUrl
+  }
+}
+
+async function handleNativeOAuthCallback(url: string) {
+  try {
+    const parsed = new URL(url)
+    const authComplete = parsed.searchParams.get('authComplete')
+    const oauthError = parsed.searchParams.get('oauthError')
+
+    await Browser.close().catch(() => {
+      /* browser may already be closed */
+    })
+
+    if (authComplete === '1') {
+      const user = await authStore.hydrateSession()
+      if (user || authStore.isAuthenticated) {
+        $q.notify({
+          type: 'positive',
+          message: t('auth.loginSuccess'),
+          position: 'top',
+        })
+        await router.push(getPostLoginPath())
+      }
+    } else if (oauthError) {
+      await router.replace({ path: '/login', query: { oauthError } })
+      void handleOAuthErrorFromRoute()
+    }
+  } catch (err) {
+    console.error('[login] Native OAuth callback error:', err)
+  }
 }
 
 function handleGoogleLogin() {
@@ -575,6 +617,20 @@ async function handleResetRequest() {
 onMounted(() => {
   void loadAuthAvailability()
   void handleOAuthErrorFromRoute()
+
+  if (isCapacitorLikeRuntime()) {
+    void CapApp.addListener('appUrlOpen', ({ url }) => {
+      if (url.startsWith('peace2074://auth/callback')) {
+        void handleNativeOAuthCallback(url)
+      }
+    }).then((handle) => {
+      appUrlOpenHandle = handle
+    })
+  }
+})
+
+onUnmounted(() => {
+  appUrlOpenHandle?.remove()
 })
 </script>
 

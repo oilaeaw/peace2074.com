@@ -14,6 +14,12 @@ importers:
       '@capacitor/android':
         specifier: ^7.4.2
         version: 7.5.0(@capacitor/core@7.5.0)
+      '@capacitor/app':
+        specifier: ^7.1.2
+        version: 7.1.2(@capacitor/core@7.5.0)
+      '@capacitor/browser':
+        specifier: ^7.0.5
+        version: 7.0.5(@capacitor/core@7.5.0)
       '@capacitor/core':
         specifier: ^7.4.2
         version: 7.5.0
@@ -1320,6 +1326,14 @@ packages:
       '@capacitor/core': 7.5.0
     dev: false
 
+  /@capacitor/app@7.1.2(@capacitor/core@7.5.0):
+    resolution: {integrity: sha512-d4I/oF/PRu4megL7/IGKYfe5j7yzSON1FRFgq6kH+m5kH6g7V+wyjHRLauCzGNjdRx4S+nWOumINds0qcRBtKg==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+    dependencies:
+      '@capacitor/core': 7.5.0
+    dev: false
+
   /@capacitor/assets@3.0.5(@types/node@24.10.11)(typescript@5.9.3):
     resolution: {integrity: sha512-ohz/OUq61Y1Fc6aVSt0uDrUdeOA7oTH4pkWDbv/8I3UrPjH7oPkzYhShuDRUjekNp9RBi198VSFdt0CetpEOzw==}
     engines: {node: '>=10.3.0'}
@@ -1348,6 +1362,14 @@ packages:
       - supports-color
       - typescript
     dev: true
+
+  /@capacitor/browser@7.0.5(@capacitor/core@7.5.0):
+    resolution: {integrity: sha512-YF/kC1m1e6c81X/agtAnYItVlqiQ/nXLG+Q3QXNDuiMoRynqa3Guu8ZaV9kWvqQcHoE2w18xz7WGpPOuh+R1fA==}
+    peerDependencies:
+      '@capacitor/core': '>=7.0.0'
+    dependencies:
+      '@capacitor/core': 7.5.0
+    dev: false
 
   /@capacitor/cli@5.7.8:
     resolution: {integrity: sha512-qN8LDlREMhrYhOvVXahoJVNkP8LP55/YPRJrzTAFrMqlNJC18L3CzgWYIblFPnuwfbH/RxbfoZT/ydkwgVpMrw==}

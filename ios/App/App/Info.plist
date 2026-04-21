@@ -77,5 +77,16 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<true/>
+	<key>CFBundleURLTypes</key>
+	<array>
+		<dict>
+			<key>CFBundleURLName</key>
+			<string>com.peace2074.app</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>peace2074</string>
+			</array>
+		</dict>
+	</array>
 </dict>
 </plist>
