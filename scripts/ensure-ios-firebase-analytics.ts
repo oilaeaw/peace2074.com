@@ -21,6 +21,28 @@ function readText(filePath: string) {
     return fs.readFileSync(filePath, 'utf8');
 }
 
+function normalizeProjectBuildFixes(projectText: string) {
+    return projectText
+        .replace(/ENABLE_MODULE_VERIFIER = YES;/g, 'ENABLE_MODULE_VERIFIER = NO;')
+        .replace(
+            /CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;/g,
+            'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;'
+        );
+}
+
+function ensureProjectBuildFixes(projectPath: string, projectLabel: string) {
+    const currentProject = readText(projectPath);
+    const normalizedProject = normalizeProjectBuildFixes(currentProject);
+
+    if (normalizedProject === currentProject) {
+        return false;
+    }
+
+    fs.writeFileSync(projectPath, normalizedProject);
+    console.log(`Patched ${projectLabel} to disable lingering module verifier/header warning overrides.`);
+    return true;
+}
+
 function lockfileHasNativeAnalytics(lockfileText: string) {
     return (
         lockfileText.includes('CapacitorFirebaseAnalytics/AnalyticsWithoutAdIdSupport') ||
@@ -95,6 +117,9 @@ function main() {
         console.log('Running pod install to refresh native iOS CocoaPods configuration...');
         runPodInstall();
     }
+
+    ensureProjectBuildFixes(appProjectPath, 'ios/App/App.xcodeproj');
+    ensureProjectBuildFixes(podsProjectPath, 'ios/App/Pods/Pods.xcodeproj');
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
