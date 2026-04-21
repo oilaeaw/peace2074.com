@@ -320,6 +320,39 @@ post_install do |installer|
     end
   end
 
+  # FirebaseCore public headers and umbrella also use quoted relative imports.
+  firebase_core_public_headers = Dir.glob(
+    File.join(installer.sandbox.root, 'FirebaseCore', 'FirebaseCore', 'Sources', 'Public', 'FirebaseCore', '*.h')
+  )
+  firebase_core_patched_headers = 0
+  firebase_core_public_headers.each do |header|
+    next unless File.exist?(header)
+
+    content = File.read(header)
+    patched = content.gsub(/#import "(FIR[^"]+\.h)"/, '#import <FirebaseCore/\1>')
+    next if patched == content
+
+    File.chmod(0644, header) unless File.writable?(header)
+    File.write(header, patched)
+    firebase_core_patched_headers += 1
+  end
+  if firebase_core_patched_headers.positive?
+    puts "\u2713 Fixed FirebaseCore framework header imports (#{firebase_core_patched_headers} headers)"
+  end
+
+  firebase_core_umbrella = File.join(installer.sandbox.root, 'Target Support Files', 'FirebaseCore', 'FirebaseCore-umbrella.h')
+  if File.exist?(firebase_core_umbrella)
+    umbrella_content = File.read(firebase_core_umbrella)
+    patched_umbrella_content = umbrella_content
+      .gsub(/#import "(FIR[^"]+\.h)"/, '#import <FirebaseCore/\1>')
+      .gsub(/#import "(FirebaseCore\.h)"/, '#import <FirebaseCore/\1>')
+    if patched_umbrella_content != umbrella_content
+      File.chmod(0644, firebase_core_umbrella) unless File.writable?(firebase_core_umbrella)
+      File.write(firebase_core_umbrella, patched_umbrella_content)
+      puts '\u2713 Fixed FirebaseCore-umbrella.h angle-bracket imports'
+    end
+  end
+
   # PromisesObjC: source headers use relative "FBL*.h" imports — leave them as-is.
   # We disable quoted-include warnings + module verification in both the Pods
   # project and the user app project so Xcode does not re-flag vendored headers

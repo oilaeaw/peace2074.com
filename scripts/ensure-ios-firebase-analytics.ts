@@ -89,6 +89,12 @@ function normalizePromisesFrameworkHeader(text: string) {
     );
 }
 
+function normalizeFirebaseCoreFrameworkHeader(text: string) {
+    return text
+        .replace(/^#import "(FIR[^"]+\.h)"$/gm, '#import <FirebaseCore/$1>')
+        .replace(/^#import "(FirebaseCore\.h)"$/gm, '#import <FirebaseCore/$1>');
+}
+
 function ensureGoogleUtilitiesFrameworkHeaderFixes() {
     const googleUtilitiesRoot = path.join(iosAppDir, 'Pods', 'GoogleUtilities', 'GoogleUtilities');
     const googleUtilitiesUmbrellaPath = path.join(
@@ -228,6 +234,96 @@ function ensurePromisesFrameworkHeaderFixes() {
     return patchedHeaderCount > 0 || patchedUmbrella;
 }
 
+function ensureFirebaseCoreFrameworkHeaderFixes() {
+    const firebaseCoreRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'FirebaseCore',
+        'FirebaseCore',
+        'Sources',
+        'Public',
+        'FirebaseCore'
+    );
+    const firebaseCoreUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'FirebaseCore',
+        'FirebaseCore-umbrella.h'
+    );
+
+    let patchedHeaderCount = 0;
+    for (const filePath of listFilesRecursive(firebaseCoreRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        const currentText = readText(filePath);
+        const normalizedText = normalizeFirebaseCoreFrameworkHeader(currentText);
+        if (normalizedText === currentText) {
+            continue;
+        }
+
+        ensureWritable(filePath);
+        fs.writeFileSync(filePath, normalizedText);
+        patchedHeaderCount += 1;
+    }
+
+    let patchedUmbrella = false;
+    if (fs.existsSync(firebaseCoreUmbrellaPath)) {
+        const currentUmbrella = readText(firebaseCoreUmbrellaPath);
+        const normalizedUmbrella = normalizeFirebaseCoreFrameworkHeader(currentUmbrella);
+        if (normalizedUmbrella !== currentUmbrella) {
+            ensureWritable(firebaseCoreUmbrellaPath);
+            fs.writeFileSync(firebaseCoreUmbrellaPath, normalizedUmbrella);
+            patchedUmbrella = true;
+        }
+    }
+
+    if (patchedHeaderCount > 0 || patchedUmbrella) {
+        console.log(
+            `Patched FirebaseCore framework header imports (${patchedHeaderCount} headers${patchedUmbrella ? ' + umbrella header' : ''}).`
+        );
+    }
+
+    return patchedHeaderCount > 0 || patchedUmbrella;
+}
+
+function firebaseCoreFrameworkHeadersPatched() {
+    const firebaseCoreRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'FirebaseCore',
+        'FirebaseCore',
+        'Sources',
+        'Public',
+        'FirebaseCore'
+    );
+    const firebaseCoreUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'FirebaseCore',
+        'FirebaseCore-umbrella.h'
+    );
+
+    for (const filePath of listFilesRecursive(firebaseCoreRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        if (/#import "(?:FIR|FirebaseCore)[^"]+\.h"/m.test(readText(filePath))) {
+            return false;
+        }
+    }
+
+    if (fs.existsSync(firebaseCoreUmbrellaPath)) {
+        return !/#import "(?:FIR|FirebaseCore)[^"]+\.h"/m.test(readText(firebaseCoreUmbrellaPath));
+    }
+
+    return true;
+}
+
 function promisesFrameworkHeadersPatched() {
     const promisesHeadersRoot = path.join(
         iosAppDir,
@@ -341,6 +437,7 @@ function main() {
     ensureProjectBuildFixes(podsProjectPath, 'ios/App/Pods/Pods.xcodeproj');
     ensureGoogleUtilitiesFrameworkHeaderFixes();
     ensurePromisesFrameworkHeaderFixes();
+    ensureFirebaseCoreFrameworkHeaderFixes();
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
@@ -373,6 +470,12 @@ function main() {
     if (!promisesFrameworkHeadersPatched()) {
         throw new Error(
             'PromisesObjC framework headers still contain double-quoted imports after native fix-up.'
+        );
+    }
+
+    if (!firebaseCoreFrameworkHeadersPatched()) {
+        throw new Error(
+            'FirebaseCore framework headers still contain double-quoted imports after native fix-up.'
         );
     }
 
