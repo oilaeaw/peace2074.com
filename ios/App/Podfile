@@ -123,11 +123,11 @@ post_install do |installer|
       # Disable VerifyModule for pod frameworks to avoid third-party header
       # validation failures and missing private module map errors.
       config.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
-      # Removing MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS prevents Xcode
-      # from running VerifyModule even if ENABLE_MODULE_VERIFIER somehow reverts
-      # to YES after project regeneration (e.g. CapacitorApp, CapacitorBrowser
-      # and Firebase pods that import sibling frameworks like Capacitor).
-      config.build_settings.delete('MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS')
+      # Keep this explicitly empty instead of deleting it. If removed entirely,
+      # Xcode can fall back to its framework-target defaults (`gnu11 gnu++14`)
+      # and still invoke modules-verifier for Swift pods like CapacitorApp /
+      # CapacitorBrowser.
+      config.build_settings['MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS'] = ''
       # Silence "double-quoted include in framework header" for all pod targets.
       # Many vendored pods (PromisesObjC, nanopb, Firebase, etc.) use relative
       # imports internally; this is harmless and already off in their xcconfigs,
@@ -149,6 +149,20 @@ post_install do |installer|
         build_file.settings ||= {}
         build_file.settings['ATTRIBUTES'] = ['Project']
         puts '✓ Marked FBLPromisePrivate.h as project-only for PromisesObjC'
+      end
+    end
+
+    if ['CapacitorApp', 'CapacitorBrowser'].include?(target.name)
+      target.build_configurations.each do |config|
+        test_framework_search_paths = Array(config.build_settings['TEST_FRAMEWORK_SEARCH_PATHS'] || '$(inherited)')
+        [
+          '$(CONFIGURATION_BUILD_DIR)',
+          '"${PODS_CONFIGURATION_BUILD_DIR}/Capacitor"',
+          '"${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"',
+        ].each do |path_entry|
+          test_framework_search_paths << path_entry unless test_framework_search_paths.include?(path_entry)
+        end
+        config.build_settings['TEST_FRAMEWORK_SEARCH_PATHS'] = test_framework_search_paths
       end
     end
 
@@ -176,7 +190,7 @@ post_install do |installer|
 
     object.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
     object.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
-    object.build_settings.delete('MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS')
+    object.build_settings['MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS'] = ''
     object.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
   end
 
@@ -235,12 +249,39 @@ post_install do |installer|
     patched_project_text = project_text
       .gsub('ENABLE_MODULE_VERIFIER = YES;', 'ENABLE_MODULE_VERIFIER = NO;')
       .gsub('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;', 'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
-      .gsub(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/, '')
+      .gsub(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/, 'MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";\n')
 
     next if patched_project_text == project_text
 
     File.write(project_file, patched_project_text)
     puts "✓ Forced verifier/header settings off in #{File.basename(File.dirname(project_file))} (#{verifier_hits} module verifier, #{quoted_include_hits} quoted-include, #{standards_hits} standards-key overrides)"
+  end
+
+  capacitor_verifier_xcconfig_paths = [
+    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.debug.xcconfig'),
+    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.release.xcconfig'),
+    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.debug.xcconfig'),
+    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
+  ]
+  capacitor_test_framework_search_paths = '$(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"'
+  capacitor_verifier_xcconfig_paths.each do |xcconfig_path|
+    next unless File.exist?(xcconfig_path)
+
+    xcconfig_text = File.read(xcconfig_path)
+    patched_xcconfig_text = xcconfig_text
+      .gsub(/^ENABLE_MODULE_VERIFIER\s*=.*\n/, '')
+      .gsub(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/, '')
+      .gsub(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
+
+    patched_xcconfig_text << "\n" unless patched_xcconfig_text.end_with?("\n")
+    patched_xcconfig_text << "ENABLE_MODULE_VERIFIER = NO\n"
+    patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
+    patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths}\n"
+
+    next if patched_xcconfig_text == xcconfig_text
+
+    File.write(xcconfig_path, patched_xcconfig_text)
+    puts "✓ Patched #{File.basename(xcconfig_path)} for Capacitor module verification"
   end
 
   # Fix nanopb umbrella header: double-quoted includes must be angle-bracketed in framework headers

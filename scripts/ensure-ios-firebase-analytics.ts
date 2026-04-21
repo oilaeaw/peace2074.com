@@ -10,6 +10,12 @@ const podfilePath = path.join(iosAppDir, 'Podfile');
 const podfileLockPath = path.join(iosAppDir, 'Podfile.lock');
 const appProjectPath = path.join(iosAppDir, 'App.xcodeproj', 'project.pbxproj');
 const podsProjectPath = path.join(iosAppDir, 'Pods', 'Pods.xcodeproj', 'project.pbxproj');
+const capacitorVerifierXcconfigPaths = [
+    path.join(iosAppDir, 'Pods', 'Target Support Files', 'CapacitorApp', 'CapacitorApp.debug.xcconfig'),
+    path.join(iosAppDir, 'Pods', 'Target Support Files', 'CapacitorApp', 'CapacitorApp.release.xcconfig'),
+    path.join(iosAppDir, 'Pods', 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.debug.xcconfig'),
+    path.join(iosAppDir, 'Pods', 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
+];
 
 const analyticsPodPattern = /^([ \t]*)pod 'CapacitorFirebaseAnalytics(?:\/AnalyticsWithoutAdIdSupport)?', :path => '([^']+@capacitor-firebase\/analytics)'$/m;
 
@@ -28,10 +34,11 @@ function normalizeProjectBuildFixes(projectText: string) {
             /CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;/g,
             'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;'
         )
-        // Remove MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS so Xcode cannot
-        // run VerifyModule even if ENABLE_MODULE_VERIFIER somehow reverts to YES
-        // after a pod install regeneration (e.g. CapacitorApp, CapacitorBrowser).
-        .replace(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/gm, '')
+        // Keep the standards key explicitly blank. Removing it entirely lets
+        // Xcode fall back to its default verifier standards (`gnu11 gnu++14`)
+        // for framework pods, which still triggers modules-verifier for
+        // CapacitorApp / CapacitorBrowser.
+        .replace(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/gm, 'MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";\n')
         .split('\n')
         .map((line) =>
             line.includes('FBLPromisePrivate.h in Headers')
@@ -39,6 +46,16 @@ function normalizeProjectBuildFixes(projectText: string) {
                 : line
         )
         .join('\n');
+}
+
+function normalizeCapacitorVerifierXcconfig(text: string) {
+    const sanitized = text
+        .replace(/^ENABLE_MODULE_VERIFIER\s*=.*\n/gm, '')
+        .replace(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/gm, '')
+        .replace(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/gm, '');
+
+    const normalized = sanitized.endsWith('\n') ? sanitized : `${sanitized}\n`;
+    return `${normalized}ENABLE_MODULE_VERIFIER = NO\nMODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\nTEST_FRAMEWORK_SEARCH_PATHS = $(inherited) $(CONFIGURATION_BUILD_DIR) "\${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "\${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"\n`;
 }
 
 function ensureProjectBuildFixes(projectPath: string, projectLabel: string) {
@@ -51,6 +68,55 @@ function ensureProjectBuildFixes(projectPath: string, projectLabel: string) {
 
     fs.writeFileSync(projectPath, normalizedProject);
     console.log(`Patched ${projectLabel} to disable lingering module verifier/header warning overrides.`);
+    return true;
+}
+
+function ensureCapacitorVerifierXcconfigFixes() {
+    let patchedCount = 0;
+
+    for (const filePath of capacitorVerifierXcconfigPaths) {
+        if (!fs.existsSync(filePath)) {
+            continue;
+        }
+
+        const currentText = readText(filePath);
+        const normalizedText = normalizeCapacitorVerifierXcconfig(currentText);
+
+        if (normalizedText === currentText) {
+            continue;
+        }
+
+        fs.writeFileSync(filePath, normalizedText);
+        patchedCount += 1;
+    }
+
+    if (patchedCount > 0) {
+        console.log(`Patched Capacitor plugin xcconfigs for module-verifier compatibility (${patchedCount} files).`);
+    }
+
+    return patchedCount > 0;
+}
+
+function capacitorVerifierXcconfigsPatched() {
+    for (const filePath of capacitorVerifierXcconfigPaths) {
+        if (!fs.existsSync(filePath)) {
+            continue;
+        }
+
+        const text = readText(filePath);
+        if (!text.includes('ENABLE_MODULE_VERIFIER = NO')) {
+            return false;
+        }
+
+        if (!text.includes('MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =')) {
+            return false;
+        }
+
+        if (!text.includes('TEST_FRAMEWORK_SEARCH_PATHS = $(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"')) {
+            return false;
+        }
+    }
+
     return true;
 }
 
@@ -537,6 +603,7 @@ function main() {
 
     ensureProjectBuildFixes(appProjectPath, 'ios/App/App.xcodeproj');
     ensureProjectBuildFixes(podsProjectPath, 'ios/App/Pods/Pods.xcodeproj');
+    ensureCapacitorVerifierXcconfigFixes();
     ensureGoogleUtilitiesFrameworkHeaderFixes();
     ensurePromisesFrameworkHeaderFixes();
     ensureFirebaseCoreFrameworkHeaderFixes();
@@ -561,6 +628,12 @@ function main() {
     if (!podsProjectHasNativePodBuildFixes(updatedPodsProject)) {
         throw new Error(
             'Pods.xcodeproj still contains quoted-include/module-verifier settings that can re-enable VerifyModule after pod install.'
+        );
+    }
+
+    if (!capacitorVerifierXcconfigsPatched()) {
+        throw new Error(
+            'CapacitorApp/CapacitorBrowser xcconfigs are still missing module-verifier compatibility overrides after native fix-up.'
         );
     }
 
