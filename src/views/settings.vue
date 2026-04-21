@@ -626,7 +626,10 @@ async function reloadApp() {
 
 <template>
   <q-page class="q-pa-md settings-page">
-    <q-pull-to-refresh @refresh="onPullRefresh">
+    <component
+      :is="isNativeRuntime() ? 'div' : 'q-pull-to-refresh'"
+      @refresh="onPullRefresh"
+    >
       <div class="page-header q-mb-md">
         <h1 class="text-h4 q-mb-xs">{{ t('pages.settings.title') }}</h1>
         <div class="text-subtitle2 page-subtitle">
@@ -907,7 +910,7 @@ async function reloadApp() {
           @close="showOfflineRecitationManager = false"
         />
       </q-dialog>
-    </q-pull-to-refresh>
+    </component>
   </q-page>
 </template>
 
