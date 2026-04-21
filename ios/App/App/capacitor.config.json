@@ -3,6 +3,12 @@
 	"appName": "Peace2074",
 	"webDir": "dist",
 	"bundledWebRuntime": false,
+	"ios": {
+		"contentInset": "automatic",
+		"scrollEnabled": false,
+		"allowsLinkPreview": false,
+		"limitsNavigationsToAppBoundDomains": true
+	},
 	"packageClassList": [
 		"FirebaseAnalyticsPlugin"
 	]
