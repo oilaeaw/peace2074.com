@@ -915,17 +915,19 @@ const orderedNavItems = computed(() => {
 
 @media (max-width: 760px) {
   .app-toolbar {
-    flex-wrap: wrap;
-    row-gap: 8px;
+    flex-wrap: nowrap;
+    gap: 4px;
   }
 
   .app-toolbar-title {
-    flex: 1 1 auto;
+    flex: 1 1 0;
+    min-width: 0;
   }
 
   .locale-select {
-    min-width: 76px;
-    max-width: 92px;
+    min-width: 60px;
+    max-width: 72px;
+    flex-shrink: 0;
   }
 }
 
