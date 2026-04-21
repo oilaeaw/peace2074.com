@@ -807,6 +807,8 @@
     "cookies_text": "Tercihlerinizi hatırlamak ve deneyiminizi geliştirmek için çerezler kullanırız. Sitenin altındaki banttan çerezleri kabul edebilir veya reddedebilirsiniz.",
     "data_security": "Veri Güvenliği",
     "data_security_text": "Verilerinizi korumak için makul önlemler alıyoruz; ancak hiçbir sistem %100 güvenli değildir.",
+    "apple_tv_section": "Apple TV ve Yerel Uygulamalar",
+    "apple_tv_text": "PEACE2074 uygulaması iPhone, iPad ve Apple TV'de kullanılabilir. Tüm platformlarda yukarıda açıklananların ötesinde herhangi bir veri toplamıyoruz. Apple TV uygulaması mikrofon, kamera veya konum hizmetlerini kullanmaz. Oturum kimlik doğrulaması güvenli HTTP-only çerezler kullanır — cihazda yerel olarak kişisel veri depolanmaz. iCloud kullanıyorsanız, cihazınız iCloud senkronizasyonunu sunucularımızdan bağımsız olarak yönetir.",
     "contact_text": "Gizlilik politikamız hakkında sorularınız varsa lütfen bizimle iletişime geçin.",
     "terms_and_conditions": "Şartlar ve Koşullar",
     "terms_intro": "Web sitemizi kullanmadan önce lütfen bu şart ve koşulları dikkatlice okuyun.",

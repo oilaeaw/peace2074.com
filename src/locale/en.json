@@ -807,6 +807,8 @@
   "cookies_text": "We use cookies to remember your preferences and enhance your experience. You can accept or decline cookies using the banner at the bottom of the site.",
   "data_security": "Data Security",
   "data_security_text": "We take reasonable measures to protect your data, but no system is 100% secure.",
+  "apple_tv_section": "Apple TV & Native Apps",
+  "apple_tv_text": "The PEACE2074 app is available on iPhone, iPad, and Apple TV. On all platforms, we do not collect any data beyond what is described above. The Apple TV app does not use the microphone, camera, or location services. Session authentication uses secure HTTP-only cookies — no personal data is stored locally on the device. If you use iCloud, your device handles iCloud sync independently of our servers.",
   "contact_text": "If you have questions about our privacy policy, please contact us.",
   "terms_and_conditions": "Terms and Conditions",
   "terms_intro": "Please read these terms and conditions carefully before using our website.",

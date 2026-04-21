@@ -24,6 +24,8 @@
         <p>{{ $t('cookies_text') }}</p>
         <h2>{{ $t('data_security') }}</h2>
         <p>{{ $t('data_security_text') }}</p>
+        <h2>{{ $t('apple_tv_section') }}</h2>
+        <p>{{ $t('apple_tv_text') }}</p>
         <h2>{{ $t('contact') }}</h2>
         <p>{{ $t('contact_text') }}</p>
       </q-card-section>
