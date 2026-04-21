@@ -14,19 +14,19 @@
  limitations under the License.
  */
 
-#import "FBLPromise+All.h"
-#import "FBLPromise+Always.h"
-#import "FBLPromise+Any.h"
-#import "FBLPromise+Async.h"
-#import "FBLPromise+Await.h"
-#import "FBLPromise+Catch.h"
-#import "FBLPromise+Delay.h"
-#import "FBLPromise+Do.h"
-#import "FBLPromise+Race.h"
-#import "FBLPromise+Recover.h"
-#import "FBLPromise+Reduce.h"
-#import "FBLPromise+Retry.h"
-#import "FBLPromise+Then.h"
-#import "FBLPromise+Timeout.h"
-#import "FBLPromise+Validate.h"
-#import "FBLPromise+Wrap.h"
+#import <FBLPromises/FBLPromise+All.h>
+#import <FBLPromises/FBLPromise+Always.h>
+#import <FBLPromises/FBLPromise+Any.h>
+#import <FBLPromises/FBLPromise+Async.h>
+#import <FBLPromises/FBLPromise+Await.h>
+#import <FBLPromises/FBLPromise+Catch.h>
+#import <FBLPromises/FBLPromise+Delay.h>
+#import <FBLPromises/FBLPromise+Do.h>
+#import <FBLPromises/FBLPromise+Race.h>
+#import <FBLPromises/FBLPromise+Recover.h>
+#import <FBLPromises/FBLPromise+Reduce.h>
+#import <FBLPromises/FBLPromise+Retry.h>
+#import <FBLPromises/FBLPromise+Then.h>
+#import <FBLPromises/FBLPromise+Timeout.h>
+#import <FBLPromises/FBLPromise+Validate.h>
+#import <FBLPromises/FBLPromise+Wrap.h>

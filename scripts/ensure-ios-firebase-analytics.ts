@@ -27,7 +27,14 @@ function normalizeProjectBuildFixes(projectText: string) {
         .replace(
             /CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;/g,
             'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;'
-        );
+        )
+        .split('\n')
+        .map((line) =>
+            line.includes('FBLPromisePrivate.h in Headers')
+                ? line.replace('ATTRIBUTES = (Private, );', 'ATTRIBUTES = (Project, );')
+                : line
+        )
+        .join('\n');
 }
 
 function ensureProjectBuildFixes(projectPath: string, projectLabel: string) {
@@ -72,6 +79,13 @@ function normalizeGoogleUtilitiesFrameworkHeader(text: string) {
     return text.replace(
         /^#import "(GUL[^"]+\.h)"$/gm,
         '#import <GoogleUtilities/$1>'
+    );
+}
+
+function normalizePromisesFrameworkHeader(text: string) {
+    return text.replace(
+        /^#import "(FBL[^"]+\.h)"$/gm,
+        '#import <FBLPromises/$1>'
     );
 }
 
@@ -160,6 +174,94 @@ function googleUtilitiesFrameworkHeadersPatched() {
     return true;
 }
 
+function ensurePromisesFrameworkHeaderFixes() {
+    const promisesHeadersRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'PromisesObjC',
+        'Sources',
+        'FBLPromises',
+        'include'
+    );
+    const promisesUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'PromisesObjC',
+        'PromisesObjC-umbrella.h'
+    );
+
+    let patchedHeaderCount = 0;
+    for (const filePath of listFilesRecursive(promisesHeadersRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        const currentText = readText(filePath);
+        const normalizedText = normalizePromisesFrameworkHeader(currentText);
+        if (normalizedText === currentText) {
+            continue;
+        }
+
+        ensureWritable(filePath);
+        fs.writeFileSync(filePath, normalizedText);
+        patchedHeaderCount += 1;
+    }
+
+    let patchedUmbrella = false;
+    if (fs.existsSync(promisesUmbrellaPath)) {
+        const currentUmbrella = readText(promisesUmbrellaPath);
+        const normalizedUmbrella = normalizePromisesFrameworkHeader(currentUmbrella);
+        if (normalizedUmbrella !== currentUmbrella) {
+            ensureWritable(promisesUmbrellaPath);
+            fs.writeFileSync(promisesUmbrellaPath, normalizedUmbrella);
+            patchedUmbrella = true;
+        }
+    }
+
+    if (patchedHeaderCount > 0 || patchedUmbrella) {
+        console.log(
+            `Patched PromisesObjC framework header imports (${patchedHeaderCount} headers${patchedUmbrella ? ' + umbrella header' : ''}).`
+        );
+    }
+
+    return patchedHeaderCount > 0 || patchedUmbrella;
+}
+
+function promisesFrameworkHeadersPatched() {
+    const promisesHeadersRoot = path.join(
+        iosAppDir,
+        'Pods',
+        'PromisesObjC',
+        'Sources',
+        'FBLPromises',
+        'include'
+    );
+    const promisesUmbrellaPath = path.join(
+        iosAppDir,
+        'Pods',
+        'Target Support Files',
+        'PromisesObjC',
+        'PromisesObjC-umbrella.h'
+    );
+
+    for (const filePath of listFilesRecursive(promisesHeadersRoot)) {
+        if (!filePath.endsWith('.h')) {
+            continue;
+        }
+
+        if (/#import "FBL[^"]+\.h"/m.test(readText(filePath))) {
+            return false;
+        }
+    }
+
+    if (fs.existsSync(promisesUmbrellaPath)) {
+        return !/#import "FBL[^"]+\.h"/m.test(readText(promisesUmbrellaPath));
+    }
+
+    return true;
+}
+
 function lockfileHasNativeAnalytics(lockfileText: string) {
     return (
         lockfileText.includes('CapacitorFirebaseAnalytics/AnalyticsWithoutAdIdSupport') ||
@@ -238,6 +340,7 @@ function main() {
     ensureProjectBuildFixes(appProjectPath, 'ios/App/App.xcodeproj');
     ensureProjectBuildFixes(podsProjectPath, 'ios/App/Pods/Pods.xcodeproj');
     ensureGoogleUtilitiesFrameworkHeaderFixes();
+    ensurePromisesFrameworkHeaderFixes();
 
     const updatedLockfile = readText(podfileLockPath);
     const updatedProject = readText(appProjectPath);
@@ -264,6 +367,12 @@ function main() {
     if (!googleUtilitiesFrameworkHeadersPatched()) {
         throw new Error(
             'GoogleUtilities public framework headers still contain double-quoted imports after native fix-up.'
+        );
+    }
+
+    if (!promisesFrameworkHeadersPatched()) {
+        throw new Error(
+            'PromisesObjC framework headers still contain double-quoted imports after native fix-up.'
         );
     }
 

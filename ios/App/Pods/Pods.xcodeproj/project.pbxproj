@@ -252,7 +252,7 @@
 		979096AD485C58AFA8A58E4BFBC82929 /* GULNetwork.m in Sources */ = {isa = PBXBuildFile; fileRef = 721D301B28851C99AA36B1FB5A07195A /* GULNetwork.m */; };
 		97CDCE21A1C498293CA6497313BA362A /* FIRComponentContainer.h in Headers */ = {isa = PBXBuildFile; fileRef = 450DA3BCC894F82E92F869350C007612 /* FIRComponentContainer.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		989EC91F5091C6D1115DFC0D2C7CD9DD /* FIRInstallationsBackoffController.h in Headers */ = {isa = PBXBuildFile; fileRef = 58BC3556C1141CC928D511E366210AC9 /* FIRInstallationsBackoffController.h */; settings = {ATTRIBUTES = (Project, ); }; };
-		98B44C696EA335AD55F17419FFCC274E /* FBLPromisePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C283821146C5D5EDA237BC87F12B51DA /* FBLPromisePrivate.h */; settings = {ATTRIBUTES = (Private, ); }; };
+		98B44C696EA335AD55F17419FFCC274E /* FBLPromisePrivate.h in Headers */ = {isa = PBXBuildFile; fileRef = C283821146C5D5EDA237BC87F12B51DA /* FBLPromisePrivate.h */; settings = {ATTRIBUTES = (Project, ); }; };
 		9BB717DC2E8659AAC25BEAF4E17482BC /* Data+Capacitor.swift in Sources */ = {isa = PBXBuildFile; fileRef = 94FF1574A15B03421C8FF74E553AB0CB /* Data+Capacitor.swift */; };
 		9C0C2B3E79EC2F6DD4742C5B75EA8E80 /* RingBuffer.swift in Sources */ = {isa = PBXBuildFile; fileRef = 130A5249832D13D3C61ABE1C701BC163 /* RingBuffer.swift */; };
 		9C1F9C1B8E5BA5A84502172BCFE12B5E /* native-bridge.js in Resources */ = {isa = PBXBuildFile; fileRef = 47706F59D07C142CE33532E52D00A179 /* native-bridge.js */; };
