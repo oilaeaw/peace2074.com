@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody, getHeader, createError } from 'h3'
 import crypto from 'node:crypto'
+import { broadcastPush } from '../utils/push-notify'
 
 /**
  * POST /api/identity-webhook
@@ -85,6 +86,14 @@ export default defineEventHandler(async (event) => {
 
         case 'signup':
             console.log(`[Identity Webhook] New user signed up: ${user?.email}`)
+            await broadcastPush(
+                {
+                    title: '👋 New member joined',
+                    body: `${user?.email} just signed up to Peace2074`,
+                    data: { url: '/' },
+                },
+                'identity-signup'
+            )
             return { ok: true }
 
         case 'login':
