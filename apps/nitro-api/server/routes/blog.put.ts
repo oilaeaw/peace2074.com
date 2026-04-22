@@ -2,6 +2,7 @@ import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
 import { getPrisma } from '../utils/prisma'
 import { updateDatoCmsBlogPostBySlug } from '../utils/datocms'
+import { generateEmbedding, blogPostEmbeddingText } from '../utils/embeddings'
 
 /**
  * PUT /api/blog
@@ -37,6 +38,25 @@ export default defineEventHandler(async (event) => {
             if (excerpt !== undefined) update.excerpt = excerpt
             if (content) update.content = content
             if (updateTags !== undefined) update.tags = updateTags
+
+            // Regenerate embedding if any text field changed
+            if (title || excerpt !== undefined || content || updateTags !== undefined) {
+                try {
+                    const current = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+                    if (current) {
+                        update.embedding = await generateEmbedding(
+                            blogPostEmbeddingText({
+                                title: title ?? current.title,
+                                excerpt: excerpt !== undefined ? excerpt : current.excerpt,
+                                content: content ?? current.content,
+                                tags: updateTags !== undefined ? updateTags : current.tags,
+                            })
+                        )
+                    }
+                } catch (err) {
+                    console.warn('[Blog PUT] Embedding generation failed:', err instanceof Error ? err.message : 'unknown')
+                }
+            }
 
             const result = await prisma.blogPost.update({
                 where: { slug: normalizedSlug },

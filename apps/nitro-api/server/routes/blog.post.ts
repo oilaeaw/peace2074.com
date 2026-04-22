@@ -3,6 +3,7 @@ import { requireAuth } from '../utils/auth'
 import { getPrisma } from '../utils/prisma'
 import { createDatoCmsBlogPost } from '../utils/datocms'
 import { sendBlogPostNotification } from '../utils/blog-notifications'
+import { generateEmbedding, blogPostEmbeddingText } from '../utils/embeddings'
 
 function toCanonicalSlug(value: string) {
     return String(value || '')
@@ -52,6 +53,15 @@ export default defineEventHandler(async (event) => {
                 return { ok: false, error: 'A post with this slug already exists' }
             }
 
+            let embedding: number[] = []
+            try {
+                embedding = await generateEmbedding(
+                    blogPostEmbeddingText({ title: normalizedTitle, excerpt: normalizedExcerpt, content, tags: normalizedTags })
+                )
+            } catch (err) {
+                console.warn('[Blog POST] Embedding generation failed:', err instanceof Error ? err.message : 'unknown')
+            }
+
             const post = await prisma.blogPost.create({
                 data: {
                     id: normalizedSlug,
@@ -62,6 +72,7 @@ export default defineEventHandler(async (event) => {
                     tags: normalizedTags,
                     date: normalizedDate,
                     author: normalizedAuthor,
+                    embedding,
                 }
             })
 

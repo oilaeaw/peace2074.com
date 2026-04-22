@@ -66,6 +66,7 @@ model BlogPost {
   tags      String[]
   date      String
   author    String
+  embedding Float[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
