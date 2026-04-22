@@ -57,14 +57,16 @@ export default defineEventHandler(async (event) => {
 
         case 'BUILD_PROCESSING_FINISHED':
             console.log('[ASC Webhook] Build finished processing:', payload.data)
-            await broadcastPush(
-                {
-                    title: '🏗️ Build processed',
-                    body: 'App Store Connect finished processing the build',
-                    data: { url: 'https://appstoreconnect.apple.com' },
-                },
-                'asc-build'
-            )
+            try {
+                await broadcastPush(
+                    {
+                        title: '🏗️ Build processed',
+                        body: 'App Store Connect finished processing the build',
+                        data: { url: 'https://appstoreconnect.apple.com' },
+                    },
+                    'asc-build'
+                )
+            } catch (err) { console.error('[ASC Webhook] broadcastPush error:', err) }
             break
 
         case 'APP_SUBMISSION_WAITING_FOR_REVIEW':
@@ -74,14 +76,16 @@ export default defineEventHandler(async (event) => {
         case 'APP_SUBMISSION_STATUS_CHANGED': {
             const status = (payload.data as Record<string, unknown>)?.reviewStatus ?? 'unknown'
             console.log(`[ASC Webhook] Review status changed → ${status}`, payload.data)
-            await broadcastPush(
-                {
-                    title: '🍎 App Store review update',
-                    body: `Review status changed → ${status}`,
-                    data: { url: 'https://appstoreconnect.apple.com' },
-                },
-                'asc-review'
-            )
+            try {
+                await broadcastPush(
+                    {
+                        title: '🍎 App Store review update',
+                        body: `Review status changed → ${status}`,
+                        data: { url: 'https://appstoreconnect.apple.com' },
+                    },
+                    'asc-review'
+                )
+            } catch (err) { console.error('[ASC Webhook] broadcastPush error:', err) }
             break
         }
 

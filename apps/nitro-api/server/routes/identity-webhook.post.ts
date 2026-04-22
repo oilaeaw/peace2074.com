@@ -86,14 +86,16 @@ export default defineEventHandler(async (event) => {
 
         case 'signup':
             console.log(`[Identity Webhook] New user signed up: ${user?.email}`)
-            await broadcastPush(
-                {
-                    title: '👋 New member joined',
-                    body: `${user?.email} just signed up to Peace2074`,
-                    data: { url: '/' },
-                },
-                'identity-signup'
-            )
+            try {
+                await broadcastPush(
+                    {
+                        title: '👋 New member joined',
+                        body: `${user?.email} just signed up to Peace2074`,
+                        data: { url: '/' },
+                    },
+                    'identity-signup'
+                )
+            } catch (err) { console.error('[Identity Webhook] broadcastPush error:', err) }
             return { ok: true }
 
         case 'login':

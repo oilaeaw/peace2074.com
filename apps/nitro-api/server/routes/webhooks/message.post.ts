@@ -51,38 +51,42 @@ export default defineEventHandler(async (event) => {
     const sender = senderId?.substring(0, 8) ?? 'Someone'
     const messageText = typeof text === 'string' ? text : (text != null ? JSON.stringify(text) : '')
 
-    if (type === 'route' && recipientId) {
-        // Direct message — only notify the specific recipient via push
-        // (they may be offline; online users get it via Socket.io)
-        console.log(`[Message Webhook] Direct from ${sender} → ${recipientId}`)
-        await broadcastPush(
-            {
-                title: `💬 New message`,
-                body: messageText.substring(0, 100),
-                data: { url: '/chat', type: 'direct', from: senderId },
-            },
-            'chat-direct'
-        )
-    } else if (isBroadcast || type === 'broadcast') {
-        console.log(`[Message Webhook] Broadcast from ${sender}`)
-        await broadcastPush(
-            {
-                title: `📢 Peace2074 Chat`,
-                body: messageText.substring(0, 100),
-                data: { url: '/chat', type: 'broadcast', from: senderId },
-            },
-            'chat-broadcast'
-        )
-    } else if (type === 'room-message') {
-        console.log(`[Message Webhook] Room message from ${sender}`)
-        await broadcastPush(
-            {
-                title: `💬 Room message`,
-                body: messageText.substring(0, 100),
-                data: { url: '/chat', type: 'room', from: senderId },
-            },
-            'chat-room'
-        )
+    try {
+        if (type === 'route' && recipientId) {
+            // Direct message — only notify the specific recipient via push
+            // (they may be offline; online users get it via Socket.io)
+            console.log(`[Message Webhook] Direct from ${sender} → ${recipientId}`)
+            await broadcastPush(
+                {
+                    title: `💬 New message`,
+                    body: messageText.substring(0, 100),
+                    data: { url: '/chat', type: 'direct', from: senderId },
+                },
+                'chat-direct'
+            )
+        } else if (isBroadcast || type === 'broadcast') {
+            console.log(`[Message Webhook] Broadcast from ${sender}`)
+            await broadcastPush(
+                {
+                    title: `📢 Peace2074 Chat`,
+                    body: messageText.substring(0, 100),
+                    data: { url: '/chat', type: 'broadcast', from: senderId },
+                },
+                'chat-broadcast'
+            )
+        } else if (type === 'room-message') {
+            console.log(`[Message Webhook] Room message from ${sender}`)
+            await broadcastPush(
+                {
+                    title: `💬 Room message`,
+                    body: messageText.substring(0, 100),
+                    data: { url: '/chat', type: 'room', from: senderId },
+                },
+                'chat-room'
+            )
+        }
+    } catch (err) {
+        console.error('[Message Webhook] broadcastPush error:', err)
     }
 
     return { ok: true }
