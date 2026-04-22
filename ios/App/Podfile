@@ -252,6 +252,8 @@ post_install do |installer|
 
     patched_project_text = project_text
       .gsub('ENABLE_MODULE_VERIFIER = YES;', 'ENABLE_MODULE_VERIFIER = NO;')
+      # Also neutralise any sdk-conditioned YES that maccatalyst builds can trigger
+      .gsub(/"ENABLE_MODULE_VERIFIER\[sdk=[^\]]+\]" = YES;/, '"ENABLE_MODULE_VERIFIER[sdk=macosx*]" = NO;')
       .gsub('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;', 'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
       .gsub(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/, 'MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";\n')
 
@@ -268,19 +270,37 @@ post_install do |installer|
     File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
   ]
   capacitor_test_framework_search_paths = '$(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"'
+  # maccatalyst builds use sdk=macosx* so a conditioned YES can override an
+  # unconditional NO. Explicitly set NO for every SDK to prevent VerifyModule.
+  verifier_no_all_sdks = [
+    'ENABLE_MODULE_VERIFIER = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=iphoneos*] = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=iphonesimulator*] = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=macosx*] = NO',
+  ].join("\n")
+
+  # CapacitorBrowser-Swift.h imports @import Capacitor; which requires
+  # Capacitor.framework to be visible during VerifyModule for maccatalyst.
+  # Add the maccatalyst build products dir explicitly so the verifier can
+  # resolve the framework regardless of PODS_CONFIGURATION_BUILD_DIR expansion.
+  maccatalyst_framework_paths = '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/Capacitor" ' \
+    '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/CapacitorCordova"'
+  capacitor_test_framework_search_paths_full = \
+    "#{capacitor_test_framework_search_paths} #{maccatalyst_framework_paths}"
+
   capacitor_verifier_xcconfig_paths.each do |xcconfig_path|
     next unless File.exist?(xcconfig_path)
 
     xcconfig_text = File.read(xcconfig_path)
     patched_xcconfig_text = xcconfig_text
-      .gsub(/^ENABLE_MODULE_VERIFIER\s*=.*\n/, '')
+      .gsub(/^ENABLE_MODULE_VERIFIER(\[sdk=[^\]]+\])?\s*=.*\n/, '')
       .gsub(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/, '')
       .gsub(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
 
     patched_xcconfig_text << "\n" unless patched_xcconfig_text.end_with?("\n")
-    patched_xcconfig_text << "ENABLE_MODULE_VERIFIER = NO\n"
+    patched_xcconfig_text << "#{verifier_no_all_sdks}\n"
     patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
-    patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths}\n"
+    patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
 
     next if patched_xcconfig_text == xcconfig_text
 
