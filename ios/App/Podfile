@@ -137,11 +137,6 @@ post_install do |installer|
       # destination is "My Mac (Mac Catalyst)". Capacitor pods are compiled from
       # source (`:path =>`), so they compile fine once Xcode is told they support it.
       config.build_settings['SUPPORTS_MACCATALYST'] = 'YES'
-      # DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER is not supported on resource
-      # bundle targets (e.g. _Privacy bundles). Only set it on framework/app targets.
-      unless target.name.end_with?('_Privacy', '_Resources')
-        config.build_settings['DERIVE_MACCATALYST_PRODUCT_BUNDLE_IDENTIFIER'] = 'YES'
-      end
     end
 
     if target.name == 'FirebaseCoreInternal'
