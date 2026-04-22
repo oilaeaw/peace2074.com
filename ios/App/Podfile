@@ -137,6 +137,10 @@ post_install do |installer|
       # destination is "My Mac (Mac Catalyst)". Capacitor pods are compiled from
       # source (`:path =>`), so they compile fine once Xcode is told they support it.
       config.build_settings['SUPPORTS_MACCATALYST'] = 'YES'
+      # maccatalyst builds use the macOS SDK (EFFECTIVE_PLATFORM_NAME = -maccatalyst).
+      # Without macosx in SUPPORTED_PLATFORMS, Xcode skips building pods for this
+      # SDK variant, causing "Unable to find module dependency: Capacitor" errors.
+      config.build_settings['SUPPORTED_PLATFORMS'] = 'iphoneos iphonesimulator macosx'
     end
 
     if target.name == 'FirebaseCoreInternal'
