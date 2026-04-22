@@ -4,6 +4,8 @@
 <dict>
 	<key>CFBundleDevelopmentRegion</key>
 	<string>en</string>
+	<key>LSApplicationCategoryType</key>
+	<string>public.app-category.reference</string>
 	<key>CFBundleDisplayName</key>
 	<string>Peace2074</string>
 	<key>CFBundleExecutable</key>
