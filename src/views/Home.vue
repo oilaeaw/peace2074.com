@@ -28,6 +28,7 @@
           />
           <q-btn to="/tasbeeh" flat :label="t('pages.home.hero.ctaTasbeeh')" />
           <q-btn
+            v-if="IOS_APP_LIVE"
             :href="IOS_APP_STORE_URL"
             :label="t('pages.home.hero.ctaIos')"
             icon="phone_iphone"
@@ -258,6 +259,8 @@ const { t, tm, locale } = useI18n()
 const $q = useQuasar()
 const router = useRouter()
 const IOS_APP_STORE_URL = 'https://apps.apple.com/app/id6761300696'
+// Set to true once the app is approved and live on the App Store
+const IOS_APP_LIVE = false
 
 const userPrompt = ref('')
 const aiResponse = ref<string | null>(null)
