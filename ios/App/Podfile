@@ -224,6 +224,12 @@ post_install do |installer|
         config.build_settings['ENABLE_USER_SCRIPT_SANDBOXING'] = 'NO'
         config.build_settings['ENABLE_MODULE_VERIFIER'] = 'NO'
         config.build_settings['CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER'] = 'NO'
+        # macosx must be in SUPPORTED_PLATFORMS for maccatalyst archive to resolve
+        # pod framework dependencies (Capacitor, etc.) via PODS_CONFIGURATION_BUILD_DIR.
+        existing = config.build_settings['SUPPORTED_PLATFORMS'] || 'iphoneos iphonesimulator'
+        unless existing.include?('macosx')
+          config.build_settings['SUPPORTED_PLATFORMS'] = "#{existing} macosx"
+        end
       end
 
       native_target.build_phases.each do |build_phase|
