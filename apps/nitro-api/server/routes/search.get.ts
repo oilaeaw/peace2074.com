@@ -1,15 +1,23 @@
 import { defineEventHandler, getQuery } from "h3";
 import chaptersEn from '../../../../src/shared/data/chapters/en.json';
 import chaptersRu from '../../../../src/shared/data/chapters/ru.json';
+import chaptersDe from '../../../../src/shared/data/chapters/de.json';
+import chaptersHe from '../../../../src/shared/data/chapters/he.json';
+import chaptersEs from '../../../../src/shared/data/chapters/es.json';
+import chaptersTr from '../../../../src/shared/data/chapters/tr.json';
 import quranData from '../../../../src/shared/data/quran.json';
+import { getPrisma } from '../utils/prisma';
 
-// Pre-loaded chapters by locale (Arabic, German, Hebrew fall back to English)
+// Pre-loaded chapters by locale
 const chaptersMap: Record<string, any[]> = {
     en: chaptersEn as any[],
     ru: chaptersRu as any[],
-    ar: chaptersEn as any[], // Arabic falls back to English
-    de: chaptersEn as any[], // German falls back to English
-    he: chaptersEn as any[], // Hebrew falls back to English
+    de: chaptersDe as any[],
+    he: chaptersHe as any[],
+    es: chaptersEs as any[],
+    tr: chaptersTr as any[],
+    ar: chaptersEn as any[], // Arabic sura names are in the 'name' field of all chapter files
+    it: chaptersEn as any[], // Italian fallback to English
 };
 
 const quranCache = quranData as Record<string, any[]>;
@@ -36,7 +44,7 @@ function getChapters(lang: string): any[] {
     return chaptersMap[normalizeLang(lang)] || chaptersMap.en;
 }
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     const { q = "", limit = "20", lang = "en" } = getQuery(event);
     const rawQuery = String(q || "");
     const query = rawQuery.trim().toLowerCase();
@@ -88,6 +96,35 @@ export default defineEventHandler((event) => {
                 if (results.length >= max) break outer;
             }
         }
+    }
+
+    // Search blog posts
+    try {
+        const prisma = await getPrisma();
+        if (prisma) {
+            const blogs = await prisma.blogPost.findMany({
+                where: {
+                    OR: [
+                        { title: { contains: rawQuery, mode: 'insensitive' } },
+                        { excerpt: { contains: rawQuery, mode: 'insensitive' } },
+                    ],
+                },
+                select: { slug: true, title: true, excerpt: true, tags: true },
+                take: 5,
+            });
+            for (const post of blogs) {
+                results.push({
+                    type: 'page',
+                    id: `blog-${post.slug}`,
+                    title: post.title,
+                    subtitle: post.excerpt || post.tags.join(', '),
+                    path: `/blog/${post.slug}`,
+                });
+                if (results.length >= max) break;
+            }
+        }
+    } catch (_err) {
+        // Blog search is best-effort; don't fail the whole request
     }
 
     return { results: results.slice(0, max) };

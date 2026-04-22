@@ -1,4 +1,5 @@
-const COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
+// Multilingual model: supports 100+ languages including Arabic, Hebrew, German, Turkish, etc.
+const COHERE_EMBEDDING_MODEL = 'embed-multilingual-v3.0'
 
 export async function generateEmbedding(text: string): Promise<number[]> {
     const apiKey = process.env.COHERE_API_KEY

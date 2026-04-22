@@ -4,6 +4,8 @@ import chaptersEn from "@/shared/data/chapters/en.json";
 import chaptersEs from "@/shared/data/chapters/es.json";
 import chaptersRu from "@/shared/data/chapters/ru.json";
 import chaptersTr from "@/shared/data/chapters/tr.json";
+import chaptersDe from "@/shared/data/chapters/de.json";
+import chaptersHe from "@/shared/data/chapters/he.json";
 
 export type SearchResult = {
     id: string | number;
@@ -18,6 +20,10 @@ const chaptersByLocale: Record<string, typeof chaptersEn> = {
     es: chaptersEs,
     ru: chaptersRu,
     tr: chaptersTr,
+    de: chaptersDe,
+    he: chaptersHe,
+    ar: chaptersEn, // Arabic sura names are in the 'name' field of all chapter files
+    it: chaptersEn, // Italian fallback to English
 };
 
 const basePages = [
@@ -114,11 +120,13 @@ function buildItems(locale: string): SearchResult[] {
     const chapters = chaptersByLocale[loc] ?? chaptersByLocale.en;
     const suras: SearchResult[] = chapters.map((c) => ({
         id: c.id,
-        title: `${c.id}. ${c.transliteration || c.translation || c.name}`,
-        subtitle: c.translation || c.name,
+        title: `${c.id}. ${loc === 'ar' ? c.name : (c.transliteration || c.translation || c.name)}`,
+        subtitle: loc === 'ar' ? c.transliteration || c.translation : (c.translation || c.name),
         path: `/quran/${c.id}`,
         type: "sura",
-    }));
+        // Always include the original Arabic name so queries in any language can match
+        searchTerms: [c.name],
+    } as SearchResult & { searchTerms: string[] }));
 
     // Add quick access verses to search
     const verses: SearchResult[] = quickAccessVerses.map((v) => ({
