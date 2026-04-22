@@ -49,7 +49,7 @@ export default defineEventHandler(async (event) => {
     const { type, senderId, recipientId, payload: text, isBroadcast } = rawBody ?? {}
 
     const sender = senderId?.substring(0, 8) ?? 'Someone'
-    const messageText = typeof text === 'string' ? text : JSON.stringify(text)
+    const messageText = typeof text === 'string' ? text : (text != null ? JSON.stringify(text) : '')
 
     if (type === 'route' && recipientId) {
         // Direct message — only notify the specific recipient via push
