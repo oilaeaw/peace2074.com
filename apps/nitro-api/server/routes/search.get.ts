@@ -91,7 +91,7 @@ export default defineEventHandler(async (event) => {
                     id,
                     title: `Ayah ${id}`,
                     subtitle: text.slice(0, 140),
-                    path: `/quran/${suraId}#verse-${verse.verse || ""}`,
+                    path: `/quran/${suraId}#${suraId}_${verse.verse || ""}`,
                 });
                 if (results.length >= max) break outer;
             }
