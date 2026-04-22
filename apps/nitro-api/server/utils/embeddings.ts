@@ -1,30 +1,30 @@
-const OPENAI_EMBEDDING_MODEL = 'text-embedding-3-small'
-const OPENAI_EMBEDDING_DIMS = 1536
+const COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
 
 export async function generateEmbedding(text: string): Promise<number[]> {
-    const apiKey = process.env.OPENAI_API_KEY
-    if (!apiKey) throw new Error('OPENAI_API_KEY is not set')
+    const apiKey = process.env.COHERE_API_KEY
+    if (!apiKey) throw new Error('COHERE_API_KEY is not set')
 
-    const response = await fetch('https://api.openai.com/v1/embeddings', {
+    const response = await fetch('https://api.cohere.com/v2/embed', {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json',
             Authorization: `Bearer ${apiKey}`,
         },
         body: JSON.stringify({
-            model: OPENAI_EMBEDDING_MODEL,
-            input: text,
-            dimensions: OPENAI_EMBEDDING_DIMS,
+            model: COHERE_EMBEDDING_MODEL,
+            texts: [text],
+            input_type: 'search_document',
+            embedding_types: ['float'],
         }),
     })
 
     if (!response.ok) {
         const err = await response.text()
-        throw new Error(`OpenAI embeddings error: ${response.status} ${err}`)
+        throw new Error(`Cohere embeddings error: ${response.status} ${err}`)
     }
 
-    const data = (await response.json()) as { data: { embedding: number[] }[] }
-    return data.data[0].embedding
+    const data = (await response.json()) as { embeddings: { float: number[][] } }
+    return data.embeddings.float[0]
 }
 
 export function blogPostEmbeddingText(post: {

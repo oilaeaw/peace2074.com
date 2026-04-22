@@ -3,7 +3,7 @@
  * Backfill embeddings for all BlogPost documents that are missing them.
  * Run: node apps/nitro-api/scripts/backfill-blog-embeddings.mjs
  *
- * Requires DATABASE_URL and OPENAI_API_KEY in .env
+ * Requires DATABASE_URL and COHERE_API_KEY in .env
  */
 import { PrismaClient } from '@prisma/client'
 import { config } from 'dotenv'
@@ -13,34 +13,34 @@ import { fileURLToPath } from 'url'
 const __dirname = dirname(fileURLToPath(import.meta.url))
 config({ path: resolve(__dirname, '../../../.env') })
 
-const OPENAI_EMBEDDING_MODEL = 'text-embedding-3-small'
-const OPENAI_EMBEDDING_DIMS = 1536
+const COHERE_EMBEDDING_MODEL = 'embed-english-v3.0'
 const BATCH_SIZE = 10
 const DELAY_MS = 200
 
 const prisma = new PrismaClient()
 
 async function generateEmbedding(text) {
-  const response = await fetch('https://api.openai.com/v1/embeddings', {
+  const response = await fetch('https://api.cohere.com/v2/embed', {
     method: 'POST',
     headers: {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${process.env.OPENAI_API_KEY}`,
+      Authorization: `Bearer ${process.env.COHERE_API_KEY}`,
     },
     body: JSON.stringify({
-      model: OPENAI_EMBEDDING_MODEL,
-      input: text,
-      dimensions: OPENAI_EMBEDDING_DIMS,
+      model: COHERE_EMBEDDING_MODEL,
+      texts: [text],
+      input_type: 'search_document',
+      embedding_types: ['float'],
     }),
   })
 
   if (!response.ok) {
     const err = await response.text()
-    throw new Error(`OpenAI error: ${response.status} ${err}`)
+    throw new Error(`Cohere error: ${response.status} ${err}`)
   }
 
   const data = await response.json()
-  return data.data[0].embedding
+  return data.embeddings.float[0]
 }
 
 function toEmbeddingText(post) {
@@ -61,8 +61,7 @@ async function sleep(ms) {
 async function main() {
   console.log('Fetching blog posts without embeddings...')
 
-  const posts = await prisma.blogPost.findMany({
-    where: { embedding: { isEmpty: true } },
+  const allPosts = await prisma.blogPost.findMany({
     select: {
       id: true,
       slug: true,
@@ -70,8 +69,10 @@ async function main() {
       excerpt: true,
       content: true,
       tags: true,
+      embedding: true,
     },
   })
+  const posts = allPosts.filter((p) => !p.embedding || p.embedding.length === 0)
 
   console.log(`Found ${posts.length} posts to backfill.`)
   if (posts.length === 0) {
