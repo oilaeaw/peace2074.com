@@ -1,1 +1,0 @@
-Localized App Store document links, cleaner iOS submission settings, and release-readiness improvements across the app and metadata.

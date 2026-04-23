@@ -1,1 +1,0 @@
-Lokalisierte App-Store-Dokumentlinks, sauberere iOS-Einreichungseinstellungen und Verbesserungen für die Release-Bereitschaft in App und Metadaten.

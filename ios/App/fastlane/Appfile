@@ -1,4 +1,0 @@
-app_identifier "com.peace2074.app"
-apple_id ENV["APPLE_ID"]           # set in .env or CI secret
-itc_team_id ENV["ITC_TEAM_ID"]     # App Store Connect team ID
-team_id ENV["TEAM_ID"]             # Developer portal team ID

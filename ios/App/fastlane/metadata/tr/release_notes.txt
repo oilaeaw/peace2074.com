@@ -1,1 +1,0 @@
-App Store belgeleri için yerelleştirilmiş bağlantılar, daha temiz iOS gönderim ayarları ve uygulama ile meta veriler genelinde sürüm hazırlığı iyileştirmeleri.

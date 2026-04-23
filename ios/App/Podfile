@@ -12,6 +12,7 @@ def capacitor_pods
   pod 'Capacitor', :path => '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios'
   pod 'CapacitorCordova', :path => '../../node_modules/.pnpm/@capacitor+ios@7.5.0_@capacitor+core@7.5.0/node_modules/@capacitor/ios'
   pod 'CapacitorFirebaseAnalytics', :path => '../../node_modules/.pnpm/@capacitor-firebase+analytics@7.5.0_@capacitor+core@7.5.0_firebase@11.10.0/node_modules/@capacitor-firebase/analytics'
+  pod 'FirebaseAnalytics', '~> 11.7.0'
   pod 'CapacitorApp', :path => '../../node_modules/.pnpm/@capacitor+app@7.1.2_@capacitor+core@7.5.0/node_modules/@capacitor/app'
   pod 'CapacitorBrowser', :path => '../../node_modules/.pnpm/@capacitor+browser@7.0.5_@capacitor+core@7.5.0/node_modules/@capacitor/browser'
 end
