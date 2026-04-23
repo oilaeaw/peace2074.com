@@ -617,6 +617,12 @@
                 "surasCompleted": "סורות",
                 "lastRead": "קריאה אחרונה",
                 "sura": "סורה",
+                "editPerms": "הרשאות",
+                "permsTitle": "ערוך הרשאות עבור",
+                "permsHint": "סמן כל פעולה שמשתמש זה רשאי לבצע על כל נושא.",
+                "permsSubject": "נושא",
+                "savePerms": "שמור הרשאות",
+                "cancel": "ביטול",
                 "roles": {
                     "user": "משתמש",
                     "editor": "עורך",

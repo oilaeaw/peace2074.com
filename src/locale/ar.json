@@ -617,6 +617,12 @@
         "surasCompleted": "السور",
         "lastRead": "آخر قراءة",
         "sura": "سورة",
+        "editPerms": "الصلاحيات",
+        "permsTitle": "تعديل صلاحيات",
+        "permsHint": "اختر كل إجراء مسموح به لهذا المستخدم على كل موضوع.",
+        "permsSubject": "الموضوع",
+        "savePerms": "حفظ الصلاحيات",
+        "cancel": "إلغاء",
         "roles": {
           "user": "مستخدم",
           "editor": "محرر",

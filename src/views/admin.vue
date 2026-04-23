@@ -195,9 +195,85 @@
                 :loading="savingUserId === props.row.id"
                 @click="saveUser(props.row)"
               />
+              <q-btn
+                color="secondary"
+                dense
+                flat
+                icon="security"
+                :label="t('pages.admin.users.editPerms')"
+                @click="openPermEditor(props.row)"
+              />
             </q-td>
           </template>
         </q-table>
+
+        <!-- Permissions Editor Dialog -->
+        <q-dialog v-model="permDialog" persistent>
+          <q-card style="min-width: 520px; max-width: 95vw">
+            <q-card-section class="row items-center q-pb-none">
+              <div class="text-h6">
+                {{ t('pages.admin.users.permsTitle') }}
+                <span class="text-primary q-ml-sm">{{
+                  permUser?.username
+                }}</span>
+              </div>
+              <q-space />
+              <q-btn icon="close" flat round dense v-close-popup />
+            </q-card-section>
+
+            <q-card-section>
+              <div class="text-caption text-grey q-mb-sm">
+                {{ t('pages.admin.users.permsHint') }}
+              </div>
+              <q-markup-table flat dense separator="cell" class="perm-table">
+                <thead>
+                  <tr>
+                    <th class="text-left">
+                      {{ t('pages.admin.users.permsSubject') }}
+                    </th>
+                    <th
+                      v-for="action in CASL_ACTIONS"
+                      :key="action"
+                      class="text-center"
+                    >
+                      {{ action }}
+                    </th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr v-for="subject in CASL_SUBJECTS" :key="subject">
+                    <td class="text-weight-medium">{{ subject }}</td>
+                    <td
+                      v-for="action in CASL_ACTIONS"
+                      :key="action"
+                      class="text-center"
+                    >
+                      <q-checkbox
+                        v-model="permMatrix[subject][action]"
+                        dense
+                        color="primary"
+                      />
+                    </td>
+                  </tr>
+                </tbody>
+              </q-markup-table>
+            </q-card-section>
+
+            <q-card-actions align="right" class="q-pa-md">
+              <q-btn
+                flat
+                :label="t('pages.admin.users.cancel')"
+                v-close-popup
+              />
+              <q-btn
+                color="primary"
+                :label="t('pages.admin.users.savePerms')"
+                :loading="savingUserId === permUser?.id"
+                @click="savePermissions"
+              />
+            </q-card-actions>
+          </q-card>
+        </q-dialog>
 
         <q-item v-if="!usersLoading && !users.length && !usersError">
           <q-item-section>
@@ -463,6 +539,109 @@ async function saveUser(user: AdminUser) {
     savingUserId.value = null
   }
 }
+
+// ── Permissions Editor ───────────────────────────────────────────────────────
+
+const CASL_ACTIONS = ['create', 'read', 'update', 'delete', 'manage'] as const
+const CASL_SUBJECTS = [
+  'admin',
+  'category',
+  'chat',
+  'likes',
+  'mediafile',
+  'permissions',
+  'post',
+  'roles',
+  'user',
+] as const
+
+type CaslAction = (typeof CASL_ACTIONS)[number]
+type CaslSubject = (typeof CASL_SUBJECTS)[number]
+type PermMatrix = Record<CaslSubject, Record<CaslAction, boolean>>
+
+const permDialog = ref(false)
+const permUser = ref<AdminUser | null>(null)
+const permMatrix = ref<PermMatrix>(buildEmptyMatrix())
+
+function buildEmptyMatrix(): PermMatrix {
+  return Object.fromEntries(
+    CASL_SUBJECTS.map((subject) => [
+      subject,
+      Object.fromEntries(CASL_ACTIONS.map((action) => [action, false])),
+    ])
+  ) as PermMatrix
+}
+
+function permsToMatrix(
+  permissions: Array<{ action: string; subject: string }>
+): PermMatrix {
+  const matrix = buildEmptyMatrix()
+  for (const { action, subject } of permissions) {
+    const s = subject as CaslSubject
+    const a = action as CaslAction
+    if (matrix[s] !== undefined && a in matrix[s]) {
+      matrix[s][a] = true
+    }
+  }
+  return matrix
+}
+
+function matrixToPerms(
+  matrix: PermMatrix
+): Array<{ action: string; subject: string }> {
+  const result: Array<{ action: string; subject: string }> = []
+  for (const subject of CASL_SUBJECTS) {
+    for (const action of CASL_ACTIONS) {
+      if (matrix[subject][action]) {
+        result.push({ action, subject })
+      }
+    }
+  }
+  return result
+}
+
+function openPermEditor(user: AdminUser) {
+  permUser.value = user
+  permMatrix.value = permsToMatrix(
+    Array.isArray(user.permissions) ? user.permissions : []
+  )
+  permDialog.value = true
+}
+
+async function savePermissions() {
+  if (!permUser.value) return
+  savingUserId.value = permUser.value.id
+  usersError.value = ''
+  usersSaveMsg.value = ''
+  try {
+    const permissions = matrixToPerms(permMatrix.value)
+    const res = await fetch(
+      `${USERS_API_BASE}/admin/users/${permUser.value.id}`,
+      {
+        method: 'PATCH',
+        credentials: 'include',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ permissions }),
+      }
+    )
+    const data = (await res.json()) as { ok: boolean; error?: string }
+    if (!data.ok)
+      throw new Error(data.error || t('pages.admin.users.updateFailed'))
+    // Sync back into the users list
+    const idx = users.value.findIndex((u) => u.id === permUser.value!.id)
+    if (idx !== -1) users.value[idx]!.permissions = permissions
+    usersSaveMsg.value = t('pages.admin.users.updateSuccess')
+    permDialog.value = false
+    setTimeout(() => {
+      usersSaveMsg.value = ''
+    }, 3000)
+  } catch (e: unknown) {
+    usersError.value =
+      e instanceof Error ? e.message : t('pages.admin.users.updateFailed')
+  } finally {
+    savingUserId.value = null
+  }
+}
 </script>
 
 <style scoped>
@@ -473,5 +652,10 @@ async function saveUser(user: AdminUser) {
 
 .header h1 {
   letter-spacing: 0.01em;
+}
+
+.perm-table th,
+.perm-table td {
+  padding: 4px 8px;
 }
 </style>

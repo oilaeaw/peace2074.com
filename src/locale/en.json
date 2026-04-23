@@ -617,6 +617,12 @@
         "surasCompleted": "Suras",
         "lastRead": "Last Read",
         "sura": "Sura",
+        "editPerms": "Permissions",
+        "permsTitle": "Edit Permissions for",
+        "permsHint": "Check each action the user is allowed to perform on each subject.",
+        "permsSubject": "Subject",
+        "savePerms": "Save Permissions",
+        "cancel": "Cancel",
         "roles": {
           "user": "User",
           "editor": "Editor",

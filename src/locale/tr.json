@@ -617,6 +617,12 @@
                 "surasCompleted": "Sureler",
                 "lastRead": "Son Okuma",
                 "sura": "Sure",
+                "editPerms": "İzinler",
+                "permsTitle": "İzinleri Düzenle:",
+                "permsHint": "Kullanıcının her konu üzerinde yapmasına izin verilen her eylemi işaretleyin.",
+                "permsSubject": "Konu",
+                "savePerms": "İzinleri Kaydet",
+                "cancel": "İptal",
                 "roles": {
                     "user": "Kullanıcı",
                     "editor": "Editör",

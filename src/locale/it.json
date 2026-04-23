@@ -617,6 +617,12 @@
                 "surasCompleted": "Sure",
                 "lastRead": "Ultima lettura",
                 "sura": "Sura",
+                "editPerms": "Permessi",
+                "permsTitle": "Modifica permessi per",
+                "permsHint": "Seleziona ogni azione che l'utente può eseguire su ogni oggetto.",
+                "permsSubject": "Oggetto",
+                "savePerms": "Salva permessi",
+                "cancel": "Annulla",
                 "roles": {
                     "user": "Utente",
                     "editor": "Redattore",

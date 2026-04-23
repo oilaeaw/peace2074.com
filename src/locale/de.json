@@ -582,6 +582,12 @@
         "surasCompleted": "Suren",
         "lastRead": "Zuletzt gelesen",
         "sura": "Sure",
+        "editPerms": "Berechtigungen",
+        "permsTitle": "Berechtigungen bearbeiten für",
+        "permsHint": "Aktivieren Sie jede Aktion, die der Benutzer auf jedem Objekt ausführen darf.",
+        "permsSubject": "Objekt",
+        "savePerms": "Berechtigungen speichern",
+        "cancel": "Abbrechen",
         "roles": {
           "user": "Benutzer",
           "editor": "Redakteur",
