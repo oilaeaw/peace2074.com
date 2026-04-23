@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getPrisma } from '../utils/prisma'
-import { generateEmbedding } from '../utils/embeddings'
+import { getPrisma } from '../../utils/prisma'
+import { generateEmbedding } from '../../utils/embeddings'
 
 /**
  * POST /api/blog/search
