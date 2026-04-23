@@ -83,6 +83,8 @@ def patch_capacitor_verifier_xcconfigs(sandbox_root)
     patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
     patched_xcconfig_text << "FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
     patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
+    patched_xcconfig_text << "COMPILER_INDEX_STORE_ENABLE = NO\n"
+    patched_xcconfig_text << "SWIFT_INDEX_STORE_ENABLE = NO\n"
 
     next if patched_xcconfig_text == xcconfig_text
 
