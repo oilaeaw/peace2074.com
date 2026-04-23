@@ -1,0 +1,18 @@
+{
+  "name": "peace2074-mobile",
+  "main": "app/app.ts",
+  "version": "1.0.0",
+  "private": true,
+  "dependencies": {
+    "@nativescript/core": "~9.0.0",
+    "nativescript-vue": "^3.0.0"
+  },
+  "devDependencies": {
+    "@nativescript/tailwind": "^4.0.0",
+    "@nativescript/types": "~9.0.0",
+    "@nativescript/webpack": "~5.0.31",
+    "@types/node": "^20.0.0",
+    "tailwindcss": "^4.0.0",
+    "typescript": "~5.8.0"
+  }
+}
