@@ -27,6 +27,31 @@ function normalizeConfigValue(value: unknown): string {
     return typeof value === 'string' ? value.trim() : ''
 }
 
+function hasPlaceholderMarker(value: string): boolean {
+    const normalized = value.trim().toLowerCase()
+
+    if (!normalized) {
+        return false
+    }
+
+    return [
+        'replace_with',
+        'your-',
+        'your_',
+        '<user>',
+        '<password>',
+        '<api_key>',
+        '<api_secret>',
+        '<cloud_name>',
+        'change-me',
+    ].some((marker) => normalized.includes(marker))
+}
+
+function normalizeCredentialValue(value: unknown): string {
+    const normalized = normalizeConfigValue(value)
+    return hasPlaceholderMarker(normalized) ? '' : normalized
+}
+
 function decodeBase64ToUint8Array(value: string): Uint8Array {
     const normalized = value.replace(/\s+/g, '')
 
@@ -51,7 +76,7 @@ function normalizeApplePrivateKey(value: unknown): Uint8Array {
         .replace(/\\n/g, '\n')
         .replace(/\r\n/g, '\n')
 
-    if (!normalized) {
+    if (!normalized || hasPlaceholderMarker(normalized)) {
         return new Uint8Array()
     }
 
@@ -122,14 +147,14 @@ function getOAuthConfig(): OAuthConfig {
 
     return {
         google: {
-            clientId: normalizeConfigValue(googleClientId),
-            clientSecret: normalizeConfigValue(googleClientSecret),
+            clientId: normalizeCredentialValue(googleClientId),
+            clientSecret: normalizeCredentialValue(googleClientSecret),
             redirectUri: normalizeConfigValue(googleRedirectUri)
         },
         apple: {
-            clientId: normalizeConfigValue(appleClientId),
-            teamId: normalizeConfigValue(appleTeamId),
-            keyId: normalizeConfigValue(appleKeyId),
+            clientId: normalizeCredentialValue(appleClientId),
+            teamId: normalizeCredentialValue(appleTeamId),
+            keyId: normalizeCredentialValue(appleKeyId),
             privateKey: normalizeApplePrivateKey(applePrivateKey),
             redirectUri: normalizeConfigValue(appleRedirectUri)
         }
