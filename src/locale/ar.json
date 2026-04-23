@@ -497,6 +497,9 @@
         "reciter": "القارئ الافتراضي",
         "transliteration": "إظهار الترجمة الحرفية",
         "remember": "تذكر آخر صفحة مقروءة",
+        "highlightMode": "تظليل التلاوة",
+        "highlightWord": "كلمة",
+        "highlightSentence": "جملة",
         "hint": "تطبق خيارات القراءة على صفحات القرآن على هذا الجهاز."
       },
       "appearance": {

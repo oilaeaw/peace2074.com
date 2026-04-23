@@ -24,6 +24,17 @@ const themeMode = computed<ThemeMode>({
 const darkModeStore = useStorageRef<boolean>(DARK_MODE_KEY, false)
 const themeMediaQuery = ref<MediaQueryList | null>(null)
 
+// Quran recitation highlight mode — shared with the reader page via same storage key
+const HIGHLIGHT_MODE_KEY = 'quran-highlight-mode'
+const highlightModeStore = useStorageRef<'word' | 'ayah'>(
+  HIGHLIGHT_MODE_KEY,
+  'word'
+)
+const highlightMode = computed<'word' | 'ayah'>({
+  get: () => highlightModeStore.value.value ?? 'word',
+  set: (mode) => highlightModeStore.set(mode),
+})
+
 const isAuthenticated = computed(() => authStore.isAuthenticated)
 const isProfileRoute = computed(() => route.name === 'Profile')
 const pageTitle = computed(() =>
@@ -401,6 +412,22 @@ async function handleChangePassword() {
             color="primary"
             :label="t('pages.preferences.quran.remember')"
           />
+          <div>
+            <div class="text-caption text-grey-7 q-mb-xs">
+              {{ t('pages.preferences.quran.highlightMode') }}
+            </div>
+            <q-btn-toggle
+              v-model="highlightMode"
+              :options="[
+                { label: t('pages.preferences.quran.highlightWord'), value: 'word' },
+                { label: t('pages.preferences.quran.highlightSentence'), value: 'ayah' },
+              ]"
+              color="primary"
+              toggle-color="primary"
+              unelevated
+              outline
+            />
+          </div>
           <q-banner dense rounded class="q-mt-sm hint-banner">
             {{ t('pages.preferences.quran.hint') }}
           </q-banner>

@@ -426,6 +426,9 @@
         "reciter": "Standard-Rezitator",
         "transliteration": "Transliteration anzeigen",
         "remember": "Letzte gelesene Seite merken",
+        "highlightMode": "Rezitation-Hervorhebung",
+        "highlightWord": "Wort",
+        "highlightSentence": "Satz",
         "hint": "Lesewahlen gelten für Quran-Seiten auf diesem Gerät."
       },
       "appearance": {

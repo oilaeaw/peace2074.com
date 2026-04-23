@@ -543,6 +543,9 @@
         "reciter": "Default reciter",
         "transliteration": "Show transliteration",
         "remember": "Remember last read page",
+        "highlightMode": "Recitation highlight",
+        "highlightWord": "Word",
+        "highlightSentence": "Sentence",
         "hint": "Reading choices apply across Quran pages on this device."
       },
       "appearance": {

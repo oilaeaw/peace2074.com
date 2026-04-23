@@ -543,6 +543,9 @@
                 "reciter": "Recitatore predefinito",
                 "transliteration": "Mostra traslitterazione",
                 "remember": "Ricorda l'ultima pagina letta",
+                "highlightMode": "Evidenziazione della recitazione",
+                "highlightWord": "Parola",
+                "highlightSentence": "Frase",
                 "hint": "Le scelte di lettura si applicano in tutte le pagine del Corano."
             },
             "appearance": {

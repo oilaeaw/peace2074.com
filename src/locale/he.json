@@ -543,6 +543,9 @@
                 "reciter": "קורא ברירת מחדל",
                 "transliteration": "הצג תעתיק",
                 "remember": "זכור את העמוד האחרון",
+                "highlightMode": "הדגשת קריאה",
+                "highlightWord": "מילה",
+                "highlightSentence": "משפט",
                 "hint": "בחירות הקריאה חלות על דפי הקוראן במכשיר זה."
             },
             "appearance": {

@@ -543,6 +543,9 @@
                 "reciter": "Varsayılan okuyucu",
                 "transliteration": "Transliterasyonu göster",
                 "remember": "Son okunan sayfayı hatırla",
+                "highlightMode": "Tilavet vurgulama",
+                "highlightWord": "Kelime",
+                "highlightSentence": "Cümle",
                 "hint": "Okuma tercihleri bu cihazdaki tüm Kur'an sayfalarında geçerlidir."
             },
             "appearance": {

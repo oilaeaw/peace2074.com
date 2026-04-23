@@ -3005,18 +3005,6 @@ watch(
             class="q-ml-sm"
           />
 
-          <!-- Word highlight toggle (audio mode only, when timings available) -->
-          <q-toggle
-            v-if="readerMode === 'audio'"
-            v-model="highlightMode"
-            true-value="word"
-            false-value="ayah"
-            :label="t('pages.quran.wordHighlight')"
-            color="secondary"
-            dense
-            class="q-ml-sm"
-          />
-
           <!-- Audio playback rate (audio mode) -->
           <q-select
             v-if="readerMode === 'audio'"

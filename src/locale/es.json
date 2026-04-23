@@ -543,6 +543,9 @@
                 "reciter": "Recitador predeterminado",
                 "transliteration": "Mostrar transliteración",
                 "remember": "Recordar última página leída",
+                "highlightMode": "Resaltado de recitación",
+                "highlightWord": "Palabra",
+                "highlightSentence": "Oración",
                 "hint": "Las opciones de lectura se aplican en todas las páginas del Corán."
             },
             "appearance": {
