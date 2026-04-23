@@ -12,6 +12,8 @@
     "@nativescript/types": "~9.0.0",
     "@nativescript/webpack": "~5.0.31",
     "@types/node": "^20.0.0",
+    "postcss": "^8.5.6",
+    "postcss-loader": "^8.1.1",
     "tailwindcss": "^4.0.0",
     "typescript": "~5.8.0"
   }

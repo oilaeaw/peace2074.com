@@ -1,6 +1,6 @@
-@import "tailwindcss";
+@import 'tailwindcss';
 
 ActionBar {
-    background-color: #65adf1;
-    color: white;
+  background-color: #0a6b44;
+  color: white;
 }
