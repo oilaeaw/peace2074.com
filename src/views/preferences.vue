@@ -4,6 +4,10 @@ import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useStorageRef } from '@/composables/useUStore'
+import {
+  useProfileSettings,
+  type QuranHighlightMode,
+} from '@/composables/useProfileSettings'
 import { useRoute, useRouter } from 'vue-router'
 
 const { t } = useI18n()
@@ -24,15 +28,15 @@ const themeMode = computed<ThemeMode>({
 const darkModeStore = useStorageRef<boolean>(DARK_MODE_KEY, false)
 const themeMediaQuery = ref<MediaQueryList | null>(null)
 
-// Quran recitation highlight mode — shared with the reader page via same storage key
-const HIGHLIGHT_MODE_KEY = 'quran-highlight-mode'
-const highlightModeStore = useStorageRef<'word' | 'ayah'>(
-  HIGHLIGHT_MODE_KEY,
-  'word'
-)
-const highlightMode = computed<'word' | 'ayah'>({
-  get: () => highlightModeStore.value.value ?? 'word',
-  set: (mode) => highlightModeStore.set(mode),
+const { highlightMode, loadProfileSettings, setHighlightMode } =
+  useProfileSettings()
+const selectedHighlightMode = computed<QuranHighlightMode>({
+  get: () => highlightMode.value,
+  set: (mode) => {
+    void setHighlightMode(mode).catch((error) => {
+      console.warn('Failed to save highlight mode:', error)
+    })
+  },
 })
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
@@ -113,6 +117,7 @@ onMounted(() => {
     themeMediaQuery.value.addEventListener('change', handleSystemThemeChange)
   }
   applyThemeMode(themeMode.value)
+  void loadProfileSettings()
 })
 
 onBeforeUnmount(() => {
@@ -417,7 +422,7 @@ async function handleChangePassword() {
               {{ t('pages.preferences.quran.highlightMode') }}
             </div>
             <q-btn-toggle
-              v-model="highlightMode"
+              v-model="selectedHighlightMode"
               :options="[
                 {
                   label: t('pages.preferences.quran.highlightWord'),

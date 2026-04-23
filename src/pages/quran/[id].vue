@@ -6,6 +6,7 @@ import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
+import { useProfileSettings } from '@/composables/useProfileSettings'
 import {
   applySeoMeta,
   buildBreadcrumbStructuredData,
@@ -528,17 +529,8 @@ const autoContinueEnabled = computed({
   set: (enabled) => autoContinueStore.set(enabled),
 })
 
-// Highlight mode: 'word' highlights individual words (when timings available),
-// 'ayah' highlights the whole verse sentence.
-const HIGHLIGHT_MODE_KEY = 'quran-highlight-mode'
-const highlightModeStore = useStorageRef<'word' | 'ayah'>(
-  HIGHLIGHT_MODE_KEY,
-  'word'
-)
-const highlightMode = computed<'word' | 'ayah'>({
-  get: () => highlightModeStore.value.value ?? 'word',
-  set: (mode) => highlightModeStore.set(mode),
-})
+// Highlight mode is sourced from the authenticated profile settings in MongoDB.
+const { highlightMode, loadProfileSettings } = useProfileSettings()
 
 // Ayah action hover/tap widget state.
 // This is a supported Quran reading interaction and should not be removed
@@ -2687,6 +2679,7 @@ function handleOfflineDownloadStatus(status: {
 }
 
 onMounted(async () => {
+  await loadProfileSettings()
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
     window.addEventListener(
