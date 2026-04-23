@@ -891,7 +891,7 @@ function isActiveAyah(verseNumber: number) {
 function isActiveWord(verseNumber: number, wordIndex: number) {
   return (
     hasTimingMatchedWords(verseNumber) &&
-    isActiveAyah(verseNumber) &&
+    currentAyahIndex.value === verseNumber - 1 &&
     currentWordIndex.value === wordIndex
   )
 }
