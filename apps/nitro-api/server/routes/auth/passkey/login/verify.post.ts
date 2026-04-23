@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
   )
   const payload = await buildAuthenticatedUser(user)
 
-  createSession(event, payload.sessionUser)
+  createSession(event, payload.sessionUser, 'passkey')
 
   return {
     ok: true,

@@ -611,6 +611,12 @@
                 "save": "שמור",
                 "noUsers": "לא נמצאו משתמשים",
                 "loading": "טוען משתמשים...",
+                "lastLogin": "כניסה אחרונה",
+                "loginCount": "כניסות",
+                "bookmarks": "סימניות",
+                "surasCompleted": "סורות",
+                "lastRead": "קריאה אחרונה",
+                "sura": "סורה",
                 "roles": {
                     "user": "משתמש",
                     "editor": "עורך",

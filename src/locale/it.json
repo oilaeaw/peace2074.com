@@ -611,6 +611,12 @@
                 "save": "Salva",
                 "noUsers": "Nessun utente trovato",
                 "loading": "Caricamento utenti...",
+                "lastLogin": "Ultimo accesso",
+                "loginCount": "Accessi",
+                "bookmarks": "Segnalibri",
+                "surasCompleted": "Sure",
+                "lastRead": "Ultima lettura",
+                "sura": "Sura",
                 "roles": {
                     "user": "Utente",
                     "editor": "Redattore",

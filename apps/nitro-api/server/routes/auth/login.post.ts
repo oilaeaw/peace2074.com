@@ -59,7 +59,7 @@ export default defineEventHandler(async (event) => {
             name: displayName
         }
 
-        createSession(event, sessionUser)
+        createSession(event, sessionUser, 'password')
 
         return {
             ok: true,

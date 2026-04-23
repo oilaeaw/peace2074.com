@@ -576,6 +576,12 @@
         "save": "Speichern",
         "noUsers": "Keine Benutzer gefunden",
         "loading": "Benutzer werden geladen...",
+        "lastLogin": "Letzter Login",
+        "loginCount": "Anmeldungen",
+        "bookmarks": "Lesezeichen",
+        "surasCompleted": "Suren",
+        "lastRead": "Zuletzt gelesen",
+        "sura": "Sure",
         "roles": {
           "user": "Benutzer",
           "editor": "Redakteur",

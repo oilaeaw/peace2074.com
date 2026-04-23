@@ -611,6 +611,12 @@
         "save": "حفظ",
         "noUsers": "لا يوجد مستخدمون",
         "loading": "جاري تحميل المستخدمين...",
+        "lastLogin": "آخر تسجيل دخول",
+        "loginCount": "تسجيلات الدخول",
+        "bookmarks": "الإشارات",
+        "surasCompleted": "السور",
+        "lastRead": "آخر قراءة",
+        "sura": "سورة",
         "roles": {
           "user": "مستخدم",
           "editor": "محرر",

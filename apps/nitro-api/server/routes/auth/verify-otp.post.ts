@@ -29,6 +29,6 @@ export default defineEventHandler(async (event) => {
 
   otpStore.delete(email)
   const user = { id: email, role: 'user', name: email }
-  createSession(event, user)
+  createSession(event, user, 'otp')
   return { ok: true, user }
 })

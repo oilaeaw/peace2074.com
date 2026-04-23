@@ -611,6 +611,12 @@
         "save": "Save",
         "noUsers": "No users found",
         "loading": "Loading users...",
+        "lastLogin": "Last Login",
+        "loginCount": "Logins",
+        "bookmarks": "Bookmarks",
+        "surasCompleted": "Suras",
+        "lastRead": "Last Read",
+        "sura": "Sura",
         "roles": {
           "user": "User",
           "editor": "Editor",

@@ -97,7 +97,7 @@ export default defineEventHandler(async (event) => {
             id: user.id,
             role: user.role || 'user',
             name: user.first_name || user.username
-        })
+        }, 'google')
 
         // Redirect to app (native gets a deep link; web gets the normal URL)
         return sendRedirect(event, isNative ? `${nativeBase}?authComplete=1` : `${redirectUrl}/`)

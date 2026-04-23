@@ -1,5 +1,6 @@
 import crypto from 'node:crypto'
 import { H3Event, createError, deleteCookie, getCookie, getHeader, setCookie } from 'h3'
+import { recordSession } from './sessions'
 
 const COOKIE_NAME = 'waelio_session'
 const COOKIE_MAX_AGE = 7 * 24 * 60 * 60 // 7 days
@@ -59,7 +60,11 @@ export function requireSecrets(options: { needPasscode?: boolean } = {}) {
     return { passcode, secret }
 }
 
-export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp'>) {
+export function createSession(
+    event: H3Event,
+    payload: Omit<SessionPayload, 'exp'>,
+    provider: 'password' | 'google' | 'apple' | 'github' | 'passkey' | 'otp' | 'magic' = 'password'
+) {
     const { secret } = requireSecrets({ needPasscode: false })
     const exp = Date.now() + COOKIE_MAX_AGE * 1000
     const token = sign({ ...payload, exp }, secret)
@@ -75,6 +80,14 @@ export function createSession(event: H3Event, payload: Omit<SessionPayload, 'exp
         path: '/',
         maxAge: COOKIE_MAX_AGE,
     })
+
+    // Record session in MongoDB (fire-and-forget)
+    const ip = getHeader(event, 'x-forwarded-for')?.split(',')[0]?.trim()
+        ?? getHeader(event, 'x-real-ip')
+        ?? null
+    const user_agent = getHeader(event, 'user-agent') ?? undefined
+    recordSession(payload.id, provider, { ip: ip ?? undefined, user_agent })
+
     return token
 }
 

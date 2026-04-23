@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
 
   pendingLinks.delete(t)
   const user = { id: entry.email, role: 'user', name: entry.email }
-  createSession(event, user)
+  createSession(event, user, 'magic')
 
   // Redirect to home after login
   return sendRedirect(event, '/', 302)

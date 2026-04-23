@@ -611,6 +611,12 @@
                 "save": "Kaydet",
                 "noUsers": "Kullanıcı bulunamadı",
                 "loading": "Kullanıcılar yükleniyor...",
+                "lastLogin": "Son Giriş",
+                "loginCount": "Girişler",
+                "bookmarks": "Yer İmleri",
+                "surasCompleted": "Sureler",
+                "lastRead": "Son Okuma",
+                "sura": "Sure",
                 "roles": {
                     "user": "Kullanıcı",
                     "editor": "Editör",

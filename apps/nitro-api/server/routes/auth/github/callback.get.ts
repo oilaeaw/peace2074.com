@@ -86,7 +86,7 @@ export default defineEventHandler(async (event) => {
             name: `${user.first_name} ${user.last_name}`.trim() || user.username
         }
 
-        createSession(event, sessionUser)
+        createSession(event, sessionUser, 'github')
 
         // Redirect to home
         return sendRedirect(event, '/')
