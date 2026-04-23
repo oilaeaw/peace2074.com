@@ -46,12 +46,21 @@ def patch_capacitor_verifier_xcconfigs(sandbox_root)
     File.join(sandbox_root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.release.xcconfig'),
     File.join(sandbox_root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.debug.xcconfig'),
     File.join(sandbox_root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorFirebaseAnalytics', 'CapacitorFirebaseAnalytics.debug.xcconfig'),
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorFirebaseAnalytics', 'CapacitorFirebaseAnalytics.release.xcconfig'),
   ]
 
+  firebase_framework_paths = '"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseAnalytics" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCore" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseCoreInternal" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/FirebaseInstallations" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/GoogleUtilities" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/nanopb" ' \
+    '"${PODS_CONFIGURATION_BUILD_DIR}/PromisesObjC"'
   capacitor_test_framework_search_paths = '$(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"'
   maccatalyst_framework_paths = '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/Capacitor" ' \
     '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/CapacitorCordova"'
-  capacitor_test_framework_search_paths_full = "#{capacitor_test_framework_search_paths} #{maccatalyst_framework_paths}"
+  capacitor_test_framework_search_paths_full = "#{capacitor_test_framework_search_paths} #{maccatalyst_framework_paths} #{firebase_framework_paths}"
   verifier_no_all_sdks = [
     'ENABLE_MODULE_VERIFIER = NO',
     'ENABLE_MODULE_VERIFIER[sdk=iphoneos*] = NO',
@@ -67,10 +76,12 @@ def patch_capacitor_verifier_xcconfigs(sandbox_root)
       .gsub(/^ENABLE_MODULE_VERIFIER(?:\[sdk=[^\]]+\])?\s*=.*\n/, '')
       .gsub(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/, '')
       .gsub(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
+      .gsub(/^FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
 
     patched_xcconfig_text << "\n" unless patched_xcconfig_text.end_with?("\n")
     patched_xcconfig_text << "#{verifier_no_all_sdks}\n"
     patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
+    patched_xcconfig_text << "FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
     patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
 
     next if patched_xcconfig_text == xcconfig_text
