@@ -1,1 +1,0 @@
-{"version":3,"file":"bundle.js","mappings":";;;;;;;;;;AAAA,2C","sources":["webpack://peace2074-mobile/external commonjs \"~/package.json\""],"sourcesContent":["module.exports = require(\"~/package.json\");"],"names":[],"sourceRoot":""}
