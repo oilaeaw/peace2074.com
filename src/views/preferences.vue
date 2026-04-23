@@ -419,8 +419,14 @@ async function handleChangePassword() {
             <q-btn-toggle
               v-model="highlightMode"
               :options="[
-                { label: t('pages.preferences.quran.highlightWord'), value: 'word' },
-                { label: t('pages.preferences.quran.highlightSentence'), value: 'ayah' },
+                {
+                  label: t('pages.preferences.quran.highlightWord'),
+                  value: 'word',
+                },
+                {
+                  label: t('pages.preferences.quran.highlightSentence'),
+                  value: 'ayah',
+                },
               ]"
               color="primary"
               toggle-color="primary"
