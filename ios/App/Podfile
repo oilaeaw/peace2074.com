@@ -479,4 +479,15 @@ end
 post_integrate do |installer|
   force_verifier_settings_off_in_project_files(__dir__)
   patch_capacitor_verifier_xcconfigs(installer.sandbox.root)
+
+  # Belt-and-suspenders: sed sweep runs after CocoaPods saves all files to
+  # disk, guaranteed to catch any entries the Ruby gsub missed (encoding/
+  # whitespace edge cases). This is idempotent — NO → NO is a no-op.
+  pods_pbxproj = File.join(__dir__, 'Pods', 'Pods.xcodeproj', 'project.pbxproj')
+  if File.exist?(pods_pbxproj)
+    system("sed -i '' 's/ENABLE_MODULE_VERIFIER = YES;/ENABLE_MODULE_VERIFIER = NO;/g' #{pods_pbxproj.shellescape}")
+    system("sed -i '' 's/MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = \"[^\"]*\";/MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = \"\";/g' #{pods_pbxproj.shellescape}")
+    remaining = `grep -c 'ENABLE_MODULE_VERIFIER = YES' #{pods_pbxproj.shellescape} 2>/dev/null`.strip.to_i
+    puts remaining == 0 ? "✓ sed sweep: 0 ENABLE_MODULE_VERIFIER = YES entries remain" : "⚠️  sed sweep: #{remaining} YES entries still present"
+  end
 end
