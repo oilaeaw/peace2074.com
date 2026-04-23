@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getPrisma } from '../utils/prisma'
+import { getMongoose } from '../utils/mongoose'
+import { BlogPostModel } from '../models/BlogPost'
 import { createDatoCmsBlogPost } from '../utils/datocms'
 import { sendBlogPostNotification } from '../utils/blog-notifications'
 import { generateEmbedding, blogPostEmbeddingText } from '../utils/embeddings'
@@ -29,7 +30,10 @@ export default defineEventHandler(async (event) => {
         const { title, excerpt, content, tags, slug } = body
 
         if (!title || !content || !slug) {
-            return { ok: false, error: 'Missing required fields: title, content, slug' }
+            return {
+                ok: false,
+                error: 'Missing required fields: title, content, slug',
+            }
         }
 
         const normalizedSlug = toCanonicalSlug(String(slug))
@@ -43,12 +47,11 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Invalid slug value' }
         }
 
-        const prisma = await getPrisma()
+        // MongoDB primary path
+        try {
+            await getMongoose()
 
-        // Prisma primary path
-        if (prisma) {
-            // Check if slug already exists
-            const existing = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+            const existing = await BlogPostModel.findOne({ slug: normalizedSlug }).lean()
             if (existing) {
                 return { ok: false, error: 'A post with this slug already exists' }
             }
@@ -56,25 +59,32 @@ export default defineEventHandler(async (event) => {
             let embedding: number[] = []
             try {
                 embedding = await generateEmbedding(
-                    blogPostEmbeddingText({ title: normalizedTitle, excerpt: normalizedExcerpt, content, tags: normalizedTags })
+                    blogPostEmbeddingText({
+                        title: normalizedTitle,
+                        excerpt: normalizedExcerpt,
+                        content,
+                        tags: normalizedTags,
+                    })
                 )
             } catch (err) {
-                console.warn('[Blog POST] Embedding generation failed:', err instanceof Error ? err.message : 'unknown')
+                console.warn(
+                    '[Blog POST] Embedding generation failed:',
+                    err instanceof Error ? err.message : 'unknown'
+                )
             }
 
-            const post = await prisma.blogPost.create({
-                data: {
-                    id: normalizedSlug,
-                    slug: normalizedSlug,
-                    title: normalizedTitle,
-                    excerpt: normalizedExcerpt,
-                    content,
-                    tags: normalizedTags,
-                    date: normalizedDate,
-                    author: normalizedAuthor,
-                    embedding,
-                }
+            const postDoc = await BlogPostModel.create({
+                _id: normalizedSlug,
+                slug: normalizedSlug,
+                title: normalizedTitle,
+                excerpt: normalizedExcerpt,
+                content,
+                tags: normalizedTags,
+                date: normalizedDate,
+                author: normalizedAuthor,
+                embedding,
             })
+            const post = postDoc.toObject()
 
             // Mirror write to DatoCMS (best effort)
             let datocmsSynced = false
@@ -90,7 +100,10 @@ export default defineEventHandler(async (event) => {
                 })
                 datocmsSynced = !!datocmsPost
             } catch (err) {
-                console.warn('[Blog POST] Prisma write succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
+                console.warn(
+                    '[Blog POST] MongoDB write succeeded but DatoCMS sync failed:',
+                    err instanceof Error ? err.message : 'unknown'
+                )
             }
 
             void sendBlogPostNotification({
@@ -103,12 +116,14 @@ export default defineEventHandler(async (event) => {
             return {
                 ok: true,
                 post,
-                source: 'prisma',
+                source: 'mongodb',
                 datocmsSynced,
             }
+        } catch (dbErr) {
+            console.warn('[Blog POST] MongoDB write failed, trying DatoCMS fallback:', dbErr instanceof Error ? dbErr.message : 'unknown')
         }
 
-        // Prisma unavailable: optional DatoCMS fallback
+        // DB unavailable: optional DatoCMS fallback
         try {
             const datocmsPost = await createDatoCmsBlogPost({
                 slug: normalizedSlug,
@@ -128,7 +143,10 @@ export default defineEventHandler(async (event) => {
                 }
             }
         } catch (err) {
-            console.warn('[Blog POST] DatoCMS fallback failed:', err instanceof Error ? err.message : 'unknown')
+            console.warn(
+                '[Blog POST] DatoCMS fallback failed:',
+                err instanceof Error ? err.message : 'unknown'
+            )
         }
 
         return { ok: false, error: 'Database not available' }

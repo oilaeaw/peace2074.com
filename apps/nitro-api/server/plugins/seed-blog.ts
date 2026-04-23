@@ -1,4 +1,5 @@
-import { getPrisma } from '../utils/prisma'
+import { getMongoose } from '../utils/mongoose'
+import { BlogPostModel } from '../models/BlogPost'
 import { sendBlogPostNotification } from '../utils/blog-notifications'
 
 type SeedBlogPost = {
@@ -31,12 +32,7 @@ export default defineNitroPlugin(async () => {
     try {
         console.log('[Blog Seed] Checking blog posts...')
 
-        const prisma = await getPrisma()
-
-        if (!prisma) {
-            console.warn('[Blog Seed] Prisma not available, skipping blog seeding')
-            return
-        }
+        await getMongoose()
 
         // Import seed data
         const seedData = await import('../data/blog-seed.json').then(m => m.default as SeedBlogPost[])
@@ -45,12 +41,12 @@ export default defineNitroPlugin(async () => {
         let seededCount = 0
 
         for (const post of seedData) {
-            const existing = await prisma.blogPost.findUnique({ where: { slug: post.slug } })
+            const existing = await BlogPostModel.findOne({ slug: post.slug }).lean()
 
             if (!existing) {
                 // Add post with dates
-                const postData = {
-                    id: post.id,
+                await BlogPostModel.create({
+                    _id: post.id,
                     slug: post.slug,
                     title: post.title,
                     excerpt: post.excerpt || '',
@@ -60,9 +56,7 @@ export default defineNitroPlugin(async () => {
                     author: post.author,
                     createdAt: post.createdAt ? new Date(post.createdAt) : new Date(),
                     updatedAt: post.updatedAt ? new Date(post.updatedAt) : new Date(),
-                }
-
-                await prisma.blogPost.create({ data: postData })
+                })
                 seededCount++
                 console.log(`[Blog Seed] ✓ Seeded: ${post.title}`)
 
@@ -96,7 +90,7 @@ export default defineNitroPlugin(async () => {
         }
 
         // Log total count
-        const total = await prisma.blogPost.count()
+        const total = await BlogPostModel.countDocuments()
         console.log(`[Blog Seed] Total blog posts: ${total}`)
 
     } catch (error: any) {

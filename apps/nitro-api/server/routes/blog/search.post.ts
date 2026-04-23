@@ -1,5 +1,5 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
 import { generateEmbedding } from '../../utils/embeddings'
 
 /**
@@ -19,14 +19,10 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing query' }
         }
 
-        const prisma = await getPrisma()
-        if (!prisma) {
-            return { ok: false, error: 'Database not available' }
-        }
+        const conn = await getMongoose()
 
         const queryEmbedding = await generateEmbedding(query.trim())
 
-        // Use MongoDB $vectorSearch aggregation via Prisma's $runCommandRaw
         const pipeline: object[] = [
             {
                 $vectorSearch: {
@@ -53,16 +49,11 @@ export default defineEventHandler(async (event) => {
             },
         ]
 
-        // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        const results = await (prisma as any).$runCommandRaw({
-            aggregate: 'BlogPost',
-            pipeline,
-            cursor: {},
-        })
+        const results = await conn.connection.db!.collection('BlogPost').aggregate(pipeline).toArray()
 
         return {
             ok: true,
-            results: results?.cursor?.firstBatch ?? [],
+            results,
         }
     } catch (err: unknown) {
         console.error('[Blog Search] Error:', err)

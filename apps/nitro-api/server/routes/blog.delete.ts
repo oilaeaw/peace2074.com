@@ -1,6 +1,7 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getPrisma } from '../utils/prisma'
+import { getMongoose } from '../utils/mongoose'
+import { BlogPostModel } from '../models/BlogPost'
 import { deleteDatoCmsBlogPostBySlug } from '../utils/datocms'
 
 /**
@@ -24,11 +25,10 @@ export default defineEventHandler(async (event) => {
 
         const normalizedSlug = String(slug).trim()
 
-        const prisma = await getPrisma()
-
-        // Prisma primary path
-        if (prisma) {
-            await prisma.blogPost.delete({ where: { slug: normalizedSlug } })
+        // MongoDB primary path
+        try {
+            await getMongoose()
+            await BlogPostModel.findOneAndDelete({ slug: normalizedSlug })
 
             // Mirror delete to DatoCMS (best effort)
             let datocmsSynced = false
@@ -36,13 +36,15 @@ export default defineEventHandler(async (event) => {
                 const datocmsDelete = await deleteDatoCmsBlogPostBySlug(normalizedSlug)
                 datocmsSynced = !!datocmsDelete
             } catch (err) {
-                console.warn('[Blog DELETE] Prisma delete succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
+                console.warn('[Blog DELETE] MongoDB delete succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
             }
 
-            return { ok: true, message: 'Post deleted successfully', source: 'prisma', datocmsSynced }
+            return { ok: true, message: 'Post deleted successfully', source: 'mongodb', datocmsSynced }
+        } catch (dbErr) {
+            console.warn('[Blog DELETE] MongoDB delete failed, trying DatoCMS fallback:', dbErr instanceof Error ? dbErr.message : 'unknown')
         }
 
-        // Prisma unavailable: optional DatoCMS fallback
+        // DB unavailable: optional DatoCMS fallback
         try {
             const datocmsDelete = await deleteDatoCmsBlogPostBySlug(normalizedSlug)
             if (datocmsDelete) {

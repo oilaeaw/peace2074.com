@@ -1,7 +1,6 @@
-import { getPrisma } from './prisma'
+import { getMongoose } from './mongoose'
+import { TasbeehModel } from '../models/Tasbeeh'
 import { updateTasbeehSummary } from './profile'
-
-let prisma: any = null
 
 export interface TasbeehSession {
     phraseIndex: number
@@ -25,37 +24,32 @@ export interface TasbeehRecord {
     updatedAt?: Date
 }
 
-async function isPrismaReady(): Promise<boolean> {
-    if (prisma) return true
-    prisma = await getPrisma()
-    return !!prisma
+async function isDbReady(): Promise<boolean> {
+    try {
+        await getMongoose()
+        return true
+    } catch {
+        return false
+    }
 }
 
 export async function getTasbeehByUserId(userId: string): Promise<TasbeehRecord | null> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const tasbeeh = await prisma.tasbeeh.findFirst({
-                where: { userId }
-            })
-            return tasbeeh
+            const tasbeeh = await TasbeehModel.findOne({ userId }).lean()
+            return tasbeeh as any
         } catch (e) {
-            console.error('Failed to get tasbeeh from Prisma:', e)
+            console.error('Failed to get tasbeeh:', e)
         }
     }
     return null
 }
 
 export async function createTasbeehRecord(userId: string): Promise<TasbeehRecord | null> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const created = await prisma.tasbeeh.create({
-                data: {
-                    userId,
-                    daily: [],
-                    sessions: []
-                }
-            })
-            return created
+            const created = await TasbeehModel.create({ userId, daily: [], sessions: [] })
+            return created.toObject() as any
         } catch (e) {
             console.error('Failed to create tasbeeh record:', e)
         }
@@ -85,12 +79,9 @@ export async function addTasbeehDaily(userId: string, daily: TasbeehDaily): Prom
         dailyArray.splice(0, dailyArray.length - 30)
     }
 
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            await prisma.tasbeeh.updateMany({
-                where: { userId },
-                data: { daily: dailyArray }
-            })
+            await TasbeehModel.updateOne({ userId }, { $set: { daily: dailyArray } })
 
             // Update profile summary
             await updateTasbeehSummary(userId, daily.total - (existingIndex >= 0 ? dailyArray[existingIndex].total : 0), false)
@@ -118,12 +109,9 @@ export async function addTasbeehSession(userId: string, session: TasbeehSession)
         sessions.splice(0, sessions.length - 100)
     }
 
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            await prisma.tasbeeh.updateMany({
-                where: { userId },
-                data: { sessions }
-            })
+            await TasbeehModel.updateOne({ userId }, { $set: { sessions } })
 
             // Update profile summary
             await updateTasbeehSummary(userId, session.count, true)

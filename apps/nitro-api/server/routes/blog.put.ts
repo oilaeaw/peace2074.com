@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getPrisma } from '../utils/prisma'
+import { getMongoose } from '../utils/mongoose'
+import { BlogPostModel } from '../models/BlogPost'
 import { updateDatoCmsBlogPostBySlug } from '../utils/datocms'
 import { generateEmbedding, blogPostEmbeddingText } from '../utils/embeddings'
 
@@ -25,12 +26,12 @@ export default defineEventHandler(async (event) => {
 
         const normalizedSlug = String(slug).trim()
 
-        const prisma = await getPrisma()
-
         const updateTags = tags ? (Array.isArray(tags) ? tags : []) : undefined
 
-        // Prisma primary path
-        if (prisma) {
+        // MongoDB primary path
+        try {
+            await getMongoose()
+
             // Build update object (only include provided fields)
             const update: any = {}
 
@@ -42,7 +43,7 @@ export default defineEventHandler(async (event) => {
             // Regenerate embedding if any text field changed
             if (title || excerpt !== undefined || content || updateTags !== undefined) {
                 try {
-                    const current = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
+                    const current = await BlogPostModel.findOne({ slug: normalizedSlug }).lean() as any
                     if (current) {
                         update.embedding = await generateEmbedding(
                             blogPostEmbeddingText({
@@ -58,10 +59,11 @@ export default defineEventHandler(async (event) => {
                 }
             }
 
-            const result = await prisma.blogPost.update({
-                where: { slug: normalizedSlug },
-                data: update
-            })
+            const result = await BlogPostModel.findOneAndUpdate(
+                { slug: normalizedSlug },
+                { $set: update },
+                { new: true }
+            ).lean()
 
             if (!result) {
                 return { ok: false, error: 'Post not found' }
@@ -78,13 +80,15 @@ export default defineEventHandler(async (event) => {
                 })
                 datocmsSynced = !!datocmsPost
             } catch (err) {
-                console.warn('[Blog PUT] Prisma update succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
+                console.warn('[Blog PUT] MongoDB update succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
             }
 
-            return { ok: true, post: result, source: 'prisma', datocmsSynced }
+            return { ok: true, post: result, source: 'mongodb', datocmsSynced }
+        } catch (dbErr) {
+            console.warn('[Blog PUT] MongoDB update failed, trying DatoCMS fallback:', dbErr instanceof Error ? dbErr.message : 'unknown')
         }
 
-        // Prisma unavailable: optional DatoCMS fallback
+        // DB unavailable: optional DatoCMS fallback
         try {
             const datocmsPost = await updateDatoCmsBlogPostBySlug(normalizedSlug, {
                 title,

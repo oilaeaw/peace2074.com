@@ -1,6 +1,7 @@
 import { defineEventHandler } from 'h3'
 import { readSession } from '../../utils/auth'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
+import { QuranProgressModel } from '../../models/QuranProgress'
 
 export default defineEventHandler(async (event) => {
     try {
@@ -14,25 +15,17 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        const prisma = await getPrisma()
+        await getMongoose()
 
-        if (!prisma) {
-            return {
-                ok: false,
-                completedSuras: [],
-                error: 'Database not available'
-            }
-        }
-
-        const progress = await prisma.quranProgress.findUnique({
-            where: { userId: session.userId },
-            select: { completedSuras: true, lastUpdated: true }
-        })
+        const progress = await QuranProgressModel.findOne(
+            { userId: session.userId },
+            { completedSuras: 1, lastUpdated: 1 }
+        ).lean()
 
         return {
             ok: true,
-            completedSuras: progress?.completedSuras || [],
-            lastUpdated: progress?.lastUpdated || null
+            completedSuras: (progress as any)?.completedSuras || [],
+            lastUpdated: (progress as any)?.lastUpdated || null
         }
     } catch (error: any) {
         console.error('Failed to fetch Quran progress:', error)

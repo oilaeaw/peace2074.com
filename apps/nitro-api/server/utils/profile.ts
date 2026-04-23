@@ -1,7 +1,6 @@
 import { createDatabaseRequiredError, isDatabaseRequired } from './database-mode'
-import { getPrisma } from './prisma'
-
-let prisma: any = null
+import { getMongoose } from './mongoose'
+import { ProfileModel } from '../models/Profile'
 
 export interface Profile {
     id?: string
@@ -18,24 +17,23 @@ export interface Profile {
     }
 }
 
-async function isPrismaReady(): Promise<boolean> {
-    if (prisma) return true
-    prisma = await getPrisma()
-    if (!prisma && isDatabaseRequired()) {
-        throw createDatabaseRequiredError()
+async function isDbReady(): Promise<boolean> {
+    try {
+        await getMongoose()
+        return true
+    } catch {
+        if (isDatabaseRequired()) throw createDatabaseRequiredError()
+        return false
     }
-    return !!prisma
 }
 
 export async function getProfile(userId: string): Promise<Profile | null> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const profile = await prisma.profile.findUnique({
-                where: { userId }
-            })
-            return profile
+            const profile = await ProfileModel.findOne({ userId }).lean()
+            return profile as any
         } catch (e) {
-            console.error('Failed to get profile from Prisma:', e)
+            console.error('Failed to get profile:', e)
             if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
         }
     }
@@ -43,21 +41,19 @@ export async function getProfile(userId: string): Promise<Profile | null> {
 }
 
 export async function createProfile(profile: Profile): Promise<Profile | null> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const created = await prisma.profile.create({
-                data: {
-                    userId: profile.userId,
-                    first_name: profile.first_name,
-                    last_name: profile.last_name,
-                    avatar_url: profile.avatar_url,
-                    github_id: profile.github_id,
-                    bookmarks: profile.bookmarks || [],
-                    settings: profile.settings || {},
-                    tasbeeh_summary: profile.tasbeeh_summary || { total: 0, sessions: 0 }
-                }
+            const created = await ProfileModel.create({
+                userId: profile.userId,
+                first_name: profile.first_name,
+                last_name: profile.last_name,
+                avatar_url: profile.avatar_url,
+                github_id: profile.github_id,
+                bookmarks: profile.bookmarks || [],
+                settings: profile.settings || {},
+                tasbeeh_summary: profile.tasbeeh_summary || { total: 0, sessions: 0 },
             })
-            return created
+            return created.toObject() as any
         } catch (e) {
             console.error('Failed to create profile:', e)
             if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
@@ -67,13 +63,14 @@ export async function createProfile(profile: Profile): Promise<Profile | null> {
 }
 
 export async function updateProfile(userId: string, updates: Partial<Profile>): Promise<Profile | null> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const updated = await prisma.profile.update({
-                where: { userId },
-                data: updates
-            })
-            return updated
+            const updated = await ProfileModel.findOneAndUpdate(
+                { userId },
+                { $set: updates },
+                { new: true, upsert: true }
+            ).lean()
+            return updated as any
         } catch (e) {
             console.error('Failed to update profile:', e)
             if (isDatabaseRequired()) throw createDatabaseRequiredError(e)

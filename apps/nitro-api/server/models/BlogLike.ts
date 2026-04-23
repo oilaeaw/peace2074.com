@@ -1,0 +1,13 @@
+import { Schema, model, models } from 'mongoose'
+
+const BlogLikeSchema = new Schema(
+    {
+        slug: { type: String, required: true, index: true },
+        userId: { type: String, required: true, index: true },
+    },
+    { timestamps: true, collection: 'BlogLike' }
+)
+
+BlogLikeSchema.index({ slug: 1, userId: 1 }, { unique: true })
+
+export const BlogLikeModel = models.BlogLike || model('BlogLike', BlogLikeSchema)

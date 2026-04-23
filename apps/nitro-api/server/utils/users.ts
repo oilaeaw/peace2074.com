@@ -1,13 +1,17 @@
-// Prisma-backed user storage.
-// Development can fall back to Nitro KV storage, but production requires Prisma.
+// Mongoose-backed user storage.
+// Development can fall back to Nitro KV storage, but production requires MongoDB.
 
 import { createDatabaseRequiredError, isFallbackAuthStorageAllowed } from './database-mode'
-import { getPrisma } from './prisma'
+import { getMongoose } from './mongoose'
+import { UserModel } from '../models/User'
+import { ReaderStatsModel } from '../models/ReaderStats'
+import { DeployLikeModel } from '../models/DeployLike'
+import { BlogLikeModel } from '../models/BlogLike'
+import { QuranProgressModel } from '../models/QuranProgress'
+import { TasbeehModel } from '../models/Tasbeeh'
+import { ProfileModel } from '../models/Profile'
 import { createProfile, getProfile, updateProfile } from './profile'
 import { isCloudinaryAssetUrl, isLikelyOAuthAvatarUrl, resolveOAuthAvatarUrl } from './cloudinary'
-
-// Cached Prisma client after successful initialization
-let prisma: any = null
 
 export interface User {
     id: string
@@ -108,16 +112,15 @@ const DEFAULT_USERS: User[] = [
 const USERS_KEY = 'db:users'
 let initPromise: Promise<void> | null = null
 let memoryUsers: User[] | null = null
-let prismaMode: 'unknown' | 'on' | 'off' = 'unknown'
-let prismaFailureLogged = false
+let dbMode: 'unknown' | 'on' | 'off' = 'unknown'
+let dbFailureLogged = false
 
-function markPrismaUnavailable(error: unknown) {
-    prismaMode = 'off'
-    prisma = null
+function markDbUnavailable(error: unknown) {
+    dbMode = 'off'
     initPromise = null
-    if (!prismaFailureLogged) {
-        prismaFailureLogged = true
-        console.warn('[users] Prisma unavailable, falling back to Nitro storage:', error)
+    if (!dbFailureLogged) {
+        dbFailureLogged = true
+        console.warn('[users] MongoDB unavailable, falling back to Nitro storage:', error)
     }
 }
 
@@ -197,7 +200,7 @@ async function saveFallbackUsers(users: User[]) {
 
 function toAppUser(user: any): User {
     return {
-        id: user.id,
+        id: user._id || user.id,
         username: user.username,
         password: user.password,
         email: user.email,
@@ -399,15 +402,9 @@ async function readLegacyUsers(): Promise<User[]> {
 }
 
 async function upsertByIdentity(user: User) {
-    const existing = await prisma.user.findFirst({
-        where: {
-            OR: [
-                { id: user.id },
-                { username: user.username },
-                { email: user.email },
-            ],
-        },
-    })
+    const existing = await UserModel.findOne({
+        $or: [{ _id: user.id }, { username: user.username }, { email: user.email }],
+    }).lean()
 
     const payload = {
         username: user.username,
@@ -424,39 +421,27 @@ async function upsertByIdentity(user: User) {
     }
 
     if (existing) {
-        await prisma.user.update({
-            where: { id: existing.id },
-            data: {
-                ...payload,
-                password: payload.password || existing.password,
-            },
+        await UserModel.findByIdAndUpdate((existing as any)._id, {
+            ...payload,
+            password: payload.password || (existing as any).password,
         })
         return
     }
 
-    await prisma.user.create({
-        data: {
-            id: user.id,
-            ...payload,
-        },
-    })
+    await UserModel.create({ _id: user.id, ...payload })
 }
 
 async function repairExistingPasswords() {
-    // Get all users and filter in memory since MongoDB/Prisma doesn't support OR with null/empty well
-    const allUsers = await prisma.user.findMany()
-    const usersNeedingRepair = allUsers.filter(u => !u.password || u.password === '')
+    const allUsers = await UserModel.find().lean()
+    const usersNeedingRepair = allUsers.filter((u: any) => !u.password || u.password === '')
 
     if (!usersNeedingRepair.length) return
 
     const defaultsById = new Map(DEFAULT_USERS.map((u) => [u.id, u]))
     for (const user of usersNeedingRepair) {
-        const fallback = defaultsById.get(user.id)
+        const fallback = defaultsById.get((user as any)._id)
         if (!fallback?.password) continue
-        await prisma.user.update({
-            where: { id: user.id },
-            data: { password: fallback.password },
-        })
+        await UserModel.findByIdAndUpdate((user as any)._id, { password: fallback.password })
     }
 }
 
@@ -465,7 +450,7 @@ async function ensureInitialized() {
 
     initPromise = (async () => {
         try {
-            const count = await prisma.user.count()
+            await UserModel.countDocuments()
             const legacyUsers = await readLegacyUsers()
             const merged = repairUsers([...legacyUsers, ...DEFAULT_USERS]).users
 
@@ -490,32 +475,28 @@ async function ensureInitialized() {
     return initPromise
 }
 
-async function isPrismaReady() {
-    if (prismaMode === 'off') return false
-    if (prismaMode === 'on' && prisma) return true
+async function isDbReady() {
+    if (dbMode === 'off') return false
 
     try {
-        prisma = await getPrisma()
-        if (!prisma) {
-            throw new Error('Prisma client not available')
-        }
+        await getMongoose()
         await ensureInitialized()
-        prismaMode = 'on'
-        prismaFailureLogged = false
+        dbMode = 'on'
+        dbFailureLogged = false
         return true
     } catch (error) {
-        markPrismaUnavailable(error)
+        markDbUnavailable(error)
         return false
     }
 }
 
 export async function getAllUsers(): Promise<User[]> {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const users = await prisma.user.findMany()
+            const users = await UserModel.find().lean()
             return users.map(toAppUser)
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -523,12 +504,12 @@ export async function getAllUsers(): Promise<User[]> {
 }
 
 export async function findUserByUsername(username: string) {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const user = await prisma.user.findUnique({ where: { username } })
+            const user = await UserModel.findOne({ username }).lean()
             return user ? toAppUser(user) : undefined
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -537,12 +518,12 @@ export async function findUserByUsername(username: string) {
 }
 
 export async function findUserByEmail(email: string) {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const user = await prisma.user.findUnique({ where: { email } })
+            const user = await UserModel.findOne({ email }).lean()
             return user ? toAppUser(user) : undefined
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -551,12 +532,12 @@ export async function findUserByEmail(email: string) {
 }
 
 export async function findUserById(id: string) {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const user = await prisma.user.findUnique({ where: { id } })
+            const user = await UserModel.findById(id).lean()
             return user ? toAppUser(user) : undefined
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -565,14 +546,13 @@ export async function findUserById(id: string) {
 }
 
 export async function updateUserPassword(userId: string, newPassword: string) {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            const user = await prisma.user.findUnique({ where: { id: userId } })
-            if (!user) return false
-            await prisma.user.update({ where: { id: userId }, data: { password: newPassword } })
+            const result = await UserModel.findByIdAndUpdate(userId, { password: newPassword })
+            if (!result) return false
             return true
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -585,19 +565,19 @@ export async function updateUserPassword(userId: string, newPassword: string) {
 }
 
 export async function deleteUserById(userId: string) {
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            await prisma.readerStats.deleteMany({ where: { userId } })
-            await prisma.deployLike.deleteMany({ where: { userId } })
-            await prisma.blogLike.deleteMany({ where: { userId } })
-            await prisma.quranProgress.deleteMany({ where: { userId } })
-            await prisma.tasbeeh.deleteMany({ where: { userId } })
-            await prisma.profile.deleteMany({ where: { userId } })
+            await ReaderStatsModel.deleteMany({ userId })
+            await DeployLikeModel.deleteMany({ userId })
+            await BlogLikeModel.deleteMany({ userId })
+            await QuranProgressModel.deleteMany({ userId })
+            await TasbeehModel.deleteMany({ userId })
+            await ProfileModel.deleteMany({ userId })
 
-            const deletedUser = await prisma.user.deleteMany({ where: { id: userId } })
-            return deletedUser.count > 0
+            const result = await UserModel.findByIdAndDelete(userId)
+            return !!result
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -615,27 +595,25 @@ export async function deleteUserById(userId: string) {
 export async function addUser(user: User) {
     const normalized = normalizeUser(user)
 
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
-            await prisma.user.create({
-                data: {
-                    id: normalized.id,
-                    username: normalized.username,
-                    password: normalized.password,
-                    email: normalized.email,
-                    role: normalized.role,
-                    google_id: normalized.google_id || null,
-                    apple_id: normalized.apple_id || null,
-                    first_name: normalized.first_name || null,
-                    last_name: normalized.last_name || null,
-                    avatar_url: normalized.avatar_url || null,
-                    github_id: normalized.github_id || null,
-                    permissions: normalized.permissions || [],
-                },
+            await UserModel.create({
+                _id: normalized.id,
+                username: normalized.username,
+                password: normalized.password,
+                email: normalized.email,
+                role: normalized.role,
+                google_id: normalized.google_id || null,
+                apple_id: normalized.apple_id || null,
+                first_name: normalized.first_name || null,
+                last_name: normalized.last_name || null,
+                avatar_url: normalized.avatar_url || null,
+                github_id: normalized.github_id || null,
+                permissions: normalized.permissions || [],
             })
             return
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
@@ -644,49 +622,31 @@ export async function addUser(user: User) {
     await saveFallbackUsers(users)
 }
 
-
-
 export async function getUserStorageDiagnostics(): Promise<{
-    source: 'prisma' | 'fallback' | 'database-required'
+    source: 'mongoose' | 'fallback' | 'database-required'
     usersCount: number
-    prismaReachable: boolean
+    dbReachable: boolean
     fallbackAllowed: boolean
 }> {
-    const prismaReachable = await isPrismaReady()
+    const dbReachable = await isDbReady()
     const fallbackAllowed = isFallbackAuthStorageAllowed()
 
-    if (prismaReachable) {
+    if (dbReachable) {
         try {
-            const usersCount = await prisma.user.count()
-            return {
-                source: 'prisma',
-                usersCount,
-                prismaReachable: true,
-                fallbackAllowed,
-            }
+            const usersCount = await UserModel.countDocuments()
+            return { source: 'mongoose', usersCount, dbReachable: true, fallbackAllowed }
         } catch (error) {
-            markPrismaUnavailable(error)
+            markDbUnavailable(error)
         }
     }
 
     if (!fallbackAllowed) {
-        return {
-            source: 'database-required',
-            usersCount: 0,
-            prismaReachable: false,
-            fallbackAllowed: false,
-        }
+        return { source: 'database-required', usersCount: 0, dbReachable: false, fallbackAllowed: false }
     }
 
     const users = await loadFallbackUsers()
-    return {
-        source: 'fallback',
-        usersCount: users.length,
-        prismaReachable: false,
-        fallbackAllowed: true,
-    }
+    return { source: 'fallback', usersCount: users.length, dbReachable: false, fallbackAllowed: true }
 }
-
 export async function findOrCreateOAuthUser(oauthInfo: {
     provider: 'google' | 'apple' | 'github'
     providerId: string
@@ -700,154 +660,107 @@ export async function findOrCreateOAuthUser(oauthInfo: {
     const { firstName, lastName } = getOAuthNameParts(oauthInfo)
     const providerField = getOAuthProviderField(provider)
 
-    // Try to find existing user by provider ID
-    if (await isPrismaReady()) {
+    if (await isDbReady()) {
         try {
             // Check by provider ID first
-            const existingByProvider = await (prisma.user as any).findFirst({
-                where: { [providerField]: providerId }
-            })
+            const existingByProvider = await UserModel.findOne({ [providerField]: providerId }).lean()
 
             if (existingByProvider) {
-                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, existingByProvider.avatar_url || undefined)
+                const rec = existingByProvider as any
+                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url || undefined)
                 const updates: Record<string, any> = {}
 
-                if (!existingByProvider.first_name && firstName) {
-                    updates.first_name = firstName
-                }
-
-                if (!existingByProvider.last_name && lastName) {
-                    updates.last_name = lastName
-                }
-
-                if (shouldPersistAvatar(existingByProvider.avatar_url || undefined, persistedAvatar)) {
-                    updates.avatar_url = persistedAvatar
-                }
+                if (!rec.first_name && firstName) updates.first_name = firstName
+                if (!rec.last_name && lastName) updates.last_name = lastName
+                if (shouldPersistAvatar(rec.avatar_url || undefined, persistedAvatar)) updates.avatar_url = persistedAvatar
 
                 const userRecord = Object.keys(updates).length > 0
-                    ? await prisma.user.update({
-                        where: { id: existingByProvider.id },
-                        data: updates,
-                    })
-                    : existingByProvider
+                    ? await UserModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean()
+                    : rec
 
-                await syncOAuthProfile(userRecord.id, oauthInfo, persistedAvatar || userRecord.avatar_url || undefined)
+                await syncOAuthProfile(rec._id, oauthInfo, persistedAvatar || (userRecord as any)?.avatar_url || undefined)
                 return toAppUser(userRecord)
             }
 
             // Check by email (link existing account)
-            const existingByEmail = await prisma.user.findUnique({
-                where: { email }
-            })
+            const existingByEmail = await UserModel.findOne({ email }).lean()
 
             if (existingByEmail) {
-                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, existingByEmail.avatar_url || undefined)
-                const updates: Record<string, any> = {
-                    [providerField]: providerId,
-                }
+                const rec = existingByEmail as any
+                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url || undefined)
+                const updates: Record<string, any> = { [providerField]: providerId }
 
-                if (!existingByEmail.first_name && firstName) {
-                    updates.first_name = firstName
-                }
+                if (!rec.first_name && firstName) updates.first_name = firstName
+                if (!rec.last_name && lastName) updates.last_name = lastName
+                if (shouldPersistAvatar(rec.avatar_url || undefined, persistedAvatar)) updates.avatar_url = persistedAvatar
 
-                if (!existingByEmail.last_name && lastName) {
-                    updates.last_name = lastName
-                }
-
-                if (shouldPersistAvatar(existingByEmail.avatar_url || undefined, persistedAvatar)) {
-                    updates.avatar_url = persistedAvatar
-                }
-
-                // Link OAuth provider to existing account
-                const updated = await prisma.user.update({
-                    where: { id: existingByEmail.id },
-                    data: updates
-                })
-
-                await syncOAuthProfile(updated.id, oauthInfo, persistedAvatar || updated.avatar_url || undefined)
+                const updated = await UserModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean() as any
+                await syncOAuthProfile(updated._id, oauthInfo, persistedAvatar || updated.avatar_url || undefined)
                 return toAppUser(updated)
             }
 
             // Create new user
             const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo)
             const username = createOAuthUsername(email)
-            const newUser = await prisma.user.create({
-                data: {
-                    id: createOAuthUserId(provider, providerId),
-                    username,
-                    email,
-                    password: '', // OAuth users don't need password
-                    role: 'user',
-                    first_name: firstName || null,
-                    last_name: lastName || null,
-                    avatar_url: persistedAvatar || picture || null,
-                    [providerField]: providerId,
-                    permissions: getRolePermissions('user')
-                }
+            const userId = createOAuthUserId(provider, providerId)
+            const newUser = await UserModel.create({
+                _id: userId,
+                username,
+                email,
+                password: '',
+                role: 'user',
+                first_name: firstName || null,
+                last_name: lastName || null,
+                avatar_url: persistedAvatar || picture || null,
+                [providerField]: providerId,
+                permissions: getRolePermissions('user'),
             })
 
-            await syncOAuthProfile(newUser.id, oauthInfo, persistedAvatar || picture)
-            return toAppUser(newUser)
+            await syncOAuthProfile(userId, oauthInfo, persistedAvatar || picture)
+            return toAppUser(newUser.toObject())
         } catch (error) {
-            console.error('[findOrCreateOAuthUser] Prisma error:', error)
-            markPrismaUnavailable(error)
+            console.error('[findOrCreateOAuthUser] MongoDB error:', error)
+            markDbUnavailable(error)
         }
     }
 
     // Fallback storage
     const users = await loadFallbackUsers()
 
-    // Check by provider ID
     let user = users.find((u: any) => u[providerField] === providerId)
     if (user) {
-        if (!user.first_name && firstName) {
-            user.first_name = firstName
-        }
-        if (!user.last_name && lastName) {
-            user.last_name = lastName
-        }
-        if (shouldPersistAvatar(user.avatar_url, picture)) {
-            user.avatar_url = picture
-        }
+        if (!user.first_name && firstName) user.first_name = firstName
+        if (!user.last_name && lastName) user.last_name = lastName
+        if (shouldPersistAvatar(user.avatar_url, picture)) user.avatar_url = picture
         await saveFallbackUsers(users)
         return user
     }
 
-    // Check by email
     user = users.find((u) => u.email === email)
     if (user) {
-        // Link OAuth provider
-        (user as any)[providerField] = providerId
-        if (!user.first_name && firstName) {
-            user.first_name = firstName
-        }
-        if (!user.last_name && lastName) {
-            user.last_name = lastName
-        }
-        if (shouldPersistAvatar(user.avatar_url, picture)) {
-            user.avatar_url = picture
-        }
+        ; (user as any)[providerField] = providerId
+        if (!user.first_name && firstName) user.first_name = firstName
+        if (!user.last_name && lastName) user.last_name = lastName
+        if (shouldPersistAvatar(user.avatar_url, picture)) user.avatar_url = picture
         await saveFallbackUsers(users)
         return user
     }
 
-    // Create new user
     const username = createOAuthUsername(email)
     const newUser: User = {
         id: createOAuthUserId(provider, providerId),
         username,
         email,
-        password: '', // OAuth users don't need password
+        password: '',
         role: 'user',
         first_name: firstName,
         last_name: lastName,
         avatar_url: picture,
         [providerField]: providerId,
-        permissions: getRolePermissions('user')
+        permissions: getRolePermissions('user'),
     }
 
     users.push(newUser)
     await saveFallbackUsers(users)
     return newUser
 }
-

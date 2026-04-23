@@ -1,6 +1,7 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../../utils/auth'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
+import { QuranProgressModel } from '../../models/QuranProgress'
 
 export default defineEventHandler(async (event) => {
     try {
@@ -11,27 +12,13 @@ export default defineEventHandler(async (event) => {
             ? body.completedSuras.filter((id: any) => typeof id === 'number')
             : []
 
-        const prisma = await getPrisma()
+        await getMongoose()
 
-        if (!prisma) {
-            return {
-                ok: false,
-                error: 'Database not available'
-            }
-        }
-
-        const progress = await prisma.quranProgress.upsert({
-            where: { userId },
-            update: {
-                completedSuras,
-                lastUpdated: new Date()
-            },
-            create: {
-                userId,
-                completedSuras,
-                lastUpdated: new Date()
-            }
-        })
+        const progress = await QuranProgressModel.findOneAndUpdate(
+            { userId },
+            { completedSuras, lastUpdated: new Date() },
+            { upsert: true, new: true }
+        ).lean() as any
 
         return {
             ok: true,

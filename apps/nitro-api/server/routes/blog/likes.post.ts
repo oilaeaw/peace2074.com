@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
+import { BlogLikeModel } from '../../models/BlogLike'
 import { requireAuth } from '../../utils/auth'
 
 /**
@@ -21,31 +22,14 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        const prisma = await getPrisma()
-        if (!prisma) {
-            return { ok: false, error: 'Database unavailable' }
-        }
+        await getMongoose()
 
-        // Check if like exists
-        const existingLike = await prisma.blogLike.findUnique({
-            where: {
-                slug_userId: {
-                    slug,
-                    userId
-                }
-            }
-        })
+        const existingLike = await BlogLikeModel.findOne({ slug, userId }).lean()
 
         if (existingLike) {
-            // Unlike - remove the like
-            await prisma.blogLike.delete({
-                where: { id: existingLike.id }
-            })
-
-            // Get updated count
-            const count = await prisma.blogLike.count({
-                where: { slug }
-            })
+            // Unlike
+            await BlogLikeModel.findByIdAndDelete((existingLike as any)._id)
+            const count = await BlogLikeModel.countDocuments({ slug })
 
             return {
                 ok: true,
@@ -53,18 +37,9 @@ export default defineEventHandler(async (event) => {
                 count
             }
         } else {
-            // Like - add the like
-            await prisma.blogLike.create({
-                data: {
-                    slug,
-                    userId
-                }
-            })
-
-            // Get updated count
-            const count = await prisma.blogLike.count({
-                where: { slug }
-            })
+            // Like
+            await BlogLikeModel.create({ slug, userId })
+            const count = await BlogLikeModel.countDocuments({ slug })
 
             return {
                 ok: true,

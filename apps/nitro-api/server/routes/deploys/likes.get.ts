@@ -1,5 +1,6 @@
-import { defineEventHandler, getQuery } from 'h3'
-import { getPrisma } from '../../utils/prisma'
+import { defineEventHandler } from 'h3'
+import { getMongoose } from '../../utils/mongoose'
+import { DeployLikeModel } from '../../models/DeployLike'
 import { readSession } from '../../utils/auth'
 
 /**
@@ -8,35 +9,24 @@ import { readSession } from '../../utils/auth'
  */
 export default defineEventHandler(async (event) => {
     try {
-        const prisma = await getPrisma()
-        if (!prisma) {
-            return { ok: false, error: 'Database unavailable' }
-        }
+        await getMongoose()
 
         const session = readSession(event)
         const userId = session?.id
 
-        // Get all likes grouped by version
-        const likes = await prisma.deployLike.groupBy({
-            by: ['version'],
-            _count: {
-                version: true
-            }
-        })
+        const grouped = await DeployLikeModel.aggregate([
+            { $group: { _id: '$version', count: { $sum: 1 } } }
+        ])
 
-        const likeCounts = likes.reduce((acc, item) => {
-            acc[item.version] = item._count.version
+        const likeCounts = grouped.reduce((acc: Record<string, number>, item: any) => {
+            acc[item._id] = item.count
             return acc
-        }, {} as Record<string, number>)
+        }, {})
 
-        // Get user's liked versions if authenticated
         let userLiked: string[] = []
         if (userId) {
-            const userLikes = await prisma.deployLike.findMany({
-                where: { userId },
-                select: { version: true }
-            })
-            userLiked = userLikes.map(l => l.version)
+            const userLikes = await DeployLikeModel.find({ userId }, { version: 1 }).lean()
+            userLiked = userLikes.map((l: any) => l.version)
         }
 
         return {

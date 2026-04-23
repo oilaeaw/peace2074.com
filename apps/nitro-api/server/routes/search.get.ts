@@ -6,7 +6,8 @@ import chaptersHe from '../../../../src/shared/data/chapters/he.json';
 import chaptersEs from '../../../../src/shared/data/chapters/es.json';
 import chaptersTr from '../../../../src/shared/data/chapters/tr.json';
 import quranData from '../../../../src/shared/data/quran.json';
-import { getPrisma } from '../utils/prisma';
+import { getMongoose } from '../utils/mongoose';
+import { BlogPostModel } from '../models/BlogPost';
 
 // Pre-loaded chapters by locale
 const chaptersMap: Record<string, any[]> = {
@@ -100,28 +101,22 @@ export default defineEventHandler(async (event) => {
 
     // Search blog posts
     try {
-        const prisma = await getPrisma();
-        if (prisma) {
-            const blogs = await prisma.blogPost.findMany({
-                where: {
-                    OR: [
-                        { title: { contains: rawQuery, mode: 'insensitive' } },
-                        { excerpt: { contains: rawQuery, mode: 'insensitive' } },
-                    ],
-                },
-                select: { slug: true, title: true, excerpt: true, tags: true },
-                take: 5,
+        await getMongoose();
+        const blogs = await BlogPostModel.find({
+            $or: [
+                { title: { $regex: rawQuery, $options: 'i' } },
+                { excerpt: { $regex: rawQuery, $options: 'i' } },
+            ],
+        }).select('slug title excerpt tags').limit(5).lean() as any[];
+        for (const post of blogs) {
+            results.push({
+                type: 'page',
+                id: `blog-${post.slug}`,
+                title: post.title,
+                subtitle: post.excerpt || (post.tags || []).join(', '),
+                path: `/blog/${post.slug}`,
             });
-            for (const post of blogs) {
-                results.push({
-                    type: 'page',
-                    id: `blog-${post.slug}`,
-                    title: post.title,
-                    subtitle: post.excerpt || post.tags.join(', '),
-                    path: `/blog/${post.slug}`,
-                });
-                if (results.length >= max) break;
-            }
+            if (results.length >= max) break;
         }
     } catch (_err) {
         // Blog search is best-effort; don't fail the whole request

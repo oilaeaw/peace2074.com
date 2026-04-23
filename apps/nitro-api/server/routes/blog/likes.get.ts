@@ -1,5 +1,6 @@
 import { defineEventHandler } from 'h3'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
+import { BlogLikeModel } from '../../models/BlogLike'
 import { readSession } from '../../utils/auth'
 
 /**
@@ -8,35 +9,26 @@ import { readSession } from '../../utils/auth'
  */
 export default defineEventHandler(async (event) => {
     try {
-        const prisma = await getPrisma()
-        if (!prisma) {
-            return { ok: false, error: 'Database unavailable' }
-        }
+        await getMongoose()
 
         const session = readSession(event)
         const userId = session?.id
 
         // Get all likes grouped by slug
-        const likes = await prisma.blogLike.groupBy({
-            by: ['slug'],
-            _count: {
-                slug: true
-            }
-        })
+        const grouped = await BlogLikeModel.aggregate([
+            { $group: { _id: '$slug', count: { $sum: 1 } } }
+        ])
 
-        const likeCounts = likes.reduce((acc, item) => {
-            acc[item.slug] = item._count.slug
+        const likeCounts = grouped.reduce((acc: Record<string, number>, item: any) => {
+            acc[item._id] = item.count
             return acc
-        }, {} as Record<string, number>)
+        }, {})
 
         // Get user's liked posts if authenticated
         let userLiked: string[] = []
         if (userId) {
-            const userLikes = await prisma.blogLike.findMany({
-                where: { userId },
-                select: { slug: true }
-            })
-            userLiked = userLikes.map(l => l.slug)
+            const userLikes = await BlogLikeModel.find({ userId }, { slug: 1 }).lean()
+            userLiked = userLikes.map((l: any) => l.slug)
         }
 
         return {

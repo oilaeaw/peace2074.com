@@ -1,5 +1,6 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { getPrisma } from '../utils/prisma'
+import { getMongoose } from '../utils/mongoose'
+import { BlogPostModel } from '../models/BlogPost'
 import blogSeedData from '../data/blog-seed.json'
 import { fetchDatoCmsBlogPosts } from '../utils/datocms'
 
@@ -88,44 +89,32 @@ export default defineEventHandler(async (event) => {
     const slugVariants = buildSlugVariants(normalizedSlug)
 
     try {
-        // 1) Prefer Prisma as primary source
-        const prisma = await getPrisma()
+        // 1) Prefer MongoDB as primary source
+        try {
+            await getMongoose()
 
-        if (prisma) {
-            try {
-                // Get single post by slug
-                if (normalizedSlug) {
-                    let post = await prisma.blogPost.findUnique({ where: { slug: normalizedSlug } })
-                    if (!post && slugVariants.length) {
-                        post = await prisma.blogPost.findFirst({
-                            where: {
-                                slug: {
-                                    in: slugVariants,
-                                },
-                            },
-                        })
-                    }
-                    if (post) {
-                        return {
-                            ok: true,
-                            post,
-                            source: 'prisma',
-                            canonicalSlug: toCanonicalSlug((post as any)?.slug),
-                        }
+            if (normalizedSlug) {
+                let post = await BlogPostModel.findOne({ slug: normalizedSlug }).lean()
+                if (!post && slugVariants.length) {
+                    post = await BlogPostModel.findOne({ slug: { $in: slugVariants } }).lean()
+                }
+                if (post) {
+                    return {
+                        ok: true,
+                        post,
+                        source: 'mongodb',
+                        canonicalSlug: toCanonicalSlug((post as any)?.slug),
                     }
                 }
-
-                // Get all posts, sorted by date descending
-                const posts = await prisma.blogPost.findMany({
-                    orderBy: { date: 'desc' }
-                })
-
-                if (!normalizedSlug && posts.length) {
-                    return { ok: true, posts, source: 'prisma' }
-                }
-            } catch (error) {
-                console.warn('[Blog GET] Prisma read failed, falling back:', error instanceof Error ? error.message : 'unknown')
             }
+
+            const posts = await BlogPostModel.find().sort({ date: -1 }).lean()
+
+            if (!normalizedSlug && posts.length) {
+                return { ok: true, posts, source: 'mongodb' }
+            }
+        } catch (error) {
+            console.warn('[Blog GET] MongoDB read failed, falling back:', error instanceof Error ? error.message : 'unknown')
         }
 
         // 2) Fallback to DatoCMS when Prisma has no data or no match

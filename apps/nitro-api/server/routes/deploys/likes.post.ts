@@ -1,5 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getPrisma } from '../../utils/prisma'
+import { getMongoose } from '../../utils/mongoose'
+import { DeployLikeModel } from '../../models/DeployLike'
 import { requireAuth } from '../../utils/auth'
 
 /**
@@ -21,50 +22,17 @@ export default defineEventHandler(async (event) => {
             }
         }
 
-        const prisma = await getPrisma()
-        if (!prisma) {
-            return { ok: false, error: 'Database unavailable' }
-        }
+        await getMongoose()
 
-        // Check if like exists
-        const existingLike = await prisma.deployLike.findUnique({
-            where: {
-                version_userId: {
-                    version,
-                    userId
-                }
-            }
-        })
+        const existingLike = await DeployLikeModel.findOne({ version, userId }).lean()
 
         if (existingLike) {
-            // Unlike - remove the like
-            await prisma.deployLike.delete({
-                where: { id: existingLike.id }
-            })
-
-            // Get updated count
-            const count = await prisma.deployLike.count({
-                where: { version }
-            })
-
-            return {
-                ok: true,
-                liked: false,
-                count
-            }
+            await DeployLikeModel.findByIdAndDelete((existingLike as any)._id)
+            const count = await DeployLikeModel.countDocuments({ version })
+            return { ok: true, liked: false, count }
         } else {
-            // Like - add the like
-            await prisma.deployLike.create({
-                data: {
-                    version,
-                    userId
-                }
-            })
-
-            // Get updated count
-            const count = await prisma.deployLike.count({
-                where: { version }
-            })
+            await DeployLikeModel.create({ version, userId })
+            const count = await DeployLikeModel.countDocuments({ version })
 
             return {
                 ok: true,
