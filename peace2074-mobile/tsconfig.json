@@ -4,15 +4,13 @@
     "target": "ES2020",
     "module": "esnext",
     "moduleResolution": "bundler",
-    "ignoreDeprecations": "6.0",
     "lib": ["dom", "ESNext"],
     "sourceMap": true,
     "noEmitHelpers": true,
     "importHelpers": true,
-    "baseUrl": ".",
     "paths": {
-      "~/*": ["app/*"],
-      "@/*": ["app/*"]
+      "~/*": ["./app/*"],
+      "@/*": ["./app/*"]
     },
     "types": ["node"],
     "allowSyntheticDefaultImports": true,
