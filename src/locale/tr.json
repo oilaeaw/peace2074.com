@@ -597,7 +597,22 @@
             "noVersions": "Kullanılabilir sürüm yok",
             "loading": "Sürümler yükleniyor...",
             "unknownDate": "Bilinmeyen tarih",
-            "loadFailed": "Sürümler yüklenemedi"
+            "loadFailed": "Sürümler yüklenemedi",
+            "users": {
+                "title": "Kullanıcı Yönetimi",
+                "loadFailed": "Kullanıcılar yüklenemedi",
+                "updateSuccess": "Kullanıcı güncellendi",
+                "updateFailed": "Kullanıcı güncellenemedi",
+                "roleLabel": "Rol",
+                "save": "Kaydet",
+                "noUsers": "Kullanıcı bulunamadı",
+                "loading": "Kullanıcılar yükleniyor...",
+                "roles": {
+                    "user": "Kullanıcı",
+                    "editor": "Editör",
+                    "admin": "Yönetici"
+                }
+            }
         },
         "blog": {
             "title": "Blog",

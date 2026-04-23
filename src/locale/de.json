@@ -562,7 +562,22 @@
       "noVersions": "Keine Versionen verfügbar",
       "loading": "Versionen werden geladen...",
       "unknownDate": "Unbekanntes Datum",
-      "loadFailed": "Releases konnten nicht geladen werden"
+      "loadFailed": "Releases konnten nicht geladen werden",
+      "users": {
+        "title": "Benutzerverwaltung",
+        "loadFailed": "Benutzer konnten nicht geladen werden",
+        "updateSuccess": "Benutzer aktualisiert",
+        "updateFailed": "Benutzer konnte nicht aktualisiert werden",
+        "roleLabel": "Rolle",
+        "save": "Speichern",
+        "noUsers": "Keine Benutzer gefunden",
+        "loading": "Benutzer werden geladen...",
+        "roles": {
+          "user": "Benutzer",
+          "editor": "Redakteur",
+          "admin": "Administrator"
+        }
+      }
     },
     "blog": {
       "title": "Blog",

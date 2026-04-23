@@ -597,7 +597,22 @@
             "noVersions": "No hay versiones disponibles",
             "loading": "Cargando versiones...",
             "unknownDate": "Fecha desconocida",
-            "loadFailed": "No se pudieron cargar las versiones"
+            "loadFailed": "No se pudieron cargar las versiones",
+            "users": {
+                "title": "Gestión de usuarios",
+                "loadFailed": "No se pudieron cargar los usuarios",
+                "updateSuccess": "Usuario actualizado",
+                "updateFailed": "No se pudo actualizar el usuario",
+                "roleLabel": "Rol",
+                "save": "Guardar",
+                "noUsers": "No se encontraron usuarios",
+                "loading": "Cargando usuarios...",
+                "roles": {
+                    "user": "Usuario",
+                    "editor": "Editor",
+                    "admin": "Administrador"
+                }
+            }
         },
         "blog": {
             "title": "Blog",

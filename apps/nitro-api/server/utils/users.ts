@@ -764,3 +764,39 @@ export async function findOrCreateOAuthUser(oauthInfo: {
     await saveFallbackUsers(users)
     return newUser
 }
+
+export async function updateUserRoleAndPermissions(
+    userId: string,
+    updates: { role?: string; permissions?: Array<{ action: string; subject: string }> }
+): Promise<User | null> {
+    const payload: Record<string, any> = {}
+
+    if (updates.role) {
+        payload.role = updates.role
+        // Rebuild baseline permissions for the new role
+        payload.permissions = resolveUserPermissions({
+            role: updates.role,
+            permissions: updates.permissions ?? [],
+        })
+    } else if (updates.permissions) {
+        payload.permissions = updates.permissions
+    }
+
+    if (await isDbReady()) {
+        try {
+            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
+            return result ? toAppUser(result) : null
+        } catch (error) {
+            markDbUnavailable(error)
+        }
+    }
+
+    // Fallback
+    const users = await loadFallbackUsers()
+    const user = users.find((u) => u.id === userId)
+    if (!user) return null
+    if (payload.role) user.role = payload.role
+    if (payload.permissions) user.permissions = payload.permissions
+    await saveFallbackUsers(users)
+    return user
+}

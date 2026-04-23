@@ -597,7 +597,22 @@
       "noVersions": "No versions available",
       "loading": "Loading versions...",
       "unknownDate": "Unknown date",
-      "loadFailed": "Failed to load releases"
+      "loadFailed": "Failed to load releases",
+      "users": {
+        "title": "User Management",
+        "loadFailed": "Failed to load users",
+        "updateSuccess": "User updated",
+        "updateFailed": "Failed to update user",
+        "roleLabel": "Role",
+        "save": "Save",
+        "noUsers": "No users found",
+        "loading": "Loading users...",
+        "roles": {
+          "user": "User",
+          "editor": "Editor",
+          "admin": "Admin"
+        }
+      }
     },
     "blog": {
       "title": "Blog",

@@ -1,4 +1,7 @@
-import { createDatabaseRequiredError, isDatabaseRequired } from './database-mode'
+import {
+    createDatabaseRequiredError,
+    isDatabaseRequired,
+} from './database-mode'
 import { getMongoose } from './mongoose'
 import { ProfileModel } from '../models/Profile'
 
@@ -62,7 +65,10 @@ export async function createProfile(profile: Profile): Promise<Profile | null> {
     return null
 }
 
-export async function updateProfile(userId: string, updates: Partial<Profile>): Promise<Profile | null> {
+export async function updateProfile(
+    userId: string,
+    updates: Partial<Profile>
+): Promise<Profile | null> {
     if (await isDbReady()) {
         try {
             const updated = await ProfileModel.findOneAndUpdate(
@@ -84,18 +90,23 @@ export async function getBookmarks(userId: string): Promise<any[]> {
     return profile?.bookmarks || []
 }
 
-export async function addBookmark(userId: string, bookmark: string): Promise<any | null> {
+export async function addBookmark(
+    userId: string,
+    bookmark: string
+): Promise<any | null> {
     const profile = await getProfile(userId)
     if (!profile) return null
 
-    const bookmarks = Array.isArray(profile.bookmarks) ? [...profile.bookmarks] : []
+    const bookmarks = Array.isArray(profile.bookmarks)
+        ? [...profile.bookmarks]
+        : []
     const existing = bookmarks.find((b: any) => b.bookmark === bookmark)
     if (existing) return existing
 
     const newBookmark = {
         _id: `bm_${Date.now()}_${Math.random().toString(36).slice(2, 8)}`,
         bookmark,
-        createdAt: new Date().toISOString()
+        createdAt: new Date().toISOString(),
     }
 
     bookmarks.push(newBookmark)
@@ -103,11 +114,16 @@ export async function addBookmark(userId: string, bookmark: string): Promise<any
     return newBookmark
 }
 
-export async function removeBookmark(userId: string, bookmarkId: string): Promise<boolean> {
+export async function removeBookmark(
+    userId: string,
+    bookmarkId: string
+): Promise<boolean> {
     const profile = await getProfile(userId)
     if (!profile) return false
 
-    const bookmarks = Array.isArray(profile.bookmarks) ? [...profile.bookmarks] : []
+    const bookmarks = Array.isArray(profile.bookmarks)
+        ? [...profile.bookmarks]
+        : []
     const filtered = bookmarks.filter((b: any) => b._id !== bookmarkId)
 
     if (filtered.length === bookmarks.length) return false
@@ -116,7 +132,11 @@ export async function removeBookmark(userId: string, bookmarkId: string): Promis
     return true
 }
 
-export async function updateTasbeehSummary(userId: string, increment: number, sessionComplete: boolean = false): Promise<void> {
+export async function updateTasbeehSummary(
+    userId: string,
+    increment: number,
+    sessionComplete: boolean = false
+): Promise<void> {
     const profile = await getProfile(userId)
     if (!profile) return
 

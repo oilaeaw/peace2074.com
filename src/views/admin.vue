@@ -85,17 +85,109 @@
         </q-list>
       </q-card-section>
     </q-card>
+
+    <!-- User Management (admin-only) -->
+    <q-card v-if="ability.can('manage', 'admin')" flat bordered class="q-mt-md">
+      <q-card-section class="row items-center justify-between">
+        <div class="text-h6">{{ t('pages.admin.users.title') }}</div>
+        <q-btn
+          color="primary"
+          outline
+          icon="refresh"
+          :label="t('pages.admin.refresh')"
+          :loading="usersLoading"
+          @click="loadUsers"
+        />
+      </q-card-section>
+
+      <q-separator />
+
+      <q-card-section>
+        <q-banner
+          v-if="usersError"
+          rounded
+          dense
+          class="bg-red-1 text-negative q-mb-md"
+        >
+          {{ usersError }}
+        </q-banner>
+
+        <q-banner
+          v-if="usersSaveMsg"
+          rounded
+          dense
+          class="bg-green-1 text-positive q-mb-md"
+        >
+          {{ usersSaveMsg }}
+        </q-banner>
+
+        <q-item v-if="usersLoading">
+          <q-item-section avatar>
+            <q-spinner color="primary" size="20px" />
+          </q-item-section>
+          <q-item-section>
+            <q-item-label>{{ t('pages.admin.users.loading') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+
+        <q-table
+          v-if="!usersLoading && users.length"
+          :rows="users"
+          :columns="userColumns"
+          row-key="id"
+          flat
+          dense
+          hide-pagination
+          :rows-per-page-options="[0]"
+        >
+          <template #body-cell-role="props">
+            <q-td :props="props">
+              <q-select
+                v-model="props.row.role"
+                :options="roleOptions"
+                dense
+                outlined
+                emit-value
+                map-options
+                style="min-width: 120px"
+              />
+            </q-td>
+          </template>
+          <template #body-cell-actions="props">
+            <q-td :props="props">
+              <q-btn
+                color="primary"
+                dense
+                flat
+                icon="save"
+                :label="t('pages.admin.users.save')"
+                :loading="savingUserId === props.row.id"
+                @click="saveUser(props.row)"
+              />
+            </q-td>
+          </template>
+        </q-table>
+
+        <q-item v-if="!usersLoading && !users.length && !usersError">
+          <q-item-section>
+            <q-item-label>{{ t('pages.admin.users.noUsers') }}</q-item-label>
+          </q-item-section>
+        </q-item>
+      </q-card-section>
+    </q-card>
   </q-page>
 </template>
 
 <script setup lang="ts">
 import { computed, onMounted, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useAuthStore } from '@/stores/auth.pinia'
 
 declare const __APP_VERSION__: string
 
 const appVersion = __APP_VERSION__ || '0.0.0'
 const { t } = useI18n()
+const { ability } = useAuthStore()
 const evenOnly = ref(true)
 const loading = ref(false)
 const error = ref('')
@@ -172,7 +264,131 @@ async function loadReleases() {
 
 onMounted(() => {
   loadReleases()
+  if (ability.can('manage', 'admin')) {
+    loadUsers()
+  }
 })
+
+// ── User Management ─────────────────────────────────────────────────────────
+
+interface AdminUser {
+  id: string
+  username: string
+  email: string
+  role: string
+  permissions: Array<{ action: string; subject: string }>
+  first_name: string | null
+  last_name: string | null
+}
+
+const DEFAULT_NITRO_PORT = 3000
+
+function computeUsersApiBase(): string {
+  if (typeof window !== 'undefined') {
+    const { protocol, hostname } = window.location
+    const configured = import.meta.env.VITE_NITRO_BASE as string | undefined
+    if (configured) return configured.replace(/\/$/, '')
+    if (
+      protocol === 'capacitor:' ||
+      protocol === 'ionic:' ||
+      protocol === 'app:'
+    )
+      return 'https://peace2074.com/api'
+    if (hostname === 'localhost' || hostname === '127.0.0.1')
+      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`
+    return '/api'
+  }
+  return '/api'
+}
+
+const USERS_API_BASE = computeUsersApiBase()
+
+const users = ref<AdminUser[]>([])
+const usersLoading = ref(false)
+const usersError = ref('')
+const usersSaveMsg = ref('')
+const savingUserId = ref<string | null>(null)
+
+const roleOptions = [
+  { label: t('pages.admin.users.roles.user'), value: 'user' },
+  { label: t('pages.admin.users.roles.editor'), value: 'editor' },
+  { label: t('pages.admin.users.roles.admin'), value: 'admin' },
+]
+
+const userColumns = [
+  {
+    name: 'username',
+    label: 'Username',
+    field: 'username',
+    align: 'left' as const,
+    sortable: true,
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    field: 'email',
+    align: 'left' as const,
+    sortable: true,
+  },
+  {
+    name: 'role',
+    label: t('pages.admin.users.roleLabel'),
+    field: 'role',
+    align: 'left' as const,
+  },
+  { name: 'actions', label: '', field: 'actions', align: 'right' as const },
+]
+
+async function loadUsers() {
+  usersLoading.value = true
+  usersError.value = ''
+  usersSaveMsg.value = ''
+  try {
+    const res = await fetch(`${USERS_API_BASE}/admin/users`, {
+      credentials: 'include',
+    })
+    const data = (await res.json()) as {
+      ok: boolean
+      users?: AdminUser[]
+      error?: string
+    }
+    if (!data.ok)
+      throw new Error(data.error || t('pages.admin.users.loadFailed'))
+    users.value = data.users ?? []
+  } catch (e: unknown) {
+    usersError.value =
+      e instanceof Error ? e.message : t('pages.admin.users.loadFailed')
+    users.value = []
+  } finally {
+    usersLoading.value = false
+  }
+}
+
+async function saveUser(user: AdminUser) {
+  savingUserId.value = user.id
+  usersError.value = ''
+  usersSaveMsg.value = ''
+  try {
+    const res = await fetch(`${USERS_API_BASE}/admin/users/${user.id}`, {
+      method: 'PATCH',
+      credentials: 'include',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ role: user.role }),
+    })
+    const data = (await res.json()) as { ok: boolean; error?: string }
+    if (!data.ok)
+      throw new Error(data.error || t('pages.admin.users.updateFailed'))
+    usersSaveMsg.value = t('pages.admin.users.updateSuccess')
+    setTimeout(() => {
+      usersSaveMsg.value = ''
+    }, 3000)
+  } catch (e: unknown) {
+    usersError.value =
+      e instanceof Error ? e.message : t('pages.admin.users.updateFailed')
+  } finally {
+    savingUserId.value = null
+  }
+}
 </script>
 
 <style scoped>

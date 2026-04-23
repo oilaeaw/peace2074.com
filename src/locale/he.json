@@ -597,7 +597,22 @@
             "noVersions": "אין גרסאות זמינות",
             "loading": "טוען גרסאות...",
             "unknownDate": "תאריך לא ידוע",
-            "loadFailed": "טעינת הגרסאות נכשלה"
+            "loadFailed": "טעינת הגרסאות נכשלה",
+            "users": {
+                "title": "ניהול משתמשים",
+                "loadFailed": "טעינת המשתמשים נכשלה",
+                "updateSuccess": "המשתמש עודכן",
+                "updateFailed": "עדכון המשתמש נכשל",
+                "roleLabel": "תפקיד",
+                "save": "שמור",
+                "noUsers": "לא נמצאו משתמשים",
+                "loading": "טוען משתמשים...",
+                "roles": {
+                    "user": "משתמש",
+                    "editor": "עורך",
+                    "admin": "מנהל"
+                }
+            }
         },
         "blog": {
             "title": "בלוג",
