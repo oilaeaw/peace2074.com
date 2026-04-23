@@ -260,6 +260,7 @@ declare global {
   const usePreferredLanguages: typeof import('@vueuse/core')['usePreferredLanguages']
   const usePreferredReducedMotion: typeof import('@vueuse/core')['usePreferredReducedMotion']
   const usePrevious: typeof import('@vueuse/core')['usePrevious']
+  const useProfileSettings: typeof import('../composables/useProfileSettings').useProfileSettings
   const useQ2P: typeof import('../composables/useQ2P').default
   const useQuranTree: typeof import('../composables/useQuranTree').useQuranTree
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
@@ -344,6 +345,9 @@ declare global {
   // @ts-ignore
   export type { RecitationDownloadProgress, RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
   import('../composables/useOfflineRecitation')
+  // @ts-ignore
+  export type { QuranHighlightMode } from '../composables/useProfileSettings'
+  import('../composables/useProfileSettings')
   // @ts-ignore
   export type { QuranVerse } from '../composables/useQuranTree'
   import('../composables/useQuranTree')
@@ -436,6 +440,7 @@ declare module 'vue' {
     readonly useMemoryStorage: UnwrapRef<typeof import('../composables/useUStore')['useMemoryStorage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useOfflineRecitation: UnwrapRef<typeof import('../composables/useOfflineRecitation')['useOfflineRecitation']>
+    readonly useProfileSettings: UnwrapRef<typeof import('../composables/useProfileSettings')['useProfileSettings']>
     readonly useQ2P: UnwrapRef<typeof import('../composables/useQ2P')['default']>
     readonly useQuranTree: UnwrapRef<typeof import('../composables/useQuranTree')['useQuranTree']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
