@@ -2,13 +2,13 @@
   <Frame>
     <Page>
       <ActionBar>
-        <Label text="Peace2074" />
+        <Label text="PEACE2074" />
       </ActionBar>
 
       <GridLayout rows="auto,auto" verticalAlignment="center">
         <Label
           row="0"
-          text="Peace2074"
+          text="PEACE2074"
           textAlignment="center"
           fontSize="28"
           color="#0A6B44"

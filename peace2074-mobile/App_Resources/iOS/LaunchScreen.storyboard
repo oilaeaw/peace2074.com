@@ -21,14 +21,17 @@
                         <rect key="frame" x="0.0" y="0.0" width="375" height="812"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                         <subviews>
-                            <imageView userInteractionEnabled="NO" contentMode="center" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen.Center" translatesAutoresizingMaskIntoConstraints="NO" id="s1z-aa-wYv">
-                                <rect key="frame" x="0.0" y="150" width="375" height="512"/>
+                            <imageView userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="LaunchScreen.Center" translatesAutoresizingMaskIntoConstraints="NO" id="s1z-aa-wYv">
+                                <rect key="frame" x="57.5" y="276" width="260" height="260"/>
+                                <constraints>
+                                    <constraint firstAttribute="width" constant="260" id="3Mm-Hv-U2V"/>
+                                    <constraint firstAttribute="height" constant="260" id="Vwy-gc-HI0"/>
+                                </constraints>
                             </imageView>
                         </subviews>
                         <color key="backgroundColor" red="1" green="1" blue="1" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                         <constraints>
-                            <constraint firstAttribute="trailing" secondItem="s1z-aa-wYv" secondAttribute="trailing" id="4Rf-kf-vql"/>
-                            <constraint firstItem="s1z-aa-wYv" firstAttribute="leading" secondItem="Ze5-6b-2t3" secondAttribute="leading" id="BpJ-vb-eKA"/>
+                            <constraint firstItem="s1z-aa-wYv" firstAttribute="centerX" secondItem="Ze5-6b-2t3" secondAttribute="centerX" id="1xn-Gj-zif"/>
                             <constraint firstItem="s1z-aa-wYv" firstAttribute="centerY" secondItem="Ze5-6b-2t3" secondAttribute="centerY" id="Rcp-LG-48z"/>
                         </constraints>
                     </view>
@@ -39,6 +42,6 @@
         </scene>
     </scenes>
     <resources>
-        <image name="LaunchScreen.Center" width="384" height="512"/>
+        <image name="LaunchScreen.Center" width="390" height="390"/>
     </resources>
 </document>
