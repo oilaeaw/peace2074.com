@@ -157,7 +157,11 @@
             <q-td :props="props">
               <span v-if="props.row.lastLogin">
                 {{ formatDate(props.row.lastLogin) }}
-                <q-badge v-if="props.row.lastLoginProvider" color="grey-5" class="q-ml-xs">
+                <q-badge
+                  v-if="props.row.lastLoginProvider"
+                  color="grey-5"
+                  class="q-ml-xs"
+                >
                   {{ props.row.lastLoginProvider }}
                 </q-badge>
               </span>
@@ -168,7 +172,12 @@
             <q-td :props="props">
               <span v-if="props.row.lastReadAt">
                 {{ formatDate(props.row.lastReadAt) }}
-                <q-badge v-if="props.row.lastReadSura" color="primary" outline class="q-ml-xs">
+                <q-badge
+                  v-if="props.row.lastReadSura"
+                  color="primary"
+                  outline
+                  class="q-ml-xs"
+                >
                   {{ t('pages.admin.users.sura') }} {{ props.row.lastReadSura }}
                 </q-badge>
               </span>
@@ -346,14 +355,61 @@ const roleOptions = [
 ]
 
 const userColumns = [
-  { name: 'username', label: 'Username', field: 'username', align: 'left' as const, sortable: true },
-  { name: 'email', label: 'Email', field: 'email', align: 'left' as const, sortable: true },
-  { name: 'role', label: t('pages.admin.users.roleLabel'), field: 'role', align: 'left' as const },
-  { name: 'lastLogin', label: t('pages.admin.users.lastLogin'), field: 'lastLogin', align: 'left' as const, sortable: true },
-  { name: 'loginCount', label: t('pages.admin.users.loginCount'), field: 'loginCount', align: 'center' as const, sortable: true },
-  { name: 'bookmarkCount', label: t('pages.admin.users.bookmarks'), field: 'bookmarkCount', align: 'center' as const, sortable: true },
-  { name: 'completedSurasCount', label: t('pages.admin.users.surasCompleted'), field: 'completedSurasCount', align: 'center' as const, sortable: true },
-  { name: 'lastReadAt', label: t('pages.admin.users.lastRead'), field: 'lastReadAt', align: 'left' as const, sortable: true },
+  {
+    name: 'username',
+    label: 'Username',
+    field: 'username',
+    align: 'left' as const,
+    sortable: true,
+  },
+  {
+    name: 'email',
+    label: 'Email',
+    field: 'email',
+    align: 'left' as const,
+    sortable: true,
+  },
+  {
+    name: 'role',
+    label: t('pages.admin.users.roleLabel'),
+    field: 'role',
+    align: 'left' as const,
+  },
+  {
+    name: 'lastLogin',
+    label: t('pages.admin.users.lastLogin'),
+    field: 'lastLogin',
+    align: 'left' as const,
+    sortable: true,
+  },
+  {
+    name: 'loginCount',
+    label: t('pages.admin.users.loginCount'),
+    field: 'loginCount',
+    align: 'center' as const,
+    sortable: true,
+  },
+  {
+    name: 'bookmarkCount',
+    label: t('pages.admin.users.bookmarks'),
+    field: 'bookmarkCount',
+    align: 'center' as const,
+    sortable: true,
+  },
+  {
+    name: 'completedSurasCount',
+    label: t('pages.admin.users.surasCompleted'),
+    field: 'completedSurasCount',
+    align: 'center' as const,
+    sortable: true,
+  },
+  {
+    name: 'lastReadAt',
+    label: t('pages.admin.users.lastRead'),
+    field: 'lastReadAt',
+    align: 'left' as const,
+    sortable: true,
+  },
   { name: 'actions', label: '', field: 'actions', align: 'right' as const },
 ]
 
