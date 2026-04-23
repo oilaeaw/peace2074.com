@@ -16,6 +16,70 @@ def capacitor_pods
   pod 'CapacitorBrowser', :path => '../../node_modules/.pnpm/@capacitor+browser@7.0.5_@capacitor+core@7.5.0/node_modules/@capacitor/browser'
 end
 
+def force_verifier_settings_off_in_project_files(root_dir)
+  [
+    File.join(root_dir, 'Pods', 'Pods.xcodeproj', 'project.pbxproj'),
+    File.join(root_dir, 'App.xcodeproj', 'project.pbxproj'),
+  ].each do |project_file|
+    next unless File.exist?(project_file)
+
+    project_text = File.read(project_file)
+    verifier_hits = project_text.scan(/ENABLE_MODULE_VERIFIER(?:\[sdk=[^\]]+\])?\s*=\s*YES;/).size
+    quoted_include_hits = project_text.scan(/CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER(?:\[sdk=[^\]]+\])?\s*=\s*YES;/).size
+    standards_hits = project_text.scan(/MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS(?:\[[^\]]+\])?\s*=\s*[^;]*;/).size
+
+    patched_project_text = project_text
+      .gsub(/("?ENABLE_MODULE_VERIFIER(?:\[sdk=[^\]]+\])?"?)\s*=\s*YES;/, '\1 = NO;')
+      .gsub(/("?CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER(?:\[sdk=[^\]]+\])?"?)\s*=\s*YES;/, '\1 = NO;')
+      .gsub(/^([ \t]*)MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS(?:\[[^\]]+\])?\s*=\s*[^;]*;$/, '\1MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";')
+
+    next if patched_project_text == project_text
+
+    File.write(project_file, patched_project_text)
+    puts "✓ Forced verifier/header settings off in #{File.basename(File.dirname(project_file))} (#{verifier_hits} module verifier, #{quoted_include_hits} quoted-include, #{standards_hits} standards-key overrides)"
+  end
+end
+
+def patch_capacitor_verifier_xcconfigs(sandbox_root)
+  capacitor_verifier_xcconfig_paths = [
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.debug.xcconfig'),
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.release.xcconfig'),
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.debug.xcconfig'),
+    File.join(sandbox_root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
+  ]
+
+  capacitor_test_framework_search_paths = '$(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"'
+  maccatalyst_framework_paths = '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/Capacitor" ' \
+    '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/CapacitorCordova"'
+  capacitor_test_framework_search_paths_full = "#{capacitor_test_framework_search_paths} #{maccatalyst_framework_paths}"
+  verifier_no_all_sdks = [
+    'ENABLE_MODULE_VERIFIER = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=iphoneos*] = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=iphonesimulator*] = NO',
+    'ENABLE_MODULE_VERIFIER[sdk=macosx*] = NO',
+  ].join("\n")
+
+  capacitor_verifier_xcconfig_paths.each do |xcconfig_path|
+    next unless File.exist?(xcconfig_path)
+
+    xcconfig_text = File.read(xcconfig_path)
+    patched_xcconfig_text = xcconfig_text
+      .gsub(/^ENABLE_MODULE_VERIFIER(?:\[sdk=[^\]]+\])?\s*=.*\n/, '')
+      .gsub(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/, '')
+      .gsub(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
+
+    patched_xcconfig_text << "\n" unless patched_xcconfig_text.end_with?("\n")
+    patched_xcconfig_text << "#{verifier_no_all_sdks}\n"
+    patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
+    patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
+
+    next if patched_xcconfig_text == xcconfig_text
+
+    File.write(xcconfig_path, patched_xcconfig_text)
+    puts "✓ Patched #{File.basename(xcconfig_path)} for Capacitor module verification"
+  end
+end
+
 target 'App' do
   capacitor_pods
   # Add your Pods here
@@ -243,80 +307,11 @@ post_install do |installer|
     user_project.save
   end
 
-  # Xcodeproj/CocoaPods can still leave generated build configurations with
-  # `ENABLE_MODULE_VERIFIER = YES` even after the object-model patches above.
-  # When that happens, device builds re-run VerifyModule on vendored pods like
-  # PromisesObjC/FBLPromises and surface the same quoted-include/private-module-map
-  # diagnostics again. Do a final text-level sweep of the generated project files
-  # so the persisted pbxproj matches the intended settings every time.
-  [
-    File.join(__dir__, 'Pods', 'Pods.xcodeproj', 'project.pbxproj'),
-    File.join(__dir__, 'App.xcodeproj', 'project.pbxproj'),
-  ].each do |project_file|
-    next unless File.exist?(project_file)
-
-    project_text = File.read(project_file)
-    verifier_hits = project_text.scan('ENABLE_MODULE_VERIFIER = YES;').size
-    quoted_include_hits = project_text.scan('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;').size
-    standards_hits = project_text.scan(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/).size
-
-    patched_project_text = project_text
-      .gsub('ENABLE_MODULE_VERIFIER = YES;', 'ENABLE_MODULE_VERIFIER = NO;')
-      # Also neutralise any sdk-conditioned YES that maccatalyst builds can trigger
-      .gsub(/"ENABLE_MODULE_VERIFIER\[sdk=[^\]]+\]" = YES;/, '"ENABLE_MODULE_VERIFIER[sdk=macosx*]" = NO;')
-      .gsub('CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;', 'CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = NO;')
-      .gsub(/^\s*MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "[^"]*";\n/, 'MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";\n')
-
-    next if patched_project_text == project_text
-
-    File.write(project_file, patched_project_text)
-    puts "✓ Forced verifier/header settings off in #{File.basename(File.dirname(project_file))} (#{verifier_hits} module verifier, #{quoted_include_hits} quoted-include, #{standards_hits} standards-key overrides)"
-  end
-
-  capacitor_verifier_xcconfig_paths = [
-    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.debug.xcconfig'),
-    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorApp', 'CapacitorApp.release.xcconfig'),
-    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.debug.xcconfig'),
-    File.join(installer.sandbox.root, 'Target Support Files', 'CapacitorBrowser', 'CapacitorBrowser.release.xcconfig'),
-  ]
-  capacitor_test_framework_search_paths = '$(inherited) $(CONFIGURATION_BUILD_DIR) "${PODS_CONFIGURATION_BUILD_DIR}/Capacitor" "${PODS_CONFIGURATION_BUILD_DIR}/CapacitorCordova"'
-  # maccatalyst builds use sdk=macosx* so a conditioned YES can override an
-  # unconditional NO. Explicitly set NO for every SDK to prevent VerifyModule.
-  verifier_no_all_sdks = [
-    'ENABLE_MODULE_VERIFIER = NO',
-    'ENABLE_MODULE_VERIFIER[sdk=iphoneos*] = NO',
-    'ENABLE_MODULE_VERIFIER[sdk=iphonesimulator*] = NO',
-    'ENABLE_MODULE_VERIFIER[sdk=macosx*] = NO',
-  ].join("\n")
-
-  # CapacitorBrowser-Swift.h imports @import Capacitor; which requires
-  # Capacitor.framework to be visible during VerifyModule for maccatalyst.
-  # Add the maccatalyst build products dir explicitly so the verifier can
-  # resolve the framework regardless of PODS_CONFIGURATION_BUILD_DIR expansion.
-  maccatalyst_framework_paths = '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/Capacitor" ' \
-    '"$(BUILD_DIR)/$(CONFIGURATION)-maccatalyst/CapacitorCordova"'
-  capacitor_test_framework_search_paths_full = \
-    "#{capacitor_test_framework_search_paths} #{maccatalyst_framework_paths}"
-
-  capacitor_verifier_xcconfig_paths.each do |xcconfig_path|
-    next unless File.exist?(xcconfig_path)
-
-    xcconfig_text = File.read(xcconfig_path)
-    patched_xcconfig_text = xcconfig_text
-      .gsub(/^ENABLE_MODULE_VERIFIER(\[sdk=[^\]]+\])?\s*=.*\n/, '')
-      .gsub(/^MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS\s*=.*\n/, '')
-      .gsub(/^TEST_FRAMEWORK_SEARCH_PATHS\s*=.*\n/, '')
-
-    patched_xcconfig_text << "\n" unless patched_xcconfig_text.end_with?("\n")
-    patched_xcconfig_text << "#{verifier_no_all_sdks}\n"
-    patched_xcconfig_text << "MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS =\n"
-    patched_xcconfig_text << "TEST_FRAMEWORK_SEARCH_PATHS = #{capacitor_test_framework_search_paths_full}\n"
-
-    next if patched_xcconfig_text == xcconfig_text
-
-    File.write(xcconfig_path, patched_xcconfig_text)
-    puts "✓ Patched #{File.basename(xcconfig_path)} for Capacitor module verification"
-  end
+  # CocoaPods/Xcode can still rewrite these settings after post_install hooks.
+  # Sweep both generated projects and Capacitor xcconfig files here, then run
+  # the same sweep again in post_integrate after CocoaPods finishes saving.
+  force_verifier_settings_off_in_project_files(__dir__)
+  patch_capacitor_verifier_xcconfigs(installer.sandbox.root)
 
   # Fix nanopb umbrella header: double-quoted includes must be angle-bracketed in framework headers
   nanopb_dir = File.join(installer.sandbox.root, 'nanopb')
@@ -479,4 +474,9 @@ post_install do |installer|
   # while importing built frameworks. Converting to <PromisesObjC/FBL*.h> breaks
   # compilation because the framework does not exist yet when its own sources
   # are being compiled.
+end
+
+post_integrate do |installer|
+  force_verifier_settings_off_in_project_files(__dir__)
+  patch_capacitor_verifier_xcconfigs(installer.sandbox.root)
 end

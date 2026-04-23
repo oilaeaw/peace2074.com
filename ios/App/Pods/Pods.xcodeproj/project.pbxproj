@@ -3452,7 +3452,7 @@
 				IBSC_MODULE = FirebaseCoreInternal;
 				INFOPLIST_FILE = "Target Support Files/FirebaseCoreInternal/ResourceBundle-FirebaseCoreInternal_Privacy-FirebaseCoreInternal-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseCoreInternal_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3489,7 +3489,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseInstallations/FirebaseInstallations.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseInstallations;
 				PRODUCT_NAME = FirebaseInstallations;
 				SDKROOT = iphoneos;
@@ -3532,7 +3532,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorApp/CapacitorApp.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = CapacitorApp;
 				PRODUCT_NAME = CapacitorApp;
 				SDKROOT = iphoneos;
@@ -3578,7 +3578,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorCordova/CapacitorCordova.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-Wno-deprecated-declarations",
@@ -3614,7 +3614,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -3635,7 +3635,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FirebaseCoreInternal;
 				INFOPLIST_FILE = "Target Support Files/FirebaseCoreInternal/ResourceBundle-FirebaseCoreInternal_Privacy-FirebaseCoreInternal-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseCoreInternal_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3658,7 +3658,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = nanopb;
 				INFOPLIST_FILE = "Target Support Files/nanopb/ResourceBundle-nanopb_Privacy-nanopb-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = nanopb_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -3722,7 +3722,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				MTL_ENABLE_DEBUG_INFO = NO;
 				MTL_FAST_MATH = YES;
 				PRODUCT_NAME = "$(TARGET_NAME)";
@@ -3749,7 +3749,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -3773,7 +3773,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -3809,7 +3809,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseCoreInternal/FirebaseCoreInternal.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseCoreInternal;
 				PRODUCT_NAME = FirebaseCoreInternal;
 				SDKROOT = iphoneos;
@@ -3841,7 +3841,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -3878,7 +3878,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorCordova/CapacitorCordova.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-Wno-deprecated-declarations",
@@ -3922,7 +3922,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FBLPromises;
 				PRODUCT_NAME = FBLPromises;
 				SDKROOT = iphoneos;
@@ -3965,7 +3965,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/nanopb/nanopb.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = nanopb;
 				PRODUCT_NAME = nanopb;
 				SDKROOT = iphoneos;
@@ -3994,7 +3994,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = GoogleUtilities;
 				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/ResourceBundle-GoogleUtilities_Privacy-GoogleUtilities-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = GoogleUtilities_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4032,7 +4032,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/nanopb/nanopb.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = nanopb;
 				PRODUCT_NAME = nanopb;
 				SDKROOT = iphoneos;
@@ -4074,7 +4074,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseCore/FirebaseCore.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseCore;
 				PRODUCT_NAME = FirebaseCore;
 				SDKROOT = iphoneos;
@@ -4119,7 +4119,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/Capacitor/Capacitor.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-Wno-deprecated-declarations",
@@ -4165,7 +4165,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = GoogleUtilities;
 				PRODUCT_NAME = GoogleUtilities;
 				SDKROOT = iphoneos;
@@ -4194,7 +4194,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FirebaseCore;
 				INFOPLIST_FILE = "Target Support Files/FirebaseCore/ResourceBundle-FirebaseCore_Privacy-FirebaseCore-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseCore_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4232,7 +4232,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-App/Pods-App.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -4278,7 +4278,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/Capacitor/Capacitor.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_CFLAGS = (
 					"$(inherited)",
 					"-Wno-deprecated-declarations",
@@ -4311,7 +4311,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FirebaseCore;
 				INFOPLIST_FILE = "Target Support Files/FirebaseCore/ResourceBundle-FirebaseCore_Privacy-FirebaseCore-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseCore_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4349,7 +4349,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorApp/CapacitorApp.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = CapacitorApp;
 				PRODUCT_NAME = CapacitorApp;
 				SDKROOT = iphoneos;
@@ -4394,7 +4394,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorBrowser/CapacitorBrowser.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = CapacitorBrowser;
 				PRODUCT_NAME = CapacitorBrowser;
 				SDKROOT = iphoneos;
@@ -4424,7 +4424,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = nanopb;
 				INFOPLIST_FILE = "Target Support Files/nanopb/ResourceBundle-nanopb_Privacy-nanopb-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = nanopb_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4447,7 +4447,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FBLPromises;
 				INFOPLIST_FILE = "Target Support Files/PromisesObjC/ResourceBundle-FBLPromises_Privacy-PromisesObjC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FBLPromises_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4484,7 +4484,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/GoogleUtilities/GoogleUtilities.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = GoogleUtilities;
 				PRODUCT_NAME = GoogleUtilities;
 				SDKROOT = iphoneos;
@@ -4512,7 +4512,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FBLPromises;
 				INFOPLIST_FILE = "Target Support Files/PromisesObjC/ResourceBundle-FBLPromises_Privacy-PromisesObjC-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FBLPromises_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4549,7 +4549,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseInstallations/FirebaseInstallations.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseInstallations;
 				PRODUCT_NAME = FirebaseInstallations;
 				SDKROOT = iphoneos;
@@ -4581,7 +4581,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -4602,7 +4602,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FirebaseInstallations;
 				INFOPLIST_FILE = "Target Support Files/FirebaseInstallations/ResourceBundle-FirebaseInstallations_Privacy-FirebaseInstallations-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseInstallations_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4641,7 +4641,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseCoreInternal/FirebaseCoreInternal.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseCoreInternal;
 				PRODUCT_NAME = FirebaseCoreInternal;
 				SDKROOT = iphoneos;
@@ -4684,7 +4684,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/CapacitorBrowser/CapacitorBrowser.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = CapacitorBrowser;
 				PRODUCT_NAME = CapacitorBrowser;
 				SDKROOT = iphoneos;
@@ -4713,7 +4713,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = FirebaseInstallations;
 				INFOPLIST_FILE = "Target Support Files/FirebaseInstallations/ResourceBundle-FirebaseInstallations_Privacy-FirebaseInstallations-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = FirebaseInstallations_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4751,7 +4751,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				);
 				MACH_O_TYPE = staticlib;
 				MODULEMAP_FILE = "Target Support Files/Pods-App/Pods-App.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				OTHER_LDFLAGS = "";
 				OTHER_LIBTOOLFLAGS = "";
 				PODS_ROOT = "$(SRCROOT)";
@@ -4823,7 +4823,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				GCC_WARN_UNUSED_FUNCTION = YES;
 				GCC_WARN_UNUSED_VARIABLE = YES;
 				IPHONEOS_DEPLOYMENT_TARGET = 16.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
 				MTL_FAST_MATH = YES;
 				ONLY_ACTIVE_ARCH = YES;
@@ -4848,7 +4848,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				IBSC_MODULE = GoogleUtilities;
 				INFOPLIST_FILE = "Target Support Files/GoogleUtilities/ResourceBundle-GoogleUtilities_Privacy-GoogleUtilities-Info.plist";
 				IPHONEOS_DEPLOYMENT_TARGET = 14.0;
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_NAME = GoogleUtilities_Privacy;
 				SDKROOT = iphoneos;
 				SKIP_INSTALL = YES;
@@ -4883,7 +4883,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/PromisesObjC/PromisesObjC.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FBLPromises;
 				PRODUCT_NAME = FBLPromises;
 				SDKROOT = iphoneos;
@@ -4915,7 +4915,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"$(inherited)",
 					"@executable_path/Frameworks",
 				);
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				SDKROOT = iphoneos;
 				SUPPORTED_PLATFORMS = "iphoneos iphonesimulator macosx";
 				SUPPORTS_MACCATALYST = YES;
@@ -4949,7 +4949,7 @@ MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 					"@loader_path/Frameworks",
 				);
 				MODULEMAP_FILE = "Target Support Files/FirebaseCore/FirebaseCore.modulemap";
-MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
+				MODULE_VERIFIER_SUPPORTED_LANGUAGE_STANDARDS = "";
 				PRODUCT_MODULE_NAME = FirebaseCore;
 				PRODUCT_NAME = FirebaseCore;
 				SDKROOT = iphoneos;
