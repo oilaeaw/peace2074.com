@@ -46,6 +46,8 @@ fi
 # Copy .prisma/client
 if [ -n "$PRISMA_GEN" ]; then
   mkdir -p "$FUNC_DIR/node_modules/.prisma"
+  # Remove any stale directory left by Nitro bundling before copying
+  rm -rf "$FUNC_DIR/node_modules/.prisma/client"
   cp -r "$PRISMA_GEN" "$FUNC_DIR/node_modules/.prisma/"
   echo "✅ Copied .prisma/client from $PRISMA_GEN"
 else
@@ -56,6 +58,8 @@ fi
 # Copy @prisma/client package
 if [ -n "$PRISMA_CLIENT_PKG" ]; then
   mkdir -p "$FUNC_DIR/node_modules/@prisma"
+  # Remove any stale directory left by Nitro bundling before copying
+  rm -rf "$FUNC_DIR/node_modules/@prisma/client"
   cp -r "$PRISMA_CLIENT_PKG" "$FUNC_DIR/node_modules/@prisma/"
   echo "✅ Copied @prisma/client package from $PRISMA_CLIENT_PKG"
 else
