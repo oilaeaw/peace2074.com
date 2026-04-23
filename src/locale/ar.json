@@ -358,6 +358,7 @@
         "markIncomplete": "تحديد كغير مكتملة"
       },
       "autoContinue": "الاستمرار التلقائي إلى السورة التالية",
+      "wordHighlight": "تظليل كلمة بكلمة",
       "autoContinueAnnouncement": "متوفر الآن ميزة جديدة! فعّل 'الاستمرار التلقائي' للانتقال تلقائياً عبر جميع السور الـ 114 أثناء التلاوة.",
       "notifications": {
         "playingSelectionWithReciter": "{label} - {reciter}",

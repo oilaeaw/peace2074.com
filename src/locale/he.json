@@ -365,6 +365,7 @@
                 "markIncomplete": "סמן כלא הושלמה"
             },
             "autoContinue": "המשך אוטומטי לסורה הבאה",
+            "wordHighlight": "הדגש מילה במילה",
             "autoContinueAnnouncement": "תכונה חדשה זמינה כעת! הפעל 'המשך אוטומטי' כדי להתקדם אוטומטית דרך כל 114 הסורות במהלך הקריאה.",
             "notifications": {
                 "playingSelectionWithReciter": "{label} - {reciter}",

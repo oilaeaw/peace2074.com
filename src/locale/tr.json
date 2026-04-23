@@ -377,6 +377,7 @@
                 "markIncomplete": "Tamamlanmadı olarak işaretle"
             },
             "autoContinue": "Otomatik olarak sonraki sureye devam et",
+            "wordHighlight": "Kelime kelime vurgula",
             "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin.",
             "notifications": {
                 "playingSelectionWithReciter": "{label} - {reciter}",

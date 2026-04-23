@@ -327,6 +327,7 @@
         "markIncomplete": "Als unvollständig markieren"
       },
       "autoContinue": "Automatisch zur nächsten Sure fortfahren",
+      "wordHighlight": "Wort für Wort hervorheben",
       "autoContinueAnnouncement": "Eine neue Funktion ist jetzt verfügbar! Aktivieren Sie 'Automatisch fortfahren', um während der Rezitation automatisch durch alle 114 Suren zu navigieren.",
       "loadSuraError": "Sure konnte nicht geladen werden",
       "loadChaptersError": "Suren konnten nicht geladen werden",

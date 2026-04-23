@@ -377,6 +377,7 @@
                 "markIncomplete": "Marcar como incompleta"
             },
             "autoContinue": "Continuar automáticamente con la siguiente surah",
+            "wordHighlight": "Resaltar palabra por palabra",
             "autoContinueAnnouncement": "¡Nueva función disponible! Activa 'Continuar automáticamente' para avanzar por las 114 surahs.",
             "notifications": {
                 "playingSelectionWithReciter": "{label} - {reciter}",

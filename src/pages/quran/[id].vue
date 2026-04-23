@@ -528,6 +528,15 @@ const autoContinueEnabled = computed({
   set: (enabled) => autoContinueStore.set(enabled),
 })
 
+// Highlight mode: 'word' highlights individual words (when timings available),
+// 'ayah' highlights the whole verse sentence.
+const HIGHLIGHT_MODE_KEY = 'quran-highlight-mode'
+const highlightModeStore = useStorageRef<'word' | 'ayah'>(HIGHLIGHT_MODE_KEY, 'word')
+const highlightMode = computed<'word' | 'ayah'>({
+  get: () => highlightModeStore.value.value ?? 'word',
+  set: (mode) => highlightModeStore.set(mode),
+})
+
 // Ayah action hover/tap widget state.
 // This is a supported Quran reading interaction and should not be removed
 // without providing an equivalent verse-actions UX and updating
@@ -869,6 +878,10 @@ function hasTimingMatchedWords(verseNumber: number) {
 }
 
 function isActiveAyah(verseNumber: number) {
+  if (highlightMode.value === 'word' && hasTimingMatchedWords(verseNumber)) {
+    // Word mode: suppress the whole-ayah highlight; words are individually highlighted
+    return false
+  }
   return currentAyahIndex.value === verseNumber - 1
 }
 
@@ -2984,6 +2997,18 @@ watch(
           <q-toggle
             v-model="autoContinueEnabled"
             :label="t('pages.quran.autoContinue')"
+            color="secondary"
+            dense
+            class="q-ml-sm"
+          />
+
+          <!-- Word highlight toggle (audio mode only, when timings available) -->
+          <q-toggle
+            v-if="readerMode === 'audio'"
+            v-model="highlightMode"
+            true-value="word"
+            false-value="ayah"
+            :label="t('pages.quran.wordHighlight')"
             color="secondary"
             dense
             class="q-ml-sm"

@@ -365,6 +365,7 @@
         "markIncomplete": "Отметить незавершённой"
       },
       "autoContinue": "Автопродолжение к следующей суре",
+      "wordHighlight": "Подсвечивать пословно",
       "autoContinueAnnouncement": "Доступна новая функция! Включите 'Автопродолжение', чтобы автоматически переходить ко всем 114 сурам во время чтения.",
       "notifications": {
         "playingSelectionWithReciter": "{label} - {reciter}",
