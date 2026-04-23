@@ -1,4 +1,4 @@
-import { connectMongoose } from './mongoose'
+import { getMongoose } from './mongoose'
 import { UserSessionModel } from '../models/UserSession'
 
 const SESSION_TTL_DAYS = 30
@@ -13,7 +13,7 @@ export async function recordSession(
     meta?: { ip?: string; user_agent?: string }
 ): Promise<void> {
     try {
-        await connectMongoose()
+        await getMongoose()
         const expires_at = new Date(Date.now() + SESSION_TTL_DAYS * 24 * 60 * 60 * 1000)
         await UserSessionModel.create({
             userId,
