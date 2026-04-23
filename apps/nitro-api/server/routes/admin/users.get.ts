@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
 import { readSession } from '../../utils/auth'
-import { connectMongoose } from '../../utils/mongoose'
+import { getMongoose } from '../../utils/mongoose'
 import { UserModel } from '../../models/User'
 
 /**
@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
     }
 
     try {
-        await connectMongoose()
+        await getMongoose()
 
         const users = await UserModel.aggregate([
             // 1. Join latest session per user
