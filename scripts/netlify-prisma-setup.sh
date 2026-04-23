@@ -23,23 +23,24 @@ cd ../..
 # Copy .prisma folder and @prisma/client to function directory
 echo "📂 Copying Prisma runtime and generated client..."
 
-# Find .prisma/client in pnpm's nested structure
-PRISMA_GEN=$(find node_modules/.pnpm -name "client" -path "*/.prisma/client" -type d 2>/dev/null | head -n 1)
-# Find the full @prisma/client package directory
-PRISMA_CLIENT_PKG=$(find node_modules/.pnpm -type d -path "*/@prisma+client*/node_modules/@prisma/client" 2>/dev/null | head -n 1)
-
-if [ -z "$PRISMA_GEN" ]; then
-  # Fallback to standard location (non-pnpm)
-  if [ -d "node_modules/.prisma/client" ]; then
-    PRISMA_GEN="node_modules/.prisma/client"
-  fi
+# Find .prisma/client — check nitro-api first (where prisma generate ran), then pnpm store, then root
+PRISMA_GEN=""
+if [ -d "apps/nitro-api/node_modules/.prisma/client" ]; then
+  PRISMA_GEN="apps/nitro-api/node_modules/.prisma/client"
+elif [ -d "node_modules/.prisma/client" ]; then
+  PRISMA_GEN="node_modules/.prisma/client"
+else
+  PRISMA_GEN=$(find node_modules/.pnpm -name "client" -path "*/.prisma/client" -type d 2>/dev/null | head -n 1)
 fi
 
-if [ -z "$PRISMA_CLIENT_PKG" ]; then
-  # Fallback to standard location (non-pnpm)
-  if [ -d "node_modules/@prisma/client" ]; then
-    PRISMA_CLIENT_PKG="node_modules/@prisma/client"
-  fi
+# Find @prisma/client package — check nitro-api first, then pnpm store, then root
+PRISMA_CLIENT_PKG=""
+if [ -d "apps/nitro-api/node_modules/@prisma/client" ]; then
+  PRISMA_CLIENT_PKG="apps/nitro-api/node_modules/@prisma/client"
+elif [ -d "node_modules/@prisma/client" ]; then
+  PRISMA_CLIENT_PKG="node_modules/@prisma/client"
+else
+  PRISMA_CLIENT_PKG=$(find node_modules/.pnpm -type d -path "*/@prisma+client*/node_modules/@prisma/client" 2>/dev/null | head -n 1)
 fi
 
 # Copy .prisma/client
