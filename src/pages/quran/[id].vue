@@ -531,7 +531,10 @@ const autoContinueEnabled = computed({
 // Highlight mode: 'word' highlights individual words (when timings available),
 // 'ayah' highlights the whole verse sentence.
 const HIGHLIGHT_MODE_KEY = 'quran-highlight-mode'
-const highlightModeStore = useStorageRef<'word' | 'ayah'>(HIGHLIGHT_MODE_KEY, 'word')
+const highlightModeStore = useStorageRef<'word' | 'ayah'>(
+  HIGHLIGHT_MODE_KEY,
+  'word'
+)
 const highlightMode = computed<'word' | 'ayah'>({
   get: () => highlightModeStore.value.value ?? 'word',
   set: (mode) => highlightModeStore.set(mode),
