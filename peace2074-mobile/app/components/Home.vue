@@ -12,7 +12,7 @@
         <GridLayout
           v-if="isLoading"
           rows="auto,auto"
-          class="overlay"
+          class="overlay-card"
           verticalAlignment="center"
           horizontalAlignment="center"
         >
@@ -34,7 +34,7 @@
         <GridLayout
           v-if="errorMessage"
           rows="auto,auto,auto"
-          class="overlay"
+          class="overlay-card error-card"
           verticalAlignment="center"
           horizontalAlignment="center"
         >
@@ -95,11 +95,15 @@ const retryLoad = () => {
 </script>
 
 <style scoped>
-.overlay {
-  width: 100%;
-  height: 100%;
-  background-color: rgba(255, 255, 255, 0.96);
-  padding: 24;
+.overlay-card {
+  padding: 20;
+  background-color: rgba(255, 255, 255, 0.94);
+  border-radius: 20;
+  margin: 24;
+}
+
+.error-card {
+  width: 80%;
 }
 
 .overlay-title {
