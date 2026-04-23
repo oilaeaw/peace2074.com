@@ -27,7 +27,11 @@
     </div>
 
     <transition name="fade">
-      <q-card v-if="open" class="ai-card glassy" bordered>
+      <q-card
+        v-if="open"
+        :class="['ai-card', 'glassy', { 'ai-card--dark': isDark }]"
+        bordered
+      >
         <q-card-section
           class="row items-start justify-between q-col-gutter-sm ai-card__header"
         >
@@ -35,7 +39,7 @@
             <div class="text-h6">
               {{ t('pages.support.aiTitle', 'Ask support AI') }}
             </div>
-            <div class="text-body2 text-grey-7 q-mt-xs">
+            <div :class="['text-body2', 'q-mt-xs', 'ai-muted-text']">
               {{
                 t(
                   'pages.support.aiSubtitle',
@@ -50,6 +54,7 @@
               round
               dense
               icon="refresh"
+              :color="isDark ? 'grey-4' : undefined"
               @click="reset"
               :aria-label="t('general.reload', 'Reset')"
             >
@@ -62,7 +67,7 @@
               round
               dense
               icon="visibility_off"
-              color="grey-7"
+              :color="isDark ? 'grey-4' : 'grey-7'"
               @click="hideForSession"
               :aria-label="t('general.close', 'Hide AI widget')"
             >
@@ -75,7 +80,7 @@
               round
               dense
               icon="close"
-              color="grey-7"
+              :color="isDark ? 'grey-4' : 'grey-7'"
               @click="close"
               :aria-label="t('general.close', 'Hide AI panel')"
             >
@@ -86,8 +91,8 @@
           </div>
         </q-card-section>
         <q-separator />
-        <q-card-section class="q-gutter-md">
-          <div class="text-caption text-grey-7">
+        <q-card-section class="q-gutter-md ai-card__body">
+          <div :class="['text-caption', 'ai-muted-text']">
             {{
               t(
                 'pages.support.aiHintInline',
@@ -100,6 +105,8 @@
             type="textarea"
             autogrow
             outlined
+            :dark="isDark"
+            input-class="ai-input-text"
             :label="
               t(
                 'pages.support.aiPlaceholder',
@@ -134,7 +141,12 @@
           >
             {{ error }}
           </q-banner>
-          <q-banner v-if="answer" rounded dense class="ai-answer">
+          <q-banner
+            v-if="answer"
+            rounded
+            dense
+            :class="['ai-answer', { 'ai-answer--dark': isDark }]"
+          >
             <div class="text-body1 ai-response-text">{{ answer }}</div>
           </q-banner>
         </q-card-section>
@@ -144,11 +156,13 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'vue'
+import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
+import { useQuasar } from 'quasar'
 import { sendDeepSeekChat } from '@/stores/services'
 
+const $q = useQuasar()
 const { t } = useI18n()
 const HIDE_STORAGE_KEY = 'support-ai-hidden'
 const prompt = ref('')
@@ -157,6 +171,7 @@ const error = ref<string | null>(null)
 const loading = ref(false)
 const open = ref(false)
 const hidden = ref(false)
+const isDark = computed(() => $q.dark.isActive)
 
 const { copy: copyToClipboard } = useClipboard({ source: answer })
 
@@ -269,6 +284,13 @@ function hideForSession() {
   background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(12px) saturate(1.05);
 }
+.ai-card--dark {
+  color: #f3f4f6;
+  border-color: rgba(148, 163, 184, 0.25);
+}
+.ai-muted-text {
+  color: #4b5563;
+}
 .ai-card__header {
   background: linear-gradient(
     135deg,
@@ -282,6 +304,14 @@ function hideForSession() {
 .ai-answer {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+}
+.ai-card__body {
+  color: inherit;
+}
+.ai-answer--dark {
+  background: rgba(15, 23, 42, 0.88);
+  border-color: rgba(59, 130, 246, 0.24);
+  color: #f8fafc;
 }
 .ai-response-text {
   max-height: 300px;
@@ -301,6 +331,38 @@ function hideForSession() {
 .fade-leave-to {
   opacity: 0;
   transform: translateY(6px);
+}
+
+:global(body.body--dark) .ai-hide-btn {
+  background: rgba(15, 23, 42, 0.92);
+  color: #e5e7eb;
+  box-shadow: 0 8px 22px rgba(0, 0, 0, 0.38);
+}
+
+:global(body.body--dark) .glassy {
+  background: rgba(17, 24, 39, 0.92);
+  backdrop-filter: blur(14px) saturate(1.1);
+}
+
+:global(body.body--dark) .ai-card__header {
+  background: linear-gradient(
+    135deg,
+    rgba(37, 99, 235, 0.2),
+    rgba(8, 145, 178, 0.22)
+  );
+  border-bottom-color: rgba(148, 163, 184, 0.18);
+}
+
+:global(body.body--dark) .ai-muted-text {
+  color: #cbd5e1;
+}
+
+:global(body.body--dark) .ai-response-text {
+  color: #f8fafc;
+}
+
+:global(body.body--dark) .ai-input-text {
+  color: #f8fafc;
 }
 @media (max-width: 640px) {
   .support-ai-widget {
