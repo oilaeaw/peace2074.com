@@ -4,7 +4,7 @@
       <GridLayout>
         <WebView
           :key="webViewKey"
-          :src="appUrl"
+          :src="webViewSrc"
           @loadStarted="onLoadStarted"
           @loadFinished="onLoadFinished"
         />
@@ -25,7 +25,7 @@
           />
           <Label
             row="1"
-            text="Loading PEACE2074..."
+            :text="loadingMessage"
             class="overlay-text"
             textAlignment="center"
           />
@@ -59,39 +59,306 @@
 </template>
 
 <script setup lang="ts">
-import { ref } from 'nativescript-vue'
+import { onMounted, onUnmounted, ref } from 'nativescript-vue'
+import {
+  Utils,
+  android as androidApp,
+  ios as iosApp,
+  isAndroid,
+  isIOS,
+  type LoadEventData,
+  type WebView as NativeScriptWebView,
+} from '@nativescript/core'
 
-type WebViewLoadEvent = {
-  error?: string
-  url?: string
-}
+type OAuthProvider = 'google' | 'apple'
 
-const appUrl = 'https://peace2074.com'
+const appOrigin = 'https://peace2074.com'
+const nativeCallbackBase = 'peace2074://auth/callback'
+const webViewSrc = ref(appOrigin)
 const isLoading = ref(true)
+const loadingMessage = ref('Loading PEACE2074...')
 const errorMessage = ref('')
 const webViewKey = ref(0)
+const webView = ref<NativeScriptWebView | null>(null)
+const oauthInProgress = ref<OAuthProvider | null>(null)
+const currentAppUrl = ref(appOrigin)
 
-const onLoadStarted = () => {
+let iosOpenUrlObserver: unknown = null
+let androidIntentHandler: ((args: unknown) => void) | null = null
+let safariAuthController: SFSafariViewController | null = null
+
+function buildNativeOAuthUrl(provider: OAuthProvider) {
+  return `${appOrigin}/api/auth/${provider}?ts=${Date.now()}&native=1`
+}
+
+function getProviderLabel(provider: OAuthProvider) {
+  return provider === 'google' ? 'Google' : 'Apple'
+}
+
+function isPeaceAppUrl(url: string) {
+  return url.startsWith(`${appOrigin}/`) || url === appOrigin
+}
+
+function resolveOAuthProvider(url: string): OAuthProvider | null {
+  const normalized = String(url || '')
+    .trim()
+    .toLowerCase()
+  if (!normalized) return null
+
+  if (
+    normalized.startsWith(`${appOrigin}/api/auth/google`) ||
+    normalized.startsWith('https://accounts.google.com') ||
+    normalized.startsWith('https://oauth2.googleapis.com') ||
+    normalized.startsWith('https://openidconnect.googleapis.com')
+  ) {
+    return 'google'
+  }
+
+  if (
+    normalized.startsWith(`${appOrigin}/api/auth/apple`) ||
+    normalized.startsWith('https://appleid.apple.com')
+  ) {
+    return 'apple'
+  }
+
+  return null
+}
+
+function isBenignLoadError(error: string) {
+  return /cancel|cancelled|canceled|frame load interrupted|unsupported url/i.test(
+    error
+  )
+}
+
+function updateLoadingState(message = 'Loading PEACE2074...') {
+  loadingMessage.value = message
   isLoading.value = true
   errorMessage.value = ''
 }
 
-const onLoadFinished = (event: WebViewLoadEvent) => {
+function finishLoading() {
+  if (!oauthInProgress.value) {
+    loadingMessage.value = 'Loading PEACE2074...'
+    isLoading.value = false
+  }
+}
+
+function rememberCurrentAppUrl(url: string) {
+  if (!isPeaceAppUrl(url)) return
+  if (url.includes('/api/auth/')) return
+  currentAppUrl.value = url
+}
+
+function getPresentingController() {
+  if (!isIOS) return null
+
+  let controller = iosApp.rootController
+  while (controller?.presentedViewController) {
+    controller = controller.presentedViewController
+  }
+
+  return controller
+}
+
+function dismissIosAuthController() {
+  if (!isIOS || !safariAuthController) return
+
+  const controller = safariAuthController
+  safariAuthController = null
+  controller.dismissViewControllerAnimatedCompletion(true, null)
+}
+
+function openNativeOAuth(provider: OAuthProvider) {
+  if (oauthInProgress.value) return
+
+  const url = buildNativeOAuthUrl(provider)
+  oauthInProgress.value = provider
+  updateLoadingState(
+    `Continue ${getProviderLabel(provider)} sign-in in the secure browser...`
+  )
+
+  let opened = false
+
+  if (isIOS) {
+    const presentingController = getPresentingController()
+    const nsUrl = NSURL.URLWithString(url)
+
+    if (presentingController && nsUrl) {
+      safariAuthController = SFSafariViewController.alloc().initWithURL(nsUrl)
+      presentingController.presentViewControllerAnimatedCompletion(
+        safariAuthController,
+        true,
+        null
+      )
+      opened = true
+    }
+  } else {
+    opened = Utils.openUrl(url)
+  }
+
+  if (!opened) {
+    oauthInProgress.value = null
+    loadingMessage.value = 'Loading PEACE2074...'
+    isLoading.value = false
+    errorMessage.value = `Unable to open ${getProviderLabel(provider)} sign-in.`
+  }
+}
+
+function reloadApp(url = appOrigin) {
+  webViewSrc.value = url
+  webViewKey.value += 1
+  updateLoadingState()
+}
+
+function getOAuthErrorMessage(code: string) {
+  switch (code) {
+    case 'google-state-invalid':
+      return 'Google sign-in expired. Please try again.'
+    case 'apple-state-invalid':
+      return 'Apple sign-in expired. Please try again.'
+    case 'apple-not-configured':
+      return 'Apple sign-in is not configured yet.'
+    case 'oauth-state-invalid':
+      return 'The secure sign-in session expired. Please try again.'
+    default:
+      return 'Secure sign-in did not complete. Please try again.'
+  }
+}
+
+function handleNativeCallback(url: string) {
+  if (!url.startsWith(nativeCallbackBase)) return
+
+  dismissIosAuthController()
+
+  const parsed = new URL(url)
+  const authComplete = parsed.searchParams.get('authComplete')
+  const oauthError = parsed.searchParams.get('oauthError')
+
+  oauthInProgress.value = null
+  loadingMessage.value = 'Loading PEACE2074...'
+
+  if (oauthError) {
+    isLoading.value = false
+    errorMessage.value = getOAuthErrorMessage(oauthError)
+    return
+  }
+
+  if (authComplete === '1') {
+    reloadApp(currentAppUrl.value || appOrigin)
+    return
+  }
+
+  isLoading.value = false
+}
+
+function handleIosOpenUrl(notification: NSNotification) {
+  const userInfo = notification.userInfo
+  const value = userInfo?.objectForKey?.('url')
+  const url = String(value || '')
+
+  if (url) {
+    handleNativeCallback(url)
+  }
+}
+
+function handleAndroidIntent(args: unknown) {
+  const intent = (args as { intent?: android.content.Intent | null })?.intent
+  const url =
+    intent && typeof intent.getDataString === 'function'
+      ? String(intent.getDataString() || '')
+      : ''
+
+  if (url) {
+    handleNativeCallback(url)
+  }
+}
+
+const onLoadStarted = (event: LoadEventData) => {
+  webView.value = event.object as NativeScriptWebView
+
+  const url = String(event.url || '')
+  const provider = resolveOAuthProvider(url)
+
+  if (provider) {
+    webView.value?.stopLoading()
+    openNativeOAuth(provider)
+    return
+  }
+
+  rememberCurrentAppUrl(url)
+  updateLoadingState()
+}
+
+const onLoadFinished = (event: LoadEventData) => {
+  webView.value = event.object as NativeScriptWebView
+
+  if (event.url) {
+    rememberCurrentAppUrl(String(event.url))
+  }
+
   if (event.error) {
+    if (oauthInProgress.value && isBenignLoadError(event.error)) {
+      return
+    }
+
     errorMessage.value = event.error
+    loadingMessage.value = 'Loading PEACE2074...'
     isLoading.value = false
     return
   }
 
   errorMessage.value = ''
-  isLoading.value = false
+  finishLoading()
 }
 
 const retryLoad = () => {
+  oauthInProgress.value = null
+  dismissIosAuthController()
   errorMessage.value = ''
-  isLoading.value = true
-  webViewKey.value += 1
+  reloadApp(currentAppUrl.value || appOrigin)
 }
+
+onMounted(() => {
+  if (isIOS) {
+    iosApp.addDelegateHandler(
+      'applicationOpenURLOptions' as keyof UIApplicationDelegate,
+      (_application, url) => {
+        const callbackUrl = String(url?.absoluteString || '')
+        if (callbackUrl) {
+          handleNativeCallback(callbackUrl)
+        }
+        return true
+      }
+    )
+
+    iosOpenUrlObserver = iosApp.addNotificationObserver(
+      'NativeScriptOpenURL',
+      handleIosOpenUrl
+    )
+  }
+
+  if (isAndroid) {
+    androidIntentHandler = (args: unknown) => handleAndroidIntent(args)
+    androidApp.on(androidApp.activityNewIntentEvent, androidIntentHandler)
+    handleAndroidIntent({
+      intent: androidApp.foregroundActivity?.getIntent?.(),
+    })
+  }
+})
+
+onUnmounted(() => {
+  dismissIosAuthController()
+
+  if (isIOS && iosOpenUrlObserver) {
+    iosApp.removeNotificationObserver(iosOpenUrlObserver, 'NativeScriptOpenURL')
+    iosOpenUrlObserver = null
+  }
+
+  if (isAndroid && androidIntentHandler) {
+    androidApp.off(androidApp.activityNewIntentEvent, androidIntentHandler)
+    androidIntentHandler = null
+  }
+})
 </script>
 
 <style scoped>
