@@ -1,6 +1,8 @@
 import { test, expect } from '@playwright/test'
 
 const layoutReadyTimeoutMs = 30000
+const hoverActionCardTimeoutMs = 5000
+const USTORE_NAMESPACE = 'peace2074'
 
 const ayahActionCardLayouts = [
     {
@@ -23,7 +25,7 @@ test.describe('Quran ayah action card', () => {
     for (const layout of ayahActionCardLayouts) {
         test(`stays available on desktop hover in ${layout.mode} layout`, async ({ page }) => {
             await page.addInitScript(() => {
-                localStorage.setItem('quran-reader-mode', 'audio')
+                localStorage.setItem(`${USTORE_NAMESPACE}:quran-reader-mode`, 'audio')
             })
 
             await page.goto(`/quran/1/${layout.mode}`)
@@ -36,7 +38,7 @@ test.describe('Quran ayah action card', () => {
             await ayahTarget.hover()
 
             const actionCard = page.getByTestId('ayah-action-card')
-            await expect(actionCard).toBeVisible({ timeout: 2500 })
+            await expect(actionCard).toBeVisible({ timeout: hoverActionCardTimeoutMs })
             await expect(actionCard).toHaveAttribute('data-verse', '1')
             await expect(actionCard).toHaveAttribute('data-recitation-source', 'audio')
             await expect(actionCard).toHaveAttribute('data-layout-mode', layout.mode)

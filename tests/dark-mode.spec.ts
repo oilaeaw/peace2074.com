@@ -24,19 +24,33 @@ const darkRoutes: DarkRouteCheck[] = [
     { path: '/support', readySelector: '.support-card, .q-card, main' },
     { path: '/contact', readySelector: '.contact-card, .q-card, main' },
     { path: '/blog', readySelector: '.blog-list, .q-card, main' },
-    { path: '/privacy', readySelector: '.plain-container' },
-    { path: '/terms', readySelector: '.plain-container' },
+    { path: '/privacy', readySelector: 'main h1, main .my-card, main .q-card' },
+    { path: '/terms', readySelector: 'main h1, main .my-card, main .q-card' },
 ]
+
+const USTORE_NAMESPACE = 'peace2074'
+
+function namespacedKey(key: string) {
+    return `${USTORE_NAMESPACE}:${key}`
+}
 
 test.describe('dark mode public route smoke test', () => {
     for (const route of darkRoutes) {
         test(`keeps large surfaces dark on ${route.path}`, async ({ page }) => {
             await page.addInitScript(() => {
-                localStorage.setItem('pref-theme-mode', 'dark')
+                localStorage.setItem('peace2074:pref-theme-mode', 'dark')
             })
 
             await page.goto(route.path)
             await page.waitForLoadState('networkidle')
+            await expect
+                .poll(async () =>
+                    page.evaluate(
+                        (key) => window.localStorage.getItem(key),
+                        namespacedKey('pref-theme-mode')
+                    )
+                )
+                .toBe('dark')
             await expect(page.locator('body')).toHaveClass(/body--dark/)
             await expect(page.locator(route.readySelector).first()).toBeVisible()
 
@@ -48,6 +62,7 @@ test.describe('dark mode public route smoke test', () => {
                     const [r, g, b, alpha = '1'] = match[1]
                         .split(',')
                         .map((segment) => segment.trim())
+
                     return {
                         r: Number.parseFloat(r),
                         g: Number.parseFloat(g),
@@ -63,9 +78,11 @@ test.describe('dark mode public route smoke test', () => {
                     alpha: number
                 }) => {
                     if (color.alpha < 0.85) return false
+
                     const values = [color.r, color.g, color.b]
                     const min = Math.min(...values)
                     const max = Math.max(...values)
+
                     return min >= 200 && max - min <= 35
                 }
 
@@ -88,6 +105,7 @@ test.describe('dark mode public route smoke test', () => {
                     if (!(element instanceof HTMLElement)) continue
 
                     const style = window.getComputedStyle(element)
+
                     if (
                         style.display === 'none' ||
                         style.visibility === 'hidden' ||

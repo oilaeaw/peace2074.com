@@ -659,6 +659,7 @@ onUnmounted(() => {
           <q-form class="q-gutter-md" @submit.prevent="handleLogin">
             <q-input
               v-model="username"
+              data-testid="login-username"
               outlined
               :label="t('auth.username')"
               :placeholder="t('auth.enterUsername')"
@@ -674,6 +675,7 @@ onUnmounted(() => {
 
             <q-input
               v-model="password"
+              data-testid="login-password"
               outlined
               :type="showPassword ? 'text' : 'password'"
               :label="t('auth.password')"
@@ -715,6 +717,7 @@ onUnmounted(() => {
 
             <q-btn
               type="submit"
+              data-testid="login-submit"
               color="primary"
               :label="t('auth.signIn')"
               class="full-width"
@@ -763,6 +766,7 @@ onUnmounted(() => {
 
               <q-btn
                 unelevated
+                data-testid="login-google"
                 color="primary"
                 class="full-width"
                 size="md"
@@ -775,6 +779,7 @@ onUnmounted(() => {
 
               <q-btn
                 outline
+                data-testid="login-apple"
                 color="dark"
                 class="full-width q-mt-sm"
                 size="md"
@@ -866,6 +871,8 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px 0 112px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -933,6 +940,7 @@ onUnmounted(() => {
   width: 100%;
   max-width: 480px;
   padding: 20px;
+  padding-bottom: 96px;
   box-sizing: border-box;
 }
 
@@ -1001,6 +1009,7 @@ onUnmounted(() => {
 @media (max-width: 600px) {
   .login-content {
     padding: 16px;
+    padding-bottom: 112px;
   }
 
   .login-card {

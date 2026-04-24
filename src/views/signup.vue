@@ -194,6 +194,7 @@ async function handleSignup() {
           <q-form @submit.prevent="handleSignup" class="q-gutter-md">
             <q-input
               v-model="username"
+              data-testid="signup-username"
               outlined
               :label="t('auth.username')"
               :placeholder="t('auth.enterUsername')"
@@ -209,6 +210,7 @@ async function handleSignup() {
 
             <q-input
               v-model="email"
+              data-testid="signup-email"
               outlined
               type="email"
               :label="t('auth.email')"
@@ -225,6 +227,7 @@ async function handleSignup() {
 
             <q-input
               v-model="password"
+              data-testid="signup-password"
               outlined
               :type="showPassword ? 'text' : 'password'"
               :label="t('auth.password')"
@@ -253,6 +256,7 @@ async function handleSignup() {
 
             <q-input
               v-model="confirmPassword"
+              data-testid="signup-confirm-password"
               outlined
               :type="showConfirmPassword ? 'text' : 'password'"
               :label="t('auth.confirmPassword')"
@@ -277,19 +281,24 @@ async function handleSignup() {
               </template>
             </q-input>
 
-            <q-checkbox v-model="acceptTerms" color="primary" dense>
-              <template v-slot:default>
-                <span class="text-caption">
-                  {{ t('auth.iAccept') }}
-                  <router-link to="/terms" class="text-primary">{{
-                    t('auth.termsAndConditions')
-                  }}</router-link>
-                </span>
-              </template>
-            </q-checkbox>
+            <q-checkbox
+              v-model="acceptTerms"
+              data-testid="signup-accept-terms"
+              color="primary"
+              dense
+              :aria-label="`${t('auth.iAccept')} ${t('auth.termsAndConditions')}`"
+            />
+
+            <div class="terms-copy text-caption">
+              <span>{{ t('auth.iAccept') }}</span>
+              <router-link to="/terms" class="text-primary terms-link">{{
+                t('auth.termsAndConditions')
+              }}</router-link>
+            </div>
 
             <q-btn
               type="submit"
+              data-testid="signup-submit"
               color="primary"
               :label="t('auth.signUp')"
               class="full-width"
@@ -337,6 +346,8 @@ async function handleSignup() {
   display: flex;
   align-items: center;
   justify-content: center;
+  padding: 24px 0 112px;
+  box-sizing: border-box;
   overflow: hidden;
 }
 
@@ -390,6 +401,7 @@ async function handleSignup() {
   width: 100%;
   max-width: 480px;
   padding: 24px;
+  padding-bottom: 96px;
   box-sizing: border-box;
 }
 
@@ -398,6 +410,17 @@ async function handleSignup() {
   backdrop-filter: blur(20px);
   border-radius: 24px;
   box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+}
+
+.terms-copy {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  margin-top: -8px;
+}
+
+.terms-link {
+  font-weight: 600;
 }
 
 .logo-container {

@@ -11,7 +11,6 @@
         "hash:password": "node --experimental-strip-types ./scripts/hash-password.ts"
     },
     "dependencies": {
-        "@playwright/test": "1.44.0",
         "@simplewebauthn/server": "^13.3.0",
         "arctic": "^3.7.0",
         "mongoose": "^8.13.2",

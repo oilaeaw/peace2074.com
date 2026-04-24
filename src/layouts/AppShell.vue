@@ -87,6 +87,12 @@
         <q-btn
           dense
           round
+          data-testid="account-menu-button"
+          :aria-label="
+            isAuthenticated
+              ? t('pages.preferences.profile.title')
+              : t('appShell.nav.login')
+          "
           :color="isAuthenticated ? 'positive' : 'white'"
           :icon="isAuthenticated ? 'account_circle' : 'login'"
         >
@@ -107,6 +113,7 @@
 
               <q-item
                 v-if="!isAuthenticated"
+                data-testid="menu-login"
                 v-ripple
                 clickable
                 @click="$router.push('/login')"
@@ -121,6 +128,7 @@
 
               <q-item
                 v-if="!isAuthenticated"
+                data-testid="menu-signup"
                 v-ripple
                 clickable
                 @click="$router.push('/signup')"
@@ -135,6 +143,7 @@
 
               <q-item
                 v-if="isAuthenticated"
+                data-testid="menu-profile"
                 v-close-popup
                 v-ripple
                 clickable
@@ -152,6 +161,7 @@
 
               <q-item
                 v-if="isAuthenticated"
+                data-testid="menu-logout"
                 v-ripple
                 clickable
                 @click="handleLogout"

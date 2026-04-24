@@ -19,7 +19,9 @@ export default defineConfig({
     ],
     webServer: {
         command: 'pnpm run dev',
-        url: 'http://localhost:4000',
+        // Dev runs two servers; wait for Nitro auth health so the first auth request
+        // in E2E does not spend the test budget waiting for the API to finish booting.
+        url: 'http://localhost:3000/auth/health',
         reuseExistingServer: true,
         timeout: 180_000,
     },

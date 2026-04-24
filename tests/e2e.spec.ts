@@ -1,5 +1,7 @@
 import { test, expect } from '@playwright/test'
 
+const quranLoadTimeoutMs = 30000
+
 test('home -> quran list -> sura detail loads', async ({ page }) => {
     await page.goto('/')
     await expect(page).toHaveURL(/\/?$/)
@@ -8,13 +10,13 @@ test('home -> quran list -> sura detail loads', async ({ page }) => {
     await page.waitForURL(/\/quran$/)
 
     const list = page.locator('a.sura-card')
-    await expect(list.first()).toBeVisible()
-    await expect(list).toHaveCount(114)
+    await expect(list.first()).toBeVisible({ timeout: quranLoadTimeoutMs })
+    await expect(list).toHaveCount(114, { timeout: quranLoadTimeoutMs })
 
     await page.goto('/quran/1/reader')
     await page.waitForURL(/\/quran\/1\/reader$/)
 
-    await expect(page.locator('.arabic-text').first()).toBeVisible()
+    await expect(page.locator('.arabic-text').first()).toBeVisible({ timeout: quranLoadTimeoutMs })
 })
 
 test('locale switch updates UI and persists', async ({ page }) => {

@@ -2,26 +2,38 @@
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
 import { computed } from 'vue'
+import { useQuasar } from 'quasar'
 
 const { t } = useI18n()
 const route = useRoute()
+const $q = useQuasar()
 
 const pageTitle = computed(() => {
   return route.meta.title || t('appShell.title')
 })
+
+const isDarkMode = computed(() => $q.dark.isActive)
 </script>
 
 <template>
-  <div class="plain-container">
-    <header class="plain-header">
+  <div class="plain-container" :class="{ 'plain-container--dark': isDarkMode }">
+    <header class="plain-header" :class="{ 'plain-header--dark': isDarkMode }">
       <nav class="plain-nav">
         <a
           :href="route.path.startsWith('/quran/') ? '/quran' : '/'"
           class="plain-link"
+          :class="{ 'plain-link--dark': isDarkMode }"
           >← {{ t('button.back') }}</a
         >
-        <h1 class="plain-title">{{ pageTitle }}</h1>
-        <a href="/" class="plain-link">{{ t('appShell.nav.home') }}</a>
+        <h1 class="plain-title" :class="{ 'plain-title--dark': isDarkMode }">
+          {{ pageTitle }}
+        </h1>
+        <a
+          href="/"
+          class="plain-link"
+          :class="{ 'plain-link--dark': isDarkMode }"
+          >{{ t('appShell.nav.home') }}</a
+        >
       </nav>
     </header>
     <main class="plain-main">
@@ -92,6 +104,28 @@ const pageTitle = computed(() => {
   line-height: 1.8;
 }
 
+.plain-container--dark {
+  background: #000;
+  color: #f3f4f6;
+}
+
+.plain-header--dark {
+  border-bottom-color: rgba(255, 255, 255, 0.08);
+  background: rgba(3, 7, 18, 0.92);
+}
+
+.plain-title--dark {
+  color: #f9fafb;
+}
+
+.plain-link--dark {
+  color: #5eead4;
+}
+
+.plain-link--dark:hover {
+  background: rgba(94, 234, 212, 0.12);
+}
+
 :global(body.body--dark) .plain-container {
   background: #000;
   color: #f3f4f6;
@@ -100,6 +134,10 @@ const pageTitle = computed(() => {
 :global(body.body--dark) .plain-header {
   border-bottom-color: rgba(255, 255, 255, 0.08);
   background: rgba(3, 7, 18, 0.92);
+}
+
+:global(body.body--dark) .plain-container .plain-header {
+  background: rgba(3, 7, 18, 0.92) !important;
 }
 
 :global(body.body--dark) .plain-title {
