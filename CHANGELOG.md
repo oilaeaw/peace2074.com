@@ -2,6 +2,14 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.1.3 (2026-04-26)
+
+### Chores
+
+- bump root, Nitro API, and NativeScript mobile package versions to `3.1.3`
+- align iOS and Android native build metadata with the `3.1.3` release batch
+- update `CHANGELOG.md` so `/deploys` reflects the current `3.1.3` release
+
 ## 3.1.2 (2026-04-20)
 
 ### Features
