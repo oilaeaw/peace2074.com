@@ -50,6 +50,8 @@ let appUrlOpenHandle: PluginListenerHandle | null = null
 const env = (import.meta as ImportMeta & { env?: LoginViewEnv }).env || {}
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
+const NATIVE_OAUTH_SESSION_ATTEMPTS = 4
+const NATIVE_OAUTH_SESSION_RETRY_MS = 750
 
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
@@ -176,6 +178,28 @@ function getPasskeyErrorMessage(err: unknown, fallback: string) {
   }
 
   return getErrorMessage(err) || fallback
+}
+
+function wait(ms: number) {
+  return new Promise((resolve) => {
+    window.setTimeout(resolve, ms)
+  })
+}
+
+async function hydrateNativeOAuthSession() {
+  for (let attempt = 0; attempt < NATIVE_OAUTH_SESSION_ATTEMPTS; attempt += 1) {
+    const user = await authStore.hydrateSession(true)
+
+    if (user || authStore.isAuthenticated) {
+      return true
+    }
+
+    if (attempt < NATIVE_OAUTH_SESSION_ATTEMPTS - 1) {
+      await wait(NATIVE_OAUTH_SESSION_RETRY_MS * (attempt + 1))
+    }
+  }
+
+  return false
 }
 
 function confirmPasskeyEnrollment() {
@@ -463,7 +487,7 @@ function openSocialLogin(provider: 'google' | 'apple') {
     // The ?native=1 param tells the server callback to redirect back via the peace2074:// deep link
     // instead of https://peace2074.com/, which would take the user out of the native app.
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}&native=1`
-    void Browser.open({ url: oauthUrl, presentationStyle: 'popover' })
+    void Browser.open({ url: oauthUrl, presentationStyle: 'fullscreen' })
   } else {
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}`
     window.location.href = oauthUrl
@@ -481,14 +505,21 @@ async function handleNativeOAuthCallback(url: string) {
     })
 
     if (authComplete === '1') {
-      const user = await authStore.hydrateSession()
-      if (user || authStore.isAuthenticated) {
+      const authenticated = await hydrateNativeOAuthSession()
+
+      if (authenticated) {
         $q.notify({
           type: 'positive',
           message: t('auth.loginSuccess'),
           position: 'top',
         })
         await router.push(getPostLoginPath())
+      } else {
+        $q.notify({
+          type: 'negative',
+          message: t('auth.loginError'),
+          position: 'top',
+        })
       }
     } else if (oauthError) {
       await router.replace({ path: '/login', query: { oauthError } })

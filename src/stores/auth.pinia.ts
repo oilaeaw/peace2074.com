@@ -9,7 +9,7 @@ const env = (import.meta as any)?.env || {}
 const DEFAULT_NITRO_PORT = 3000
 const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
-const NATIVE_AUTH_TIMEOUT_MS = 2500
+const NATIVE_AUTH_TIMEOUT_MS = 10000
 const WEB_AUTH_TIMEOUT_MS = 6000
 
 function isNativeRuntime() {
