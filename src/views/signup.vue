@@ -346,7 +346,10 @@ async function handleSignup() {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 0 112px;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px)
+    max(16px, env(safe-area-inset-right, 0px))
+    calc(env(safe-area-inset-bottom, 0px) + 112px)
+    max(16px, env(safe-area-inset-left, 0px));
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -399,9 +402,8 @@ async function handleSignup() {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 480px;
-  padding: 24px;
-  padding-bottom: 96px;
+  max-width: 520px;
+  padding: 24px 0 calc(env(safe-area-inset-bottom, 0px) + 96px);
   box-sizing: border-box;
 }
 

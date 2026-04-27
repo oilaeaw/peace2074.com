@@ -806,7 +806,10 @@ onUnmounted(() => {
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 24px 0 112px;
+  padding: calc(env(safe-area-inset-top, 0px) + 24px)
+    max(16px, env(safe-area-inset-right, 0px))
+    calc(env(safe-area-inset-bottom, 0px) + 112px)
+    max(16px, env(safe-area-inset-left, 0px));
   box-sizing: border-box;
   overflow: hidden;
 }
@@ -873,9 +876,8 @@ onUnmounted(() => {
   position: relative;
   z-index: 1;
   width: 100%;
-  max-width: 480px;
-  padding: 20px;
-  padding-bottom: 96px;
+  max-width: 520px;
+  padding: 20px 0 calc(env(safe-area-inset-bottom, 0px) + 96px);
   box-sizing: border-box;
 }
 
@@ -942,9 +944,15 @@ onUnmounted(() => {
 }
 
 @media (max-width: 600px) {
+  .login-container {
+    padding: calc(env(safe-area-inset-top, 0px) + 16px)
+      max(12px, env(safe-area-inset-right, 0px))
+      calc(env(safe-area-inset-bottom, 0px) + 96px)
+      max(12px, env(safe-area-inset-left, 0px));
+  }
+
   .login-content {
-    padding: 16px;
-    padding-bottom: 112px;
+    padding: 12px 0 calc(env(safe-area-inset-bottom, 0px) + 112px);
   }
 
   .login-card {

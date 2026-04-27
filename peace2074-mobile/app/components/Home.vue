@@ -1,10 +1,25 @@
 <template>
-  <Frame>
-    <Page actionBarHidden="true">
-      <GridLayout>
+  <Frame class="app-frame">
+    <Page
+      class="app-page"
+      actionBarHidden="true"
+      backgroundColor="#08111c"
+      :iosOverflowSafeArea="true"
+      :iosOverflowSafeAreaEnabled="true"
+    >
+      <GridLayout
+        rows="*"
+        class="app-shell"
+        :iosOverflowSafeArea="true"
+        :iosOverflowSafeAreaEnabled="true"
+      >
         <WebView
+          row="0"
+          class="app-webview"
           :key="webViewKey"
           :src="webViewSrc"
+          :iosOverflowSafeArea="true"
+          :iosOverflowSafeAreaEnabled="true"
           @loadStarted="onLoadStarted"
           @loadFinished="onLoadFinished"
         />
@@ -12,7 +27,8 @@
         <GridLayout
           v-if="isLoading"
           rows="auto,auto"
-          class="overlay-card"
+          class="overlay-card loading-card"
+          :width="loadingCardWidth"
           verticalAlignment="center"
           horizontalAlignment="center"
         >
@@ -35,6 +51,7 @@
           v-if="errorMessage"
           rows="auto,auto,auto"
           class="overlay-card error-card"
+          :width="errorCardWidth"
           verticalAlignment="center"
           horizontalAlignment="center"
         >
@@ -62,6 +79,7 @@
 import { onMounted, onUnmounted, ref } from 'nativescript-vue'
 import {
   Utils,
+  Screen,
   android as androidApp,
   ios as iosApp,
   isAndroid,
@@ -74,6 +92,9 @@ type OAuthProvider = 'google' | 'apple'
 
 const appOrigin = 'https://peace2074.com'
 const nativeCallbackBase = 'peace2074://auth/callback'
+const CARD_SIDE_MARGIN = 32
+const LOADING_CARD_MAX_WIDTH = 360
+const ERROR_CARD_MAX_WIDTH = 420
 const webViewSrc = ref(appOrigin)
 const isLoading = ref(true)
 const loadingMessage = ref('Loading PEACE2074...')
@@ -86,6 +107,17 @@ const currentAppUrl = ref(appOrigin)
 let iosOpenUrlObserver: unknown = null
 let androidIntentHandler: ((args: unknown) => void) | null = null
 let safariAuthController: SFSafariViewController | null = null
+
+function getResponsiveCardWidth(maxWidth: number) {
+  const availableWidth = Math.max(
+    Screen.mainScreen.widthDIPs - CARD_SIDE_MARGIN,
+    280
+  )
+  return Math.min(availableWidth, maxWidth)
+}
+
+const loadingCardWidth = getResponsiveCardWidth(LOADING_CARD_MAX_WIDTH)
+const errorCardWidth = getResponsiveCardWidth(ERROR_CARD_MAX_WIDTH)
 
 function buildNativeOAuthUrl(provider: OAuthProvider) {
   return `${appOrigin}/api/auth/${provider}?ts=${Date.now()}&native=1`
@@ -362,15 +394,26 @@ onUnmounted(() => {
 </script>
 
 <style scoped>
+.app-frame,
+.app-page,
+.app-shell,
+.app-webview {
+  background-color: #08111c;
+}
+
 .overlay-card {
-  padding: 20;
+  padding: 24;
   background-color: rgba(255, 255, 255, 0.94);
-  border-radius: 20;
-  margin: 24;
+  border-radius: 24;
+  margin: 16;
+}
+
+.loading-card {
+  min-width: 220;
 }
 
 .error-card {
-  width: 80%;
+  min-width: 280;
 }
 
 .overlay-title {

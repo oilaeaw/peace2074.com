@@ -3,14 +3,19 @@
  * then seeds it with representative bookmarks.
  *
  * Usage:
- *   node scripts/seed-demo-account.mjs [--base https://api.peace2074.com]
+ *   node scripts/seed-demo-account.mjs [--base https://peace2074.com]
  *
  * The script is idempotent — if the account already exists it just
  * logs in and re-seeds any bookmarks that are not yet present.
  */
 
-const DEFAULT_BASE = 'https://api.peace2074.com'
-const base = process.argv.find((a) => a.startsWith('http')) ?? DEFAULT_BASE
+const DEFAULT_BASE = 'https://peace2074.com'
+const explicitBaseIndex = process.argv.findIndex((arg) => arg === '--base')
+const explicitBase =
+  explicitBaseIndex >= 0 ? process.argv[explicitBaseIndex + 1] : null
+const positionalBase =
+  process.argv.find((arg) => arg.startsWith('http')) ?? null
+const base = explicitBase || positionalBase || DEFAULT_BASE
 
 const DEMO_EMAIL = 'demo@peace2074.com'
 const DEMO_PASSWORD = 'Demo2074!Review'
