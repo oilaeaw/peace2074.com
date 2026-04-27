@@ -42,9 +42,6 @@ const password = ref('')
 const loading = ref(false)
 const showPassword = ref(false)
 const rememberMe = ref(false)
-const showForgotDialog = ref(false)
-const resetEmail = ref('')
-const sendingReset = ref(false)
 const passkeyLoading = ref(false)
 const appleConfigured = ref<boolean | null>(null)
 let appUrlOpenHandle: PluginListenerHandle | null = null
@@ -575,45 +572,6 @@ async function handleLogin() {
   }
 }
 
-function handleForgotPassword() {
-  showForgotDialog.value = true
-}
-
-async function handleResetRequest() {
-  if (!resetEmail.value) {
-    $q.notify({
-      type: 'warning',
-      message: t('auth.enterEmail'),
-      position: 'top',
-    })
-    return
-  }
-
-  sendingReset.value = true
-
-  try {
-    // TODO: Implement actual password reset endpoint
-    await new Promise((resolve) => setTimeout(resolve, 1500))
-
-    $q.notify({
-      type: 'positive',
-      message: t('auth.resetEmailSent'),
-      position: 'top',
-    })
-
-    showForgotDialog.value = false
-    resetEmail.value = ''
-  } catch (err: unknown) {
-    $q.notify({
-      type: 'negative',
-      message: getErrorMessage(err) || t('auth.resetError'),
-      position: 'top',
-    })
-  } finally {
-    sendingReset.value = false
-  }
-}
-
 onMounted(() => {
   void loadAuthAvailability()
   void handleOAuthErrorFromRoute()
@@ -703,15 +661,6 @@ onUnmounted(() => {
                 :label="t('auth.rememberMe')"
                 color="primary"
                 dense
-              />
-              <q-btn
-                flat
-                dense
-                color="primary"
-                :label="t('auth.forgotPassword')"
-                class="text-caption"
-                padding="none"
-                @click="handleForgotPassword"
               />
             </div>
 
@@ -814,51 +763,6 @@ onUnmounted(() => {
             </div>
           </q-form>
         </q-card-section>
-
-        <!-- Forgot Password Dialog -->
-        <q-dialog v-model="showForgotDialog">
-          <q-card style="min-width: 400px">
-            <q-card-section>
-              <div class="text-h6">{{ t('auth.resetPassword') }}</div>
-            </q-card-section>
-
-            <q-card-section class="q-pt-none">
-              <p class="text-body2 text-grey-7">
-                {{ t('auth.resetInstructions') }}
-              </p>
-              <q-input
-                v-model="resetEmail"
-                outlined
-                type="email"
-                :label="t('auth.email')"
-                :placeholder="t('auth.enterEmail')"
-                :disable="sendingReset"
-                autocomplete="email"
-              >
-                <template #prepend>
-                  <q-icon name="email" />
-                </template>
-              </q-input>
-            </q-card-section>
-
-            <q-card-actions align="right">
-              <q-btn
-                v-close-popup
-                flat
-                :label="t('cancel')"
-                color="grey-7"
-                :disable="sendingReset"
-              />
-              <q-btn
-                unelevated
-                :label="t('auth.sendResetLink')"
-                color="primary"
-                :loading="sendingReset"
-                @click="handleResetRequest"
-              />
-            </q-card-actions>
-          </q-card>
-        </q-dialog>
       </q-card>
     </div>
   </div>
