@@ -27,13 +27,13 @@ function getSecrets() {
     return { passcode, secret }
 }
 
-function sign(payload: SessionPayload, secret: string) {
+export function sign(payload: SessionPayload, secret: string) {
     const body = Buffer.from(JSON.stringify(payload)).toString('base64url')
     const sig = crypto.createHmac('sha256', secret).update(body).digest('base64url')
     return `${body}.${sig}`
 }
 
-function verify(token: string, secret: string): SessionPayload | null {
+export function verify(token: string, secret: string): SessionPayload | null {
     const [body, sig] = token.split('.')
     if (!body || !sig) return null
     const expected = crypto.createHmac('sha256', secret).update(body).digest('base64url')

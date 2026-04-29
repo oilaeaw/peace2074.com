@@ -95,7 +95,7 @@ const nativeCallbackBase = 'peace2074://auth/callback'
 const CARD_SIDE_MARGIN = 32
 const LOADING_CARD_MAX_WIDTH = 360
 const ERROR_CARD_MAX_WIDTH = 420
-const webViewSrc = ref(appOrigin)
+const webViewSrc = ref(`${appOrigin}?native=1`)
 const isLoading = ref(true)
 const loadingMessage = ref('Loading PEACE2074...')
 const errorMessage = ref('')
@@ -276,7 +276,14 @@ function handleNativeCallback(url: string) {
   }
 
   if (authComplete === '1') {
-    reloadApp(currentAppUrl.value || appOrigin)
+    const token = parsed.searchParams.get('token')
+    let reloadUrl = currentAppUrl.value || appOrigin
+    const urlObj = new URL(reloadUrl)
+    urlObj.searchParams.set('native', '1') // pass native flag
+    if (token) {
+      urlObj.searchParams.set('token', token)
+    }
+    reloadApp(urlObj.toString())
     return
   }
 

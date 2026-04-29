@@ -505,6 +505,15 @@ async function handleNativeOAuthCallback(url: string) {
     })
 
     if (authComplete === '1') {
+      const token = parsed.searchParams.get('token')
+      if (token) {
+        try {
+          await postAuthJson(NITRO_BASE, '/auth/exchange', { token })
+        } catch (err) {
+          console.warn('Failed to exchange token:', err)
+        }
+      }
+
       const authenticated = await hydrateNativeOAuthSession()
 
       if (authenticated) {

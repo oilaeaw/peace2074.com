@@ -1,13 +1,22 @@
 <script setup lang="ts">
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { useRoute } from 'vue-router'
+
+import { Capacitor } from '@capacitor/core'
 
 const CONSENT_KEY = 'consent-banner-v1'
 const show = ref(false)
 const { t } = useI18n()
+const route = useRoute()
 
 onMounted(() => {
   try {
+    if (Capacitor.isNativePlatform() || route.query.native === '1') {
+      show.value = false
+      return
+    }
+
     if (typeof window !== 'undefined') {
       const saved = window.localStorage.getItem(CONSENT_KEY)
       if (saved === 'accepted') {

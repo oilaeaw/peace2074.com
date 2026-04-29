@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { computed, ref, watch, onMounted, defineAsyncComponent } from 'vue'
-import { useRoute } from 'vue-router'
+import { useRoute, useRouter } from 'vue-router'
+import { useAuthStore } from '@/stores/auth.pinia'
 import AppShell from '@/layouts/AppShell.vue'
 import PlainLayout from '@/layouts/plain.vue'
 
@@ -14,6 +15,7 @@ const showSplash = ref(true)
 const MIN_SPLASH_MS = 300
 const MAX_SPLASH_MS = 1200
 const isNativeRuntime = computed(() => {
+  if (route.query.native === '1') return true
   if (typeof window === 'undefined') return false
   const protocol = String(window.location.protocol || '')
   return (
@@ -82,6 +84,30 @@ function waitForFontsReady(timeoutMs = 800): Promise<void> {
 }
 
 onMounted(async () => {
+  // Token exchange for NativeScript OAuth flows
+  const token = route.query.token as string
+  if (token) {
+    try {
+      const NITRO_BASE = '/api'
+      await fetch(`${NITRO_BASE}/auth/exchange`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ token }),
+        credentials: 'include'
+      })
+      const authStore = useAuthStore()
+      await authStore.hydrateSession(true)
+      
+      // Clean up URL
+      const router = useRouter()
+      const query = { ...route.query }
+      delete query.token
+      router.replace({ query })
+    } catch (err) {
+      console.warn('Failed to exchange native token', err)
+    }
+  }
+
   const splashStartedAt = performance.now()
 
   await Promise.race([

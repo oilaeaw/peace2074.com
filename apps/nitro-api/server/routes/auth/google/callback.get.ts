@@ -1,7 +1,7 @@
 import { defineEventHandler, getQuery, getCookie, deleteCookie, sendRedirect, createError } from 'h3'
 import { OAuth2RequestError } from 'arctic'
 import { getGoogleOAuth, getOAuthCookieOptions, setOAuthNoStoreHeaders, type OAuthUserInfo } from '../../../utils/oauth'
-import { createSession } from '../../../utils/auth'
+import { createSession, requireSecrets, sign } from '../../../utils/auth'
 import { findUserByEmail, findOrCreateOAuthUser } from '../../../utils/users'
 import { applyCors } from '../../../utils/cors'
 
@@ -92,15 +92,23 @@ export default defineEventHandler(async (event) => {
         // Find or create user
         const user = await findOrCreateOAuthUser(oauthInfo)
 
-        // Create session
-        createSession(event, {
+        const payload = {
             id: user.id,
             role: user.role || 'user',
-            name: user.first_name || user.username
-        }, 'google')
+            name: user.first_name || user.username,
+        }
 
-        // Redirect to app (native gets a deep link; web gets the normal URL)
-        return sendRedirect(event, isNative ? `${nativeBase}?authComplete=1` : `${redirectUrl}/`)
+        createSession(event, payload, 'google')
+
+        if (isNative) {
+            const { secret } = requireSecrets({ needPasscode: false })
+            const exp = Date.now() + 5 * 60 * 1000 // 5 minutes validity
+            const token = sign({ ...payload, exp }, secret)
+            return sendRedirect(event, `${nativeBase}?authComplete=1&token=${encodeURIComponent(token)}`)
+        }
+
+        // Redirect to app
+        return sendRedirect(event, `${redirectUrl}/`)
 
     } catch (error: any) {
         console.error('[auth/google/callback] OAuth error:', error)
