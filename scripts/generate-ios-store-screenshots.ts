@@ -41,6 +41,20 @@ const deviceConfigs: DeviceConfig[] = [
         height: 896,
         deviceScaleFactor: 3,
     },
+    {
+        label: '13-inch iPad Pro (2064x2752)',
+        outputPrefix: 'APP_IPAD_PRO_13',
+        width: 1032,
+        height: 1376,
+        deviceScaleFactor: 2,
+    },
+    {
+        label: '12.9-inch iPad Pro (2048x2732)',
+        outputPrefix: 'IPAD_PRO_3GEN_129',
+        width: 1024,
+        height: 1366,
+        deviceScaleFactor: 2,
+    },
 ]
 
 const screenshotTargets: ScreenshotTarget[] = [
