@@ -3,7 +3,7 @@
     <StackLayout class="screen screen-list">
       <Label text="Native Quran reader" class="screen-eyebrow" />
       <Label
-        text="Browse all 114 surahs in a native list. Arabic text is bundled directly into the app so the reader can work without the web shell."
+        text="Browse all 114 surahs in a native list. Arabic text is bundled directly into the app so the reader can work without leaving the native experience."
         class="screen-copy"
         textWrap="true"
       />

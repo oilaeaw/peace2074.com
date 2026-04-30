@@ -31,7 +31,7 @@
           <StackLayout class="screen screen-home">
             <Label text="PEACE2074" class="hero-brand" />
             <Label
-              text="Your NativeScript app now starts with a real native shell. Quran browsing and reading are native-first, and the web experience is still one tap away while we migrate the rest."
+              text="Your NativeScript app now starts with a real native shell. Quran browsing and reading are native-first, and the full app experience is still one tap away while we migrate the rest."
               class="hero-copy"
               textWrap="true"
             />
@@ -64,16 +64,16 @@
 
             <StackLayout class="feature-card feature-card-secondary">
               <Label
-                text="Web fallback still available"
+                text="Full app access is still available"
                 class="feature-title feature-title-secondary"
               />
               <Label
-                text="Bookmarks, login, advanced account flows, and the rest of the app still work through the existing web experience while we move features over piece by piece."
+                text="Bookmarks, login, advanced account flows, and the rest of the app still work through the full app experience while we move features over piece by piece."
                 class="feature-copy feature-copy-secondary"
                 textWrap="true"
               />
               <Button
-                text="Open full web experience"
+                text="Open full app"
                 class="secondary-button"
                 @tap="openLegacyWeb()"
               />
@@ -181,14 +181,14 @@ const currentTitle = computed(() => {
     case 'quran-reader':
       return selectedSuraSummary.value?.transliteration || 'Reader'
     case 'legacy-web':
-      return 'Web experience'
+      return 'Full app'
     default:
       return 'PEACE2074'
   }
 })
 
 const headerActionLabel = computed(() =>
-  currentScreen.value === 'legacy-web' ? 'Home' : 'Web'
+  currentScreen.value === 'legacy-web' ? 'Home' : 'Full app'
 )
 
 function handleHeaderAction() {

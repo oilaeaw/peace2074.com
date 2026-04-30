@@ -26,12 +26,12 @@
 
       <StackLayout class="reader-note">
         <Label
-          text="This first native reader focuses on fast browsing and calm reading. Audio, bookmarks, and account-aware features are still available in the web experience for now."
+          text="This first native reader focuses on fast browsing and calm reading. Audio, bookmarks, and account-aware features are still available in the full app for now."
           class="reader-note-text"
           textWrap="true"
         />
         <Button
-          text="Open this surah in the web experience"
+          text="Open this surah in full app"
           class="secondary-button"
           @tap="openInWeb"
         />
