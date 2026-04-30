@@ -36,6 +36,7 @@
     "db:restore": "bash scripts/backup-db.sh --restore",
     "dev:vite": "vite --strictPort",
     "dev:nitro": "dotenv -- pnpm --filter nitro-api dev",
+    "clean:binaries": "bash scripts/clean-binaries.sh",
     "prebuild": "pnpm sync:quran:data",
     "build": "pnpm sync:quran:data && vite build",
     "preview": "vite preview",
