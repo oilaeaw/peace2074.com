@@ -7,440 +7,354 @@
       :iosOverflowSafeArea="true"
       :iosOverflowSafeAreaEnabled="true"
     >
-      <GridLayout
-        rows="*"
-        class="app-shell"
-        :iosOverflowSafeArea="true"
-        :iosOverflowSafeAreaEnabled="true"
-      >
-        <WebView
-          row="0"
-          class="app-webview"
-          :key="webViewKey"
-          :src="webViewSrc"
-          :iosOverflowSafeArea="true"
-          :iosOverflowSafeAreaEnabled="true"
-          @loadStarted="onLoadStarted"
-          @loadFinished="onLoadFinished"
+      <GridLayout rows="auto,*" class="shell-root">
+        <GridLayout row="0" columns="auto,*,auto" class="shell-header">
+          <Button
+            col="0"
+            text="← Back"
+            class="header-button header-button-secondary"
+            :visibility="canGoBack ? 'visible' : 'collapse'"
+            @tap="goBack"
+          />
+
+          <Label col="1" :text="currentTitle" class="shell-title" />
+
+          <Button
+            col="2"
+            :text="headerActionLabel"
+            class="header-button"
+            @tap="handleHeaderAction"
+          />
+        </GridLayout>
+
+        <ScrollView v-if="currentScreen === 'home'" row="1">
+          <StackLayout class="screen screen-home">
+            <Label text="PEACE2074" class="hero-brand" />
+            <Label
+              text="Your NativeScript app now starts with a real native shell. Quran browsing and reading are native-first, and the web experience is still one tap away while we migrate the rest."
+              class="hero-copy"
+              textWrap="true"
+            />
+
+            <GridLayout columns="*,*" class="stats-row">
+              <StackLayout col="0" class="stat-card stat-card-left">
+                <Label :text="totalSurasLabel" class="stat-value" />
+                <Label text="Bundled surahs" class="stat-label" />
+              </StackLayout>
+
+              <StackLayout col="1" class="stat-card stat-card-right">
+                <Label :text="totalAyatLabel" class="stat-value" />
+                <Label text="Bundled ayat" class="stat-label" />
+              </StackLayout>
+            </GridLayout>
+
+            <StackLayout class="feature-card">
+              <Label text="Native Quran flow" class="feature-title" />
+              <Label
+                text="Open a native surah list, search by chapter number or name, and read bundled Arabic text in a calm full-screen reader."
+                class="feature-copy"
+                textWrap="true"
+              />
+              <Button
+                text="Open native Quran reader"
+                class="primary-button"
+                @tap="openQuranList"
+              />
+            </StackLayout>
+
+            <StackLayout class="feature-card feature-card-secondary">
+              <Label
+                text="Web fallback still available"
+                class="feature-title feature-title-secondary"
+              />
+              <Label
+                text="Bookmarks, login, advanced account flows, and the rest of the app still work through the existing web experience while we move features over piece by piece."
+                class="feature-copy feature-copy-secondary"
+                textWrap="true"
+              />
+              <Button
+                text="Open full web experience"
+                class="secondary-button"
+                @tap="openLegacyWeb()"
+              />
+            </StackLayout>
+
+            <Label
+              text="Next native slices: bookmarks, progress sync, Holy Names, and Tasbeeh."
+              class="roadmap-note"
+              textWrap="true"
+            />
+          </StackLayout>
+        </ScrollView>
+
+        <QuranList
+          v-else-if="currentScreen === 'quran-list'"
+          row="1"
+          @select="openQuranReader"
         />
 
-        <GridLayout
-          v-if="isLoading"
-          rows="auto,auto"
-          class="overlay-card loading-card"
-          :width="loadingCardWidth"
-          verticalAlignment="center"
-          horizontalAlignment="center"
-        >
-          <ActivityIndicator
-            row="0"
-            busy="true"
-            width="36"
-            height="36"
-            color="#0A6B44"
-          />
-          <Label
-            row="1"
-            :text="loadingMessage"
-            class="overlay-text"
-            textAlignment="center"
-          />
-        </GridLayout>
+        <QuranReader
+          v-else-if="currentScreen === 'quran-reader'"
+          row="1"
+          :sura-id="selectedSuraId"
+          @open-web="openReaderInWeb"
+        />
 
-        <GridLayout
-          v-if="errorMessage"
-          rows="auto,auto,auto"
-          class="overlay-card error-card"
-          :width="errorCardWidth"
-          verticalAlignment="center"
-          horizontalAlignment="center"
-        >
-          <Label
-            row="0"
-            text="Unable to load PEACE2074"
-            class="overlay-title"
-            textAlignment="center"
-          />
-          <Label
-            row="1"
-            :text="errorMessage"
-            class="overlay-text"
-            textWrap="true"
-            textAlignment="center"
-          />
-          <Button row="2" text="Retry" class="retry-button" @tap="retryLoad" />
-        </GridLayout>
+        <LegacyWebView v-else row="1" :src="legacyWebUrl" />
       </GridLayout>
     </Page>
   </Frame>
 </template>
 
 <script setup lang="ts">
-import { onMounted, onUnmounted, ref } from 'nativescript-vue'
-import {
-  Utils,
-  Screen,
-  android as androidApp,
-  ios as iosApp,
-  isAndroid,
-  isIOS,
-  type LoadEventData,
-  type WebView as NativeScriptWebView,
-} from '@nativescript/core'
+import { computed, ref } from 'nativescript-vue'
 
-type OAuthProvider = 'google' | 'apple'
+import LegacyWebView from './LegacyWebView.vue'
+import QuranList from './QuranList.vue'
+import QuranReader from './QuranReader.vue'
+import { TOTAL_AYAT, TOTAL_SURAS, getSuraSummary } from '../utils/quran'
 
-const appOrigin = 'https://peace2074.com'
-const nativeCallbackBase = 'peace2074://auth/callback'
-const CARD_SIDE_MARGIN = 32
-const LOADING_CARD_MAX_WIDTH = 360
-const ERROR_CARD_MAX_WIDTH = 420
-const webViewSrc = ref(`${appOrigin}?native=1`)
-const isLoading = ref(true)
-const loadingMessage = ref('Loading PEACE2074...')
-const errorMessage = ref('')
-const webViewKey = ref(0)
-const webView = ref<NativeScriptWebView | null>(null)
-const oauthInProgress = ref<OAuthProvider | null>(null)
-const currentAppUrl = ref(appOrigin)
+type ScreenKey = 'home' | 'quran-list' | 'quran-reader' | 'legacy-web'
 
-let iosOpenUrlObserver: unknown = null
-let androidIntentHandler: ((args: unknown) => void) | null = null
-let safariAuthController: SFSafariViewController | null = null
+const APP_ORIGIN = 'https://peace2074.com'
+const totalSurasLabel = String(TOTAL_SURAS)
+const totalAyatLabel = String(TOTAL_AYAT)
 
-function getResponsiveCardWidth(maxWidth: number) {
-  const availableWidth = Math.max(
-    Screen.mainScreen.widthDIPs - CARD_SIDE_MARGIN,
-    280
+const currentScreen = ref<ScreenKey>('home')
+const screenHistory = ref<ScreenKey[]>([])
+const selectedSuraId = ref<number | null>(null)
+const legacyWebUrl = ref(`${APP_ORIGIN}?native=1`)
+
+function appendNativeFlag(url: string) {
+  try {
+    const parsed = new URL(url, APP_ORIGIN)
+    parsed.searchParams.set('native', '1')
+    return parsed.toString()
+  } catch {
+    const fallback = new URL(APP_ORIGIN)
+    fallback.searchParams.set('native', '1')
+    return fallback.toString()
+  }
+}
+
+function navigateTo(screen: ScreenKey) {
+  if (currentScreen.value === screen) return
+  screenHistory.value.push(currentScreen.value)
+  currentScreen.value = screen
+}
+
+function openQuranList() {
+  navigateTo('quran-list')
+}
+
+function openQuranReader(suraId: number) {
+  selectedSuraId.value = suraId
+  navigateTo('quran-reader')
+}
+
+function openLegacyWeb(path = '/') {
+  legacyWebUrl.value = appendNativeFlag(
+    path.startsWith('http') ? path : `${APP_ORIGIN}${path}`
   )
-  return Math.min(availableWidth, maxWidth)
+  navigateTo('legacy-web')
 }
 
-const loadingCardWidth = getResponsiveCardWidth(LOADING_CARD_MAX_WIDTH)
-const errorCardWidth = getResponsiveCardWidth(ERROR_CARD_MAX_WIDTH)
-
-function buildNativeOAuthUrl(provider: OAuthProvider) {
-  return `${appOrigin}/api/auth/${provider}?ts=${Date.now()}&native=1`
+function openReaderInWeb(suraId: number) {
+  openLegacyWeb(`/quran/${suraId}`)
 }
 
-function getProviderLabel(provider: OAuthProvider) {
-  return provider === 'google' ? 'Google' : 'Apple'
+function goBack() {
+  const previous = screenHistory.value.pop()
+  currentScreen.value = previous || 'home'
 }
 
-function isPeaceAppUrl(url: string) {
-  return url.startsWith(`${appOrigin}/`) || url === appOrigin
-}
+const canGoBack = computed(() => currentScreen.value !== 'home')
+const selectedSuraSummary = computed(() => {
+  if (!selectedSuraId.value) return null
+  return getSuraSummary(selectedSuraId.value)
+})
 
-function resolveOAuthProvider(url: string): OAuthProvider | null {
-  const normalized = String(url || '')
-    .trim()
-    .toLowerCase()
-  if (!normalized) return null
-
-  if (
-    normalized.startsWith(`${appOrigin}/api/auth/google`) ||
-    normalized.startsWith('https://accounts.google.com') ||
-    normalized.startsWith('https://oauth2.googleapis.com') ||
-    normalized.startsWith('https://openidconnect.googleapis.com')
-  ) {
-    return 'google'
-  }
-
-  if (
-    normalized.startsWith(`${appOrigin}/api/auth/apple`) ||
-    normalized.startsWith('https://appleid.apple.com')
-  ) {
-    return 'apple'
-  }
-
-  return null
-}
-
-function isBenignLoadError(error: string) {
-  return /cancel|cancelled|canceled|frame load interrupted|unsupported url/i.test(
-    error
-  )
-}
-
-function updateLoadingState(message = 'Loading PEACE2074...') {
-  loadingMessage.value = message
-  isLoading.value = true
-  errorMessage.value = ''
-}
-
-function finishLoading() {
-  if (!oauthInProgress.value) {
-    loadingMessage.value = 'Loading PEACE2074...'
-    isLoading.value = false
-  }
-}
-
-function rememberCurrentAppUrl(url: string) {
-  if (!isPeaceAppUrl(url)) return
-  if (url.includes('/api/auth/')) return
-  currentAppUrl.value = url
-}
-
-function getPresentingController() {
-  if (!isIOS) return null
-
-  let controller = iosApp.rootController
-  while (controller?.presentedViewController) {
-    controller = controller.presentedViewController
-  }
-
-  return controller
-}
-
-function dismissIosAuthController() {
-  if (!isIOS || !safariAuthController) return
-
-  const controller = safariAuthController
-  safariAuthController = null
-  controller.dismissViewControllerAnimatedCompletion(true, null)
-}
-
-function openNativeOAuth(provider: OAuthProvider) {
-  if (oauthInProgress.value) return
-
-  const url = buildNativeOAuthUrl(provider)
-  oauthInProgress.value = provider
-  updateLoadingState(
-    `Continue ${getProviderLabel(provider)} sign-in in the secure browser...`
-  )
-
-  let opened = false
-
-  if (isIOS) {
-    const presentingController = getPresentingController()
-    const nsUrl = NSURL.URLWithString(url)
-
-    if (presentingController && nsUrl) {
-      safariAuthController = SFSafariViewController.alloc().initWithURL(nsUrl)
-      presentingController.presentViewControllerAnimatedCompletion(
-        safariAuthController,
-        true,
-        null
-      )
-      opened = true
-    }
-  } else {
-    opened = Utils.openUrl(url)
-  }
-
-  if (!opened) {
-    oauthInProgress.value = null
-    loadingMessage.value = 'Loading PEACE2074...'
-    isLoading.value = false
-    errorMessage.value = `Unable to open ${getProviderLabel(provider)} sign-in.`
-  }
-}
-
-function reloadApp(url = appOrigin) {
-  webViewSrc.value = url
-  webViewKey.value += 1
-  updateLoadingState()
-}
-
-function getOAuthErrorMessage(code: string) {
-  switch (code) {
-    case 'google-state-invalid':
-      return 'Google sign-in expired. Please try again.'
-    case 'apple-state-invalid':
-      return 'Apple sign-in expired. Please try again.'
-    case 'apple-not-configured':
-      return 'Apple sign-in is not configured yet.'
-    case 'oauth-state-invalid':
-      return 'The secure sign-in session expired. Please try again.'
+const currentTitle = computed(() => {
+  switch (currentScreen.value) {
+    case 'quran-list':
+      return 'Native Quran'
+    case 'quran-reader':
+      return selectedSuraSummary.value?.transliteration || 'Reader'
+    case 'legacy-web':
+      return 'Web experience'
     default:
-      return 'Secure sign-in did not complete. Please try again.'
-  }
-}
-
-function handleNativeCallback(url: string) {
-  if (!url.startsWith(nativeCallbackBase)) return
-
-  dismissIosAuthController()
-
-  const parsed = new URL(url)
-  const authComplete = parsed.searchParams.get('authComplete')
-  const oauthError = parsed.searchParams.get('oauthError')
-
-  oauthInProgress.value = null
-  loadingMessage.value = 'Loading PEACE2074...'
-
-  if (oauthError) {
-    isLoading.value = false
-    errorMessage.value = getOAuthErrorMessage(oauthError)
-    return
-  }
-
-  if (authComplete === '1') {
-    const token = parsed.searchParams.get('token')
-    let reloadUrl = currentAppUrl.value || appOrigin
-    const urlObj = new URL(reloadUrl)
-    urlObj.searchParams.set('native', '1') // pass native flag
-    if (token) {
-      urlObj.searchParams.set('token', token)
-    }
-    reloadApp(urlObj.toString())
-    return
-  }
-
-  isLoading.value = false
-}
-
-function handleIosOpenUrl(notification: NSNotification) {
-  const userInfo = notification.userInfo
-  const value = userInfo?.objectForKey?.('url')
-  const url = String(value || '')
-
-  if (url) {
-    handleNativeCallback(url)
-  }
-}
-
-function handleAndroidIntent(args: unknown) {
-  const intent = (args as { intent?: android.content.Intent | null })?.intent
-  const url =
-    intent && typeof intent.getDataString === 'function'
-      ? String(intent.getDataString() || '')
-      : ''
-
-  if (url) {
-    handleNativeCallback(url)
-  }
-}
-
-const onLoadStarted = (event: LoadEventData) => {
-  webView.value = event.object as NativeScriptWebView
-
-  const url = String(event.url || '')
-  const provider = resolveOAuthProvider(url)
-
-  if (provider) {
-    webView.value?.stopLoading()
-    openNativeOAuth(provider)
-    return
-  }
-
-  rememberCurrentAppUrl(url)
-  updateLoadingState()
-}
-
-const onLoadFinished = (event: LoadEventData) => {
-  webView.value = event.object as NativeScriptWebView
-
-  if (event.url) {
-    rememberCurrentAppUrl(String(event.url))
-  }
-
-  if (event.error) {
-    if (oauthInProgress.value && isBenignLoadError(event.error)) {
-      return
-    }
-
-    errorMessage.value = event.error
-    loadingMessage.value = 'Loading PEACE2074...'
-    isLoading.value = false
-    return
-  }
-
-  errorMessage.value = ''
-  finishLoading()
-}
-
-const retryLoad = () => {
-  oauthInProgress.value = null
-  dismissIosAuthController()
-  errorMessage.value = ''
-  reloadApp(currentAppUrl.value || appOrigin)
-}
-
-onMounted(() => {
-  if (isIOS) {
-    iosApp.addDelegateHandler(
-      'applicationOpenURLOptions' as keyof UIApplicationDelegate,
-      (_application, url) => {
-        const callbackUrl = String(url?.absoluteString || '')
-        if (callbackUrl) {
-          handleNativeCallback(callbackUrl)
-        }
-        return true
-      }
-    )
-
-    iosOpenUrlObserver = iosApp.addNotificationObserver(
-      'NativeScriptOpenURL',
-      handleIosOpenUrl
-    )
-  }
-
-  if (isAndroid) {
-    androidIntentHandler = (args: unknown) => handleAndroidIntent(args)
-    androidApp.on(androidApp.activityNewIntentEvent, androidIntentHandler)
-    handleAndroidIntent({
-      intent: androidApp.foregroundActivity?.getIntent?.(),
-    })
+      return 'PEACE2074'
   }
 })
 
-onUnmounted(() => {
-  dismissIosAuthController()
+const headerActionLabel = computed(() =>
+  currentScreen.value === 'legacy-web' ? 'Home' : 'Web'
+)
 
-  if (isIOS && iosOpenUrlObserver) {
-    iosApp.removeNotificationObserver(iosOpenUrlObserver, 'NativeScriptOpenURL')
-    iosOpenUrlObserver = null
+function handleHeaderAction() {
+  if (currentScreen.value === 'legacy-web') {
+    currentScreen.value = 'home'
+    screenHistory.value = []
+    return
   }
 
-  if (isAndroid && androidIntentHandler) {
-    androidApp.off(androidApp.activityNewIntentEvent, androidIntentHandler)
-    androidIntentHandler = null
+  if (currentScreen.value === 'quran-reader' && selectedSuraId.value) {
+    openReaderInWeb(selectedSuraId.value)
+    return
   }
-})
+
+  if (currentScreen.value === 'quran-list') {
+    openLegacyWeb('/quran')
+    return
+  }
+
+  openLegacyWeb('/')
+}
 </script>
 
 <style scoped>
 .app-frame,
 .app-page,
-.app-shell,
-.app-webview {
+.shell-root {
   background-color: #08111c;
 }
 
-.overlay-card {
-  padding: 24;
-  background-color: rgba(255, 255, 255, 0.94);
-  border-radius: 24;
-  margin: 16;
+.shell-header {
+  padding: 16 18 14;
+  background-color: #08111c;
+  border-bottom-width: 1;
+  border-bottom-color: rgba(255, 255, 255, 0.08);
 }
 
-.loading-card {
-  min-width: 220;
+.shell-title {
+  font-size: 20;
+  font-weight: 700;
+  color: #ffffff;
+  text-align: center;
+  vertical-align: middle;
 }
 
-.error-card {
-  min-width: 280;
-}
-
-.overlay-title {
-  font-size: 24;
-  color: #0a6b44;
-  margin-bottom: 12;
-}
-
-.overlay-text {
-  font-size: 16;
-  color: #4b5563;
-  margin-top: 12;
-  margin-bottom: 12;
-}
-
-.retry-button {
-  margin-top: 16;
-  padding: 12;
+.header-button {
+  min-width: 78;
+  padding: 10 14;
+  border-radius: 999;
   background-color: #0a6b44;
   color: #ffffff;
+  font-size: 14;
+  font-weight: 700;
+}
+
+.header-button-secondary {
+  background-color: transparent;
+  color: #7dd3a8;
+  border-width: 1;
+  border-color: #7dd3a8;
+}
+
+.screen {
+  padding: 24;
+  background-color: #08111c;
+}
+
+.hero-brand {
+  font-size: 34;
+  font-weight: 800;
+  color: #ffffff;
+}
+
+.hero-copy {
+  margin-top: 12;
+  font-size: 17;
+  line-height: 26;
+  color: #dbe7e3;
+}
+
+.stats-row {
+  margin-top: 20;
+}
+
+.stat-card {
+  padding: 18;
+  border-radius: 22;
+  background-color: rgba(255, 255, 255, 0.08);
+}
+
+.stat-card-left {
+  margin-right: 8;
+}
+
+.stat-card-right {
+  margin-left: 8;
+}
+
+.stat-value {
+  font-size: 24;
+  font-weight: 700;
+  color: #ffffff;
+}
+
+.stat-label {
+  margin-top: 6;
+  font-size: 13;
+  color: #9eb0a8;
+}
+
+.feature-card {
+  margin-top: 18;
+  padding: 22;
+  border-radius: 28;
+  background-color: rgba(255, 255, 255, 0.96);
+}
+
+.feature-card-secondary {
+  background-color: rgba(125, 211, 168, 0.14);
+}
+
+.feature-title {
+  font-size: 22;
+  font-weight: 700;
+  color: #0f172a;
+}
+
+.feature-title-secondary {
+  color: #ffffff;
+}
+
+.feature-copy {
+  margin-top: 10;
+  font-size: 16;
+  line-height: 24;
+  color: #334155;
+}
+
+.feature-copy-secondary {
+  color: #dbe7e3;
+}
+
+.primary-button {
+  margin-top: 16;
+  padding: 14;
   border-radius: 999;
+  background-color: #0a6b44;
+  color: #ffffff;
+  font-weight: 700;
+}
+
+.secondary-button {
+  margin-top: 16;
+  padding: 14;
+  border-radius: 999;
+  background-color: transparent;
+  color: #7dd3a8;
+  border-width: 1;
+  border-color: #7dd3a8;
+  font-weight: 700;
+}
+
+.roadmap-note {
+  margin-top: 18;
+  font-size: 14;
+  line-height: 22;
+  color: #9eb0a8;
 }
 </style>

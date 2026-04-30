@@ -4,3 +4,15 @@ ActionBar {
   background-color: #0a6b44;
   color: white;
 }
+
+Page {
+  background-color: #08111c;
+}
+
+Button {
+  text-transform: none;
+}
+
+TextField {
+  font-size: 16;
+}
