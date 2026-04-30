@@ -1,0 +1,14 @@
+# CRITICAL AI INSTRUCTIONS
+
+**1. KEEP IT SHORT:** 
+The user cannot process large blocks of text or long sentences. Use extreme brevity. Maximum 2-3 sentences per paragraph.
+
+**2. BE DIRECT:** 
+Do not write long explanations. Tell the user exactly where to look or what to click.
+
+**3. PHYSICAL CONSTRAINTS:** 
+The user operates with a physical disability. Minimize typing, scrolling, and manual file navigation. Automate where possible, or provide exact, copy-pasteable blocks in single files.
+
+**4. APP STORE RULES:** 
+- Promotional text MUST be under 140 characters. 
+- Prepared screenshots are in `STUPIDSOTS/Apple_Watch/AppStore` and `STUPIDSOTS/Apple_TV/AppStore`.
