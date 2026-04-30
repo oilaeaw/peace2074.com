@@ -142,6 +142,20 @@ function setPromptExample() {
         </div>
       </section>
 
+      <section class="video-section">
+        <h2 class="section-title">{{ t('pages.home.video.title', 'App Preview') }}</h2>
+        <div class="video-container">
+          <iframe 
+            src="https://www.youtube.com/embed/?enablejsapi=1&rel=0&autoplay=0&playsinline=1&fs=1" 
+            title="PEACE2074 Video" 
+            frameborder="0" 
+            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+            allowfullscreen
+            class="responsive-iframe"
+          ></iframe>
+        </div>
+      </section>
+
       <section class="screenshots-section">
         <h2 class="section-title">Available on Apple TV & Apple Watch</h2>
         <div class="screenshots-container">
@@ -310,6 +324,31 @@ function setPromptExample() {
   margin: -1px;
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
+  border: 0;
+}
+
+.video-section {
+  grid-column: 1 / -1;
+  border: 1px solid #e4e6eb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+.video-container {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 Aspect Ratio */
+  border-radius: 12px;
+  overflow: hidden;
+  background: #000;
+}
+.responsive-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
   border: 0;
 }
 
