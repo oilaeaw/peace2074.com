@@ -1,9 +1,8 @@
 <template>
   <ScrollView>
     <StackLayout class="screen screen-list">
-      <Label text="Native Quran reader" class="screen-eyebrow" />
       <Label
-        text="Browse all 114 surahs in a native list. Arabic text is bundled directly into the app so the reader can work without leaving the native experience."
+        text="Search by number, transliteration, or English name."
         class="screen-copy"
         textWrap="true"
       />
@@ -100,15 +99,8 @@ function selectSura(suraId: number) {
   background-color: #08111c;
 }
 
-.screen-eyebrow {
-  font-size: 14;
-  color: #7dd3a8;
-  text-transform: uppercase;
-  letter-spacing: 1.2;
-}
-
 .screen-copy {
-  margin-top: 12;
+  margin-top: 2;
   font-size: 16;
   color: #dbe7e3;
 }

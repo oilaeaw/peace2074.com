@@ -24,19 +24,6 @@
         />
       </StackLayout>
 
-      <StackLayout class="reader-note">
-        <Label
-          text="This first native reader focuses on fast browsing and calm reading. Audio, bookmarks, and account-aware features are still available in the full app for now."
-          class="reader-note-text"
-          textWrap="true"
-        />
-        <Button
-          text="Open this surah in full app"
-          class="secondary-button"
-          @tap="openInWeb"
-        />
-      </StackLayout>
-
       <StackLayout>
         <GridLayout
           v-for="verse in sura.verses"
@@ -76,19 +63,10 @@ const props = defineProps<{
   suraId: number | null
 }>()
 
-const emit = defineEmits<{
-  (e: 'open-web', suraId: number): void
-}>()
-
 const sura = computed(() => {
   if (!props.suraId) return null
   return getSura(props.suraId)
 })
-
-function openInWeb() {
-  if (!props.suraId) return
-  emit('open-web', props.suraId)
-}
 </script>
 
 <style scoped>
@@ -125,31 +103,6 @@ function openInWeb() {
   margin-top: 10;
   font-size: 13;
   color: #64748b;
-}
-
-.reader-note {
-  margin-top: 18;
-  padding: 20;
-  border-radius: 22;
-  background-color: rgba(125, 211, 168, 0.15);
-}
-
-.reader-note-text {
-  font-size: 14;
-  color: #dbe7e3;
-}
-
-.secondary-button {
-  margin-top: 14;
-  padding: 14;
-  border-radius: 999;
-  background-color: transparent;
-  color: #7dd3a8;
-  border-width: 1;
-  border-color: #7dd3a8;
-  font-size: 17;
-  font-weight: 700;
-  opacity: 1;
 }
 
 .ayah-card {
