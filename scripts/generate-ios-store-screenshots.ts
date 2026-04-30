@@ -28,10 +28,10 @@ const outputDir = path.join(repoRoot, 'ios', 'App', 'fastlane', 'screenshots', '
 
 const deviceConfigs: DeviceConfig[] = [
     {
-        label: 'Large iPhone (1284x2778)',
-        outputPrefix: 'APP_IPHONE_69',
-        width: 428,
-        height: 926,
+        label: '6.7-inch iPhone (1290x2796)',
+        outputPrefix: 'APP_IPHONE_67',
+        width: 430,
+        height: 932,
         deviceScaleFactor: 3,
     },
     {
