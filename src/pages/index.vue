@@ -141,6 +141,28 @@ function setPromptExample() {
           <p class="ai-response-text">{{ aiResponse }}</p>
         </div>
       </section>
+
+      <section class="screenshots-section">
+        <h2 class="section-title">Available on Apple TV & Apple Watch</h2>
+        <div class="screenshots-container">
+          <div class="screenshot-group tv">
+            <h3>Apple TV</h3>
+            <div class="images">
+              <img src="/screenshots/tv-1.png" alt="Apple TV Home" loading="lazy" />
+              <img src="/screenshots/tv-2.png" alt="Apple TV Player" loading="lazy" />
+              <img src="/screenshots/tv-3.png" alt="Apple TV Bookmarks" loading="lazy" />
+            </div>
+          </div>
+          <div class="screenshot-group watch">
+            <h3>Apple Watch</h3>
+            <div class="images">
+              <img src="/screenshots/watch-1.png" alt="Apple Watch Home" loading="lazy" />
+              <img src="/screenshots/watch-2.png" alt="Apple Watch Player" loading="lazy" />
+              <img src="/screenshots/watch-3.png" alt="Apple Watch Bookmarks" loading="lazy" />
+            </div>
+          </div>
+        </div>
+      </section>
     </div>
   </q-page>
 </template>
@@ -289,6 +311,49 @@ function setPromptExample() {
   overflow: hidden;
   clip: rect(0, 0, 0, 0);
   border: 0;
+}
+
+.screenshots-section {
+  grid-column: 1 / -1;
+  border: 1px solid #e4e6eb;
+  border-radius: 16px;
+  padding: 1.5rem;
+  background: #fff;
+  box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
+}
+.section-title {
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+  margin-bottom: 1.5rem;
+  margin-top: 0;
+}
+.screenshots-container {
+  display: flex;
+  flex-direction: column;
+  gap: 2rem;
+}
+.screenshot-group h3 {
+  font-size: 1.2rem;
+  margin-bottom: 1rem;
+  color: #334155;
+  font-weight: 500;
+}
+.screenshot-group .images {
+  display: flex;
+  gap: 1rem;
+  overflow-x: auto;
+  padding-bottom: 1rem;
+}
+.screenshot-group.tv img {
+  width: 320px;
+  border-radius: 8px;
+  border: 1px solid #e2e8f0;
+}
+.screenshot-group.watch img {
+  width: 160px;
+  border-radius: 16px;
+  border: 1px solid #e2e8f0;
 }
 
 @media (max-width: 640px) {
