@@ -110,7 +110,6 @@ function selectSura(suraId: number) {
 .screen-copy {
   margin-top: 12;
   font-size: 16;
-  line-height: 24;
   color: #dbe7e3;
 }
 

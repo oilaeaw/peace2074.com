@@ -136,7 +136,6 @@ function openInWeb() {
 
 .reader-note-text {
   font-size: 14;
-  line-height: 22;
   color: #dbe7e3;
 }
 
@@ -148,6 +147,9 @@ function openInWeb() {
   color: #7dd3a8;
   border-width: 1;
   border-color: #7dd3a8;
+  font-size: 17;
+  font-weight: 700;
+  opacity: 1;
 }
 
 .ayah-card {

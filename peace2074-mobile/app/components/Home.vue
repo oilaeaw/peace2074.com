@@ -242,6 +242,7 @@ function handleHeaderAction() {
   color: #ffffff;
   font-size: 14;
   font-weight: 700;
+  opacity: 1;
 }
 
 .header-button-secondary {
@@ -265,7 +266,6 @@ function handleHeaderAction() {
 .hero-copy {
   margin-top: 12;
   font-size: 17;
-  line-height: 26;
   color: #dbe7e3;
 }
 
@@ -323,7 +323,6 @@ function handleHeaderAction() {
 .feature-copy {
   margin-top: 10;
   font-size: 16;
-  line-height: 24;
   color: #334155;
 }
 
@@ -337,7 +336,10 @@ function handleHeaderAction() {
   border-radius: 999;
   background-color: #0a6b44;
   color: #ffffff;
+  font-size: 17;
   font-weight: 700;
+  border-width: 0;
+  opacity: 1;
 }
 
 .secondary-button {
@@ -348,13 +350,14 @@ function handleHeaderAction() {
   color: #7dd3a8;
   border-width: 1;
   border-color: #7dd3a8;
+  font-size: 17;
   font-weight: 700;
+  opacity: 1;
 }
 
 .roadmap-note {
   margin-top: 18;
   font-size: 14;
-  line-height: 22;
   color: #9eb0a8;
 }
 </style>
