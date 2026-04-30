@@ -1,4 +1,4 @@
-import { chromium, devices, type Page } from '@playwright/test'
+import { chromium, type Page } from '@playwright/test'
 import { promises as fs } from 'node:fs'
 import path from 'node:path'
 import { fileURLToPath } from 'node:url'
@@ -12,10 +12,10 @@ type ScreenshotTarget = {
 
 type DeviceConfig = {
     label: string
-    profileName: keyof typeof devices
     outputPrefix: string
     width: number
     height: number
+    deviceScaleFactor: number
 }
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
@@ -28,25 +28,25 @@ const outputDir = path.join(repoRoot, 'ios', 'App', 'fastlane', 'screenshots', '
 
 const deviceConfigs: DeviceConfig[] = [
     {
-        label: '6.5-inch iPhone',
-        profileName: 'iPhone 14 Plus',
-        outputPrefix: 'APP_IPHONE_65',
-        width: 428,
-        height: 926,
+        label: '6.9-inch iPhone',
+        outputPrefix: 'APP_IPHONE_69',
+        width: 440,
+        height: 956,
+        deviceScaleFactor: 3,
     },
     {
-        label: '13-inch iPad',
-        profileName: 'iPad Pro 11',
-        outputPrefix: 'IPAD_PRO_3GEN_129',
-        width: 1032,
-        height: 1376,
+        label: '6.5-inch iPhone',
+        outputPrefix: 'APP_IPHONE_65',
+        width: 430,
+        height: 932,
+        deviceScaleFactor: 3,
     },
 ]
 
 const screenshotTargets: ScreenshotTarget[] = [
     { slug: '01-home', route: '/', selector: 'h1', delayMs: 600 },
     { slug: '02-quran-list', route: '/quran', selector: 'a.sura-card', delayMs: 800 },
-    { slug: '03-quran-reader', route: '/quran/1/reader', selector: '.arabic-text', delayMs: 1200 },
+    { slug: '03-recitation', route: '/quran/1/reader', selector: '.arabic-text', delayMs: 1200 },
 ]
 
 let resolvedBaseUrl: string | null = configuredBaseUrl ?? null
@@ -80,15 +80,9 @@ async function main() {
 
     try {
         for (const deviceConfig of deviceConfigs) {
-            const device = devices[deviceConfig.profileName]
-            if (!device) {
-                throw new Error(`Missing Playwright device profile: ${deviceConfig.profileName}`)
-            }
-
-            console.log(`capturing ${deviceConfig.label} via ${deviceConfig.profileName}`)
+            console.log(`capturing ${deviceConfig.label}`)
 
             const context = await browser.newContext({
-                ...device,
                 viewport: {
                     width: deviceConfig.width,
                     height: deviceConfig.height,
@@ -97,6 +91,9 @@ async function main() {
                     width: deviceConfig.width,
                     height: deviceConfig.height,
                 },
+                deviceScaleFactor: deviceConfig.deviceScaleFactor,
+                isMobile: true,
+                hasTouch: true,
                 locale: 'en-US',
                 colorScheme: 'light',
             })
