@@ -42,6 +42,13 @@ const deviceConfigs: DeviceConfig[] = [
         deviceScaleFactor: 3,
     },
     {
+        label: '3.5-inch iPhone (640x920)',
+        outputPrefix: 'APP_IPHONE_35',
+        width: 320,
+        height: 460,
+        deviceScaleFactor: 2,
+    },
+    {
         label: '13-inch iPad Pro (2064x2752)',
         outputPrefix: 'APP_IPAD_PRO_13',
         width: 1032,
