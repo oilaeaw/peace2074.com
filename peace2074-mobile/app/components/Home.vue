@@ -31,7 +31,7 @@
           <StackLayout class="screen screen-home">
             <Label text="PEACE2074" class="hero-brand" />
             <Label
-              text="Your NativeScript app now starts with a real native shell. Quran browsing and reading are native-first, and the full app experience is still one tap away while we migrate the rest."
+              text="Your NativeScript app now starts with a real native shell. Quran browsing and reading are native-first, with the rest of PEACE2074 moving over piece by piece."
               class="hero-copy"
               textWrap="true"
             />
@@ -62,23 +62,6 @@
               />
             </StackLayout>
 
-            <StackLayout class="feature-card feature-card-secondary">
-              <Label
-                text="Full app access is still available"
-                class="feature-title feature-title-secondary"
-              />
-              <Label
-                text="Bookmarks, login, advanced account flows, and the rest of the app still work through the full app experience while we move features over piece by piece."
-                class="feature-copy feature-copy-secondary"
-                textWrap="true"
-              />
-              <Button
-                text="Open full app"
-                class="secondary-button"
-                @tap="openLegacyWeb()"
-              />
-            </StackLayout>
-
             <Label
               text="Next native slices: bookmarks, progress sync, Holy Names, and Tasbeeh."
               class="roadmap-note"
@@ -86,6 +69,13 @@
             />
           </StackLayout>
         </ScrollView>
+
+        <AppInfo
+          v-else-if="currentScreen === 'info'"
+          row="1"
+          @open-full-app="openLegacyWeb()"
+          @open-native-quran="openQuranList"
+        />
 
         <QuranList
           v-else-if="currentScreen === 'quran-list'"
@@ -109,12 +99,13 @@
 <script setup lang="ts">
 import { computed, ref } from 'nativescript-vue'
 
+import AppInfo from './AppInfo.vue'
 import LegacyWebView from './LegacyWebView.vue'
 import QuranList from './QuranList.vue'
 import QuranReader from './QuranReader.vue'
 import { TOTAL_AYAT, TOTAL_SURAS, getSuraSummary } from '../utils/quran'
 
-type ScreenKey = 'home' | 'quran-list' | 'quran-reader' | 'legacy-web'
+type ScreenKey = 'home' | 'info' | 'quran-list' | 'quran-reader' | 'legacy-web'
 
 const APP_ORIGIN = 'https://peace2074.com'
 const totalSurasLabel = String(TOTAL_SURAS)
@@ -147,6 +138,10 @@ function openQuranList() {
   navigateTo('quran-list')
 }
 
+function openInfo() {
+  navigateTo('info')
+}
+
 function openQuranReader(suraId: number) {
   selectedSuraId.value = suraId
   navigateTo('quran-reader')
@@ -176,6 +171,8 @@ const selectedSuraSummary = computed(() => {
 
 const currentTitle = computed(() => {
   switch (currentScreen.value) {
+    case 'info':
+      return 'About this build'
     case 'quran-list':
       return 'Native Quran'
     case 'quran-reader':
@@ -187,14 +184,26 @@ const currentTitle = computed(() => {
   }
 })
 
-const headerActionLabel = computed(() =>
-  currentScreen.value === 'legacy-web' ? 'Home' : 'Full app'
-)
+const headerActionLabel = computed(() => {
+  if (currentScreen.value === 'legacy-web') return 'Home'
+  if (currentScreen.value === 'home') return 'About'
+  return 'Full app'
+})
 
 function handleHeaderAction() {
   if (currentScreen.value === 'legacy-web') {
     currentScreen.value = 'home'
     screenHistory.value = []
+    return
+  }
+
+  if (currentScreen.value === 'home') {
+    openInfo()
+    return
+  }
+
+  if (currentScreen.value === 'info') {
+    openLegacyWeb('/')
     return
   }
 
