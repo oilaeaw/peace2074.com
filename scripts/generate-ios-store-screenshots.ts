@@ -10,12 +10,18 @@ type ScreenshotTarget = {
     delayMs: number
 }
 
+type DeviceAlias = {
+    outputPrefix: string
+    slugs?: string[]
+}
+
 type DeviceConfig = {
     label: string
     outputPrefix: string
     width: number
     height: number
     deviceScaleFactor: number
+    aliases?: DeviceAlias[]
 }
 
 const scriptDir = path.dirname(fileURLToPath(import.meta.url))
@@ -33,6 +39,7 @@ const deviceConfigs: DeviceConfig[] = [
         width: 430,
         height: 932,
         deviceScaleFactor: 3,
+        aliases: [{ outputPrefix: 'APP_IPHONE_69', slugs: ['01-home'] }],
     },
     {
         label: '6.5-inch iPhone (1242x2688)',
@@ -150,6 +157,18 @@ async function main() {
                     const outputPath = path.join(outputDir, `${deviceConfig.outputPrefix}-${target.slug}.png`)
                     await page.screenshot({ path: outputPath, fullPage: false })
                     console.log(`saved ${path.relative(repoRoot, outputPath)}`)
+
+                    if (deviceConfig.aliases) {
+                        for (const alias of deviceConfig.aliases) {
+                            if (alias.slugs && !alias.slugs.includes(target.slug)) {
+                                continue
+                            }
+
+                            const aliasPath = path.join(outputDir, `${alias.outputPrefix}-${target.slug}.png`)
+                            await fs.copyFile(outputPath, aliasPath)
+                            console.log(`saved ${path.relative(repoRoot, aliasPath)}`)
+                        }
+                    }
                 }
             } finally {
                 await context.close()
