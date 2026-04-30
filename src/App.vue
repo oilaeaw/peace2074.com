@@ -85,7 +85,9 @@ function waitForFontsReady(timeoutMs = 800): Promise<void> {
 
 onMounted(async () => {
   // Token exchange for NativeScript OAuth flows
-  const token = route.query.token as string
+  const searchParams = new URLSearchParams(window.location.search)
+  const token = searchParams.get('token')
+  
   if (token) {
     try {
       const NITRO_BASE = '/api'
@@ -98,13 +100,12 @@ onMounted(async () => {
       const authStore = useAuthStore()
       await authStore.hydrateSession(true)
       
-      // Clean up URL
-      const router = useRouter()
-      const query = { ...route.query }
-      delete query.token
-      router.replace({ query })
+      // Clean up URL without relying on Vue Router inside an async hook
+      const newUrl = new URL(window.location.href)
+      newUrl.searchParams.delete('token')
+      window.history.replaceState({}, '', newUrl.toString())
     } catch (err) {
-      console.warn('Failed to exchange native token', err)
+      // Ignore silently in production
     }
   }
 
