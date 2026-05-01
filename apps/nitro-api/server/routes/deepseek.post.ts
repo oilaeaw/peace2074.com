@@ -15,7 +15,7 @@ type DeepSeekRequestBody = {
     max_tokens?: number
 }
 
-const DEFAULT_MODEL = '@google/gemini-3.1-flash-lite'
+const DEFAULT_MODEL = '@cf/moonshotai/kimi-k2.6'
 const MAX_TOKENS_CAP = 800
 const RATE_LIMIT_MAX = 15       // requests per window per IP
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
