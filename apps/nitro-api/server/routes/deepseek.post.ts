@@ -62,10 +62,7 @@ export default defineEventHandler(async (event) => {
         throw createError({ statusCode: 403, statusMessage: 'Access denied.' })
     }
 
-    // Require login if env flag set
-    if (process.env.DEEPSEEK_REQUIRE_AUTH === 'true' && !session) {
-        throw createError({ statusCode: 401, statusMessage: 'Login required to use Ask AI.' })
-    }
+    // Authentication removed: AI is completely free for everyone to use.
 
     // Rate limit by IP
     if (isRateLimited(clientIp)) {
