@@ -69,18 +69,7 @@ export default defineEventHandler(async (event) => {
     }
     const config = useRuntimeConfig()
 
-    const apiKey = (config as any).deepseekApiKey
-        || (config as any).deepSeekApi
-        || process.env.DEEPSEEK_API_KEY
-        || process.env.NITRO_DEEPSEEK_API_KEY
-        || process.env.deepSeekApi
-
-    if (!apiKey || String(apiKey).trim() === '') {
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'Cloudflare AI API key missing. Set DEEPSEEK_API_KEY in the environment.',
-        })
-    }
+    // API Key checks removed because Cloudflare Bindings do not require them!
 
     const body = (await readBody<DeepSeekRequestBody>(event)) || {}
 
@@ -109,40 +98,33 @@ Always be respectful, concise, and spiritually thoughtful.`,
     const userMessages = body.messages!.filter(m => m.role !== 'system')
     const finalModel = body.model || DEFAULT_MODEL
     
-    // Cloudflare Workers AI raw REST API endpoint
-    const url = `https://api.cloudflare.com/client/v4/accounts/f8e411adbc0ac8c96ac4e00beaacd9cd/ai/run/${finalModel}`;
+    // Use the native Cloudflare Workers AI binding provided by the user's snippet.
+    // This requires ZERO API keys or authentication.
+    const aiBinding = (event.context as any)?.cloudflare?.env?.AI
+    
+    if (!aiBinding) {
+        throw createError({
+            statusCode: 500,
+            statusMessage: 'Cloudflare AI binding not found in environment context.',
+        })
+    }
 
     try {
-        const response = await fetch(url, {
-            method: 'POST',
-            headers: {
-                'Authorization': `Bearer ${String(apiKey).trim()}`,
-                'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({
-                messages: [SYSTEM_PROMPT, ...userMessages],
-                temperature: body.temperature ?? 0.7,
-                max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP),
-            })
+        const response = await aiBinding.run(finalModel, {
+            messages: [SYSTEM_PROMPT, ...userMessages],
+            temperature: body.temperature ?? 0.7,
+            max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
         });
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(errorText);
-        }
-
-        const data = await response.json();
-        
-        // Cloudflare returns the text in data.result.response
-        // We wrap it in a structure the frontend expects
         return {
             id: 'cloudflare-ai-' + Date.now(),
             model: finalModel,
             message: {
                 role: 'assistant',
-                content: data.result?.response || ''
+                // Depending on the model, the response might be in response or directly the object
+                content: response?.response || response || ''
             },
-            raw: data
+            raw: response
         }
     } catch (error: any) {
         const statusCode = error?.status ?? 500
