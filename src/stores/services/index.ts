@@ -153,6 +153,7 @@ export async function sendDeepSeekChat(payload: DeepSeekPayload) {
   try {
     const res = await fetch(resolveNitroUrl("/deepseek"), {
       method: "POST",
+      credentials: "include",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
     });
