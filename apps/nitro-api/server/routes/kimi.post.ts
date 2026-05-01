@@ -114,13 +114,13 @@ Always be respectful, concise, and spiritually thoughtful.`,
         } 
         // 2. Fallback to Cloudflare AI REST API if on Netlify or nitro dev
         else {
-            const apiKey = config.kimiApiKey;
-            const baseUrl = config.kimiBaseUrl || 'https://api.moonshot.cn/v1';
+            const apiKey = config.kimiApiKey || process.env.KIMI_API_KEY || process.env.NITRO_KIMI_API_KEY;
+            const baseUrl = config.kimiBaseUrl || process.env.KIMI_BASE_URL || process.env.NITRO_KIMI_BASE_URL || 'https://api.moonshot.cn/v1';
 
-            if (!apiKey) {
+            if (!apiKey || apiKey === 'PASTE_YOUR_CLOUDFLARE_API_TOKEN_HERE' || apiKey.includes('your-kimi-api-key')) {
                 throw createError({
                     statusCode: 500,
-                    statusMessage: 'Cloudflare AI binding not found, AND KIMI_API_KEY is not configured in the environment for fallback.',
+                    statusMessage: 'Cloudflare AI binding not found, AND a valid KIMI_API_KEY is not configured in the environment for fallback. Please set a valid Cloudflare API Token.',
                 });
             }
 

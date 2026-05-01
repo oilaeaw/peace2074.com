@@ -25,8 +25,8 @@ export default defineNitroConfig({
     runtimeConfig: {
         // Secrets are automatically read from corresponding
         // environment variables e.g. NITRO_KIMI_API_KEY
-        kimiApiKey: "",
-        kimiBaseUrl: "",
+        kimiApiKey: process.env.KIMI_API_KEY || "",
+        kimiBaseUrl: process.env.KIMI_BASE_URL || "",
         vapidPublicKey: "",
         vapidPrivateKey: "",
         vapidSubject: "",
