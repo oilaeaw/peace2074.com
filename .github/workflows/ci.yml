@@ -26,6 +26,9 @@ jobs:
       - name: Check locales
         run: pnpm check:locales
 
+      - name: Create .env
+        run: cp .env.example .env
+
       - name: Install Playwright Browsers
         run: pnpm exec playwright install --with-deps
 

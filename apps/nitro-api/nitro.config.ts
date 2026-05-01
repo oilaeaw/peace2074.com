@@ -1,6 +1,6 @@
 import { defineNitroConfig } from "nitropack";
 
-const DEFAULT_PORT = 3000;
+const DEFAULT_PORT = 3002;
 // NETLIFY_BUILD is set during Netlify build command
 const isNetlifyBuild = process.env.NETLIFY_BUILD === 'true';
 
