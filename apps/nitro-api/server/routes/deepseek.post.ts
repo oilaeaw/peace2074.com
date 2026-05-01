@@ -1,5 +1,4 @@
 import { createError, defineEventHandler, getHeader, readBody, setResponseStatus } from 'h3'
-import OpenAI from 'openai'
 import { applyCors } from '../utils/cors'
 import { readSession } from '../utils/auth'
 
@@ -79,23 +78,9 @@ export default defineEventHandler(async (event) => {
     if (!apiKey || String(apiKey).trim() === '') {
         throw createError({
             statusCode: 500,
-            statusMessage: 'DeepSeek API key missing. Set DEEPSEEK_API_KEY (or NITRO_DEEPSEEK_API_KEY) in the environment.',
+            statusMessage: 'Cloudflare AI API key missing. Set DEEPSEEK_API_KEY in the environment.',
         })
     }
-
-    // Use custom endpoint if specified, otherwise default to DeepSeek's public API
-    const baseURL =
-        (config as any).deepseekBaseUrl ||
-        (config as any).deepSeekBaseUrl ||
-        process.env.DEEPSEEK_BASE_URL ||
-        process.env.NITRO_DEEPSEEK_BASE_URL ||
-        process.env.deepSeekBaseUrl ||
-        'https://api.cloudflare.com/client/v4/accounts/f8e411adbc0ac8c96ac4e00beaacd9cd/ai/v1'
-
-    const client = new OpenAI({
-        apiKey: String(apiKey).trim(),
-        baseURL: String(baseURL).trim(),
-    })
 
     const body = (await readBody<DeepSeekRequestBody>(event)) || {}
 
@@ -122,29 +107,47 @@ Always be respectful, concise, and spiritually thoughtful.`,
 
     // Strip any system messages from the client to prevent prompt injection, then prepend ours
     const userMessages = body.messages!.filter(m => m.role !== 'system')
+    const finalModel = body.model || DEFAULT_MODEL
+    
+    // Cloudflare Workers AI raw REST API endpoint
+    const url = `https://api.cloudflare.com/client/v4/accounts/f8e411adbc0ac8c96ac4e00beaacd9cd/ai/run/${finalModel}`;
 
     try {
-        const completion = await client.chat.completions.create({
-            model: body.model || DEFAULT_MODEL,
-            messages: [SYSTEM_PROMPT, ...userMessages],
-            temperature: body.temperature ?? 0.7,
-            max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP),
-        })
+        const response = await fetch(url, {
+            method: 'POST',
+            headers: {
+                'Authorization': `Bearer ${String(apiKey).trim()}`,
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                messages: [SYSTEM_PROMPT, ...userMessages],
+                temperature: body.temperature ?? 0.7,
+                max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP),
+            })
+        });
 
-        const message = completion.choices?.[0]?.message
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(errorText);
+        }
 
+        const data = await response.json();
+        
+        // Cloudflare returns the text in data.result.response
+        // We wrap it in a structure the frontend expects
         return {
-            id: completion.id,
-            created: completion.created,
-            model: completion.model,
-            message,
-            usage: completion.usage,
-            raw: completion.choices,
+            id: 'cloudflare-ai-' + Date.now(),
+            model: finalModel,
+            message: {
+                role: 'assistant',
+                content: data.result?.response || ''
+            },
+            raw: data
         }
     } catch (error: any) {
         const statusCode = error?.status ?? 500
-        const message = error?.message || 'DeepSeek request failed'
-        console.error(`[DeepSeek] request failed with status ${statusCode}:`, message)
+        const message = error?.message || 'Cloudflare AI request failed'
+        console.error(`[Cloudflare AI] request failed with status ${statusCode}:`, message)
 
         setResponseStatus(event, statusCode)
 
@@ -152,7 +155,7 @@ Always be respectful, concise, and spiritually thoughtful.`,
             error: {
                 message,
                 status: statusCode,
-                data: error?.error?.message,
+                data: message,
             }
         }
     }
