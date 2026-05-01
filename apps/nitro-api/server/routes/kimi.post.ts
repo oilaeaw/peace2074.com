@@ -97,39 +97,52 @@ Always be respectful, concise, and spiritually thoughtful.`,
     // Strip any system messages from the client to prevent prompt injection, then prepend ours
     const userMessages = body.messages!.filter(m => m.role !== 'system')
     const finalModel = body.model || DEFAULT_MODEL
-    
-    // Use the native Cloudflare Workers AI binding provided by the user's snippet.
-    // This requires ZERO API keys or authentication.
-    const aiBinding = (event.context as any)?.cloudflare?.env?.AI
-    
-    if (!aiBinding) {
+    const apiKey = config.kimiApiKey
+    const baseUrl = config.kimiBaseUrl || 'https://api.moonshot.cn/v1'
+
+    if (!apiKey) {
         throw createError({
             statusCode: 500,
-            statusMessage: 'Cloudflare AI binding not found in environment context.',
+            statusMessage: 'KIMI_API_KEY is not configured in the environment.',
         })
     }
 
     try {
-        const response = await aiBinding.run(finalModel, {
-            messages: [SYSTEM_PROMPT, ...userMessages],
-            temperature: body.temperature ?? 0.7,
-            max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
+        const response = await fetch(`${baseUrl}/chat/completions`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer ${apiKey}`,
+            },
+            body: JSON.stringify({
+                model: finalModel,
+                messages: [SYSTEM_PROMPT, ...userMessages],
+                temperature: body.temperature ?? 0.7,
+                max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
+            })
         });
 
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`AI request failed with status ${response.status}: ${errorText}`);
+        }
+
+        const data = await response.json() as any;
+
         return {
-            id: 'cloudflare-ai-' + Date.now(),
+            id: 'kimi-ai-' + Date.now(),
             model: finalModel,
             message: {
                 role: 'assistant',
-                // Depending on the model, the response might be in response or directly the object
-                content: response?.response || response || ''
+                // Standard OpenAI response format
+                content: data?.choices?.[0]?.message?.content || data?.response || ''
             },
-            raw: response
+            raw: data
         }
     } catch (error: any) {
         const statusCode = error?.status ?? 500
-        const message = error?.message || 'Cloudflare AI request failed'
-        console.error(`[Cloudflare AI] request failed with status ${statusCode}:`, message)
+        const message = error?.message || 'AI request failed'
+        console.error(`[AI] request failed with status ${statusCode}:`, message)
 
         setResponseStatus(event, statusCode)
 
