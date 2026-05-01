@@ -1,0 +1,85 @@
+{
+  "buildCommand" : {
+    "command" : "build",
+    "skipDependencies" : false,
+    "style" : "buildAndRun"
+  },
+  "configuredTargets" : [
+    {
+      "guid" : "1479b19ed4611146bbc5043339d79eb675d292f74331dd4584566b72d42df8c1"
+    }
+  ],
+  "containerPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/peace2074TV.xcodeproj",
+  "continueBuildingAfterErrors" : false,
+  "dependencyScope" : "workspace",
+  "enableIndexBuildArena" : false,
+  "hideShellScriptEnvironment" : false,
+  "parameters" : {
+    "action" : "install",
+    "activeArchitecture" : "undefined_arch",
+    "activeRunDestination" : {
+      "disableOnlyActiveArch" : true,
+      "platform" : "appletvos",
+      "sdk" : "appletvos26.2",
+      "sdkVariant" : "appletvos",
+      "supportedArchitectures" : [
+        "armv4t",
+        "armv5",
+        "armv6",
+        "armv7",
+        "armv7f",
+        "armv7s",
+        "armv7k",
+        "arm64",
+        "arm64e"
+      ],
+      "targetArchitecture" : "undefined_arch"
+    },
+    "arenaInfo" : {
+      "buildIntermediatesPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex",
+      "buildProductsPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Products",
+      "derivedDataPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData",
+      "indexDataStoreFolderPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Index.noindex/DataStore",
+      "indexEnableDataStore" : true,
+      "indexPCHPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Index.noindex/PrecompiledHeaders",
+      "pchPath" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/PrecompiledHeaders"
+    },
+    "configurationName" : "Release",
+    "overrides" : {
+      "commandLine" : {
+        "table" : {
+          "CODE_SIGNING_ALLOWED" : "NO"
+        }
+      },
+      "synthesized" : {
+        "table" : {
+          "ACTION" : "install",
+          "ASSET_PACK_FOLDER_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/InstallationBuildProductsLocation/OnDemandResources",
+          "ASSETCATALOG_COMPILER_FLATTENED_APP_ICON_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/ProductIcon.png",
+          "DEPLOYMENT_LOCATION" : "YES",
+          "DEPLOYMENT_POSTPROCESSING" : "YES",
+          "DSTROOT" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/InstallationBuildProductsLocation",
+          "EMBED_ASSET_PACKS_IN_PRODUCT_BUNDLE" : "NO",
+          "ENABLE_PREVIEWS" : "NO",
+          "ENABLE_SIGNATURE_AGGREGATION" : "YES",
+          "ENABLE_XOJIT_PREVIEWS" : "YES",
+          "INDEX_ENABLE_DATA_STORE" : "NO",
+          "MESSAGES_APPLICATION_EXTENSION_SUPPORT_FOLDER_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/MessagesApplicationExtensionSupport",
+          "MESSAGES_APPLICATION_SUPPORT_FOLDER_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/MessagesApplicationSupport",
+          "OBJROOT" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath",
+          "SHARED_PRECOMPS_DIR" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/PrecompiledHeaders",
+          "SIGNATURE_METADATA_FOLDER_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/Signatures",
+          "SWIFT_STDLIB_TOOL_UNSIGNED_DESTINATION_DIR" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/SwiftSupport",
+          "SYMROOT" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath",
+          "WATCHKIT_2_SUPPORT_FOLDER_PATH" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/BuildProductsPath/WatchKitSupport2"
+        }
+      }
+    }
+  },
+  "schemeCommand" : "archive",
+  "showNonLoggedProgress" : true,
+  "useDryRun" : false,
+  "useImplicitDependencies" : true,
+  "useLegacyBuildLocations" : false,
+  "useParallelTargets" : true
+}

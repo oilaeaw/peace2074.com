@@ -1,0 +1,26 @@
+{
+  "" : {
+    "const-values" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary.swiftconstvalues",
+    "dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary.d",
+    "diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary.dia",
+    "emit-module-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary-emit-module.d",
+    "emit-module-diagnostics" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary-emit-module.dia",
+    "pch" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary-Bridging-header.pch",
+    "swift-dependencies" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/peace2074TV-primary.swiftdeps"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/DerivedSources/GeneratedAssetSymbols.swift" : {
+    "index-unit-output-path" : "/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/GeneratedAssetSymbols.o",
+    "llvm-bc" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/GeneratedAssetSymbols.bc",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/GeneratedAssetSymbols.o"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/peace2074TV/ContentView.swift" : {
+    "index-unit-output-path" : "/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/ContentView.o",
+    "llvm-bc" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/ContentView.bc",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/ContentView.o"
+  },
+  "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/peace2074TV/Peace2074TVApp.swift" : {
+    "index-unit-output-path" : "/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/Peace2074TVApp.o",
+    "llvm-bc" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/Peace2074TVApp.bc",
+    "object" : "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/build/DerivedData/Build/Intermediates.noindex/ArchiveIntermediates/peace2074TV/IntermediateBuildFilesPath/peace2074TV.build/Release-appletvos/peace2074TV.build/Objects-normal/arm64/Peace2074TVApp.o"
+  }
+}

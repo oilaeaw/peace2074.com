@@ -1,0 +1,179 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+	<key>logFormatVersion</key>
+	<integer>12</integer>
+	<key>logs</key>
+	<dict>
+		<key>26A5CA63-35CE-44A2-873C-47B523C39FB6</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>26A5CA63-35CE-44A2-873C-47B523C39FB6.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>0</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>peace2074TV project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>peace2074TV</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>timeStartedRecording</key>
+			<real>799287997.73148</real>
+			<key>timeStoppedRecording</key>
+			<real>799287998.55549002</real>
+			<key>title</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>uniqueIdentifier</key>
+			<string>26A5CA63-35CE-44A2-873C-47B523C39FB6</string>
+		</dict>
+		<key>442C03CF-37CC-419C-8E7F-D812E7E17E27</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>442C03CF-37CC-419C-8E7F-D812E7E17E27.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>0</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>peace2074TV project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>peace2074TV</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>timeStartedRecording</key>
+			<real>799287920.842489</real>
+			<key>timeStoppedRecording</key>
+			<real>799287921.73948205</real>
+			<key>title</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>uniqueIdentifier</key>
+			<string>442C03CF-37CC-419C-8E7F-D812E7E17E27</string>
+		</dict>
+		<key>8AE4146B-DC2B-462A-8A82-567AB7FBFE3D</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>8AE4146B-DC2B-462A-8A82-567AB7FBFE3D.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>S</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>0</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>peace2074TV project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>peace2074TV</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>timeStartedRecording</key>
+			<real>799287951.01631296</real>
+			<key>timeStoppedRecording</key>
+			<real>799287951.76835001</real>
+			<key>title</key>
+			<string>Cleaning project peace2074TV with scheme peace2074TV</string>
+			<key>uniqueIdentifier</key>
+			<string>8AE4146B-DC2B-462A-8A82-567AB7FBFE3D</string>
+		</dict>
+		<key>B26C28CC-FEAA-41BC-B0B6-E15045F099B7</key>
+		<dict>
+			<key>className</key>
+			<string>IDECommandLineBuildLog</string>
+			<key>documentTypeString</key>
+			<string>&lt;nil&gt;</string>
+			<key>domainType</key>
+			<string>Xcode.IDEActivityLogDomainType.BuildLog</string>
+			<key>fileName</key>
+			<string>B26C28CC-FEAA-41BC-B0B6-E15045F099B7.xcactivitylog</string>
+			<key>hasPrimaryLog</key>
+			<true/>
+			<key>primaryObservable</key>
+			<dict>
+				<key>highLevelStatus</key>
+				<string>W</string>
+				<key>totalNumberOfAnalyzerIssues</key>
+				<integer>0</integer>
+				<key>totalNumberOfErrors</key>
+				<integer>0</integer>
+				<key>totalNumberOfTestFailures</key>
+				<integer>0</integer>
+				<key>totalNumberOfWarnings</key>
+				<integer>1</integer>
+			</dict>
+			<key>schemeIdentifier-containerName</key>
+			<string>peace2074TV project</string>
+			<key>schemeIdentifier-schemeName</key>
+			<string>peace2074TV</string>
+			<key>schemeIdentifier-sharedScheme</key>
+			<integer>1</integer>
+			<key>signature</key>
+			<string>Archiving project peace2074TV with scheme peace2074TV</string>
+			<key>timeStartedRecording</key>
+			<real>799287998.57510304</real>
+			<key>timeStoppedRecording</key>
+			<real>799288003.74875104</real>
+			<key>title</key>
+			<string>Archiving project peace2074TV with scheme peace2074TV</string>
+			<key>uniqueIdentifier</key>
+			<string>B26C28CC-FEAA-41BC-B0B6-E15045F099B7</string>
+		</dict>
+	</dict>
+</dict>
+</plist>

@@ -119,6 +119,3 @@ private struct FeatureCard: View {
     }
 }
 
-#Preview {
-    ContentView()
-}
