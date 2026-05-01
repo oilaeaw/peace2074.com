@@ -262,7 +262,7 @@
         "responseTitle": "AI Response",
         "copied": "Response copied to clipboard!",
         "noReply": "No response received.",
-        "requestFailed": "DeepSeek request failed. Please try again.",
+        "requestFailed": "Kimi request failed. Please try again.",
         "historyTitle": "History",
         "historyEmpty": "No previous questions yet.",
         "reuse": "Reuse",

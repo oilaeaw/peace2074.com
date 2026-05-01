@@ -5,7 +5,7 @@
 GitHub detected exposed secrets in multiple commits and files:
 
 1. **MongoDB credentials** in `DATABASE_CONNECTION_FIX.md` (commit `58894985`)
-2. **DeepSeek API Key** in `netlify-env-setup.sh`
+2. **Kimi API Key** in `netlify-env-setup.sh`
 3. **AUTH_SECRET** in `netlify-env-setup.sh`
 4. **NETLIFY_WEBHOOK_SECRET** in `netlify-env-setup.sh`
 
@@ -18,7 +18,7 @@ GitHub detected exposed secrets in multiple commits and files:
 - ❌ Cluster hostname pattern (`peace2074.1o4lzch.mongodb.net`)
 - ✅ Password was not directly exposed (in gitignored `.env`)
 
-### 2. DeepSeek API Key
+### 2. Kimi API Key
 
 - ❌ Complete API key: `sk-c9500709d5d6483689e12cd77f735222`
 - 🔐 **CRITICAL**: Rotate immediately
@@ -42,20 +42,20 @@ GitHub detected exposed secrets in multiple commits and files:
 
 ## ⚠️ CRITICAL: Rotate All Exposed Secrets
 
-### 1. Rotate DeepSeek API Key (HIGHEST PRIORITY)
+### 1. Rotate Kimi API Key (HIGHEST PRIORITY)
 
-1. Go to https://platform.deepseek.com (or your DeepSeek dashboard)
+1. Go to https://platform.kimi.com (or your Kimi dashboard)
 2. Navigate to **API Keys**
 3. **Delete** the exposed key: `sk-c95007...`
 4. **Create** a new API key
 5. Update your local `.env`:
    ```bash
-   DEEPSEEK_API_KEY="your-new-key-here"
+   KIMI_API_KEY="your-new-key-here"
    ```
 6. Update Netlify:
    ```bash
-   netlify env:set DEEPSEEK_API_KEY "your-new-key-here"
-   netlify env:set NITRO_DEEPSEEK_API_KEY "your-new-key-here"
+   netlify env:set KIMI_API_KEY "your-new-key-here"
+   netlify env:set NITRO_KIMI_API_KEY "your-new-key-here"
    ```
 
 ### 2. Rotate AUTH_SECRET (HIGHEST PRIORITY)

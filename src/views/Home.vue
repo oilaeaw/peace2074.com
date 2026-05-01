@@ -251,7 +251,7 @@ import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
-import { sendDeepSeekChat, resolveNitroUrl } from '@/stores/services'
+import { sendKimiChat, resolveNitroUrl } from '@/stores/services'
 import inspiringVerses from '@/app/data/verses.json'
 import dailyMessagesData from '@/app/data/daily-messages.json'
 
@@ -342,7 +342,7 @@ const askPeaceAI = async () => {
   isLoading.value = true
   errorMessage.value = null
   try {
-    const res = await sendDeepSeekChat({
+    const res = await sendKimiChat({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt.value },

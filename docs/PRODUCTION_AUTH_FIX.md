@@ -47,10 +47,10 @@ The [netlify.toml](../netlify.toml) is already correctly configured:
 AUTH_SECRET=your-secure-secret-min-32-chars
 NITRO_AUTH_SECRET=${AUTH_SECRET}
 
-# DeepSeek (if using AI features)
-DEEPSEEK_API_KEY=sk-your-key
-NITRO_DEEPSEEK_API_KEY=${DEEPSEEK_API_KEY}
-DEEPSEEK_BASE_URL=<your-deepseek-base-url>
+# Kimi (if using AI features)
+KIMI_API_KEY=sk-your-key
+NITRO_KIMI_API_KEY=${KIMI_API_KEY}
+KIMI_BASE_URL=<your-kimi-base-url>
 
 # SMTP (for contact form)
 SMTP_HOST=smtp.gmail.com
@@ -140,7 +140,7 @@ If you prefer using a separate API domain:
    - `/auth/logout` ✓
    - `/auth/me` ✓
    - `/quran` ✓
-   - `/deepseek` ✓
+   - `/kimi` ✓
    - `/contact` ✓
    - `/bookmarks` ✓
 

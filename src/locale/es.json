@@ -262,7 +262,7 @@
                 "responseTitle": "Respuesta de IA",
                 "copied": "¡Respuesta copiada al portapapeles!",
                 "noReply": "No se recibió respuesta.",
-                "requestFailed": "La solicitud de DeepSeek falló. Por favor, inténtalo de nuevo.",
+                "requestFailed": "La solicitud de Kimi falló. Por favor, inténtalo de nuevo.",
                 "historyTitle": "Historial",
                 "historyEmpty": "Aún no hay preguntas previas.",
                 "reuse": "Reutilizar",

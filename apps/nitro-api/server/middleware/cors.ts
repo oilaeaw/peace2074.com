@@ -1,6 +1,6 @@
 import { defineEventHandler, setHeader } from "h3";
 
-// Simple permissive CORS for API routes (DeepSeek, search, etc.)
+// Simple permissive CORS for API routes (Kimi, search, etc.)
 export default defineEventHandler((event) => {
     const allowedOrigins = [
         "http://localhost:4000",

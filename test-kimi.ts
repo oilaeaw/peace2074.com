@@ -5,13 +5,13 @@ interface ChatMessage {
   content: string;
 }
 
-interface DeepSeekPayload {
+interface KimiPayload {
   model: string;
   messages: ChatMessage[];
   temperature: number;
 }
 
-interface DeepSeekResponse {
+interface KimiResponse {
   choices: Array<{
     message: {
       content: string;
@@ -28,27 +28,27 @@ interface DeepSeekResponse {
   };
 }
 
-const DEEPSEEK_API_KEY: string =
-  process.env.DEEPSEEK_API_KEY || "sk-your-test-key";
-const DEEPSEEK_BASE_URL: string =
-  process.env.DEEPSEEK_BASE_URL || "https://example.com/api"; // Set via env var
+const KIMI_API_KEY: string =
+  process.env.KIMI_API_KEY || "sk-your-test-key";
+const KIMI_BASE_URL: string =
+  process.env.KIMI_BASE_URL || "https://example.com/api"; // Set via env var
 
-console.log("🧪 Testing DeepSeek Integration...\n");
-console.log(`API Key: ${DEEPSEEK_API_KEY.substring(0, 15)}...`);
-console.log(`Base URL: ${DEEPSEEK_BASE_URL}\n`);
+console.log("🧪 Testing Kimi Integration...\n");
+console.log(`API Key: ${KIMI_API_KEY.substring(0, 15)}...`);
+console.log(`Base URL: ${KIMI_BASE_URL}\n`);
 
-const payload: DeepSeekPayload = {
-  model: "deepseek-chat",
+const payload: KimiPayload = {
+  model: "kimi-chat",
   messages: [{ role: "user", content: "Say hello in Arabic (one word)" }],
   temperature: 0.7,
 };
 
 try {
-  const response = await fetch(`${DEEPSEEK_BASE_URL}/chat/completions`, {
+  const response = await fetch(`${KIMI_BASE_URL}/chat/completions`, {
     method: "POST",
     headers: {
       "Content-Type": "application/json",
-      Authorization: `Bearer ${DEEPSEEK_API_KEY}`,
+      Authorization: `Bearer ${KIMI_API_KEY}`,
     },
     body: JSON.stringify(payload),
   });
@@ -59,13 +59,13 @@ try {
     process.exit(1);
   }
 
-  const data = (await response.json()) as DeepSeekResponse;
+  const data = (await response.json()) as KimiResponse;
   const message = data.choices?.[0]?.message?.content;
 
-  console.log("✅ DeepSeek Response:");
+  console.log("✅ Kimi Response:");
   console.log(`   ${message}`);
   console.log("\n📊 Usage:", data.usage);
-  console.log("\n✨ DeepSeek integration is working!\n");
+  console.log("\n✨ Kimi integration is working!\n");
 } catch (error) {
   console.error("❌ Test failed:", (error as Error).message);
   process.exit(1);

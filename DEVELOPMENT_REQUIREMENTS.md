@@ -116,9 +116,9 @@ const version = __APP_VERSION__.split('.').slice(-2).join('.') // Last 2 segment
 const version = __APP_VERSION__.split('.').slice(0, 2).join('.') // First 2 segments = "3.0"
 ```
 
-### Error Object Handling (DeepSeek API)
+### Error Object Handling (Kimi API)
 
-DeepSeek API returns errors in HTTP 200 responses as objects:
+Kimi API returns errors in HTTP 200 responses as objects:
 
 ```typescript
 { error: { message: "402 Insufficient Balance", status: 402, data: "..." } }
@@ -145,7 +145,7 @@ throw new Error(errorMessage)
 **Always check for error field** even on successful responses:
 
 ```typescript
-const res = await sendDeepSeekChat(messages)
+const res = await sendKimiChat(messages)
 if (res?.error) {
   const errorMsg = res.error.message || res.error.data || String(res.error)
   throw new Error(errorMsg)
@@ -231,8 +231,8 @@ All UI copy must exist in ALL 6 locale files:
 
 ### Required for Full Functionality
 
-- `DEEPSEEK_API_KEY` or `NITRO_DEEPSEEK_API_KEY` - AI chat feature
-- `DEEPSEEK_BASE_URL` - API endpoint
+- `KIMI_API_KEY` or `NITRO_KIMI_API_KEY` - AI chat feature
+- `KIMI_BASE_URL` - API endpoint
 - `MONGODB_URL` - Database (fallback: KV storage)
 - SMTP vars for contact form:
   - `SMTP_HOST`, `SMTP_PORT`, `SMTP_USER`, `SMTP_PASS`
@@ -327,9 +327,9 @@ API calls go through `src/stores/services/index.ts`:
 
 ```typescript
 // CORRECT: Use service layer
-import { sendDeepSeekChat } from '@/stores/services'
+import { sendKimiChat } from '@/stores/services'
 
-const response = await sendDeepSeekChat(messages)
+const response = await sendKimiChat(messages)
 
 // Handle error objects from API
 if (response?.error) {
@@ -365,7 +365,7 @@ Set in Netlify dashboard (Settings → Environment variables):
 
 - All vars from `.env.example`
 - `DISABLE_PRISMA=true` (if MongoDB unreachable)
-- DeepSeek API keys
+- Kimi API keys
 - SMTP credentials
 
 ---
@@ -424,7 +424,7 @@ onMounted(() => {
 ### "[object Object]" in AI Responses
 
 **Symptom**: Error messages show as "[object Object]"  
-**Cause**: DeepSeek API returns error objects, not strings  
+**Cause**: Kimi API returns error objects, not strings  
 **Fix**: Extract message field: `error?.message || String(error)`
 
 ### iOS Version Shows Old Value After Update

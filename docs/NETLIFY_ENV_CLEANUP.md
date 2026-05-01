@@ -53,8 +53,8 @@ Go to: **Site Settings → Environment Variables** and remove these:
 #### Remove Non-NITRO Duplicates (keep NITRO\_ versions)
 
 - `AUTH_SECRET` → Keep `NITRO_AUTH_SECRET`
-- `DEEPSEEK_API_KEY` → Keep `NITRO_DEEPSEEK_API_KEY`
-- `DEEPSEEK_BASE_URL` → Keep `NITRO_DEEPSEEK_BASE_URL`
+- `KIMI_API_KEY` → Keep `NITRO_KIMI_API_KEY`
+- `KIMI_BASE_URL` → Keep `NITRO_KIMI_BASE_URL`
 - `VAPID_*` → Keep `NITRO_VAPID_*`
 
 #### Remove Unused
@@ -76,11 +76,11 @@ JWT_REFRESH_TOKEN_SECRET
 CONF_ENCRYPTION_KEY
 ```
 
-### DeepSeek AI
+### Kimi AI
 
 ```bash
-NITRO_DEEPSEEK_API_KEY
-NITRO_DEEPSEEK_BASE_URL
+NITRO_KIMI_API_KEY
+NITRO_KIMI_BASE_URL
 ```
 
 ### OAuth

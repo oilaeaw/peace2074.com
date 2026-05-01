@@ -12,11 +12,11 @@
         ]
     },
     {
-        "id": "deepseek-integration",
-        "slug": "deepseek-integration",
-        "title": "DeepSeek Assistant for Support",
-        "excerpt": "A quick overview of how we wired DeepSeek to help with support questions.",
-        "content": "The Support page now includes a DeepSeek-powered assistant. It reuses our Nitro /deepseek endpoint, keeps data on-platform, and avoids new dependencies.",
+        "id": "kimi-integration",
+        "slug": "kimi-integration",
+        "title": "Kimi Assistant for Support",
+        "excerpt": "A quick overview of how we wired Kimi to help with support questions.",
+        "content": "The Support page now includes a Kimi-powered assistant. It reuses our Nitro /kimi endpoint, keeps data on-platform, and avoids new dependencies.",
         "date": "2025-12-27",
         "tags": [
             "ai",

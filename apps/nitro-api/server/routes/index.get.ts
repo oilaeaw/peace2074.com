@@ -8,7 +8,7 @@ export default defineEventHandler(() => ({
         'GET /health',
         'GET /quran',
         'GET /quran/:id',
-        'POST /deepseek',
+        'POST /kimi',
     ],
     message: 'Nitro API ready. Override PORT to change the default 3000 listener.',
 }))

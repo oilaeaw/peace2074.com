@@ -7,7 +7,7 @@
 <script setup lang="ts">
 import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { sendDeepSeekChat } from '@/stores/services'
+import { sendKimiChat } from '@/stores/services'
 
 const { t, tm } = useI18n()
 const userPrompt = ref('')
@@ -34,7 +34,7 @@ async function askPeaceAI() {
   errorMessage.value = null
 
   try {
-    const response = await sendDeepSeekChat({
+    const response = await sendKimiChat({
       messages: [
         { role: 'system', content: systemPrompt },
         { role: 'user', content: userPrompt.value.trim() },

@@ -244,11 +244,11 @@ export default defineConfig({
   },
 
   server: {
-    port: 4000,
+    port: 4001,
     middlewareMode: false,
     hmr: {
       host: 'localhost',
-      port: 4000,
+      port: 4001,
       protocol: 'ws',
     },
     proxy: {

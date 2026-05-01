@@ -56,11 +56,11 @@ Make sure these are also set in Netlify:
 netlify env:set AUTH_SECRET "your-auth-secret-from-env"
 netlify env:set AUTH_PASSCODE "your-auth-passcode-from-env"
 
-# DeepSeek API (for AI chat - optional)
-# Note: DEEPSEEK_BASE_URL defaults to the standard DeepSeek API endpoint
+# Kimi API (for AI chat - optional)
+# Note: KIMI_BASE_URL defaults to the standard Kimi API endpoint
 # Only set this if you're using a custom endpoint
-netlify env:set DEEPSEEK_API_KEY "your-deepseek-api-key"
-# netlify env:set DEEPSEEK_BASE_URL "your-custom-endpoint-if-needed"
+netlify env:set KIMI_API_KEY "your-kimi-api-key"
+# netlify env:set KIMI_BASE_URL "your-custom-endpoint-if-needed"
 
 # SMTP for contact form (optional)
 netlify env:set SMTP_HOST "smtp.gmail.com"

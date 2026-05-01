@@ -13,12 +13,12 @@ Set these in Netlify Dashboard → Site Settings → Environment Variables
 - `AUTH_SECRET` - Random secret (32+ chars). Generate: `openssl rand -base64 32`
 - `NITRO_AUTH_SECRET` - Same as AUTH_SECRET
 
-### DeepSeek AI
+### Kimi AI
 
-- `DEEPSEEK_API_KEY` - Your DeepSeek API key (starts with sk-)
-- `NITRO_DEEPSEEK_API_KEY` - Same as DEEPSEEK_API_KEY
-- `DEEPSEEK_BASE_URL` - DeepSeek API base URL (required, get from DeepSeek dashboard)
-- `NITRO_DEEPSEEK_BASE_URL` - Same as DEEPSEEK_BASE_URL
+- `KIMI_API_KEY` - Your Kimi API key (starts with sk-)
+- `NITRO_KIMI_API_KEY` - Same as KIMI_API_KEY
+- `KIMI_BASE_URL` - Kimi API base URL (required, get from Kimi dashboard)
+- `NITRO_KIMI_BASE_URL` - Same as KIMI_BASE_URL
 
 ### GitHub OAuth
 

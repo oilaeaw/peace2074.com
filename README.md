@@ -4,7 +4,7 @@
 
 - Never commit real credentials. Use `.env.example` as the template; keep actual values in local env files and CI/hosting secrets.
 - Front-end env vars must be prefixed `VITE_`. Key values for this app:
-  - `DEEPSEEK_API_KEY` (or `NITRO_DEEPSEEK_API_KEY`) and optional `DEEPSEEK_BASE_URL`
+  - `KIMI_API_KEY` (or `NITRO_KIMI_API_KEY`) and optional `KIMI_BASE_URL`
 - Client-side storage (local/session/config) is not secure—don’t store real secrets there, even if “encrypted.”
 - Before pushing, verify `git status` shows no `.env` or secrets-containing files staged.
 
@@ -52,18 +52,18 @@ This project is configured for deployment to Netlify. See:
 - [NETLIFY_ENV.md](./NETLIFY_ENV.md) for environment variable setup
 - [DISABLE_LEGACY_PRERENDERING.md](./DISABLE_LEGACY_PRERENDERING.md) for instructions on disabling legacy prerendering (required action)
 
-## DeepSeek integration
+## Kimi integration
 
-The Nitro API now exposes `POST /deepseek`, which proxies chat-completion requests to DeepSeek via the OpenAI SDK.
+The Nitro API now exposes `POST /kimi`, which proxies chat-completion requests to Kimi via the OpenAI SDK.
 
-1. Add `DEEPSEEK_API_KEY=<your key>` (and optionally `DEEPSEEK_BASE_URL`). CamelCase keys (`deepSeekApi`, `deepSeekBaseUrl`) still work for backward compatibility.
+1. Add `KIMI_API_KEY=<your key>` (and optionally `KIMI_BASE_URL`). CamelCase keys (`deepSeekApi`, `deepSeekBaseUrl`) still work for backward compatibility.
 2. Start the backend: `pnpm --filter nitro-api dev` (defaults to `http://127.0.0.1:3000`).
-3. Front-end code can call `sendDeepSeekChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from same-origin (dev: http://127.0.0.1:3000) without needing a `VITE_` env.
+3. Front-end code can call `sendKimiChat({ messages: [...] })` from `src/stores/services/index.ts`. The helper targets the Nitro base from same-origin (dev: http://127.0.0.1:3000) without needing a `VITE_` env.
 
 Example payload:
 
 ```ts
-await sendDeepSeekChat({
+await sendKimiChat({
   messages: [
     { role: 'system', content: 'You are a helpful assistant.' },
     { role: 'user', content: 'Provide a short reflection on patience.' },

@@ -262,7 +262,7 @@
                 "responseTitle": "AI Yanıtı",
                 "copied": "Yanıt panoya kopyalandı!",
                 "noReply": "Yanıt alınamadı.",
-                "requestFailed": "DeepSeek isteği başarısız oldu. Lütfen tekrar deneyin.",
+                "requestFailed": "Kimi isteği başarısız oldu. Lütfen tekrar deneyin.",
                 "historyTitle": "Geçmiş",
                 "historyEmpty": "Henüz önceki soru yok.",
                 "reuse": "Yeniden kullan",

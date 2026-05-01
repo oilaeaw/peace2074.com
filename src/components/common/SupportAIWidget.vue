@@ -43,7 +43,7 @@
               {{
                 t(
                   'pages.support.aiSubtitle',
-                  'Describe your issue and DeepSeek will suggest next steps.'
+                  'Describe your issue and Kimi will suggest next steps.'
                 )
               }}
             </div>
@@ -160,7 +160,7 @@ import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
-import { sendDeepSeekChat } from '@/stores/services'
+import { sendKimiChat } from '@/stores/services'
 
 const $q = useQuasar()
 const { t } = useI18n()
@@ -185,7 +185,7 @@ async function ask() {
   loading.value = true
   error.value = null
   try {
-    const res = await sendDeepSeekChat({
+    const res = await sendKimiChat({
       messages: [{ role: 'user', content }],
     })
 

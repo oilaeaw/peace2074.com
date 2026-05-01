@@ -24,9 +24,9 @@ export default defineNitroConfig({
     },
     runtimeConfig: {
         // Secrets are automatically read from corresponding
-        // environment variables e.g. NITRO_DEEPSEEK_API_KEY
-        deepseekApiKey: "",
-        deepseekBaseUrl: "",
+        // environment variables e.g. NITRO_KIMI_API_KEY
+        kimiApiKey: "",
+        kimiBaseUrl: "",
         vapidPublicKey: "",
         vapidPrivateKey: "",
         vapidSubject: "",

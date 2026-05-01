@@ -16,7 +16,7 @@ interface TranslationResponseItem {
     translation: string
 }
 
-interface DeepSeekResponse {
+interface KimiResponse {
     choices?: Array<{
         message?: {
             content?: string | null
@@ -36,16 +36,16 @@ const chaptersEn = JSON.parse(
 ) as ChapterTitle[]
 
 const apiKey =
-    process.env.DEEPSEEK_API_KEY || process.env.NITRO_DEEPSEEK_API_KEY
+    process.env.KIMI_API_KEY || process.env.NITRO_KIMI_API_KEY
 const baseURL = (
-    process.env.DEEPSEEK_BASE_URL ||
-    process.env.NITRO_DEEPSEEK_BASE_URL ||
-    'https://api.deepseek.com/v1'
+    process.env.KIMI_BASE_URL ||
+    process.env.NITRO_KIMI_BASE_URL ||
+    'https://api.kimi.com/v1'
 ).replace(/\/$/, '')
-const model = process.env.DEEPSEEK_MODEL || 'deepseek-chat'
+const model = process.env.KIMI_MODEL || 'kimi-chat'
 
 if (!apiKey || String(apiKey).trim() === '') {
-    throw new Error('Missing DEEPSEEK_API_KEY (or NITRO_DEEPSEEK_API_KEY).')
+    throw new Error('Missing KIMI_API_KEY (or NITRO_KIMI_API_KEY).')
 }
 
 async function translateBatch(
@@ -79,7 +79,7 @@ async function translateBatch(
         }),
     })
 
-    const json = await response.json() as DeepSeekResponse
+    const json = await response.json() as KimiResponse
 
     if (!response.ok) {
         throw new Error(
@@ -135,5 +135,5 @@ await fs.writeFile(
 )
 
 console.log(
-    'Generated chapters/de.json and chapters/he.json (DeepSeek batch mode).',
+    'Generated chapters/de.json and chapters/he.json (Kimi batch mode).',
 )

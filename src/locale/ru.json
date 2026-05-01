@@ -250,7 +250,7 @@
         "responseTitle": "Ответ ИИ",
         "copied": "Ответ скопирован",
         "noReply": "Ответ не получен.",
-        "requestFailed": "Ошибка запроса DeepSeek. Попробуйте снова.",
+        "requestFailed": "Ошибка запроса Kimi. Попробуйте снова.",
         "historyTitle": "История",
         "historyEmpty": "Пока нет предыдущих вопросов.",
         "reuse": "Повторить",

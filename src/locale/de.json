@@ -215,7 +215,7 @@
         "responseTitle": "KI-Antwort",
         "copied": "Antwort kopiert",
         "noReply": "Keine Antwort erhalten.",
-        "requestFailed": "DeepSeek-Anfrage fehlgeschlagen. Bitte erneut versuchen.",
+        "requestFailed": "Kimi-Anfrage fehlgeschlagen. Bitte erneut versuchen.",
         "historyTitle": "Verlauf",
         "historyEmpty": "Noch keine früheren Fragen.",
         "reuse": "Wiederverwenden",

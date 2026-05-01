@@ -80,13 +80,13 @@ export async function deleteBookmark(id: string) {
   }
 }
 
-type DeepSeekMessage = {
+type KimiMessage = {
   role: "system" | "user" | "assistant";
   content: string;
 };
 
-type DeepSeekPayload = {
-  messages: DeepSeekMessage[];
+type KimiPayload = {
+  messages: KimiMessage[];
   model?: string;
   temperature?: number;
   max_tokens?: number;
@@ -135,9 +135,9 @@ const NITRO_BASE = computeNitroBase();
 
 if (typeof window !== "undefined") {
   if (NITRO_BASE) {
-    console.debug("[DeepSeek] targeting", NITRO_BASE);
+    console.debug("[Kimi] targeting", NITRO_BASE);
   } else {
-    console.warn('[DeepSeek] NITRO_BASE missing; falling back to same-origin requests')
+    console.warn('[Kimi] NITRO_BASE missing; falling back to same-origin requests')
   }
 }
 
@@ -146,12 +146,12 @@ export function resolveNitroUrl(path: string) {
   return NITRO_BASE ? `${NITRO_BASE}${normalized}` : normalized;
 }
 
-export async function sendDeepSeekChat(payload: DeepSeekPayload) {
+export async function sendKimiChat(payload: KimiPayload) {
   if (!payload?.messages?.length) {
-    throw new Error("DeepSeek payload requires at least one message");
+    throw new Error("Kimi payload requires at least one message");
   }
   try {
-    const res = await fetch(resolveNitroUrl("/deepseek"), {
+    const res = await fetch(resolveNitroUrl("/kimi"), {
       method: "POST",
       credentials: "include",
       headers: { "Content-Type": "application/json" },
@@ -165,12 +165,12 @@ export async function sendDeepSeekChat(payload: DeepSeekPayload) {
         errPayload?.error?.data ||
         errPayload?.statusMessage ||
         (typeof errPayload?.error === 'string' ? errPayload.error : null) ||
-        `DeepSeek request failed (${res.status})`;
+        `Kimi request failed (${res.status})`;
       throw new Error(errorMessage);
     }
     return await res.json();
   } catch (e) {
-    console.warn("DeepSeek request failed", e);
+    console.warn("Kimi request failed", e);
     throw e;
   }
 }

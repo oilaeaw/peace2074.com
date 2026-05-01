@@ -7,7 +7,7 @@ export default defineEventHandler(() => ({
         '/health',
         '/quran',
         '/quran/:id',
-        '/deepseek',
+        '/kimi',
     ],
     message: 'Nitro API is running on port 3000 by default. Override with PORT env var if needed.',
 }))

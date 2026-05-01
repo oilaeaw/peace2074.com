@@ -7,7 +7,7 @@ type ChatMessage = {
     content: string
 }
 
-type DeepSeekRequestBody = {
+type KimiRequestBody = {
     messages?: ChatMessage[]
     model?: string
     temperature?: number
@@ -49,14 +49,14 @@ export default defineEventHandler(async (event) => {
     const clientIp = getClientIp(event as any)
 
     // IP blacklist check
-    const ipBlacklist = getBlacklist('DEEPSEEK_IP_BLACKLIST')
+    const ipBlacklist = getBlacklist('KIMI_IP_BLACKLIST')
     if (ipBlacklist.has(clientIp)) {
         throw createError({ statusCode: 403, statusMessage: 'Access denied.' })
     }
 
     // Session / user blacklist check
     const session = readSession(event as any)
-    const userBlacklist = getBlacklist('DEEPSEEK_USER_BLACKLIST')
+    const userBlacklist = getBlacklist('KIMI_USER_BLACKLIST')
     if (session?.id && userBlacklist.has(session.id.toLowerCase())) {
         throw createError({ statusCode: 403, statusMessage: 'Access denied.' })
     }
@@ -71,7 +71,7 @@ export default defineEventHandler(async (event) => {
 
     // API Key checks removed because Cloudflare Bindings do not require them!
 
-    const body = (await readBody<DeepSeekRequestBody>(event)) || {}
+    const body = (await readBody<KimiRequestBody>(event)) || {}
 
     if (!Array.isArray(body.messages) || body.messages.length === 0) {
         throw createError({
