@@ -404,7 +404,9 @@
         "title": "Audio",
         "desc": "Steuere Athan- und Wiedergabe-Standards.",
         "autoPlay": "Athan automatisch abspielen",
-        "autoPlayHint": "Athan automatisch starten, wenn verfügbar."
+        "autoPlayHint": "Athan automatisch starten, wenn verfügbar.",
+        "autoPlayPrayerTimes": "Adhan zu den Gebetszeiten",
+        "autoPlayPrayerTimesHint": "Den Adhan automatisch abspielen, wenn eine Gebetszeit beginnt."
       },
       "refresh": {
         "title": "App aktualisieren",

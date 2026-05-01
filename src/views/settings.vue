@@ -9,6 +9,7 @@ const DRAWER_OPEN_KEY = 'drawer-open-by-default'
 const COMPACT_KEY = 'pref-compact-layout'
 const MOTION_KEY = 'pref-reduce-motion'
 const AUTOPLAY_KEY = 'pref-autoplay-athan'
+const AUTOPLAY_PRAYER_KEY = 'pref-autoplay-prayer-times'
 const QURAN_TRANSLATION_KEY = 'quran-show-translation'
 const NOTIFICATIONS_KEY = 'pref-enable-notifications'
 const DARK_MODE_KEY = 'pref-dark-mode'
@@ -32,6 +33,7 @@ const drawerOpenByDefault = ref(readDrawerOpenPreference())
 const compactLayout = ref(readCompactPreference())
 const reduceMotion = ref(readReduceMotionPreference())
 const autoPlayAthan = ref(readAutoplayAthanPreference())
+const autoPlayPrayerTimes = ref(readAutoplayPrayerTimesPreference())
 const showQuranTranslation = ref(readQuranTranslationPreference())
 const darkMode = ref(readDarkModePreference())
 const fontSize = ref(readFontSizePreference())
@@ -61,6 +63,10 @@ watch(reduceMotion, (val) => {
 watch(autoPlayAthan, (val) => {
   persistAutoplayPreference(val)
   broadcastAutoplayPreference(val)
+})
+
+watch(autoPlayPrayerTimes, (val) => {
+  persistAutoplayPrayerTimesPreference(val)
 })
 
 watch(showQuranTranslation, (val) => {
@@ -210,6 +216,18 @@ function readAutoplayAthanPreference(): boolean {
 function persistAutoplayPreference(val: boolean) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(AUTOPLAY_KEY, String(val))
+}
+
+function readAutoplayPrayerTimesPreference(): boolean {
+  if (typeof window === 'undefined') return true // Default to true for Adhan at prayer times
+  const stored = window.localStorage.getItem(AUTOPLAY_PRAYER_KEY)
+  if (stored === null) return true // Default to true
+  return stored === 'true'
+}
+
+function persistAutoplayPrayerTimesPreference(val: boolean) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(AUTOPLAY_PRAYER_KEY, String(val))
 }
 
 function broadcastAutoplayPreference(val: boolean) {
@@ -864,6 +882,22 @@ async function reloadApp() {
                 v-model="autoPlayAthan"
                 color="primary"
                 :aria-label="t('pages.settings.audio.autoPlay')"
+              />
+            </div>
+            <q-separator spaced />
+            <div class="setting-row">
+              <div>
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.audio.autoPlayPrayerTimes') }}
+                </div>
+                <div class="text-caption setting-hint">
+                  {{ t('pages.settings.audio.autoPlayPrayerTimesHint') }}
+                </div>
+              </div>
+              <q-toggle
+                v-model="autoPlayPrayerTimes"
+                color="primary"
+                :aria-label="t('pages.settings.audio.autoPlayPrayerTimes')"
               />
             </div>
             <q-separator spaced />

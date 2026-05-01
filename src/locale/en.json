@@ -521,7 +521,9 @@
         "title": "Audio",
         "desc": "Control athan and playback defaults.",
         "autoPlay": "Autoplay athan",
-        "autoPlayHint": "Start athan playback automatically when available."
+        "autoPlayHint": "Start athan playback automatically when available.",
+        "autoPlayPrayerTimes": "Adhan at Prayer Times",
+        "autoPlayPrayerTimesHint": "Automatically play the Adhan when a prayer time starts."
       },
       "refresh": {
         "title": "Refresh app",

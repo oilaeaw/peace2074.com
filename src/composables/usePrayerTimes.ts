@@ -46,8 +46,19 @@ export function usePrayerTimes() {
       now.getHours() === nextPrayerTime.value.getHours() &&
       now.getMinutes() === nextPrayerTime.value.getMinutes()
     ) {
-      console.log(`Time for ${nextPrayer.value}! Playing Athan...`);
-      play();
+      console.log(`Time for ${nextPrayer.value}!`);
+      
+      const isAutoPlayEnabled = typeof window !== 'undefined' 
+        ? window.localStorage.getItem('pref-autoplay-prayer-times') !== 'false'
+        : true; // Default to true if not set
+        
+      if (isAutoPlayEnabled) {
+        console.log('Playing Athan...');
+        play();
+      } else {
+        console.log('Athan auto-play is disabled in settings.');
+      }
+      
       hasPlayedForCurrentPrayer = true;
       
       // Recalculate to set the next prayer

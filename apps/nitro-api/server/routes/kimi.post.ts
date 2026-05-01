@@ -95,49 +95,66 @@ Always be respectful, concise, and spiritually thoughtful.`,
     }
 
     // Strip any system messages from the client to prevent prompt injection, then prepend ours
-    const userMessages = body.messages!.filter(m => m.role !== 'system')
-    const finalModel = body.model || DEFAULT_MODEL
-    const apiKey = config.kimiApiKey
-    const baseUrl = config.kimiBaseUrl || 'https://api.moonshot.cn/v1'
+    const userMessages = body.messages!.filter(m => m.role !== 'system');
+    const finalModel = body.model || DEFAULT_MODEL;
 
-    if (!apiKey) {
-        throw createError({
-            statusCode: 500,
-            statusMessage: 'KIMI_API_KEY is not configured in the environment.',
-        })
-    }
+    const aiBinding = (event.context as any)?.cloudflare?.env?.AI;
 
     try {
-        const response = await fetch(`${baseUrl}/chat/completions`, {
-            method: 'POST',
-            headers: {
-                'Content-Type': 'application/json',
-                'Authorization': `Bearer ${apiKey}`,
-            },
-            body: JSON.stringify({
-                model: finalModel,
+        let aiResponse;
+        
+        // 1. Prioritize native Cloudflare AI Binding if available (Cloudflare Pages/Workers)
+        if (aiBinding) {
+            const response = await aiBinding.run(finalModel, {
                 messages: [SYSTEM_PROMPT, ...userMessages],
                 temperature: body.temperature ?? 0.7,
                 max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
-            })
-        });
+            });
+            aiResponse = response?.response || response || '';
+        } 
+        // 2. Fallback to Cloudflare AI REST API if on Netlify or nitro dev
+        else {
+            const apiKey = config.kimiApiKey;
+            const baseUrl = config.kimiBaseUrl || 'https://api.moonshot.cn/v1';
 
-        if (!response.ok) {
-            const errorText = await response.text();
-            throw new Error(`AI request failed with status ${response.status}: ${errorText}`);
+            if (!apiKey) {
+                throw createError({
+                    statusCode: 500,
+                    statusMessage: 'Cloudflare AI binding not found, AND KIMI_API_KEY is not configured in the environment for fallback.',
+                });
+            }
+
+            const response = await fetch(`${baseUrl}/chat/completions`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': `Bearer ${apiKey}`,
+                },
+                body: JSON.stringify({
+                    model: finalModel,
+                    messages: [SYSTEM_PROMPT, ...userMessages],
+                    temperature: body.temperature ?? 0.7,
+                    max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`AI request failed with status ${response.status}: ${errorText}`);
+            }
+
+            const data = await response.json() as any;
+            aiResponse = data?.choices?.[0]?.message?.content || data?.response || '';
         }
-
-        const data = await response.json() as any;
 
         return {
             id: 'kimi-ai-' + Date.now(),
             model: finalModel,
             message: {
                 role: 'assistant',
-                // Standard OpenAI response format
-                content: data?.choices?.[0]?.message?.content || data?.response || ''
+                content: aiResponse
             },
-            raw: data
+            raw: aiResponse
         }
     } catch (error: any) {
         const statusCode = error?.status ?? 500

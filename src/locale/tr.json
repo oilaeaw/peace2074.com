@@ -521,7 +521,9 @@
                 "title": "Ses",
                 "desc": "Ezan ve oynatma varsayılanlarını kontrol edin.",
                 "autoPlay": "Ezanı otomatik oynat",
-                "autoPlayHint": "Mümkün olduğunda ezan oynatmayı otomatik başlat."
+                "autoPlayHint": "Mümkün olduğunda ezan oynatmayı otomatik başlat.",
+                "autoPlayPrayerTimes": "Namaz Vakitlerinde Ezan",
+                "autoPlayPrayerTimesHint": "Namaz vakti girdiğinde Ezanı otomatik olarak çal."
             },
             "refresh": {
                 "title": "Uygulamayı yenile",

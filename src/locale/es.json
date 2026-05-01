@@ -521,7 +521,9 @@
                 "title": "Audio",
                 "desc": "Controla los valores predeterminados del athan y la reproducción.",
                 "autoPlay": "Reproducción automática del athan",
-                "autoPlayHint": "Inicia la reproducción del athan automáticamente."
+                "autoPlayHint": "Inicia la reproducción del athan automáticamente.",
+                "autoPlayPrayerTimes": "Adhan en Horarios de Oración",
+                "autoPlayPrayerTimesHint": "Reproducir automáticamente el Adhan cuando comience el horario de oración."
             },
             "refresh": {
                 "title": "Actualizar aplicación",
