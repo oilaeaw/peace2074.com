@@ -137,7 +137,7 @@
     "@types/three": "^0.182.0",
     "@vueuse/core": "^13.9.0",
     "@waelio/ustore": "^1.0.8",
-    "adhan": "^4.4.4",
+    "adhan": "^4.4.3",
     "axios": "^1.12.2",
     "firebase": "^11.2.0",
     "jose": "^6.1.3",
