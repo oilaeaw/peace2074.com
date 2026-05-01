@@ -254,6 +254,7 @@ declare global {
   const usePointer: typeof import('@vueuse/core')['usePointer']
   const usePointerLock: typeof import('@vueuse/core')['usePointerLock']
   const usePointerSwipe: typeof import('@vueuse/core')['usePointerSwipe']
+  const usePrayerTimes: typeof import('../composables/usePrayerTimes').default
   const usePreferredColorScheme: typeof import('@vueuse/core')['usePreferredColorScheme']
   const usePreferredContrast: typeof import('@vueuse/core')['usePreferredContrast']
   const usePreferredDark: typeof import('@vueuse/core')['usePreferredDark']
@@ -440,6 +441,7 @@ declare module 'vue' {
     readonly useMemoryStorage: UnwrapRef<typeof import('../composables/useUStore')['useMemoryStorage']>
     readonly useModel: UnwrapRef<typeof import('vue')['useModel']>
     readonly useOfflineRecitation: UnwrapRef<typeof import('../composables/useOfflineRecitation')['useOfflineRecitation']>
+    readonly usePrayerTimes: UnwrapRef<typeof import('../composables/usePrayerTimes')['default']>
     readonly useProfileSettings: UnwrapRef<typeof import('../composables/useProfileSettings')['useProfileSettings']>
     readonly useQ2P: UnwrapRef<typeof import('../composables/useQ2P')['default']>
     readonly useQuranTree: UnwrapRef<typeof import('../composables/useQuranTree')['useQuranTree']>
