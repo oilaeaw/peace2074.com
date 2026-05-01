@@ -15,7 +15,7 @@ type DeepSeekRequestBody = {
     max_tokens?: number
 }
 
-const DEFAULT_MODEL = 'deepseek-chat'
+const DEFAULT_MODEL = '@google/gemini-3.1-flash-lite'
 const MAX_TOKENS_CAP = 800
 const RATE_LIMIT_MAX = 15       // requests per window per IP
 const RATE_LIMIT_WINDOW_MS = 60 * 60 * 1000 // 1 hour
@@ -93,7 +93,7 @@ export default defineEventHandler(async (event) => {
         process.env.DEEPSEEK_BASE_URL ||
         process.env.NITRO_DEEPSEEK_BASE_URL ||
         process.env.deepSeekBaseUrl ||
-        'https://' + 'api' + '.deepseek' + '.com' // Concatenated to avoid triggering GitHub secret scanner
+        'https://api.cloudflare.com/client/v4/accounts/f8e411adbc0ac8c96ac4e00beaacd9cd/ai/v1'
 
     const client = new OpenAI({
         apiKey: String(apiKey).trim(),
