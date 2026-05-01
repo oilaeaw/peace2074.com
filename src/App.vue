@@ -4,6 +4,12 @@ import { useRoute, useRouter } from 'vue-router'
 import { useAuthStore } from '@/stores/auth.pinia'
 import AppShell from '@/layouts/AppShell.vue'
 import PlainLayout from '@/layouts/plain.vue'
+import { usePrayerTimes } from '@/composables/usePrayerTimes'
+
+// Initialize Athan Scheduler globally
+const { updateLocationToCurrent } = usePrayerTimes()
+// Try to get actual location; falls back to Jerusalem
+updateLocationToCurrent()
 
 const ThreeBackground = defineAsyncComponent(
   () => import('@/components/common/ThreeBackground.vue')
