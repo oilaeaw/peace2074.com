@@ -14,55 +14,52 @@ export async function getHolyBook() {
   const url = "/api/quran";
   try {
     const res = await fetch(url);
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
-  } catch (e) {
-    console.warn(e);
-    return null;
-  }
-}
 
-export async function getBookmarks() {
-  try {
-    const res = await fetch("/api/bookmarks", { credentials: "include" });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch (e) {
-    console.warn(e);
-    return null;
-  }
-}
+    function normalizeBaseUrl(value: unknown) {
+      return typeof value === 'string' ? value.trim().replace(/\/$/, '') : ''
+    }
 
-export async function createBookmark({ bookmark }: { bookmark: string }) {
-  try {
-    const res = await fetch("/api/bookmarks", {
-      method: "POST",
-      body: JSON.stringify({ bookmark }),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
+    function isMobileAppProtocol(protocol: string) {
+      return protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
+    }
   } catch (e) {
     console.warn(e);
-    return null;
-  }
-}
+    const configured = normalizeBaseUrl(env.VITE_NITRO_BASE)
 
-export async function updateBookmark(id: string, bookmark: string) {
-  try {
-    const res = await fetch(`/api/bookmarks/${id}`, {
-      method: "PUT",
-      body: JSON.stringify({ bookmark }),
-      credentials: "include",
-      headers: { "Content-Type": "application/json" },
-    });
-    if (!res.ok) throw new Error(`HTTP ${res.status}`);
-    return await res.json();
-  } catch (e) {
-    console.warn(e);
-    return null;
+    // SSR/default fallback: /api
+    if (typeof window === 'undefined') {
+      return '/api'
+    }
+
+    const { protocol } = window.location
+
+    // Capacitor/Ionic runtime is not same-origin with Netlify functions.
+    if (isMobileAppProtocol(protocol)) {
+      return configured || DEFAULT_MOBILE_API_BASE
+    }
+
+    // Standard browser runtime should stay same-origin so local dev can use the
+    // Vite /api proxy instead of cross-origin requests that fail as "Failed to fetch".
+    return '/api'
   }
+
+  const NITRO_BASE = computeNitroBase();
+
+  if (typeof window !== "undefined") {
+    if (NITRO_BASE) {
+      console.debug("[Kimi] targeting", NITRO_BASE);
+    } else {
+      console.warn('[Kimi] NITRO_BASE missing; falling back to same-origin requests')
+    }
+  }
+
+  export function resolveNitroUrl(path: string) {
+    const normalized = path.startsWith("/") ? path : `/${path}`;
+    return NITRO_BASE ? `${NITRO_BASE}${normalized}` : normalized;
+  }
+  return null;
+}
 }
 
 export async function deleteBookmark(id: string) {
