@@ -98,7 +98,7 @@ pnpm dev
 # [Blog Seed] Total blog posts: X
 
 # Test API:
-curl http://localhost:3001/blog | jq '.posts | length'
+curl http://localhost:3000/blog | jq '.posts | length'
 ```
 
 ### Production (Netlify)
