@@ -98,48 +98,60 @@ Always be respectful, concise, and spiritually thoughtful.`,
     const userMessages = body.messages!.filter(m => m.role !== 'system');
     const finalModel = body.model || DEFAULT_MODEL;
 
-    const aiBinding = (event.context as any)?.cloudflare?.env?.AI;
-
     try {
-        let aiResponse;
+        let aiResponse = '';
         
-        // 1. Prioritize native Cloudflare AI Binding if available (Cloudflare Pages/Workers)
-        if (aiBinding) {
-            const response = await aiBinding.run(finalModel, {
+        // Proxy the request to the deployed Cloudflare Agent Worker
+        const workerUrl = 'https://aged-limit-06d9.wahbehw.workers.dev/chat';
+        
+        const response = await fetch(workerUrl, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+            },
+            body: JSON.stringify({
                 messages: [SYSTEM_PROMPT, ...userMessages],
-                temperature: body.temperature ?? 0.7,
-                max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
-            });
-            aiResponse = response?.response || response || '';
-        } 
-        // 2. Fallback to Cloudflare AI REST API if on Netlify or nitro dev
-        else {
-            const apiKey = config.kimiApiKey || process.env.KIMI_API_KEY || process.env.NITRO_KIMI_API_KEY || process.env.CLOUDFLARE_API_TOKEN;
-            const baseUrl = config.kimiBaseUrl || process.env.KIMI_BASE_URL || process.env.NITRO_KIMI_BASE_URL || 'https://api.moonshot.cn/v1';
+            })
+        });
 
-            // Let the fetch request handle API key validation with real API errors.
+        if (!response.ok) {
+            const errorText = await response.text();
+            throw new Error(`Agent worker failed with status ${response.status}: ${errorText}`);
+        }
 
-            const response = await fetch(`${baseUrl}/chat/completions`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': `Bearer ${apiKey}`,
-                },
-                body: JSON.stringify({
-                    model: finalModel,
-                    messages: [SYSTEM_PROMPT, ...userMessages],
-                    temperature: body.temperature ?? 0.7,
-                    max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
-                })
-            });
+        // Parse the Vercel AI SDK Data Stream protocol and accumulate it into a single string
+        const reader = response.body?.getReader();
+        const decoder = new TextDecoder('utf-8');
+        let done = false;
 
-            if (!response.ok) {
-                const errorText = await response.text();
-                throw new Error(`AI request failed with status ${response.status}: ${errorText}`);
+        if (reader) {
+            let buffer = '';
+            while (!done) {
+                const { value, done: doneReading } = await reader.read();
+                done = doneReading;
+                if (value) {
+                    buffer += decoder.decode(value, { stream: true });
+                    const parts = buffer.split('\n');
+                    buffer = parts.pop() || ''; 
+                    
+                    for (const line of parts) {
+                        if (line.startsWith('0:')) {
+                            try {
+                                const textContent = JSON.parse(line.slice(2));
+                                aiResponse += textContent;
+                            } catch (e) {
+                                // Ignore partial chunks
+                            }
+                        }
+                    }
+                }
             }
-
-            const data = await response.json() as any;
-            aiResponse = data?.choices?.[0]?.message?.content || data?.response || '';
+            // Flush remaining buffer
+            if (buffer.startsWith('0:')) {
+                try {
+                    aiResponse += JSON.parse(buffer.slice(2));
+                } catch (e) {}
+            }
         }
 
         return {
