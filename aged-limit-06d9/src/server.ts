@@ -204,6 +204,42 @@ If the user asks to schedule a task, use the schedule tool to schedule the task.
     return result.toUIMessageStreamResponse();
   }
 
+  async fetch(request: Request) {
+    if (request.method === "POST" && new URL(request.url).pathname === "/chat") {
+      const body = await request.json() as any;
+      const workersai = createWorkersAI({ binding: this.env.AI });
+
+      const result = streamText({
+        model: workersai("@cf/moonshotai/kimi-k2.6", {
+          sessionAffinity: this.sessionAffinity
+        }),
+        system: `You are a helpful assistant that can understand images. You can check the weather, get the user's timezone, run calculations, and schedule tasks.\n\n${getSchedulePrompt({ date: new Date() })}\n\nIf the user asks to schedule a task, use the schedule tool to schedule the task.`,
+        messages: body.messages,
+        tools: {
+          getWeather: tool({
+            description: "Get the current weather for a city",
+            inputSchema: z.object({ city: z.string() }),
+            execute: async ({ city }) => ({ city, temperature: 25, condition: "sunny", unit: "celsius" })
+          }),
+          getUserTimezone: tool({
+            description: "Get the user's timezone from their browser.",
+            inputSchema: z.object({})
+          }),
+          calculate: tool({
+            description: "Perform a math calculation.",
+            inputSchema: z.object({ a: z.number(), b: z.number(), operator: z.enum(["+", "-", "*", "/", "%"]) }),
+            execute: async ({ a, b, operator }) => {
+              const ops: any = { "+": (x:number, y:number) => x+y, "-": (x:number, y:number) => x-y, "*": (x:number, y:number) => x*y, "/": (x:number, y:number) => x/y, "%": (x:number, y:number) => x%y };
+              return { expression: `${a} ${operator} ${b}`, result: ops[operator](a, b) };
+            }
+          })
+        }
+      });
+      return result.toDataStreamResponse();
+    }
+    return super.fetch(request);
+  }
+
   async executeTask(description: string, _task: Schedule<string>) {
     // Do the actual work here (send email, call API, etc.)
     console.log(`Executing scheduled task: ${description}`);
@@ -224,6 +260,13 @@ If the user asks to schedule a task, use the schedule tool to schedule the task.
 
 export default {
   async fetch(request: Request, env: Env) {
+    // Custom route to allow the Nitro API to communicate via standard HTTP POST
+    if (request.method === "POST" && new URL(request.url).pathname === "/chat") {
+      const id = env.ChatAgent.idFromName("default");
+      const stub = env.ChatAgent.get(id);
+      return stub.fetch(request);
+    }
+
     return (
       (await routeAgentRequest(request, env)) ||
       new Response("Not found", { status: 404 })
