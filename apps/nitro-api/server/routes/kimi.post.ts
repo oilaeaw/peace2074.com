@@ -102,7 +102,7 @@ Always be respectful, concise, and spiritually thoughtful.`,
         let aiResponse = '';
         
         // Proxy the request to the deployed Cloudflare Agent Worker
-        const workerUrl = 'https://aged-limit-06d9.wahbehw.workers.dev/chat';
+        const workerUrl = 'https://aged-limit-06d9.wahbehw.workers.dev/agents/chat';
         
         const response = await fetch(workerUrl, {
             method: 'POST',

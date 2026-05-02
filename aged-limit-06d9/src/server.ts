@@ -205,7 +205,7 @@ If the user asks to schedule a task, use the schedule tool to schedule the task.
   }
 
   async fetch(request: Request) {
-    if (request.method === "POST" && new URL(request.url).pathname === "/chat") {
+    if (request.method === "POST" && new URL(request.url).pathname === "/agents/chat") {
       const body = await request.json() as any;
       const workersai = createWorkersAI({ binding: this.env.AI });
 
@@ -261,7 +261,7 @@ If the user asks to schedule a task, use the schedule tool to schedule the task.
 export default {
   async fetch(request: Request, env: Env) {
     // Custom route to allow the Nitro API to communicate via standard HTTP POST
-    if (request.method === "POST" && new URL(request.url).pathname === "/chat") {
+    if (request.method === "POST" && new URL(request.url).pathname === "/agents/chat") {
       const id = env.ChatAgent.idFromName("default");
       const stub = env.ChatAgent.get(id);
       return stub.fetch(request);
