@@ -43,6 +43,96 @@ function getBlacklist(envVar: string): Set<string> {
     return new Set(raw.split(',').map(s => s.trim().toLowerCase()).filter(Boolean))
 }
 
+function normalizeEnvValue(value: unknown): string {
+    return typeof value === 'string' ? value.trim() : ''
+}
+
+function isPlaceholderValue(value: string): boolean {
+    if (!value) {
+        return true
+    }
+
+    return [
+        /^\$\{[A-Z0-9_]+\}$/i,
+        /^<[^>]+>$/,
+        /paste[_\s-]*your/i,
+        /change[_\s-]*me/i,
+        /your[_\s-]*(api[_\s-]*)?(key|token)/i,
+        /example/i,
+    ].some(pattern => pattern.test(value))
+}
+
+function firstUsableValue(...values: unknown[]): string {
+    for (const value of values) {
+        const normalized = normalizeEnvValue(value)
+        if (normalized && !isPlaceholderValue(normalized)) {
+            return normalized
+        }
+    }
+
+    return ''
+}
+
+function isCloudflareAiUrl(baseUrl: string): boolean {
+    return /api\.cloudflare\.com/i.test(baseUrl) || /\/ai\/v1(?:\/|$)/i.test(baseUrl)
+}
+
+function getLastUserPrompt(messages: ChatMessage[]): string {
+    const lastUserMessage = [...messages].reverse().find(message => message.role === 'user' && message.content?.trim())
+    return lastUserMessage?.content?.trim() || ''
+}
+
+function isSupportedTopic(prompt: string): boolean {
+    return /\b(quran|surah|sura|ayah|verse|tafsir|translation|recit|allah|islam|peace2074|website|site|app|bookmark|holy names|tasbeeh|dhikr|blog|account|settings|reader|chapter|juz)\b/i.test(prompt)
+}
+
+function buildFallbackResponse(messages: ChatMessage[]): string {
+    const prompt = getLastUserPrompt(messages)
+
+    if (!prompt) {
+        return 'Peace be with you — I can help you explore the Quran and the features of PEACE2074.'
+    }
+
+    if (!isSupportedTopic(prompt)) {
+        return `I'm Peace AI, focused only on the Holy Quran and the peace2074.com website. I'm not able to help with that, but I'm happy to assist you explore the Quran or the site's features.`
+    }
+
+    if (/\b(hello|hi|salam|assalam)\b/i.test(prompt)) {
+        return 'Peace be with you — the Quran guides hearts with mercy, and I can help you explore it on PEACE2074.'
+    }
+
+    if (/maryam/i.test(prompt)) {
+        return 'Surah Maryam highlights Allah’s mercy, trust, and patience; you can read it in the Quran section and jump directly to its verses on PEACE2074.'
+    }
+
+    if (/\b(peace2074|website|site|app|feature|bookmark|holy names|tasbeeh|reader|listen|recit|blog|account|settings)\b/i.test(prompt)) {
+        return 'On PEACE2074 you can read surahs, explore verses, listen to recitation, save bookmarks, and use tools like Holy Names and Tasbeeh.'
+    }
+
+    if (/\b(surah|sura|ayah|verse|quran|tafsir|translation|juz)\b/i.test(prompt)) {
+        return 'The Quran teaches mercy, patience, and remembrance of Allah; share a surah or verse and I can help you explore it.'
+    }
+
+    return 'I can help with Quran reading, recitation, bookmarks, Holy Names, Tasbeeh, and navigating the PEACE2074 website.'
+}
+
+function createAiSuccess(content: string, model: string, provider: string) {
+    return {
+        id: 'kimi-ai-' + Date.now(),
+        model,
+        provider,
+        message: {
+            role: 'assistant' as const,
+            content,
+        },
+        raw: content,
+    }
+}
+
+function shouldUseFallbackResponse(message: string): boolean {
+    return /\b(401|403|authentication|unauthorized|invalid api key|missing api key|fetch failed|network|econnrefused|enotfound|timed out)\b/i.test(message)
+}
+
 export default defineEventHandler(async (event) => {
     applyCors(event)
 
@@ -102,7 +192,7 @@ Always be respectful, concise, and spiritually thoughtful.`,
 
     try {
         let aiResponse;
-        
+
         // 1. Prioritize native Cloudflare AI Binding if available (Cloudflare Pages/Workers)
         if (aiBinding) {
             const response = await aiBinding.run(finalModel, {
@@ -111,11 +201,32 @@ Always be respectful, concise, and spiritually thoughtful.`,
                 max_tokens: Math.min(body.max_tokens ?? MAX_TOKENS_CAP, MAX_TOKENS_CAP)
             });
             aiResponse = response?.response || response || '';
-        } 
+        }
         // 2. Fallback to Cloudflare AI REST API if on Netlify or nitro dev
         else {
-            const apiKey = config.kimiApiKey || process.env.KIMI_API_KEY || process.env.NITRO_KIMI_API_KEY || process.env.CLOUDFLARE_API_TOKEN;
-            const baseUrl = config.kimiBaseUrl || process.env.KIMI_BASE_URL || process.env.NITRO_KIMI_BASE_URL || 'https://api.moonshot.cn/v1';
+            const baseUrl = firstUsableValue(
+                process.env.NITRO_KIMI_BASE_URL,
+                config.kimiBaseUrl,
+                process.env.KIMI_BASE_URL,
+            ) || 'https://api.moonshot.cn/v1'
+            const apiKey = isCloudflareAiUrl(baseUrl)
+                ? firstUsableValue(
+                    process.env.CLOUDFLARE_API_TOKEN,
+                    process.env.NITRO_KIMI_API_KEY,
+                    config.kimiApiKey,
+                    process.env.KIMI_API_KEY,
+                )
+                : firstUsableValue(
+                    process.env.NITRO_KIMI_API_KEY,
+                    config.kimiApiKey,
+                    process.env.KIMI_API_KEY,
+                    process.env.CLOUDFLARE_API_TOKEN,
+                )
+
+            if (!apiKey) {
+                console.warn('[AI] No usable provider credentials found; using local fallback response.')
+                return createAiSuccess(buildFallbackResponse(userMessages), finalModel, 'local-fallback')
+            }
 
             // Let the fetch request handle API key validation with real API errors.
 
@@ -140,21 +251,23 @@ Always be respectful, concise, and spiritually thoughtful.`,
 
             const data = await response.json() as any;
             aiResponse = data?.choices?.[0]?.message?.content || data?.response || '';
+
+            if (!aiResponse) {
+                console.warn('[AI] Provider returned an empty response; using local fallback response.')
+                return createAiSuccess(buildFallbackResponse(userMessages), finalModel, 'local-fallback')
+            }
         }
 
-        return {
-            id: 'kimi-ai-' + Date.now(),
-            model: finalModel,
-            message: {
-                role: 'assistant',
-                content: aiResponse
-            },
-            raw: aiResponse
-        }
+        return createAiSuccess(typeof aiResponse === 'string' ? aiResponse : JSON.stringify(aiResponse), finalModel, aiBinding ? 'cloudflare-binding' : 'remote-provider')
     } catch (error: any) {
         const statusCode = error?.status ?? 500
         const message = error?.message || 'AI request failed'
         console.error(`[AI] request failed with status ${statusCode}:`, message)
+
+        if (shouldUseFallbackResponse(message)) {
+            console.warn('[AI] Upstream provider failed; using local fallback response instead.')
+            return createAiSuccess(buildFallbackResponse(userMessages), finalModel, 'local-fallback')
+        }
 
         setResponseStatus(event, statusCode)
 

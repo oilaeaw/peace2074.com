@@ -143,13 +143,23 @@ function setPromptExample() {
       </section>
 
       <section class="video-section">
-        <h2 class="section-title">{{ t('pages.home.video.title', 'App Preview') }}</h2>
+        <h2 class="section-title">
+          {{ t('pages.home.video.title', 'App Preview') }}
+        </h2>
         <div class="video-container">
-          <iframe 
-            src="https://www.youtube.com/embed/?enablejsapi=1&rel=0&autoplay=0&playsinline=1&fs=1" 
-            title="PEACE2074 Video" 
-            frameborder="0" 
-            allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share" 
+          <iframe
+            src="https://www.youtube.com/embed/?enablejsapi=1&rel=0&autoplay=0&playsinline=1&fs=1"
+            title="PEACE2074 Video"
+            frameborder="0"
+            allow="
+              accelerometer;
+              autoplay;
+              clipboard-write;
+              encrypted-media;
+              gyroscope;
+              picture-in-picture;
+              web-share;
+            "
             allowfullscreen
             class="responsive-iframe"
           ></iframe>
@@ -162,17 +172,41 @@ function setPromptExample() {
           <div class="screenshot-group tv">
             <h3>Apple TV</h3>
             <div class="images">
-              <img src="/screenshots/tv-1.png" alt="Apple TV Home" loading="lazy" />
-              <img src="/screenshots/tv-2.png" alt="Apple TV Player" loading="lazy" />
-              <img src="/screenshots/tv-3.png" alt="Apple TV Bookmarks" loading="lazy" />
+              <img
+                src="/screenshots/tv-1.png"
+                alt="Apple TV Home"
+                loading="lazy"
+              />
+              <img
+                src="/screenshots/tv-2.png"
+                alt="Apple TV Player"
+                loading="lazy"
+              />
+              <img
+                src="/screenshots/tv-3.png"
+                alt="Apple TV Bookmarks"
+                loading="lazy"
+              />
             </div>
           </div>
           <div class="screenshot-group watch">
             <h3>Apple Watch</h3>
             <div class="images">
-              <img src="/screenshots/watch-1.png" alt="Apple Watch Home" loading="lazy" />
-              <img src="/screenshots/watch-2.png" alt="Apple Watch Player" loading="lazy" />
-              <img src="/screenshots/watch-3.png" alt="Apple Watch Bookmarks" loading="lazy" />
+              <img
+                src="/screenshots/watch-1.png"
+                alt="Apple Watch Home"
+                loading="lazy"
+              />
+              <img
+                src="/screenshots/watch-2.png"
+                alt="Apple Watch Player"
+                loading="lazy"
+              />
+              <img
+                src="/screenshots/watch-3.png"
+                alt="Apple Watch Bookmarks"
+                loading="lazy"
+              />
             </div>
           </div>
         </div>
@@ -238,6 +272,7 @@ function setPromptExample() {
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  min-width: 0;
   box-shadow: 0 12px 24px rgba(15, 23, 42, 0.08);
 }
 .ai-header {
@@ -302,15 +337,22 @@ function setPromptExample() {
   margin-top: 1.25rem;
   border-top: 1px solid #e2e8f0;
   padding-top: 1rem;
+  overflow: hidden;
 }
 .ai-response-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
+  overflow-wrap: anywhere;
   word-break: break-word;
   white-space: pre-wrap;
   line-height: 1.6;
   margin: 0;
+  font-family: inherit;
 }
 .ai-response h3 {
   margin-bottom: 0.4rem;

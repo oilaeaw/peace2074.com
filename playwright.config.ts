@@ -11,17 +11,17 @@ export default defineConfig({
         viewport: { width: 1280, height: 720 },
         actionTimeout: 10_000,
         // Frontend runs on 4000 in dev; Nitro API runs separately. Point Playwright at the UI.
-        baseURL: process.env.BASE_URL || 'http://localhost:4000',
+        baseURL: process.env.BASE_URL || 'http://127.0.0.1:4000',
         ignoreHTTPSErrors: true,
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },
     ],
     webServer: {
-        command: 'pnpm run dev',
-        // Dev runs two servers; wait for Nitro auth health so the first auth request
-        // in E2E does not spend the test budget waiting for the API to finish booting.
-        url: 'http://localhost:3000/auth/health',
+        command: 'VITE_DEV_HOST=127.0.0.1 pnpm run dev',
+        // Wait for the frontend entrypoint, then let individual tests poll API readiness
+        // through the Vite /api proxy before making backend assertions.
+        url: 'http://127.0.0.1:4000/',
         reuseExistingServer: true,
         timeout: 180_000,
     },

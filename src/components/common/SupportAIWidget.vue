@@ -304,9 +304,12 @@ function hideForSession() {
 .ai-answer {
   background: #f8fafc;
   border: 1px solid #e2e8f0;
+  max-width: 100%;
+  overflow: hidden;
 }
 .ai-card__body {
   color: inherit;
+  min-width: 0;
 }
 .ai-answer--dark {
   background: rgba(15, 23, 42, 0.88);
@@ -314,12 +317,19 @@ function hideForSession() {
   color: #f8fafc;
 }
 .ai-response-text {
+  display: block;
+  width: 100%;
+  max-width: 100%;
+  min-width: 0;
+  margin: 0;
   max-height: 300px;
   overflow-y: auto;
   overflow-x: hidden;
+  overflow-wrap: anywhere;
   word-break: break-word;
   white-space: pre-wrap;
-  line-height: 1.5;
+  line-height: 1.6;
+  font-family: inherit;
 }
 .fade-enter-active,
 .fade-leave-active {

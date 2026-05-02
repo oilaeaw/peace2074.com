@@ -14,6 +14,7 @@ const pkg = JSON.parse(
 );
 
 const DEV = process.env.NODE_ENV === 'development';
+const DEV_SERVER_HOST = process.env.VITE_DEV_HOST?.trim() || undefined;
 
 // https://vitejs.dev/config/
 export default defineConfig({
@@ -244,10 +245,11 @@ export default defineConfig({
   },
 
   server: {
+    host: DEV_SERVER_HOST,
     port: 4000,
     middlewareMode: false,
     hmr: {
-      host: 'localhost',
+      host: DEV_SERVER_HOST || 'localhost',
       port: 4000,
       protocol: 'ws',
     },

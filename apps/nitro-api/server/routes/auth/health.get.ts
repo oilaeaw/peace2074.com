@@ -1,8 +1,11 @@
 import { defineEventHandler } from 'h3'
+import { applyCors } from '../../utils/cors'
 import { getOAuthAvailability } from '../../utils/oauth'
 import { getUserStorageDiagnostics } from '../../utils/users'
 
-export default defineEventHandler(async () => {
+export default defineEventHandler(async (event) => {
+    applyCors(event)
+
     const config = useRuntimeConfig()
     const oauth = getOAuthAvailability()
 

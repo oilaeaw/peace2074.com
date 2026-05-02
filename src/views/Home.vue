@@ -151,7 +151,7 @@
               <font-awesome-icon icon="fa-solid fa-copy" />
             </q-btn>
           </div>
-          <pre class="response-content">{{ aiResponse }}</pre>
+          <div class="response-content">{{ aiResponse }}</div>
         </q-card-section>
 
         <q-separator class="q-my-sm" />
@@ -730,6 +730,35 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   background: rgba(248, 250, 252, 0.9);
   border: 1px solid #e2e8f0;
   border-radius: 12px;
+  overflow: hidden;
+}
+
+.response-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  gap: 0.75rem;
+  margin-bottom: 0.75rem;
+}
+
+.response-title {
+  font-weight: 600;
+  color: #2c3e50;
+}
+
+.response-content {
+  margin: 0;
+  max-width: 100%;
+  min-width: 0;
+  max-height: min(320px, 40vh);
+  overflow-y: auto;
+  overflow-x: hidden;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+  word-break: break-word;
+  line-height: 1.65;
+  font-family: inherit;
+  color: #334155;
 }
 
 .blog-title {
@@ -746,6 +775,12 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
   -webkit-line-clamp: 2;
   -webkit-box-orient: vertical;
   overflow: hidden;
+}
+
+.history-response {
+  white-space: normal;
+  overflow-wrap: anywhere;
+  word-break: break-word;
 }
 
 /* Dark theme support */
@@ -857,6 +892,16 @@ const confettiPieces = Array.from({ length: 18 }).map((_, idx) => ({
 .body--dark .response {
   background: rgba(255, 255, 255, 0.04);
   border-color: rgba(148, 163, 184, 0.22);
+}
+
+:deep(body.body--dark) .response-title,
+.body--dark .response-title {
+  color: #f1f5f9;
+}
+
+:deep(body.body--dark) .response-content,
+.body--dark .response-content {
+  color: #e2e8f0;
 }
 
 :deep(body.body--dark) .blog-excerpt,

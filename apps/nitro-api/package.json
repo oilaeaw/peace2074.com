@@ -4,9 +4,9 @@
     "private": true,
     "type": "module",
     "scripts": {
-        "dev": "pnpm exec dotenv -e ../../.env -- pnpm exec nitro dev -p 3000",
+        "dev": "pnpm exec dotenv -e ../../.env -- pnpm exec nitro dev --port 3000",
         "build": "pnpm exec nitro build",
-        "preview": "pnpm exec nitro preview -p 3000",
+        "preview": "pnpm exec nitro preview --port 3000",
         "migrate:chat-permissions": "pnpm exec dotenv -e ../../.env -- node --experimental-strip-types ./scripts/migrate-chat-permissions.ts",
         "hash:password": "node --experimental-strip-types ./scripts/hash-password.ts"
     },

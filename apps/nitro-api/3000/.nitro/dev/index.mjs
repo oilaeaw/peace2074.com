@@ -1,7 +1,7 @@
-import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import './timing.js';globalThis.__timing__.logStart('Nitro Start');import { tmpdir } from 'node:os';
+import process from 'node:process';globalThis._importMeta_={url:import.meta.url,env:process.env};import { tmpdir } from 'node:os';
 import destr from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/destr@2.0.5/node_modules/destr/dist/index.mjs';
 import { defineEventHandler, handleCacheHeaders, splitCookiesString, createEvent, fetchWithEvent, isEvent, eventHandler, setHeaders, createError, sendRedirect, proxyRequest, getRequestURL, getRequestHeader, getResponseHeader, getRequestHeaders, setResponseHeaders, setResponseStatus, send, removeResponseHeader, appendResponseHeader, setResponseHeader, createApp, createRouter as createRouter$1, toNodeListener, lazyEventHandler, getRouterParam, readBody, getQuery as getQuery$1 } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/h3@1.15.11/node_modules/h3/dist/index.mjs';
-import { createDebugger, createHooks } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs';
+import { createHooks } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/hookable@5.5.3/node_modules/hookable/dist/index.mjs';
 import { createFetch, Headers as Headers$1 } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/ofetch@1.5.1/node_modules/ofetch/dist/node.mjs';
 import { fetchNodeRequestHandler, callNodeRequestHandler } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/node-mock-http@1.0.4/node_modules/node-mock-http/dist/index.mjs';
 import { parseURL, withoutBase, joinURL, getQuery, withQuery, decodePath, withLeadingSlash, withoutTrailingSlash } from 'file:///Users/waelio/Code/GitHub/peace2074/peace2074.com/node_modules/.pnpm/ufo@1.6.4/node_modules/ufo/dist/index.mjs';
@@ -923,45 +923,8 @@ async function errorHandler(error, event) {
   // H3 will handle fallback
 }
 
-function defineNitroPlugin(def) {
-  return def;
-}
-
-const __m77rsDiF23_213Yc1ASexRtU1kqng2JSCPvvpVtdPA = defineNitroPlugin((nitro) => {
-  createDebugger(nitro.hooks, { tag: "nitro-runtime" });
-});
-
-const globalTiming = globalThis.__timing__ || {
-  start: () => 0,
-  end: () => 0,
-  metrics: []
-};
-const timingMiddleware = eventHandler((event) => {
-  const start = globalTiming.start();
-  const _end = event.node.res.end;
-  event.node.res.end = function(chunk, encoding, cb) {
-    const metrics = [
-      ["Generate", globalTiming.end(start)],
-      ...globalTiming.metrics
-    ];
-    const serverTiming = metrics.map((m) => `-;dur=${m[1]};desc="${encodeURIComponent(m[0])}"`).join(", ");
-    if (!event.node.res.headersSent) {
-      event.node.res.setHeader("Server-Timing", serverTiming);
-    }
-    _end.call(event.node.res, chunk, encoding, cb);
-    return this;
-  }.bind(event.node.res);
-});
-const _ryFw1VYXej0B_4RtbMyV2SaCxSox0LzAcAGepz0W1wk = defineNitroPlugin((nitro) => {
-  nitro.h3App.stack.unshift({
-    route: "/",
-    handler: timingMiddleware
-  });
-});
-
 const plugins = [
-  __m77rsDiF23_213Yc1ASexRtU1kqng2JSCPvvpVtdPA,
-_ryFw1VYXej0B_4RtbMyV2SaCxSox0LzAcAGepz0W1wk
+  
 ];
 
 const assets = {};
@@ -1319,5 +1282,5 @@ async function shutdown() {
     nitroApp.hooks.callHook("close").catch(console.error)
   ]);
   parentPort?.postMessage({ event: "exit" });
-};globalThis.__timing__.logEnd('Nitro Start');
+}
 //# sourceMappingURL=index.mjs.map
