@@ -14,52 +14,55 @@ export async function getHolyBook() {
   const url = "/api/quran";
   try {
     const res = await fetch(url);
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
     return await res.json();
-
-    function normalizeBaseUrl(value: unknown) {
-      return typeof value === 'string' ? value.trim().replace(/\/$/, '') : ''
-    }
-
-    function isMobileAppProtocol(protocol: string) {
-      return protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
-    }
   } catch (e) {
     console.warn(e);
-    const configured = normalizeBaseUrl(env.VITE_NITRO_BASE)
-
-    // SSR/default fallback: /api
-    if (typeof window === 'undefined') {
-      return '/api'
-    }
-
-    const { protocol } = window.location
-
-    // Capacitor/Ionic runtime is not same-origin with Netlify functions.
-    if (isMobileAppProtocol(protocol)) {
-      return configured || DEFAULT_MOBILE_API_BASE
-    }
-
-    // Standard browser runtime should stay same-origin so local dev can use the
-    // Vite /api proxy instead of cross-origin requests that fail as "Failed to fetch".
-    return '/api'
+    return null;
   }
-
-  const NITRO_BASE = computeNitroBase();
-
-  if (typeof window !== "undefined") {
-    if (NITRO_BASE) {
-      console.debug("[Kimi] targeting", NITRO_BASE);
-    } else {
-      console.warn('[Kimi] NITRO_BASE missing; falling back to same-origin requests')
-    }
-  }
-
-  export function resolveNitroUrl(path: string) {
-    const normalized = path.startsWith("/") ? path : `/${path}`;
-    return NITRO_BASE ? `${NITRO_BASE}${normalized}` : normalized;
-  }
-  return null;
 }
+
+export async function getBookmarks() {
+  try {
+    const res = await fetch("/api/bookmarks", { credentials: "include" });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn(e);
+    return null;
+  }
+}
+
+export async function createBookmark({ bookmark }: { bookmark: string }) {
+  try {
+    const res = await fetch("/api/bookmarks", {
+      method: "POST",
+      body: JSON.stringify({ bookmark }),
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn(e);
+    return null;
+  }
+}
+
+export async function updateBookmark(id: string, bookmark: string) {
+  try {
+    const res = await fetch(`/api/bookmarks/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ bookmark }),
+      credentials: "include",
+      headers: { "Content-Type": "application/json" },
+    });
+    if (!res.ok) throw new Error(`HTTP ${res.status}`);
+    return await res.json();
+  } catch (e) {
+    console.warn(e);
+    return null;
+  }
 }
 
 export async function deleteBookmark(id: string) {
@@ -96,36 +99,31 @@ type ContactPayload = {
   message: string;
 };
 
-const env = (import.meta as any)?.env || {}
-const DEFAULT_NITRO_PORT = 3000
-const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
+const env = (import.meta as any)?.env || {};
+const DEFAULT_MOBILE_API_BASE = "https://peace2074.com/api";
+
+function normalizeBaseUrl(value: unknown) {
+  return typeof value === "string" ? value.trim().replace(/\/$/, "") : "";
+}
+
+function isMobileAppProtocol(protocol: string) {
+  return protocol === "capacitor:" || protocol === "ionic:" || protocol === "app:";
+}
 
 function computeNitroBase() {
-  if (typeof window !== 'undefined') {
-    const { protocol, hostname } = window.location
-    const configured = env.VITE_NITRO_BASE
+  const configured = normalizeBaseUrl(env.VITE_NITRO_BASE);
 
-    // Explicit override always wins (useful for mobile builds)
-    if (configured && typeof configured === 'string') {
-      return configured.replace(/\/$/, '')
-    }
-
-    // Capacitor/Ionic runtime is not same-origin with Netlify functions
-    if (protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:') {
-      return DEFAULT_MOBILE_API_BASE
-    }
-
-    // Local dev: check for override, otherwise use local Nitro
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-      return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`.replace(/\/$/, '')
-    }
-
-    // Production: always use /api prefix for Netlify Functions routing
-    return '/api'
+  if (typeof window === "undefined") {
+    return "/api";
   }
 
-  // SSR/default fallback: /api
-  return '/api'
+  const { protocol } = window.location;
+
+  if (isMobileAppProtocol(protocol)) {
+    return configured || DEFAULT_MOBILE_API_BASE;
+  }
+
+  return "/api";
 }
 
 const NITRO_BASE = computeNitroBase();
@@ -134,7 +132,7 @@ if (typeof window !== "undefined") {
   if (NITRO_BASE) {
     console.debug("[Kimi] targeting", NITRO_BASE);
   } else {
-    console.warn('[Kimi] NITRO_BASE missing; falling back to same-origin requests')
+    console.warn("[Kimi] NITRO_BASE missing; falling back to same-origin requests");
   }
 }
 
