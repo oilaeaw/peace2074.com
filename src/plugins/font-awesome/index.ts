@@ -26,6 +26,10 @@ import {
   faImage,
   faPenToSquare,
 } from "@fortawesome/free-regular-svg-icons";
+import {
+  faApple,
+  faGoogle,
+} from "@fortawesome/free-brands-svg-icons";
 
 const initFaLibrary = () => {
   library.add(
@@ -49,7 +53,9 @@ const initFaLibrary = () => {
     faCheck,
     faUser,
     faLocationDot,
-    faCopy
+    faCopy,
+    faGoogle,
+    faApple
   );
 };
 

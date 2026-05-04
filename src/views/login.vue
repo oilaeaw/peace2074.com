@@ -762,7 +762,7 @@ onUnmounted(() => {
                 :disable="loading"
                 @click="handleGoogleLogin"
               >
-                <q-icon name="fab fa-google" size="20px" class="q-mr-sm" />
+                <font-awesome-icon :icon="['fab', 'google']" class="q-mr-sm" />
                 {{ t('sign_in_with_google', 'Sign in with Google') }}
               </q-btn>
 
@@ -775,7 +775,7 @@ onUnmounted(() => {
                 :disable="loading || !appleAvailable"
                 @click="handleAppleLogin"
               >
-                <q-icon name="fab fa-apple" size="20px" class="q-mr-sm" />
+                <font-awesome-icon :icon="['fab', 'apple']" class="q-mr-sm" />
                 {{ t('auth.signInWithApple', 'Sign in with Apple') }}
               </q-btn>
 
