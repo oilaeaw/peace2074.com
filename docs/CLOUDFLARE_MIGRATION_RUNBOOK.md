@@ -17,6 +17,8 @@ That preserves the URLs already hardcoded into the mobile app and web app:
 - `public/_redirects` — SPA fallback for Cloudflare Pages so direct route visits still load the Vue app.
 - `tests/deployment-smoke.spec.ts` — HTTP-level smoke checks for health, Quran, and changelog endpoints.
 - `scripts/smoke-deployment.ts` — quick post-deploy verification script for staging/production.
+- `apps/nitro-api/Dockerfile` — standalone Node-host image for the Nitro API.
+- `.dockerignore` — trims the Docker build context to the API and shared Quran data.
 
 ## Environment matrix
 
@@ -43,6 +45,18 @@ That preserves the URLs already hardcoded into the mobile app and web app:
 - Frontend only: `pnpm build:frontend`
 - Nitro API for standalone Node host: `pnpm build:node-api`
 - Existing Netlify path: `pnpm build:netlify`
+
+## Fastest backend handoff today
+
+If Netlify needs to be retired today, the safest path is:
+
+1. Re-enable Netlify first so production traffic is not broken while you migrate.
+2. Deploy the API from `apps/nitro-api/Dockerfile` to a Node-friendly host (Render, Railway, Fly.io, etc.).
+3. Set the API host environment variables from `.env.example`.
+4. Verify the API host directly at `/api/health`.
+5. Update Cloudflare Pages `API_ORIGIN` to the new API host.
+6. Re-run `pnpm test:smoke:deployment` against the Cloudflare Pages URL.
+7. Only after smoke checks pass should Netlify be turned off again.
 
 ## Local verification
 

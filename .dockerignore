@@ -1,0 +1,14 @@
+# Keep Docker build context focused on the standalone Nitro API deployment.
+**
+
+!package.json
+!pnpm-lock.yaml
+!pnpm-workspace.yaml
+!CHANGELOG.md
+!apps/
+!apps/nitro-api/
+!apps/nitro-api/**
+!src/
+!src/shared/
+!src/shared/data/
+!src/shared/data/**
