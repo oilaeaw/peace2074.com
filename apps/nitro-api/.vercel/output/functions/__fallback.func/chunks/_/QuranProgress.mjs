@@ -1,0 +1,15 @@
+import mongoose from 'mongoose';
+
+const { Schema, model, models } = mongoose;
+const QuranProgressSchema = new Schema(
+  {
+    userId: { type: String, required: true, unique: true },
+    completedSuras: [{ type: Number }],
+    lastUpdated: { type: Date, default: Date.now }
+  },
+  { timestamps: true, collection: "QuranProgress" }
+);
+const QuranProgressModel = models.QuranProgress || model("QuranProgress", QuranProgressSchema);
+
+export { QuranProgressModel as Q };
+//# sourceMappingURL=QuranProgress.mjs.map
