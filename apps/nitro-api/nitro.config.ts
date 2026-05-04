@@ -7,6 +7,7 @@ const requestedPreset =
     || "";
 // NETLIFY_BUILD is set during Netlify build command.
 const isNetlifyBuild = process.env.NETLIFY_BUILD === "true" || requestedPreset === "netlify";
+const isCloudflareBuild = requestedPreset.startsWith("cloudflare");
 const runtimeBaseURL =
     process.env.NITRO_APP_BASE_URL?.trim()
     || process.env.NITRO_BASE_URL?.trim()
@@ -38,6 +39,14 @@ export default defineNitroConfig({
     baseURL: runtimeBaseURL,
     // Netlify still expects output in the workspace-level functions directory.
     ...(netlifyOutput ? { output: netlifyOutput } : {}),
+    ...(isCloudflareBuild
+        ? {
+            cloudflare: {
+                deployConfig: true,
+                nodeCompat: true,
+            },
+        }
+        : {}),
     devServer: {
         port: DEFAULT_PORT,
         host: "0.0.0.0",
