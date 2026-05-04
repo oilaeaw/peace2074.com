@@ -1,3 +1,5 @@
+@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
+
 @supports (-webkit-touch-callout: none) {
   /* CSS specific to iOS devices */
   body {
@@ -26,7 +28,6 @@
 @supports not (-webkit-touch-callout: none) {
   /* CSS for other than iOS devices */
 }
-@import url('https://fonts.googleapis.com/css2?family=Amiri&family=Noto+Naskh+Arabic:wght@400;700&display=swap');
 
 /* Utility: prefer high-quality Arabic types for Quran pages */
 .arabic-font,
@@ -64,33 +65,6 @@ body.body--dark {
 }
 .vue-scroll-picker-layer-bottom {
   background-color: greenyellow !important;
-}
-@font-face {
-  font-family: 'DM Sans';
-  src:
-    url('/assets/fonts/dmsans-2fb93aaf.woff2') format('woff2'),
-    url('/assets/fonts/dmsans-dbe1f17c.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'DM Serif Display';
-  src:
-    url('/assets/fonts/dmserifdisplay-aca0e217.woff2') format('woff2'),
-    url('/assets/fonts/dmserifdisplay-cbc631ca.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
-}
-@font-face {
-  font-family: 'DM Mono';
-  src:
-    url('/assets/fonts/dmmono-612bc94f.woff2') format('woff2'),
-    url('/assets/fonts/dmmono-cbe07c46.woff2') format('woff2');
-  font-weight: 400;
-  font-style: normal;
-  font-display: swap;
 }
 
 /* Global theme variables for Islamic design pages.

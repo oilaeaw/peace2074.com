@@ -33,6 +33,11 @@ import {
   stripLocalePrefix,
   type AppLocale,
 } from '@/utils/locale-routing'
+import '@fontsource/dm-sans/400.css'
+import '@fontsource/dm-sans/500.css'
+import '@fontsource/dm-sans/700.css'
+import '@fontsource/dm-serif-display/400.css'
+import '@fontsource/dm-mono/400.css'
 import '@/assets/app.scss'
 
 const isClient = typeof window !== 'undefined'
