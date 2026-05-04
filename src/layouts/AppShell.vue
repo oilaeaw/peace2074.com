@@ -179,8 +179,27 @@
       </q-toolbar>
     </q-header>
 
-    <q-drawer v-model="leftDrawer" :show-if-above="!isNativeRuntime" bordered>
-      <q-list>
+    <q-drawer
+      v-model="leftDrawer"
+      :show-if-above="!isNativeRuntime"
+      bordered
+      class="app-drawer"
+    >
+      <div class="drawer-header q-px-md q-pt-md q-pb-sm">
+        <div class="drawer-eyebrow text-overline">
+          {{ t('general.SiteTitle') }}
+        </div>
+        <div class="drawer-title text-subtitle1 text-weight-bold">
+          {{ t('pages.settings.navigation.title') }}
+        </div>
+        <div class="drawer-description text-caption">
+          {{ t('pages.settings.navigation.desc') }}
+        </div>
+      </div>
+
+      <q-separator inset class="q-mb-sm" />
+
+      <q-list class="drawer-nav-list" padding>
         <q-item
           v-for="item in orderedNavItems"
           :key="item.key"
@@ -188,6 +207,8 @@
           clickable
           :to="item.to"
           :draggable="navOrderingEnabled"
+          :title="t(item.labelKey)"
+          :aria-label="t(item.labelKey)"
           :class="{
             dragging: draggingKey === item.key,
             'drag-disabled': !navOrderingEnabled,
@@ -197,21 +218,37 @@
           @drop.prevent="onDrop(item.key, $event)"
           @dragend="onDragEnd"
         >
-          <q-item-section avatar>
-            <q-icon name="drag_indicator" />
+          <q-item-section avatar class="drawer-avatar-section">
+            <q-avatar
+              size="34px"
+              color="primary"
+              text-color="white"
+              class="drawer-avatar"
+            >
+              {{ getNavInitials(item) }}
+            </q-avatar>
           </q-item-section>
-          <q-item-section>{{ t(item.labelKey) }}</q-item-section>
-          <q-item-section side>
+          <q-item-section>
+            <q-item-label class="drawer-item-title">
+              {{ t(item.labelKey) }}
+            </q-item-label>
+            <q-item-label caption class="drawer-item-caption">
+              {{ getNavPathLabel(item) }}
+            </q-item-label>
+          </q-item-section>
+          <q-item-section side class="drawer-action-section">
             <q-btn
               dense
               flat
-              round
-              :icon="item.pinned ? 'push_pin' : 'push_pin'"
+              no-caps
+              :label="item.pinned ? t('appShell.unpin') : t('appShell.pin')"
               :color="item.pinned ? 'amber' : 'grey-6'"
               :disable="!navOrderingEnabled"
               :aria-label="
                 item.pinned ? t('appShell.unpin') : t('appShell.pin')
               "
+              :title="item.pinned ? t('appShell.unpin') : t('appShell.pin')"
+              class="drawer-pin-button"
               @click.stop="togglePin(item.key)"
             />
           </q-item-section>
@@ -570,6 +607,31 @@ function openSearchDialog() {
   searchDialogOpen.value = true
 }
 
+function getNavInitials(item: NavItem) {
+  const label = String(t(item.labelKey) || '').trim()
+  const characters = Array.from(label)
+
+  if (!characters.length) {
+    return '•'
+  }
+
+  const words = label.split(/\s+/).filter(Boolean)
+
+  if (words.length > 1) {
+    return words
+      .slice(0, 2)
+      .map((word) => Array.from(word)[0] || '')
+      .join('')
+      .toUpperCase()
+  }
+
+  return characters.slice(0, 2).join('').toUpperCase()
+}
+
+function getNavPathLabel(item: NavItem) {
+  return buildLocalePath(item.to, locale.value)
+}
+
 async function handleLogout() {
   await authStore.logout()
   router.push('/')
@@ -918,9 +980,78 @@ const orderedNavItems = computed(() => {
   min-width: 120px;
 }
 
+.app-drawer {
+  background: linear-gradient(180deg, #ffffff 0%, #f8fafc 100%);
+}
+
+.drawer-header {
+  display: grid;
+  gap: 4px;
+}
+
+.drawer-eyebrow {
+  color: #0ea5e9;
+  letter-spacing: 0.08em;
+}
+
+.drawer-title {
+  color: #0f172a;
+}
+
+.drawer-description {
+  color: #475569;
+  line-height: 1.45;
+}
+
+.drawer-nav-list {
+  padding-top: 0;
+}
+
+.drawer-avatar-section {
+  min-width: 48px;
+}
+
+.drawer-avatar {
+  font-size: 0.75rem;
+  font-weight: 700;
+  letter-spacing: 0.04em;
+}
+
+.drawer-item-title {
+  font-weight: 600;
+  color: #0f172a;
+}
+
+.drawer-item-caption {
+  color: #64748b;
+  word-break: break-word;
+}
+
+.drawer-action-section {
+  padding-left: 8px;
+}
+
+.drawer-pin-button {
+  min-width: 68px;
+}
+
 :global(body.body--dark) .app-layout {
   background: #000;
   color: #f8fafc;
+}
+
+:global(body.body--dark) .app-drawer {
+  background: linear-gradient(180deg, #111827 0%, #020617 100%);
+}
+
+:global(body.body--dark) .drawer-title,
+:global(body.body--dark) .drawer-item-title {
+  color: #f8fafc;
+}
+
+:global(body.body--dark) .drawer-description,
+:global(body.body--dark) .drawer-item-caption {
+  color: rgba(226, 232, 240, 0.78);
 }
 
 @media (max-width: 760px) {
@@ -1001,7 +1132,10 @@ const orderedNavItems = computed(() => {
   opacity: 0.6;
 }
 .q-drawer .q-item {
+  align-items: center;
+  border-radius: 14px;
   cursor: grab;
+  margin: 4px 8px;
 }
 .q-drawer .q-item.dragging {
   cursor: grabbing;
