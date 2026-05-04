@@ -4,7 +4,7 @@
 
 [build]
   # Build frontend, then Nitro API, then rename entry point for Netlify detection
-  command = "pnpm install -r && pnpm build && NETLIFY_BUILD=true pnpm --filter nitro-api build && cp CHANGELOG.md netlify/functions/server/CHANGELOG.md"
+  command = "pnpm install -r && pnpm build:netlify"
   publish = "dist"
   functions = "netlify/functions"
 

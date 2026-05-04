@@ -17,29 +17,40 @@ interface Deploy {
 
 export default defineEventHandler(async () => {
     try {
-        // Try multiple paths: bundled alongside the route file, then project root fallbacks
-        const candidates = [
-            join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'CHANGELOG.md'), // project root from server/routes/
-            join(dirname(fileURLToPath(import.meta.url)), 'CHANGELOG.md'),   // bundled next to this file
-            join(process.cwd(), 'CHANGELOG.md'),                             // cwd = nitro-api in some envs
-            join(process.cwd(), '..', '..', 'CHANGELOG.md'),                 // cwd = nitro-api, up 2
-        ]
+        const bundledChangelog = await useStorage('assets:release')
+            .getItem('CHANGELOG.md')
+            .catch(() => '')
 
-        let content = ''
-        for (const p of candidates) {
-            try {
-                content = await readFile(p, 'utf-8')
-                break
-            } catch { /* try next */ }
+        let content = typeof bundledChangelog === 'string'
+            ? bundledChangelog
+            : ''
+
+        if (!content) {
+            // Try multiple paths: bundled alongside the route file, then project root fallbacks.
+            // This keeps legacy Netlify builds working and provides a fallback for local tooling.
+            const candidates = [
+                join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'CHANGELOG.md'),
+                join(dirname(fileURLToPath(import.meta.url)), 'CHANGELOG.md'),
+                join(process.cwd(), 'CHANGELOG.md'),
+                join(process.cwd(), '..', '..', 'CHANGELOG.md'),
+            ]
+
+            for (const p of candidates) {
+                try {
+                    content = await readFile(p, 'utf-8')
+                    break
+                } catch {
+                    // Try the next fallback path.
+                }
+            }
         }
 
         if (!content) {
-            console.error('CHANGELOG.md not found in any candidate path:', candidates)
+            console.error('CHANGELOG.md could not be loaded from the bundled asset or fallback paths')
             return { ok: false, deploys: [] }
         }
 
         const deploys: Deploy[] = []
-        const versionRegex = /## (\d+\.\d+\.\d+) \((\d{4}-\d{2}-\d{2})\)/g
         const sections = content.split(/(?=## \d+\.\d+\.\d+)/)
 
         for (const section of sections) {

@@ -1,21 +1,43 @@
 import { defineNitroConfig } from "nitropack";
 
 const DEFAULT_PORT = 3000;
-// NETLIFY_BUILD is set during Netlify build command
-const isNetlifyBuild = process.env.NETLIFY_BUILD === 'true';
+const requestedPreset =
+    process.env.NITRO_PRESET?.trim()
+    || process.env.SERVER_PRESET?.trim()
+    || "";
+// NETLIFY_BUILD is set during Netlify build command.
+const isNetlifyBuild = process.env.NETLIFY_BUILD === "true" || requestedPreset === "netlify";
+const runtimeBaseURL =
+    process.env.NITRO_APP_BASE_URL?.trim()
+    || process.env.NITRO_BASE_URL?.trim()
+    || (process.env.NODE_ENV === "production" ? "/api" : "/");
+const netlifyOutput = isNetlifyBuild
+    ? {
+        dir: "../../netlify/functions",
+        serverDir: "../../netlify/functions/server",
+    }
+    : undefined;
 
 export default defineNitroConfig({
     compatibilityDate: "2024-10-01",
     srcDir: "server",
-    preset: "netlify",
-    // In production (Netlify), routes are prefixed with /api via redirects
-    // In dev, Vite proxy strips /api prefix before forwarding
-    baseURL: isNetlifyBuild ? '/api' : '/',
-    // Output to root netlify/functions directory for Netlify to pick up
-    output: {
-        dir: isNetlifyBuild ? '../../netlify/functions' : '.netlify/functions-internal',
-        serverDir: isNetlifyBuild ? '../../netlify/functions/server' : '.netlify/functions-internal/server',
-    },
+    serverAssets: [
+        {
+            baseName: "release",
+            dir: "../../",
+            pattern: "CHANGELOG.md",
+        },
+    ],
+    // Nitro defaults production builds to the standalone Node preset (`node_server`).
+    // CI can override with NITRO_PRESET for Netlify, Cloudflare, etc.
+    ...(requestedPreset || isNetlifyBuild
+        ? { preset: requestedPreset || "netlify" }
+        : {}),
+    // Production builds keep the /api prefix so reverse proxies (Netlify redirects,
+    // Cloudflare Pages Functions, CDN rules, etc.) can forward requests transparently.
+    baseURL: runtimeBaseURL,
+    // Netlify still expects output in the workspace-level functions directory.
+    ...(netlifyOutput ? { output: netlifyOutput } : {}),
     devServer: {
         port: DEFAULT_PORT,
         host: "0.0.0.0",
