@@ -32,6 +32,9 @@ importers:
       '@emailjs/browser':
         specifier: ^4.4.1
         version: 4.4.1
+      '@fontsource/amiri':
+        specifier: ^5.2.8
+        version: 5.2.8
       '@fontsource/dm-mono':
         specifier: ^5.2.7
         version: 5.2.7
@@ -41,6 +44,9 @@ importers:
       '@fontsource/dm-serif-display':
         specifier: ^5.2.8
         version: 5.2.8
+      '@fontsource/noto-naskh-arabic':
+        specifier: ^5.2.11
+        version: 5.2.11
       '@fortawesome/fontawesome-svg-core':
         specifier: ^7.1.0
         version: 7.2.0
@@ -3315,6 +3321,10 @@ packages:
     resolution: {integrity: sha512-2xCRM9q9FlzGZCdgDMJwc0gyUkWFtkosy7Xxr6sFgQwn+wMNIWd7xIvYNauU1r64B5L5rsGKy/n9TKJ0aAFeqQ==}
     dev: false
 
+  /@fontsource/amiri@5.2.8:
+    resolution: {integrity: sha512-HT/wBlEC/ummjXWg5yH+V0Tzw1vITtI9UM8mwxhwOkNZWD2zuie5vXpAVSCZORArT/LUQ4NP0fRcjiElUwI/8A==}
+    dev: false
+
   /@fontsource/dm-mono@5.2.7:
     resolution: {integrity: sha512-Ma1az2atTVgQWuOWwjuxx26p/6A6CU9HBNKq1CFV6YKpKhpswnf9ry9Ql4+T6bTZzkdtSfS6tjJvqZOljVzIFQ==}
     dev: false
@@ -3325,6 +3335,10 @@ packages:
 
   /@fontsource/dm-serif-display@5.2.8:
     resolution: {integrity: sha512-GYSDSlGU6vyhv9a5MwaiVNf9HCuSVpK8hEFRyG4NNDHCDeHiX7YHDAcWsaoLKKcfXLgWG9YkBkk9T3SxM4rAjQ==}
+    dev: false
+
+  /@fontsource/noto-naskh-arabic@5.2.11:
+    resolution: {integrity: sha512-mi4QOG3EK+iho//vjB+13Ww4Oy1ulkgBgUuVpVZQBjBPkaMoHOJZBpSIZOXTzL7ZFTvMPzdSTvt0juE9NVl+PA==}
     dev: false
 
   /@formatjs/ecma402-abstract@2.3.6:

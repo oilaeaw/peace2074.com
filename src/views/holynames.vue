@@ -787,8 +787,6 @@ const holynames: HolyNameI[] = [
 </template>
 
 <style lang="scss" scoped>
-@import url('https://fonts.googleapis.com/css2?family=Amiri:wght@700&family=Noto+Naskh+Arabic:wght@700&display=swap');
-
 .holynames-page {
   background: linear-gradient(135deg, #f9fafb 0%, #e8f0e8 100%);
   min-height: 100vh;

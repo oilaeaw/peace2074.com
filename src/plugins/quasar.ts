@@ -1,6 +1,7 @@
 import { App } from 'vue'
 import { Quasar, Notify, Dialog } from 'quasar'
 import 'quasar/dist/quasar.css'
+import '@quasar/extras/roboto-font/roboto-font.css'
 import '@quasar/extras/material-icons/material-icons.css'
 
 export default function registerQuasar(app: App) {
