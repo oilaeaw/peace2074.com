@@ -45,6 +45,37 @@ export default defineNitroConfig({
                 deployConfig: true,
                 nodeCompat: true,
             },
+            rollupConfig: {
+                plugins: [
+                    {
+                        // MongoDB has 8 optional native/cloud deps that aren't installed and
+                        // cannot be externals in CF Workers — stub them all as empty modules.
+                        name: "stub-mongodb-optional-deps",
+                        resolveId(id: string) {
+                            const stubs = [
+                                "@aws-sdk/credential-providers",
+                                "@mongodb-js/zstd",
+                                "kerberos",
+                                "gcp-metadata",
+                                "snappy",
+                                "socks",
+                                "aws4",
+                                "mongodb-client-encryption",
+                            ];
+                            if (stubs.includes(id)) {
+                                return `\0stub:${id}`;
+                            }
+                            return null;
+                        },
+                        load(id: string) {
+                            if (id.startsWith("\0stub:")) {
+                                return "export default {}; export const fromNodeProviderChain = () => ({});";
+                            }
+                            return null;
+                        },
+                    },
+                ],
+            },
         }
         : {}),
     devServer: {

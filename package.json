@@ -43,6 +43,7 @@
     "build:api": "pnpm --filter nitro-api build",
     "build:node-api": "NITRO_PRESET=node_server NITRO_APP_BASE_URL=/api pnpm build:api",
     "build:netlify": "pnpm build:frontend && NETLIFY_BUILD=true NITRO_PRESET=netlify NITRO_APP_BASE_URL=/api pnpm build:api && cp CHANGELOG.md netlify/functions/server/CHANGELOG.md",
+    "build:cf": "pnpm sync:quran:data && vite build && NITRO_PRESET=cloudflare-pages NITRO_APP_BASE_URL=/api pnpm build:api && cp -r dist/. apps/nitro-api/dist/",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",

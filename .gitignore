@@ -21,6 +21,11 @@ dist-ssr
 *.sln
 apps/nitro-api/.nitro/
 apps/nitro-api/.output/
+apps/nitro-api/dist/
+apps/nitro-api/.vercel/
+apps/nitro-api/.wrangler/
+**/.vercel/
+.vercel
 *.sw?
 /pnpm-lock.yaml.bak
 
@@ -45,3 +50,29 @@ ios/App/*.xcworkspace/xcuserdata/
 ios/build/
 ios/App/build/
 *.xcarchive
+
+# iOS junk directories (NativeScript, tvOS, timestamped exports, archives)
+ios/peace2074-mobile/
+ios/peace2074-tvOS/
+ios/STUPIDSOTS/
+ios/AppStoreScreenshots/
+ios/screenshots/
+ios/mobile/
+"ios/peace2074mobile */"
+ios/Watch*/
+ios/*.xcarchive
+
+# Root-level debug / test scripts
+cookies.txt
+test-auth-local.mjs
+test-kimi.ts
+blog-posts-export.json
+list-users.mjs
+
+# Timestamped export folders at repo root
+peace2074mobile*/
+peace2074-tvOS/
+
+# aged-limit-06d9 build output (separate CF Worker project)
+aged-limit-06d9/dist/
+aged-limit-06d9/node_modules/
