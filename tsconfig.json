@@ -1,7 +1,5 @@
 {
   "compilerOptions": {
-    "ignoreDeprecations": "5.0",
-    "baseUrl": ".",
     "target": "ESNext",
     "useDefineForClassFields": true,
     "module": "ESNext",
@@ -20,13 +18,13 @@
     "noUnusedParameters": false,
     "noFallthroughCasesInSwitch": true,
     "paths": {
-      "@/*": ["src/*"],
-      "~/*": ["src/*"],
-      "~/assets/*": ["src/assets/*"],
-      "~/store/*": ["src/stores/*"],
-      "~/app/*": ["src/app/*"],
-      "@shared/*": ["src/shared/*"],
-      "@shared": ["src/shared"]
+      "@/*": ["./src/*"],
+      "~/*": ["./src/*"],
+      "~/assets/*": ["./src/assets/*"],
+      "~/store/*": ["./src/stores/*"],
+      "~/app/*": ["./src/app/*"],
+      "@shared/*": ["./src/shared/*"],
+      "@shared": ["./src/shared"]
     }
   },
   "include": [
