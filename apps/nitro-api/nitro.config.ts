@@ -1,3 +1,4 @@
+import { fileURLToPath } from "node:url";
 import { defineNitroConfig } from "nitropack";
 
 const DEFAULT_PORT = 3000;
@@ -48,39 +49,15 @@ export default defineNitroConfig({
                     compatibility_flags: ["nodejs_compat_v2"],
                 },
             },
+            // Alias `debug` to a no-op stub before node resolution runs.
+            // The real `debug` CJS package (module.exports = fn) gets wrapped by rollup into
+            // a namespace object; getDefaultExportFromNamespaceIfNotNamed only unwraps
+            // single-key namespaces, so callers like mquery get an object, not a function.
+            alias: {
+                debug: fileURLToPath(new URL("./server/stubs/debug.ts", import.meta.url)),
+            },
             rollupConfig: {
                 plugins: [
-                    {
-                        // The `debug` CJS module exports a function as module.exports, but
-                        // rollup wraps it in a namespace with multiple keys (enable, disable…).
-                        // getDefaultExportFromNamespaceIfNotNamed only unwraps single-key namespaces,
-                        // so mquery's `const log = debug('mquery')` throws "not a function".
-                        // Replace with a no-op stub — we don't need debug logging in prod CF Workers.
-                        name: "stub-debug-for-cf",
-                        resolveId(id: string) {
-                            if (id === "debug") return "\0stub:debug";
-                            return null;
-                        },
-                        load(id: string) {
-                            if (id !== "\0stub:debug") return null;
-                            return [
-                                "const noop = () => {};",
-                                "const debug = (ns) => {",
-                                "  const fn = () => {};",
-                                "  fn.enabled = false; fn.namespace = ns;",
-                                "  fn.extend = (sub) => debug(ns + ':' + sub);",
-                                "  fn.destroy = () => {};",
-                                "  return fn;",
-                                "};",
-                                "debug.enable = () => {};",
-                                "debug.disable = () => '';",
-                                "debug.enabled = () => false;",
-                                "debug.formatters = {};",
-                                "debug.names = []; debug.skips = [];",
-                                "export default debug;",
-                            ].join("\n");
-                        },
-                    },
                     {
                         // MongoDB has 8 optional native/cloud deps that aren't installed and
                         // cannot be externals in CF Workers — stub them all as empty modules.
