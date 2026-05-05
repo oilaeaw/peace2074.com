@@ -20,222 +20,229 @@ Timeout: 5000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 5000ms
-    9 × unexpected value "http://127.0.0.1:4000/signup"
+    8 × unexpected value "http://127.0.0.1:4000/signup"
 
 ```
 
 # Page snapshot
 
 ```yaml
-- generic [ref=e1]:
-  - generic [ref=e4]:
-    - banner [ref=e5]:
-      - toolbar [ref=e6]:
-        - button "Toggle menu" [ref=e7] [cursor=pointer]:
-          - img [ref=e9]: menu
-        - img "PEACE2074" [ref=e12]
-        - link "Peace2074" [ref=e14] [cursor=pointer]:
-          - /url: /
-        - button "Search…" [ref=e15] [cursor=pointer]:
-          - img [ref=e17]: search
-        - button "Play Athan" [ref=e18] [cursor=pointer]:
-          - img [ref=e20]: volume_up
-        - generic [ref=e23] [cursor=pointer]:
-          - generic [ref=e25]:
-            - generic [ref=e26]: 🇺🇸
-            - combobox "🇺🇸" [ref=e27]: 🇺🇸 English
-          - generic [ref=e29]: arrow_drop_down
-        - button "Login" [ref=e30] [cursor=pointer]:
-          - img [ref=e32]: login
-    - complementary [ref=e33]:
-      - generic [ref=e34]:
-        - generic [ref=e35]:
-          - generic [ref=e36]: Peace2074
-          - generic [ref=e37]: Navigation
-          - generic [ref=e38]: Control drawer ordering and visibility.
-        - separator [ref=e39]
-        - list [ref=e40]:
-          - listitem "Home" [ref=e41] [cursor=pointer]:
-            - generic [ref=e44]: HO
-            - generic [ref=e45]:
-              - generic [ref=e46]: Home
-              - generic [ref=e47]: /
-            - button "Pin" [ref=e49]:
-              - generic [ref=e51]: Pin
-          - listitem "About" [ref=e52] [cursor=pointer]:
-            - generic [ref=e55]: AB
-            - generic [ref=e56]:
-              - generic [ref=e57]: About
-              - generic [ref=e58]: /about
-            - button "Pin" [ref=e60]:
-              - generic [ref=e62]: Pin
-          - listitem "Quran" [ref=e63] [cursor=pointer]:
-            - generic [ref=e66]: QU
-            - generic [ref=e67]:
-              - generic [ref=e68]: Quran
-              - generic [ref=e69]: /quran
-            - button "Pin" [ref=e71]:
-              - generic [ref=e73]: Pin
-          - listitem "Holy Names" [ref=e74] [cursor=pointer]:
-            - generic [ref=e77]: HN
-            - generic [ref=e78]:
-              - generic [ref=e79]: Holy Names
-              - generic [ref=e80]: /holynames
-            - button "Pin" [ref=e82]:
-              - generic [ref=e84]: Pin
-          - listitem "Tasbeeh" [ref=e85] [cursor=pointer]:
-            - generic [ref=e88]: TA
-            - generic [ref=e89]:
-              - generic [ref=e90]: Tasbeeh
-              - generic [ref=e91]: /tasbeeh
-            - button "Pin" [ref=e93]:
-              - generic [ref=e95]: Pin
-          - listitem "Miracles" [ref=e96] [cursor=pointer]:
-            - generic [ref=e99]: MI
-            - generic [ref=e100]:
-              - generic [ref=e101]: Miracles
-              - generic [ref=e102]: /miracles
-            - button "Pin" [ref=e104]:
-              - generic [ref=e106]: Pin
-          - listitem "Chat" [ref=e107] [cursor=pointer]:
-            - generic [ref=e110]: CH
-            - generic [ref=e111]:
-              - generic [ref=e112]: Chat
-              - generic [ref=e113]: /chat
-            - button "Pin" [ref=e115]:
-              - generic [ref=e117]: Pin
-          - listitem "Support" [ref=e118] [cursor=pointer]:
-            - generic [ref=e121]: SU
-            - generic [ref=e122]:
-              - generic [ref=e123]: Support
-              - generic [ref=e124]: /support
-            - button "Pin" [ref=e126]:
-              - generic [ref=e128]: Pin
-          - listitem "Settings" [ref=e129] [cursor=pointer]:
-            - generic [ref=e132]: SE
-            - generic [ref=e133]:
-              - generic [ref=e134]: Settings
-              - generic [ref=e135]: /settings
-            - button "Pin" [ref=e137]:
-              - generic [ref=e139]: Pin
-          - listitem "Preferences" [ref=e140] [cursor=pointer]:
-            - generic [ref=e143]: PR
-            - generic [ref=e144]:
-              - generic [ref=e145]: Preferences
-              - generic [ref=e146]: /preferences
-            - button "Pin" [ref=e148]:
-              - generic [ref=e150]: Pin
-          - listitem "Admin Page" [ref=e151] [cursor=pointer]:
-            - generic [ref=e154]: AP
-            - generic [ref=e155]:
-              - generic [ref=e156]: Admin Page
-              - generic [ref=e157]: /admin
-            - button "Pin" [ref=e159]:
-              - generic [ref=e161]: Pin
-          - listitem "Login" [ref=e162] [cursor=pointer]:
-            - generic [ref=e165]: LO
-            - generic [ref=e166]:
-              - generic [ref=e167]: Login
-              - generic [ref=e168]: /login
-            - button "Pin" [ref=e170]:
-              - generic [ref=e172]: Pin
-          - listitem "Blog" [ref=e173] [cursor=pointer]:
-            - generic [ref=e176]: BL
-            - generic [ref=e177]:
-              - generic [ref=e178]: Blog
-              - generic [ref=e179]: /blog
-            - button "Pin" [ref=e181]:
-              - generic [ref=e183]: Pin
-          - listitem "Deploys" [ref=e184] [cursor=pointer]:
-            - generic [ref=e187]: DE
-            - generic [ref=e188]:
-              - generic [ref=e189]: Deploys
-              - generic [ref=e190]: /deploys
-            - button "Pin" [ref=e192]:
-              - generic [ref=e194]: Pin
-          - listitem "Contact" [ref=e195] [cursor=pointer]:
-            - generic [ref=e198]: CO
-            - generic [ref=e199]:
-              - generic [ref=e200]: Contact
-              - generic [ref=e201]: /contact
-            - button "Pin" [ref=e203]:
-              - generic [ref=e205]: Pin
-    - generic [ref=e212]:
-      - generic [ref=e213]:
-        - generic [ref=e215]: mosque
-        - generic [ref=e216]: Peace2074
-        - generic [ref=e217]: Create your account
-      - generic [ref=e219]:
-        - generic [ref=e222]:
-          - generic [ref=e224]: person
-          - generic [ref=e225]:
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - toolbar [ref=e7]:
+      - button "Toggle menu" [ref=e8] [cursor=pointer]:
+        - img [ref=e10]: menu
+      - img "PEACE2074" [ref=e13]
+      - link "Peace2074" [ref=e15] [cursor=pointer]:
+        - /url: /
+      - button "Search…" [ref=e16] [cursor=pointer]:
+        - img [ref=e18]: search
+      - button "Play Athan" [ref=e19] [cursor=pointer]:
+        - img [ref=e21]: volume_up
+      - generic [ref=e24] [cursor=pointer]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: 🇺🇸
+          - combobox "🇺🇸" [ref=e28]: 🇺🇸 English
+        - generic [ref=e30]: arrow_drop_down
+      - button "Login" [ref=e31] [cursor=pointer]:
+        - img [ref=e33]: login
+  - complementary [ref=e34]:
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: Peace2074
+        - generic [ref=e38]: Navigation
+        - generic [ref=e39]: Control drawer ordering and visibility.
+      - separator [ref=e40]
+      - list [ref=e41]:
+        - listitem "Home" [ref=e42] [cursor=pointer]:
+          - generic [ref=e45]: HO
+          - generic [ref=e46]:
+            - generic [ref=e47]: Home
+            - generic [ref=e48]: /
+          - button "Pin" [ref=e50]:
+            - generic [ref=e52]: Pin
+        - listitem "About" [ref=e53] [cursor=pointer]:
+          - generic [ref=e56]: AB
+          - generic [ref=e57]:
+            - generic [ref=e58]: About
+            - generic [ref=e59]: /about
+          - button "Pin" [ref=e61]:
+            - generic [ref=e63]: Pin
+        - listitem "Quran" [ref=e64] [cursor=pointer]:
+          - generic [ref=e67]: QU
+          - generic [ref=e68]:
+            - generic [ref=e69]: Quran
+            - generic [ref=e70]: /quran
+          - button "Pin" [ref=e72]:
+            - generic [ref=e74]: Pin
+        - listitem "Holy Names" [ref=e75] [cursor=pointer]:
+          - generic [ref=e78]: HN
+          - generic [ref=e79]:
+            - generic [ref=e80]: Holy Names
+            - generic [ref=e81]: /holynames
+          - button "Pin" [ref=e83]:
+            - generic [ref=e85]: Pin
+        - listitem "Tasbeeh" [ref=e86] [cursor=pointer]:
+          - generic [ref=e89]: TA
+          - generic [ref=e90]:
+            - generic [ref=e91]: Tasbeeh
+            - generic [ref=e92]: /tasbeeh
+          - button "Pin" [ref=e94]:
+            - generic [ref=e96]: Pin
+        - listitem "Miracles" [ref=e97] [cursor=pointer]:
+          - generic [ref=e100]: MI
+          - generic [ref=e101]:
+            - generic [ref=e102]: Miracles
+            - generic [ref=e103]: /miracles
+          - button "Pin" [ref=e105]:
+            - generic [ref=e107]: Pin
+        - listitem "Chat" [ref=e108] [cursor=pointer]:
+          - generic [ref=e111]: CH
+          - generic [ref=e112]:
+            - generic [ref=e113]: Chat
+            - generic [ref=e114]: /chat
+          - button "Pin" [ref=e116]:
+            - generic [ref=e118]: Pin
+        - listitem "Support" [ref=e119] [cursor=pointer]:
+          - generic [ref=e122]: SU
+          - generic [ref=e123]:
+            - generic [ref=e124]: Support
+            - generic [ref=e125]: /support
+          - button "Pin" [ref=e127]:
+            - generic [ref=e129]: Pin
+        - listitem "Settings" [ref=e130] [cursor=pointer]:
+          - generic [ref=e133]: SE
+          - generic [ref=e134]:
+            - generic [ref=e135]: Settings
+            - generic [ref=e136]: /settings
+          - button "Pin" [ref=e138]:
+            - generic [ref=e140]: Pin
+        - listitem "Preferences" [ref=e141] [cursor=pointer]:
+          - generic [ref=e144]: PR
+          - generic [ref=e145]:
+            - generic [ref=e146]: Preferences
+            - generic [ref=e147]: /preferences
+          - button "Pin" [ref=e149]:
+            - generic [ref=e151]: Pin
+        - listitem "Admin Page" [ref=e152] [cursor=pointer]:
+          - generic [ref=e155]: AP
+          - generic [ref=e156]:
+            - generic [ref=e157]: Admin Page
+            - generic [ref=e158]: /admin
+          - button "Pin" [ref=e160]:
+            - generic [ref=e162]: Pin
+        - listitem "Login" [ref=e163] [cursor=pointer]:
+          - generic [ref=e166]: LO
+          - generic [ref=e167]:
+            - generic [ref=e168]: Login
+            - generic [ref=e169]: /login
+          - button "Pin" [ref=e171]:
+            - generic [ref=e173]: Pin
+        - listitem "Blog" [ref=e174] [cursor=pointer]:
+          - generic [ref=e177]: BL
+          - generic [ref=e178]:
+            - generic [ref=e179]: Blog
+            - generic [ref=e180]: /blog
+          - button "Pin" [ref=e182]:
+            - generic [ref=e184]: Pin
+        - listitem "Deploys" [ref=e185] [cursor=pointer]:
+          - generic [ref=e188]: DE
+          - generic [ref=e189]:
+            - generic [ref=e190]: Deploys
+            - generic [ref=e191]: /deploys
+          - button "Pin" [ref=e193]:
+            - generic [ref=e195]: Pin
+        - listitem "Contact" [ref=e196] [cursor=pointer]:
+          - generic [ref=e199]: CO
+          - generic [ref=e200]:
+            - generic [ref=e201]: Contact
+            - generic [ref=e202]: /contact
+          - button "Pin" [ref=e204]:
+            - generic [ref=e206]: Pin
+  - generic [ref=e213]:
+    - generic [ref=e214]:
+      - generic [ref=e216]: mosque
+      - generic [ref=e217]: Peace2074
+      - generic [ref=e218]: Create your account
+    - generic [ref=e220]:
+      - generic [ref=e222]:
+        - generic:
+          - generic:
+            - generic: person
+          - generic:
             - generic: Username
-            - textbox "Username" [ref=e226]:
+            - textbox "Username" [disabled]:
               - /placeholder: Enter your username
-              - text: e2e_1778014082003-8i19qc
-        - generic [ref=e230]:
-          - generic [ref=e232]: email
-          - generic [ref=e233]:
+              - text: e2e_1778016396296-s4f6pm
+      - generic [ref=e225]:
+        - generic:
+          - generic:
+            - generic: email
+          - generic:
             - generic: Email
-            - textbox "Email" [ref=e234]:
+            - textbox "Email" [disabled]:
               - /placeholder: Enter your email
-              - text: e2e_1778014082003-8i19qc@example.com
-        - generic [ref=e238]:
-          - generic [ref=e240]: lock
-          - generic [ref=e241]:
+              - text: e2e_1778016396296-s4f6pm@example.com
+      - generic [ref=e228]:
+        - generic:
+          - generic:
+            - generic: lock
+          - generic:
             - generic: Password
-            - textbox "Password" [ref=e242]:
+            - textbox "Password" [disabled]:
               - /placeholder: Enter your password
-              - text: Auth_1778014082003-8i19qc!42
-          - generic [ref=e244] [cursor=pointer]: visibility
-        - generic [ref=e248]:
-          - generic [ref=e250]: lock
-          - generic [ref=e251]:
+              - text: Auth_1778016396296-s4f6pm!42
+          - generic:
+            - generic: visibility
+      - generic [ref=e231]:
+        - generic:
+          - generic:
+            - generic: lock
+          - generic:
             - generic: Confirm Password
-            - textbox "Confirm Password" [ref=e252]:
+            - textbox "Confirm Password" [disabled]:
               - /placeholder: Confirm password
-              - text: Auth_1778014082003-8i19qc!42
-          - generic [ref=e254] [cursor=pointer]: visibility
-        - checkbox "I accept the terms and conditions" [checked] [ref=e256] [cursor=pointer]:
-          - img [ref=e259]
-        - generic [ref=e261]:
-          - generic [ref=e262]: I accept the
-          - link "terms and conditions" [ref=e263] [cursor=pointer]:
-            - /url: /terms
-        - button "Sign Up" [ref=e264] [cursor=pointer]:
-          - generic [ref=e266]: Sign Up
-        - generic [ref=e267]:
-          - text: Already have an account?
-          - link "Sign In" [ref=e268] [cursor=pointer]:
-            - /url: /login
-            - generic [ref=e270]: Sign In
-    - generic [ref=e272]:
-      - button "AI Support" [ref=e273] [cursor=pointer]:
-        - generic [ref=e274]:
-          - img [ref=e275]: smart_toy
-          - generic [ref=e276]: AI Support
-      - button "close" [ref=e277] [cursor=pointer]:
-        - img [ref=e279]: close
-    - contentinfo [ref=e280]:
-      - generic [ref=e281]:
-        - generic [ref=e282]:
-          - img "decor" [ref=e283]
-          - generic [ref=e284]: © 2026 Peace2074 · v3.1.3
-        - navigation "Footer links" [ref=e285]:
-          - link "About" [ref=e286] [cursor=pointer]:
-            - /url: /about
-          - link "Quran" [ref=e287] [cursor=pointer]:
-            - /url: /quran
-          - link "Terms and Conditions" [ref=e288] [cursor=pointer]:
-            - /url: /terms
-          - link "Privacy Policy" [ref=e289] [cursor=pointer]:
-            - /url: /privacy
-          - link "Contact" [ref=e290] [cursor=pointer]:
-            - /url: /contact
-  - alert [ref=e291]:
-    - generic [ref=e293]:
-      - img [ref=e294]: warning
-      - generic [ref=e295]: Unable to reach the server. Please check your connection and try again.
+              - text: Auth_1778016396296-s4f6pm!42
+          - generic:
+            - generic: visibility
+      - checkbox "I accept the terms and conditions" [checked] [ref=e233] [cursor=pointer]:
+        - img [ref=e236]
+      - generic [ref=e238]:
+        - generic [ref=e239]: I accept the
+        - link "terms and conditions" [ref=e240] [cursor=pointer]:
+          - /url: /terms
+      - button "Sign Up" [ref=e241]:
+        - generic:
+          - generic: Sign Up
+        - img [ref=e243]
+      - generic [ref=e247]:
+        - text: Already have an account?
+        - link "Sign In" [ref=e248] [cursor=pointer]:
+          - /url: /login
+          - generic [ref=e250]: Sign In
+  - generic [ref=e252]:
+    - button "AI Support" [ref=e253] [cursor=pointer]:
+      - generic [ref=e254]:
+        - img [ref=e255]: smart_toy
+        - generic [ref=e256]: AI Support
+    - button "close" [ref=e257] [cursor=pointer]:
+      - img [ref=e259]: close
+  - contentinfo [ref=e260]:
+    - generic [ref=e261]:
+      - generic [ref=e262]:
+        - img "decor" [ref=e263]
+        - generic [ref=e264]: © 2026 Peace2074 · v3.1.3
+      - navigation "Footer links" [ref=e265]:
+        - link "About" [ref=e266] [cursor=pointer]:
+          - /url: /about
+        - link "Quran" [ref=e267] [cursor=pointer]:
+          - /url: /quran
+        - link "Terms and Conditions" [ref=e268] [cursor=pointer]:
+          - /url: /terms
+        - link "Privacy Policy" [ref=e269] [cursor=pointer]:
+          - /url: /privacy
+        - link "Contact" [ref=e270] [cursor=pointer]:
+          - /url: /contact
 ```
 
 # Test source
