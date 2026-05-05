@@ -44,6 +44,9 @@ export default defineNitroConfig({
             cloudflare: {
                 deployConfig: true,
                 nodeCompat: true,
+                wrangler: {
+                    compatibility_flags: ["nodejs_compat_v2"],
+                },
             },
             rollupConfig: {
                 plugins: [
