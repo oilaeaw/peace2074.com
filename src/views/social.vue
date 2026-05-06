@@ -55,6 +55,24 @@
         </q-card-actions>
       </q-card>
     </section>
+
+    <section class="q-mt-xl">
+      <q-banner rounded class="legal-banner">
+        <template #avatar>
+          <q-icon name="gavel" color="primary" />
+        </template>
+
+        <div class="text-subtitle2 text-weight-bold">
+          {{ t('pages.social.legalTitle') }}
+        </div>
+        <div class="q-mt-xs">
+          {{ t('pages.social.legalOwnership') }}
+        </div>
+        <div class="q-mt-sm text-caption">
+          {{ t('pages.social.legalPrivacy') }}
+        </div>
+      </q-banner>
+    </section>
   </q-page>
 </template>
 
@@ -108,6 +126,12 @@ const tiktokSlots = [
 
 .video-meta {
   padding-bottom: 0;
+}
+
+.legal-banner {
+  background: #eff6ff;
+  color: #1e3a8a;
+  border: 1px solid rgba(59, 130, 246, 0.18);
 }
 
 .video-frame {
