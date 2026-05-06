@@ -52,7 +52,8 @@
       "logout": "Sign Out",
       "blog": "Blog",
       "contact": "Contact",
-      "deploys": "Deploys"
+      "deploys": "Deploys",
+      "social": "Social"
     }
   },
   "navigation": {
@@ -690,6 +691,20 @@
       "loadError": "Failed to load deployment history",
       "loginRequiredToLike": "Please log in to like deployments",
       "toggleLikeError": "Failed to toggle like"
+    },
+    "social": {
+      "title": "Social & Share",
+      "subtitle": "Follow us and share the Quran with the world",
+      "followUs": "Follow Us",
+      "shareVerse": "Share a Verse",
+      "selectSura": "Select Surah",
+      "selectAyah": "Ayah number",
+      "loadVerse": "Load Verse",
+      "verseNotFound": "Verse not found",
+      "loadError": "Failed to load verse",
+      "copyText": "Copy Text",
+      "copied": "Copied to clipboard!",
+      "copyError": "Failed to copy"
     }
   },
   "offline": {

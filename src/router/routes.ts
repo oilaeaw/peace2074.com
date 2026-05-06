@@ -419,6 +419,19 @@ const baseRoutes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/social',
+    name: 'Social',
+    component: () => import('@/views/social.vue'),
+    meta: {
+      title: 'Social & Share',
+      titleKey: 'pages.social.title',
+      description: 'Follow PEACE2074 on social media and share Quran verses with the world.',
+      keywords: ['social media', 'share quran', 'TikTok', 'Instagram', 'peace2074'],
+      contentGroup: 'social',
+      schemaType: 'WebPage',
+    },
+  },
+  {
     path: '/privacy',
     name: 'Privacy',
     component: () => import('@/views/privacy.vue'),

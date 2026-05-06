@@ -488,6 +488,12 @@ const defaultNavItems = [
     to: '/miracles',
     icon: 'lightbulb',
   },
+  {
+    key: 'social',
+    labelKey: 'appShell.nav.social',
+    to: '/social',
+    icon: 'share',
+  },
   { key: 'chat', labelKey: 'appShell.nav.chat', to: '/chat', icon: 'chat' },
   {
     key: 'support',
