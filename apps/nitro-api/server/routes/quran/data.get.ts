@@ -1,6 +1,6 @@
 import { defineEventHandler } from 'h3'
-import quranData from '../../../../../src/shared/data/quran.json'
+import { loadQuranData } from '../../utils/quran-data'
 
-export default defineEventHandler(() => {
-    return quranData
+export default defineEventHandler(async (event) => {
+    return await loadQuranData(event)
 })

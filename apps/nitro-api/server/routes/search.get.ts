@@ -5,9 +5,9 @@ import chaptersDe from '../../../../src/shared/data/chapters/de.json';
 import chaptersHe from '../../../../src/shared/data/chapters/he.json';
 import chaptersEs from '../../../../src/shared/data/chapters/es.json';
 import chaptersTr from '../../../../src/shared/data/chapters/tr.json';
-import quranData from '../../../../src/shared/data/quran.json';
 import { getMongoose } from '../utils/mongoose';
 import { BlogPostModel } from '../models/BlogPost';
+import { loadQuranData } from '../utils/quran-data';
 
 // Pre-loaded chapters by locale
 const chaptersMap: Record<string, any[]> = {
@@ -20,8 +20,6 @@ const chaptersMap: Record<string, any[]> = {
     ar: chaptersEn as any[], // Arabic sura names are in the 'name' field of all chapter files
     it: chaptersEn as any[], // Italian fallback to English
 };
-
-const quranCache = quranData as Record<string, any[]>;
 
 function normalizeText(str: string) {
     const noHarakat = str
@@ -56,7 +54,6 @@ export default defineEventHandler(async (event) => {
 
     const loc = normalizeLang(String(lang));
     const chapters = getChapters(loc);
-    const quran = quranCache;
 
     const results: any[] = [];
 
@@ -80,23 +77,29 @@ export default defineEventHandler(async (event) => {
     }
 
     // Match verses (light scan; stop at limit)
-    outer: for (const [suraId, verses] of Object.entries(quran)) {
-        for (const verse of verses || []) {
-            const text = String(verse.text || "");
-            const hay = text.toLowerCase();
-            const hayNorm = normalizeText(text);
-            if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
-                const id = `${suraId}:${verse.verse || ""}`;
-                results.push({
-                    type: "verse",
-                    id,
-                    title: `Ayah ${id}`,
-                    subtitle: text.slice(0, 140),
-                    path: `/quran/${suraId}#${suraId}_${verse.verse || ""}`,
-                });
-                if (results.length >= max) break outer;
+    try {
+        const quran = await loadQuranData(event);
+
+        outer: for (const [suraId, verses] of Object.entries(quran)) {
+            for (const verse of verses || []) {
+                const text = String(verse.text || "");
+                const hay = text.toLowerCase();
+                const hayNorm = normalizeText(text);
+                if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
+                    const id = `${suraId}:${verse.verse || ""}`;
+                    results.push({
+                        type: "verse",
+                        id,
+                        title: `Ayah ${id}`,
+                        subtitle: text.slice(0, 140),
+                        path: `/quran/${suraId}#${suraId}_${verse.verse || ""}`,
+                    });
+                    if (results.length >= max) break outer;
+                }
             }
         }
+    } catch (_err) {
+        // Verse search is best-effort; keep sura/page/blog results working.
     }
 
     // Search blog posts

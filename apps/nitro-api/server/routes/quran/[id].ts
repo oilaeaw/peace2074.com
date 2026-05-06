@@ -11,23 +11,9 @@ import chaptersSv from '../../../../../src/shared/data/chapters/sv.json'
 import chaptersUr from '../../../../../src/shared/data/chapters/ur.json'
 import chaptersZh from '../../../../../src/shared/data/chapters/zh.json'
 import chaptersEs from '../../../../../src/shared/data/chapters/es.json'
+import { loadQuranData, tryLoadEditionData } from '../../utils/quran-data'
 
-import quranData from '../../../../../src/shared/data/quran.json'
-import editionsEn from '../../../../../src/shared/data/editions/en.json'
-import editionsEs from '../../../../../src/shared/data/editions/es.json'
-import editionsRu from '../../../../../src/shared/data/editions/ru.json'
-import editionsTr from '../../../../../src/shared/data/editions/tr.json'
-import editionsDe from '../../../../../src/shared/data/editions/de.json'
-import editionsHe from '../../../../../src/shared/data/editions/he.json'
-import editionsFr from '../../../../../src/shared/data/editions/fr.json'
-import editionsBn from '../../../../../src/shared/data/editions/bn.json'
-import editionsId from '../../../../../src/shared/data/editions/id.json'
-import editionsSv from '../../../../../src/shared/data/editions/sv.json'
-import editionsUr from '../../../../../src/shared/data/editions/ur.json'
-import editionsZh from '../../../../../src/shared/data/editions/zh.json'
-import editionsTranslit from '../../../../../src/shared/data/editions/transliteration.json'
-
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     const id = Number(getRouterParam(event, 'id') || 1)
     const query = getQuery(event)
     const requested = String(query.lang || query.locale || '').toLowerCase().trim()
@@ -59,22 +45,7 @@ export default defineEventHandler((event) => {
         zh: chaptersZh as any[],
         es: chaptersEs as any[],
     }
-    const book = quranData as Record<string, any[]>
-    const editionsByLocale: Record<string, Record<string, any[]>> = {
-        en: editionsEn as Record<string, any[]>,
-        es: editionsEs as Record<string, any[]>,
-        ru: editionsRu as Record<string, any[]>,
-        tr: editionsTr as Record<string, any[]>,
-        de: editionsDe as Record<string, any[]>,
-        he: editionsHe as Record<string, any[]>,
-        fr: editionsFr as Record<string, any[]>,
-        bn: editionsBn as Record<string, any[]>,
-        id: editionsId as Record<string, any[]>,
-        sv: editionsSv as Record<string, any[]>,
-        ur: editionsUr as Record<string, any[]>,
-        zh: editionsZh as Record<string, any[]>,
-        transliteration: editionsTranslit as Record<string, any[]>,
-    }
+    const book = await loadQuranData(event)
 
     const metaByLocale = (loc: string) =>
         (chaptersData[loc] || chaptersData.en || []).find((c: any) => Number(c?.id || c?.number) === id)
@@ -86,7 +57,7 @@ export default defineEventHandler((event) => {
     const metaHe = metaByLocale('he')
     const verses = Array.isArray(book[String(id)]) ? book[String(id)] : []
 
-    const localeEdition = editionsByLocale[locale] ?? null
+    const localeEdition = locale === 'en' ? null : await tryLoadEditionData(event, locale)
     const translatedVerses = Array.isArray(localeEdition?.[String(id)]) ? localeEdition[String(id)] : []
 
     const byVerse = (arr: any[]) => {

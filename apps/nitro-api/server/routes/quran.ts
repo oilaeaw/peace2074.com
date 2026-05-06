@@ -1,10 +1,10 @@
 import { defineEventHandler, getQuery } from 'h3'
 import chaptersEn from '../../../../src/shared/data/chapters/en.json'
-import quranData from '../../../../src/shared/data/quran.json'
+import { loadQuranData } from '../utils/quran-data'
 
-export default defineEventHandler((event) => {
+export default defineEventHandler(async (event) => {
     const chapters = chaptersEn as any[]
-    const book = quranData as Record<string, any[]>
+    const book = await loadQuranData(event)
 
     const query = getQuery(event)
     const requestedId = Number(query?.s || query?.id || 0)
