@@ -42,6 +42,12 @@ export default defineNitroConfig({
     ...(netlifyOutput ? { output: netlifyOutput } : {}),
     ...(isCloudflareBuild
         ? {
+            cloudflarePages: {
+                routes: {
+                    include: ["/api/*"],
+                    exclude: [],
+                },
+            },
             cloudflare: {
                 deployConfig: true,
                 nodeCompat: true,
