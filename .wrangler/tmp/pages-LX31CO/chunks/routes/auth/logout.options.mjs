@@ -1,0 +1,2 @@
+import{d as o}from"../../nitro/nitro.mjs";import{a as r}from"../../_/cors.mjs";import"node:buffer";import"node:util";import"node:process";import"cloudflare:workers";import"node:events";import"node:timers";import"node:crypto";import"node:fs/promises";import"node:net";import"node:stream";import"node:url";import"node:dns";import"node:zlib";import"node:tls";import"node:timers/promises";import"node:assert";import"node:async_hooks";const e=o(o=>{r(o),o.node.res.statusCode=204,o.node.res.end()});export{e as default};
+//# sourceMappingURL=logout.options.mjs.map
