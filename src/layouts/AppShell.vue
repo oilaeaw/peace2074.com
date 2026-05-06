@@ -397,7 +397,7 @@ const ConsentBanner = defineAsyncComponent(
 
 declare const __APP_VERSION__: string
 
-const NAV_STORAGE_KEY = 'nav-items-v1'
+const NAV_STORAGE_KEY = 'nav-items-v2'
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
 const COMPACT_KEY = 'pref-compact-layout'
