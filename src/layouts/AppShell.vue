@@ -397,7 +397,7 @@ const ConsentBanner = defineAsyncComponent(
 
 declare const __APP_VERSION__: string
 
-const NAV_STORAGE_KEY = 'nav-items-v5'
+const NAV_STORAGE_KEY = 'nav-items-v6'
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
 const COMPACT_KEY = 'pref-compact-layout'
@@ -462,12 +462,6 @@ const langs = computed(() => {
 })
 
 const defaultNavItems = [
-  {
-    key: 'social',
-    labelKey: 'appShell.nav.social',
-    to: '/social',
-    icon: 'share',
-  },
   { key: 'home', labelKey: 'appShell.nav.home', to: '/', icon: 'home' },
   { key: 'about', labelKey: 'appShell.nav.about', to: '/about', icon: 'info' },
   {
@@ -493,6 +487,12 @@ const defaultNavItems = [
     labelKey: 'appShell.nav.miracles',
     to: '/miracles',
     icon: 'lightbulb',
+  },
+  {
+    key: 'social',
+    labelKey: 'appShell.nav.social',
+    to: '/social',
+    icon: 'share',
   },
   {
     key: 'support',
