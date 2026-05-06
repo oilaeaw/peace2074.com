@@ -384,13 +384,11 @@ async function copyVerseText() {
 onMounted(async () => {
   // Build sura list from bundled data
   try {
-    const mod = await import('@/assets/data/quran-meta.json').catch(() =>
-      import('@/shared/data/quran-meta.json').catch(() => null)
-    )
-    const suras: { id: number; name: string; e_name: string }[] =
+    const mod = await import('@shared/data/chapters/en.json')
+    const suras: { id: number; name: string; transliteration: string }[] =
       (mod as any)?.default ?? (mod as any) ?? []
     allSuras.value = suras.map((s) => ({
-      label: `${s.id}. ${s.e_name} (${s.name})`,
+      label: `${s.id}. ${s.transliteration} (${s.name})`,
       value: s.id,
     }))
     suraOptions.value = allSuras.value
