@@ -2836,11 +2836,13 @@ watch(
 watch(locale, async () => {
   if (!sura.value) return
   if (isPlayingAudio.value) {
-    // Locale changed during active recitation — reload only the translation
-    // text without stopping audio.
+    // Locale changed during active recitation — reload translations without
+    // stopping audio, then fetch quran.com translations for the new locale.
     await q2p.init(currentSuraId.value, locale.value || 'en')
     sura.value = q2p.GetSura?.value || null
     applyQuranDetailTitle(false)
+    await loadTranslationsFromBundled(currentSuraId.value)
+    loadAudioAndTimings(currentSuraId.value)
     return
   }
   loadSuraById(currentSuraId.value)

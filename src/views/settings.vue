@@ -83,6 +83,18 @@ const translatorModel = computed({
   },
 })
 
+watch(locale, (newLocale) => {
+  // When the app locale changes, dispatch quran-translator-changed so the
+  // Quran page re-fetches with the new locale's default (or stored) translator.
+  if (typeof window === 'undefined') return
+  const id = readTranslatorIdForLocale(newLocale)
+  window.dispatchEvent(
+    new CustomEvent('quran-translator-changed', {
+      detail: { id, locale: newLocale },
+    })
+  )
+})
+
 watch(navOrderingEnabled, (val) => {
   persistNavOrdering(val)
   broadcastNavOrdering(val)
