@@ -86,10 +86,8 @@ export default defineEventHandler((event) => {
     const metaHe = metaByLocale('he')
     const verses = Array.isArray(book[String(id)]) ? book[String(id)] : []
 
-    const localeEdition = editionsByLocale[locale] || editionsByLocale.en
-    const englishEdition = editionsByLocale.en
+    const localeEdition = editionsByLocale[locale] ?? null
     const translatedVerses = Array.isArray(localeEdition?.[String(id)]) ? localeEdition[String(id)] : []
-    const englishVerses = Array.isArray(englishEdition?.[String(id)]) ? englishEdition[String(id)] : []
 
     const byVerse = (arr: any[]) => {
         const out = new Map<number, string>()
@@ -102,7 +100,6 @@ export default defineEventHandler((event) => {
     }
 
     const translatedByVerse = byVerse(translatedVerses)
-    const englishByVerse = byVerse(englishVerses)
 
     const sura = {
         id,
@@ -128,7 +125,7 @@ export default defineEventHandler((event) => {
             return {
                 verse: verseNo,
                 text: v?.text,
-                translation: translatedByVerse.get(verseNo) || englishByVerse.get(verseNo) || String(v?.translation || ''),
+                translation: translatedByVerse.get(verseNo) ?? String(v?.translation || ''),
             }
         }),
     }

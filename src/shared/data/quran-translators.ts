@@ -8,6 +8,11 @@ export interface QuranTranslator {
  * First entry in each array is the curated default for that locale.
  */
 export const QURAN_TRANSLATORS: Record<string, QuranTranslator[]> = {
+    ar: [
+        { id: 16, name: 'تفسير المیسر' },
+        { id: 17, name: 'تفسير الجلالين' },
+        { id: 230, name: 'تفسير ابن كثير' },
+    ],
     en: [
         { id: 20, name: 'Saheeh International' },
         { id: 22, name: 'Abdullah Yusuf Ali' },

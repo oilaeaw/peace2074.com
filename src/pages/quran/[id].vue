@@ -1627,9 +1627,7 @@ async function loadTranslationsFromBundled(id: number) {
   if (!sura.value?.ayat) return
   const loc = locale.value || 'en'
   try {
-    const edition = await import(
-      `../../shared/data/editions/${loc}.json`
-    ).catch(() => import('../../shared/data/editions/en.json'))
+    const edition = await import(`../../shared/data/editions/${loc}.json`)
     const verses: Array<{ verse: number; text: string }> =
       edition.default?.[String(id)] || []
     verses.forEach((v) => {
@@ -1637,7 +1635,7 @@ async function loadTranslationsFromBundled(id: number) {
       if (ayah && v.text) ayah.translation = v.text
     })
   } catch {
-    // Silently fail — translations just won't show
+    // No bundled edition for this locale — API will provide the translation
   }
 }
 
