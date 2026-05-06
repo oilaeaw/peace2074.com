@@ -85,6 +85,18 @@ export default defineNitroConfig({
                             return null;
                         },
                     },
+                    {
+                        // Cloudflare Workers rejects `.hasOwnProperty()` calls on null-prototype
+                        // objects produced by Mongoose internals. Replace with the safe form.
+                        name: "fix-has-own-property",
+                        renderChunk(code: string) {
+                            const fixed = code.replace(
+                                /([a-zA-Z_$][\w$]*)\.hasOwnProperty\(/g,
+                                "Object.prototype.hasOwnProperty.call($1, "
+                            );
+                            return fixed !== code ? { code: fixed } : null;
+                        },
+                    },
                 ],
             },
         }
