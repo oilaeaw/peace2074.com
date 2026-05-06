@@ -97,6 +97,9 @@ export default defineConfig({
       injectManifest: {
         globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
         globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js', '**/data/quran.json'],
+        // Locale bundles can exceed Workbox's default 2 MiB precache cap.
+        // Keep them precacheable so Cloudflare production builds do not fail.
+        maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
       manifest: {
         name: "Peace2074 - Islamic Knowledge Platform",
