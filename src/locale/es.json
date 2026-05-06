@@ -52,7 +52,8 @@
             "logout": "Cerrar sesión",
             "blog": "Blog",
             "contact": "Contacto",
-            "deploys": "Despliegues"
+            "deploys": "Despliegues",
+            "social": "Social"
         }
     },
     "navigation": {
@@ -481,7 +482,9 @@
                 "darkMode": "Modo oscuro",
                 "darkModeHint": "Cambia entre tema claro y oscuro.",
                 "translation": "Mostrar traducción del Corán",
-                "translationHint": "Siempre mostrar la traducción después del texto árabe."
+                "translationHint": "Siempre mostrar la traducción después del texto árabe.",
+                "translator": "Traductor del Corán",
+                "translatorHint": "Elige tu estudioso de traducción preferido para el idioma actual."
             },
             "accessibility": {
                 "title": "Accesibilidad",
@@ -688,6 +691,22 @@
             "loadError": "No se pudo cargar el historial de despliegues",
             "loginRequiredToLike": "Inicia sesión para dar me gusta a los despliegues",
             "toggleLikeError": "No se pudo cambiar el me gusta"
+        },
+        "social": {
+            "title": "Social y Compartir",
+            "subtitle": "Síguenos y comparte el Corán con el mundo",
+            "followUs": "Síguenos",
+            "featuredVideos": "Videos Destacados",
+            "featuredVideosSubtitle": "Artistas jóvenes compartiendo fe y amor a través de nasheeds",
+            "shareVerse": "Compartir un Versículo",
+            "selectSura": "Seleccionar Sura",
+            "selectAyah": "Número de Ayah",
+            "loadVerse": "Cargar Versículo",
+            "verseNotFound": "Versículo no encontrado",
+            "loadError": "Error al cargar el versículo",
+            "copyText": "Copiar Texto",
+            "copied": "¡Copiado al portapapeles!",
+            "copyError": "Error al copiar"
         }
     },
     "offline": {

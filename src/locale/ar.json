@@ -52,7 +52,8 @@
       "logout": "تسجيل الخروج",
       "blog": "المدونة",
       "contact": "اتصل بنا",
-      "deploys": "سجل النشر"
+      "deploys": "سجل النشر",
+      "social": "التواصل الاجتماعي"
     }
   },
   "navigation": {
@@ -690,6 +691,22 @@
       "loadError": "تعذر تحميل سجل النشر",
       "loginRequiredToLike": "يرجى تسجيل الدخول للإعجاب بعمليات النشر",
       "toggleLikeError": "تعذر تبديل الإعجاب"
+    },
+    "social": {
+      "title": "التواصل الاجتماعي والمشاركة",
+      "subtitle": "تابعونا وشاركوا القرآن مع العالم",
+      "followUs": "تابعونا",
+      "featuredVideos": "مقاطع مميزة",
+      "featuredVideosSubtitle": "فنانون شباب يشاركون الإيمان والحب من خلال الأناشيد",
+      "shareVerse": "شارك آية",
+      "selectSura": "اختر السورة",
+      "selectAyah": "رقم الآية",
+      "loadVerse": "تحميل الآية",
+      "verseNotFound": "الآية غير موجودة",
+      "loadError": "فشل تحميل الآية",
+      "copyText": "نسخ النص",
+      "copied": "تم النسخ إلى الحافظة!",
+      "copyError": "فشل النسخ"
     }
   },
   "offline": {

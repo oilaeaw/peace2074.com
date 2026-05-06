@@ -52,7 +52,8 @@
             "logout": "Esci",
             "blog": "Blog",
             "contact": "Contatti",
-            "deploys": "Distribuzioni"
+            "deploys": "Distribuzioni",
+            "social": "Social"
         }
     },
     "navigation": {
@@ -481,7 +482,9 @@
                 "darkMode": "Modalità scura",
                 "darkModeHint": "Passa tra tema chiaro e scuro.",
                 "translation": "Mostra traduzione del Corano",
-                "translationHint": "Mostra sempre la traduzione dopo il testo arabo."
+                "translationHint": "Mostra sempre la traduzione dopo il testo arabo.",
+                "translator": "Traduttore del Corano",
+                "translatorHint": "Scegli il tuo studioso di traduzione preferito per la lingua corrente."
             },
             "accessibility": {
                 "title": "Accessibilità",
@@ -688,6 +691,22 @@
             "loadError": "Impossibile caricare la cronologia delle distribuzioni",
             "loginRequiredToLike": "Accedi per mettere mi piace alle distribuzioni",
             "toggleLikeError": "Impossibile cambiare il mi piace"
+        },
+        "social": {
+            "title": "Social & Condividi",
+            "subtitle": "Seguici e condividi il Corano con il mondo",
+            "followUs": "Seguici",
+            "featuredVideos": "Video in Evidenza",
+            "featuredVideosSubtitle": "Giovani artisti che condividono fede e amore attraverso i nasheed",
+            "shareVerse": "Condividi un Versetto",
+            "selectSura": "Seleziona Sura",
+            "selectAyah": "Numero Ayah",
+            "loadVerse": "Carica Versetto",
+            "verseNotFound": "Versetto non trovato",
+            "loadError": "Caricamento versetto fallito",
+            "copyText": "Copia Testo",
+            "copied": "Copiato negli appunti!",
+            "copyError": "Copia fallita"
         }
     },
     "offline": {

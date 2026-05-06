@@ -52,7 +52,8 @@
             "logout": "התנתקות",
             "blog": "בלוג",
             "contact": "צור קשר",
-            "deploys": "פריסות"
+            "deploys": "פריסות",
+            "social": "חברתי"
         }
     },
     "navigation": {
@@ -690,6 +691,22 @@
             "loadError": "טעינת היסטוריית הפריסות נכשלה",
             "loginRequiredToLike": "יש להתחבר כדי לעשות לייק לפריסות",
             "toggleLikeError": "לא ניתן לשנות את הלייק"
+        },
+        "social": {
+            "title": "רשתות חברתיות ושיתוף",
+            "subtitle": "עקבו אחרינו ושתפו את הקוראן עם העולם",
+            "followUs": "עקבו אחרינו",
+            "featuredVideos": "סרטונים מומלצים",
+            "featuredVideosSubtitle": "אמנים צעירים משתפים אמונה ואהבה דרך נשידים",
+            "shareVerse": "שתפו פסוק",
+            "selectSura": "בחרו סורה",
+            "selectAyah": "מספר אייה",
+            "loadVerse": "טען פסוק",
+            "verseNotFound": "פסוק לא נמצא",
+            "loadError": "טעינת הפסוק נכשלה",
+            "copyText": "העתק טקסט",
+            "copied": "הועתק ללוח!",
+            "copyError": "ההעתקה נכשלה"
         }
     },
     "offline": {

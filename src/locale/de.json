@@ -52,7 +52,8 @@
       "logout": "Abmelden",
       "blog": "Blog",
       "contact": "Kontakt",
-      "deploys": "Bereitstellungen"
+      "deploys": "Bereitstellungen",
+      "social": "Sozial"
     }
   },
   "pages": {
@@ -655,6 +656,22 @@
       "loadError": "Bereitstellungsverlauf konnte nicht geladen werden",
       "loginRequiredToLike": "Bitte melde dich an, um Bereitstellungen zu liken",
       "toggleLikeError": "Gefällt mir konnte nicht umgeschaltet werden"
+    },
+    "social": {
+      "title": "Soziale Medien & Teilen",
+      "subtitle": "Folge uns und teile den Koran mit der Welt",
+      "followUs": "Folge uns",
+      "featuredVideos": "Ausgewählte Videos",
+      "featuredVideosSubtitle": "Junge Künstler teilen Glauben und Liebe durch Naschieds",
+      "shareVerse": "Vers teilen",
+      "selectSura": "Sure auswählen",
+      "selectAyah": "Vers-Nummer",
+      "loadVerse": "Vers laden",
+      "verseNotFound": "Vers nicht gefunden",
+      "loadError": "Vers konnte nicht geladen werden",
+      "copyText": "Text kopieren",
+      "copied": "In die Zwischenablage kopiert!",
+      "copyError": "Kopieren fehlgeschlagen"
     }
   },
   "offline": {

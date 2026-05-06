@@ -52,7 +52,8 @@
             "logout": "Çıkış Yap",
             "blog": "Blog",
             "contact": "İletişim",
-            "deploys": "Dağıtımlar"
+            "deploys": "Dağıtımlar",
+            "social": "Sosyal"
         }
     },
     "navigation": {
@@ -481,7 +482,9 @@
                 "darkMode": "Karanlık mod",
                 "darkModeHint": "Açık ve koyu tema arasında geçiş yapın.",
                 "translation": "Kur'an çevirisini göster",
-                "translationHint": "Şeffaflık için Arapça metinden sonra çeviriyi her zaman göster."
+                "translationHint": "Şeffaflık için Arapça metinden sonra çeviriyi her zaman göster.",
+                "translator": "Kur'an çevirmeni",
+                "translatorHint": "Mevcut dil için tercih ettiğiniz çeviri âlimi seçin."
             },
             "accessibility": {
                 "title": "Erişilebilirlik",
@@ -688,6 +691,22 @@
             "loadError": "Dağıtım geçmişi yüklenemedi",
             "loginRequiredToLike": "Dağıtımları beğenmek için lütfen giriş yapın",
             "toggleLikeError": "Beğeni değiştirilemedi"
+        },
+        "social": {
+            "title": "Sosyal ve Paylaş",
+            "subtitle": "Bizi takip edin ve Kuran'ı dünyayla paylaşın",
+            "followUs": "Bizi Takip Edin",
+            "featuredVideos": "Öne Çıkan Videolar",
+            "featuredVideosSubtitle": "Naşidler aracılığıyla inanç ve sevgiyi paylaşan genç sanatçılar",
+            "shareVerse": "Bir Ayet Paylaş",
+            "selectSura": "Sure Seç",
+            "selectAyah": "Ayet numarası",
+            "loadVerse": "Ayeti Yükle",
+            "verseNotFound": "Ayet bulunamadı",
+            "loadError": "Ayet yüklenemedi",
+            "copyText": "Metni Kopyala",
+            "copied": "Panoya kopyalandı!",
+            "copyError": "Kopyalama başarısız"
         }
     },
     "offline": {
