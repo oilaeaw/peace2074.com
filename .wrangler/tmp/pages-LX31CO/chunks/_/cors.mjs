@@ -1,2 +1,0 @@
-import{z as o}from"../nitro/nitro.mjs";function applyCors(r){const t=r.node.req.headers.origin;o(r,"Access-Control-Allow-Origin",t||"capacitor://localhost"),o(r,"Access-Control-Allow-Credentials","true"),o(r,"Access-Control-Allow-Methods","GET,POST,PUT,PATCH,DELETE,OPTIONS"),o(r,"Access-Control-Allow-Headers","Content-Type,Authorization,Accept,Origin"),o(r,"Vary","Origin")}export{applyCors as a};
-//# sourceMappingURL=cors.mjs.map

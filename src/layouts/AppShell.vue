@@ -218,15 +218,8 @@
           @drop.prevent="onDrop(item.key, $event)"
           @dragend="onDragEnd"
         >
-          <q-item-section avatar class="drawer-avatar-section">
-            <q-avatar
-              size="34px"
-              color="primary"
-              text-color="white"
-              class="drawer-avatar"
-            >
-              {{ getNavInitials(item) }}
-            </q-avatar>
+          <q-item-section avatar>
+            <q-icon :name="item.icon" size="1.5rem" color="primary" />
           </q-item-section>
           <q-item-section>
             <q-item-label class="drawer-item-title">
@@ -469,25 +462,71 @@ const langs = computed(() => {
 })
 
 const defaultNavItems = [
-  { key: 'home', labelKey: 'appShell.nav.home', to: '/' },
-  { key: 'about', labelKey: 'appShell.nav.about', to: '/about' },
-  { key: 'quran', labelKey: 'appShell.nav.quran', to: '/quran' },
-  { key: 'holynames', labelKey: 'appShell.nav.holynames', to: '/holynames' },
-  { key: 'tasbeeh', labelKey: 'appShell.nav.tasbeeh', to: '/tasbeeh' },
-  { key: 'miracles', labelKey: 'appShell.nav.miracles', to: '/miracles' },
-  { key: 'chat', labelKey: 'appShell.nav.chat', to: '/chat' },
-  { key: 'support', labelKey: 'appShell.nav.support', to: '/support' },
-  { key: 'settings', labelKey: 'appShell.nav.settings', to: '/settings' },
+  { key: 'home', labelKey: 'appShell.nav.home', to: '/', icon: 'home' },
+  { key: 'about', labelKey: 'appShell.nav.about', to: '/about', icon: 'info' },
+  {
+    key: 'quran',
+    labelKey: 'appShell.nav.quran',
+    to: '/quran',
+    icon: 'menu_book',
+  },
+  {
+    key: 'holynames',
+    labelKey: 'appShell.nav.holynames',
+    to: '/holynames',
+    icon: 'auto_awesome',
+  },
+  {
+    key: 'tasbeeh',
+    labelKey: 'appShell.nav.tasbeeh',
+    to: '/tasbeeh',
+    icon: 'loop',
+  },
+  {
+    key: 'miracles',
+    labelKey: 'appShell.nav.miracles',
+    to: '/miracles',
+    icon: 'lightbulb',
+  },
+  { key: 'chat', labelKey: 'appShell.nav.chat', to: '/chat', icon: 'chat' },
+  {
+    key: 'support',
+    labelKey: 'appShell.nav.support',
+    to: '/support',
+    icon: 'volunteer_activism',
+  },
+  {
+    key: 'settings',
+    labelKey: 'appShell.nav.settings',
+    to: '/settings',
+    icon: 'settings',
+  },
   {
     key: 'preferences',
     labelKey: 'appShell.nav.preferences',
     to: '/preferences',
+    icon: 'tune',
   },
-  { key: 'admin', labelKey: 'navigation.AdminPage', to: '/admin' },
-  { key: 'login', labelKey: 'appShell.nav.login', to: '/login' },
-  { key: 'blog', labelKey: 'appShell.nav.blog', to: '/blog' },
-  { key: 'deploys', labelKey: 'appShell.nav.deploys', to: '/deploys' },
-  { key: 'contact', labelKey: 'appShell.nav.contact', to: '/contact' },
+  {
+    key: 'admin',
+    labelKey: 'navigation.AdminPage',
+    to: '/admin',
+    icon: 'admin_panel_settings',
+  },
+  { key: 'login', labelKey: 'appShell.nav.login', to: '/login', icon: 'login' },
+  { key: 'blog', labelKey: 'appShell.nav.blog', to: '/blog', icon: 'article' },
+  {
+    key: 'deploys',
+    labelKey: 'appShell.nav.deploys',
+    to: '/deploys',
+    icon: 'rocket_launch',
+  },
+  {
+    key: 'contact',
+    labelKey: 'appShell.nav.contact',
+    to: '/contact',
+    icon: 'contact_mail',
+  },
 ]
 
 type NavItem = (typeof defaultNavItems)[number] & { pinned?: boolean }
@@ -1005,16 +1044,6 @@ const orderedNavItems = computed(() => {
 
 .drawer-nav-list {
   padding-top: 0;
-}
-
-.drawer-avatar-section {
-  min-width: 48px;
-}
-
-.drawer-avatar {
-  font-size: 0.75rem;
-  font-weight: 700;
-  letter-spacing: 0.04em;
 }
 
 .drawer-item-title {

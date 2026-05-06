@@ -1,2 +1,0 @@
-import{d as o}from"../../nitro/nitro.mjs";import{q as r}from"../../_/quran.mjs";import"node:buffer";import"node:util";import"node:process";import"cloudflare:workers";import"node:events";import"node:timers";import"node:crypto";import"node:fs/promises";import"node:net";import"node:stream";import"node:url";import"node:dns";import"node:zlib";import"node:tls";import"node:timers/promises";import"node:assert";import"node:async_hooks";const t=o(()=>r);export{t as default};
-//# sourceMappingURL=data.get.mjs.map
