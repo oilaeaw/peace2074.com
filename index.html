@@ -146,18 +146,10 @@
       }
 
       if (!isLocalhost) {
-        const gaScript = document.createElement('script')
-        gaScript.async = true
-        gaScript.src =
-          'https://www.googletagmanager.com/gtag/js?id=G-XN9FGVQBKX'
-        document.head.appendChild(gaScript)
-
-        gtag('js', new Date())
-
-        // Default consent to denied.
-        // url_passthrough preserves UTM/gclid params in URLs so GA4 can
-        // still attribute traffic sources even without analytics cookies,
-        // resolving the "(not set)" acquisition channel dimension.
+        // Default consent MUST be set before gtag('js') and config per
+        // Google's consent mode spec, otherwise attribution dimensions
+        // show as "(not set)". url_passthrough preserves UTM/gclid params
+        // in links when analytics_storage is denied.
         gtag('consent', 'default', {
           ad_user_data: 'denied',
           ad_personalization: 'denied',
@@ -167,6 +159,13 @@
           ads_data_redaction: true,
         })
 
+        const gaScript = document.createElement('script')
+        gaScript.async = true
+        gaScript.src =
+          'https://www.googletagmanager.com/gtag/js?id=G-XN9FGVQBKX'
+        document.head.appendChild(gaScript)
+
+        gtag('js', new Date())
         gtag('config', 'G-XN9FGVQBKX')
 
         // Function to grant all consent
