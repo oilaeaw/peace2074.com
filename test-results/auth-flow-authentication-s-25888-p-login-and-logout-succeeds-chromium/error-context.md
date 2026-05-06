@@ -173,7 +173,7 @@ Call log:
             - generic: Username
             - textbox "Username" [disabled]:
               - /placeholder: Enter your username
-              - text: e2e_1778019528210-mjsc7j
+              - text: e2e_1778046228467-s4hi0q
       - generic [ref=e225]:
         - generic:
           - generic:
@@ -182,7 +182,7 @@ Call log:
             - generic: Email
             - textbox "Email" [disabled]:
               - /placeholder: Enter your email
-              - text: e2e_1778019528210-mjsc7j@example.com
+              - text: e2e_1778046228467-s4hi0q@example.com
       - generic [ref=e228]:
         - generic:
           - generic:
@@ -191,7 +191,7 @@ Call log:
             - generic: Password
             - textbox "Password" [disabled]:
               - /placeholder: Enter your password
-              - text: Auth_1778019528210-mjsc7j!42
+              - text: Auth_1778046228467-s4hi0q!42
           - generic:
             - generic: visibility
       - generic [ref=e231]:
@@ -202,7 +202,7 @@ Call log:
             - generic: Confirm Password
             - textbox "Confirm Password" [disabled]:
               - /placeholder: Confirm password
-              - text: Auth_1778019528210-mjsc7j!42
+              - text: Auth_1778046228467-s4hi0q!42
           - generic:
             - generic: visibility
       - checkbox "I accept the terms and conditions" [checked] [ref=e233] [cursor=pointer]:

@@ -57,3 +57,11 @@ for (const [from, to] of patches) {
 
 writeFileSync(workerPath, patched, 'utf8')
 console.log(`[patch-cf-worker] Done – applied ${appliedCount}/${patches.length} patches.`)
+
+// Fix _routes.json: only route /api/* through the Worker.
+// Nitro generates include:["/*"] which causes it to intercept SPA requests
+// and 302-redirect / → /api/ (the baseURL). Restricting to /api/* lets
+// Cloudflare Pages serve static assets and the SPA index.html directly.
+const routesPath = resolve('apps/nitro-api/dist/_routes.json')
+writeFileSync(routesPath, JSON.stringify({ version: 1, include: ['/api/*'], exclude: [] }, null, 2) + '\n', 'utf8')
+console.log('[patch-cf-worker] ✓ Fixed _routes.json → include: ["/api/*"]')
