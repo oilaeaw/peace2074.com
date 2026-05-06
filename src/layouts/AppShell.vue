@@ -508,12 +508,6 @@ const defaultNavItems = [
     icon: 'settings',
   },
   {
-    key: 'preferences',
-    labelKey: 'appShell.nav.preferences',
-    to: '/preferences',
-    icon: 'tune',
-  },
-  {
     key: 'admin',
     labelKey: 'navigation.AdminPage',
     to: '/admin',
