@@ -669,7 +669,11 @@
                 "deleteError": "מחיקת הפוסט נכשלה",
                 "loadError": "טעינת הפוסט נכשלה",
                 "postNotFound": "הפוסט לא נמצא",
-                "fillRequired": "נא למלא את כל השדות הנדרשים"
+                "fillRequired": "נא למלא את כל השדות הנדרשים",
+                "aiDraft": "טיוטת AI",
+                "aiDraftTip": "צור טיוטת מאמר מהכותרת שלך באמצעות AI",
+                "aiDraftDone": "הטיוטה נוצרה — תרגיש חופשי לערוך!",
+                "aiDraftFailed": "טיוטת AI אינה זמינה, כתוב ידנית"
             }
         },
         "deploys": {

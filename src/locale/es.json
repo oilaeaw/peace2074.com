@@ -667,7 +667,11 @@
                 "deleteError": "No se pudo eliminar la publicación",
                 "loadError": "No se pudo cargar la publicación",
                 "postNotFound": "Publicación no encontrada",
-                "fillRequired": "Por favor completa todos los campos obligatorios"
+                "fillRequired": "Por favor completa todos los campos obligatorios",
+                "aiDraft": "Borrador IA",
+                "aiDraftTip": "Genera un borrador de artículo desde tu título usando IA",
+                "aiDraftDone": "Borrador generado — ¡siéntete libre de editarlo!",
+                "aiDraftFailed": "Borrador de IA no disponible, escribe manualmente"
             }
         },
         "deploys": {

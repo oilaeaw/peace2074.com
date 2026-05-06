@@ -634,7 +634,11 @@
         "deleteError": "Beitrag konnte nicht gelöscht werden",
         "loadError": "Beitrag konnte nicht geladen werden",
         "postNotFound": "Beitrag nicht gefunden",
-        "fillRequired": "Bitte fülle alle Pflichtfelder aus"
+        "fillRequired": "Bitte fülle alle Pflichtfelder aus",
+        "aiDraft": "KI-Entwurf",
+        "aiDraftTip": "Einen Artikelentwurf aus deinem Titel per KI generieren",
+        "aiDraftDone": "KI-Entwurf erstellt — du kannst ihn bearbeiten!",
+        "aiDraftFailed": "KI-Entwurf nicht verfügbar, bitte manuell schreiben"
       }
     },
     "deploys": {

@@ -667,7 +667,11 @@
                 "deleteError": "Impossibile eliminare il post",
                 "loadError": "Impossibile caricare il post",
                 "postNotFound": "Post non trovato",
-                "fillRequired": "Compila tutti i campi obbligatori"
+                "fillRequired": "Compila tutti i campi obbligatori",
+                "aiDraft": "Bozza AI",
+                "aiDraftTip": "Genera una bozza dell'articolo dal tuo titolo con l'AI",
+                "aiDraftDone": "Bozza generata — sentiti libero di modificarla!",
+                "aiDraftFailed": "Bozza AI non disponibile, scrivi manualmente"
             }
         },
         "deploys": {

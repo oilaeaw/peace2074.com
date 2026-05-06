@@ -90,22 +90,22 @@ function waitForFontsReady(timeoutMs = 800): Promise<void> {
 }
 
 onMounted(async () => {
-  // Token exchange for NativeScript OAuth flows
   const searchParams = new URLSearchParams(window.location.search)
   const token = searchParams.get('token')
-  
+  const authStore = useAuthStore()
+
   if (token) {
+    // NativeScript OAuth token exchange
     try {
       const NITRO_BASE = '/api'
       await fetch(`${NITRO_BASE}/auth/exchange`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ token }),
-        credentials: 'include'
+        credentials: 'include',
       })
-      const authStore = useAuthStore()
       await authStore.hydrateSession(true)
-      
+
       // Clean up URL without relying on Vue Router inside an async hook
       const newUrl = new URL(window.location.href)
       newUrl.searchParams.delete('token')
@@ -113,6 +113,10 @@ onMounted(async () => {
     } catch (err) {
       // Ignore silently in production
     }
+  } else {
+    // Web OAuth redirect (Apple/Google) — cookie already set by server,
+    // just hydrate so the store knows immediately without needing a refresh.
+    authStore.hydrateSession().catch(() => {})
   }
 
   const splashStartedAt = performance.now()

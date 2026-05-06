@@ -57,14 +57,46 @@
         maxlength="300"
       />
 
-      <q-input
-        v-model="form.content"
-        :label="t('pages.blog.editor.content')"
-        filled
-        type="textarea"
-        rows="12"
-        :rules="[(val) => !!val || t('pages.blog.editor.contentRequired')]"
-      />
+      <div class="blog-content-field">
+        <div class="row items-center justify-between q-mb-xs">
+          <span class="text-caption text-grey-7"
+            >{{ t('pages.blog.editor.content') }} *</span
+          >
+          <q-btn
+            flat
+            dense
+            size="sm"
+            icon="auto_awesome"
+            color="secondary"
+            :label="t('pages.blog.editor.aiDraft')"
+            :loading="aiDrafting"
+            :disable="!form.title.trim()"
+            @click="generateDraft"
+          >
+            <q-tooltip>{{ t('pages.blog.editor.aiDraftTip') }}</q-tooltip>
+          </q-btn>
+        </div>
+        <q-editor
+          v-model="form.content"
+          min-height="20rem"
+          :toolbar="[
+            ['bold', 'italic', 'underline', 'strike'],
+            [
+              {
+                label: $q.lang.editor.formatting,
+                icon: $q.iconSet.editor.formatting,
+                list: 'no-icons',
+                options: ['h1', 'h2', 'h3', 'h4', 'p', 'code'],
+              },
+            ],
+            ['quote', 'unordered', 'ordered', 'outdent', 'indent'],
+            ['link', 'hr'],
+            ['left', 'center', 'right', 'justify'],
+            ['undo', 'redo', 'removeFormat'],
+            ['fullscreen'],
+          ]"
+        />
+      </div>
 
       <q-input
         v-model="tagsInput"
@@ -120,7 +152,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, onMounted, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRouter, useRoute } from 'vue-router'
 import { useQuasar } from 'quasar'
@@ -147,6 +179,66 @@ const form = ref({
 const tagsInput = ref('')
 const submitting = ref(false)
 const deleting = ref(false)
+const aiDrafting = ref(false)
+
+// Auto-generate slug from title when creating a new post
+watch(
+  () => form.value.title,
+  (title) => {
+    if (isEditMode.value) return
+    form.value.slug = title
+      .toLowerCase()
+      .trim()
+      .replace(/[^a-z0-9\s-]/g, '')
+      .replace(/\s+/g, '-')
+      .replace(/-+/g, '-')
+      .slice(0, 80)
+  }
+)
+
+async function generateDraft() {
+  const topic = form.value.title.trim()
+  if (!topic) return
+
+  aiDrafting.value = true
+  try {
+    const res = await fetch(resolveNitroUrl('/kimi'), {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      credentials: 'include',
+      body: JSON.stringify({
+        messages: [
+          {
+            role: 'user',
+            content: `Write a well-structured blog article for the PEACE2074 Quran app about: "${topic}". Use HTML formatting with <h2>, <p>, and <ul> tags. Keep it informative and respectful. Around 300-400 words.`,
+          },
+        ],
+      }),
+    })
+    const data = await res.json()
+    const text: string = data?.message?.content || data?.raw || ''
+    if (text) {
+      form.value.content = text
+      $q.notify({
+        type: 'positive',
+        message: t('pages.blog.editor.aiDraftDone'),
+        icon: 'auto_awesome',
+      })
+    } else {
+      $q.notify({
+        type: 'warning',
+        message: t('pages.blog.editor.aiDraftFailed'),
+      })
+    }
+  } catch {
+    $q.notify({
+      type: 'negative',
+      message: t('pages.blog.editor.aiDraftFailed'),
+    })
+  } finally {
+    aiDrafting.value = false
+  }
+}
 
 function updateTags() {
   if (!tagsInput.value.trim()) return

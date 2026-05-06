@@ -669,7 +669,11 @@
         "deleteError": "Failed to delete post",
         "loadError": "Failed to load post",
         "postNotFound": "Post not found",
-        "fillRequired": "Please fill in all required fields"
+        "fillRequired": "Please fill in all required fields",
+        "aiDraft": "AI Draft",
+        "aiDraftTip": "Generate a draft article from your title using AI",
+        "aiDraftDone": "AI draft generated — feel free to edit!",
+        "aiDraftFailed": "AI draft unavailable, please write manually"
       }
     },
     "deploys": {

@@ -667,7 +667,11 @@
                 "deleteError": "Yazı silinemedi",
                 "loadError": "Yazı yüklenemedi",
                 "postNotFound": "Yazı bulunamadı",
-                "fillRequired": "Lütfen tüm zorunlu alanları doldurun"
+                "fillRequired": "Lütfen tüm zorunlu alanları doldurun",
+                "aiDraft": "Yapay Zeka Taslağı",
+                "aiDraftTip": "Başlığınızdan yapay zeka ile makale taslağı oluşturun",
+                "aiDraftDone": "Taslak oluşturuldu — düzenleyebilirsiniz!",
+                "aiDraftFailed": "Yapay zeka taslağı kullanılamıyor, lütfen elle yazın"
             }
         },
         "deploys": {
