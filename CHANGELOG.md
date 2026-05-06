@@ -16,6 +16,20 @@ All notable changes to this project will be documented in this file. See [standa
 - bump root and Nitro API package versions to `3.2.0`
 - bump nav localStorage key to `v3` to reset cached nav for all users
 
+## 3.2.0 (2026-05-06)
+
+### Features
+
+- add `/social` page with TikTok video embeds, artist credit, copyright notices
+- complete i18n for `/social` across all 8 locales
+- remove Chat from drawer, merged under Support
+- remove Preferences from drawer navigation
+
+### Chores
+
+- bump root and Nitro API package versions to `3.2.0`
+- bump nav localStorage key to `v3` to reset cached nav for all users
+
 ## 3.1.3 (2026-04-26)
 
 ### Chores
