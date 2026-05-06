@@ -53,8 +53,12 @@ export default defineNitroConfig({
             // The real `debug` CJS package (module.exports = fn) gets wrapped by rollup into
             // a namespace object; getDefaultExportFromNamespaceIfNotNamed only unwraps
             // single-key namespaces, so callers like mquery get an object, not a function.
+            // Alias `node:util` to a safe stub that guards against Mongoose calling
+            // util.inherits(ctor, undefined) when optional deps are absent.
             alias: {
                 debug: fileURLToPath(new URL("./server/stubs/debug.ts", import.meta.url)),
+                "node:util": fileURLToPath(new URL("./server/stubs/util.ts", import.meta.url)),
+                util: fileURLToPath(new URL("./server/stubs/util.ts", import.meta.url)),
             },
             rollupConfig: {
                 plugins: [
@@ -86,12 +90,13 @@ export default defineNitroConfig({
                         },
                     },
                     {
-                        // Cloudflare Workers rejects `.hasOwnProperty()` calls on null-prototype
-                        // objects produced by Mongoose internals. Replace with the safe form.
+                        // Cloudflare Workers V8 rejects `.hasOwnProperty()` calls on
+                        // null-prototype objects that Mongoose creates. Replace all such
+                        // calls with the safe Object.prototype form at bundle time.
                         name: "fix-has-own-property",
                         renderChunk(code: string) {
                             const fixed = code.replace(
-                                /([a-zA-Z_$][\w$]*)\.hasOwnProperty\(/g,
+                                /\b([a-zA-Z_$][\w$]*)\.hasOwnProperty\(/g,
                                 "Object.prototype.hasOwnProperty.call($1, "
                             );
                             return fixed !== code ? { code: fixed } : null;
