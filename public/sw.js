@@ -23,7 +23,7 @@ if (workbox) {
   workbox.routing.registerRoute(
     ({ request }) => request.mode === 'navigate',
     new workbox.strategies.NetworkFirst({
-      cacheName: 'app-shell-v1',
+      cacheName: 'app-shell-v2',
       networkTimeoutSeconds: 5,
       plugins: [
         new workbox.expiration.ExpirationPlugin({
@@ -38,7 +38,7 @@ if (workbox) {
   workbox.routing.registerRoute(
     ({ url }) => url.pathname.startsWith('/api/'),
     new workbox.strategies.NetworkFirst({
-      cacheName: 'api-cache-v1',
+      cacheName: 'api-cache-v2',
       networkTimeoutSeconds: 5,
       plugins: [
         new workbox.expiration.ExpirationPlugin({
@@ -54,7 +54,7 @@ if (workbox) {
     ({ url }) =>
       url.pathname.includes('/quran') || url.pathname.includes('/data/'),
     new workbox.strategies.CacheFirst({
-      cacheName: 'quran-data-v1',
+      cacheName: 'quran-data-v2',
       plugins: [
         new workbox.expiration.ExpirationPlugin({
           maxEntries: 500,
@@ -68,7 +68,7 @@ if (workbox) {
   workbox.routing.registerRoute(
     ({ request }) => request.destination === 'image',
     new workbox.strategies.CacheFirst({
-      cacheName: 'image-cache-v1',
+      cacheName: 'image-cache-v2',
       plugins: [
         new workbox.expiration.ExpirationPlugin({
           maxEntries: 200,
