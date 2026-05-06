@@ -4,6 +4,13 @@ function normalizeFlag(value: string | undefined) {
     return String(value || '').trim().toLowerCase()
 }
 
+export function hasLocalDbFallback(): boolean {
+    return Boolean(
+        process.env.DATABASE_URL_LOCAL ||
+        process.env.NITRO_DATABASE_URL_LOCAL
+    )
+}
+
 export function isDatabaseRequired() {
     const requireDatabase = normalizeFlag(process.env.REQUIRE_DATABASE)
     const allowFallback = normalizeFlag(process.env.ALLOW_FALLBACK_AUTH_STORAGE)
@@ -12,6 +19,8 @@ export function isDatabaseRequired() {
 
     if (requireDatabase === 'true') return true
     if (allowFallback === 'true') return false
+    // Local MongoDB configured — safe to use as fallback even in production
+    if (hasLocalDbFallback()) return false
 
     return nodeEnv === 'production' || netlifyContext === 'production'
 }

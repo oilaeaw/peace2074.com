@@ -1,8 +1,11 @@
 // Mongoose-backed user storage.
-// Development can fall back to Nitro KV storage, but production requires MongoDB.
+// Primary: MongoDB Atlas (DATABASE_URL)
+// Fallback: local MongoDB (DATABASE_URL_LOCAL) — used when Atlas is unreachable.
+// Writes during outage are queued and flushed back to Atlas on recovery.
 
-import { createDatabaseRequiredError, isFallbackAuthStorageAllowed } from './database-mode'
+import { createDatabaseRequiredError, isFallbackAuthStorageAllowed, hasLocalDbFallback } from './database-mode'
 import { getMongoose } from './mongoose'
+import { getLocalConnection, queueWrite, isLocalConnected } from './mongoose-local'
 import { UserModel } from '../models/User'
 import { ReaderStatsModel } from '../models/ReaderStats'
 import { DeployLikeModel } from '../models/DeployLike'
@@ -485,6 +488,19 @@ async function isDbReady() {
     }
 }
 
+/** Returns a UserModel bound to the local MongoDB connection, or null if unavailable. */
+async function getLocalUserModel() {
+    if (!hasLocalDbFallback()) return null
+    try {
+        const conn = await getLocalConnection()
+        if (!conn) return null
+        // Re-use existing model on this connection or register it
+        return conn.models['User'] ?? conn.model('User', UserModel.schema)
+    } catch {
+        return null
+    }
+}
+
 export async function getAllUsers(): Promise<User[]> {
     if (await isDbReady()) {
         try {
@@ -719,7 +735,56 @@ export async function findOrCreateOAuthUser(oauthInfo: {
         }
     }
 
-    // Fallback storage
+    // Local MongoDB fallback (Atlas unreachable)
+    const localModel = await getLocalUserModel()
+    if (localModel) {
+        try {
+            let rec = await localModel.findOne({ [providerField]: providerId }).lean() as any
+            if (!rec) rec = await localModel.findOne({ email }).lean() as any
+
+            if (rec) {
+                const updates: Record<string, any> = { [providerField]: providerId }
+                if (!rec.first_name && firstName) updates.first_name = firstName
+                if (!rec.last_name && lastName) updates.last_name = lastName
+                if (shouldPersistAvatar(rec.avatar_url, picture)) updates.avatar_url = picture
+                const updated = await localModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean() as any
+                const appUser = toAppUser(updated)
+                // Queue sync back to Atlas
+                queueWrite(async () => {
+                    await UserModel.findByIdAndUpdate(appUser.id, updates, { upsert: false })
+                })
+                return appUser
+            }
+
+            // Create new user in local DB
+            const username = createOAuthUsername(email)
+            const userId = createOAuthUserId(provider, providerId)
+            const newDoc = {
+                _id: userId,
+                username,
+                email,
+                password: '',
+                role: 'user',
+                first_name: firstName || null,
+                last_name: lastName || null,
+                avatar_url: picture || null,
+                [providerField]: providerId,
+                permissions: getRolePermissions('user'),
+            }
+            await localModel.create(newDoc)
+            const appUser = toAppUser(newDoc)
+            // Queue creation sync back to Atlas
+            queueWrite(async () => {
+                const exists = await UserModel.findById(userId).lean()
+                if (!exists) await UserModel.create(newDoc)
+            })
+            return appUser
+        } catch (localErr) {
+            console.error('[findOrCreateOAuthUser] Local MongoDB error:', localErr)
+        }
+    }
+
+    // Last resort: file/memory fallback storage
     const users = await loadFallbackUsers()
 
     let user = users.find((u: any) => u[providerField] === providerId)

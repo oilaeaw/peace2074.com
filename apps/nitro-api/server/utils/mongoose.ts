@@ -1,5 +1,6 @@
 import mongoose from 'mongoose'
 import { isFallbackAuthStorageAllowed } from './database-mode'
+import { flushPendingWrites } from './mongoose-local'
 
 // Cache connection promise across Lambda invocations (process reuse)
 let connectionPromise: Promise<typeof mongoose> | null = null
@@ -53,6 +54,8 @@ export async function getMongoose(): Promise<typeof mongoose> {
             console.log('[mongoose] Connected to MongoDB Atlas')
             lastConnectionError = null
             lastConnectionFailureAt = 0
+            // Atlas is back — replay any writes that happened during outage
+            flushPendingWrites().catch(() => { })
             return mongoose
         })
         .catch((err) => {
