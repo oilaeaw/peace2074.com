@@ -52,10 +52,8 @@ function computeNitroBase() {
         return 'https://peace2074.com/api'
     }
 
-    if (hostname === 'localhost' || hostname === '127.0.0.1') {
-        return `${protocol}//${hostname}:3000`
-    }
-
+    // In browser context (including dev), use relative /api so the Vite proxy
+    // handles routing to the Nitro server regardless of the bound hostname.
     return '/api'
 }
 

@@ -158,10 +158,8 @@ function computeNitroBase() {
     return DEFAULT_MOBILE_API_BASE
   }
 
-  if (hostname === 'localhost' || hostname === '127.0.0.1') {
-    return `${protocol}//${hostname}:${DEFAULT_NITRO_PORT}`
-  }
-
+  // In browser context (including dev), use relative /api so the Vite proxy
+  // handles routing to the Nitro server regardless of the bound hostname.
   return '/api'
 }
 
