@@ -397,7 +397,7 @@ const ConsentBanner = defineAsyncComponent(
 
 declare const __APP_VERSION__: string
 
-const NAV_STORAGE_KEY = 'nav-items-v2'
+const NAV_STORAGE_KEY = 'nav-items-v3'
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
 const COMPACT_KEY = 'pref-compact-layout'
@@ -494,7 +494,6 @@ const defaultNavItems = [
     to: '/social',
     icon: 'share',
   },
-  { key: 'chat', labelKey: 'appShell.nav.chat', to: '/chat', icon: 'chat' },
   {
     key: 'support',
     labelKey: 'appShell.nav.support',
