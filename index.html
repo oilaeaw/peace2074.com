@@ -154,12 +154,17 @@
 
         gtag('js', new Date())
 
-        // Default consent to denied
+        // Default consent to denied.
+        // url_passthrough preserves UTM/gclid params in URLs so GA4 can
+        // still attribute traffic sources even without analytics cookies,
+        // resolving the "(not set)" acquisition channel dimension.
         gtag('consent', 'default', {
           ad_user_data: 'denied',
           ad_personalization: 'denied',
           ad_storage: 'denied',
           analytics_storage: 'denied',
+          url_passthrough: true,
+          ads_data_redaction: true,
         })
 
         gtag('config', 'G-XN9FGVQBKX')
