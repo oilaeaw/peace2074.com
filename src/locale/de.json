@@ -1434,5 +1434,12 @@
     "details": "Indem Sie auf 'Akzeptieren' klicken, stimmen Sie unserer Verwendung von Cookies für Analysen zu.",
     "accept": "Akzeptieren",
     "decline": "Ablehnen"
-  }
+  },
+  "prayer_times_purpose": "Um genaue Gebetszeiten basierend auf Ihrem Standort zu berechnen und Sie zu benachrichtigen, wenn es Zeit zum Beten ist.",
+  "location_services": "Standortdienste",
+  "location_services_text": "Auf iPhone und iPad kann die App Zugriff auf Ihren Gerätestandort anfordern, um präzise islamische Gebetszeiten (Fajr, Dhuhr, Asr, Maghrib, Isha) für Ihren Bereich zu berechnen. Standortdaten werden ausschließlich lokal auf dem Gerät zur Berechnung der Gebetszeiten verwendet – sie werden weder an unsere Server übermittelt noch gespeichert oder an Dritte weitergegeben. Sie können die Standortberechtigung jederzeit in den Geräteeinstellungen entziehen; die App fällt dann auf einen Standardstandort (Jerusalem) zurück. Die Apple TV-App verwendet keine Standortdienste.",
+  "push_notifications": "Push-Benachrichtigungen",
+  "push_notifications_text": "Die App kann Ihnen Push-Benachrichtigungen senden, um Sie auf den Beginn einer Gebetszeit hinzuweisen, damit der Adhan pünktlich abgespielt wird. Benachrichtigungen werden nur gesendet, wenn Sie explizit zustimmen. Sie können sie jederzeit in den Geräteeinstellungen oder in der App deaktivieren.",
+  "terms_location": "Standort & Benachrichtigungen",
+  "terms_location_text": "Durch die Aktivierung von Gebetszeit-Benachrichtigungen stimmen Sie zu, dass die App ausschließlich zur lokalen Berechnung von Gebetszeiten auf Ihren Gerätestandort zugreift. Diese Daten werden nicht gespeichert oder weitergegeben. Sie können die Standort- oder Benachrichtigungsberechtigung jederzeit in den Geräteeinstellungen widerrufen."
 }

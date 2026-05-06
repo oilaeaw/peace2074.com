@@ -1,1438 +1,1445 @@
 {
-    "welcome": "Benvenuto",
-    "button": {
-        "about": "Chi siamo",
-        "back": "Indietro",
-        "go": "VAI",
-        "home": "Home",
-        "toggle_dark": "Attiva modalità scura",
-        "toggle_langs": "Cambia lingua",
-        "Privacy": "La nostra Privacy",
-        "Privacy_Short": "Privacy",
-        "Terms": "I nostri Termini e Condizioni",
-        "Terms_Short": "Termini",
-        "Contact": "Contattaci",
-        "TimeLine": "Cronologia",
-        "Utils": "Utilità",
-        "submit": "Invia",
-        "reset": "Ripristina",
-        "reload": "Ricarica",
-        "close": "Chiudi",
-        "new_content": "Nuovi contenuti disponibili, ricarica per aggiornare.",
-        "offline_ready": "App pronta per funzionare offline"
-    },
-    "athan": {
-        "play": "Riproduci Athan",
-        "pause": "Pausa Athan",
-        "stop": "Ferma Athan"
-    },
-    "appShell": {
-        "toggleMenu": "Attiva/disattiva menu",
-        "searchPlaceholder": "Cerca…",
-        "playAthan": "Riproduci Athan",
-        "stopAthan": "Ferma Athan",
-        "pin": "Aggiungi",
-        "unpin": "Rimuovi",
-        "resultType": {
-            "sura": "Corano",
-            "page": "Pagina"
-        },
-        "nav": {
-            "home": "Home",
-            "about": "Chi siamo",
-            "quran": "Corano",
-            "holynames": "Nomi Sacri",
-            "tasbeeh": "Tasbeeh",
-            "miracles": "Miracoli",
-            "chat": "Chat",
-            "support": "Supporto",
-            "settings": "Impostazioni",
-            "preferences": "Preferenze",
-            "login": "Accedi",
-            "logout": "Esci",
-            "blog": "Blog",
-            "contact": "Contatti",
-            "deploys": "Distribuzioni",
-            "social": "Social"
-        }
-    },
-    "navigation": {
-        "Profile": "Il mio Profilo",
-        "Favorites": "I miei Preferiti",
-        "Messages": "Messaggi",
-        "HomePageTitle": "Pagina Home",
-        "HomePageCaption": "Pagina Home",
-        "AuthPageTitle": "Autenticazione",
-        "AuthPageCaption": "Crea utente / Accedi",
-        "AboutPageTitle": "Chi siamo",
-        "AboutPageCaption": "Chi siamo",
-        "ContactPageTitle": "Contattaci",
-        "ContactPageCaption": "Contattaci",
-        "TermsPageTitle": "Termini",
-        "TermsPageCaption": "Termini e condizioni",
-        "BlogPageTitle": "Il nostro Blog",
-        "BlogPageCaption": "Post e Articoli",
-        "ProductsPageTitle": "Prodotti",
-        "ProductsPageCaption": "I nostri Prodotti",
-        "PrivacyPageTitle": "Privacy",
-        "PrivacyPageCaption": "Pagina Privacy",
-        "ServicesPageTitle": "Servizi",
-        "ServicesPageCaption": "I nostri Servizi",
-        "SettingsPageTitle": "Impostazioni",
-        "SettingsPageCaption": "Impostazioni display",
-        "TranslationPageTitle": "Traduzioni",
-        "TranslationPageCaption": "Gestisci traduzioni",
-        "GlossaryPageTitle": "Glossario",
-        "GlossaryPageCaption": "La nostra pagina del Glossario",
-        "MediaPageTitle": "Media",
-        "MediaPageCaption": "La nostra pagina Media",
-        "Signin": "Accedi",
-        "Signout": "Esci",
-        "Register": "Registrati",
-        "AdminPage": "Pagina Admin"
-    },
-    "pages": {
-        "about": {
-            "title": "Chi è PEACE2074",
-            "hero": {
-                "eyebrow": "Chi è PEACE2074",
-                "title": "Un luogo luminoso per leggere, ricordare e tornare.",
-                "lead": "PEACE2074 è uno spazio multilingue per il Corano e la riflessione, progettato per risultare calmo, bello e davvero utile, sia che lo apra per un solo ayah, per un solo respiro o per un viaggio più lungo.",
-                "primaryCta": "Apri il Corano",
-                "secondaryCta": "Esplora i Nomi Sacri",
-                "tags": {
-                    "read": "Lettura del Corano",
-                    "remember": "Dhikr e Tasbeeh",
-                    "reflect": "Nomi Sacri e riflessione",
-                    "connect": "Supporto e comunità"
-                }
-            },
-            "spotlight": {
-                "label": "Progettato per una concentrazione gentile",
-                "title": "Creato per abbassare il rumore e aumentare la presenza.",
-                "body": "Ogni schermata vuole risultare chiara, di supporto e spiritualmente centrata, dalla lettura delle surah e condivisione dei versetti ai segnalibri, all'ascolto offline e alla riflessione quotidiana."
-            },
-            "stats": {
-                "languages": {
-                    "value": "8",
-                    "label": "lingue supportate"
-                },
-                "suras": {
-                    "value": "114",
-                    "label": "surah pronte da esplorare"
-                },
-                "experience": {
-                    "value": "1",
-                    "label": "esperienza calma su web e iOS"
-                }
-            },
-            "story": {
-                "eyebrow": "Perché esiste",
-                "title": "Gli strumenti della fede possono essere potenti senza diventare opprimenti.",
-                "body": "PEACE2074 riunisce lettura del Corano, dhikr, esplorazione riflessiva e supporto pratico in un solo luogo. L'obiettivo è semplice: aiutarti a tornare a ciò che conta con meno attrito e più bellezza.",
-                "cardTitle": "Un ritmo digitale più calmo",
-                "cardBody": "Invece di strumenti sparsi e interfacce rumorose, PEACE2074 unisce lettura, recitazione, Tasbeeh, Nomi Sacri, riflessioni e supporto in un unico flusso di pace."
-            },
-            "verse": {
-                "label": "Spirito guida",
-                "quote": "La pace non è solo qualcosa che cerchi. È qualcosa che pratichi, pagina dopo pagina, preghiera dopo preghiera, ritorno dopo ritorno.",
-                "source": "Spirito PEACE2074"
-            },
-            "pillars": {
-                "eyebrow": "Cosa lo rende speciale",
-                "title": "Tre pilastri danno forma all'esperienza",
-                "lead": "Ogni parte dell'app è pensata per risultare utile in un giorno frenetico e bella in un momento silenzioso.",
-                "read": {
-                    "title": "Leggi con chiarezza",
-                    "body": "Esplora il Corano con modalità di lettura focalizzate, condivisione dei versetti, segnalibri e una recitazione che non ti intralcia."
-                },
-                "remember": {
-                    "title": "Ricorda con presenza",
-                    "body": "Tieni vicino il dhikr attraverso Tasbeeh digitale, Nomi Sacri e suggerimenti delicati che sostengono la costanza senza pressione."
-                },
-                "connect": {
-                    "title": "Connettiti con il supporto",
-                    "body": "Trova aiuto tramite chat, contatto e guida ponderata quando hai bisogno di direzione, non di altro rumore."
-                }
-            },
-            "journey": {
-                "eyebrow": "Un percorso guidato",
-                "title": "Dalla curiosità alla costanza",
-                "lead": "Che tu arrivi cercando, riflettendo o ricostruendo un'abitudine, PEACE2074 ti incontra dove sei.",
-                "discover": {
-                    "step": "01",
-                    "title": "Scopri",
-                    "body": "Inizia da una surah, un versetto o una domanda e lascia che l'app renda chiaro il passo successivo."
-                },
-                "reflect": {
-                    "step": "02",
-                    "title": "Rifletti",
-                    "body": "Usa recitazione, traduzioni, promemoria e strumenti spirituali per restare un po' di più dentro il significato."
-                },
-                "return": {
-                    "step": "03",
-                    "title": "Torna",
-                    "body": "Torna quando vuoi ai tuoi segnalibri, alle tue routine e al tuo ritmo di pace, senza un rientro faticoso."
-                }
-            },
-            "promise": {
-                "eyebrow": "Ciò che proteggiamo",
-                "title": "Bello, utile e rispettoso per impostazione predefinita",
-                "body": "L'esperienza è modellata attorno alla concentrazione, all'accesso multilingue e a un ritmo visivo calmo che rispetta sia la riflessione sia la routine.",
-                "one": "Un'interfaccia pulita con la lettura al centro",
-                "two": "Localizzazione con supporto RTL per arabo ed ebraico",
-                "three": "Recitazione offline e strumenti di supporto su web e iOS"
-            },
-            "build": {
-                "eyebrow": "Sviluppato in pubblico",
-                "title": "Codice aperto, cura per iOS e fondamenta SEO",
-                "lead": "PEACE2074 condivide il suo repository pubblico, offre un'esperienza iOS calma tramite Capacitor e mantiene le pagine chiave scopribili con SEO basata sulle route e dati strutturati."
-            },
-            "repo": {
-                "eyebrow": "Repository pubblico",
-                "title": "Segui il progetto in tempo reale",
-                "body": "La codebase è pubblica su GitHub e la stessa base alimenta l'esperienza web e l'app iOS con issue, cronologia dei contributi ed esecuzioni dei workflow visibili.",
-                "links": {
-                    "code": "Vedi codice",
-                    "issues": "Issue",
-                    "contributors": "Contributori",
-                    "actions": "CI e azioni"
-                }
-            },
-            "analytics": {
-                "eyebrow": "Analytics consapevoli",
-                "title": "Misurato con consenso, non a intuito",
-                "body": "Le analytics rispettano il consenso, monitorano la salute del prodotto e si affiancano a URL canonici, meta tag e dati strutturati così che l'esperienza resti misurabile e scopribile.",
-                "pointConsent": "Le impostazioni di consenso controllano la raccolta analytics prima che gli eventi vengano inviati.",
-                "pointGa4": "GA4 e Firebase Analytics nativo catturano percorsi come visualizzazioni di pagina, segnalibri e interazioni chiave del prodotto.",
-                "pointReader": "Le analytics del lettore riassumono progressi nelle surah e modelli di lettura per gli utenti autenticati.",
-                "pointSeo": "I metadati delle route, gli URL canonici, i tag Open Graph e i dati strutturati aiutano le pagine chiave a restare facili da trovare.",
-                "links": {
-                    "playbook": "Playbook GA4",
-                    "readerStats": "Doc statistiche lettore"
-                }
-            },
-            "cta": {
-                "eyebrow": "Entra con dolcezza",
-                "title": "Resta quanto ti serve.",
-                "body": "Apri il Corano, esplora i Nomi Sacri o contattaci se desideri aiuto nel dare forma al tuo percorso.",
-                "primary": "Inizia a leggere",
-                "secondary": "Esplora i Nomi Sacri",
-                "tertiary": "Contatta PEACE2074"
-            }
-        },
-        "support": {
-            "title": "Supporto",
-            "subtitle": "Hai bisogno di aiuto? Siamo qui per ascoltarti e assisterti.",
-            "ctaChat": "Vai alla chat",
-            "ctaContact": "Contattaci",
-            "helpTitle": "Guide e FAQ",
-            "helpBody": "Consulta prima la nostra documentazione e i problemi comuni.",
-            "contactTitle": "Contattaci",
-            "contactBody": "Se sei bloccato, inviaci i dettagli e ti risponderemo il prima possibile.",
-            "aiTitle": "Supporto IA",
-            "aiDesc": "Ottieni aiuto dal nostro assistente IA"
-        },
-        "home": {
-            "title": "Home",
-            "hero": {
-                "title": "Peace2074",
-                "lead": "Un luogo tranquillo per leggere, riflettere e ricordare.",
-                "ctaReadQuran": "Leggi il Corano",
-                "ctaHolyNames": "Nomi Sacri",
-                "ctaTasbeeh": "Tasbeeh",
-                "ctaIos": "iPhone e iPad",
-                "aiLabel": "Chiedi a PEACE AI",
-                "cardTitle": "Riflessione Quotidiana",
-                "cardBody": "Versetti selezionati e promemoria brevi per aiutarti a concentrarti."
-            },
-            "ai": {
-                "title": "Chiedi a PEACE AI",
-                "subtitle": "Ottieni orientamento su capitoli, riflessioni o su come usare l'app.",
-                "tryAnother": "Prova un altro prompt",
-                "examples": [
-                    "Evidenzia due lezioni chiave dalla Surah Maryam e dove leggerla qui.",
-                    "Qual è il tema principale della Surah Al-Fatiha?",
-                    "Puoi darmi una breve riflessione sulla pazienza nel Corano?",
-                    "Dove posso trovare la storia del Profeta Yusuf?",
-                    "Spiega il significato di Laylat al-Qadr."
-                ],
-                "placeholder": "Chiedi di una surah, un tema o una funzione",
-                "ask": "Chiedi",
-                "thinking": "Sto pensando…",
-                "responseTitle": "Risposta IA",
-                "copied": "Risposta copiata negli appunti!",
-                "noReply": "Nessuna risposta ricevuta.",
-                "requestFailed": "Richiesta Kimi fallita. Per favore riprova.",
-                "historyTitle": "Cronologia",
-                "historyEmpty": "Nessuna domanda precedente.",
-                "reuse": "Riutilizza",
-                "clearHistory": "Cancella cronologia"
-            },
-            "manifesto": {
-                "quote": "Per i folli. I disadattati. I ribelli. I guastafeste. I reietti. Quelli che vedono le cose diversamente. Che non amano le regole. E non hanno rispetto per lo status quo. Puoi citarli, essere in disaccordo con loro, glorificarli o denigrarli. L'unica cosa che non puoi fare è ignorarli. Perché cambiano le cose. Spingono avanti la razza umana. E mentre alcuni li vedono come folli, noi vediamo dei geni. Perché le persone abbastanza folli da pensare di poter cambiare il mondo, sono quelle che lo fanno.",
-                "attribution": "Think Different, Apple 1997"
-            },
-            "ramadan": {
-                "badge": "Campagna Ramadan",
-                "title": "30 Giorni di Riflessione e Costanza",
-                "body": "Costruisci una dolce abitudine quotidiana con la lettura del Corano, Tasbeeh e supporto della comunità.",
-                "todayPrompt": "Prompt di riflessione di oggi",
-                "ctaQuran": "Apri Corano",
-                "ctaTasbeeh": "Apri Tasbeeh",
-                "ctaChat": "Apri Chat",
-                "usePrompt": "Usa prompt in IA",
-                "promptApplied": "Il prompt Ramadan di oggi è pronto in PEACE AI."
-            }
-        },
-        "holynames": "Nomi Sacri di Allah",
-        "tasbeeh": "Tasbeeh Digitale",
-        "quran": {
-            "title": "Corano",
-            "detail": "Dettaglio Corano",
-            "backToList": "Torna all'elenco",
-            "playRecitation": "Riproduci recitazione",
-            "stopRecitation": "Ferma recitazione",
-            "play": "Riproduci",
-            "pause": "Pausa",
-            "resume": "Riprendi",
-            "startingRecitation": "Avvio della recitazione",
-            "playing": "Recitazione in corso",
-            "playingOffline": "Riproduzione dall'archivio offline",
-            "paused": "In pausa - tocca per riprendere",
-            "resumed": "Riproduzione ripresa",
-            "resumeFromLast": "Continuare da dove hai interrotto?",
-            "restart": "Riavvia versetto",
-            "restartSura": "Riavvia dall'inizio",
-            "scrollToTop": "Torna su",
-            "audioRecitation": "Recitazione audio",
-            "nativeReader": "Lettore nativo (TTS)",
-            "ttsNotSupported": "Testo-voce non supportato in questo browser",
-            "ttsSpeed": "Velocità",
-            "ttsVoice": "Voce",
-            "pageTitle": "Il Santo Corano",
-            "loading": "Caricamento…",
-            "verses": "versetti",
-            "invalidSuraRange": "Numero surah non valido. Scegli una surah tra 1 e 114.",
-            "apiHint": "Se il contenuto non si carica, assicurati che il server API /api/quran sia in esecuzione.",
-            "loadSuraError": "Impossibile caricare la surah",
-            "loadChaptersError": "Impossibile caricare le surah",
-            "loadingAudio": "Caricamento audio…",
-            "sura": {
-                "name": "Nome della surah",
-                "id": "Numero surah",
-                "location": "Posizione della surah",
-                "totverses": "Numero di versetti",
-                "bookmark": "segnalibro"
-            },
-            "holynames": "Nomi Sacri",
-            "modes": {
-                "reader": "Modalità lettura",
-                "mushaf": "Modalità Mushaf",
-                "native": "Modalità nativa"
-            },
-            "readerMode": {
-                "audio": "Audio",
-                "tts": "TTS"
-            },
-            "bookmarks": {
-                "menu": "Segnalibri",
-                "empty": "Nessun segnalibro ancora",
-                "add": "Aggiungi segnalibro versetto {verse}",
-                "saved": "Segnalibro salvato",
-                "removed": "Segnalibro rimosso",
-                "confirmRemove": "Rimuovere segnalibro?",
-                "confirmRemoveMessage": "Sei sicuro di voler rimuovere questo segnalibro?",
-                "alreadySaved": "Già aggiunto ai segnalibri",
-                "error": "Impossibile salvare il segnalibro",
-                "current": "questa surah",
-                "bookmarkSura": "Aggiungi surah ai segnalibri",
-                "removeSura": "Rimuovi segnalibro"
-            },
-            "quickAccess": {
-                "menu": "Accesso rapido",
-                "title": "Versetti ad accesso rapido",
-                "kursi": "Ayat al-Kursi",
-                "fatiha": "Al-Fatiha",
-                "yasin": "Ya-Sin",
-                "mulk": "Al-Mulk",
-                "ikhlas": "Al-Ikhlas"
-            },
-            "ramadanProgress": {
-                "title": "Traccia la tua lettura del Corano",
-                "badge": "Ramadan",
-                "message": "Ramadan Mubarak! Che Allah accetti la tua recitazione in questo mese benedetto.",
-                "completed": "{completed} / {total} Surah ({percentage}%)",
-                "continueReading": "Continua a leggere",
-                "restart": "Riavvia",
-                "resetProgress": "Reimposta progressi",
-                "resetConfirm": "Reimposta progressi",
-                "resetConfirmMessage": "Sei sicuro di voler reimpostare tutti i progressi di lettura?",
-                "suraCompleted": "Surah {sura} completata! ✓",
-                "suraIncomplete": "Surah {sura} segnata come incompleta",
-                "progressReset": "Progressi reimpostati",
-                "registerToSync": "Registrati per salvare i tuoi progressi nel cloud!",
-                "register": "Registrati",
-                "viewProgress": "Vedi progressi",
-                "markComplete": "Segna come completata",
-                "markIncomplete": "Segna come incompleta"
-            },
-            "autoContinue": "Continua automaticamente con la surah successiva",
-            "wordHighlight": "Evidenzia parola per parola",
-            "autoContinueAnnouncement": "Nuova funzione disponibile! Attiva 'Continua automaticamente' per avanzare nelle 114 surah.",
-            "notifications": {
-                "playingSelectionWithReciter": "{label} - {reciter}",
-                "playingVerseWithReciter": "Riproduzione del versetto {verse} - {reciter}",
-                "playingSuraFromVerse": "Riproduzione della surah {sura} dal versetto {verse}",
-                "startingSura": "Avvio della surah {sura}...",
-                "stoppedVerse": "Versetto {verse} fermato",
-                "playingVerse": "Riproduzione del versetto {verse}",
-                "nextSura": "→ Surah successiva",
-                "previousSura": "← Surah precedente"
-            },
-            "share": {
-                "text": "Leggi il Corano {suraName} {reference}",
-                "action": "Condividi {reference}",
-                "verseAction": "Condividi versetto {reference}",
-                "shared": "{label} condiviso",
-                "linkCopied": "Link copiato: {text}"
-            },
-            "dismissAnnouncement": "Chiudi annuncio"
-        },
-        "miracles": {
-            "pageTitle": "Miracoli del Corano",
-            "drawingPadTitle": "Blocco da disegno dei miracoli del Corano",
-            "drawingPadSubtitle": "Disegna il pattern per la Surah 1",
-            "clear": "Cancella",
-            "saveDrawing": "Salva disegno",
-            "visualTab": "Pattern Visivi",
-            "linguisticTab": "Analisi Linguistica",
-            "linguisticPilotTitle": "Pilota Linguistico",
-            "title": "Visualizzatore di lettere del Corano",
-            "scope": "Ambito",
-            "wholeBook": "Libro intero",
-            "singleSura": "Surah singola",
-            "singleVerse": "Versetto singolo",
-            "sura": "Surah",
-            "verse": "Versetto",
-            "cellSize": "Dimensione cella",
-            "gap": "Spazio",
-            "maxWidth": "Larghezza massima",
-            "draw": "Disegna",
-            "downloadPng": "Scarica PNG",
-            "legendInfo": "La legenda mostra {count} lettere.",
-            "chars": "Caratteri",
-            "words": "Parole",
-            "unique": "Uniche",
-            "changeVerse": "Cambia versetto",
-            "numericExamplesTitle": "Esempi di miracoli numerici nel Corano",
-            "oppositeWords": "Ripetizione di parole opposte",
-            "oppositeWordsDesc": "Il numero di alcune parole opposte è uguale, come \"il mondo\" e \"l'aldilà\" (115 volte ciascuna).",
-            "wordRelations": "Relazioni tra parole, lettere, versetti e surah",
-            "wordRelationsDesc": "L'attenzione è sui numeri, come i 114 capitoli del Corano.",
-            "conceptRelations": "Relazioni tra parole e concetti",
-            "conceptRelationsDesc": "La parola \"mese\" è ripetuta 12 volte, uguale al numero di mesi in un anno.",
-            "letterCounts": "Numero di lettere nei versetti",
-            "letterCountsDesc": "Il numero di lettere in alcuni versetti corrisponde a un numero specifico menzionato nel versetto stesso."
-        },
-        "chat": {
-            "title": "Chat della Comunità",
-            "subtitle": "Connettiti con altri, fai domande e condividi riflessioni.",
-            "banner": "Live ora: chat in tempo reale con waelio-messaging.",
-            "ctaChat": "Apri chat",
-            "ctaSupport": "Ottieni supporto",
-            "communityTitle": "Stanze pubbliche",
-            "communityBody": "Unisciti a stanze aperte per discutere surah, riflessioni e suggerimenti.",
-            "devTitle": "Sviluppatori",
-            "devBody": "Vuoi contribuire? Contattaci e collabora con noi.",
-            "todoTitle": "Stato live",
-            "todoBody": "La chat live, le stanze e la cronologia dei messaggi sono ora attive con waelio-messaging.",
-            "live": {
-                "title": "Chat Live",
-                "adminBadge": "Admin",
-                "reconnect": "Riconnetti",
-                "anon": "Anonimo",
-                "users": "Utenti online",
-                "you": "Tu",
-                "noUsers": "Nessun altro utente online",
-                "connected": "Connesso",
-                "connecting": "Connessione...",
-                "disconnected": "Disconnesso",
-                "directMessage": "Messaggio diretto",
-                "broadcastMessage": "Messaggio a tutti",
-                "messageToRoom": "Messaggio a #{room}",
-                "loginRequiredToSend": "Effettua l'accesso per inviare messaggi.",
-                "createRoomTitle": "Crea nuova stanza",
-                "roomNameLabel": "Nome stanza",
-                "createRoomAction": "Crea",
-                "sendDirect": "Invia all'utente",
-                "send": "Invia"
-            }
-        },
-        "settings": {
-            "title": "Impostazioni",
-            "subtitle": "Controlla come appare e si comporta l'app.",
-            "display": {
-                "title": "Display",
-                "desc": "Regola la densità del layout e le preferenze di movimento.",
-                "compact": "Layout compatto",
-                "compactHint": "Usa spaziatura più stretta.",
-                "motion": "Riduci movimento",
-                "motionHint": "Ammorbidisci le animazioni.",
-                "darkMode": "Modalità scura",
-                "darkModeHint": "Passa tra tema chiaro e scuro.",
-                "translation": "Mostra traduzione del Corano",
-                "translationHint": "Mostra sempre la traduzione dopo il testo arabo.",
-                "translator": "Traduttore del Corano",
-                "translatorHint": "Scegli il tuo studioso di traduzione preferito per la lingua corrente."
-            },
-            "accessibility": {
-                "title": "Accessibilità",
-                "desc": "Regola la dimensione del testo e il contrasto per una lettura più facile.",
-                "fontSize": "Dimensione testo",
-                "fontSizeHint": "Rende tutto il testo più grande o piccolo.",
-                "fontSizes": {
-                    "0": "Piccolo",
-                    "1": "Medio",
-                    "2": "Grande",
-                    "3": "Extra grande"
-                },
-                "highContrast": "Alto contrasto",
-                "highContrastHint": "Aumenta il contrasto."
-            },
-            "navigation": {
-                "title": "Navigazione",
-                "desc": "Controlla l'ordine e la visibilità del cassetto.",
-                "enableOrdering": "Abilita ordinamento trascinamento",
-                "enableOrderingHint": "Permette di riordinare e fissare elementi.",
-                "drawerDefault": "Apri cassetto all'avvio",
-                "drawerDefaultHint": "Abilita per avviare con il cassetto aperto."
-            },
-            "notifications": {
-                "title": "Notifiche",
-                "desc": "Rimani informato quando arrivano nuovi contenuti.",
-                "enable": "Abilita notifiche",
-                "enableHint": "Chiederemo il permesso prima di inviare qualcosa.",
-                "enabled": "Notifiche push abilitate!",
-                "unavailable": "Le notifiche non sono supportate su questo dispositivo/browser.",
-                "denied": "Le notifiche sono bloccate. Abilitale nelle impostazioni del browser.",
-                "error": "Impossibile abilitare le notifiche al momento.",
-                "testTitle": "Notifiche abilitate",
-                "testBody": "Riceverai aggiornamenti da Peace2074"
-            },
-            "audio": {
-                "title": "Audio",
-                "desc": "Controlla le impostazioni predefinite dell'athan e della riproduzione.",
-                "autoPlay": "Riproduzione automatica athan",
-                "autoPlayHint": "Avvia la riproduzione dell'athan automaticamente.",
-                "autoPlayPrayerTimes": "Adhan agli orari di preghiera",
-                "autoPlayPrayerTimesHint": "Riproduci automaticamente l'Adhan all'inizio dell'orario di preghiera."
-            },
-            "refresh": {
-                "title": "Aggiorna app",
-                "desc": "Forza un aggiornamento e ricarica per ottenere l'ultima versione."
-            },
-            "clearingCache": "Pulizia della cache in corso..."
-        },
-        "preferences": {
-            "title": "Preferenze utente",
-            "subtitle": "Salva le impostazioni predefinite personali per lettura e aggiornamenti.",
-            "profile": {
-                "title": "Profilo",
-                "displayName": "Nome visualizzato",
-                "emailUpdates": "Inviami aggiornamenti occasionali via email",
-                "hint": "Le preferenze sono locali a questo dispositivo per ora."
-            },
-            "quran": {
-                "title": "Lettura del Corano",
-                "reciter": "Recitatore predefinito",
-                "transliteration": "Mostra traslitterazione",
-                "remember": "Ricorda l'ultima pagina letta",
-                "highlightMode": "Evidenziazione della recitazione",
-                "highlightWord": "Parola",
-                "highlightSentence": "Frase",
-                "hint": "Le scelte di lettura si applicano in tutte le pagine del Corano."
-            },
-            "appearance": {
-                "title": "Aspetto",
-                "hint": "Segui il tema di sistema o forza chiaro/scuro.",
-                "themeOptions": {
-                    "system": "Sistema",
-                    "light": "Chiaro",
-                    "dark": "Scuro"
-                }
-            },
-            "security": {
-                "title": "Sicurezza",
-                "currentPassword": "Password attuale",
-                "newPassword": "Nuova password",
-                "confirmPassword": "Conferma nuova password",
-                "changePasswordBtn": "Cambia password",
-                "generatePassword": "Genera password sicura",
-                "passwordChanged": "Password cambiata con successo",
-                "passwordGenerated": "Password sicura generata e inserita",
-                "hint": "La password deve essere di almeno 8 caratteri.",
-                "deleteAccount": {
-                    "title": "Elimina account",
-                    "warningTitle": "Azione permanente",
-                    "warningBody": "Questo elimina definitivamente il tuo account, il profilo, i progressi salvati, i Mi piace, le passkey e la sessione attiva. L'azione non può essere annullata.",
-                    "confirmLabel": "Nome utente o email",
-                    "confirmHint": "Digita {identifier} per confermare l'eliminazione dell'account.",
-                    "currentPasswordHint": "Obbligatoria per gli account con password. Se usi solo l'accesso con Apple o Google, puoi lasciare questo campo vuoto.",
-                    "action": "Elimina account",
-                    "confirmDialogTitle": "Eliminare definitivamente l'account?",
-                    "confirmDialogMessage": "Il tuo account e i dati associati verranno eliminati definitivamente. Questa azione non può essere annullata.",
-                    "success": "Account eliminato con successo"
-                },
-                "errors": {
-                    "allFieldsRequired": "Tutti i campi sono obbligatori",
-                    "passwordMismatch": "Le nuove password non coincidono",
-                    "passwordTooShort": "La password deve essere di almeno 8 caratteri",
-                    "changeFailed": "Impossibile cambiare la password",
-                    "confirmationRequired": "Digita il tuo nome utente o indirizzo email per confermare",
-                    "confirmationMismatch": "Il testo di conferma non corrisponde al tuo account",
-                    "deleteFailed": "Impossibile eliminare l'account"
-                }
-            }
-        },
-        "admin": {
-            "title": "Amministrazione",
-            "subtitle": "Gestisci versioni e controllo versioni",
-            "currentVersion": "Versione attuale",
-            "onlyEven": "Mostra solo versioni stabili",
-            "refresh": "Aggiorna",
-            "even": "Stabile",
-            "noTitle": "Senza titolo",
-            "noVersions": "Nessuna versione disponibile",
-            "loading": "Caricamento versioni...",
-            "unknownDate": "Data sconosciuta",
-            "loadFailed": "Impossibile caricare le versioni",
-            "users": {
-                "title": "Gestione utenti",
-                "loadFailed": "Impossibile caricare gli utenti",
-                "updateSuccess": "Utente aggiornato",
-                "updateFailed": "Impossibile aggiornare l'utente",
-                "roleLabel": "Ruolo",
-                "save": "Salva",
-                "noUsers": "Nessun utente trovato",
-                "loading": "Caricamento utenti...",
-                "lastLogin": "Ultimo accesso",
-                "loginCount": "Accessi",
-                "bookmarks": "Segnalibri",
-                "surasCompleted": "Sure",
-                "lastRead": "Ultima lettura",
-                "sura": "Sura",
-                "editPerms": "Permessi",
-                "permsTitle": "Modifica permessi per",
-                "permsHint": "Seleziona ogni azione che l'utente può eseguire su ogni oggetto.",
-                "permsSubject": "Oggetto",
-                "savePerms": "Salva permessi",
-                "cancel": "Annulla",
-                "roles": {
-                    "user": "Utente",
-                    "editor": "Redattore",
-                    "admin": "Amministratore"
-                }
-            }
-        },
-        "blog": {
-            "title": "Blog",
-            "subtitle": "Aggiornamenti, suggerimenti e riflessioni.",
-            "empty": "Nessun post ancora.",
-            "notFound": "Post non trovato",
-            "newPost": "Nuovo post",
-            "likeSingle": "{count} Mi piace",
-            "likePlural": "{count} Mi piace",
-            "likeUpdateError": "Impossibile aggiornare il Mi piace",
-            "editor": {
-                "newPost": "Nuovo post",
-                "editPost": "Modifica post",
-                "authRequired": "Devi accedere per creare o modificare post.",
-                "title": "Titolo",
-                "titleRequired": "Il titolo è obbligatorio",
-                "slug": "Slug",
-                "slugHint": "Identificatore URL-friendly",
-                "slugRequired": "Lo slug è obbligatorio",
-                "excerpt": "Estratto",
-                "content": "Contenuto",
-                "contentRequired": "Il contenuto è obbligatorio",
-                "tags": "Tag",
-                "tagsHint": "Tag separati da virgola",
-                "publish": "Pubblica",
-                "update": "Aggiorna",
-                "delete": "Elimina",
-                "confirmDelete": "Eliminare il post?",
-                "confirmDeleteMessage": "Questa azione non può essere annullata.",
-                "publishSuccess": "Post pubblicato con successo!",
-                "updateSuccess": "Post aggiornato con successo!",
-                "deleteSuccess": "Post eliminato con successo!",
-                "saveError": "Impossibile salvare il post",
-                "deleteError": "Impossibile eliminare il post",
-                "loadError": "Impossibile caricare il post",
-                "postNotFound": "Post non trovato",
-                "fillRequired": "Compila tutti i campi obbligatori",
-                "aiDraft": "Bozza AI",
-                "aiDraftTip": "Genera una bozza dell'articolo dal tuo titolo con l'AI",
-                "aiDraftDone": "Bozza generata — sentiti libero di modificarla!",
-                "aiDraftFailed": "Bozza AI non disponibile, scrivi manualmente"
-            }
-        },
-        "deploys": {
-            "title": "Cronologia distribuzioni",
-            "subtitle": "Traccia le nostre versioni e aggiornamenti nel tempo",
-            "features": "Funzionalità",
-            "fixes": "Correzioni bug",
-            "documentation": "Documentazione",
-            "chores": "Attività di manutenzione",
-            "like": "Mi piace",
-            "unlike": "Rimuovi Mi piace",
-            "liked": "❤️ Mi piace!",
-            "unliked": "Mi piace rimosso",
-            "loadError": "Impossibile caricare la cronologia delle distribuzioni",
-            "loginRequiredToLike": "Accedi per mettere mi piace alle distribuzioni",
-            "toggleLikeError": "Impossibile cambiare il mi piace"
-        },
-        "social": {
-            "title": "Social & Condividi",
-            "subtitle": "Seguici e condividi il Corano con il mondo",
-            "followUs": "Seguici",
-            "featuredVideos": "Video in Evidenza",
-            "featuredVideosSubtitle": "Giovani artisti che condividono fede e amore attraverso i nasheed",
-            "shareVerse": "Condividi un Versetto",
-            "selectSura": "Seleziona Sura",
-            "selectAyah": "Numero Ayah",
-            "loadVerse": "Carica Versetto",
-            "verseNotFound": "Versetto non trovato",
-            "loadError": "Caricamento versetto fallito",
-            "copyText": "Copia Testo",
-            "copied": "Copiato negli appunti!",
-            "copyError": "Copia fallita"
-        }
-    },
-    "offline": {
-        "title": "Recitazione offline",
-        "subtitle": "Scarica recitazioni del Corano per ascoltarle offline",
-        "selectQuality": "Seleziona qualità audio",
-        "regular": "Qualità standard",
-        "highQuality": "Alta qualità",
-        "storageUsed": "Spazio utilizzato",
-        "surasDownloaded": "Surah scaricate",
-        "downloadOptions": "Opzioni di download",
-        "downloadAllQuran": "Scarica tutto il Corano (114 Surah)",
-        "downloadCurrentSura": "Scarica la surah corrente",
-        "clearAllCache": "Elimina tutto l'audio scaricato",
-        "downloading": "Download in corso",
-        "sura": "Surah",
-        "verses": "versetti",
-        "noSuraSelected": "Nessuna surah selezionata",
-        "downloadingStarted": "Download avviato...",
-        "downloadComplete": "Download completato!",
-        "downloadFailed": "Download fallito, riprova",
-        "downloadAllComplete": "{completed} surah scaricate. {failed} fallite.",
-        "cacheCleared": "Tutto l'audio offline eliminato",
-        "qualityChanged": "Qualità cambiata. Ricarica per usare l'audio offline.",
-        "listenWithoutInternet": "Ascolta senza internet",
-        "currentSuraReady": "Questa sura è pronta offline",
-        "currentSuraReadyHint": "Puoi ascoltare questa recitazione senza internet. L'audio scaricato verrà preferito automaticamente quando disponibile.",
-        "fullLibraryReady": "Tutto il Corano è pronto offline",
-        "fullLibraryReadyHint": "Tutte le recitazioni sono state scaricate. L'app preferirà l'audio salvato sul dispositivo quando possibile per ridurre l'uso di internet.",
-        "internetRequired": "Al momento serve internet",
-        "internetRequiredHint": "Scarica questa sura o tutto il Corano per ascoltare senza internet.",
-        "confirmDownloadAll": {
-            "title": "Scaricare tutto il Corano?",
-            "message": "Verranno scaricati circa {size} di dati audio a qualità {quality}."
-        },
-        "confirmClear": {
-            "title": "Eliminare tutto l'audio offline?",
-            "message": "Verranno eliminate tutte le recitazioni scaricate. Puoi riscaricale in seguito."
-        }
-    },
-    "general": {
-        "Home": "Home",
-        "SiteTitle": "Peace2074",
-        "SiteDomain": "https://peace2074.com",
-        "navigationLinks": "Link di navigazione",
-        "CurrentVersion": "Versione attuale",
-        "setLocale": "Imposta lingua predefinita",
-        "CheckUpdates": "Cerca aggiornamenti",
-        "Services": "Servizi",
-        "fetchingUpdates": "Recupero aggiornamenti",
-        "searching": "Ricerca in corso…",
-        "languages": "Lingue",
-        "download": "Scarica",
-        "cancel": "Annulla",
-        "delete": "Elimina",
-        "edit": "Modifica",
-        "share": "Condividi",
-        "undo": "Annulla",
-        "languageNames": {
-            "en": "Inglese",
-            "ar": "Arabo",
-            "de": "Tedesco",
-            "es": "Spagnolo",
-            "ru": "Russo",
-            "he": "Ebraico",
-            "it": "Italiano",
-            "tr": "Turco"
-        },
-        "dark": "scuro",
-        "light": "chiaro",
-        "auto": "automatico",
-        "lightMode": "Cambia modalità luce",
-        "open": "apri",
-        "close": "chiudi",
-        "holdState": "Sempre aperto",
-        "swipeToChange": "Scorri per cambiare",
-        "pause": "Pausa",
-        "play": "Riproduci",
-        "stop": "Ferma",
-        "updateAvailable": "È disponibile una nuova versione!",
-        "update": "Aggiorna ora",
-        "later": "Più tardi",
-        "greetings": {
-            "eidMubarak": "✨ Eid Mubarak ✨",
-            "englishCustomers": "Per i nostri clienti italofoni, possiamo mostrare un saluto."
-        }
-    },
-    "intro": {
-        "desc": "Appassionato di JavaScript, tutto sulla riusabilità e il miglioramento."
-    },
-    "notfound": "Non trovato",
-    "contact": {
-        "help": "Siamo qui",
-        "offer_help": "Facci sapere come possiamo aiutarti!",
-        "accept_terms": "Visualizza i nostri termini e condizioni.",
-        "terms_accepted": "Accetto i termini e le condizioni.",
-        "name": {
-            "label": "Il tuo nome *",
-            "hint": "Nome e cognome",
-            "placeholder": "Qual è il tuo nome?"
-        },
-        "email1": {
-            "label": "La tua email *",
-            "hint": "La tua email",
-            "placeholder": "Per poterti rispondere."
-        },
-        "message1": {
-            "label": "Il tuo messaggio *",
-            "hint": "Inserisci il tuo messaggio",
-            "placeholder": "Dicci come possiamo aiutare"
-        },
-        "email": {
-            "label": "Il tuo indirizzo email *",
-            "hint": "La tua email",
-            "placeholder": "Per poterti rispondere."
-        },
-        "message": {
-            "label": "Il tuo messaggio *",
-            "hint": "Inserisci il tuo messaggio",
-            "placeholder": "Dicci come possiamo aiutare"
-        },
-        "projects": {
-            "label": "Nome progetto *",
-            "placeholder": "A quale progetto ti riferisci?"
-        },
-        "success": "Messaggio registrato. Ti risponderemo presto.",
-        "error": "Impossibile inviare il messaggio. Riprova.",
-        "contactTitle": "Informazioni di contatto",
-        "reachDirectly": "Contattaci direttamente:",
-        "socialTitle": "Social",
-        "socialX": "X / Twitter",
-        "socialGitHub": "GitHub"
-    },
-    "about": {
-        "title": "Waelio",
-        "par10": "Un leader eclettico nel mondo digitale, con oltre due decenni di successo professionale."
-    },
-    "demoContent": {
-        "q1": "Posso creare un post?",
-        "q2": "Posso leggere un post?",
-        "q3": "Posso aggiornare un post?",
-        "q4": "Posso eliminare un post?"
-    },
-    "privacy_policy": "Informativa sulla Privacy",
-    "privacy_intro": "La tua privacy è importante per noi. Questa pagina spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni.",
-    "information_we_collect": "Informazioni che raccogliamo",
-    "basic_account_info": "Informazioni account di base (come indirizzo email) se ti registri o accedi.",
-    "usage_data": "Dati di utilizzo e cookie per migliorare la tua esperienza.",
-    "how_we_use_information": "Come utilizziamo le informazioni",
-    "provide_services": "Per fornire e mantenere i nostri servizi.",
-    "improve_experience": "Per migliorare e personalizzare la tua esperienza.",
-    "communicate_updates": "Per comunicare con te su aggiornamenti o supporto.",
-    "cookies": "Cookie",
-    "cookies_text": "Utilizziamo i cookie per ricordare le tue preferenze e migliorare la tua esperienza. Puoi accettare o rifiutare i cookie usando il banner in fondo al sito.",
-    "data_security": "Sicurezza dei dati",
-    "data_security_text": "Adottiamo misure ragionevoli per proteggere i tuoi dati, ma nessun sistema è sicuro al 100%.",
-    "apple_tv_section": "Apple TV e app native",
-    "apple_tv_text": "L'app PEACE2074 è disponibile su iPhone, iPad e Apple TV. Su tutte le piattaforme, non raccogliamo dati oltre a quanto descritto sopra. L'app Apple TV non utilizza il microfono, la fotocamera o i servizi di localizzazione. L'autenticazione della sessione utilizza cookie HTTP-only sicuri — nessun dato personale viene memorizzato localmente sul dispositivo. Se utilizzi iCloud, il tuo dispositivo gestisce la sincronizzazione iCloud in modo indipendente dai nostri server.",
-    "contact_text": "Se hai domande sulla nostra informativa sulla privacy, contattaci.",
-    "terms_and_conditions": "Termini e condizioni",
-    "terms_intro": "Leggi attentamente questi termini e condizioni prima di utilizzare il nostro sito web.",
-    "acceptance_of_terms": "Accettazione dei termini",
-    "acceptance_of_terms_text": "Accedendo o utilizzando il nostro sito web, accetti di essere vincolato da questi termini. Se non sei d'accordo, ti preghiamo di non usare il sito.",
-    "use_of_site": "Uso del sito",
-    "use_of_site_1": "Devi usare il sito nel rispetto di tutte le leggi e normative applicabili.",
-    "use_of_site_2": "Non puoi usare il sito per scopi illegali o proibiti.",
-    "intellectual_property": "Proprietà intellettuale",
-    "intellectual_property_text": "Tutti i contenuti di questo sito sono di proprietà del titolare del sito o dei suoi licenziatari e sono protetti dalle leggi sul copyright.",
-    "limitation_of_liability": "Limitazione di responsabilità",
-    "limitation_of_liability_text": "Non siamo responsabili per eventuali danni derivanti dall'uso del sito.",
-    "changes_to_terms": "Modifiche ai termini",
-    "changes_to_terms_text": "Possiamo aggiornare questi termini in qualsiasi momento. L'uso continuato del sito significa che accetti i nuovi termini.",
-    "auth": {
-        "username": "Nome utente",
-        "password": "Password",
-        "email": "Email",
-        "confirmPassword": "Conferma password",
-        "usernameRequired": "Il nome utente è obbligatorio",
-        "passwordRequired": "La password è obbligatoria",
-        "enterUsername": "Inserisci il tuo nome utente",
-        "enterPassword": "Inserisci la tua password",
-        "enterEmail": "Inserisci la tua email",
-        "enterCredentials": "Inserisci nome utente e password",
-        "signIn": "Accedi",
-        "signUp": "Registrati",
-        "login": "Accedi",
-        "rememberMe": "Ricordami",
-        "orContinueWith": "oppure continua con",
-        "signInWithPasskey": "Accedi con passkey",
-        "passkeyHint": "Usa Face ID, Touch ID, Windows Hello o il tuo gestore password.",
-        "passkeyNotSupported": "Le passkey non sono supportate in questo contesto del browser.",
-        "passkeyUnavailable": "Nessuna passkey è ancora registrata per questo account. Accedi prima con la password.",
-        "passkeyCancelled": "L'accesso con passkey è stato annullato.",
-        "passkeyLoginSuccess": "Hai effettuato l'accesso con la tua passkey.",
-        "passkeyLoginError": "L'accesso con passkey non è riuscito. Riprova.",
-        "passkeyCreated": "Passkey salvata per un accesso più rapido la prossima volta.",
-        "passkeyCreateError": "Impossibile salvare la tua passkey in questo momento.",
-        "passkeyCreatePromptTitle": "Salvare una passkey?",
-        "passkeyCreatePromptMessage": "Usa la biometria del tuo dispositivo o il gestore password per accedere più velocemente la prossima volta.",
-        "passkeyCreatePromptConfirm": "Salva passkey",
-        "signInWithGitHub": "Accedi con GitHub",
-        "signInWithNetlify": "Accedi con Netlify Identity",
-        "appleSignInUnavailable": "L'accesso con Apple non è attualmente disponibile.",
-        "socialSignInExpired": "L'accesso social è scaduto o è stato interrotto. Riprova.",
-        "googleSignInExpired": "L'accesso con Google è scaduto o è stato interrotto. Riprova.",
-        "appleSignInExpired": "L'accesso con Apple è scaduto o è stato interrotto. Riprova.",
-        "welcomeBack": "Bentornato",
-        "forgotPassword": "Hai dimenticato la password?",
-        "resetPassword": "Reimposta password",
-        "resetInstructions": "Inserisci la tua email e ti invieremo le istruzioni per reimpostare la password.",
-        "sendResetLink": "Invia link di reimpostazione",
-        "resetEmailSent": "Le istruzioni per reimpostare la password sono state inviate alla tua email",
-        "resetError": "Impossibile inviare l'email di reimpostazione",
-        "loginError": "Accesso non riuscito. Riprova.",
-        "loginSuccess": "Bentornato!",
-        "dontHaveAccount": "Non hai un account?",
-        "alreadyHaveAccount": "Hai già un account?",
-        "createAccount": "Crea il tuo account",
-        "fillAllFields": "Compila tutti i campi",
-        "passwordMismatch": "Le password non corrispondono",
-        "acceptTerms": "Accetta i termini e le condizioni",
-        "iAccept": "Accetto i",
-        "termsAndConditions": "termini e condizioni",
-        "signupSuccess": "Account creato con successo! Effettua il login.",
-        "signupError": "Registrazione non riuscita. Riprova."
-    },
-    "login": "Accedi",
-    "signup": "Registrati",
-    "user": "Utente",
-    "password": "Password",
-    "sign_in_with_google": "Accedi con Google",
-    "sign_up": "Registrati",
-    "signup_success": "Account creato! Effettua il login.",
-    "signup_failed": "Registrazione non riuscita",
-    "create_account": "Crea account",
-    "back_to_login": "Torna al login",
-    "please_fill_all_fields": "Compila tutti i campi",
-    "passwords_do_not_match": "Le password non corrispondono",
-    "confirm_password": "Conferma password",
-    "cancel": "Annulla",
-    "edit": "Modifica",
-    "login_success": "Accesso effettuato con successo",
-    "please_accept_terms": "Accetta i nostri termini e condizioni.",
-    "email": "Email",
-    "submit": "invia",
-    "reset": "Reimposta",
-    "Login": "Accedi",
-    "password_login": "Accedi con email",
-    "username": "Nome utente",
-    "username_required": "La password è obbligatoria",
-    "hello": "Ciao",
-    "logout": "Esci",
-    "already_logged_in": "Hai già effettuato l'accesso",
-    "login_method": "Metodi di accesso",
-    "logout_success": "Hai effettuato il logout con successo",
+  "welcome": "Benvenuto",
+  "button": {
+    "about": "Chi siamo",
     "back": "Indietro",
-    "username_taken": "Nome utente già in uso",
-    "accept_terms_and_conditions": "Accetta i nostri termini e condizioni",
-    "password_required": "Password obbligatoria",
-    "resend_verification_email": "reinvia email di verifica",
-    "password_signup": "registrati",
-    "username_optional": "Nome utente",
-    "first_name": "Nome",
-    "last_name": "Cognome",
-    "username_hint": "nome utente",
-    "email_required": "Email obbligatoria",
-    "The 99 Holy Names of Allah": "I 99 Santi Nomi di Allah",
-    "welcome_back": "Bentornato, {name}",
-    "welcome_guest": "Ciao ospite",
-    "no_bookmarks": "Nessun segnalibro salvato",
-    "tasbeeh": {
-        "title": "Tasbeeh digitale",
-        "subtitle": "Rosario di preghiera islamico",
-        "tapToCount": "Tocca per contare",
-        "reset": "Reimposta",
-        "settings": "Impostazioni",
-        "selectPhrase": "Seleziona la frase di dhikr",
-        "todayStats": "Statistiche di oggi",
-        "total": "Totale",
-        "sessions": "Sessioni",
-        "completed": "Serie completate",
-        "continue": "Continua",
-        "vibration": "Feedback con vibrazione",
-        "sound": "Feedback sonoro",
-        "autoNext": "Frase successiva automatica",
-        "phrases": {
-            "subhanallah": "Gloria ad Allah",
-            "alhamdulillah": "Lode ad Allah",
-            "allahu_akbar": "Allah è il Più Grande",
-            "la_ilaha_illa_allah": "Non c'è dio all'infuori di Allah",
-            "astaghfirullah": "Chiedo perdono ad Allah",
-            "la_hawla": "Non c'è forza se non con Allah"
+    "go": "VAI",
+    "home": "Home",
+    "toggle_dark": "Attiva modalità scura",
+    "toggle_langs": "Cambia lingua",
+    "Privacy": "La nostra Privacy",
+    "Privacy_Short": "Privacy",
+    "Terms": "I nostri Termini e Condizioni",
+    "Terms_Short": "Termini",
+    "Contact": "Contattaci",
+    "TimeLine": "Cronologia",
+    "Utils": "Utilità",
+    "submit": "Invia",
+    "reset": "Ripristina",
+    "reload": "Ricarica",
+    "close": "Chiudi",
+    "new_content": "Nuovi contenuti disponibili, ricarica per aggiornare.",
+    "offline_ready": "App pronta per funzionare offline"
+  },
+  "athan": {
+    "play": "Riproduci Athan",
+    "pause": "Pausa Athan",
+    "stop": "Ferma Athan"
+  },
+  "appShell": {
+    "toggleMenu": "Attiva/disattiva menu",
+    "searchPlaceholder": "Cerca…",
+    "playAthan": "Riproduci Athan",
+    "stopAthan": "Ferma Athan",
+    "pin": "Aggiungi",
+    "unpin": "Rimuovi",
+    "resultType": {
+      "sura": "Corano",
+      "page": "Pagina"
+    },
+    "nav": {
+      "home": "Home",
+      "about": "Chi siamo",
+      "quran": "Corano",
+      "holynames": "Nomi Sacri",
+      "tasbeeh": "Tasbeeh",
+      "miracles": "Miracoli",
+      "chat": "Chat",
+      "support": "Supporto",
+      "settings": "Impostazioni",
+      "preferences": "Preferenze",
+      "login": "Accedi",
+      "logout": "Esci",
+      "blog": "Blog",
+      "contact": "Contatti",
+      "deploys": "Distribuzioni",
+      "social": "Social"
+    }
+  },
+  "navigation": {
+    "Profile": "Il mio Profilo",
+    "Favorites": "I miei Preferiti",
+    "Messages": "Messaggi",
+    "HomePageTitle": "Pagina Home",
+    "HomePageCaption": "Pagina Home",
+    "AuthPageTitle": "Autenticazione",
+    "AuthPageCaption": "Crea utente / Accedi",
+    "AboutPageTitle": "Chi siamo",
+    "AboutPageCaption": "Chi siamo",
+    "ContactPageTitle": "Contattaci",
+    "ContactPageCaption": "Contattaci",
+    "TermsPageTitle": "Termini",
+    "TermsPageCaption": "Termini e condizioni",
+    "BlogPageTitle": "Il nostro Blog",
+    "BlogPageCaption": "Post e Articoli",
+    "ProductsPageTitle": "Prodotti",
+    "ProductsPageCaption": "I nostri Prodotti",
+    "PrivacyPageTitle": "Privacy",
+    "PrivacyPageCaption": "Pagina Privacy",
+    "ServicesPageTitle": "Servizi",
+    "ServicesPageCaption": "I nostri Servizi",
+    "SettingsPageTitle": "Impostazioni",
+    "SettingsPageCaption": "Impostazioni display",
+    "TranslationPageTitle": "Traduzioni",
+    "TranslationPageCaption": "Gestisci traduzioni",
+    "GlossaryPageTitle": "Glossario",
+    "GlossaryPageCaption": "La nostra pagina del Glossario",
+    "MediaPageTitle": "Media",
+    "MediaPageCaption": "La nostra pagina Media",
+    "Signin": "Accedi",
+    "Signout": "Esci",
+    "Register": "Registrati",
+    "AdminPage": "Pagina Admin"
+  },
+  "pages": {
+    "about": {
+      "title": "Chi è PEACE2074",
+      "hero": {
+        "eyebrow": "Chi è PEACE2074",
+        "title": "Un luogo luminoso per leggere, ricordare e tornare.",
+        "lead": "PEACE2074 è uno spazio multilingue per il Corano e la riflessione, progettato per risultare calmo, bello e davvero utile, sia che lo apra per un solo ayah, per un solo respiro o per un viaggio più lungo.",
+        "primaryCta": "Apri il Corano",
+        "secondaryCta": "Esplora i Nomi Sacri",
+        "tags": {
+          "read": "Lettura del Corano",
+          "remember": "Dhikr e Tasbeeh",
+          "reflect": "Nomi Sacri e riflessione",
+          "connect": "Supporto e comunità"
         }
-    },
-    "account": {
-        "title": "Account"
-    },
-    "meta": {
-        "home": "Un'esperienza tranquilla per leggere il Corano, riflettere e connettersi.",
-        "quran": "Il Corano — naviga e leggi le 114 surah.",
-        "holynames": "Esplora i 99 Nomi Sacri di Allah con significati e recitazioni audio.",
-        "tasbeeh": "Tasbeeh Digitale — un contatore semplice e bello per il dhikr.",
-        "miracles": "Leggi storie ispiratrici e riflessioni su segni e miracoli.",
-        "privacy": "Scopri come proteggiamo i tuoi dati e la tua privacy.",
-        "titles": {
-            "home": "Home",
-            "quran": "Corano",
-            "holynames": "Nomi Sacri",
-            "tasbeeh": "Tasbeeh"
+      },
+      "spotlight": {
+        "label": "Progettato per una concentrazione gentile",
+        "title": "Creato per abbassare il rumore e aumentare la presenza.",
+        "body": "Ogni schermata vuole risultare chiara, di supporto e spiritualmente centrata, dalla lettura delle surah e condivisione dei versetti ai segnalibri, all'ascolto offline e alla riflessione quotidiana."
+      },
+      "stats": {
+        "languages": {
+          "value": "8",
+          "label": "lingue supportate"
+        },
+        "suras": {
+          "value": "114",
+          "label": "surah pronte da esplorare"
+        },
+        "experience": {
+          "value": "1",
+          "label": "esperienza calma su web e iOS"
         }
+      },
+      "story": {
+        "eyebrow": "Perché esiste",
+        "title": "Gli strumenti della fede possono essere potenti senza diventare opprimenti.",
+        "body": "PEACE2074 riunisce lettura del Corano, dhikr, esplorazione riflessiva e supporto pratico in un solo luogo. L'obiettivo è semplice: aiutarti a tornare a ciò che conta con meno attrito e più bellezza.",
+        "cardTitle": "Un ritmo digitale più calmo",
+        "cardBody": "Invece di strumenti sparsi e interfacce rumorose, PEACE2074 unisce lettura, recitazione, Tasbeeh, Nomi Sacri, riflessioni e supporto in un unico flusso di pace."
+      },
+      "verse": {
+        "label": "Spirito guida",
+        "quote": "La pace non è solo qualcosa che cerchi. È qualcosa che pratichi, pagina dopo pagina, preghiera dopo preghiera, ritorno dopo ritorno.",
+        "source": "Spirito PEACE2074"
+      },
+      "pillars": {
+        "eyebrow": "Cosa lo rende speciale",
+        "title": "Tre pilastri danno forma all'esperienza",
+        "lead": "Ogni parte dell'app è pensata per risultare utile in un giorno frenetico e bella in un momento silenzioso.",
+        "read": {
+          "title": "Leggi con chiarezza",
+          "body": "Esplora il Corano con modalità di lettura focalizzate, condivisione dei versetti, segnalibri e una recitazione che non ti intralcia."
+        },
+        "remember": {
+          "title": "Ricorda con presenza",
+          "body": "Tieni vicino il dhikr attraverso Tasbeeh digitale, Nomi Sacri e suggerimenti delicati che sostengono la costanza senza pressione."
+        },
+        "connect": {
+          "title": "Connettiti con il supporto",
+          "body": "Trova aiuto tramite chat, contatto e guida ponderata quando hai bisogno di direzione, non di altro rumore."
+        }
+      },
+      "journey": {
+        "eyebrow": "Un percorso guidato",
+        "title": "Dalla curiosità alla costanza",
+        "lead": "Che tu arrivi cercando, riflettendo o ricostruendo un'abitudine, PEACE2074 ti incontra dove sei.",
+        "discover": {
+          "step": "01",
+          "title": "Scopri",
+          "body": "Inizia da una surah, un versetto o una domanda e lascia che l'app renda chiaro il passo successivo."
+        },
+        "reflect": {
+          "step": "02",
+          "title": "Rifletti",
+          "body": "Usa recitazione, traduzioni, promemoria e strumenti spirituali per restare un po' di più dentro il significato."
+        },
+        "return": {
+          "step": "03",
+          "title": "Torna",
+          "body": "Torna quando vuoi ai tuoi segnalibri, alle tue routine e al tuo ritmo di pace, senza un rientro faticoso."
+        }
+      },
+      "promise": {
+        "eyebrow": "Ciò che proteggiamo",
+        "title": "Bello, utile e rispettoso per impostazione predefinita",
+        "body": "L'esperienza è modellata attorno alla concentrazione, all'accesso multilingue e a un ritmo visivo calmo che rispetta sia la riflessione sia la routine.",
+        "one": "Un'interfaccia pulita con la lettura al centro",
+        "two": "Localizzazione con supporto RTL per arabo ed ebraico",
+        "three": "Recitazione offline e strumenti di supporto su web e iOS"
+      },
+      "build": {
+        "eyebrow": "Sviluppato in pubblico",
+        "title": "Codice aperto, cura per iOS e fondamenta SEO",
+        "lead": "PEACE2074 condivide il suo repository pubblico, offre un'esperienza iOS calma tramite Capacitor e mantiene le pagine chiave scopribili con SEO basata sulle route e dati strutturati."
+      },
+      "repo": {
+        "eyebrow": "Repository pubblico",
+        "title": "Segui il progetto in tempo reale",
+        "body": "La codebase è pubblica su GitHub e la stessa base alimenta l'esperienza web e l'app iOS con issue, cronologia dei contributi ed esecuzioni dei workflow visibili.",
+        "links": {
+          "code": "Vedi codice",
+          "issues": "Issue",
+          "contributors": "Contributori",
+          "actions": "CI e azioni"
+        }
+      },
+      "analytics": {
+        "eyebrow": "Analytics consapevoli",
+        "title": "Misurato con consenso, non a intuito",
+        "body": "Le analytics rispettano il consenso, monitorano la salute del prodotto e si affiancano a URL canonici, meta tag e dati strutturati così che l'esperienza resti misurabile e scopribile.",
+        "pointConsent": "Le impostazioni di consenso controllano la raccolta analytics prima che gli eventi vengano inviati.",
+        "pointGa4": "GA4 e Firebase Analytics nativo catturano percorsi come visualizzazioni di pagina, segnalibri e interazioni chiave del prodotto.",
+        "pointReader": "Le analytics del lettore riassumono progressi nelle surah e modelli di lettura per gli utenti autenticati.",
+        "pointSeo": "I metadati delle route, gli URL canonici, i tag Open Graph e i dati strutturati aiutano le pagine chiave a restare facili da trovare.",
+        "links": {
+          "playbook": "Playbook GA4",
+          "readerStats": "Doc statistiche lettore"
+        }
+      },
+      "cta": {
+        "eyebrow": "Entra con dolcezza",
+        "title": "Resta quanto ti serve.",
+        "body": "Apri il Corano, esplora i Nomi Sacri o contattaci se desideri aiuto nel dare forma al tuo percorso.",
+        "primary": "Inizia a leggere",
+        "secondary": "Esplora i Nomi Sacri",
+        "tertiary": "Contatta PEACE2074"
+      }
     },
-    "bookmarks": "segnalibro",
-    "profile": {
-        "title": "Profilo",
-        "edit": "Modifica profilo",
-        "save": "Salva modifiche"
+    "support": {
+      "title": "Supporto",
+      "subtitle": "Hai bisogno di aiuto? Siamo qui per ascoltarti e assisterti.",
+      "ctaChat": "Vai alla chat",
+      "ctaContact": "Contattaci",
+      "helpTitle": "Guide e FAQ",
+      "helpBody": "Consulta prima la nostra documentazione e i problemi comuni.",
+      "contactTitle": "Contattaci",
+      "contactBody": "Se sei bloccato, inviaci i dettagli e ti risponderemo il prima possibile.",
+      "aiTitle": "Supporto IA",
+      "aiDesc": "Ottieni aiuto dal nostro assistente IA"
+    },
+    "home": {
+      "title": "Home",
+      "hero": {
+        "title": "Peace2074",
+        "lead": "Un luogo tranquillo per leggere, riflettere e ricordare.",
+        "ctaReadQuran": "Leggi il Corano",
+        "ctaHolyNames": "Nomi Sacri",
+        "ctaTasbeeh": "Tasbeeh",
+        "ctaIos": "iPhone e iPad",
+        "aiLabel": "Chiedi a PEACE AI",
+        "cardTitle": "Riflessione Quotidiana",
+        "cardBody": "Versetti selezionati e promemoria brevi per aiutarti a concentrarti."
+      },
+      "ai": {
+        "title": "Chiedi a PEACE AI",
+        "subtitle": "Ottieni orientamento su capitoli, riflessioni o su come usare l'app.",
+        "tryAnother": "Prova un altro prompt",
+        "examples": [
+          "Evidenzia due lezioni chiave dalla Surah Maryam e dove leggerla qui.",
+          "Qual è il tema principale della Surah Al-Fatiha?",
+          "Puoi darmi una breve riflessione sulla pazienza nel Corano?",
+          "Dove posso trovare la storia del Profeta Yusuf?",
+          "Spiega il significato di Laylat al-Qadr."
+        ],
+        "placeholder": "Chiedi di una surah, un tema o una funzione",
+        "ask": "Chiedi",
+        "thinking": "Sto pensando…",
+        "responseTitle": "Risposta IA",
+        "copied": "Risposta copiata negli appunti!",
+        "noReply": "Nessuna risposta ricevuta.",
+        "requestFailed": "Richiesta Kimi fallita. Per favore riprova.",
+        "historyTitle": "Cronologia",
+        "historyEmpty": "Nessuna domanda precedente.",
+        "reuse": "Riutilizza",
+        "clearHistory": "Cancella cronologia"
+      },
+      "manifesto": {
+        "quote": "Per i folli. I disadattati. I ribelli. I guastafeste. I reietti. Quelli che vedono le cose diversamente. Che non amano le regole. E non hanno rispetto per lo status quo. Puoi citarli, essere in disaccordo con loro, glorificarli o denigrarli. L'unica cosa che non puoi fare è ignorarli. Perché cambiano le cose. Spingono avanti la razza umana. E mentre alcuni li vedono come folli, noi vediamo dei geni. Perché le persone abbastanza folli da pensare di poter cambiare il mondo, sono quelle che lo fanno.",
+        "attribution": "Think Different, Apple 1997"
+      },
+      "ramadan": {
+        "badge": "Campagna Ramadan",
+        "title": "30 Giorni di Riflessione e Costanza",
+        "body": "Costruisci una dolce abitudine quotidiana con la lettura del Corano, Tasbeeh e supporto della comunità.",
+        "todayPrompt": "Prompt di riflessione di oggi",
+        "ctaQuran": "Apri Corano",
+        "ctaTasbeeh": "Apri Tasbeeh",
+        "ctaChat": "Apri Chat",
+        "usePrompt": "Usa prompt in IA",
+        "promptApplied": "Il prompt Ramadan di oggi è pronto in PEACE AI."
+      }
+    },
+    "holynames": "Nomi Sacri di Allah",
+    "tasbeeh": "Tasbeeh Digitale",
+    "quran": {
+      "title": "Corano",
+      "detail": "Dettaglio Corano",
+      "backToList": "Torna all'elenco",
+      "playRecitation": "Riproduci recitazione",
+      "stopRecitation": "Ferma recitazione",
+      "play": "Riproduci",
+      "pause": "Pausa",
+      "resume": "Riprendi",
+      "startingRecitation": "Avvio della recitazione",
+      "playing": "Recitazione in corso",
+      "playingOffline": "Riproduzione dall'archivio offline",
+      "paused": "In pausa - tocca per riprendere",
+      "resumed": "Riproduzione ripresa",
+      "resumeFromLast": "Continuare da dove hai interrotto?",
+      "restart": "Riavvia versetto",
+      "restartSura": "Riavvia dall'inizio",
+      "scrollToTop": "Torna su",
+      "audioRecitation": "Recitazione audio",
+      "nativeReader": "Lettore nativo (TTS)",
+      "ttsNotSupported": "Testo-voce non supportato in questo browser",
+      "ttsSpeed": "Velocità",
+      "ttsVoice": "Voce",
+      "pageTitle": "Il Santo Corano",
+      "loading": "Caricamento…",
+      "verses": "versetti",
+      "invalidSuraRange": "Numero surah non valido. Scegli una surah tra 1 e 114.",
+      "apiHint": "Se il contenuto non si carica, assicurati che il server API /api/quran sia in esecuzione.",
+      "loadSuraError": "Impossibile caricare la surah",
+      "loadChaptersError": "Impossibile caricare le surah",
+      "loadingAudio": "Caricamento audio…",
+      "sura": {
+        "name": "Nome della surah",
+        "id": "Numero surah",
+        "location": "Posizione della surah",
+        "totverses": "Numero di versetti",
+        "bookmark": "segnalibro"
+      },
+      "holynames": "Nomi Sacri",
+      "modes": {
+        "reader": "Modalità lettura",
+        "mushaf": "Modalità Mushaf",
+        "native": "Modalità nativa"
+      },
+      "readerMode": {
+        "audio": "Audio",
+        "tts": "TTS"
+      },
+      "bookmarks": {
+        "menu": "Segnalibri",
+        "empty": "Nessun segnalibro ancora",
+        "add": "Aggiungi segnalibro versetto {verse}",
+        "saved": "Segnalibro salvato",
+        "removed": "Segnalibro rimosso",
+        "confirmRemove": "Rimuovere segnalibro?",
+        "confirmRemoveMessage": "Sei sicuro di voler rimuovere questo segnalibro?",
+        "alreadySaved": "Già aggiunto ai segnalibri",
+        "error": "Impossibile salvare il segnalibro",
+        "current": "questa surah",
+        "bookmarkSura": "Aggiungi surah ai segnalibri",
+        "removeSura": "Rimuovi segnalibro"
+      },
+      "quickAccess": {
+        "menu": "Accesso rapido",
+        "title": "Versetti ad accesso rapido",
+        "kursi": "Ayat al-Kursi",
+        "fatiha": "Al-Fatiha",
+        "yasin": "Ya-Sin",
+        "mulk": "Al-Mulk",
+        "ikhlas": "Al-Ikhlas"
+      },
+      "ramadanProgress": {
+        "title": "Traccia la tua lettura del Corano",
+        "badge": "Ramadan",
+        "message": "Ramadan Mubarak! Che Allah accetti la tua recitazione in questo mese benedetto.",
+        "completed": "{completed} / {total} Surah ({percentage}%)",
+        "continueReading": "Continua a leggere",
+        "restart": "Riavvia",
+        "resetProgress": "Reimposta progressi",
+        "resetConfirm": "Reimposta progressi",
+        "resetConfirmMessage": "Sei sicuro di voler reimpostare tutti i progressi di lettura?",
+        "suraCompleted": "Surah {sura} completata! ✓",
+        "suraIncomplete": "Surah {sura} segnata come incompleta",
+        "progressReset": "Progressi reimpostati",
+        "registerToSync": "Registrati per salvare i tuoi progressi nel cloud!",
+        "register": "Registrati",
+        "viewProgress": "Vedi progressi",
+        "markComplete": "Segna come completata",
+        "markIncomplete": "Segna come incompleta"
+      },
+      "autoContinue": "Continua automaticamente con la surah successiva",
+      "wordHighlight": "Evidenzia parola per parola",
+      "autoContinueAnnouncement": "Nuova funzione disponibile! Attiva 'Continua automaticamente' per avanzare nelle 114 surah.",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "Riproduzione del versetto {verse} - {reciter}",
+        "playingSuraFromVerse": "Riproduzione della surah {sura} dal versetto {verse}",
+        "startingSura": "Avvio della surah {sura}...",
+        "stoppedVerse": "Versetto {verse} fermato",
+        "playingVerse": "Riproduzione del versetto {verse}",
+        "nextSura": "→ Surah successiva",
+        "previousSura": "← Surah precedente"
+      },
+      "share": {
+        "text": "Leggi il Corano {suraName} {reference}",
+        "action": "Condividi {reference}",
+        "verseAction": "Condividi versetto {reference}",
+        "shared": "{label} condiviso",
+        "linkCopied": "Link copiato: {text}"
+      },
+      "dismissAnnouncement": "Chiudi annuncio"
+    },
+    "miracles": {
+      "pageTitle": "Miracoli del Corano",
+      "drawingPadTitle": "Blocco da disegno dei miracoli del Corano",
+      "drawingPadSubtitle": "Disegna il pattern per la Surah 1",
+      "clear": "Cancella",
+      "saveDrawing": "Salva disegno",
+      "visualTab": "Pattern Visivi",
+      "linguisticTab": "Analisi Linguistica",
+      "linguisticPilotTitle": "Pilota Linguistico",
+      "title": "Visualizzatore di lettere del Corano",
+      "scope": "Ambito",
+      "wholeBook": "Libro intero",
+      "singleSura": "Surah singola",
+      "singleVerse": "Versetto singolo",
+      "sura": "Surah",
+      "verse": "Versetto",
+      "cellSize": "Dimensione cella",
+      "gap": "Spazio",
+      "maxWidth": "Larghezza massima",
+      "draw": "Disegna",
+      "downloadPng": "Scarica PNG",
+      "legendInfo": "La legenda mostra {count} lettere.",
+      "chars": "Caratteri",
+      "words": "Parole",
+      "unique": "Uniche",
+      "changeVerse": "Cambia versetto",
+      "numericExamplesTitle": "Esempi di miracoli numerici nel Corano",
+      "oppositeWords": "Ripetizione di parole opposte",
+      "oppositeWordsDesc": "Il numero di alcune parole opposte è uguale, come \"il mondo\" e \"l'aldilà\" (115 volte ciascuna).",
+      "wordRelations": "Relazioni tra parole, lettere, versetti e surah",
+      "wordRelationsDesc": "L'attenzione è sui numeri, come i 114 capitoli del Corano.",
+      "conceptRelations": "Relazioni tra parole e concetti",
+      "conceptRelationsDesc": "La parola \"mese\" è ripetuta 12 volte, uguale al numero di mesi in un anno.",
+      "letterCounts": "Numero di lettere nei versetti",
+      "letterCountsDesc": "Il numero di lettere in alcuni versetti corrisponde a un numero specifico menzionato nel versetto stesso."
+    },
+    "chat": {
+      "title": "Chat della Comunità",
+      "subtitle": "Connettiti con altri, fai domande e condividi riflessioni.",
+      "banner": "Live ora: chat in tempo reale con waelio-messaging.",
+      "ctaChat": "Apri chat",
+      "ctaSupport": "Ottieni supporto",
+      "communityTitle": "Stanze pubbliche",
+      "communityBody": "Unisciti a stanze aperte per discutere surah, riflessioni e suggerimenti.",
+      "devTitle": "Sviluppatori",
+      "devBody": "Vuoi contribuire? Contattaci e collabora con noi.",
+      "todoTitle": "Stato live",
+      "todoBody": "La chat live, le stanze e la cronologia dei messaggi sono ora attive con waelio-messaging.",
+      "live": {
+        "title": "Chat Live",
+        "adminBadge": "Admin",
+        "reconnect": "Riconnetti",
+        "anon": "Anonimo",
+        "users": "Utenti online",
+        "you": "Tu",
+        "noUsers": "Nessun altro utente online",
+        "connected": "Connesso",
+        "connecting": "Connessione...",
+        "disconnected": "Disconnesso",
+        "directMessage": "Messaggio diretto",
+        "broadcastMessage": "Messaggio a tutti",
+        "messageToRoom": "Messaggio a #{room}",
+        "loginRequiredToSend": "Effettua l'accesso per inviare messaggi.",
+        "createRoomTitle": "Crea nuova stanza",
+        "roomNameLabel": "Nome stanza",
+        "createRoomAction": "Crea",
+        "sendDirect": "Invia all'utente",
+        "send": "Invia"
+      }
     },
     "settings": {
-        "title": "Impostazioni",
-        "display": "Impostazioni display",
-        "language": "Preferenza lingua",
-        "theme": "Tema"
+      "title": "Impostazioni",
+      "subtitle": "Controlla come appare e si comporta l'app.",
+      "display": {
+        "title": "Display",
+        "desc": "Regola la densità del layout e le preferenze di movimento.",
+        "compact": "Layout compatto",
+        "compactHint": "Usa spaziatura più stretta.",
+        "motion": "Riduci movimento",
+        "motionHint": "Ammorbidisci le animazioni.",
+        "darkMode": "Modalità scura",
+        "darkModeHint": "Passa tra tema chiaro e scuro.",
+        "translation": "Mostra traduzione del Corano",
+        "translationHint": "Mostra sempre la traduzione dopo il testo arabo.",
+        "translator": "Traduttore del Corano",
+        "translatorHint": "Scegli il tuo studioso di traduzione preferito per la lingua corrente."
+      },
+      "accessibility": {
+        "title": "Accessibilità",
+        "desc": "Regola la dimensione del testo e il contrasto per una lettura più facile.",
+        "fontSize": "Dimensione testo",
+        "fontSizeHint": "Rende tutto il testo più grande o piccolo.",
+        "fontSizes": {
+          "0": "Piccolo",
+          "1": "Medio",
+          "2": "Grande",
+          "3": "Extra grande"
+        },
+        "highContrast": "Alto contrasto",
+        "highContrastHint": "Aumenta il contrasto."
+      },
+      "navigation": {
+        "title": "Navigazione",
+        "desc": "Controlla l'ordine e la visibilità del cassetto.",
+        "enableOrdering": "Abilita ordinamento trascinamento",
+        "enableOrderingHint": "Permette di riordinare e fissare elementi.",
+        "drawerDefault": "Apri cassetto all'avvio",
+        "drawerDefaultHint": "Abilita per avviare con il cassetto aperto."
+      },
+      "notifications": {
+        "title": "Notifiche",
+        "desc": "Rimani informato quando arrivano nuovi contenuti.",
+        "enable": "Abilita notifiche",
+        "enableHint": "Chiederemo il permesso prima di inviare qualcosa.",
+        "enabled": "Notifiche push abilitate!",
+        "unavailable": "Le notifiche non sono supportate su questo dispositivo/browser.",
+        "denied": "Le notifiche sono bloccate. Abilitale nelle impostazioni del browser.",
+        "error": "Impossibile abilitare le notifiche al momento.",
+        "testTitle": "Notifiche abilitate",
+        "testBody": "Riceverai aggiornamenti da Peace2074"
+      },
+      "audio": {
+        "title": "Audio",
+        "desc": "Controlla le impostazioni predefinite dell'athan e della riproduzione.",
+        "autoPlay": "Riproduzione automatica athan",
+        "autoPlayHint": "Avvia la riproduzione dell'athan automaticamente.",
+        "autoPlayPrayerTimes": "Adhan agli orari di preghiera",
+        "autoPlayPrayerTimesHint": "Riproduci automaticamente l'Adhan all'inizio dell'orario di preghiera."
+      },
+      "refresh": {
+        "title": "Aggiorna app",
+        "desc": "Forza un aggiornamento e ricarica per ottenere l'ultima versione."
+      },
+      "clearingCache": "Pulizia della cache in corso..."
     },
-    "holyNames": {
-        "1": {
-            "transliteration": "Il Più Misericordioso",
-            "meaning": "Il Più Compassionevole"
-        },
-        "2": {
-            "transliteration": "Il Più Benevolo",
-            "meaning": "Il Donatore di Misericordia"
-        },
-        "3": {
-            "transliteration": "Il Re",
-            "meaning": "Il Signore Sovrano"
-        },
-        "4": {
-            "transliteration": "Il Più Sacro",
-            "meaning": "Il Puro"
-        },
-        "5": {
-            "transliteration": "La Fonte di Pace",
-            "meaning": "Il Perfetto"
-        },
-        "6": {
-            "transliteration": "L'Ispiratore della Fede",
-            "meaning": "L'Infusore di Fede"
-        },
-        "7": {
-            "transliteration": "Il Guardiano",
-            "meaning": "Il Preservatore della Sicurezza"
-        },
-        "8": {
-            "transliteration": "Il Vittorioso",
-            "meaning": "Il Potente"
-        },
-        "9": {
-            "transliteration": "Il Coercitivo",
-            "meaning": "Il Ristoratore"
-        },
-        "10": {
-            "transliteration": "Il Supremo",
-            "meaning": "Il Maestoso"
-        },
-        "11": {
-            "transliteration": "Il Creatore",
-            "meaning": "Il Creatore di Tutte le Cose"
-        },
-        "12": {
-            "transliteration": "L'Evolutore",
-            "meaning": "Il Modellatore"
-        },
-        "13": {
-            "transliteration": "Il Modellatore",
-            "meaning": "Lo Scultore della Bellezza"
-        },
-        "14": {
-            "transliteration": "Il Perdonatore",
-            "meaning": "Il Tutto-Perdonatore"
-        },
-        "15": {
-            "transliteration": "Il Dominatore",
-            "meaning": "L'Onniprevvalente"
-        },
-        "16": {
-            "transliteration": "Il Donatore",
-            "meaning": "Il Sommo Donatore"
-        },
-        "17": {
-            "transliteration": "Il Provveditore",
-            "meaning": "Il Sostentatore"
-        },
-        "18": {
-            "transliteration": "L'Apritore",
-            "meaning": "Il Sommo Risolutore"
-        },
-        "19": {
-            "transliteration": "L'Onnisciente",
-            "meaning": "Colui che Sa Tutto"
-        },
-        "20": {
-            "transliteration": "Il Trattenitore",
-            "meaning": "Il Limitatore"
-        },
-        "21": {
-            "transliteration": "L'Espansore",
-            "meaning": "L'Amplificatore"
-        },
-        "22": {
-            "transliteration": "Il Riduttore",
-            "meaning": "L'Abbasatore"
-        },
-        "23": {
-            "transliteration": "L'Esaltatore",
-            "meaning": "L'Elevatore"
-        },
-        "24": {
-            "transliteration": "L'Onorevole",
-            "meaning": "Il Donatore d'Onore"
-        },
-        "25": {
-            "transliteration": "L'Umiliatore",
-            "meaning": "Il Disonoratore"
-        },
-        "26": {
-            "transliteration": "L'Onniscoltante",
-            "meaning": "Colui che Sente Tutto"
-        },
-        "27": {
-            "transliteration": "L'Onniveggente",
-            "meaning": "Colui che Vede Tutto"
-        },
-        "28": {
-            "transliteration": "Il Giudice",
-            "meaning": "Il Giudice Imparziale"
-        },
-        "29": {
-            "transliteration": "Il Giusto",
-            "meaning": "Il Perfettamente Giusto"
-        },
-        "30": {
-            "transliteration": "Il Sottile",
-            "meaning": "Il Più Gentile"
-        },
-        "31": {
-            "transliteration": "Il Consapevole",
-            "meaning": "L'Onnisapiente"
-        },
-        "32": {
-            "transliteration": "Il Clemente",
-            "meaning": "Il Mite"
-        },
-        "33": {
-            "transliteration": "Il Magnifico",
-            "meaning": "Il Supremo"
-        },
-        "34": {
-            "transliteration": "Il Clemente",
-            "meaning": "Il Tutto-Clemente"
-        },
-        "35": {
-            "transliteration": "Il Riconoscente",
-            "meaning": "Il Più Grato"
-        },
-        "36": {
-            "transliteration": "L'Altissimo",
-            "meaning": "L'Esaltato"
-        },
-        "37": {
-            "transliteration": "Il Grandissimo",
-            "meaning": "Il Più Grande"
-        },
-        "38": {
-            "transliteration": "Il Preservatore",
-            "meaning": "Il Guardiano"
-        },
-        "39": {
-            "transliteration": "Il Sostentatore",
-            "meaning": "Il Nutritore"
-        },
-        "40": {
-            "transliteration": "Il Calcolatore",
-            "meaning": "Il Sufficiente"
-        },
-        "41": {
-            "transliteration": "Il Maestoso",
-            "meaning": "Il Sublime"
-        },
-        "42": {
-            "transliteration": "Il Generoso",
-            "meaning": "Il Più Generoso"
-        },
-        "43": {
-            "transliteration": "Il Vigilante",
-            "meaning": "Il Sempre Vigilante"
-        },
-        "44": {
-            "transliteration": "Il Responsivo",
-            "meaning": "Colui che Risponde alle Preghiere"
-        },
-        "45": {
-            "transliteration": "L'Onnicomprensivo",
-            "meaning": "L'Illimitato"
-        },
-        "46": {
-            "transliteration": "Il Saggio",
-            "meaning": "L'Onnisapiente"
-        },
-        "47": {
-            "transliteration": "L'Amorevole",
-            "meaning": "Il Più Amorevole"
-        },
-        "48": {
-            "transliteration": "Il Glorioso",
-            "meaning": "Il Più Glorioso"
-        },
-        "49": {
-            "transliteration": "Il Risuscitatore",
-            "meaning": "Colui che Risuscita i Morti"
-        },
-        "50": {
-            "transliteration": "Il Testimone",
-            "meaning": "L'Onnipresente"
-        },
-        "51": {
-            "transliteration": "La Verità",
-            "meaning": "La Verità Assoluta"
-        },
-        "52": {
-            "transliteration": "Il Custode",
-            "meaning": "L'Amministratore degli Affari"
-        },
-        "53": {
-            "transliteration": "Il Forte",
-            "meaning": "L'Onnipotente"
-        },
-        "54": {
-            "transliteration": "Il Fermo",
-            "meaning": "L'Incrollabile"
-        },
-        "55": {
-            "transliteration": "L'Amico",
-            "meaning": "L'Amico Protettore"
-        },
-        "56": {
-            "transliteration": "Il Degno di Lode",
-            "meaning": "Il Tutto-Degno di Lode"
-        },
-        "57": {
-            "transliteration": "Il Calcolatore",
-            "meaning": "L'Enumeratore di Tutte le Cose"
-        },
-        "58": {
-            "transliteration": "L'Iniziatore",
-            "meaning": "Il Primo a Creare"
-        },
-        "59": {
-            "transliteration": "Il Restauratore",
-            "meaning": "Colui che Ricostituisce"
-        },
-        "60": {
-            "transliteration": "Il Datore di Vita",
-            "meaning": "Il Vivificatore"
-        },
-        "61": {
-            "transliteration": "Il Creatore della Morte",
-            "meaning": "Colui che Causa la Morte"
-        },
-        "62": {
-            "transliteration": "Il Sempre Vivo",
-            "meaning": "Colui che Esiste Eternamente"
-        },
-        "63": {
-            "transliteration": "L'Autosufficiente",
-            "meaning": "Colui che Sostiene Tutto"
-        },
-        "64": {
-            "transliteration": "Il Perspicace",
-            "meaning": "Colui che Scopre"
-        },
-        "65": {
-            "transliteration": "Il Glorioso",
-            "meaning": "L'Eccelso"
-        },
-        "66": {
-            "transliteration": "L'Unico",
-            "meaning": "Il Singolarmente Unico"
-        },
-        "67": {
-            "transliteration": "L'Eterno",
-            "meaning": "L'Assoluto"
-        },
-        "68": {
-            "transliteration": "L'Onnipotente",
-            "meaning": "Colui che ha Tutto il Potere"
-        },
-        "69": {
-            "transliteration": "Il Potente",
-            "meaning": "L'Onnipossente"
-        },
-        "70": {
-            "transliteration": "Colui che Anticipa",
-            "meaning": "Colui che Porta Avanti"
-        },
-        "71": {
-            "transliteration": "Colui che Ritarda",
-            "meaning": "Colui che Posticipa"
-        },
-        "72": {
-            "transliteration": "Il Primo",
-            "meaning": "Colui che Esiste dall'Inizio"
-        },
-        "73": {
-            "transliteration": "L'Ultimo",
-            "meaning": "Colui che Esiste Eternamente"
-        },
-        "74": {
-            "transliteration": "Il Manifesto",
-            "meaning": "Colui che è Evidente"
-        },
-        "75": {
-            "transliteration": "Il Nascosto",
-            "meaning": "Colui che è Invisibile"
-        },
-        "76": {
-            "transliteration": "Il Governatore",
-            "meaning": "Colui che Governa"
-        },
-        "77": {
-            "transliteration": "L'Esaltato",
-            "meaning": "Il Molto Esaltato"
-        },
-        "78": {
-            "transliteration": "Il Benefico",
-            "meaning": "La Fonte di Tutto il Bene"
-        },
-        "79": {
-            "transliteration": "Colui che Accetta il Pentimento",
-            "meaning": "Colui che Accetta il Pentimento"
-        },
-        "80": {
-            "transliteration": "Il Vendicatore",
-            "meaning": "Colui che Infligge Retribuzione"
-        },
-        "81": {
-            "transliteration": "Il Compassionevole",
-            "meaning": "Il Perdonatore"
-        },
-        "82": {
-            "transliteration": "Il Sommo Perdonatore",
-            "meaning": "Il Supremo Perdonatore"
-        },
-        "83": {
-            "transliteration": "Il Benevolo",
-            "meaning": "Il Più Gentile"
-        },
-        "84": {
-            "transliteration": "Padrone del Regno",
-            "meaning": "Proprietario di Tutta la Sovranità"
-        },
-        "85": {
-            "transliteration": "Signore della Maestà e della Generosità",
-            "meaning": "Il Possessore di Gloria e Onore"
-        },
-        "86": {
-            "transliteration": "L'Equo",
-            "meaning": "Il Giusto"
-        },
-        "87": {
-            "transliteration": "Il Raccoglitore",
-            "meaning": "L'Assemblatore"
-        },
-        "88": {
-            "transliteration": "Il Ricco",
-            "meaning": "L'Opulento"
-        },
-        "89": {
-            "transliteration": "L'Arricchitore",
-            "meaning": "Il Donatore di Ricchezza"
-        },
-        "90": {
-            "transliteration": "Il Preventore",
-            "meaning": "Il Trattenitore"
-        },
-        "91": {
-            "transliteration": "L'Angosciante",
-            "meaning": "Il Creatore del Danno"
-        },
-        "92": {
-            "transliteration": "Il Propizio",
-            "meaning": "Il Creatore del Bene"
-        },
-        "93": {
-            "transliteration": "La Luce",
-            "meaning": "L'Illuminatore"
-        },
-        "94": {
-            "transliteration": "La Guida",
-            "meaning": "Il Fornitore di Guida"
-        },
-        "95": {
-            "transliteration": "L'Incomparabile",
-            "meaning": "L'Originatore"
-        },
-        "96": {
-            "transliteration": "L'Eterno",
-            "meaning": "Il Perpetuo"
-        },
-        "97": {
-            "transliteration": "L'Erede",
-            "meaning": "Il Supremo Erede"
-        },
-        "98": {
-            "transliteration": "La Guida Retta",
-            "meaning": "Il Maestro Giusto"
-        },
-        "99": {
-            "transliteration": "Il Paziente",
-            "meaning": "Il Più Paziente"
+    "preferences": {
+      "title": "Preferenze utente",
+      "subtitle": "Salva le impostazioni predefinite personali per lettura e aggiornamenti.",
+      "profile": {
+        "title": "Profilo",
+        "displayName": "Nome visualizzato",
+        "emailUpdates": "Inviami aggiornamenti occasionali via email",
+        "hint": "Le preferenze sono locali a questo dispositivo per ora."
+      },
+      "quran": {
+        "title": "Lettura del Corano",
+        "reciter": "Recitatore predefinito",
+        "transliteration": "Mostra traslitterazione",
+        "remember": "Ricorda l'ultima pagina letta",
+        "highlightMode": "Evidenziazione della recitazione",
+        "highlightWord": "Parola",
+        "highlightSentence": "Frase",
+        "hint": "Le scelte di lettura si applicano in tutte le pagine del Corano."
+      },
+      "appearance": {
+        "title": "Aspetto",
+        "hint": "Segui il tema di sistema o forza chiaro/scuro.",
+        "themeOptions": {
+          "system": "Sistema",
+          "light": "Chiaro",
+          "dark": "Scuro"
         }
+      },
+      "security": {
+        "title": "Sicurezza",
+        "currentPassword": "Password attuale",
+        "newPassword": "Nuova password",
+        "confirmPassword": "Conferma nuova password",
+        "changePasswordBtn": "Cambia password",
+        "generatePassword": "Genera password sicura",
+        "passwordChanged": "Password cambiata con successo",
+        "passwordGenerated": "Password sicura generata e inserita",
+        "hint": "La password deve essere di almeno 8 caratteri.",
+        "deleteAccount": {
+          "title": "Elimina account",
+          "warningTitle": "Azione permanente",
+          "warningBody": "Questo elimina definitivamente il tuo account, il profilo, i progressi salvati, i Mi piace, le passkey e la sessione attiva. L'azione non può essere annullata.",
+          "confirmLabel": "Nome utente o email",
+          "confirmHint": "Digita {identifier} per confermare l'eliminazione dell'account.",
+          "currentPasswordHint": "Obbligatoria per gli account con password. Se usi solo l'accesso con Apple o Google, puoi lasciare questo campo vuoto.",
+          "action": "Elimina account",
+          "confirmDialogTitle": "Eliminare definitivamente l'account?",
+          "confirmDialogMessage": "Il tuo account e i dati associati verranno eliminati definitivamente. Questa azione non può essere annullata.",
+          "success": "Account eliminato con successo"
+        },
+        "errors": {
+          "allFieldsRequired": "Tutti i campi sono obbligatori",
+          "passwordMismatch": "Le nuove password non coincidono",
+          "passwordTooShort": "La password deve essere di almeno 8 caratteri",
+          "changeFailed": "Impossibile cambiare la password",
+          "confirmationRequired": "Digita il tuo nome utente o indirizzo email per confermare",
+          "confirmationMismatch": "Il testo di conferma non corrisponde al tuo account",
+          "deleteFailed": "Impossibile eliminare l'account"
+        }
+      }
     },
-    "Asma' Allah Al-Husna": "Asma' Allah Al-Husna",
-    "consent": {
-        "message": "Utilizziamo cookie per migliorare la tua esperienza e analizzare l'utilizzo del sito.",
-        "details": "Cliccando 'Accetta', acconsenti all'uso dei cookie per analisi.",
-        "accept": "Accetta",
-        "decline": "Rifiuta"
+    "admin": {
+      "title": "Amministrazione",
+      "subtitle": "Gestisci versioni e controllo versioni",
+      "currentVersion": "Versione attuale",
+      "onlyEven": "Mostra solo versioni stabili",
+      "refresh": "Aggiorna",
+      "even": "Stabile",
+      "noTitle": "Senza titolo",
+      "noVersions": "Nessuna versione disponibile",
+      "loading": "Caricamento versioni...",
+      "unknownDate": "Data sconosciuta",
+      "loadFailed": "Impossibile caricare le versioni",
+      "users": {
+        "title": "Gestione utenti",
+        "loadFailed": "Impossibile caricare gli utenti",
+        "updateSuccess": "Utente aggiornato",
+        "updateFailed": "Impossibile aggiornare l'utente",
+        "roleLabel": "Ruolo",
+        "save": "Salva",
+        "noUsers": "Nessun utente trovato",
+        "loading": "Caricamento utenti...",
+        "lastLogin": "Ultimo accesso",
+        "loginCount": "Accessi",
+        "bookmarks": "Segnalibri",
+        "surasCompleted": "Sure",
+        "lastRead": "Ultima lettura",
+        "sura": "Sura",
+        "editPerms": "Permessi",
+        "permsTitle": "Modifica permessi per",
+        "permsHint": "Seleziona ogni azione che l'utente può eseguire su ogni oggetto.",
+        "permsSubject": "Oggetto",
+        "savePerms": "Salva permessi",
+        "cancel": "Annulla",
+        "roles": {
+          "user": "Utente",
+          "editor": "Redattore",
+          "admin": "Amministratore"
+        }
+      }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Aggiornamenti, suggerimenti e riflessioni.",
+      "empty": "Nessun post ancora.",
+      "notFound": "Post non trovato",
+      "newPost": "Nuovo post",
+      "likeSingle": "{count} Mi piace",
+      "likePlural": "{count} Mi piace",
+      "likeUpdateError": "Impossibile aggiornare il Mi piace",
+      "editor": {
+        "newPost": "Nuovo post",
+        "editPost": "Modifica post",
+        "authRequired": "Devi accedere per creare o modificare post.",
+        "title": "Titolo",
+        "titleRequired": "Il titolo è obbligatorio",
+        "slug": "Slug",
+        "slugHint": "Identificatore URL-friendly",
+        "slugRequired": "Lo slug è obbligatorio",
+        "excerpt": "Estratto",
+        "content": "Contenuto",
+        "contentRequired": "Il contenuto è obbligatorio",
+        "tags": "Tag",
+        "tagsHint": "Tag separati da virgola",
+        "publish": "Pubblica",
+        "update": "Aggiorna",
+        "delete": "Elimina",
+        "confirmDelete": "Eliminare il post?",
+        "confirmDeleteMessage": "Questa azione non può essere annullata.",
+        "publishSuccess": "Post pubblicato con successo!",
+        "updateSuccess": "Post aggiornato con successo!",
+        "deleteSuccess": "Post eliminato con successo!",
+        "saveError": "Impossibile salvare il post",
+        "deleteError": "Impossibile eliminare il post",
+        "loadError": "Impossibile caricare il post",
+        "postNotFound": "Post non trovato",
+        "fillRequired": "Compila tutti i campi obbligatori",
+        "aiDraft": "Bozza AI",
+        "aiDraftTip": "Genera una bozza dell'articolo dal tuo titolo con l'AI",
+        "aiDraftDone": "Bozza generata — sentiti libero di modificarla!",
+        "aiDraftFailed": "Bozza AI non disponibile, scrivi manualmente"
+      }
+    },
+    "deploys": {
+      "title": "Cronologia distribuzioni",
+      "subtitle": "Traccia le nostre versioni e aggiornamenti nel tempo",
+      "features": "Funzionalità",
+      "fixes": "Correzioni bug",
+      "documentation": "Documentazione",
+      "chores": "Attività di manutenzione",
+      "like": "Mi piace",
+      "unlike": "Rimuovi Mi piace",
+      "liked": "❤️ Mi piace!",
+      "unliked": "Mi piace rimosso",
+      "loadError": "Impossibile caricare la cronologia delle distribuzioni",
+      "loginRequiredToLike": "Accedi per mettere mi piace alle distribuzioni",
+      "toggleLikeError": "Impossibile cambiare il mi piace"
+    },
+    "social": {
+      "title": "Social & Condividi",
+      "subtitle": "Seguici e condividi il Corano con il mondo",
+      "followUs": "Seguici",
+      "featuredVideos": "Video in Evidenza",
+      "featuredVideosSubtitle": "Giovani artisti che condividono fede e amore attraverso i nasheed",
+      "shareVerse": "Condividi un Versetto",
+      "selectSura": "Seleziona Sura",
+      "selectAyah": "Numero Ayah",
+      "loadVerse": "Carica Versetto",
+      "verseNotFound": "Versetto non trovato",
+      "loadError": "Caricamento versetto fallito",
+      "copyText": "Copia Testo",
+      "copied": "Copiato negli appunti!",
+      "copyError": "Copia fallita"
     }
+  },
+  "offline": {
+    "title": "Recitazione offline",
+    "subtitle": "Scarica recitazioni del Corano per ascoltarle offline",
+    "selectQuality": "Seleziona qualità audio",
+    "regular": "Qualità standard",
+    "highQuality": "Alta qualità",
+    "storageUsed": "Spazio utilizzato",
+    "surasDownloaded": "Surah scaricate",
+    "downloadOptions": "Opzioni di download",
+    "downloadAllQuran": "Scarica tutto il Corano (114 Surah)",
+    "downloadCurrentSura": "Scarica la surah corrente",
+    "clearAllCache": "Elimina tutto l'audio scaricato",
+    "downloading": "Download in corso",
+    "sura": "Surah",
+    "verses": "versetti",
+    "noSuraSelected": "Nessuna surah selezionata",
+    "downloadingStarted": "Download avviato...",
+    "downloadComplete": "Download completato!",
+    "downloadFailed": "Download fallito, riprova",
+    "downloadAllComplete": "{completed} surah scaricate. {failed} fallite.",
+    "cacheCleared": "Tutto l'audio offline eliminato",
+    "qualityChanged": "Qualità cambiata. Ricarica per usare l'audio offline.",
+    "listenWithoutInternet": "Ascolta senza internet",
+    "currentSuraReady": "Questa sura è pronta offline",
+    "currentSuraReadyHint": "Puoi ascoltare questa recitazione senza internet. L'audio scaricato verrà preferito automaticamente quando disponibile.",
+    "fullLibraryReady": "Tutto il Corano è pronto offline",
+    "fullLibraryReadyHint": "Tutte le recitazioni sono state scaricate. L'app preferirà l'audio salvato sul dispositivo quando possibile per ridurre l'uso di internet.",
+    "internetRequired": "Al momento serve internet",
+    "internetRequiredHint": "Scarica questa sura o tutto il Corano per ascoltare senza internet.",
+    "confirmDownloadAll": {
+      "title": "Scaricare tutto il Corano?",
+      "message": "Verranno scaricati circa {size} di dati audio a qualità {quality}."
+    },
+    "confirmClear": {
+      "title": "Eliminare tutto l'audio offline?",
+      "message": "Verranno eliminate tutte le recitazioni scaricate. Puoi riscaricale in seguito."
+    }
+  },
+  "general": {
+    "Home": "Home",
+    "SiteTitle": "Peace2074",
+    "SiteDomain": "https://peace2074.com",
+    "navigationLinks": "Link di navigazione",
+    "CurrentVersion": "Versione attuale",
+    "setLocale": "Imposta lingua predefinita",
+    "CheckUpdates": "Cerca aggiornamenti",
+    "Services": "Servizi",
+    "fetchingUpdates": "Recupero aggiornamenti",
+    "searching": "Ricerca in corso…",
+    "languages": "Lingue",
+    "download": "Scarica",
+    "cancel": "Annulla",
+    "delete": "Elimina",
+    "edit": "Modifica",
+    "share": "Condividi",
+    "undo": "Annulla",
+    "languageNames": {
+      "en": "Inglese",
+      "ar": "Arabo",
+      "de": "Tedesco",
+      "es": "Spagnolo",
+      "ru": "Russo",
+      "he": "Ebraico",
+      "it": "Italiano",
+      "tr": "Turco"
+    },
+    "dark": "scuro",
+    "light": "chiaro",
+    "auto": "automatico",
+    "lightMode": "Cambia modalità luce",
+    "open": "apri",
+    "close": "chiudi",
+    "holdState": "Sempre aperto",
+    "swipeToChange": "Scorri per cambiare",
+    "pause": "Pausa",
+    "play": "Riproduci",
+    "stop": "Ferma",
+    "updateAvailable": "È disponibile una nuova versione!",
+    "update": "Aggiorna ora",
+    "later": "Più tardi",
+    "greetings": {
+      "eidMubarak": "✨ Eid Mubarak ✨",
+      "englishCustomers": "Per i nostri clienti italofoni, possiamo mostrare un saluto."
+    }
+  },
+  "intro": {
+    "desc": "Appassionato di JavaScript, tutto sulla riusabilità e il miglioramento."
+  },
+  "notfound": "Non trovato",
+  "contact": {
+    "help": "Siamo qui",
+    "offer_help": "Facci sapere come possiamo aiutarti!",
+    "accept_terms": "Visualizza i nostri termini e condizioni.",
+    "terms_accepted": "Accetto i termini e le condizioni.",
+    "name": {
+      "label": "Il tuo nome *",
+      "hint": "Nome e cognome",
+      "placeholder": "Qual è il tuo nome?"
+    },
+    "email1": {
+      "label": "La tua email *",
+      "hint": "La tua email",
+      "placeholder": "Per poterti rispondere."
+    },
+    "message1": {
+      "label": "Il tuo messaggio *",
+      "hint": "Inserisci il tuo messaggio",
+      "placeholder": "Dicci come possiamo aiutare"
+    },
+    "email": {
+      "label": "Il tuo indirizzo email *",
+      "hint": "La tua email",
+      "placeholder": "Per poterti rispondere."
+    },
+    "message": {
+      "label": "Il tuo messaggio *",
+      "hint": "Inserisci il tuo messaggio",
+      "placeholder": "Dicci come possiamo aiutare"
+    },
+    "projects": {
+      "label": "Nome progetto *",
+      "placeholder": "A quale progetto ti riferisci?"
+    },
+    "success": "Messaggio registrato. Ti risponderemo presto.",
+    "error": "Impossibile inviare il messaggio. Riprova.",
+    "contactTitle": "Informazioni di contatto",
+    "reachDirectly": "Contattaci direttamente:",
+    "socialTitle": "Social",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
+  },
+  "about": {
+    "title": "Waelio",
+    "par10": "Un leader eclettico nel mondo digitale, con oltre due decenni di successo professionale."
+  },
+  "demoContent": {
+    "q1": "Posso creare un post?",
+    "q2": "Posso leggere un post?",
+    "q3": "Posso aggiornare un post?",
+    "q4": "Posso eliminare un post?"
+  },
+  "privacy_policy": "Informativa sulla Privacy",
+  "privacy_intro": "La tua privacy è importante per noi. Questa pagina spiega come raccogliamo, utilizziamo e proteggiamo le tue informazioni.",
+  "information_we_collect": "Informazioni che raccogliamo",
+  "basic_account_info": "Informazioni account di base (come indirizzo email) se ti registri o accedi.",
+  "usage_data": "Dati di utilizzo e cookie per migliorare la tua esperienza.",
+  "how_we_use_information": "Come utilizziamo le informazioni",
+  "provide_services": "Per fornire e mantenere i nostri servizi.",
+  "improve_experience": "Per migliorare e personalizzare la tua esperienza.",
+  "communicate_updates": "Per comunicare con te su aggiornamenti o supporto.",
+  "cookies": "Cookie",
+  "cookies_text": "Utilizziamo i cookie per ricordare le tue preferenze e migliorare la tua esperienza. Puoi accettare o rifiutare i cookie usando il banner in fondo al sito.",
+  "data_security": "Sicurezza dei dati",
+  "data_security_text": "Adottiamo misure ragionevoli per proteggere i tuoi dati, ma nessun sistema è sicuro al 100%.",
+  "apple_tv_section": "Apple TV e app native",
+  "apple_tv_text": "L'app PEACE2074 è disponibile su iPhone, iPad e Apple TV. Su tutte le piattaforme, non raccogliamo dati oltre a quanto descritto sopra. L'app Apple TV non utilizza il microfono, la fotocamera o i servizi di localizzazione. L'autenticazione della sessione utilizza cookie HTTP-only sicuri — nessun dato personale viene memorizzato localmente sul dispositivo. Se utilizzi iCloud, il tuo dispositivo gestisce la sincronizzazione iCloud in modo indipendente dai nostri server.",
+  "contact_text": "Se hai domande sulla nostra informativa sulla privacy, contattaci.",
+  "terms_and_conditions": "Termini e condizioni",
+  "terms_intro": "Leggi attentamente questi termini e condizioni prima di utilizzare il nostro sito web.",
+  "acceptance_of_terms": "Accettazione dei termini",
+  "acceptance_of_terms_text": "Accedendo o utilizzando il nostro sito web, accetti di essere vincolato da questi termini. Se non sei d'accordo, ti preghiamo di non usare il sito.",
+  "use_of_site": "Uso del sito",
+  "use_of_site_1": "Devi usare il sito nel rispetto di tutte le leggi e normative applicabili.",
+  "use_of_site_2": "Non puoi usare il sito per scopi illegali o proibiti.",
+  "intellectual_property": "Proprietà intellettuale",
+  "intellectual_property_text": "Tutti i contenuti di questo sito sono di proprietà del titolare del sito o dei suoi licenziatari e sono protetti dalle leggi sul copyright.",
+  "limitation_of_liability": "Limitazione di responsabilità",
+  "limitation_of_liability_text": "Non siamo responsabili per eventuali danni derivanti dall'uso del sito.",
+  "changes_to_terms": "Modifiche ai termini",
+  "changes_to_terms_text": "Possiamo aggiornare questi termini in qualsiasi momento. L'uso continuato del sito significa che accetti i nuovi termini.",
+  "auth": {
+    "username": "Nome utente",
+    "password": "Password",
+    "email": "Email",
+    "confirmPassword": "Conferma password",
+    "usernameRequired": "Il nome utente è obbligatorio",
+    "passwordRequired": "La password è obbligatoria",
+    "enterUsername": "Inserisci il tuo nome utente",
+    "enterPassword": "Inserisci la tua password",
+    "enterEmail": "Inserisci la tua email",
+    "enterCredentials": "Inserisci nome utente e password",
+    "signIn": "Accedi",
+    "signUp": "Registrati",
+    "login": "Accedi",
+    "rememberMe": "Ricordami",
+    "orContinueWith": "oppure continua con",
+    "signInWithPasskey": "Accedi con passkey",
+    "passkeyHint": "Usa Face ID, Touch ID, Windows Hello o il tuo gestore password.",
+    "passkeyNotSupported": "Le passkey non sono supportate in questo contesto del browser.",
+    "passkeyUnavailable": "Nessuna passkey è ancora registrata per questo account. Accedi prima con la password.",
+    "passkeyCancelled": "L'accesso con passkey è stato annullato.",
+    "passkeyLoginSuccess": "Hai effettuato l'accesso con la tua passkey.",
+    "passkeyLoginError": "L'accesso con passkey non è riuscito. Riprova.",
+    "passkeyCreated": "Passkey salvata per un accesso più rapido la prossima volta.",
+    "passkeyCreateError": "Impossibile salvare la tua passkey in questo momento.",
+    "passkeyCreatePromptTitle": "Salvare una passkey?",
+    "passkeyCreatePromptMessage": "Usa la biometria del tuo dispositivo o il gestore password per accedere più velocemente la prossima volta.",
+    "passkeyCreatePromptConfirm": "Salva passkey",
+    "signInWithGitHub": "Accedi con GitHub",
+    "signInWithNetlify": "Accedi con Netlify Identity",
+    "appleSignInUnavailable": "L'accesso con Apple non è attualmente disponibile.",
+    "socialSignInExpired": "L'accesso social è scaduto o è stato interrotto. Riprova.",
+    "googleSignInExpired": "L'accesso con Google è scaduto o è stato interrotto. Riprova.",
+    "appleSignInExpired": "L'accesso con Apple è scaduto o è stato interrotto. Riprova.",
+    "welcomeBack": "Bentornato",
+    "forgotPassword": "Hai dimenticato la password?",
+    "resetPassword": "Reimposta password",
+    "resetInstructions": "Inserisci la tua email e ti invieremo le istruzioni per reimpostare la password.",
+    "sendResetLink": "Invia link di reimpostazione",
+    "resetEmailSent": "Le istruzioni per reimpostare la password sono state inviate alla tua email",
+    "resetError": "Impossibile inviare l'email di reimpostazione",
+    "loginError": "Accesso non riuscito. Riprova.",
+    "loginSuccess": "Bentornato!",
+    "dontHaveAccount": "Non hai un account?",
+    "alreadyHaveAccount": "Hai già un account?",
+    "createAccount": "Crea il tuo account",
+    "fillAllFields": "Compila tutti i campi",
+    "passwordMismatch": "Le password non corrispondono",
+    "acceptTerms": "Accetta i termini e le condizioni",
+    "iAccept": "Accetto i",
+    "termsAndConditions": "termini e condizioni",
+    "signupSuccess": "Account creato con successo! Effettua il login.",
+    "signupError": "Registrazione non riuscita. Riprova."
+  },
+  "login": "Accedi",
+  "signup": "Registrati",
+  "user": "Utente",
+  "password": "Password",
+  "sign_in_with_google": "Accedi con Google",
+  "sign_up": "Registrati",
+  "signup_success": "Account creato! Effettua il login.",
+  "signup_failed": "Registrazione non riuscita",
+  "create_account": "Crea account",
+  "back_to_login": "Torna al login",
+  "please_fill_all_fields": "Compila tutti i campi",
+  "passwords_do_not_match": "Le password non corrispondono",
+  "confirm_password": "Conferma password",
+  "cancel": "Annulla",
+  "edit": "Modifica",
+  "login_success": "Accesso effettuato con successo",
+  "please_accept_terms": "Accetta i nostri termini e condizioni.",
+  "email": "Email",
+  "submit": "invia",
+  "reset": "Reimposta",
+  "Login": "Accedi",
+  "password_login": "Accedi con email",
+  "username": "Nome utente",
+  "username_required": "La password è obbligatoria",
+  "hello": "Ciao",
+  "logout": "Esci",
+  "already_logged_in": "Hai già effettuato l'accesso",
+  "login_method": "Metodi di accesso",
+  "logout_success": "Hai effettuato il logout con successo",
+  "back": "Indietro",
+  "username_taken": "Nome utente già in uso",
+  "accept_terms_and_conditions": "Accetta i nostri termini e condizioni",
+  "password_required": "Password obbligatoria",
+  "resend_verification_email": "reinvia email di verifica",
+  "password_signup": "registrati",
+  "username_optional": "Nome utente",
+  "first_name": "Nome",
+  "last_name": "Cognome",
+  "username_hint": "nome utente",
+  "email_required": "Email obbligatoria",
+  "The 99 Holy Names of Allah": "I 99 Santi Nomi di Allah",
+  "welcome_back": "Bentornato, {name}",
+  "welcome_guest": "Ciao ospite",
+  "no_bookmarks": "Nessun segnalibro salvato",
+  "tasbeeh": {
+    "title": "Tasbeeh digitale",
+    "subtitle": "Rosario di preghiera islamico",
+    "tapToCount": "Tocca per contare",
+    "reset": "Reimposta",
+    "settings": "Impostazioni",
+    "selectPhrase": "Seleziona la frase di dhikr",
+    "todayStats": "Statistiche di oggi",
+    "total": "Totale",
+    "sessions": "Sessioni",
+    "completed": "Serie completate",
+    "continue": "Continua",
+    "vibration": "Feedback con vibrazione",
+    "sound": "Feedback sonoro",
+    "autoNext": "Frase successiva automatica",
+    "phrases": {
+      "subhanallah": "Gloria ad Allah",
+      "alhamdulillah": "Lode ad Allah",
+      "allahu_akbar": "Allah è il Più Grande",
+      "la_ilaha_illa_allah": "Non c'è dio all'infuori di Allah",
+      "astaghfirullah": "Chiedo perdono ad Allah",
+      "la_hawla": "Non c'è forza se non con Allah"
+    }
+  },
+  "account": {
+    "title": "Account"
+  },
+  "meta": {
+    "home": "Un'esperienza tranquilla per leggere il Corano, riflettere e connettersi.",
+    "quran": "Il Corano — naviga e leggi le 114 surah.",
+    "holynames": "Esplora i 99 Nomi Sacri di Allah con significati e recitazioni audio.",
+    "tasbeeh": "Tasbeeh Digitale — un contatore semplice e bello per il dhikr.",
+    "miracles": "Leggi storie ispiratrici e riflessioni su segni e miracoli.",
+    "privacy": "Scopri come proteggiamo i tuoi dati e la tua privacy.",
+    "titles": {
+      "home": "Home",
+      "quran": "Corano",
+      "holynames": "Nomi Sacri",
+      "tasbeeh": "Tasbeeh"
+    }
+  },
+  "bookmarks": "segnalibro",
+  "profile": {
+    "title": "Profilo",
+    "edit": "Modifica profilo",
+    "save": "Salva modifiche"
+  },
+  "settings": {
+    "title": "Impostazioni",
+    "display": "Impostazioni display",
+    "language": "Preferenza lingua",
+    "theme": "Tema"
+  },
+  "holyNames": {
+    "1": {
+      "transliteration": "Il Più Misericordioso",
+      "meaning": "Il Più Compassionevole"
+    },
+    "2": {
+      "transliteration": "Il Più Benevolo",
+      "meaning": "Il Donatore di Misericordia"
+    },
+    "3": {
+      "transliteration": "Il Re",
+      "meaning": "Il Signore Sovrano"
+    },
+    "4": {
+      "transliteration": "Il Più Sacro",
+      "meaning": "Il Puro"
+    },
+    "5": {
+      "transliteration": "La Fonte di Pace",
+      "meaning": "Il Perfetto"
+    },
+    "6": {
+      "transliteration": "L'Ispiratore della Fede",
+      "meaning": "L'Infusore di Fede"
+    },
+    "7": {
+      "transliteration": "Il Guardiano",
+      "meaning": "Il Preservatore della Sicurezza"
+    },
+    "8": {
+      "transliteration": "Il Vittorioso",
+      "meaning": "Il Potente"
+    },
+    "9": {
+      "transliteration": "Il Coercitivo",
+      "meaning": "Il Ristoratore"
+    },
+    "10": {
+      "transliteration": "Il Supremo",
+      "meaning": "Il Maestoso"
+    },
+    "11": {
+      "transliteration": "Il Creatore",
+      "meaning": "Il Creatore di Tutte le Cose"
+    },
+    "12": {
+      "transliteration": "L'Evolutore",
+      "meaning": "Il Modellatore"
+    },
+    "13": {
+      "transliteration": "Il Modellatore",
+      "meaning": "Lo Scultore della Bellezza"
+    },
+    "14": {
+      "transliteration": "Il Perdonatore",
+      "meaning": "Il Tutto-Perdonatore"
+    },
+    "15": {
+      "transliteration": "Il Dominatore",
+      "meaning": "L'Onniprevvalente"
+    },
+    "16": {
+      "transliteration": "Il Donatore",
+      "meaning": "Il Sommo Donatore"
+    },
+    "17": {
+      "transliteration": "Il Provveditore",
+      "meaning": "Il Sostentatore"
+    },
+    "18": {
+      "transliteration": "L'Apritore",
+      "meaning": "Il Sommo Risolutore"
+    },
+    "19": {
+      "transliteration": "L'Onnisciente",
+      "meaning": "Colui che Sa Tutto"
+    },
+    "20": {
+      "transliteration": "Il Trattenitore",
+      "meaning": "Il Limitatore"
+    },
+    "21": {
+      "transliteration": "L'Espansore",
+      "meaning": "L'Amplificatore"
+    },
+    "22": {
+      "transliteration": "Il Riduttore",
+      "meaning": "L'Abbasatore"
+    },
+    "23": {
+      "transliteration": "L'Esaltatore",
+      "meaning": "L'Elevatore"
+    },
+    "24": {
+      "transliteration": "L'Onorevole",
+      "meaning": "Il Donatore d'Onore"
+    },
+    "25": {
+      "transliteration": "L'Umiliatore",
+      "meaning": "Il Disonoratore"
+    },
+    "26": {
+      "transliteration": "L'Onniscoltante",
+      "meaning": "Colui che Sente Tutto"
+    },
+    "27": {
+      "transliteration": "L'Onniveggente",
+      "meaning": "Colui che Vede Tutto"
+    },
+    "28": {
+      "transliteration": "Il Giudice",
+      "meaning": "Il Giudice Imparziale"
+    },
+    "29": {
+      "transliteration": "Il Giusto",
+      "meaning": "Il Perfettamente Giusto"
+    },
+    "30": {
+      "transliteration": "Il Sottile",
+      "meaning": "Il Più Gentile"
+    },
+    "31": {
+      "transliteration": "Il Consapevole",
+      "meaning": "L'Onnisapiente"
+    },
+    "32": {
+      "transliteration": "Il Clemente",
+      "meaning": "Il Mite"
+    },
+    "33": {
+      "transliteration": "Il Magnifico",
+      "meaning": "Il Supremo"
+    },
+    "34": {
+      "transliteration": "Il Clemente",
+      "meaning": "Il Tutto-Clemente"
+    },
+    "35": {
+      "transliteration": "Il Riconoscente",
+      "meaning": "Il Più Grato"
+    },
+    "36": {
+      "transliteration": "L'Altissimo",
+      "meaning": "L'Esaltato"
+    },
+    "37": {
+      "transliteration": "Il Grandissimo",
+      "meaning": "Il Più Grande"
+    },
+    "38": {
+      "transliteration": "Il Preservatore",
+      "meaning": "Il Guardiano"
+    },
+    "39": {
+      "transliteration": "Il Sostentatore",
+      "meaning": "Il Nutritore"
+    },
+    "40": {
+      "transliteration": "Il Calcolatore",
+      "meaning": "Il Sufficiente"
+    },
+    "41": {
+      "transliteration": "Il Maestoso",
+      "meaning": "Il Sublime"
+    },
+    "42": {
+      "transliteration": "Il Generoso",
+      "meaning": "Il Più Generoso"
+    },
+    "43": {
+      "transliteration": "Il Vigilante",
+      "meaning": "Il Sempre Vigilante"
+    },
+    "44": {
+      "transliteration": "Il Responsivo",
+      "meaning": "Colui che Risponde alle Preghiere"
+    },
+    "45": {
+      "transliteration": "L'Onnicomprensivo",
+      "meaning": "L'Illimitato"
+    },
+    "46": {
+      "transliteration": "Il Saggio",
+      "meaning": "L'Onnisapiente"
+    },
+    "47": {
+      "transliteration": "L'Amorevole",
+      "meaning": "Il Più Amorevole"
+    },
+    "48": {
+      "transliteration": "Il Glorioso",
+      "meaning": "Il Più Glorioso"
+    },
+    "49": {
+      "transliteration": "Il Risuscitatore",
+      "meaning": "Colui che Risuscita i Morti"
+    },
+    "50": {
+      "transliteration": "Il Testimone",
+      "meaning": "L'Onnipresente"
+    },
+    "51": {
+      "transliteration": "La Verità",
+      "meaning": "La Verità Assoluta"
+    },
+    "52": {
+      "transliteration": "Il Custode",
+      "meaning": "L'Amministratore degli Affari"
+    },
+    "53": {
+      "transliteration": "Il Forte",
+      "meaning": "L'Onnipotente"
+    },
+    "54": {
+      "transliteration": "Il Fermo",
+      "meaning": "L'Incrollabile"
+    },
+    "55": {
+      "transliteration": "L'Amico",
+      "meaning": "L'Amico Protettore"
+    },
+    "56": {
+      "transliteration": "Il Degno di Lode",
+      "meaning": "Il Tutto-Degno di Lode"
+    },
+    "57": {
+      "transliteration": "Il Calcolatore",
+      "meaning": "L'Enumeratore di Tutte le Cose"
+    },
+    "58": {
+      "transliteration": "L'Iniziatore",
+      "meaning": "Il Primo a Creare"
+    },
+    "59": {
+      "transliteration": "Il Restauratore",
+      "meaning": "Colui che Ricostituisce"
+    },
+    "60": {
+      "transliteration": "Il Datore di Vita",
+      "meaning": "Il Vivificatore"
+    },
+    "61": {
+      "transliteration": "Il Creatore della Morte",
+      "meaning": "Colui che Causa la Morte"
+    },
+    "62": {
+      "transliteration": "Il Sempre Vivo",
+      "meaning": "Colui che Esiste Eternamente"
+    },
+    "63": {
+      "transliteration": "L'Autosufficiente",
+      "meaning": "Colui che Sostiene Tutto"
+    },
+    "64": {
+      "transliteration": "Il Perspicace",
+      "meaning": "Colui che Scopre"
+    },
+    "65": {
+      "transliteration": "Il Glorioso",
+      "meaning": "L'Eccelso"
+    },
+    "66": {
+      "transliteration": "L'Unico",
+      "meaning": "Il Singolarmente Unico"
+    },
+    "67": {
+      "transliteration": "L'Eterno",
+      "meaning": "L'Assoluto"
+    },
+    "68": {
+      "transliteration": "L'Onnipotente",
+      "meaning": "Colui che ha Tutto il Potere"
+    },
+    "69": {
+      "transliteration": "Il Potente",
+      "meaning": "L'Onnipossente"
+    },
+    "70": {
+      "transliteration": "Colui che Anticipa",
+      "meaning": "Colui che Porta Avanti"
+    },
+    "71": {
+      "transliteration": "Colui che Ritarda",
+      "meaning": "Colui che Posticipa"
+    },
+    "72": {
+      "transliteration": "Il Primo",
+      "meaning": "Colui che Esiste dall'Inizio"
+    },
+    "73": {
+      "transliteration": "L'Ultimo",
+      "meaning": "Colui che Esiste Eternamente"
+    },
+    "74": {
+      "transliteration": "Il Manifesto",
+      "meaning": "Colui che è Evidente"
+    },
+    "75": {
+      "transliteration": "Il Nascosto",
+      "meaning": "Colui che è Invisibile"
+    },
+    "76": {
+      "transliteration": "Il Governatore",
+      "meaning": "Colui che Governa"
+    },
+    "77": {
+      "transliteration": "L'Esaltato",
+      "meaning": "Il Molto Esaltato"
+    },
+    "78": {
+      "transliteration": "Il Benefico",
+      "meaning": "La Fonte di Tutto il Bene"
+    },
+    "79": {
+      "transliteration": "Colui che Accetta il Pentimento",
+      "meaning": "Colui che Accetta il Pentimento"
+    },
+    "80": {
+      "transliteration": "Il Vendicatore",
+      "meaning": "Colui che Infligge Retribuzione"
+    },
+    "81": {
+      "transliteration": "Il Compassionevole",
+      "meaning": "Il Perdonatore"
+    },
+    "82": {
+      "transliteration": "Il Sommo Perdonatore",
+      "meaning": "Il Supremo Perdonatore"
+    },
+    "83": {
+      "transliteration": "Il Benevolo",
+      "meaning": "Il Più Gentile"
+    },
+    "84": {
+      "transliteration": "Padrone del Regno",
+      "meaning": "Proprietario di Tutta la Sovranità"
+    },
+    "85": {
+      "transliteration": "Signore della Maestà e della Generosità",
+      "meaning": "Il Possessore di Gloria e Onore"
+    },
+    "86": {
+      "transliteration": "L'Equo",
+      "meaning": "Il Giusto"
+    },
+    "87": {
+      "transliteration": "Il Raccoglitore",
+      "meaning": "L'Assemblatore"
+    },
+    "88": {
+      "transliteration": "Il Ricco",
+      "meaning": "L'Opulento"
+    },
+    "89": {
+      "transliteration": "L'Arricchitore",
+      "meaning": "Il Donatore di Ricchezza"
+    },
+    "90": {
+      "transliteration": "Il Preventore",
+      "meaning": "Il Trattenitore"
+    },
+    "91": {
+      "transliteration": "L'Angosciante",
+      "meaning": "Il Creatore del Danno"
+    },
+    "92": {
+      "transliteration": "Il Propizio",
+      "meaning": "Il Creatore del Bene"
+    },
+    "93": {
+      "transliteration": "La Luce",
+      "meaning": "L'Illuminatore"
+    },
+    "94": {
+      "transliteration": "La Guida",
+      "meaning": "Il Fornitore di Guida"
+    },
+    "95": {
+      "transliteration": "L'Incomparabile",
+      "meaning": "L'Originatore"
+    },
+    "96": {
+      "transliteration": "L'Eterno",
+      "meaning": "Il Perpetuo"
+    },
+    "97": {
+      "transliteration": "L'Erede",
+      "meaning": "Il Supremo Erede"
+    },
+    "98": {
+      "transliteration": "La Guida Retta",
+      "meaning": "Il Maestro Giusto"
+    },
+    "99": {
+      "transliteration": "Il Paziente",
+      "meaning": "Il Più Paziente"
+    }
+  },
+  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna",
+  "consent": {
+    "message": "Utilizziamo cookie per migliorare la tua esperienza e analizzare l'utilizzo del sito.",
+    "details": "Cliccando 'Accetta', acconsenti all'uso dei cookie per analisi.",
+    "accept": "Accetta",
+    "decline": "Rifiuta"
+  },
+  "prayer_times_purpose": "Per calcolare orari di preghiera precisi in base alla tua posizione e notificarti quando è ora di pregare.",
+  "location_services": "Servizi di posizione",
+  "location_services_text": "Su iPhone e iPad, l'app può richiedere l'accesso alla posizione del tuo dispositivo per calcolare gli orari di preghiera islamici precisi (Fajr, Dhuhr, Asr, Maghrib, Isha) per la tua area. I dati di posizione vengono utilizzati solo sul dispositivo per calcolare gli orari — non vengono mai trasmessi ai nostri server, conservati o condivisi con terze parti. Puoi negare o revocare il permesso di posizione in qualsiasi momento nelle Impostazioni; l'app userà allora una posizione predefinita (Gerusalemme). L'app Apple TV non utilizza i servizi di posizione.",
+  "push_notifications": "Notifiche push",
+  "push_notifications_text": "L'app può inviarti notifiche push per avvisarti quando inizia un orario di preghiera, così l'Adhan può essere riprodotto in tempo. Le notifiche vengono inviate solo se concedi esplicitamente il permesso. Puoi disattivarle in qualsiasi momento dalle Impostazioni o dall'app stessa.",
+  "terms_location": "Posizione e notifiche",
+  "terms_location_text": "Attivando le notifiche degli orari di preghiera, acconsenti all'accesso dell'app alla posizione del tuo dispositivo esclusivamente per calcolare gli orari di preghiera localmente. Questi dati non vengono conservati o condivisi. Puoi revocare il permesso di posizione o notifiche in qualsiasi momento dalle Impostazioni."
 }

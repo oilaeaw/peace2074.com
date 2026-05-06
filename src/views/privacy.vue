@@ -19,7 +19,12 @@
           <li>{{ $t('provide_services') }}</li>
           <li>{{ $t('improve_experience') }}</li>
           <li>{{ $t('communicate_updates') }}</li>
+          <li>{{ $t('prayer_times_purpose') }}</li>
         </ul>
+        <h2>{{ $t('location_services') }}</h2>
+        <p>{{ $t('location_services_text') }}</p>
+        <h2>{{ $t('push_notifications') }}</h2>
+        <p>{{ $t('push_notifications_text') }}</p>
         <h2>{{ $t('cookies') }}</h2>
         <p>{{ $t('cookies_text') }}</p>
         <h2>{{ $t('data_security') }}</h2>

@@ -16,6 +16,8 @@
           <li>{{ $t('use_of_site_1') }}</li>
           <li>{{ $t('use_of_site_2') }}</li>
         </ul>
+        <h2>{{ $t('terms_location') }}</h2>
+        <p>{{ $t('terms_location_text') }}</p>
         <h2>{{ $t('intellectual_property') }}</h2>
         <p>{{ $t('intellectual_property_text') }}</p>
         <h2>{{ $t('limitation_of_liability') }}</h2>

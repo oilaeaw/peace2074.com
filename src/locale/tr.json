@@ -1,1438 +1,1445 @@
 {
-    "welcome": "Hoş geldiniz",
-    "button": {
-        "about": "Hakkında",
-        "back": "Geri",
-        "go": "GİT",
-        "home": "Ana Sayfa",
-        "toggle_dark": "Karanlık modu değiştir",
-        "toggle_langs": "Dili değiştir",
-        "Privacy": "Gizliliğimiz",
-        "Privacy_Short": "Gizlilik",
-        "Terms": "Şartlar ve Koşullarımız",
-        "Terms_Short": "Şartlar",
-        "Contact": "Bize ulaşın",
-        "TimeLine": "Zaman Çizelgesi",
-        "Utils": "Araçlar",
-        "submit": "Gönder",
-        "reset": "Sıfırla",
-        "reload": "Yenile",
-        "close": "Kapat",
-        "new_content": "Yeni içerik mevcut, güncellemek için yenileyin.",
-        "offline_ready": "Uygulama çevrimdışı çalışmaya hazır"
-    },
-    "athan": {
-        "play": "Ezanı Oynat",
-        "pause": "Ezanı Duraklat",
-        "stop": "Ezanı Durdur"
-    },
-    "appShell": {
-        "toggleMenu": "Menüyü aç/kapat",
-        "searchPlaceholder": "Ara…",
-        "playAthan": "Ezanı Oynat",
-        "stopAthan": "Ezanı Durdur",
-        "pin": "Sabitle",
-        "unpin": "Sabitlemeyi kaldır",
-        "resultType": {
-            "sura": "Kur'an",
-            "page": "Sayfa"
-        },
-        "nav": {
-            "home": "Ana Sayfa",
-            "about": "Hakkında",
-            "quran": "Kur'an",
-            "holynames": "Kutsal İsimler",
-            "tasbeeh": "Tesbih",
-            "miracles": "Mucizeler",
-            "chat": "Sohbet",
-            "support": "Destek",
-            "settings": "Ayarlar",
-            "preferences": "Tercihler",
-            "login": "Giriş",
-            "logout": "Çıkış Yap",
-            "blog": "Blog",
-            "contact": "İletişim",
-            "deploys": "Dağıtımlar",
-            "social": "Sosyal"
-        }
-    },
-    "navigation": {
-        "Profile": "Profilim",
-        "Favorites": "Favorilerim",
-        "Messages": "Mesajlar",
-        "HomePageTitle": "Ana Sayfa",
-        "HomePageCaption": "Ana Sayfa",
-        "AuthPageTitle": "Kimlik Doğrulama",
-        "AuthPageCaption": "Kullanıcı Oluştur / Giriş",
-        "AboutPageTitle": "Hakkımızda",
-        "AboutPageCaption": "Hakkımızda",
-        "ContactPageTitle": "Bize ulaşın",
-        "ContactPageCaption": "Bize ulaşın",
-        "TermsPageTitle": "Şartlar",
-        "TermsPageCaption": "Şartlar ve koşullar",
-        "BlogPageTitle": "Blogumuz",
-        "BlogPageCaption": "Yazılar ve Makaleler",
-        "ProductsPageTitle": "Ürünler",
-        "ProductsPageCaption": "Ürünlerimiz",
-        "PrivacyPageTitle": "Gizlilik",
-        "PrivacyPageCaption": "Gizlilik Sayfası",
-        "ServicesPageTitle": "Hizmetler",
-        "ServicesPageCaption": "Hizmetlerimiz",
-        "SettingsPageTitle": "Ayarlar Sayfası",
-        "SettingsPageCaption": "Görüntü Ayarları",
-        "TranslationPageTitle": "Çeviriler",
-        "TranslationPageCaption": "Çevirilerinizi yönetin",
-        "GlossaryPageTitle": "Sözlük",
-        "GlossaryPageCaption": "Sözlük Sayfamız",
-        "MediaPageTitle": "Medya",
-        "MediaPageCaption": "Medya Sayfamız",
-        "Signin": "Giriş",
-        "Signout": "Çıkış",
-        "Register": "Kayıt Ol",
-        "AdminPage": "Yönetim Sayfası"
-    },
-    "pages": {
-        "about": {
-            "title": "PEACE2074 Hakkında",
-            "hero": {
-                "eyebrow": "PEACE2074 Hakkında",
-                "title": "Okumak, hatırlamak ve geri dönmek için aydınlık bir yer.",
-                "lead": "PEACE2074, Kur'an ve tefekkür için çok dilli bir alandır; tek bir ayet, tek bir sakin nefes ya da daha uzun bir yolculuk için açsanız da huzurlu, güzel ve gerçekten kullanışlı hissettirmek üzere tasarlandı.",
-                "primaryCta": "Kur'an'ı Aç",
-                "secondaryCta": "Kutsal İsimleri Keşfet",
-                "tags": {
-                    "read": "Kur'an okuma",
-                    "remember": "Zikir ve tesbih",
-                    "reflect": "Kutsal İsimler ve tefekkür",
-                    "connect": "Destek ve topluluk"
-                }
-            },
-            "spotlight": {
-                "label": "Nazik odak için tasarlandı",
-                "title": "Gürültüyü azaltıp huzurlu farkındalığı artırmak için yapıldı.",
-                "body": "Her ekranın açık, destekleyici ve manevi olarak dengeli hissettirmesi amaçlandı; sure okuma ve ayet paylaşımından yer imlerine, çevrimdışı dinlemeye ve günlük tefekküre kadar."
-            },
-            "stats": {
-                "languages": {
-                    "value": "8",
-                    "label": "desteklenen dil"
-                },
-                "suras": {
-                    "value": "114",
-                    "label": "keşfe hazır sure"
-                },
-                "experience": {
-                    "value": "1",
-                    "label": "web ve iOS'ta sakin deneyim"
-                }
-            },
-            "story": {
-                "eyebrow": "Neden var",
-                "title": "İman araçları bunaltıcı olmadan da güçlü olabilir.",
-                "body": "PEACE2074, Kur'an okumayı, zikri, düşünceli keşfi ve pratik desteği tek bir yerde toplar. Amaç basit: daha az sürtünme ve daha çok güzellikle sizi önemli olana geri döndürmek.",
-                "cardTitle": "Daha sakin bir dijital ritim",
-                "cardBody": "Dağınık araçlar ve gürültülü arayüzler yerine PEACE2074 okuma, tilavet, tesbih, Kutsal İsimler, tefekkürler ve desteği tek bir huzur akışında buluşturur."
-            },
-            "verse": {
-                "label": "Yol gösteren ruh",
-                "quote": "Huzur yalnızca aradığınız bir şey değildir. Sayfa sayfa, dua dua, dönüş dönüş uyguladığınız bir şeydir.",
-                "source": "PEACE2074 ruhu"
-            },
-            "pillars": {
-                "eyebrow": "Onu özel yapan şey",
-                "title": "Deneyimi üç sütun şekillendirir",
-                "lead": "Uygulamanın her parçası yoğun bir günde faydalı, sakin bir anda ise güzel hissettirmek için tasarlandı.",
-                "read": {
-                    "title": "Berraklıkla oku",
-                    "body": "Kur'an'ı odaklı okuma modları, ayet paylaşımı, yer imleri ve yolunuza çıkmayan bir tilavetle keşfedin."
-                },
-                "remember": {
-                    "title": "Varlıkla hatırla",
-                    "body": "Dijital tesbih, Kutsal İsimler ve baskı kurmadan istikrarı destekleyen nazik yönlendirmelerle zikri yakın tutun."
-                },
-                "connect": {
-                    "title": "Destekle bağlantı kur",
-                    "body": "Daha fazla gürültüye değil, yön duygusuna ihtiyaç duyduğunuzda sohbet, iletişim ve düşünceli rehberlik yoluyla yardım bulun."
-                }
-            },
-            "journey": {
-                "eyebrow": "Rehberli bir yolculuk",
-                "title": "Meraktan istikrara",
-                "lead": "İster arayarak, ister düşünerek, ister bir alışkanlığı yeniden kurarak gelin; PEACE2074 sizi bulunduğunuz yerde karşılar.",
-                "discover": {
-                    "step": "01",
-                    "title": "Keşfet",
-                    "body": "Bir sure, bir ayet ya da bir soruyla başlayın ve uygulamanın sonraki adımı görünür kılmasına izin verin."
-                },
-                "reflect": {
-                    "step": "02",
-                    "title": "Tefekkür et",
-                    "body": "Anlamla biraz daha uzun kalmak için tilavet, çeviriler, hatırlatmalar ve manevi araçlardan yararlanın."
-                },
-                "return": {
-                    "step": "03",
-                    "title": "Geri dön",
-                    "body": "Yer imlerinize, rutinlerinize ve huzurlu ivmenize istediğiniz zaman geri dönün; yeniden başlamak yorucu olmak zorunda değil."
-                }
-            },
-            "promise": {
-                "eyebrow": "Koruduğumuz şey",
-                "title": "Varsayılan olarak güzel, faydalı ve saygılı",
-                "body": "Deneyim; odak, çok dilli erişim ve hem tefekküre hem rutine saygı duyan sakin bir görsel ritim etrafında şekillendi.",
-                "one": "Okumayı merkeze alan temiz bir arayüz",
-                "two": "Arapça ve İbranice için RTL destekli yerelleştirme",
-                "three": "Çevrimdışı tilavet ve web ile iOS'ta destekleyici araçlar"
-            },
-            "build": {
-                "eyebrow": "Açık geliştiriliyor",
-                "title": "Açık kod, iOS özeni ve SEO'ya hazır temeller",
-                "lead": "PEACE2074 herkese açık deposunu paylaşır, Capacitor üzerinden sakin bir iOS deneyimi sunar ve rota tabanlı SEO ile yapılandırılmış veriler sayesinde önemli sayfaları keşfedilebilir tutar."
-            },
-            "repo": {
-                "eyebrow": "Herkese açık depo",
-                "title": "Projeyi gerçek zamanlı takip edin",
-                "body": "Kod tabanı GitHub'da herkese açıktır ve aynı temel; issue'lar, katkı geçmişi ve workflow çalıştırmaları görünürken hem web deneyimini hem iOS uygulamasını güçlendirir.",
-                "links": {
-                    "code": "Kodu görüntüle",
-                    "issues": "Issue'lar",
-                    "contributors": "Katkıda bulunanlar",
-                    "actions": "CI ve Actions"
-                }
-            },
-            "analytics": {
-                "eyebrow": "Düşünceli analitik",
-                "title": "Tahminle değil, izinle ölçülür",
-                "body": "Analitik; izne saygı duyar, ürün sağlığını izler ve deneyimin ölçülebilir ve keşfedilebilir kalması için canonical URL'ler, meta etiketler ve yapılandırılmış verilerle birlikte çalışır.",
-                "pointConsent": "Onay ayarları, etkinlikler gönderilmeden önce analitik toplamayı kontrol eder.",
-                "pointGa4": "GA4 ve yerel Firebase Analytics; sayfa görüntülemeleri, yer imleri ve temel ürün etkileşimleri gibi akışları yakalar.",
-                "pointReader": "Okuyucu analitiği, oturum açmış kullanıcılar için sure ilerlemesini ve okuma örüntülerini özetler.",
-                "pointSeo": "Rota meta verileri, canonical URL'ler, Open Graph etiketleri ve yapılandırılmış veriler önemli sayfaların arama dostu kalmasına yardımcı olur.",
-                "links": {
-                    "playbook": "GA4 kılavuzu",
-                    "readerStats": "Okuyucu istatistikleri belgeleri"
-                }
-            },
-            "cta": {
-                "eyebrow": "Nazikçe içeri girin",
-                "title": "İhtiyacınız kadar kalın.",
-                "body": "Kur'an'ı açın, Kutsal İsimleri keşfedin ya da yolculuğunuzu şekillendirmek için yardım istiyorsanız bizimle iletişime geçin.",
-                "primary": "Okumaya başla",
-                "secondary": "Kutsal İsimleri keşfet",
-                "tertiary": "PEACE2074 ile iletişime geç"
-            }
-        },
-        "support": {
-            "title": "Destek",
-            "subtitle": "Yardıma mı ihtiyacınız var? Dinlemek ve yardımcı olmak için buradayız.",
-            "ctaChat": "Sohbete git",
-            "ctaContact": "Bize ulaşın",
-            "helpTitle": "Kılavuzlar ve SSS",
-            "helpBody": "Önce yardım dokümanlarımızı ve yaygın sorunları kontrol edin.",
-            "contactTitle": "Bize ulaşın",
-            "contactBody": "Takılırsanız, detayları gönderin; en kısa sürede yanıtlayalım.",
-            "aiTitle": "Yapay Zekâ Desteği",
-            "aiDesc": "Yapay zekâ asistanımızdan yardım alın"
-        },
-        "home": {
-            "title": "Ana Sayfa",
-            "hero": {
-                "title": "Peace2074",
-                "lead": "Okumak, düşünmek ve zikretmek için sakin bir yer.",
-                "ctaReadQuran": "Kur'an Oku",
-                "ctaHolyNames": "Kutsal İsimler",
-                "ctaTasbeeh": "Tesbih",
-                "ctaIos": "iPhone ve iPad",
-                "aiLabel": "PEACE AI'ye Sor",
-                "cardTitle": "Günlük Tefekkür",
-                "cardBody": "Odaklanmanıza yardımcı olacak kısa ayet seçkileri ve hatırlatmalar."
-            },
-            "ai": {
-                "title": "PEACE AI'ye Sor",
-                "subtitle": "Sureler, tefekkürler veya uygulama kullanımı hakkında rehberlik alın.",
-                "tryAnother": "Başka bir istem deneyin",
-                "examples": [
-                    "Meryem Suresi'nden iki temel dersi ve burada nereden okunacağını vurgula.",
-                    "Fatiha Suresi'nin ana teması nedir?",
-                    "Kur'an'dan sabır hakkında kısa bir tefekkür verebilir misin?",
-                    "Yusuf Peygamber'in kıssasını nerede bulabilirim?",
-                    "Kadir Gecesi'nin önemini açıklar mısın?"
-                ],
-                "placeholder": "Bir sure, tema veya özellik hakkında sor",
-                "ask": "Sor",
-                "thinking": "Düşünüyor…",
-                "responseTitle": "AI Yanıtı",
-                "copied": "Yanıt panoya kopyalandı!",
-                "noReply": "Yanıt alınamadı.",
-                "requestFailed": "Kimi isteği başarısız oldu. Lütfen tekrar deneyin.",
-                "historyTitle": "Geçmiş",
-                "historyEmpty": "Henüz önceki soru yok.",
-                "reuse": "Yeniden kullan",
-                "clearHistory": "Geçmişi temizle"
-            },
-            "manifesto": {
-                "quote": "Delilere. Uyumsuzlara. İsyancılara. Sorun çıkaranlara. Kare deliklerdeki yuvarlak çivilere. İşleri farklı görenlere. Kuralları sevmezler ve statükoyla ilgilenmezler. Onları alıntılayabilir, onlara katılmayabilir, yüceltebilir veya karalayabilirsiniz. Ancak yapamayacağınız tek şey onları görmezden gelmektir. Çünkü onlar değiştirir. İnsanlığı ileriye taşırlar. Ve bazıları onları deli olarak görse de, biz dâhilik görürüz. Çünkü dünyayı değiştirebileceklerini düşünecek kadar deli olan insanlar, bunu yapanlardır.",
-                "attribution": "Farklı Düşün, Apple 1997"
-            },
-            "ramadan": {
-                "badge": "Ramazan Kampanyası",
-                "title": "30 Günlük Tefekkür ve İstikrar",
-                "body": "Kur'an okuma, tesbih ve topluluk desteğiyle nazik bir günlük alışkanlık oluşturun.",
-                "todayPrompt": "Bugünün tefekkür sorusu",
-                "ctaQuran": "Kur'an'ı aç",
-                "ctaTasbeeh": "Tesbih'i aç",
-                "ctaChat": "Sohbeti aç",
-                "usePrompt": "Soruyu AI'da kullan",
-                "promptApplied": "Bugünün Ramazan sorusu PEACE AI'ye eklendi."
-            }
-        },
-        "holynames": "Allah'ın Güzel İsimleri",
-        "tasbeeh": "Dijital Tesbih",
-        "quran": {
-            "title": "Kur'an",
-            "detail": "Kur'an Detay",
-            "backToList": "Listeye dön",
-            "playRecitation": "Tilaveti oynat",
-            "stopRecitation": "Tilaveti durdur",
-            "play": "Oynat",
-            "pause": "Duraklat",
-            "resume": "Devam Et",
-            "startingRecitation": "Tilavet başlatılıyor",
-            "playing": "Tilavet sürüyor",
-            "playingOffline": "Çevrimdışı depodan oynatılıyor",
-            "paused": "Duraklatıldı - devam etmek için dokunun",
-            "resumed": "Oynatma devam ediyor",
-            "resumeFromLast": "Kaldığınız yerden devam edilsin mi?",
-            "restart": "Ayeti yeniden başlat",
-            "restartSura": "Baştan yeniden başlat",
-            "scrollToTop": "Başa dön",
-            "audioRecitation": "Sesli Tilavet",
-            "nativeReader": "Yerel Okuyucu (TTS)",
-            "ttsNotSupported": "Bu tarayıcıda metin okuma desteklenmiyor",
-            "ttsSpeed": "Hız",
-            "ttsVoice": "Ses",
-            "pageTitle": "Kutsal Kur'an",
-            "loading": "Yükleniyor…",
-            "verses": "ayet",
-            "invalidSuraRange": "Geçersiz sure numarası. Lütfen 1 ile 114 arasında bir sure seçin.",
-            "apiHint": "İçerik yüklenmezse sunucu API'sinin /api/quran çalıştığından emin olun.",
-            "loadSuraError": "Sure yüklenemedi",
-            "loadChaptersError": "Sureler yüklenemedi",
-            "loadingAudio": "Ses yükleniyor…",
-            "sura": {
-                "name": "surenin adı",
-                "id": "sure numarası",
-                "location": "sure yeri",
-                "totverses": "ayet sayısı",
-                "bookmark": "yer imi"
-            },
-            "holynames": "Kutsal İsimler",
-            "modes": {
-                "reader": "Okuyucu modu",
-                "mushaf": "Mushaf modu",
-                "native": "Yerel mod"
-            },
-            "readerMode": {
-                "audio": "Ses",
-                "tts": "TTS"
-            },
-            "bookmarks": {
-                "menu": "Yer İmleri",
-                "empty": "Henüz yer imi yok",
-                "add": "{verse}. ayeti yer imine ekle",
-                "saved": "Yer imi kaydedildi",
-                "removed": "Yer imi kaldırıldı",
-                "confirmRemove": "Yer imi kaldırılsın mı?",
-                "confirmRemoveMessage": "Bu yer imini kaldırmak istediğinizden emin misiniz?",
-                "alreadySaved": "Zaten yer imlerinde",
-                "error": "Yer imi kaydedilemedi",
-                "current": "bu sure",
-                "bookmarkSura": "Sureyi yer imlerine ekle",
-                "removeSura": "Yer imini kaldır"
-            },
-            "quickAccess": {
-                "menu": "Hızlı",
-                "title": "Hızlı Erişim Ayetleri",
-                "kursi": "Ayetel Kürsi",
-                "fatiha": "Fatiha",
-                "yasin": "Yasin",
-                "mulk": "Mülk",
-                "ikhlas": "İhlâs"
-            },
-            "ramadanProgress": {
-                "title": "Kuran Tamamlama İlerlemenizi Takip Edin",
-                "badge": "Ramazan",
-                "message": "Ramazan-ı şerif mübarek olsun! Allah bu mübarek ayda okuduğunuz Kuran'ı kabul etsin.",
-                "completed": "{completed} / {total} Sure ({percentage}%)",
-                "continueReading": "Okumaya Devam Et",
-                "restart": "Yeniden Başla",
-                "resetProgress": "İlerlemeyi Sıfırla",
-                "resetConfirm": "İlerlemeyi Sıfırla",
-                "resetConfirmMessage": "Tüm Kuran okuma ilerlemenizi sıfırlamak istediğinizden emin misiniz?",
-                "suraCompleted": "Sure {sura} tamamlandı! ✓",
-                "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
-                "progressReset": "İlerleme sıfırlandı",
-                "registerToSync": "Kaydınızı buluta kaydetmek ve herhangi bir cihazdan erişmek için kayıt olun!",
-                "register": "Kayıt Ol",
-                "viewProgress": "İlerlemeyi görüntüle",
-                "markComplete": "Tamamlandı olarak işaretle",
-                "markIncomplete": "Tamamlanmadı olarak işaretle"
-            },
-            "autoContinue": "Otomatik olarak sonraki sureye devam et",
-            "wordHighlight": "Kelime kelime vurgula",
-            "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin.",
-            "notifications": {
-                "playingSelectionWithReciter": "{label} - {reciter}",
-                "playingVerseWithReciter": "{verse}. ayet oynatılıyor - {reciter}",
-                "playingSuraFromVerse": "{sura}. sure {verse}. ayetten oynatılıyor",
-                "startingSura": "{sura}. sure başlatılıyor...",
-                "stoppedVerse": "{verse}. ayet durduruldu",
-                "playingVerse": "{verse}. ayet oynatılıyor",
-                "nextSura": "→ Sonraki Sure",
-                "previousSura": "← Önceki Sure"
-            },
-            "share": {
-                "text": "Kur'an oku {suraName} {reference}",
-                "action": "{reference} paylaş",
-                "verseAction": "{reference} ayetini paylaş",
-                "shared": "{label} paylaşıldı",
-                "linkCopied": "Bağlantı kopyalandı: {text}"
-            },
-            "dismissAnnouncement": "Duyuruyu kapat"
-        },
-        "miracles": {
-            "pageTitle": "Kur'an Mucizeleri",
-            "drawingPadTitle": "Kur'an Mucizeleri Çizim Tahtası",
-            "drawingPadSubtitle": "1. Sure için deseni çiz",
-            "clear": "Temizle",
-            "saveDrawing": "Çizimi kaydet",
-            "visualTab": "Görsel Desenler",
-            "linguisticTab": "Dilbilimsel Analiz",
-            "linguisticPilotTitle": "Dilbilimsel Pilot",
-            "title": "Kur'an Harf Görselleştirici",
-            "scope": "Kapsam",
-            "wholeBook": "Tüm kitap",
-            "singleSura": "Tek sure",
-            "singleVerse": "Tek ayet",
-            "sura": "Sure",
-            "verse": "Ayet",
-            "cellSize": "Hücre boyutu",
-            "gap": "Boşluk",
-            "maxWidth": "Maks genişlik",
-            "draw": "Çiz",
-            "downloadPng": "PNG indir",
-            "legendInfo": "Açıklama {count} harf gösterir. Metin büyük olduğunda çok büyük görüntülerden kaçınmak için tuval harfleri örnekler.",
-            "chars": "Karakterler",
-            "words": "Kelimeler",
-            "unique": "Benzersiz",
-            "changeVerse": "Ayeti değiştir",
-            "numericExamplesTitle": "Kur'an'daki sayısal mucize örnekleri",
-            "oppositeWords": "Zıt kelimelerin tekrarları",
-            "oppositeWordsDesc": "Bazı zıt kelimelerin sayıları eşittir; örneğin \"dünya\" ve \"ahiret\" (her biri 115 kez), \"melekler\" ve \"şeytanlar\" (her biri 88 kez), \"ışık\" ve \"karanlık\" (her biri 24 kez).",
-            "wordRelations": "Kelimeler, harfler, ayetler ve sure sayıları arasındaki ilişkiler",
-            "wordRelationsDesc": "Odak sayılardadır; örneğin Kur'an'daki sure sayısı 114'tür.",
-            "conceptRelations": "Kelimeler ve kavramlar arasındaki ilişkiler",
-            "conceptRelationsDesc": "Bazı kelimelerin tekrar sayılarının diğer sayılarla ilişkilendirilmesi; örneğin \"ay\" kelimesinin yıldaki ay sayısı olan 12 kez geçmesi.",
-            "letterCounts": "Ayetlerdeki harf sayıları",
-            "letterCountsDesc": "Dikkat çekicidir ki bazı ayetlerdeki harf sayısı belirli bir sayıyla örtüşür; örneğin bir ayetin başından sonuna kadar harf sayısı ayette geçen sayıyla aynıdır."
-        },
-        "chat": {
-            "title": "Topluluk Sohbeti",
-            "subtitle": "Başkalarıyla bağlantı kurun, sorular sorun ve tefekkürlerinizi paylaşın.",
-            "banner": "Şimdi canlı: waelio-messaging destekli gerçek zamanlı sohbet.",
-            "ctaChat": "Sohbeti aç",
-            "ctaSupport": "Destek al",
-            "communityTitle": "Herkese açık odalar",
-            "communityBody": "Sureler, tefekkürler ve uygulama ipuçları konuşmak için açık odalara katılın.",
-            "devTitle": "Geliştiriciler",
-            "devBody": "Katkı yapmak ister misiniz? Açık konularda bizimle iletişime geçin.",
-            "todoTitle": "Canlı durum",
-            "todoBody": "Canlı sohbet, odalar ve mesaj geçmişi artık waelio-messaging ile aktif.",
-            "live": {
-                "title": "Canlı Sohbet",
-                "adminBadge": "Yönetici",
-                "reconnect": "Yeniden bağlan",
-                "anon": "Anonim",
-                "users": "Çevrimiçi kullanıcılar",
-                "you": "Sen",
-                "noUsers": "Başka çevrimiçi kullanıcı yok",
-                "connected": "Bağlandı",
-                "connecting": "Bağlanıyor...",
-                "disconnected": "Bağlantı kesildi",
-                "directMessage": "Doğrudan mesaj",
-                "broadcastMessage": "Herkese mesaj",
-                "messageToRoom": "#{room} odasına mesaj",
-                "loginRequiredToSend": "Mesaj göndermek için lütfen giriş yapın.",
-                "createRoomTitle": "Yeni Oda Oluştur",
-                "roomNameLabel": "Oda adı",
-                "createRoomAction": "Oluştur",
-                "sendDirect": "Kullanıcıya gönder",
-                "send": "Gönder"
-            }
-        },
-        "settings": {
-            "title": "Ayarlar",
-            "subtitle": "Uygulamanın görünümünü ve davranışını kontrol edin.",
-            "display": {
-                "title": "Görünüm",
-                "desc": "Yerleşim yoğunluğunu ve hareket tercihlerini ayarlayın.",
-                "compact": "Kompakt yerleşim",
-                "compactHint": "Yoğun ekranlar için daha sıkı aralık kullanın.",
-                "motion": "Hareketi azalt",
-                "motionHint": "Daha sakin etkileşim için animasyonları yumuşatın.",
-                "darkMode": "Karanlık mod",
-                "darkModeHint": "Açık ve koyu tema arasında geçiş yapın.",
-                "translation": "Kur'an çevirisini göster",
-                "translationHint": "Şeffaflık için Arapça metinden sonra çeviriyi her zaman göster.",
-                "translator": "Kur'an çevirmeni",
-                "translatorHint": "Mevcut dil için tercih ettiğiniz çeviri âlimi seçin."
-            },
-            "accessibility": {
-                "title": "Erişilebilirlik",
-                "desc": "Daha kolay okuma için metin boyutunu ve kontrastı ayarlayın.",
-                "fontSize": "Metin boyutu",
-                "fontSizeHint": "Tüm metni büyük veya küçük yapar.",
-                "fontSizes": {
-                    "0": "Küçük",
-                    "1": "Orta",
-                    "2": "Büyük",
-                    "3": "Çok Büyük"
-                },
-                "highContrast": "Yüksek kontrast",
-                "highContrastHint": "Daha iyi görünürlük için kontrastı artırın."
-            },
-            "navigation": {
-                "title": "Gezinme",
-                "desc": "Çekmece sıralamasını ve görünürlüğünü kontrol edin.",
-                "enableOrdering": "Sürükle sıralamayı etkinleştir",
-                "enableOrderingHint": "Çekmecedeki öğeleri yeniden sıralama ve sabitlemeye izin ver.",
-                "drawerDefault": "Başlangıçta çekmeceyi aç",
-                "drawerDefaultHint": "Açık başlatmak için etkinleştirin; yalnızca gerektiğinde açmak için devre dışı bırakın."
-            },
-            "notifications": {
-                "title": "Bildirimler",
-                "desc": "Yeni içerik geldiğinde haberdar olun.",
-                "enable": "Bildirimleri etkinleştir",
-                "enableHint": "Bir şey göndermeden önce izin isteyeceğiz.",
-                "enabled": "Push bildirimleri etkin!",
-                "unavailable": "Bu cihaz/tarayıcıda bildirimler desteklenmiyor.",
-                "denied": "Bildirimler engellendi. Lütfen tarayıcı ayarlarından izin verin.",
-                "error": "Bildirimler şu anda etkinleştirilemedi.",
-                "testTitle": "Bildirimler Etkin",
-                "testBody": "Artık Peace2074'ten güncellemeler alacaksınız"
-            },
-            "audio": {
-                "title": "Ses",
-                "desc": "Ezan ve oynatma varsayılanlarını kontrol edin.",
-                "autoPlay": "Ezanı otomatik oynat",
-                "autoPlayHint": "Mümkün olduğunda ezan oynatmayı otomatik başlat.",
-                "autoPlayPrayerTimes": "Namaz Vakitlerinde Ezan",
-                "autoPlayPrayerTimesHint": "Namaz vakti girdiğinde Ezanı otomatik olarak çal."
-            },
-            "refresh": {
-                "title": "Uygulamayı yenile",
-                "desc": "En son sürümü almak için zorla güncelle ve yeniden yükle."
-            },
-            "clearingCache": "Önbellek temizleniyor ve yeniden yükleniyor..."
-        },
-        "preferences": {
-            "title": "Kullanıcı tercihleri",
-            "subtitle": "Okuma ve güncellemeler için kişisel varsayılanları kaydedin.",
-            "profile": {
-                "title": "Profil",
-                "displayName": "Görünen ad",
-                "emailUpdates": "Bana ara sıra e-posta güncellemeleri gönder",
-                "hint": "Tercihler şimdilik bu cihaza özeldir."
-            },
-            "quran": {
-                "title": "Kur'an okuma",
-                "reciter": "Varsayılan okuyucu",
-                "transliteration": "Transliterasyonu göster",
-                "remember": "Son okunan sayfayı hatırla",
-                "highlightMode": "Tilavet vurgulama",
-                "highlightWord": "Kelime",
-                "highlightSentence": "Cümle",
-                "hint": "Okuma tercihleri bu cihazdaki tüm Kur'an sayfalarında geçerlidir."
-            },
-            "appearance": {
-                "title": "Görünüm",
-                "hint": "Sistem temasını takip edin veya açık/koyu zorlayın.",
-                "themeOptions": {
-                    "system": "Sistem",
-                    "light": "Açık",
-                    "dark": "Koyu"
-                }
-            },
-            "security": {
-                "title": "Güvenlik",
-                "currentPassword": "Mevcut şifre",
-                "newPassword": "Yeni şifre",
-                "confirmPassword": "Yeni şifreyi doğrula",
-                "changePasswordBtn": "Şifreyi Değiştir",
-                "generatePassword": "Güçlü Şifre Oluştur",
-                "passwordChanged": "Şifre başarıyla değiştirildi",
-                "passwordGenerated": "Güçlü şifre oluşturuldu ve alanlara eklendi",
-                "hint": "Şifre en az 8 karakter olmalıdır.",
-                "deleteAccount": {
-                    "title": "Hesabı sil",
-                    "warningTitle": "Kalıcı işlem",
-                    "warningBody": "Bu işlem hesabınızı, profilinizi, kayıtlı ilerlemenizi, beğenilerinizi, geçiş anahtarlarınızı ve aktif oturumunuzu kalıcı olarak siler. Bu işlem geri alınamaz.",
-                    "confirmLabel": "Kullanıcı adı veya e-posta",
-                    "confirmHint": "Hesap silmeyi onaylamak için {identifier} yazın.",
-                    "currentPasswordHint": "Şifreli hesaplar için gereklidir. Yalnızca Apple veya Google ile giriş yapıyorsanız bu alanı boş bırakabilirsiniz.",
-                    "action": "Hesabı sil",
-                    "confirmDialogTitle": "Hesap kalıcı olarak silinsin mi?",
-                    "confirmDialogMessage": "Hesabınız ve ilişkili verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz.",
-                    "success": "Hesap başarıyla silindi"
-                },
-                "errors": {
-                    "allFieldsRequired": "Tüm alanlar zorunludur",
-                    "passwordMismatch": "Yeni şifreler eşleşmiyor",
-                    "passwordTooShort": "Şifre en az 8 karakter olmalı",
-                    "changeFailed": "Şifre değiştirilemedi",
-                    "confirmationRequired": "Onaylamak için lütfen kullanıcı adınızı veya e-posta adresinizi yazın",
-                    "confirmationMismatch": "Onay metni hesabınızla eşleşmiyor",
-                    "deleteFailed": "Hesap silinemedi"
-                }
-            }
-        },
-        "admin": {
-            "title": "Yönetim",
-            "subtitle": "Sürümleri ve versiyon kontrolünü yönetin",
-            "currentVersion": "Mevcut Sürüm",
-            "onlyEven": "Sadece kararlı sürümleri göster",
-            "refresh": "Yenile",
-            "even": "Kararlı",
-            "noTitle": "Başlık yok",
-            "noVersions": "Kullanılabilir sürüm yok",
-            "loading": "Sürümler yükleniyor...",
-            "unknownDate": "Bilinmeyen tarih",
-            "loadFailed": "Sürümler yüklenemedi",
-            "users": {
-                "title": "Kullanıcı Yönetimi",
-                "loadFailed": "Kullanıcılar yüklenemedi",
-                "updateSuccess": "Kullanıcı güncellendi",
-                "updateFailed": "Kullanıcı güncellenemedi",
-                "roleLabel": "Rol",
-                "save": "Kaydet",
-                "noUsers": "Kullanıcı bulunamadı",
-                "loading": "Kullanıcılar yükleniyor...",
-                "lastLogin": "Son Giriş",
-                "loginCount": "Girişler",
-                "bookmarks": "Yer İmleri",
-                "surasCompleted": "Sureler",
-                "lastRead": "Son Okuma",
-                "sura": "Sure",
-                "editPerms": "İzinler",
-                "permsTitle": "İzinleri Düzenle:",
-                "permsHint": "Kullanıcının her konu üzerinde yapmasına izin verilen her eylemi işaretleyin.",
-                "permsSubject": "Konu",
-                "savePerms": "İzinleri Kaydet",
-                "cancel": "İptal",
-                "roles": {
-                    "user": "Kullanıcı",
-                    "editor": "Editör",
-                    "admin": "Yönetici"
-                }
-            }
-        },
-        "blog": {
-            "title": "Blog",
-            "subtitle": "Güncellemeler, ipuçları ve tefekkürler.",
-            "empty": "Henüz yazı yok.",
-            "notFound": "Yazı bulunamadı",
-            "newPost": "Yeni Yazı",
-            "likeSingle": "{count} Beğeni",
-            "likePlural": "{count} Beğeni",
-            "likeUpdateError": "Beğeni güncellenemedi",
-            "editor": {
-                "newPost": "Yeni Yazı",
-                "editPost": "Yazıyı Düzenle",
-                "authRequired": "Blog yazısı oluşturmak veya düzenlemek için giriş yapmalısınız.",
-                "title": "Başlık",
-                "titleRequired": "Başlık zorunludur",
-                "slug": "Slug",
-                "slugHint": "URL uyumlu tanımlayıcı (örn: benim-yazi-basligim)",
-                "slugRequired": "Slug zorunludur",
-                "excerpt": "Özet",
-                "content": "İçerik",
-                "contentRequired": "İçerik zorunludur",
-                "tags": "Etiketler",
-                "tagsHint": "Virgülle ayrılmış etiketler",
-                "publish": "Yayınla",
-                "update": "Güncelle",
-                "delete": "Sil",
-                "confirmDelete": "Yazı silinsin mi?",
-                "confirmDeleteMessage": "Bu işlem geri alınamaz.",
-                "publishSuccess": "Yazı başarıyla yayınlandı!",
-                "updateSuccess": "Yazı başarıyla güncellendi!",
-                "deleteSuccess": "Yazı başarıyla silindi!",
-                "saveError": "Yazı kaydedilemedi",
-                "deleteError": "Yazı silinemedi",
-                "loadError": "Yazı yüklenemedi",
-                "postNotFound": "Yazı bulunamadı",
-                "fillRequired": "Lütfen tüm zorunlu alanları doldurun",
-                "aiDraft": "Yapay Zeka Taslağı",
-                "aiDraftTip": "Başlığınızdan yapay zeka ile makale taslağı oluşturun",
-                "aiDraftDone": "Taslak oluşturuldu — düzenleyebilirsiniz!",
-                "aiDraftFailed": "Yapay zeka taslağı kullanılamıyor, lütfen elle yazın"
-            }
-        },
-        "deploys": {
-            "title": "Dağıtım Geçmişi",
-            "subtitle": "Sürümlerimizi ve özellik güncellemelerimizi zaman içinde takip edin",
-            "features": "Özellikler",
-            "fixes": "Hata Düzeltmeleri",
-            "documentation": "Dokümantasyon",
-            "chores": "Bakım Çalışmaları",
-            "like": "Beğen",
-            "unlike": "Beğeniyi kaldır",
-            "liked": "❤️ Beğenildi!",
-            "unliked": "Beğeni kaldırıldı",
-            "loadError": "Dağıtım geçmişi yüklenemedi",
-            "loginRequiredToLike": "Dağıtımları beğenmek için lütfen giriş yapın",
-            "toggleLikeError": "Beğeni değiştirilemedi"
-        },
-        "social": {
-            "title": "Sosyal ve Paylaş",
-            "subtitle": "Bizi takip edin ve Kuran'ı dünyayla paylaşın",
-            "followUs": "Bizi Takip Edin",
-            "featuredVideos": "Öne Çıkan Videolar",
-            "featuredVideosSubtitle": "Naşidler aracılığıyla inanç ve sevgiyi paylaşan genç sanatçılar",
-            "shareVerse": "Bir Ayet Paylaş",
-            "selectSura": "Sure Seç",
-            "selectAyah": "Ayet numarası",
-            "loadVerse": "Ayeti Yükle",
-            "verseNotFound": "Ayet bulunamadı",
-            "loadError": "Ayet yüklenemedi",
-            "copyText": "Metni Kopyala",
-            "copied": "Panoya kopyalandı!",
-            "copyError": "Kopyalama başarısız"
-        }
-    },
-    "offline": {
-        "title": "Çevrimdışı Okuma",
-        "subtitle": "Çevrimdışı dinlemek için Kuran okumalarını indirin",
-        "selectQuality": "Ses kalitesini seçin",
-        "regular": "Normal Kalite",
-        "highQuality": "Yüksek Kalite",
-        "storageUsed": "Kullanılan Depolama",
-        "surasDownloaded": "İndirilen Sureler",
-        "downloadOptions": "İndirme Seçenekleri",
-        "downloadAllQuran": "Tüm Kuran'ı İndir (114 Sure)",
-        "downloadCurrentSura": "Mevcut Sureyi İndir",
-        "clearAllCache": "Tüm İndirilen Sesleri Temizle",
-        "downloading": "İndiriliyor",
-        "sura": "Sure",
-        "verses": "Ayetler",
-        "noSuraSelected": "Sure seçilmedi",
-        "downloadingStarted": "İndirme başladı...",
-        "downloadComplete": "İndirme tamamlandı!",
-        "downloadFailed": "İndirme başarısız, lütfen tekrar deneyin",
-        "downloadAllComplete": "{completed} sure indirildi. {failed} başarısız.",
-        "cacheCleared": "Tüm çevrimdışı sesler temizlendi",
-        "qualityChanged": "Kalite değiştirildi. Çevrimdışı ses kullanmak için yeniden yükleyin.",
-        "listenWithoutInternet": "İnternetsiz dinle",
-        "currentSuraReady": "Bu sure çevrimdışı hazır",
-        "currentSuraReadyHint": "Bu kıraati internet olmadan dinleyebilirsiniz. İndirilen ses, mevcut olduğunda otomatik olarak tercih edilir.",
-        "fullLibraryReady": "Tüm Kur'an çevrimdışı hazır",
-        "fullLibraryReadyHint": "Tüm kıraatler indirildi. Uygulama, internet kullanımını azaltmak için mümkün olduğunda cihazdaki sesi tercih eder.",
-        "internetRequired": "Şu anda internet gerekiyor",
-        "internetRequiredHint": "İnternetsiz dinlemek için bu sureyi veya tüm Kur'an'ı indirin.",
-        "confirmDownloadAll": {
-            "title": "Tüm Kuran İndirilsin mi?",
-            "message": "Bu, {quality} kalitesinde yaklaşık {size} ses verisi indirecektir. Yeterli depolamanız ve kararlı bir bağlantınız olduğundan emin olun."
-        },
-        "confirmClear": {
-            "title": "Tüm Çevrimdışı Sesler Temizlensin mi?",
-            "message": "Bu, indirilen tüm okumaları silecektir. Daha sonra tekrar indirebilirsiniz."
-        }
-    },
-    "general": {
-        "Home": "Ana Sayfa",
-        "SiteTitle": "Peace2074",
-        "SiteDomain": "https://peace2074.com",
-        "navigationLinks": "Gezinme Bağlantıları",
-        "CurrentVersion": "Mevcut Sürüm",
-        "setLocale": "Varsayılan Dili Ayarla",
-        "CheckUpdates": "Güncellemeleri getir",
-        "Services": "Hizmetler",
-        "fetchingUpdates": "Güncellemeler alınıyor",
-        "searching": "Aranıyor…",
-        "languages": "Diller",
-        "languageNames": {
-            "en": "İngilizce",
-            "ar": "Arapça",
-            "de": "Almanca",
-            "es": "İspanyolca",
-            "ru": "Rusça",
-            "he": "İbranice",
-            "it": "İtalyanca",
-            "tr": "Türkçe"
-        },
-        "dark": "koyu",
-        "light": "açık",
-        "auto": "otomatik",
-        "lightMode": "Aydınlık Modu Değiştir",
-        "open": "aç",
-        "close": "kapat",
-        "holdState": "Her zaman açık",
-        "swipeToChange": "Değiştirmek için kaydır",
-        "pause": "Duraklat",
-        "play": "Oynat",
-        "stop": "Durdur",
-        "download": "İndir",
-        "cancel": "İptal",
-        "delete": "Sil",
-        "edit": "Düzenle",
-        "share": "Paylaş",
-        "undo": "Geri al",
-        "updateAvailable": "Yeni bir sürüm mevcut!",
-        "update": "Şimdi Güncelle",
-        "later": "Sonra",
-        "greetings": {
-            "eidMubarak": "✨ Bayramınız mübarek olsun ✨",
-            "englishCustomers": "İngilizce konuşan müşterilerimiz için bir selamlama gösterebiliriz."
-        }
-    },
-    "intro": {
-        "desc": "JavaScript meraklısı, Wolf Pack kardeşi, Ducks tutkunu; yeniden kullanılabilirlik ve iyileştirmeler odaklı."
-    },
-    "notfound": "Bulunamadı",
-    "contact": {
-        "help": "Buradayız",
-        "offer_help": "Nasıl yardımcı olabileceğimizi lütfen bize bildirin!",
-        "accept_terms": "Şartlar ve koşullarımızı görüntüleyin.",
-        "terms_accepted": "Şartlar ve koşulları kabul ediyorum.",
-        "name": {
-            "label": "Adınız *",
-            "hint": "Ad ve soyad",
-            "placeholder": "Adınız nedir"
-        },
-        "email1": {
-            "label": "E-postanız *",
-            "hint": "E-postanız",
-            "placeholder": "Size geri dönüş yapabilmemiz için. "
-        },
-        "message1": {
-            "label": "Mesajınız *",
-            "hint": "Mesajınızı girin",
-            "placeholder": "Nasıl yardımcı olabileceğimizi anlatın"
-        },
-        "email": {
-            "label": "E-posta adresiniz *",
-            "hint": "E-postanız",
-            "placeholder": "Size geri dönüş yapabilmemiz için."
-        },
-        "message": {
-            "label": "Mesajınız *",
-            "hint": "Mesajınızı girin",
-            "placeholder": "Nasıl yardımcı olabileceğimizi anlatın"
-        },
-        "projects": {
-            "label": "Proje Adı *",
-            "placeholder": "Hangi projeden bahsediyorsunuz?"
-        },
-        "success": "Mesaj kaydedildi. Yakında cevap vereceğiz.",
-        "error": "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
-        "contactTitle": "İletişim Bilgileri",
-        "reachDirectly": "Doğrudan bize ulaşın:",
-        "socialTitle": "Sosyal",
-        "socialX": "X / Twitter",
-        "socialGitHub": "GitHub"
-    },
-    "about": {
-        "title": "Waelio",
-        "par10": "Dijital dünyada farklı/eklektik bir lider; yirmi yılı aşkın profesyonel başarıya sahip."
-    },
-    "demoContent": {
-        "q1": "Yazı oluşturabilir miyim?",
-        "q2": "Yazı okuyabilir miyim?",
-        "q3": "Yazıyı güncelleyebilir miyim?",
-        "q4": "Yazıyı silebilir miyim?"
-    },
-    "privacy_policy": "Gizlilik Politikası",
-    "privacy_intro": "Gizliliğiniz bizim için önemlidir. Bu sayfa, web sitemizi kullanırken bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar.",
-    "information_we_collect": "Topladığımız Bilgiler",
-    "basic_account_info": "Kayıt olur veya giriş yaparsanız temel hesap bilgileri (ör. e-posta adresi).",
-    "usage_data": "Deneyiminizi geliştirmek için kullanım verileri ve çerezler.",
-    "how_we_use_information": "Bilgileri Nasıl Kullanıyoruz",
-    "provide_services": "Hizmetlerimizi sunmak ve sürdürmek için.",
-    "improve_experience": "Deneyiminizi iyileştirmek ve kişiselleştirmek için.",
-    "communicate_updates": "Güncellemeler veya destek hakkında sizinle iletişim kurmak için.",
-    "cookies": "Çerezler",
-    "cookies_text": "Tercihlerinizi hatırlamak ve deneyiminizi geliştirmek için çerezler kullanırız. Sitenin altındaki banttan çerezleri kabul edebilir veya reddedebilirsiniz.",
-    "data_security": "Veri Güvenliği",
-    "data_security_text": "Verilerinizi korumak için makul önlemler alıyoruz; ancak hiçbir sistem %100 güvenli değildir.",
-    "apple_tv_section": "Apple TV ve Yerel Uygulamalar",
-    "apple_tv_text": "PEACE2074 uygulaması iPhone, iPad ve Apple TV'de kullanılabilir. Tüm platformlarda yukarıda açıklananların ötesinde herhangi bir veri toplamıyoruz. Apple TV uygulaması mikrofon, kamera veya konum hizmetlerini kullanmaz. Oturum kimlik doğrulaması güvenli HTTP-only çerezler kullanır — cihazda yerel olarak kişisel veri depolanmaz. iCloud kullanıyorsanız, cihazınız iCloud senkronizasyonunu sunucularımızdan bağımsız olarak yönetir.",
-    "contact_text": "Gizlilik politikamız hakkında sorularınız varsa lütfen bizimle iletişime geçin.",
-    "terms_and_conditions": "Şartlar ve Koşullar",
-    "terms_intro": "Web sitemizi kullanmadan önce lütfen bu şart ve koşulları dikkatlice okuyun.",
-    "acceptance_of_terms": "Şartların Kabulü",
-    "acceptance_of_terms_text": "Sitemize erişerek veya kullanarak bu şartlara bağlı kalmayı kabul etmiş olursunuz. Kabul etmiyorsanız lütfen sitemizi kullanmayın.",
-    "use_of_site": "Sitenin Kullanımı",
-    "use_of_site_1": "Siteyi yürürlükteki tüm yasa ve düzenlemelere uygun olarak kullanmalısınız.",
-    "use_of_site_2": "Siteyi yasa dışı veya yasak bir amaç için kullanamazsınız.",
-    "intellectual_property": "Fikri Mülkiyet",
-    "intellectual_property_text": "Bu sitedeki tüm içerik site sahibine veya lisans verenlerine aittir ve telif hakkı yasalarıyla korunur.",
-    "limitation_of_liability": "Sorumluluğun Sınırlandırılması",
-    "limitation_of_liability_text": "Sitenin kullanımından doğan herhangi bir zarardan sorumlu değiliz.",
-    "changes_to_terms": "Şartlarda Değişiklik",
-    "changes_to_terms_text": "Bu şartları istediğimiz zaman güncelleyebiliriz. Siteyi kullanmaya devam etmeniz yeni şartları kabul ettiğiniz anlamına gelir.",
-    "auth": {
-        "username": "Kullanıcı adı",
-        "password": "Şifre",
-        "email": "E-posta",
-        "confirmPassword": "Şifreyi Onayla",
-        "usernameRequired": "Kullanıcı adı zorunludur",
-        "passwordRequired": "Şifre zorunludur",
-        "enterUsername": "Kullanıcı adınızı girin",
-        "enterPassword": "Şifrenizi girin",
-        "enterEmail": "E-postanızı girin",
-        "enterCredentials": "Lütfen kullanıcı adı ve şifre girin",
-        "signIn": "Giriş Yap",
-        "signUp": "Kayıt Ol",
-        "login": "Giriş Yap",
-        "rememberMe": "Beni hatırla",
-        "orContinueWith": "veya şununla devam et",
-        "signInWithPasskey": "Geçiş anahtarıyla giriş yap",
-        "passkeyHint": "Face ID, Touch ID, Windows Hello veya parola yöneticinizi kullanın.",
-        "passkeyNotSupported": "Geçiş anahtarları bu tarayıcı bağlamında desteklenmiyor.",
-        "passkeyUnavailable": "Bu hesap için henüz bir geçiş anahtarı kayıtlı değil. Önce şifrenizle giriş yapın.",
-        "passkeyCancelled": "Geçiş anahtarıyla giriş iptal edildi.",
-        "passkeyLoginSuccess": "Geçiş anahtarıyla giriş yapıldı.",
-        "passkeyLoginError": "Geçiş anahtarıyla giriş başarısız oldu. Lütfen tekrar deneyin.",
-        "passkeyCreated": "Geçiş anahtarı kaydedildi; bir dahaki girişiniz daha hızlı olacak.",
-        "passkeyCreateError": "Geçiş anahtarınız şu anda kaydedilemedi.",
-        "passkeyCreatePromptTitle": "Bir geçiş anahtarı kaydedilsin mi?",
-        "passkeyCreatePromptMessage": "Bir dahaki girişinizde daha hızlı olmak için cihaz biyometrisini veya parola yöneticinizi kullanın.",
-        "passkeyCreatePromptConfirm": "Geçiş anahtarını kaydet",
-        "signInWithGitHub": "GitHub ile giriş yap",
-        "signInWithNetlify": "Netlify Identity ile giriş yap",
-        "appleSignInUnavailable": "Apple ile giriş şu anda kullanılamıyor.",
-        "socialSignInExpired": "Girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
-        "googleSignInExpired": "Google ile girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
-        "appleSignInExpired": "Apple ile girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
-        "welcomeBack": "Tekrar hoş geldiniz",
-        "forgotPassword": "Şifrenizi mi unuttunuz?",
-        "resetPassword": "Şifreyi Sıfırla",
-        "resetInstructions": "E-postanızı girin, şifre sıfırlama talimatlarını gönderelim.",
-        "sendResetLink": "Sıfırlama Bağlantısı Gönder",
-        "resetEmailSent": "Şifre sıfırlama talimatları e-postanıza gönderildi",
-        "resetError": "Sıfırlama e-postası gönderilemedi",
-        "loginError": "Giriş başarısız. Lütfen tekrar deneyin.",
-        "loginSuccess": "Tekrar hoş geldiniz!",
-        "dontHaveAccount": "Hesabınız yok mu?",
-        "alreadyHaveAccount": "Zaten hesabınız var mı?",
-        "createAccount": "Hesabınızı oluşturun",
-        "fillAllFields": "Lütfen tüm alanları doldurun",
-        "passwordMismatch": "Şifreler eşleşmiyor",
-        "acceptTerms": "Lütfen şart ve koşulları kabul edin",
-        "iAccept": "Kabul ediyorum",
-        "termsAndConditions": "şartlar ve koşullar",
-        "signupSuccess": "Hesap başarıyla oluşturuldu! Lütfen giriş yapın.",
-        "signupError": "Kayıt başarısız. Lütfen tekrar deneyin."
-    },
-    "login": "Giriş",
-    "signup": "Kayıt Ol",
-    "user": "Kullanıcı",
-    "password": "Şifre",
-    "sign_in_with_google": "Google ile giriş yap",
-    "sign_up": "Kayıt Ol",
-    "signup_success": "Hesap oluşturuldu! Lütfen giriş yapın.",
-    "signup_failed": "Kayıt başarısız",
-    "create_account": "Hesap oluştur",
-    "back_to_login": "Girişe dön",
-    "please_fill_all_fields": "Lütfen tüm alanları doldurun",
-    "passwords_do_not_match": "Şifreler eşleşmiyor",
-    "confirm_password": "Şifreyi onayla",
-    "cancel": "İptal",
-    "edit": "Düzenle",
-    "login_success": "Başarıyla giriş yapıldı",
-    "please_accept_terms": "Şartlar ve koşulları kabul edin.",
-    "email": "E-posta",
-    "submit": "gönder",
-    "reset": "Sıfırla",
-    "Login": "Giriş",
-    "password_login": "E-posta ile giriş",
-    "username": "Kullanıcı adı",
-    "username_required": "Şifre zorunludur",
-    "hello": "Merhaba",
-    "logout": "Çıkış",
-    "already_logged_in": "Zaten giriş yapılmış",
-    "login_method": "Giriş Yöntemleri",
-    "logout_success": "başarıyla çıkış yaptınız",
+  "welcome": "Hoş geldiniz",
+  "button": {
+    "about": "Hakkında",
     "back": "Geri",
-    "username_taken": "Kullanıcı adı alınmış",
-    "accept_terms_and_conditions": "Şartlar ve koşullarımızı kabul edin",
-    "password_required": "Şifre Zorunlu",
-    "resend_verification_email": "doğrulama e-postasını yeniden gönder",
-    "password_signup": "kayıt ol",
-    "username_optional": "Kullanıcı adı",
-    "first_name": "Ad",
-    "last_name": "Soyad",
-    "username_hint": "kullanıcı adı",
-    "email_required": "E-posta zorunlu",
-    "The 99 Holy Names of Allah": "Allah'ın 99 Güzel İsmi",
-    "welcome_back": "Tekrar hoş geldin, {name}",
-    "welcome_guest": "Merhaba Misafir",
-    "no_bookmarks": "Kayıtlı yer imi yok",
-    "tasbeeh": {
-        "title": "Dijital Tesbih",
-        "subtitle": "İslami Dua Tespihi",
-        "tapToCount": "Saymak için dokun",
-        "reset": "Sıfırla",
-        "settings": "Ayarlar",
-        "selectPhrase": "Zikir ifadesi seç",
-        "todayStats": "Bugünün İstatistikleri",
-        "total": "Toplam",
-        "sessions": "Oturumlar",
-        "completed": "Tamamlanan Setler",
-        "continue": "Devam",
-        "vibration": "Titreşim Geri Bildirimi",
-        "sound": "Sesli Geri Bildirim",
-        "autoNext": "Otomatik Sonraki İfade",
-        "phrases": {
-            "subhanallah": "Allah'ı tesbih ederim",
-            "alhamdulillah": "Allah'a hamd olsun",
-            "allahu_akbar": "Allah en büyüktür",
-            "la_ilaha_illa_allah": "Allah'tan başka ilah yoktur",
-            "astaghfirullah": "Allah'tan bağışlanma dilerim",
-            "la_hawla": "Güç ve kuvvet ancak Allah iledir"
+    "go": "GİT",
+    "home": "Ana Sayfa",
+    "toggle_dark": "Karanlık modu değiştir",
+    "toggle_langs": "Dili değiştir",
+    "Privacy": "Gizliliğimiz",
+    "Privacy_Short": "Gizlilik",
+    "Terms": "Şartlar ve Koşullarımız",
+    "Terms_Short": "Şartlar",
+    "Contact": "Bize ulaşın",
+    "TimeLine": "Zaman Çizelgesi",
+    "Utils": "Araçlar",
+    "submit": "Gönder",
+    "reset": "Sıfırla",
+    "reload": "Yenile",
+    "close": "Kapat",
+    "new_content": "Yeni içerik mevcut, güncellemek için yenileyin.",
+    "offline_ready": "Uygulama çevrimdışı çalışmaya hazır"
+  },
+  "athan": {
+    "play": "Ezanı Oynat",
+    "pause": "Ezanı Duraklat",
+    "stop": "Ezanı Durdur"
+  },
+  "appShell": {
+    "toggleMenu": "Menüyü aç/kapat",
+    "searchPlaceholder": "Ara…",
+    "playAthan": "Ezanı Oynat",
+    "stopAthan": "Ezanı Durdur",
+    "pin": "Sabitle",
+    "unpin": "Sabitlemeyi kaldır",
+    "resultType": {
+      "sura": "Kur'an",
+      "page": "Sayfa"
+    },
+    "nav": {
+      "home": "Ana Sayfa",
+      "about": "Hakkında",
+      "quran": "Kur'an",
+      "holynames": "Kutsal İsimler",
+      "tasbeeh": "Tesbih",
+      "miracles": "Mucizeler",
+      "chat": "Sohbet",
+      "support": "Destek",
+      "settings": "Ayarlar",
+      "preferences": "Tercihler",
+      "login": "Giriş",
+      "logout": "Çıkış Yap",
+      "blog": "Blog",
+      "contact": "İletişim",
+      "deploys": "Dağıtımlar",
+      "social": "Sosyal"
+    }
+  },
+  "navigation": {
+    "Profile": "Profilim",
+    "Favorites": "Favorilerim",
+    "Messages": "Mesajlar",
+    "HomePageTitle": "Ana Sayfa",
+    "HomePageCaption": "Ana Sayfa",
+    "AuthPageTitle": "Kimlik Doğrulama",
+    "AuthPageCaption": "Kullanıcı Oluştur / Giriş",
+    "AboutPageTitle": "Hakkımızda",
+    "AboutPageCaption": "Hakkımızda",
+    "ContactPageTitle": "Bize ulaşın",
+    "ContactPageCaption": "Bize ulaşın",
+    "TermsPageTitle": "Şartlar",
+    "TermsPageCaption": "Şartlar ve koşullar",
+    "BlogPageTitle": "Blogumuz",
+    "BlogPageCaption": "Yazılar ve Makaleler",
+    "ProductsPageTitle": "Ürünler",
+    "ProductsPageCaption": "Ürünlerimiz",
+    "PrivacyPageTitle": "Gizlilik",
+    "PrivacyPageCaption": "Gizlilik Sayfası",
+    "ServicesPageTitle": "Hizmetler",
+    "ServicesPageCaption": "Hizmetlerimiz",
+    "SettingsPageTitle": "Ayarlar Sayfası",
+    "SettingsPageCaption": "Görüntü Ayarları",
+    "TranslationPageTitle": "Çeviriler",
+    "TranslationPageCaption": "Çevirilerinizi yönetin",
+    "GlossaryPageTitle": "Sözlük",
+    "GlossaryPageCaption": "Sözlük Sayfamız",
+    "MediaPageTitle": "Medya",
+    "MediaPageCaption": "Medya Sayfamız",
+    "Signin": "Giriş",
+    "Signout": "Çıkış",
+    "Register": "Kayıt Ol",
+    "AdminPage": "Yönetim Sayfası"
+  },
+  "pages": {
+    "about": {
+      "title": "PEACE2074 Hakkında",
+      "hero": {
+        "eyebrow": "PEACE2074 Hakkında",
+        "title": "Okumak, hatırlamak ve geri dönmek için aydınlık bir yer.",
+        "lead": "PEACE2074, Kur'an ve tefekkür için çok dilli bir alandır; tek bir ayet, tek bir sakin nefes ya da daha uzun bir yolculuk için açsanız da huzurlu, güzel ve gerçekten kullanışlı hissettirmek üzere tasarlandı.",
+        "primaryCta": "Kur'an'ı Aç",
+        "secondaryCta": "Kutsal İsimleri Keşfet",
+        "tags": {
+          "read": "Kur'an okuma",
+          "remember": "Zikir ve tesbih",
+          "reflect": "Kutsal İsimler ve tefekkür",
+          "connect": "Destek ve topluluk"
         }
-    },
-    "account": {
-        "title": "Hesap"
-    },
-    "meta": {
-        "home": "Peace2074 — manevi yolculuğunuzu desteklemek için İslami kaynaklar, dua araçları ve düşündürücü yazılar.",
-        "holynames": "Allah'ın 99 Güzel İsmini anlamları ve sesli okumalarıyla keşfedin.",
-        "tasbeeh": "Dijital Tesbih — oturum takibi ve ayarlarla zikir için sade ve şık sayaç.",
-        "miracles": "İşaretler ve mucizeler hakkında ilham verici hikâyeler ve tefekkürler okuyun.",
-        "quran": "Kutsal Kur'an — sureleri okuyun, gezinin ve yer imleyin; güzel Arapça tipografi ve duyarlı düzen ile.",
-        "privacy": "Siteyi kullanırken verilerinizi ve gizliliğinizi nasıl koruduğumuzu öğrenin.",
-        "titles": {
-            "home": "Ana Sayfa",
-            "quran": "Kur'an",
-            "holynames": "Kutsal İsimler",
-            "tasbeeh": "Tesbih"
+      },
+      "spotlight": {
+        "label": "Nazik odak için tasarlandı",
+        "title": "Gürültüyü azaltıp huzurlu farkındalığı artırmak için yapıldı.",
+        "body": "Her ekranın açık, destekleyici ve manevi olarak dengeli hissettirmesi amaçlandı; sure okuma ve ayet paylaşımından yer imlerine, çevrimdışı dinlemeye ve günlük tefekküre kadar."
+      },
+      "stats": {
+        "languages": {
+          "value": "8",
+          "label": "desteklenen dil"
+        },
+        "suras": {
+          "value": "114",
+          "label": "keşfe hazır sure"
+        },
+        "experience": {
+          "value": "1",
+          "label": "web ve iOS'ta sakin deneyim"
         }
+      },
+      "story": {
+        "eyebrow": "Neden var",
+        "title": "İman araçları bunaltıcı olmadan da güçlü olabilir.",
+        "body": "PEACE2074, Kur'an okumayı, zikri, düşünceli keşfi ve pratik desteği tek bir yerde toplar. Amaç basit: daha az sürtünme ve daha çok güzellikle sizi önemli olana geri döndürmek.",
+        "cardTitle": "Daha sakin bir dijital ritim",
+        "cardBody": "Dağınık araçlar ve gürültülü arayüzler yerine PEACE2074 okuma, tilavet, tesbih, Kutsal İsimler, tefekkürler ve desteği tek bir huzur akışında buluşturur."
+      },
+      "verse": {
+        "label": "Yol gösteren ruh",
+        "quote": "Huzur yalnızca aradığınız bir şey değildir. Sayfa sayfa, dua dua, dönüş dönüş uyguladığınız bir şeydir.",
+        "source": "PEACE2074 ruhu"
+      },
+      "pillars": {
+        "eyebrow": "Onu özel yapan şey",
+        "title": "Deneyimi üç sütun şekillendirir",
+        "lead": "Uygulamanın her parçası yoğun bir günde faydalı, sakin bir anda ise güzel hissettirmek için tasarlandı.",
+        "read": {
+          "title": "Berraklıkla oku",
+          "body": "Kur'an'ı odaklı okuma modları, ayet paylaşımı, yer imleri ve yolunuza çıkmayan bir tilavetle keşfedin."
+        },
+        "remember": {
+          "title": "Varlıkla hatırla",
+          "body": "Dijital tesbih, Kutsal İsimler ve baskı kurmadan istikrarı destekleyen nazik yönlendirmelerle zikri yakın tutun."
+        },
+        "connect": {
+          "title": "Destekle bağlantı kur",
+          "body": "Daha fazla gürültüye değil, yön duygusuna ihtiyaç duyduğunuzda sohbet, iletişim ve düşünceli rehberlik yoluyla yardım bulun."
+        }
+      },
+      "journey": {
+        "eyebrow": "Rehberli bir yolculuk",
+        "title": "Meraktan istikrara",
+        "lead": "İster arayarak, ister düşünerek, ister bir alışkanlığı yeniden kurarak gelin; PEACE2074 sizi bulunduğunuz yerde karşılar.",
+        "discover": {
+          "step": "01",
+          "title": "Keşfet",
+          "body": "Bir sure, bir ayet ya da bir soruyla başlayın ve uygulamanın sonraki adımı görünür kılmasına izin verin."
+        },
+        "reflect": {
+          "step": "02",
+          "title": "Tefekkür et",
+          "body": "Anlamla biraz daha uzun kalmak için tilavet, çeviriler, hatırlatmalar ve manevi araçlardan yararlanın."
+        },
+        "return": {
+          "step": "03",
+          "title": "Geri dön",
+          "body": "Yer imlerinize, rutinlerinize ve huzurlu ivmenize istediğiniz zaman geri dönün; yeniden başlamak yorucu olmak zorunda değil."
+        }
+      },
+      "promise": {
+        "eyebrow": "Koruduğumuz şey",
+        "title": "Varsayılan olarak güzel, faydalı ve saygılı",
+        "body": "Deneyim; odak, çok dilli erişim ve hem tefekküre hem rutine saygı duyan sakin bir görsel ritim etrafında şekillendi.",
+        "one": "Okumayı merkeze alan temiz bir arayüz",
+        "two": "Arapça ve İbranice için RTL destekli yerelleştirme",
+        "three": "Çevrimdışı tilavet ve web ile iOS'ta destekleyici araçlar"
+      },
+      "build": {
+        "eyebrow": "Açık geliştiriliyor",
+        "title": "Açık kod, iOS özeni ve SEO'ya hazır temeller",
+        "lead": "PEACE2074 herkese açık deposunu paylaşır, Capacitor üzerinden sakin bir iOS deneyimi sunar ve rota tabanlı SEO ile yapılandırılmış veriler sayesinde önemli sayfaları keşfedilebilir tutar."
+      },
+      "repo": {
+        "eyebrow": "Herkese açık depo",
+        "title": "Projeyi gerçek zamanlı takip edin",
+        "body": "Kod tabanı GitHub'da herkese açıktır ve aynı temel; issue'lar, katkı geçmişi ve workflow çalıştırmaları görünürken hem web deneyimini hem iOS uygulamasını güçlendirir.",
+        "links": {
+          "code": "Kodu görüntüle",
+          "issues": "Issue'lar",
+          "contributors": "Katkıda bulunanlar",
+          "actions": "CI ve Actions"
+        }
+      },
+      "analytics": {
+        "eyebrow": "Düşünceli analitik",
+        "title": "Tahminle değil, izinle ölçülür",
+        "body": "Analitik; izne saygı duyar, ürün sağlığını izler ve deneyimin ölçülebilir ve keşfedilebilir kalması için canonical URL'ler, meta etiketler ve yapılandırılmış verilerle birlikte çalışır.",
+        "pointConsent": "Onay ayarları, etkinlikler gönderilmeden önce analitik toplamayı kontrol eder.",
+        "pointGa4": "GA4 ve yerel Firebase Analytics; sayfa görüntülemeleri, yer imleri ve temel ürün etkileşimleri gibi akışları yakalar.",
+        "pointReader": "Okuyucu analitiği, oturum açmış kullanıcılar için sure ilerlemesini ve okuma örüntülerini özetler.",
+        "pointSeo": "Rota meta verileri, canonical URL'ler, Open Graph etiketleri ve yapılandırılmış veriler önemli sayfaların arama dostu kalmasına yardımcı olur.",
+        "links": {
+          "playbook": "GA4 kılavuzu",
+          "readerStats": "Okuyucu istatistikleri belgeleri"
+        }
+      },
+      "cta": {
+        "eyebrow": "Nazikçe içeri girin",
+        "title": "İhtiyacınız kadar kalın.",
+        "body": "Kur'an'ı açın, Kutsal İsimleri keşfedin ya da yolculuğunuzu şekillendirmek için yardım istiyorsanız bizimle iletişime geçin.",
+        "primary": "Okumaya başla",
+        "secondary": "Kutsal İsimleri keşfet",
+        "tertiary": "PEACE2074 ile iletişime geç"
+      }
     },
-    "bookmarks": "yer imi",
-    "profile": {
-        "title": "Profil",
-        "edit": "Profili Düzenle",
-        "save": "Değişiklikleri Kaydet"
+    "support": {
+      "title": "Destek",
+      "subtitle": "Yardıma mı ihtiyacınız var? Dinlemek ve yardımcı olmak için buradayız.",
+      "ctaChat": "Sohbete git",
+      "ctaContact": "Bize ulaşın",
+      "helpTitle": "Kılavuzlar ve SSS",
+      "helpBody": "Önce yardım dokümanlarımızı ve yaygın sorunları kontrol edin.",
+      "contactTitle": "Bize ulaşın",
+      "contactBody": "Takılırsanız, detayları gönderin; en kısa sürede yanıtlayalım.",
+      "aiTitle": "Yapay Zekâ Desteği",
+      "aiDesc": "Yapay zekâ asistanımızdan yardım alın"
+    },
+    "home": {
+      "title": "Ana Sayfa",
+      "hero": {
+        "title": "Peace2074",
+        "lead": "Okumak, düşünmek ve zikretmek için sakin bir yer.",
+        "ctaReadQuran": "Kur'an Oku",
+        "ctaHolyNames": "Kutsal İsimler",
+        "ctaTasbeeh": "Tesbih",
+        "ctaIos": "iPhone ve iPad",
+        "aiLabel": "PEACE AI'ye Sor",
+        "cardTitle": "Günlük Tefekkür",
+        "cardBody": "Odaklanmanıza yardımcı olacak kısa ayet seçkileri ve hatırlatmalar."
+      },
+      "ai": {
+        "title": "PEACE AI'ye Sor",
+        "subtitle": "Sureler, tefekkürler veya uygulama kullanımı hakkında rehberlik alın.",
+        "tryAnother": "Başka bir istem deneyin",
+        "examples": [
+          "Meryem Suresi'nden iki temel dersi ve burada nereden okunacağını vurgula.",
+          "Fatiha Suresi'nin ana teması nedir?",
+          "Kur'an'dan sabır hakkında kısa bir tefekkür verebilir misin?",
+          "Yusuf Peygamber'in kıssasını nerede bulabilirim?",
+          "Kadir Gecesi'nin önemini açıklar mısın?"
+        ],
+        "placeholder": "Bir sure, tema veya özellik hakkında sor",
+        "ask": "Sor",
+        "thinking": "Düşünüyor…",
+        "responseTitle": "AI Yanıtı",
+        "copied": "Yanıt panoya kopyalandı!",
+        "noReply": "Yanıt alınamadı.",
+        "requestFailed": "Kimi isteği başarısız oldu. Lütfen tekrar deneyin.",
+        "historyTitle": "Geçmiş",
+        "historyEmpty": "Henüz önceki soru yok.",
+        "reuse": "Yeniden kullan",
+        "clearHistory": "Geçmişi temizle"
+      },
+      "manifesto": {
+        "quote": "Delilere. Uyumsuzlara. İsyancılara. Sorun çıkaranlara. Kare deliklerdeki yuvarlak çivilere. İşleri farklı görenlere. Kuralları sevmezler ve statükoyla ilgilenmezler. Onları alıntılayabilir, onlara katılmayabilir, yüceltebilir veya karalayabilirsiniz. Ancak yapamayacağınız tek şey onları görmezden gelmektir. Çünkü onlar değiştirir. İnsanlığı ileriye taşırlar. Ve bazıları onları deli olarak görse de, biz dâhilik görürüz. Çünkü dünyayı değiştirebileceklerini düşünecek kadar deli olan insanlar, bunu yapanlardır.",
+        "attribution": "Farklı Düşün, Apple 1997"
+      },
+      "ramadan": {
+        "badge": "Ramazan Kampanyası",
+        "title": "30 Günlük Tefekkür ve İstikrar",
+        "body": "Kur'an okuma, tesbih ve topluluk desteğiyle nazik bir günlük alışkanlık oluşturun.",
+        "todayPrompt": "Bugünün tefekkür sorusu",
+        "ctaQuran": "Kur'an'ı aç",
+        "ctaTasbeeh": "Tesbih'i aç",
+        "ctaChat": "Sohbeti aç",
+        "usePrompt": "Soruyu AI'da kullan",
+        "promptApplied": "Bugünün Ramazan sorusu PEACE AI'ye eklendi."
+      }
+    },
+    "holynames": "Allah'ın Güzel İsimleri",
+    "tasbeeh": "Dijital Tesbih",
+    "quran": {
+      "title": "Kur'an",
+      "detail": "Kur'an Detay",
+      "backToList": "Listeye dön",
+      "playRecitation": "Tilaveti oynat",
+      "stopRecitation": "Tilaveti durdur",
+      "play": "Oynat",
+      "pause": "Duraklat",
+      "resume": "Devam Et",
+      "startingRecitation": "Tilavet başlatılıyor",
+      "playing": "Tilavet sürüyor",
+      "playingOffline": "Çevrimdışı depodan oynatılıyor",
+      "paused": "Duraklatıldı - devam etmek için dokunun",
+      "resumed": "Oynatma devam ediyor",
+      "resumeFromLast": "Kaldığınız yerden devam edilsin mi?",
+      "restart": "Ayeti yeniden başlat",
+      "restartSura": "Baştan yeniden başlat",
+      "scrollToTop": "Başa dön",
+      "audioRecitation": "Sesli Tilavet",
+      "nativeReader": "Yerel Okuyucu (TTS)",
+      "ttsNotSupported": "Bu tarayıcıda metin okuma desteklenmiyor",
+      "ttsSpeed": "Hız",
+      "ttsVoice": "Ses",
+      "pageTitle": "Kutsal Kur'an",
+      "loading": "Yükleniyor…",
+      "verses": "ayet",
+      "invalidSuraRange": "Geçersiz sure numarası. Lütfen 1 ile 114 arasında bir sure seçin.",
+      "apiHint": "İçerik yüklenmezse sunucu API'sinin /api/quran çalıştığından emin olun.",
+      "loadSuraError": "Sure yüklenemedi",
+      "loadChaptersError": "Sureler yüklenemedi",
+      "loadingAudio": "Ses yükleniyor…",
+      "sura": {
+        "name": "surenin adı",
+        "id": "sure numarası",
+        "location": "sure yeri",
+        "totverses": "ayet sayısı",
+        "bookmark": "yer imi"
+      },
+      "holynames": "Kutsal İsimler",
+      "modes": {
+        "reader": "Okuyucu modu",
+        "mushaf": "Mushaf modu",
+        "native": "Yerel mod"
+      },
+      "readerMode": {
+        "audio": "Ses",
+        "tts": "TTS"
+      },
+      "bookmarks": {
+        "menu": "Yer İmleri",
+        "empty": "Henüz yer imi yok",
+        "add": "{verse}. ayeti yer imine ekle",
+        "saved": "Yer imi kaydedildi",
+        "removed": "Yer imi kaldırıldı",
+        "confirmRemove": "Yer imi kaldırılsın mı?",
+        "confirmRemoveMessage": "Bu yer imini kaldırmak istediğinizden emin misiniz?",
+        "alreadySaved": "Zaten yer imlerinde",
+        "error": "Yer imi kaydedilemedi",
+        "current": "bu sure",
+        "bookmarkSura": "Sureyi yer imlerine ekle",
+        "removeSura": "Yer imini kaldır"
+      },
+      "quickAccess": {
+        "menu": "Hızlı",
+        "title": "Hızlı Erişim Ayetleri",
+        "kursi": "Ayetel Kürsi",
+        "fatiha": "Fatiha",
+        "yasin": "Yasin",
+        "mulk": "Mülk",
+        "ikhlas": "İhlâs"
+      },
+      "ramadanProgress": {
+        "title": "Kuran Tamamlama İlerlemenizi Takip Edin",
+        "badge": "Ramazan",
+        "message": "Ramazan-ı şerif mübarek olsun! Allah bu mübarek ayda okuduğunuz Kuran'ı kabul etsin.",
+        "completed": "{completed} / {total} Sure ({percentage}%)",
+        "continueReading": "Okumaya Devam Et",
+        "restart": "Yeniden Başla",
+        "resetProgress": "İlerlemeyi Sıfırla",
+        "resetConfirm": "İlerlemeyi Sıfırla",
+        "resetConfirmMessage": "Tüm Kuran okuma ilerlemenizi sıfırlamak istediğinizden emin misiniz?",
+        "suraCompleted": "Sure {sura} tamamlandı! ✓",
+        "suraIncomplete": "Sure {sura} tamamlanmamış olarak işaretlendi",
+        "progressReset": "İlerleme sıfırlandı",
+        "registerToSync": "Kaydınızı buluta kaydetmek ve herhangi bir cihazdan erişmek için kayıt olun!",
+        "register": "Kayıt Ol",
+        "viewProgress": "İlerlemeyi görüntüle",
+        "markComplete": "Tamamlandı olarak işaretle",
+        "markIncomplete": "Tamamlanmadı olarak işaretle"
+      },
+      "autoContinue": "Otomatik olarak sonraki sureye devam et",
+      "wordHighlight": "Kelime kelime vurgula",
+      "autoContinueAnnouncement": "Yeni bir özellik artık mevcut! Okuma sırasında otomatik olarak tüm 114 sureye ilerlemek için 'Otomatik devam' özelliğini etkinleştirin.",
+      "notifications": {
+        "playingSelectionWithReciter": "{label} - {reciter}",
+        "playingVerseWithReciter": "{verse}. ayet oynatılıyor - {reciter}",
+        "playingSuraFromVerse": "{sura}. sure {verse}. ayetten oynatılıyor",
+        "startingSura": "{sura}. sure başlatılıyor...",
+        "stoppedVerse": "{verse}. ayet durduruldu",
+        "playingVerse": "{verse}. ayet oynatılıyor",
+        "nextSura": "→ Sonraki Sure",
+        "previousSura": "← Önceki Sure"
+      },
+      "share": {
+        "text": "Kur'an oku {suraName} {reference}",
+        "action": "{reference} paylaş",
+        "verseAction": "{reference} ayetini paylaş",
+        "shared": "{label} paylaşıldı",
+        "linkCopied": "Bağlantı kopyalandı: {text}"
+      },
+      "dismissAnnouncement": "Duyuruyu kapat"
+    },
+    "miracles": {
+      "pageTitle": "Kur'an Mucizeleri",
+      "drawingPadTitle": "Kur'an Mucizeleri Çizim Tahtası",
+      "drawingPadSubtitle": "1. Sure için deseni çiz",
+      "clear": "Temizle",
+      "saveDrawing": "Çizimi kaydet",
+      "visualTab": "Görsel Desenler",
+      "linguisticTab": "Dilbilimsel Analiz",
+      "linguisticPilotTitle": "Dilbilimsel Pilot",
+      "title": "Kur'an Harf Görselleştirici",
+      "scope": "Kapsam",
+      "wholeBook": "Tüm kitap",
+      "singleSura": "Tek sure",
+      "singleVerse": "Tek ayet",
+      "sura": "Sure",
+      "verse": "Ayet",
+      "cellSize": "Hücre boyutu",
+      "gap": "Boşluk",
+      "maxWidth": "Maks genişlik",
+      "draw": "Çiz",
+      "downloadPng": "PNG indir",
+      "legendInfo": "Açıklama {count} harf gösterir. Metin büyük olduğunda çok büyük görüntülerden kaçınmak için tuval harfleri örnekler.",
+      "chars": "Karakterler",
+      "words": "Kelimeler",
+      "unique": "Benzersiz",
+      "changeVerse": "Ayeti değiştir",
+      "numericExamplesTitle": "Kur'an'daki sayısal mucize örnekleri",
+      "oppositeWords": "Zıt kelimelerin tekrarları",
+      "oppositeWordsDesc": "Bazı zıt kelimelerin sayıları eşittir; örneğin \"dünya\" ve \"ahiret\" (her biri 115 kez), \"melekler\" ve \"şeytanlar\" (her biri 88 kez), \"ışık\" ve \"karanlık\" (her biri 24 kez).",
+      "wordRelations": "Kelimeler, harfler, ayetler ve sure sayıları arasındaki ilişkiler",
+      "wordRelationsDesc": "Odak sayılardadır; örneğin Kur'an'daki sure sayısı 114'tür.",
+      "conceptRelations": "Kelimeler ve kavramlar arasındaki ilişkiler",
+      "conceptRelationsDesc": "Bazı kelimelerin tekrar sayılarının diğer sayılarla ilişkilendirilmesi; örneğin \"ay\" kelimesinin yıldaki ay sayısı olan 12 kez geçmesi.",
+      "letterCounts": "Ayetlerdeki harf sayıları",
+      "letterCountsDesc": "Dikkat çekicidir ki bazı ayetlerdeki harf sayısı belirli bir sayıyla örtüşür; örneğin bir ayetin başından sonuna kadar harf sayısı ayette geçen sayıyla aynıdır."
+    },
+    "chat": {
+      "title": "Topluluk Sohbeti",
+      "subtitle": "Başkalarıyla bağlantı kurun, sorular sorun ve tefekkürlerinizi paylaşın.",
+      "banner": "Şimdi canlı: waelio-messaging destekli gerçek zamanlı sohbet.",
+      "ctaChat": "Sohbeti aç",
+      "ctaSupport": "Destek al",
+      "communityTitle": "Herkese açık odalar",
+      "communityBody": "Sureler, tefekkürler ve uygulama ipuçları konuşmak için açık odalara katılın.",
+      "devTitle": "Geliştiriciler",
+      "devBody": "Katkı yapmak ister misiniz? Açık konularda bizimle iletişime geçin.",
+      "todoTitle": "Canlı durum",
+      "todoBody": "Canlı sohbet, odalar ve mesaj geçmişi artık waelio-messaging ile aktif.",
+      "live": {
+        "title": "Canlı Sohbet",
+        "adminBadge": "Yönetici",
+        "reconnect": "Yeniden bağlan",
+        "anon": "Anonim",
+        "users": "Çevrimiçi kullanıcılar",
+        "you": "Sen",
+        "noUsers": "Başka çevrimiçi kullanıcı yok",
+        "connected": "Bağlandı",
+        "connecting": "Bağlanıyor...",
+        "disconnected": "Bağlantı kesildi",
+        "directMessage": "Doğrudan mesaj",
+        "broadcastMessage": "Herkese mesaj",
+        "messageToRoom": "#{room} odasına mesaj",
+        "loginRequiredToSend": "Mesaj göndermek için lütfen giriş yapın.",
+        "createRoomTitle": "Yeni Oda Oluştur",
+        "roomNameLabel": "Oda adı",
+        "createRoomAction": "Oluştur",
+        "sendDirect": "Kullanıcıya gönder",
+        "send": "Gönder"
+      }
     },
     "settings": {
-        "title": "Ayarlar",
-        "display": "Görüntü Ayarları",
-        "language": "Dil Tercihi",
-        "theme": "Tema"
+      "title": "Ayarlar",
+      "subtitle": "Uygulamanın görünümünü ve davranışını kontrol edin.",
+      "display": {
+        "title": "Görünüm",
+        "desc": "Yerleşim yoğunluğunu ve hareket tercihlerini ayarlayın.",
+        "compact": "Kompakt yerleşim",
+        "compactHint": "Yoğun ekranlar için daha sıkı aralık kullanın.",
+        "motion": "Hareketi azalt",
+        "motionHint": "Daha sakin etkileşim için animasyonları yumuşatın.",
+        "darkMode": "Karanlık mod",
+        "darkModeHint": "Açık ve koyu tema arasında geçiş yapın.",
+        "translation": "Kur'an çevirisini göster",
+        "translationHint": "Şeffaflık için Arapça metinden sonra çeviriyi her zaman göster.",
+        "translator": "Kur'an çevirmeni",
+        "translatorHint": "Mevcut dil için tercih ettiğiniz çeviri âlimi seçin."
+      },
+      "accessibility": {
+        "title": "Erişilebilirlik",
+        "desc": "Daha kolay okuma için metin boyutunu ve kontrastı ayarlayın.",
+        "fontSize": "Metin boyutu",
+        "fontSizeHint": "Tüm metni büyük veya küçük yapar.",
+        "fontSizes": {
+          "0": "Küçük",
+          "1": "Orta",
+          "2": "Büyük",
+          "3": "Çok Büyük"
+        },
+        "highContrast": "Yüksek kontrast",
+        "highContrastHint": "Daha iyi görünürlük için kontrastı artırın."
+      },
+      "navigation": {
+        "title": "Gezinme",
+        "desc": "Çekmece sıralamasını ve görünürlüğünü kontrol edin.",
+        "enableOrdering": "Sürükle sıralamayı etkinleştir",
+        "enableOrderingHint": "Çekmecedeki öğeleri yeniden sıralama ve sabitlemeye izin ver.",
+        "drawerDefault": "Başlangıçta çekmeceyi aç",
+        "drawerDefaultHint": "Açık başlatmak için etkinleştirin; yalnızca gerektiğinde açmak için devre dışı bırakın."
+      },
+      "notifications": {
+        "title": "Bildirimler",
+        "desc": "Yeni içerik geldiğinde haberdar olun.",
+        "enable": "Bildirimleri etkinleştir",
+        "enableHint": "Bir şey göndermeden önce izin isteyeceğiz.",
+        "enabled": "Push bildirimleri etkin!",
+        "unavailable": "Bu cihaz/tarayıcıda bildirimler desteklenmiyor.",
+        "denied": "Bildirimler engellendi. Lütfen tarayıcı ayarlarından izin verin.",
+        "error": "Bildirimler şu anda etkinleştirilemedi.",
+        "testTitle": "Bildirimler Etkin",
+        "testBody": "Artık Peace2074'ten güncellemeler alacaksınız"
+      },
+      "audio": {
+        "title": "Ses",
+        "desc": "Ezan ve oynatma varsayılanlarını kontrol edin.",
+        "autoPlay": "Ezanı otomatik oynat",
+        "autoPlayHint": "Mümkün olduğunda ezan oynatmayı otomatik başlat.",
+        "autoPlayPrayerTimes": "Namaz Vakitlerinde Ezan",
+        "autoPlayPrayerTimesHint": "Namaz vakti girdiğinde Ezanı otomatik olarak çal."
+      },
+      "refresh": {
+        "title": "Uygulamayı yenile",
+        "desc": "En son sürümü almak için zorla güncelle ve yeniden yükle."
+      },
+      "clearingCache": "Önbellek temizleniyor ve yeniden yükleniyor..."
     },
-    "holyNames": {
-        "1": {
-            "transliteration": "En Merhametli",
-            "meaning": "En Şefkatli"
-        },
-        "2": {
-            "transliteration": "En Lütufkâr",
-            "meaning": "Rahmet Veren"
-        },
-        "3": {
-            "transliteration": "Hükümdar",
-            "meaning": "Mutlak Egemen"
-        },
-        "4": {
-            "transliteration": "En Kutsal",
-            "meaning": "Pek Temiz Olan"
-        },
-        "5": {
-            "transliteration": "Esenlik Kaynağı",
-            "meaning": "Kusursuz Olan"
-        },
-        "6": {
-            "transliteration": "İman Veren",
-            "meaning": "İman Aşılayan"
-        },
-        "7": {
-            "transliteration": "Koruyucu",
-            "meaning": "Eminliğin Koruyucusu"
-        },
-        "8": {
-            "transliteration": "Galip",
-            "meaning": "Güçlü Olan"
-        },
-        "9": {
-            "transliteration": "Cebbar",
-            "meaning": "Düzene Koyan"
-        },
-        "10": {
-            "transliteration": "Yüce",
-            "meaning": "Azametli Olan"
-        },
-        "11": {
-            "transliteration": "Yaratan",
-            "meaning": "Her Şeyi Yaratan"
-        },
-        "12": {
-            "transliteration": "Var Eden",
-            "meaning": "Şekil Veren"
-        },
-        "13": {
-            "transliteration": "Musavvir",
-            "meaning": "Güzellik Veren"
-        },
-        "14": {
-            "transliteration": "Bağışlayan",
-            "meaning": "Çok Bağışlayan"
-        },
-        "15": {
-            "transliteration": "Kahhar",
-            "meaning": "Her Şeye Galip Olan"
-        },
-        "16": {
-            "transliteration": "Vahhab",
-            "meaning": "Çok Veren"
-        },
-        "17": {
-            "transliteration": "Rızık Veren",
-            "meaning": "Geçimi Sağlayan"
-        },
-        "18": {
-            "transliteration": "Açan",
-            "meaning": "Çözüm Veren"
-        },
-        "19": {
-            "transliteration": "Her Şeyi Bilen",
-            "meaning": "Alîm"
-        },
-        "20": {
-            "transliteration": "Kısıtlayan",
-            "meaning": "Daraltan"
-        },
-        "21": {
-            "transliteration": "Genişleten",
-            "meaning": "Bolluk Veren"
-        },
-        "22": {
-            "transliteration": "Alçaltan",
-            "meaning": "İndiren"
-        },
-        "23": {
-            "transliteration": "Yükselten",
-            "meaning": "Yücelten"
-        },
-        "24": {
-            "transliteration": "İzzet Veren",
-            "meaning": "Onur Veren"
-        },
-        "25": {
-            "transliteration": "Zillete Düşüren",
-            "meaning": "Küçülten"
-        },
-        "26": {
-            "transliteration": "Her Şeyi İşiten",
-            "meaning": "Semi"
-        },
-        "27": {
-            "transliteration": "Her Şeyi Gören",
-            "meaning": "Basîr"
-        },
-        "28": {
-            "transliteration": "Hükmeden",
-            "meaning": "Adil Hâkim"
-        },
-        "29": {
-            "transliteration": "Adaletli",
-            "meaning": "Mutlak Adil"
-        },
-        "30": {
-            "transliteration": "Latif",
-            "meaning": "En Nazik"
-        },
-        "31": {
-            "transliteration": "Haberdar",
-            "meaning": "Her Şeyden Haberdar"
-        },
-        "32": {
-            "transliteration": "Halîm",
-            "meaning": "Yumuşak Davranan"
-        },
-        "33": {
-            "transliteration": "Azametli",
-            "meaning": "Yüce"
-        },
-        "34": {
-            "transliteration": "Bağışlayan",
-            "meaning": "Çok Bağışlayan"
-        },
-        "35": {
-            "transliteration": "Şükre Karşılık Veren",
-            "meaning": "Çok Şükredilen"
-        },
-        "36": {
-            "transliteration": "Yüce",
-            "meaning": "En Yüksek"
-        },
-        "37": {
-            "transliteration": "Büyük",
-            "meaning": "En Büyük"
-        },
-        "38": {
-            "transliteration": "Koruyan",
-            "meaning": "Hafız"
-        },
-        "39": {
-            "transliteration": "Besleyen",
-            "meaning": "Rızıklandıran"
-        },
-        "40": {
-            "transliteration": "Hesap Gören",
-            "meaning": "Yeterli Olan"
-        },
-        "41": {
-            "transliteration": "Celâl Sahibi",
-            "meaning": "Yüce Olan"
-        },
-        "42": {
-            "transliteration": "Cömert",
-            "meaning": "En Cömert"
-        },
-        "43": {
-            "transliteration": "Gözeten",
-            "meaning": "Daima Gözeten"
-        },
-        "44": {
-            "transliteration": "Dualara Cevap Veren",
-            "meaning": "Mucîb"
-        },
-        "45": {
-            "transliteration": "Kuşatan",
-            "meaning": "Sınırsız"
-        },
-        "46": {
-            "transliteration": "Hikmet Sahibi",
-            "meaning": "Hakîm"
-        },
-        "47": {
-            "transliteration": "Seven",
-            "meaning": "En Çok Seven"
-        },
-        "48": {
-            "transliteration": "Şanlı",
-            "meaning": "En Yüce Şan Sahibi"
-        },
-        "49": {
-            "transliteration": "Dirilten",
-            "meaning": "Ölüleri Dirilten"
-        },
-        "50": {
-            "transliteration": "Şahit",
-            "meaning": "Her Şeye Şahit Olan"
-        },
-        "51": {
-            "transliteration": "Hak",
-            "meaning": "Mutlak Gerçek"
-        },
-        "52": {
-            "transliteration": "Vekil",
-            "meaning": "İşleri Düzenleyen"
-        },
-        "53": {
-            "transliteration": "Güçlü",
-            "meaning": "Çok Güçlü"
-        },
-        "54": {
-            "transliteration": "Metin",
-            "meaning": "Sarsılmaz"
-        },
-        "55": {
-            "transliteration": "Dost",
-            "meaning": "Koruyucu Dost"
-        },
-        "56": {
-            "transliteration": "Övülmeye Layık",
-            "meaning": "Hamîd"
-        },
-        "57": {
-            "transliteration": "Hesap Görücü",
-            "meaning": "Hesap Sorucu"
-        },
-        "58": {
-            "transliteration": "Başlatan",
-            "meaning": "İlk Yaratan"
-        },
-        "59": {
-            "transliteration": "Geri Döndüren",
-            "meaning": "Yeniden Var Eden"
-        },
-        "60": {
-            "transliteration": "Hayat Veren",
-            "meaning": "Can Veren"
-        },
-        "61": {
-            "transliteration": "Öldüren",
-            "meaning": "Can Alan"
-        },
-        "62": {
-            "transliteration": "Daima Diri",
-            "meaning": "Hayy"
-        },
-        "63": {
-            "transliteration": "Kendi Kendine Kaim",
-            "meaning": "Her Şeyi Ayakta Tutan"
-        },
-        "64": {
-            "transliteration": "Bulucu",
-            "meaning": "İdrak Eden"
-        },
-        "65": {
-            "transliteration": "Yüce",
-            "meaning": "Şerefli"
-        },
-        "66": {
-            "transliteration": "Tek",
-            "meaning": "Biricik"
-        },
-        "67": {
-            "transliteration": "Bölünmez",
-            "meaning": "Tek ve Eşsiz"
-        },
-        "68": {
-            "transliteration": "Ebedî",
-            "meaning": "Mutlak"
-        },
-        "69": {
-            "transliteration": "Kudretli",
-            "meaning": "Her Şeye Gücü Yeten"
-        },
-        "70": {
-            "transliteration": "Muktedir",
-            "meaning": "Takdir Eden"
-        },
-        "71": {
-            "transliteration": "Öne Alan",
-            "meaning": "İleri Alan"
-        },
-        "72": {
-            "transliteration": "Geri Bırakan",
-            "meaning": "Erteleyen"
-        },
-        "73": {
-            "transliteration": "İlk",
-            "meaning": "Başlangıç"
-        },
-        "74": {
-            "transliteration": "Son",
-            "meaning": "Son"
-        },
-        "75": {
-            "transliteration": "Zahir",
-            "meaning": "Açık Olan"
-        },
-        "76": {
-            "transliteration": "Bâtın",
-            "meaning": "Gizli Olan"
-        },
-        "77": {
-            "transliteration": "Yönetici",
-            "meaning": "Koruyucu"
-        },
-        "78": {
-            "transliteration": "En Yüce",
-            "meaning": "Üstün"
-        },
-        "79": {
-            "transliteration": "İyiliğin Kaynağı",
-            "meaning": "Salih"
-        },
-        "80": {
-            "transliteration": "Tevbeleri Kabul Eden",
-            "meaning": "Affedici"
-        },
-        "81": {
-            "transliteration": "İntikam Alan",
-            "meaning": "Karşılık Veren"
-        },
-        "82": {
-            "transliteration": "Affeden",
-            "meaning": "En Çok Affeden"
-        },
-        "83": {
-            "transliteration": "Şefkatli",
-            "meaning": "En Merhametli"
-        },
-        "84": {
-            "transliteration": "Mülkün Sahibi",
-            "meaning": "Egemenliğin Sahibi"
-        },
-        "85": {
-            "transliteration": "Celâl ve İkram Sahibi",
-            "meaning": "Yücelik ve İkram Sahibi"
-        },
-        "86": {
-            "transliteration": "Adaletli",
-            "meaning": "Hakça Hükmeden"
-        },
-        "87": {
-            "transliteration": "Toplayan",
-            "meaning": "Bir Araya Getiren"
-        },
-        "88": {
-            "transliteration": "Hiçbir Şeye Muhtaç Olmayan",
-            "meaning": "Zengin"
-        },
-        "89": {
-            "transliteration": "Zengin Eden",
-            "meaning": "Varlık Veren"
-        },
-        "90": {
-            "transliteration": "Engelleyen",
-            "meaning": "Alıkoyan"
-        },
-        "91": {
-            "transliteration": "Sıkıntı Veren",
-            "meaning": "Zarar Yaratan"
-        },
-        "92": {
-            "transliteration": "Fayda Veren",
-            "meaning": "İyilik Yaratan"
-        },
-        "93": {
-            "transliteration": "Nur",
-            "meaning": "Aydınlatan"
-        },
-        "94": {
-            "transliteration": "Hidayet Veren",
-            "meaning": "Yol Gösteren"
-        },
-        "95": {
-            "transliteration": "Eşi Benzeri Olmayan",
-            "meaning": "İlk Örnek Veren"
-        },
-        "96": {
-            "transliteration": "Sonsuz",
-            "meaning": "Ebedî"
-        },
-        "97": {
-            "transliteration": "Miras Bırakan",
-            "meaning": "En Yüce Varis"
-        },
-        "98": {
-            "transliteration": "Rehber",
-            "meaning": "Doğru Yolu Gösteren"
-        },
-        "99": {
-            "transliteration": "Sabırlı",
-            "meaning": "En Sabırlı"
+    "preferences": {
+      "title": "Kullanıcı tercihleri",
+      "subtitle": "Okuma ve güncellemeler için kişisel varsayılanları kaydedin.",
+      "profile": {
+        "title": "Profil",
+        "displayName": "Görünen ad",
+        "emailUpdates": "Bana ara sıra e-posta güncellemeleri gönder",
+        "hint": "Tercihler şimdilik bu cihaza özeldir."
+      },
+      "quran": {
+        "title": "Kur'an okuma",
+        "reciter": "Varsayılan okuyucu",
+        "transliteration": "Transliterasyonu göster",
+        "remember": "Son okunan sayfayı hatırla",
+        "highlightMode": "Tilavet vurgulama",
+        "highlightWord": "Kelime",
+        "highlightSentence": "Cümle",
+        "hint": "Okuma tercihleri bu cihazdaki tüm Kur'an sayfalarında geçerlidir."
+      },
+      "appearance": {
+        "title": "Görünüm",
+        "hint": "Sistem temasını takip edin veya açık/koyu zorlayın.",
+        "themeOptions": {
+          "system": "Sistem",
+          "light": "Açık",
+          "dark": "Koyu"
         }
+      },
+      "security": {
+        "title": "Güvenlik",
+        "currentPassword": "Mevcut şifre",
+        "newPassword": "Yeni şifre",
+        "confirmPassword": "Yeni şifreyi doğrula",
+        "changePasswordBtn": "Şifreyi Değiştir",
+        "generatePassword": "Güçlü Şifre Oluştur",
+        "passwordChanged": "Şifre başarıyla değiştirildi",
+        "passwordGenerated": "Güçlü şifre oluşturuldu ve alanlara eklendi",
+        "hint": "Şifre en az 8 karakter olmalıdır.",
+        "deleteAccount": {
+          "title": "Hesabı sil",
+          "warningTitle": "Kalıcı işlem",
+          "warningBody": "Bu işlem hesabınızı, profilinizi, kayıtlı ilerlemenizi, beğenilerinizi, geçiş anahtarlarınızı ve aktif oturumunuzu kalıcı olarak siler. Bu işlem geri alınamaz.",
+          "confirmLabel": "Kullanıcı adı veya e-posta",
+          "confirmHint": "Hesap silmeyi onaylamak için {identifier} yazın.",
+          "currentPasswordHint": "Şifreli hesaplar için gereklidir. Yalnızca Apple veya Google ile giriş yapıyorsanız bu alanı boş bırakabilirsiniz.",
+          "action": "Hesabı sil",
+          "confirmDialogTitle": "Hesap kalıcı olarak silinsin mi?",
+          "confirmDialogMessage": "Hesabınız ve ilişkili verileriniz kalıcı olarak silinecek. Bu işlem geri alınamaz.",
+          "success": "Hesap başarıyla silindi"
+        },
+        "errors": {
+          "allFieldsRequired": "Tüm alanlar zorunludur",
+          "passwordMismatch": "Yeni şifreler eşleşmiyor",
+          "passwordTooShort": "Şifre en az 8 karakter olmalı",
+          "changeFailed": "Şifre değiştirilemedi",
+          "confirmationRequired": "Onaylamak için lütfen kullanıcı adınızı veya e-posta adresinizi yazın",
+          "confirmationMismatch": "Onay metni hesabınızla eşleşmiyor",
+          "deleteFailed": "Hesap silinemedi"
+        }
+      }
     },
-    "Asma' Allah Al-Husna": "Esmâü'l-Hüsnâ",
-    "consent": {
-        "message": "Deneyiminizi geliştirmek ve site kullanımını analiz etmek için çerezler kullanıyoruz.",
-        "details": "'Kabul Et'e tıklayarak, analiz için çerez kullanımımızı kabul etmiş olursunuz.",
-        "accept": "Kabul Et",
-        "decline": "Reddet"
+    "admin": {
+      "title": "Yönetim",
+      "subtitle": "Sürümleri ve versiyon kontrolünü yönetin",
+      "currentVersion": "Mevcut Sürüm",
+      "onlyEven": "Sadece kararlı sürümleri göster",
+      "refresh": "Yenile",
+      "even": "Kararlı",
+      "noTitle": "Başlık yok",
+      "noVersions": "Kullanılabilir sürüm yok",
+      "loading": "Sürümler yükleniyor...",
+      "unknownDate": "Bilinmeyen tarih",
+      "loadFailed": "Sürümler yüklenemedi",
+      "users": {
+        "title": "Kullanıcı Yönetimi",
+        "loadFailed": "Kullanıcılar yüklenemedi",
+        "updateSuccess": "Kullanıcı güncellendi",
+        "updateFailed": "Kullanıcı güncellenemedi",
+        "roleLabel": "Rol",
+        "save": "Kaydet",
+        "noUsers": "Kullanıcı bulunamadı",
+        "loading": "Kullanıcılar yükleniyor...",
+        "lastLogin": "Son Giriş",
+        "loginCount": "Girişler",
+        "bookmarks": "Yer İmleri",
+        "surasCompleted": "Sureler",
+        "lastRead": "Son Okuma",
+        "sura": "Sure",
+        "editPerms": "İzinler",
+        "permsTitle": "İzinleri Düzenle:",
+        "permsHint": "Kullanıcının her konu üzerinde yapmasına izin verilen her eylemi işaretleyin.",
+        "permsSubject": "Konu",
+        "savePerms": "İzinleri Kaydet",
+        "cancel": "İptal",
+        "roles": {
+          "user": "Kullanıcı",
+          "editor": "Editör",
+          "admin": "Yönetici"
+        }
+      }
+    },
+    "blog": {
+      "title": "Blog",
+      "subtitle": "Güncellemeler, ipuçları ve tefekkürler.",
+      "empty": "Henüz yazı yok.",
+      "notFound": "Yazı bulunamadı",
+      "newPost": "Yeni Yazı",
+      "likeSingle": "{count} Beğeni",
+      "likePlural": "{count} Beğeni",
+      "likeUpdateError": "Beğeni güncellenemedi",
+      "editor": {
+        "newPost": "Yeni Yazı",
+        "editPost": "Yazıyı Düzenle",
+        "authRequired": "Blog yazısı oluşturmak veya düzenlemek için giriş yapmalısınız.",
+        "title": "Başlık",
+        "titleRequired": "Başlık zorunludur",
+        "slug": "Slug",
+        "slugHint": "URL uyumlu tanımlayıcı (örn: benim-yazi-basligim)",
+        "slugRequired": "Slug zorunludur",
+        "excerpt": "Özet",
+        "content": "İçerik",
+        "contentRequired": "İçerik zorunludur",
+        "tags": "Etiketler",
+        "tagsHint": "Virgülle ayrılmış etiketler",
+        "publish": "Yayınla",
+        "update": "Güncelle",
+        "delete": "Sil",
+        "confirmDelete": "Yazı silinsin mi?",
+        "confirmDeleteMessage": "Bu işlem geri alınamaz.",
+        "publishSuccess": "Yazı başarıyla yayınlandı!",
+        "updateSuccess": "Yazı başarıyla güncellendi!",
+        "deleteSuccess": "Yazı başarıyla silindi!",
+        "saveError": "Yazı kaydedilemedi",
+        "deleteError": "Yazı silinemedi",
+        "loadError": "Yazı yüklenemedi",
+        "postNotFound": "Yazı bulunamadı",
+        "fillRequired": "Lütfen tüm zorunlu alanları doldurun",
+        "aiDraft": "Yapay Zeka Taslağı",
+        "aiDraftTip": "Başlığınızdan yapay zeka ile makale taslağı oluşturun",
+        "aiDraftDone": "Taslak oluşturuldu — düzenleyebilirsiniz!",
+        "aiDraftFailed": "Yapay zeka taslağı kullanılamıyor, lütfen elle yazın"
+      }
+    },
+    "deploys": {
+      "title": "Dağıtım Geçmişi",
+      "subtitle": "Sürümlerimizi ve özellik güncellemelerimizi zaman içinde takip edin",
+      "features": "Özellikler",
+      "fixes": "Hata Düzeltmeleri",
+      "documentation": "Dokümantasyon",
+      "chores": "Bakım Çalışmaları",
+      "like": "Beğen",
+      "unlike": "Beğeniyi kaldır",
+      "liked": "❤️ Beğenildi!",
+      "unliked": "Beğeni kaldırıldı",
+      "loadError": "Dağıtım geçmişi yüklenemedi",
+      "loginRequiredToLike": "Dağıtımları beğenmek için lütfen giriş yapın",
+      "toggleLikeError": "Beğeni değiştirilemedi"
+    },
+    "social": {
+      "title": "Sosyal ve Paylaş",
+      "subtitle": "Bizi takip edin ve Kuran'ı dünyayla paylaşın",
+      "followUs": "Bizi Takip Edin",
+      "featuredVideos": "Öne Çıkan Videolar",
+      "featuredVideosSubtitle": "Naşidler aracılığıyla inanç ve sevgiyi paylaşan genç sanatçılar",
+      "shareVerse": "Bir Ayet Paylaş",
+      "selectSura": "Sure Seç",
+      "selectAyah": "Ayet numarası",
+      "loadVerse": "Ayeti Yükle",
+      "verseNotFound": "Ayet bulunamadı",
+      "loadError": "Ayet yüklenemedi",
+      "copyText": "Metni Kopyala",
+      "copied": "Panoya kopyalandı!",
+      "copyError": "Kopyalama başarısız"
     }
+  },
+  "offline": {
+    "title": "Çevrimdışı Okuma",
+    "subtitle": "Çevrimdışı dinlemek için Kuran okumalarını indirin",
+    "selectQuality": "Ses kalitesini seçin",
+    "regular": "Normal Kalite",
+    "highQuality": "Yüksek Kalite",
+    "storageUsed": "Kullanılan Depolama",
+    "surasDownloaded": "İndirilen Sureler",
+    "downloadOptions": "İndirme Seçenekleri",
+    "downloadAllQuran": "Tüm Kuran'ı İndir (114 Sure)",
+    "downloadCurrentSura": "Mevcut Sureyi İndir",
+    "clearAllCache": "Tüm İndirilen Sesleri Temizle",
+    "downloading": "İndiriliyor",
+    "sura": "Sure",
+    "verses": "Ayetler",
+    "noSuraSelected": "Sure seçilmedi",
+    "downloadingStarted": "İndirme başladı...",
+    "downloadComplete": "İndirme tamamlandı!",
+    "downloadFailed": "İndirme başarısız, lütfen tekrar deneyin",
+    "downloadAllComplete": "{completed} sure indirildi. {failed} başarısız.",
+    "cacheCleared": "Tüm çevrimdışı sesler temizlendi",
+    "qualityChanged": "Kalite değiştirildi. Çevrimdışı ses kullanmak için yeniden yükleyin.",
+    "listenWithoutInternet": "İnternetsiz dinle",
+    "currentSuraReady": "Bu sure çevrimdışı hazır",
+    "currentSuraReadyHint": "Bu kıraati internet olmadan dinleyebilirsiniz. İndirilen ses, mevcut olduğunda otomatik olarak tercih edilir.",
+    "fullLibraryReady": "Tüm Kur'an çevrimdışı hazır",
+    "fullLibraryReadyHint": "Tüm kıraatler indirildi. Uygulama, internet kullanımını azaltmak için mümkün olduğunda cihazdaki sesi tercih eder.",
+    "internetRequired": "Şu anda internet gerekiyor",
+    "internetRequiredHint": "İnternetsiz dinlemek için bu sureyi veya tüm Kur'an'ı indirin.",
+    "confirmDownloadAll": {
+      "title": "Tüm Kuran İndirilsin mi?",
+      "message": "Bu, {quality} kalitesinde yaklaşık {size} ses verisi indirecektir. Yeterli depolamanız ve kararlı bir bağlantınız olduğundan emin olun."
+    },
+    "confirmClear": {
+      "title": "Tüm Çevrimdışı Sesler Temizlensin mi?",
+      "message": "Bu, indirilen tüm okumaları silecektir. Daha sonra tekrar indirebilirsiniz."
+    }
+  },
+  "general": {
+    "Home": "Ana Sayfa",
+    "SiteTitle": "Peace2074",
+    "SiteDomain": "https://peace2074.com",
+    "navigationLinks": "Gezinme Bağlantıları",
+    "CurrentVersion": "Mevcut Sürüm",
+    "setLocale": "Varsayılan Dili Ayarla",
+    "CheckUpdates": "Güncellemeleri getir",
+    "Services": "Hizmetler",
+    "fetchingUpdates": "Güncellemeler alınıyor",
+    "searching": "Aranıyor…",
+    "languages": "Diller",
+    "languageNames": {
+      "en": "İngilizce",
+      "ar": "Arapça",
+      "de": "Almanca",
+      "es": "İspanyolca",
+      "ru": "Rusça",
+      "he": "İbranice",
+      "it": "İtalyanca",
+      "tr": "Türkçe"
+    },
+    "dark": "koyu",
+    "light": "açık",
+    "auto": "otomatik",
+    "lightMode": "Aydınlık Modu Değiştir",
+    "open": "aç",
+    "close": "kapat",
+    "holdState": "Her zaman açık",
+    "swipeToChange": "Değiştirmek için kaydır",
+    "pause": "Duraklat",
+    "play": "Oynat",
+    "stop": "Durdur",
+    "download": "İndir",
+    "cancel": "İptal",
+    "delete": "Sil",
+    "edit": "Düzenle",
+    "share": "Paylaş",
+    "undo": "Geri al",
+    "updateAvailable": "Yeni bir sürüm mevcut!",
+    "update": "Şimdi Güncelle",
+    "later": "Sonra",
+    "greetings": {
+      "eidMubarak": "✨ Bayramınız mübarek olsun ✨",
+      "englishCustomers": "İngilizce konuşan müşterilerimiz için bir selamlama gösterebiliriz."
+    }
+  },
+  "intro": {
+    "desc": "JavaScript meraklısı, Wolf Pack kardeşi, Ducks tutkunu; yeniden kullanılabilirlik ve iyileştirmeler odaklı."
+  },
+  "notfound": "Bulunamadı",
+  "contact": {
+    "help": "Buradayız",
+    "offer_help": "Nasıl yardımcı olabileceğimizi lütfen bize bildirin!",
+    "accept_terms": "Şartlar ve koşullarımızı görüntüleyin.",
+    "terms_accepted": "Şartlar ve koşulları kabul ediyorum.",
+    "name": {
+      "label": "Adınız *",
+      "hint": "Ad ve soyad",
+      "placeholder": "Adınız nedir"
+    },
+    "email1": {
+      "label": "E-postanız *",
+      "hint": "E-postanız",
+      "placeholder": "Size geri dönüş yapabilmemiz için. "
+    },
+    "message1": {
+      "label": "Mesajınız *",
+      "hint": "Mesajınızı girin",
+      "placeholder": "Nasıl yardımcı olabileceğimizi anlatın"
+    },
+    "email": {
+      "label": "E-posta adresiniz *",
+      "hint": "E-postanız",
+      "placeholder": "Size geri dönüş yapabilmemiz için."
+    },
+    "message": {
+      "label": "Mesajınız *",
+      "hint": "Mesajınızı girin",
+      "placeholder": "Nasıl yardımcı olabileceğimizi anlatın"
+    },
+    "projects": {
+      "label": "Proje Adı *",
+      "placeholder": "Hangi projeden bahsediyorsunuz?"
+    },
+    "success": "Mesaj kaydedildi. Yakında cevap vereceğiz.",
+    "error": "Mesaj gönderilemedi. Lütfen tekrar deneyin.",
+    "contactTitle": "İletişim Bilgileri",
+    "reachDirectly": "Doğrudan bize ulaşın:",
+    "socialTitle": "Sosyal",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
+  },
+  "about": {
+    "title": "Waelio",
+    "par10": "Dijital dünyada farklı/eklektik bir lider; yirmi yılı aşkın profesyonel başarıya sahip."
+  },
+  "demoContent": {
+    "q1": "Yazı oluşturabilir miyim?",
+    "q2": "Yazı okuyabilir miyim?",
+    "q3": "Yazıyı güncelleyebilir miyim?",
+    "q4": "Yazıyı silebilir miyim?"
+  },
+  "privacy_policy": "Gizlilik Politikası",
+  "privacy_intro": "Gizliliğiniz bizim için önemlidir. Bu sayfa, web sitemizi kullanırken bilgilerinizi nasıl topladığımızı, kullandığımızı ve koruduğumuzu açıklar.",
+  "information_we_collect": "Topladığımız Bilgiler",
+  "basic_account_info": "Kayıt olur veya giriş yaparsanız temel hesap bilgileri (ör. e-posta adresi).",
+  "usage_data": "Deneyiminizi geliştirmek için kullanım verileri ve çerezler.",
+  "how_we_use_information": "Bilgileri Nasıl Kullanıyoruz",
+  "provide_services": "Hizmetlerimizi sunmak ve sürdürmek için.",
+  "improve_experience": "Deneyiminizi iyileştirmek ve kişiselleştirmek için.",
+  "communicate_updates": "Güncellemeler veya destek hakkında sizinle iletişim kurmak için.",
+  "cookies": "Çerezler",
+  "cookies_text": "Tercihlerinizi hatırlamak ve deneyiminizi geliştirmek için çerezler kullanırız. Sitenin altındaki banttan çerezleri kabul edebilir veya reddedebilirsiniz.",
+  "data_security": "Veri Güvenliği",
+  "data_security_text": "Verilerinizi korumak için makul önlemler alıyoruz; ancak hiçbir sistem %100 güvenli değildir.",
+  "apple_tv_section": "Apple TV ve Yerel Uygulamalar",
+  "apple_tv_text": "PEACE2074 uygulaması iPhone, iPad ve Apple TV'de kullanılabilir. Tüm platformlarda yukarıda açıklananların ötesinde herhangi bir veri toplamıyoruz. Apple TV uygulaması mikrofon, kamera veya konum hizmetlerini kullanmaz. Oturum kimlik doğrulaması güvenli HTTP-only çerezler kullanır — cihazda yerel olarak kişisel veri depolanmaz. iCloud kullanıyorsanız, cihazınız iCloud senkronizasyonunu sunucularımızdan bağımsız olarak yönetir.",
+  "contact_text": "Gizlilik politikamız hakkında sorularınız varsa lütfen bizimle iletişime geçin.",
+  "terms_and_conditions": "Şartlar ve Koşullar",
+  "terms_intro": "Web sitemizi kullanmadan önce lütfen bu şart ve koşulları dikkatlice okuyun.",
+  "acceptance_of_terms": "Şartların Kabulü",
+  "acceptance_of_terms_text": "Sitemize erişerek veya kullanarak bu şartlara bağlı kalmayı kabul etmiş olursunuz. Kabul etmiyorsanız lütfen sitemizi kullanmayın.",
+  "use_of_site": "Sitenin Kullanımı",
+  "use_of_site_1": "Siteyi yürürlükteki tüm yasa ve düzenlemelere uygun olarak kullanmalısınız.",
+  "use_of_site_2": "Siteyi yasa dışı veya yasak bir amaç için kullanamazsınız.",
+  "intellectual_property": "Fikri Mülkiyet",
+  "intellectual_property_text": "Bu sitedeki tüm içerik site sahibine veya lisans verenlerine aittir ve telif hakkı yasalarıyla korunur.",
+  "limitation_of_liability": "Sorumluluğun Sınırlandırılması",
+  "limitation_of_liability_text": "Sitenin kullanımından doğan herhangi bir zarardan sorumlu değiliz.",
+  "changes_to_terms": "Şartlarda Değişiklik",
+  "changes_to_terms_text": "Bu şartları istediğimiz zaman güncelleyebiliriz. Siteyi kullanmaya devam etmeniz yeni şartları kabul ettiğiniz anlamına gelir.",
+  "auth": {
+    "username": "Kullanıcı adı",
+    "password": "Şifre",
+    "email": "E-posta",
+    "confirmPassword": "Şifreyi Onayla",
+    "usernameRequired": "Kullanıcı adı zorunludur",
+    "passwordRequired": "Şifre zorunludur",
+    "enterUsername": "Kullanıcı adınızı girin",
+    "enterPassword": "Şifrenizi girin",
+    "enterEmail": "E-postanızı girin",
+    "enterCredentials": "Lütfen kullanıcı adı ve şifre girin",
+    "signIn": "Giriş Yap",
+    "signUp": "Kayıt Ol",
+    "login": "Giriş Yap",
+    "rememberMe": "Beni hatırla",
+    "orContinueWith": "veya şununla devam et",
+    "signInWithPasskey": "Geçiş anahtarıyla giriş yap",
+    "passkeyHint": "Face ID, Touch ID, Windows Hello veya parola yöneticinizi kullanın.",
+    "passkeyNotSupported": "Geçiş anahtarları bu tarayıcı bağlamında desteklenmiyor.",
+    "passkeyUnavailable": "Bu hesap için henüz bir geçiş anahtarı kayıtlı değil. Önce şifrenizle giriş yapın.",
+    "passkeyCancelled": "Geçiş anahtarıyla giriş iptal edildi.",
+    "passkeyLoginSuccess": "Geçiş anahtarıyla giriş yapıldı.",
+    "passkeyLoginError": "Geçiş anahtarıyla giriş başarısız oldu. Lütfen tekrar deneyin.",
+    "passkeyCreated": "Geçiş anahtarı kaydedildi; bir dahaki girişiniz daha hızlı olacak.",
+    "passkeyCreateError": "Geçiş anahtarınız şu anda kaydedilemedi.",
+    "passkeyCreatePromptTitle": "Bir geçiş anahtarı kaydedilsin mi?",
+    "passkeyCreatePromptMessage": "Bir dahaki girişinizde daha hızlı olmak için cihaz biyometrisini veya parola yöneticinizi kullanın.",
+    "passkeyCreatePromptConfirm": "Geçiş anahtarını kaydet",
+    "signInWithGitHub": "GitHub ile giriş yap",
+    "signInWithNetlify": "Netlify Identity ile giriş yap",
+    "appleSignInUnavailable": "Apple ile giriş şu anda kullanılamıyor.",
+    "socialSignInExpired": "Girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
+    "googleSignInExpired": "Google ile girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
+    "appleSignInExpired": "Apple ile girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
+    "welcomeBack": "Tekrar hoş geldiniz",
+    "forgotPassword": "Şifrenizi mi unuttunuz?",
+    "resetPassword": "Şifreyi Sıfırla",
+    "resetInstructions": "E-postanızı girin, şifre sıfırlama talimatlarını gönderelim.",
+    "sendResetLink": "Sıfırlama Bağlantısı Gönder",
+    "resetEmailSent": "Şifre sıfırlama talimatları e-postanıza gönderildi",
+    "resetError": "Sıfırlama e-postası gönderilemedi",
+    "loginError": "Giriş başarısız. Lütfen tekrar deneyin.",
+    "loginSuccess": "Tekrar hoş geldiniz!",
+    "dontHaveAccount": "Hesabınız yok mu?",
+    "alreadyHaveAccount": "Zaten hesabınız var mı?",
+    "createAccount": "Hesabınızı oluşturun",
+    "fillAllFields": "Lütfen tüm alanları doldurun",
+    "passwordMismatch": "Şifreler eşleşmiyor",
+    "acceptTerms": "Lütfen şart ve koşulları kabul edin",
+    "iAccept": "Kabul ediyorum",
+    "termsAndConditions": "şartlar ve koşullar",
+    "signupSuccess": "Hesap başarıyla oluşturuldu! Lütfen giriş yapın.",
+    "signupError": "Kayıt başarısız. Lütfen tekrar deneyin."
+  },
+  "login": "Giriş",
+  "signup": "Kayıt Ol",
+  "user": "Kullanıcı",
+  "password": "Şifre",
+  "sign_in_with_google": "Google ile giriş yap",
+  "sign_up": "Kayıt Ol",
+  "signup_success": "Hesap oluşturuldu! Lütfen giriş yapın.",
+  "signup_failed": "Kayıt başarısız",
+  "create_account": "Hesap oluştur",
+  "back_to_login": "Girişe dön",
+  "please_fill_all_fields": "Lütfen tüm alanları doldurun",
+  "passwords_do_not_match": "Şifreler eşleşmiyor",
+  "confirm_password": "Şifreyi onayla",
+  "cancel": "İptal",
+  "edit": "Düzenle",
+  "login_success": "Başarıyla giriş yapıldı",
+  "please_accept_terms": "Şartlar ve koşulları kabul edin.",
+  "email": "E-posta",
+  "submit": "gönder",
+  "reset": "Sıfırla",
+  "Login": "Giriş",
+  "password_login": "E-posta ile giriş",
+  "username": "Kullanıcı adı",
+  "username_required": "Şifre zorunludur",
+  "hello": "Merhaba",
+  "logout": "Çıkış",
+  "already_logged_in": "Zaten giriş yapılmış",
+  "login_method": "Giriş Yöntemleri",
+  "logout_success": "başarıyla çıkış yaptınız",
+  "back": "Geri",
+  "username_taken": "Kullanıcı adı alınmış",
+  "accept_terms_and_conditions": "Şartlar ve koşullarımızı kabul edin",
+  "password_required": "Şifre Zorunlu",
+  "resend_verification_email": "doğrulama e-postasını yeniden gönder",
+  "password_signup": "kayıt ol",
+  "username_optional": "Kullanıcı adı",
+  "first_name": "Ad",
+  "last_name": "Soyad",
+  "username_hint": "kullanıcı adı",
+  "email_required": "E-posta zorunlu",
+  "The 99 Holy Names of Allah": "Allah'ın 99 Güzel İsmi",
+  "welcome_back": "Tekrar hoş geldin, {name}",
+  "welcome_guest": "Merhaba Misafir",
+  "no_bookmarks": "Kayıtlı yer imi yok",
+  "tasbeeh": {
+    "title": "Dijital Tesbih",
+    "subtitle": "İslami Dua Tespihi",
+    "tapToCount": "Saymak için dokun",
+    "reset": "Sıfırla",
+    "settings": "Ayarlar",
+    "selectPhrase": "Zikir ifadesi seç",
+    "todayStats": "Bugünün İstatistikleri",
+    "total": "Toplam",
+    "sessions": "Oturumlar",
+    "completed": "Tamamlanan Setler",
+    "continue": "Devam",
+    "vibration": "Titreşim Geri Bildirimi",
+    "sound": "Sesli Geri Bildirim",
+    "autoNext": "Otomatik Sonraki İfade",
+    "phrases": {
+      "subhanallah": "Allah'ı tesbih ederim",
+      "alhamdulillah": "Allah'a hamd olsun",
+      "allahu_akbar": "Allah en büyüktür",
+      "la_ilaha_illa_allah": "Allah'tan başka ilah yoktur",
+      "astaghfirullah": "Allah'tan bağışlanma dilerim",
+      "la_hawla": "Güç ve kuvvet ancak Allah iledir"
+    }
+  },
+  "account": {
+    "title": "Hesap"
+  },
+  "meta": {
+    "home": "Peace2074 — manevi yolculuğunuzu desteklemek için İslami kaynaklar, dua araçları ve düşündürücü yazılar.",
+    "holynames": "Allah'ın 99 Güzel İsmini anlamları ve sesli okumalarıyla keşfedin.",
+    "tasbeeh": "Dijital Tesbih — oturum takibi ve ayarlarla zikir için sade ve şık sayaç.",
+    "miracles": "İşaretler ve mucizeler hakkında ilham verici hikâyeler ve tefekkürler okuyun.",
+    "quran": "Kutsal Kur'an — sureleri okuyun, gezinin ve yer imleyin; güzel Arapça tipografi ve duyarlı düzen ile.",
+    "privacy": "Siteyi kullanırken verilerinizi ve gizliliğinizi nasıl koruduğumuzu öğrenin.",
+    "titles": {
+      "home": "Ana Sayfa",
+      "quran": "Kur'an",
+      "holynames": "Kutsal İsimler",
+      "tasbeeh": "Tesbih"
+    }
+  },
+  "bookmarks": "yer imi",
+  "profile": {
+    "title": "Profil",
+    "edit": "Profili Düzenle",
+    "save": "Değişiklikleri Kaydet"
+  },
+  "settings": {
+    "title": "Ayarlar",
+    "display": "Görüntü Ayarları",
+    "language": "Dil Tercihi",
+    "theme": "Tema"
+  },
+  "holyNames": {
+    "1": {
+      "transliteration": "En Merhametli",
+      "meaning": "En Şefkatli"
+    },
+    "2": {
+      "transliteration": "En Lütufkâr",
+      "meaning": "Rahmet Veren"
+    },
+    "3": {
+      "transliteration": "Hükümdar",
+      "meaning": "Mutlak Egemen"
+    },
+    "4": {
+      "transliteration": "En Kutsal",
+      "meaning": "Pek Temiz Olan"
+    },
+    "5": {
+      "transliteration": "Esenlik Kaynağı",
+      "meaning": "Kusursuz Olan"
+    },
+    "6": {
+      "transliteration": "İman Veren",
+      "meaning": "İman Aşılayan"
+    },
+    "7": {
+      "transliteration": "Koruyucu",
+      "meaning": "Eminliğin Koruyucusu"
+    },
+    "8": {
+      "transliteration": "Galip",
+      "meaning": "Güçlü Olan"
+    },
+    "9": {
+      "transliteration": "Cebbar",
+      "meaning": "Düzene Koyan"
+    },
+    "10": {
+      "transliteration": "Yüce",
+      "meaning": "Azametli Olan"
+    },
+    "11": {
+      "transliteration": "Yaratan",
+      "meaning": "Her Şeyi Yaratan"
+    },
+    "12": {
+      "transliteration": "Var Eden",
+      "meaning": "Şekil Veren"
+    },
+    "13": {
+      "transliteration": "Musavvir",
+      "meaning": "Güzellik Veren"
+    },
+    "14": {
+      "transliteration": "Bağışlayan",
+      "meaning": "Çok Bağışlayan"
+    },
+    "15": {
+      "transliteration": "Kahhar",
+      "meaning": "Her Şeye Galip Olan"
+    },
+    "16": {
+      "transliteration": "Vahhab",
+      "meaning": "Çok Veren"
+    },
+    "17": {
+      "transliteration": "Rızık Veren",
+      "meaning": "Geçimi Sağlayan"
+    },
+    "18": {
+      "transliteration": "Açan",
+      "meaning": "Çözüm Veren"
+    },
+    "19": {
+      "transliteration": "Her Şeyi Bilen",
+      "meaning": "Alîm"
+    },
+    "20": {
+      "transliteration": "Kısıtlayan",
+      "meaning": "Daraltan"
+    },
+    "21": {
+      "transliteration": "Genişleten",
+      "meaning": "Bolluk Veren"
+    },
+    "22": {
+      "transliteration": "Alçaltan",
+      "meaning": "İndiren"
+    },
+    "23": {
+      "transliteration": "Yükselten",
+      "meaning": "Yücelten"
+    },
+    "24": {
+      "transliteration": "İzzet Veren",
+      "meaning": "Onur Veren"
+    },
+    "25": {
+      "transliteration": "Zillete Düşüren",
+      "meaning": "Küçülten"
+    },
+    "26": {
+      "transliteration": "Her Şeyi İşiten",
+      "meaning": "Semi"
+    },
+    "27": {
+      "transliteration": "Her Şeyi Gören",
+      "meaning": "Basîr"
+    },
+    "28": {
+      "transliteration": "Hükmeden",
+      "meaning": "Adil Hâkim"
+    },
+    "29": {
+      "transliteration": "Adaletli",
+      "meaning": "Mutlak Adil"
+    },
+    "30": {
+      "transliteration": "Latif",
+      "meaning": "En Nazik"
+    },
+    "31": {
+      "transliteration": "Haberdar",
+      "meaning": "Her Şeyden Haberdar"
+    },
+    "32": {
+      "transliteration": "Halîm",
+      "meaning": "Yumuşak Davranan"
+    },
+    "33": {
+      "transliteration": "Azametli",
+      "meaning": "Yüce"
+    },
+    "34": {
+      "transliteration": "Bağışlayan",
+      "meaning": "Çok Bağışlayan"
+    },
+    "35": {
+      "transliteration": "Şükre Karşılık Veren",
+      "meaning": "Çok Şükredilen"
+    },
+    "36": {
+      "transliteration": "Yüce",
+      "meaning": "En Yüksek"
+    },
+    "37": {
+      "transliteration": "Büyük",
+      "meaning": "En Büyük"
+    },
+    "38": {
+      "transliteration": "Koruyan",
+      "meaning": "Hafız"
+    },
+    "39": {
+      "transliteration": "Besleyen",
+      "meaning": "Rızıklandıran"
+    },
+    "40": {
+      "transliteration": "Hesap Gören",
+      "meaning": "Yeterli Olan"
+    },
+    "41": {
+      "transliteration": "Celâl Sahibi",
+      "meaning": "Yüce Olan"
+    },
+    "42": {
+      "transliteration": "Cömert",
+      "meaning": "En Cömert"
+    },
+    "43": {
+      "transliteration": "Gözeten",
+      "meaning": "Daima Gözeten"
+    },
+    "44": {
+      "transliteration": "Dualara Cevap Veren",
+      "meaning": "Mucîb"
+    },
+    "45": {
+      "transliteration": "Kuşatan",
+      "meaning": "Sınırsız"
+    },
+    "46": {
+      "transliteration": "Hikmet Sahibi",
+      "meaning": "Hakîm"
+    },
+    "47": {
+      "transliteration": "Seven",
+      "meaning": "En Çok Seven"
+    },
+    "48": {
+      "transliteration": "Şanlı",
+      "meaning": "En Yüce Şan Sahibi"
+    },
+    "49": {
+      "transliteration": "Dirilten",
+      "meaning": "Ölüleri Dirilten"
+    },
+    "50": {
+      "transliteration": "Şahit",
+      "meaning": "Her Şeye Şahit Olan"
+    },
+    "51": {
+      "transliteration": "Hak",
+      "meaning": "Mutlak Gerçek"
+    },
+    "52": {
+      "transliteration": "Vekil",
+      "meaning": "İşleri Düzenleyen"
+    },
+    "53": {
+      "transliteration": "Güçlü",
+      "meaning": "Çok Güçlü"
+    },
+    "54": {
+      "transliteration": "Metin",
+      "meaning": "Sarsılmaz"
+    },
+    "55": {
+      "transliteration": "Dost",
+      "meaning": "Koruyucu Dost"
+    },
+    "56": {
+      "transliteration": "Övülmeye Layık",
+      "meaning": "Hamîd"
+    },
+    "57": {
+      "transliteration": "Hesap Görücü",
+      "meaning": "Hesap Sorucu"
+    },
+    "58": {
+      "transliteration": "Başlatan",
+      "meaning": "İlk Yaratan"
+    },
+    "59": {
+      "transliteration": "Geri Döndüren",
+      "meaning": "Yeniden Var Eden"
+    },
+    "60": {
+      "transliteration": "Hayat Veren",
+      "meaning": "Can Veren"
+    },
+    "61": {
+      "transliteration": "Öldüren",
+      "meaning": "Can Alan"
+    },
+    "62": {
+      "transliteration": "Daima Diri",
+      "meaning": "Hayy"
+    },
+    "63": {
+      "transliteration": "Kendi Kendine Kaim",
+      "meaning": "Her Şeyi Ayakta Tutan"
+    },
+    "64": {
+      "transliteration": "Bulucu",
+      "meaning": "İdrak Eden"
+    },
+    "65": {
+      "transliteration": "Yüce",
+      "meaning": "Şerefli"
+    },
+    "66": {
+      "transliteration": "Tek",
+      "meaning": "Biricik"
+    },
+    "67": {
+      "transliteration": "Bölünmez",
+      "meaning": "Tek ve Eşsiz"
+    },
+    "68": {
+      "transliteration": "Ebedî",
+      "meaning": "Mutlak"
+    },
+    "69": {
+      "transliteration": "Kudretli",
+      "meaning": "Her Şeye Gücü Yeten"
+    },
+    "70": {
+      "transliteration": "Muktedir",
+      "meaning": "Takdir Eden"
+    },
+    "71": {
+      "transliteration": "Öne Alan",
+      "meaning": "İleri Alan"
+    },
+    "72": {
+      "transliteration": "Geri Bırakan",
+      "meaning": "Erteleyen"
+    },
+    "73": {
+      "transliteration": "İlk",
+      "meaning": "Başlangıç"
+    },
+    "74": {
+      "transliteration": "Son",
+      "meaning": "Son"
+    },
+    "75": {
+      "transliteration": "Zahir",
+      "meaning": "Açık Olan"
+    },
+    "76": {
+      "transliteration": "Bâtın",
+      "meaning": "Gizli Olan"
+    },
+    "77": {
+      "transliteration": "Yönetici",
+      "meaning": "Koruyucu"
+    },
+    "78": {
+      "transliteration": "En Yüce",
+      "meaning": "Üstün"
+    },
+    "79": {
+      "transliteration": "İyiliğin Kaynağı",
+      "meaning": "Salih"
+    },
+    "80": {
+      "transliteration": "Tevbeleri Kabul Eden",
+      "meaning": "Affedici"
+    },
+    "81": {
+      "transliteration": "İntikam Alan",
+      "meaning": "Karşılık Veren"
+    },
+    "82": {
+      "transliteration": "Affeden",
+      "meaning": "En Çok Affeden"
+    },
+    "83": {
+      "transliteration": "Şefkatli",
+      "meaning": "En Merhametli"
+    },
+    "84": {
+      "transliteration": "Mülkün Sahibi",
+      "meaning": "Egemenliğin Sahibi"
+    },
+    "85": {
+      "transliteration": "Celâl ve İkram Sahibi",
+      "meaning": "Yücelik ve İkram Sahibi"
+    },
+    "86": {
+      "transliteration": "Adaletli",
+      "meaning": "Hakça Hükmeden"
+    },
+    "87": {
+      "transliteration": "Toplayan",
+      "meaning": "Bir Araya Getiren"
+    },
+    "88": {
+      "transliteration": "Hiçbir Şeye Muhtaç Olmayan",
+      "meaning": "Zengin"
+    },
+    "89": {
+      "transliteration": "Zengin Eden",
+      "meaning": "Varlık Veren"
+    },
+    "90": {
+      "transliteration": "Engelleyen",
+      "meaning": "Alıkoyan"
+    },
+    "91": {
+      "transliteration": "Sıkıntı Veren",
+      "meaning": "Zarar Yaratan"
+    },
+    "92": {
+      "transliteration": "Fayda Veren",
+      "meaning": "İyilik Yaratan"
+    },
+    "93": {
+      "transliteration": "Nur",
+      "meaning": "Aydınlatan"
+    },
+    "94": {
+      "transliteration": "Hidayet Veren",
+      "meaning": "Yol Gösteren"
+    },
+    "95": {
+      "transliteration": "Eşi Benzeri Olmayan",
+      "meaning": "İlk Örnek Veren"
+    },
+    "96": {
+      "transliteration": "Sonsuz",
+      "meaning": "Ebedî"
+    },
+    "97": {
+      "transliteration": "Miras Bırakan",
+      "meaning": "En Yüce Varis"
+    },
+    "98": {
+      "transliteration": "Rehber",
+      "meaning": "Doğru Yolu Gösteren"
+    },
+    "99": {
+      "transliteration": "Sabırlı",
+      "meaning": "En Sabırlı"
+    }
+  },
+  "Asma' Allah Al-Husna": "Esmâü'l-Hüsnâ",
+  "consent": {
+    "message": "Deneyiminizi geliştirmek ve site kullanımını analiz etmek için çerezler kullanıyoruz.",
+    "details": "'Kabul Et'e tıklayarak, analiz için çerez kullanımımızı kabul etmiş olursunuz.",
+    "accept": "Kabul Et",
+    "decline": "Reddet"
+  },
+  "prayer_times_purpose": "Konumunuza göre doğru namaz vakitlerini hesaplamak ve namaz vaktini bildirmek için.",
+  "location_services": "Konum Hizmetleri",
+  "location_services_text": "iPhone ve iPad'de uygulama, bölgenizdeki doğru İslami namaz vakitlerini (Sabah, Öğle, İkindi, Akşam, Yatsı) hesaplamak için cihazınızın konumuna erişim isteyebilir. Konum verileri yalnızca namaz vakitlerini hesaplamak için cihazda kullanılır — sunucularımıza iletilmez, depolanmaz veya üçüncü taraflarla paylaşılmaz. İzni istediğiniz zaman Ayarlar'dan reddedebilir veya iptal edebilirsiniz; uygulama varsayılan konumu (Kudüs) kullanır. Apple TV uygulaması konum hizmetleri kullanmaz.",
+  "push_notifications": "Anlık Bildirimler",
+  "push_notifications_text": "Uygulama, namaz vakti geldiğinde Ezan'ın zamanında çalınabilmesi için size anlık bildirim gönderebilir. Bildirimler yalnızca açıkça izin vermeniz durumunda gönderilir. Cihaz Ayarları'ndan veya uygulama içinden istediğiniz zaman devre dışı bırakabilirsiniz.",
+  "terms_location": "Konum ve Bildirimler",
+  "terms_location_text": "Namaz vakti bildirimlerini etkinleştirerek, uygulamanın namaz vakitlerini yalnızca yerel olarak hesaplamak amacıyla cihaz konumunuza erişmesine onay vermiş olursunuz. Bu veriler depolanmaz veya paylaşılmaz. Konum veya bildirim iznini istediğiniz zaman Ayarlar'dan iptal edebilirsiniz."
 }
