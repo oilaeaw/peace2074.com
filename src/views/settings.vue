@@ -8,6 +8,7 @@ import {
   TRANSLATOR_PREF_KEY,
   readTranslatorIdForLocale,
   persistTranslatorIdForLocale,
+  type QuranTranslator,
 } from '@shared/data/quran-translators'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
@@ -46,12 +47,27 @@ const fontSize = ref(readFontSizePreference())
 const highContrast = ref(readHighContrastPreference())
 const showOfflineRecitationManager = ref(false)
 
-const translatorOptions = computed(() =>
-  (QURAN_TRANSLATORS[locale.value] || []).map((tr) => ({
+const apiTranslators = ref<Record<string, QuranTranslator[]> | null>(null)
+
+async function fetchTranslators() {
+  try {
+    const res = await fetch('/api/quran/translations')
+    if (res.ok) {
+      const json = await res.json()
+      if (json?.translators) apiTranslators.value = json.translators
+    }
+  } catch {
+    // fall back to bundled data
+  }
+}
+
+const translatorOptions = computed(() => {
+  const source = apiTranslators.value ?? QURAN_TRANSLATORS
+  return (source[locale.value] || []).map((tr) => ({
     value: tr.id,
     label: tr.name,
   }))
-)
+})
 
 const translatorModel = computed({
   get: () => readTranslatorIdForLocale(locale.value),
@@ -134,6 +150,7 @@ watch(enableNotifications, async (val) => {
 onMounted(async () => {
   applyFontSize(fontSize.value)
   applyHighContrast(highContrast.value)
+  fetchTranslators()
 
   if (!enableNotifications.value) return
   const ok = await activateNotifications()
