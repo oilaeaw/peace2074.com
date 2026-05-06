@@ -45,6 +45,59 @@
       </div>
     </div>
 
+    <!-- Featured Videos -->
+    <div class="section-label text-overline text-grey-5 q-mb-xs">
+      {{ t('pages.social.featuredVideos') }}
+    </div>
+    <div class="text-caption text-grey-6 q-mb-md">
+      {{ t('pages.social.featuredVideosSubtitle') }}
+    </div>
+    <div class="row q-col-gutter-md q-mb-xl">
+      <div
+        v-for="video in featuredVideos"
+        :key="video.id"
+        class="col-12 col-sm-6 col-md-4"
+      >
+        <q-card flat bordered>
+          <q-video :src="video.embedUrl" :ratio="9 / 16" :title="video.title" />
+          <q-card-section class="q-pt-sm q-pb-xs">
+            <div class="text-body2 text-weight-medium">{{ video.title }}</div>
+            <div class="row items-center q-mt-xs q-gutter-xs">
+              <q-icon name="music_note" size="14px" color="grey-6" />
+              <a
+                :href="video.artistUrl"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-caption text-primary"
+                >{{ video.artist }}</a
+              >
+              <span class="text-caption text-grey-5">{{
+                video.artistHandle
+              }}</span>
+            </div>
+          </q-card-section>
+          <q-separator />
+          <q-card-section class="q-py-xs">
+            <div class="row items-center justify-between">
+              <span class="text-caption text-grey-5">
+                © {{ video.artist }} — all rights reserved. Embedded via TikTok
+                official embed.
+              </span>
+              <a
+                :href="`https://www.tiktok.com/@${video.artistHandle.replace('@', '')}/video/${video.id}`"
+                target="_blank"
+                rel="noopener noreferrer"
+                class="text-caption text-grey-6 row items-center q-gutter-xs"
+              >
+                <q-icon name="open_in_new" size="12px" />
+                <span>Watch on TikTok</span>
+              </a>
+            </div>
+          </q-card-section>
+        </q-card>
+      </div>
+    </div>
+
     <!-- Share a verse -->
     <div class="section-label text-overline text-grey-5 q-mb-sm">
       {{ t('pages.social.shareVerse') }}
@@ -133,7 +186,33 @@ import { resolveNitroUrl } from '@/stores/services'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
-
+// ── Featured Videos ─────────────────────────────────────────────────────────
+const featuredVideos = [
+  {
+    id: '7614273496935386390',
+    title: '🚦🌹 Come to Islam',
+    artist: 'Abdull Vocals',
+    artistHandle: '@abdullvocals',
+    artistUrl: 'https://www.tiktok.com/@abdullvocals',
+    embedUrl: 'https://www.tiktok.com/embed/v2/7614273496935386390',
+  },
+  {
+    id: '7604807153408331030',
+    title: '🌹🕋 Alhamdulillah',
+    artist: 'Abdull Vocals',
+    artistHandle: '@abdullvocals',
+    artistUrl: 'https://www.tiktok.com/@abdullvocals',
+    embedUrl: 'https://www.tiktok.com/embed/v2/7604807153408331030',
+  },
+  {
+    id: '7617605509402725655',
+    title: '🌹 Hijab Nasheed',
+    artist: 'Abdull Vocals',
+    artistHandle: '@abdullvocals',
+    artistUrl: 'https://www.tiktok.com/@abdullvocals',
+    embedUrl: 'https://www.tiktok.com/embed/v2/7617605509402725655',
+  },
+]
 // ── Social handles ──────────────────────────────────────────────────────────
 const handles = [
   {
