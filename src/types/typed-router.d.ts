@@ -156,6 +156,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/social': RouteRecordInfo<
+      '/social',
+      '/social',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/support': RouteRecordInfo<
       '/support',
       '/support',
@@ -301,6 +308,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/signup.vue': {
       routes:
         | '/signup'
+      views:
+        | never
+    }
+    'src/views/social.vue': {
+      routes:
+        | '/social'
       views:
         | never
     }
