@@ -1,8 +1,14 @@
 <script setup lang="ts">
-import { onMounted, ref, watch } from 'vue'
+import { onMounted, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
+import {
+  QURAN_TRANSLATORS,
+  TRANSLATOR_PREF_KEY,
+  readTranslatorIdForLocale,
+  persistTranslatorIdForLocale,
+} from '@shared/data/quran-translators'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -16,7 +22,7 @@ const DARK_MODE_KEY = 'pref-dark-mode'
 const FONT_SIZE_KEY = 'pref-font-size'
 const HIGH_CONTRAST_KEY = 'pref-high-contrast'
 
-const { t } = useI18n()
+const { t, locale } = useI18n()
 const $q = useQuasar()
 
 function isNativeRuntime(): boolean {
@@ -39,6 +45,27 @@ const darkMode = ref(readDarkModePreference())
 const fontSize = ref(readFontSizePreference())
 const highContrast = ref(readHighContrastPreference())
 const showOfflineRecitationManager = ref(false)
+
+const translatorOptions = computed(() =>
+  (QURAN_TRANSLATORS[locale.value] || []).map((tr) => ({
+    value: tr.id,
+    label: tr.name,
+  }))
+)
+
+const translatorModel = computed({
+  get: () => readTranslatorIdForLocale(locale.value),
+  set: (id: number) => {
+    persistTranslatorIdForLocale(locale.value, id)
+    if (typeof window !== 'undefined') {
+      window.dispatchEvent(
+        new CustomEvent('quran-translator-changed', {
+          detail: { id, locale: locale.value },
+        })
+      )
+    }
+  },
+})
 
 watch(navOrderingEnabled, (val) => {
   persistNavOrdering(val)
@@ -726,6 +753,31 @@ async function reloadApp() {
                 color="primary"
                 :aria-label="t('pages.settings.display.translation')"
               />
+            </div>
+            <div
+              v-if="showQuranTranslation && translatorOptions.length > 0"
+              class="setting-row q-mt-sm"
+            >
+              <div style="flex: 1">
+                <div class="text-subtitle1">
+                  {{ t('pages.settings.display.translator') }}
+                </div>
+                <div class="text-caption setting-hint">
+                  {{ t('pages.settings.display.translatorHint') }}
+                </div>
+                <q-select
+                  v-model="translatorModel"
+                  :options="translatorOptions"
+                  emit-value
+                  map-options
+                  dense
+                  outlined
+                  color="primary"
+                  class="q-mt-sm"
+                  style="max-width: 320px"
+                  :aria-label="t('pages.settings.display.translator')"
+                />
+              </div>
             </div>
           </q-card-section>
         </q-card>

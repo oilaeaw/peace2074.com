@@ -364,7 +364,9 @@
         "darkMode": "Dunkler Modus",
         "darkModeHint": "Wechsel zwischen hellem und dunklem Design.",
         "translation": "Quran-Übersetzung anzeigen",
-        "translationHint": "Die Übersetzung wird zur Transparenz immer nach dem arabischen Text angezeigt."
+        "translationHint": "Die Übersetzung wird zur Transparenz immer nach dem arabischen Text angezeigt.",
+        "translator": "Quran-Übersetzer",
+        "translatorHint": "Wähle deinen bevorzugten Übersetzungsgelehrten für die aktuelle Sprache."
       },
       "accessibility": {
         "title": "Barrierefreiheit",

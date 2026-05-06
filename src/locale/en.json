@@ -481,7 +481,9 @@
         "darkMode": "Dark mode",
         "darkModeHint": "Switch between light and dark theme.",
         "translation": "Show Quran translation",
-        "translationHint": "Always display translation after Arabic text for transparency."
+        "translationHint": "Always display translation after Arabic text for transparency.",
+        "translator": "Quran translator",
+        "translatorHint": "Choose your preferred translation scholar for the current language."
       },
       "accessibility": {
         "title": "Accessibility",

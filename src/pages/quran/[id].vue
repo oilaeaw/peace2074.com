@@ -18,6 +18,10 @@ import {
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
 import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
+import {
+  readTranslatorIdForLocale,
+  TRANSLATOR_PREF_KEY,
+} from '@shared/data/quran-translators'
 
 // Define component name for keep-alive
 defineOptions({
@@ -41,6 +45,13 @@ const q2p = useQ2P()
 const $q = useQuasar()
 const bookmarksStore = useBookmarksStore()
 const QURAN_TRANSLATION_KEY = 'quran-show-translation'
+
+/** Strip HTML tags that quran.com injects into some translation texts (e.g. <sup> footnotes). */
+function cleanTranslationText(text: string): string {
+  return String(text || '')
+    .replace(/<[^>]*>/g, '')
+    .trim()
+}
 
 const sura = ref<any | null>(null)
 const loading = ref(true)
@@ -1516,16 +1527,20 @@ async function loadAudioAndTimings(id: number) {
       preferredOfflineQuality
     )
     if (loadedFromCache) {
-      return // Successfully loaded from cache
+      // Audio is offline — load translations from bundled editions.
+      await loadTranslationsFromBundled(id)
+      return
     }
     // If cache load failed, continue to online loading
   }
 
   const AUDIO_BASE_URL = 'https://verses.quran.com/'
 
+  const translatorId = readTranslatorIdForLocale(locale.value || 'en')
+
   try {
-    // Fetch verses with audio segments for reciter 7 (Al-Afasy)
-    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&words=true&word_fields=text_uthmani&per_page=300`
+    // Fetch verses with audio segments for reciter 7 (Al-Afasy) + preferred translation.
+    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&words=true&word_fields=text_uthmani&translations=${translatorId}&per_page=300`
     const res = await fetch(sourceUrl)
     if (!res.ok) {
       trackApi5xx('quran_com_verses', res.status, sourceUrl)
@@ -1533,6 +1548,7 @@ async function loadAudioAndTimings(id: number) {
         '[Quran Audio] Failed to load from quran.com, falling back to alquran.cloud'
       )
       await loadAudioListFallback(id)
+      await loadTranslationsFromBundled(id)
       return
     }
 
@@ -1579,6 +1595,15 @@ async function loadAudioAndTimings(id: number) {
           syncedVerseWords.value[verseNum - 1] = words
         }
       }
+
+      // Merge translation text into sura ayat
+      const translationText = verse?.translations?.[0]?.text
+      if (translationText && sura.value?.ayat) {
+        const ayah = sura.value.ayat[verseNum - 1]
+        if (ayah) {
+          ayah.translation = cleanTranslationText(translationText)
+        }
+      }
     })
 
     // Filter out any undefined entries
@@ -1590,6 +1615,29 @@ async function loadAudioAndTimings(id: number) {
   } catch (err) {
     console.error('[Quran Audio] Failed to load from quran.com:', err)
     await loadAudioListFallback(id)
+    await loadTranslationsFromBundled(id)
+  }
+}
+
+/**
+ * Offline fallback: load translation text from the bundled edition JSON
+ * for the current locale. Used when the quran.com API is unreachable.
+ */
+async function loadTranslationsFromBundled(id: number) {
+  if (!sura.value?.ayat) return
+  const loc = locale.value || 'en'
+  try {
+    const edition = await import(
+      `../../shared/data/editions/${loc}.json`
+    ).catch(() => import('../../shared/data/editions/en.json'))
+    const verses: Array<{ verse: number; text: string }> =
+      edition.default?.[String(id)] || []
+    verses.forEach((v) => {
+      const ayah = sura.value?.ayat?.[v.verse - 1]
+      if (ayah && v.text) ayah.translation = v.text
+    })
+  } catch {
+    // Silently fail — translations just won't show
   }
 }
 
@@ -2686,6 +2734,7 @@ onMounted(async () => {
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
     )
+    window.addEventListener('quran-translator-changed', onTranslatorChanged)
   }
 
   // Load list of cached suras for offline detection
@@ -2756,8 +2805,17 @@ onUnmounted(() => {
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
     )
+    window.removeEventListener('quran-translator-changed', onTranslatorChanged)
   }
 })
+
+function onTranslatorChanged() {
+  if (!sura.value) return
+  // Reload only translations (not audio) when the preference changes.
+  loadTranslationsFromBundled(currentSuraId.value).then(() => {
+    loadAudioAndTimings(currentSuraId.value)
+  })
+}
 
 watch(
   () => route.params.id,
