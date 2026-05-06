@@ -112,11 +112,9 @@ const DEFAULT_USERS: User[] = [
 const USERS_KEY = 'db:users'
 let initPromise: Promise<void> | null = null
 let memoryUsers: User[] | null = null
-let dbMode: 'unknown' | 'on' | 'off' = 'unknown'
 let dbFailureLogged = false
 
 function markDbUnavailable(error: unknown) {
-    dbMode = 'off'
     initPromise = null
     if (!dbFailureLogged) {
         dbFailureLogged = true
@@ -476,12 +474,9 @@ async function ensureInitialized() {
 }
 
 async function isDbReady() {
-    if (dbMode === 'off') return false
-
     try {
         await getMongoose()
         await ensureInitialized()
-        dbMode = 'on'
         dbFailureLogged = false
         return true
     } catch (error) {
