@@ -795,3 +795,39 @@ export async function updateUserRoleAndPermissions(
     await saveFallbackUsers(users)
     return user
 }
+
+export async function banUser(userId: string, reason?: string): Promise<User | null> {
+    const payload = { banned: true, bannedAt: new Date(), bannedReason: reason ?? null }
+    if (await isDbReady()) {
+        try {
+            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
+            return result ? toAppUser(result) : null
+        } catch (error) {
+            markDbUnavailable(error)
+        }
+    }
+    const users = await loadFallbackUsers()
+    const user = users.find((u) => u.id === userId)
+    if (!user) return null
+    Object.assign(user, payload)
+    await saveFallbackUsers(users)
+    return user
+}
+
+export async function unbanUser(userId: string): Promise<User | null> {
+    const payload = { banned: false, bannedAt: null, bannedReason: null }
+    if (await isDbReady()) {
+        try {
+            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
+            return result ? toAppUser(result) : null
+        } catch (error) {
+            markDbUnavailable(error)
+        }
+    }
+    const users = await loadFallbackUsers()
+    const user = users.find((u) => u.id === userId)
+    if (!user) return null
+    Object.assign(user, payload)
+    await saveFallbackUsers(users)
+    return user
+}

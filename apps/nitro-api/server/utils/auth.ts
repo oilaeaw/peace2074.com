@@ -116,5 +116,9 @@ export function requireAuth(event: H3Event): SessionPayload {
     if (!session) {
         throw createError({ statusCode: 401, statusMessage: 'Unauthorized' })
     }
+    if ((session as any).banned) {
+        clearSessionCookie(event)
+        throw createError({ statusCode: 403, statusMessage: 'Account suspended' })
+    }
     return session
 }

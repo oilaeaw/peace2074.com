@@ -15,6 +15,9 @@ const UserSchema = new Schema(
         avatar_url: { type: String, default: null },
         github_id: { type: String, default: null },
         permissions: { type: Schema.Types.Mixed, default: [] },
+        banned: { type: Boolean, default: false },
+        bannedAt: { type: Date, default: null },
+        bannedReason: { type: String, default: null },
     },
     { timestamps: true, collection: 'User' }
 )
