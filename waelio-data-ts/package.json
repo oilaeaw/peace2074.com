@@ -5,9 +5,9 @@
   "main": "dist/index.js",
   "types": "dist/index.d.ts",
   "scripts": {
-    "dev": "tsx watch src/server.ts",
+    "dev": "tsx watch server.ts",
     "start": "node dist/server.js",
-    "build": "tsup src/index.ts src/server.ts --format cjs,esm --dts",
+    "build": "tsup index.ts server.ts --format cjs,esm --dts",
     "test": "node --test test/"
   },
   "keywords": [

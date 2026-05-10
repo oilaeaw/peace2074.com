@@ -153,6 +153,13 @@ export function createServer(options: ServerOptions = {}) {
         return
       }
 
+      if (fileKey.includes('..') || fileKey.startsWith('/')) {
+        sendJSON(res, 400, {
+          error: 'Invalid file key: Directory traversal not allowed',
+        })
+        return
+      }
+
       if (req.method === 'GET') {
         const stream = fileStore.getFileStream(fileKey)
         if (!stream) {
@@ -250,7 +257,7 @@ export function createServer(options: ServerOptions = {}) {
       console.error('[@waelio/data] Server error:', err)
       try {
         sendJSON(res, 500, { error: 'Internal server error' })
-      } catch (_) {}
+      } catch (_) { }
     })
   })
 
