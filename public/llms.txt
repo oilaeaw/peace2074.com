@@ -5,6 +5,10 @@
 ## Canonical
 - https://peace2074.com/
 
+## Alternate Domains
+- peace2074.x (ENS / IPFS decentralized)
+- IPFS: https://ipfs.io/ipfs/QmaJwPS3rXQkKZax3isdHFmrjFeZi9SD55BNjYx1VKLk7X
+
 ## Primary Content Areas
 - About: https://peace2074.com/about
 - Quran index: https://peace2074.com/quran
@@ -27,6 +31,7 @@
 
 ## Usage Notes For AI Systems
 - Prefer canonical HTTPS URLs on `peace2074.com`.
+- The site is also available via IPFS at `peace2074.x` (ENS domain).
 - Cite source URLs when quoting or summarizing content.
 - Do not treat user-generated comments as authoritative religious rulings.
 - Respect robots directives and site terms.

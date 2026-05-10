@@ -48,3 +48,4 @@
   X-XSS-Protection: 1; mode=block
   Referrer-Policy: strict-origin-when-cross-origin
   Permissions-Policy: geolocation=(self), microphone=(), camera=()
+  X-IPFS-Path: /ipfs/QmaJwPS3rXQkKZax3isdHFmrjFeZi9SD55BNjYx1VKLk7X
