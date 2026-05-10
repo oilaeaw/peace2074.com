@@ -1,14 +1,18 @@
 import http from 'node:http'
 import crypto from 'node:crypto'
+import path from 'node:path'
 import { Database, DatabaseOptions } from './Database'
+import { FileStore, FileStoreOptions } from './FileStore'
 
 export interface ServerOptions {
   db?: Database
+  fileStore?: FileStore
   token?: string
   port?: number
   host?: string
   cors?: string | string[]
   dbOptions?: DatabaseOptions
+  fileStoreOptions?: FileStoreOptions
 }
 
 export function createServer(options: ServerOptions = {}) {
@@ -22,9 +26,11 @@ export function createServer(options: ServerOptions = {}) {
   }
 
   const db = options.db || new Database(options.dbOptions || {})
+  const fileStore =
+    options.fileStore || new FileStore(options.fileStoreOptions || {})
   const sseClients = new Set<http.ServerResponse>()
 
-  db.on('change', (payload) => {
+  const broadcastEvent = (payload: any) => {
     const msg = `data: ${JSON.stringify(payload)}\n\n`
     for (const res of sseClients) {
       try {
@@ -33,7 +39,10 @@ export function createServer(options: ServerOptions = {}) {
         sseClients.delete(res)
       }
     }
-  })
+  }
+
+  db.on('change', broadcastEvent)
+  fileStore.on('change', broadcastEvent)
 
   function setCorsHeaders(req: http.IncomingMessage, res: http.ServerResponse) {
     const origin = getAllowedOrigin(req)
@@ -76,13 +85,26 @@ export function createServer(options: ServerOptions = {}) {
     return crypto.timingSafeEqual(provided, expected)
   }
 
-  function readBody(req: http.IncomingMessage): Promise<string> {
+  function readBody(req: http.IncomingMessage): Promise<Buffer> {
     return new Promise((resolve, reject) => {
       const chunks: Buffer[] = []
       req.on('data', (c) => chunks.push(c))
-      req.on('end', () => resolve(Buffer.concat(chunks).toString('utf8')))
+      req.on('end', () => resolve(Buffer.concat(chunks)))
       req.on('error', reject)
     })
+  }
+
+  function getContentType(ext: string): string {
+    const types: Record<string, string> = {
+      '.mp3': 'audio/mpeg',
+      '.wav': 'audio/wav',
+      '.json': 'application/json',
+      '.txt': 'text/plain',
+      '.png': 'image/png',
+      '.jpg': 'image/jpeg',
+      '.jpeg': 'image/jpeg',
+    }
+    return types[ext.toLowerCase()] || 'application/octet-stream'
   }
 
   async function handler(req: http.IncomingMessage, res: http.ServerResponse) {
@@ -122,6 +144,52 @@ export function createServer(options: ServerOptions = {}) {
       return
     }
 
+    // ── Binary File Storage Routes (Files API) ──
+    if (parts[0] === 'files') {
+      const fileKey = parts.slice(1).join('/')
+
+      if (!fileKey) {
+        sendJSON(res, 400, { error: 'Missing file key' })
+        return
+      }
+
+      if (req.method === 'GET') {
+        const stream = fileStore.getFileStream(fileKey)
+        if (!stream) {
+          sendJSON(res, 404, { error: 'File not found' })
+          return
+        }
+
+        const ext = path.extname(fileKey)
+        const size = fileStore.getFileSize(fileKey)
+
+        res.writeHead(200, {
+          'Content-Type': getContentType(ext),
+          'Content-Length': size || 0,
+        })
+        stream.pipe(res)
+        return
+      }
+
+      if (req.method === 'POST' || req.method === 'PUT') {
+        try {
+          const buffer = await readBody(req)
+          fileStore.saveFile(fileKey, buffer)
+          sendJSON(res, 200, { ok: true, key: fileKey, size: buffer.length })
+        } catch (e) {
+          sendJSON(res, 500, { error: 'Failed to save file' })
+        }
+        return
+      }
+
+      if (req.method === 'DELETE') {
+        const existed = fileStore.deleteFile(fileKey)
+        sendJSON(res, existed ? 200 : 404, { ok: existed })
+        return
+      }
+    }
+
+    // ── JSON Database Routes (Collections API) ──
     if (req.method === 'GET' && parts[0] === 'collections') {
       sendJSON(res, 200, db.collections())
       return
@@ -151,7 +219,8 @@ export function createServer(options: ServerOptions = {}) {
     if (req.method === 'POST' && key) {
       let body
       try {
-        body = JSON.parse(await readBody(req))
+        const rawBody = (await readBody(req)).toString('utf8')
+        body = JSON.parse(rawBody)
       } catch {
         sendJSON(res, 400, { error: 'Invalid JSON body' })
         return
@@ -189,7 +258,7 @@ export function createServer(options: ServerOptions = {}) {
     console.log(`[@waelio/data] Listening on http://${host}:${port}`)
   })
 
-  return { server, db, token }
+  return { server, db, fileStore, token }
 }
 
 export default createServer
@@ -207,6 +276,7 @@ if (
   const cors = process.env.DB_CORS || undefined
   const filePath = process.env.DB_FILE || undefined
   const encryptionKey = process.env.DB_ENCRYPTION_KEY || undefined
+  const storageDir = process.env.DB_BLOBS_DIR || undefined
 
   createServer({
     token,
@@ -214,5 +284,6 @@ if (
     host,
     cors,
     dbOptions: { filePath, encryptionKey },
+    fileStoreOptions: { storageDir },
   })
 }
