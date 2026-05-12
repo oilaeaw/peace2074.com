@@ -25,12 +25,21 @@ fi
 
 echo ""
 echo "=== Publishing to Android (Google Play Store) ==="
-# Note: Ensure you have your release keystore configured in App_Resources/Android/app/build.gradle
-npx nativescript build android --release || echo "Android build may have failed due to missing keystore. Please ensure it's configured."
-bundle exec fastlane android release || echo "Fastlane Android upload failed. Please ensure GOOGLE_PLAY_JSON_KEY_CONTENT is in your .env"
+if [ -n "$ANDROID_KEYSTORE_PATH" ]; then
+  npx nativescript build android --release \
+    --key-store-path "$ANDROID_KEYSTORE_PATH" \
+    --key-store-password "$ANDROID_KEYSTORE_PASSWORD" \
+    --key-store-alias "$ANDROID_KEYSTORE_ALIAS" \
+    --key-store-alias-password "$ANDROID_KEYSTORE_ALIAS_PASSWORD" \
+    --aab || echo "Android release build failed."
+else
+  echo "No ANDROID_KEYSTORE_PATH found in environment. Building an unsigned AAB..."
+  npx nativescript build android --aab || echo "Android unsigned build failed."
+fi
+fastlane android release || echo "Fastlane Android upload failed. Please ensure GOOGLE_PLAY_JSON_KEY_CONTENT is in your .env"
 
 echo ""
 echo "=== Publishing to iOS (App Store) ==="
-bundle exec fastlane ios release || echo "Fastlane iOS upload failed. Please ensure App Store API Keys are in your .env"
+fastlane ios release || echo "Fastlane iOS upload failed. Please ensure App Store API Keys are in your .env"
 
 echo "Done! The process has finished."
