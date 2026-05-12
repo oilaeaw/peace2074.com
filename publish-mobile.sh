@@ -47,6 +47,10 @@ fi
 
 echo ""
 echo "=== Publishing to iOS (App Store) ==="
+echo "Cleaning and preparing NativeScript iOS project..."
+npx nativescript clean
+npx nativescript prepare ios --release || echo "NativeScript iOS prepare failed."
+
 fastlane ios release || echo "Fastlane iOS upload failed. Please ensure App Store API Keys are in your .env"
 
 echo "Done! The process has finished."
