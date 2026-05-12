@@ -18,16 +18,16 @@ cd /Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/peace2074-mobile
 echo "Installing NativeScript dependencies..."
 pnpm install
 
-# Check if android is already added, if not, install the platform package and add it
-if ! grep -q "@nativescript/android" package.json; then
-  echo "Adding @nativescript/android..."
-  pnpm install -D @nativescript/android
-fi
-
-if [ ! -d "platforms/android" ]; then
-  echo "Adding Android platform to NativeScript..."
-  npx nativescript platform add android
-fi
+# Android platform setup disabled temporarily to prioritize iOS
+# if ! grep -q "@nativescript/android" package.json; then
+#   echo "Adding @nativescript/android..."
+#   pnpm install -D @nativescript/android
+# fi
+#
+# if [ ! -d "platforms/android" ]; then
+#   echo "Adding Android platform to NativeScript..."
+#   npx nativescript platform add android || true
+# fi
 
 echo ""
 echo "=== Publishing to Android (Google Play Store) ==="
