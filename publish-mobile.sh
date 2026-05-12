@@ -20,13 +20,13 @@ fi
 
 if [ ! -d "platforms/android" ]; then
   echo "Adding Android platform to NativeScript..."
-  npx ns platform add android
+  npx nativescript platform add android
 fi
 
 echo ""
 echo "=== Publishing to Android (Google Play Store) ==="
 # Note: Ensure you have your release keystore configured in App_Resources/Android/app/build.gradle
-npx ns build android --release || echo "Android build may have failed due to missing keystore. Please ensure it's configured."
+npx nativescript build android --release || echo "Android build may have failed due to missing keystore. Please ensure it's configured."
 bundle exec fastlane android release || echo "Fastlane Android upload failed. Please ensure GOOGLE_PLAY_JSON_KEY_CONTENT is in your .env"
 
 echo ""
