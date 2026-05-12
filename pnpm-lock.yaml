@@ -250,12 +250,6 @@ importers:
         specifier: ^3.6.7
         version: 3.6.7
 
-  ios/peace2074-mobile:
-    devDependencies:
-      '@nativescript/android':
-        specifier: ^9.0.4
-        version: 9.0.4
-
 packages:
 
   /@apideck/better-ajv-errors@0.3.7(ajv@8.20.0):
@@ -3159,10 +3153,6 @@ packages:
     dependencies:
       sparse-bitfield: 3.0.3
     dev: false
-
-  /@nativescript/android@9.0.4:
-    resolution: {integrity: sha512-htfv7Ku/M6Tq6fQjhV0nSwxa9agNYEs9x4zBdOW8mRye5CZS7xTJq83MffYkItrtN/jJeeaxiSAgu0F+L4oHgA==}
-    dev: true
 
   /@noble/hashes@1.8.0:
     resolution: {integrity: sha512-jCs9ldd7NwzpgXDIf6P3+NrHh9/sD6CQdxHyjQI+h/6rDNo88ypBxxz45UDuZHz9r3tNz7N/VInSVoVdtXEI4A==}
