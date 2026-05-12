@@ -16,7 +16,7 @@ fi
 cd /Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/peace2074-mobile
 
 echo "Installing NativeScript dependencies..."
-pnpm install
+npm install
 
 # Android platform setup disabled temporarily to prioritize iOS
 # if ! grep -q "@nativescript/android" package.json; then
