@@ -36,7 +36,7 @@ VAPID_SUBJECT=mailto:admin@peace2074.com
 ENABLE_BLOG_NOTIFICATIONS=true
 ```
 
-**⚠️ IMPORTANT**: Also add these to your Netlify environment variables!
+**⚠️ IMPORTANT**: Also add these to your Cloudflare environment variables!
 
 ### 3. Restart Dev Server
 

@@ -911,7 +911,7 @@
         "passkeyCreatePromptMessage": "Bir dahaki girişinizde daha hızlı olmak için cihaz biyometrisini veya parola yöneticinizi kullanın.",
         "passkeyCreatePromptConfirm": "Geçiş anahtarını kaydet",
         "signInWithGitHub": "GitHub ile giriş yap",
-        "signInWithNetlify": "Netlify Identity ile giriş yap",
+        "signInWithCloudflare": "Cloudflare Identity ile giriş yap",
         "appleSignInUnavailable": "Apple ile giriş şu anda kullanılamıyor.",
         "socialSignInExpired": "Girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",
         "googleSignInExpired": "Google ile girişin süresi doldu veya işlem yarıda kesildi. Lütfen tekrar deneyin.",

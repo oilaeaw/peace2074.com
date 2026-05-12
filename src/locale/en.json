@@ -918,7 +918,7 @@
     "passkeyCreatePromptMessage": "Use your device biometrics or password manager to sign in faster next time.",
     "passkeyCreatePromptConfirm": "Save passkey",
     "signInWithGitHub": "Sign in with GitHub",
-    "signInWithNetlify": "Sign in with Netlify Identity",
+    "signInWithCloudflare": "Sign in with Cloudflare Identity",
     "appleSignInUnavailable": "Sign in with Apple is currently unavailable.",
     "socialSignInExpired": "Sign-in expired or was interrupted. Please try again.",
     "googleSignInExpired": "Google sign-in expired or was interrupted. Please try again.",

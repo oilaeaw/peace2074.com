@@ -1,6 +1,6 @@
 # Contributing and Change Policy
 
-This repository powers a Nuxt 3 + Nitro SSR app deployed to Netlify. To protect production and avoid surprises, all changes must follow this policy.
+This repository powers a Nuxt 3 + Nitro SSR app deployed to Cloudflare. To protect production and avoid surprises, all changes must follow this policy.
 
 ## Principles
 - Respect the architecture documented in `.github/copilot-instructions.md`.
@@ -54,5 +54,5 @@ Local release commands (for testing with npm or pnpm):
 - `npm run release:major` or `pnpm run release:major` - bump major version (x.0.0)
 
 ## Notes
-- Cookies and sessions: use `nuxt-auth-utils` (iron-session). In production, set `SESSION_COOKIE_DOMAIN` to share across apex and www. Avoid setting on public suffix hosts (e.g., Netlify previews).
+- Cookies and sessions: use `nuxt-auth-utils` (iron-session). In production, set `SESSION_COOKIE_DOMAIN` to share across apex and www. Avoid setting on public suffix hosts (e.g., Cloudflare previews).
 - Realtime: WebSockets are disabled for the current platform. Client plugin is a no-op; do not reintroduce WS without a deployment plan.

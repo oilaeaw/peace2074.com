@@ -44,8 +44,6 @@ declare module 'unstorage'
 declare module 'unstorage/drivers/localstorage'
 declare module '@emailjs/browser'
 declare module '@casl/ability'
-declare module 'netlify-identity-widget'
-
 declare module 'virtual:pwa-register' {
     export interface RegisterSWOptions {
         immediate?: boolean

@@ -1,8 +1,8 @@
-# Disabling Legacy Prerendering on Netlify
+# Disabling Legacy Prerendering on Cloudflare
 
 ## Background
 
-Netlify is deprecating its legacy prerendering feature. The legacy built-in prerendering will be disabled in phases:
+Cloudflare is deprecating its legacy prerendering feature. The legacy built-in prerendering will be disabled in phases:
 
 - **January 20, 2026**: Free plans
 - **February 2026**: Personal/Pro plans  
@@ -23,11 +23,11 @@ For SPAs like this, legacy prerendering is unnecessary and should be disabled.
 
 ## How to Disable Legacy Prerendering
 
-Since legacy prerendering cannot be disabled through `netlify.toml` or file-based configuration, you must disable it through the Netlify dashboard:
+Since legacy prerendering cannot be disabled through `cloudflare.toml` or file-based configuration, you must disable it through the Cloudflare dashboard:
 
 ### Steps:
 
-1. Log in to your [Netlify dashboard](https://app.netlify.com)
+1. Log in to your [Cloudflare dashboard](https://app.cloudflare.com)
 2. Navigate to your site
 3. Go to **Site Configuration** → **Build & deploy** → **Post processing**
 4. Find the **Prerendering** section
@@ -36,10 +36,10 @@ Since legacy prerendering cannot be disabled through `netlify.toml` or file-base
 
 ## Alternative: Use the New Prerender Extension
 
-If you need prerendering for SEO purposes (e.g., for AI crawlers or search engines), you can migrate to the new [Netlify Prerender Extension](https://docs.netlify.com/build/post-processing/prerendering/):
+If you need prerendering for SEO purposes (e.g., for AI crawlers or search engines), you can migrate to the new [Cloudflare Prerender Extension](https://docs.cloudflare.com/build/post-processing/prerendering/):
 
 1. Disable legacy prerendering (as described above)
-2. Go to **Extensions** in your Netlify dashboard
+2. Go to **Extensions** in your Cloudflare dashboard
 3. Find and install the **Prerender** extension
 4. Configure it according to your needs
 
@@ -47,9 +47,9 @@ However, for most SPAs, this is not necessary unless you have specific SEO requi
 
 ## More Information
 
-- [Netlify Prerendering Documentation](https://docs.netlify.com/build/post-processing/prerendering/)
-- [Prerender Extension Announcement](https://www.netlify.com/changelog/2025-12-16-prerender-extension-ga/)
-- [Prerendering for Modern SPAs](https://www.netlify.com/blog/prerendering-an-old-trick-new-again/)
+- [Cloudflare Prerendering Documentation](https://docs.cloudflare.com/build/post-processing/prerendering/)
+- [Prerender Extension Announcement](https://www.cloudflare.com/changelog/2025-12-16-prerender-extension-ga/)
+- [Prerendering for Modern SPAs](https://www.cloudflare.com/blog/prerendering-an-old-trick-new-again/)
 
 ## Verification
 

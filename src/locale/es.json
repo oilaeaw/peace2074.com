@@ -911,7 +911,7 @@
         "passkeyCreatePromptMessage": "Usa la biometría de tu dispositivo o tu gestor de contraseñas para iniciar sesión más rápido la próxima vez.",
         "passkeyCreatePromptConfirm": "Guardar clave de acceso",
         "signInWithGitHub": "Iniciar sesión con GitHub",
-        "signInWithNetlify": "Iniciar sesión con Netlify Identity",
+        "signInWithCloudflare": "Iniciar sesión con Cloudflare Identity",
         "appleSignInUnavailable": "El inicio de sesión con Apple no está disponible actualmente.",
         "socialSignInExpired": "El inicio de sesión social expiró o fue interrumpido. Por favor, inténtalo de nuevo.",
         "googleSignInExpired": "El inicio de sesión con Google expiró o fue interrumpido. Por favor, inténtalo de nuevo.",

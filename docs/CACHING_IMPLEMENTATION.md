@@ -27,7 +27,7 @@
   - Cache size monitoring
 - **Usage:** Wrap fetch calls with custom TTL parameter
 
-### 4. **Netlify CDN Caching**
+### 4. **Cloudflare CDN Caching**
 - **File:** `public/_headers`
 - **Rules:**
   - Hashed assets: forever (immutable, content-addressed)
@@ -48,12 +48,12 @@
 - **Benefits:** Automatic cache-busting on content change
 
 ### 6. **Production Configuration**
-- **File:** `netlify.toml`
+- **File:** `cloudflare.toml`
 - **Added:**
   - Edge function settings
   - 30s function timeout
   - 1GB function memory
-- **Netlify Configuration:** Function caching enables edge performance
+- **Cloudflare Configuration:** Function caching enables edge performance
 
 ### 7. **Development Optimization**
 - **Cache Control Headers:** `public, max-age=3600, s-maxage=3600`
@@ -144,11 +144,11 @@ const handleLogout = () => {
 - ✅ X-Content-Type-Options security header
 
 ### 3. `public/_headers`
-- ✅ Netlify edge caching rules
+- ✅ Cloudflare edge caching rules
 - ✅ Security headers
 - ✅ TTL configuration per resource type
 
-### 4. `netlify.toml`
+### 4. `cloudflare.toml`
 - ✅ Edge function configuration
 - ✅ Production function settings (timeout, memory)
 
@@ -165,7 +165,7 @@ const handleLogout = () => {
 1. **Memory Cache** (useCache composable) - Fastest, session-only
 2. **Service Worker Cache** (Workbox) - Next load, browser storage
 3. **LocalStorage** (useCache fallback) - Persistent across tabs
-4. **CDN Edge Cache** (Netlify _headers) - Global distribution
+4. **CDN Edge Cache** (Cloudflare _headers) - Global distribution
 5. **Origin Server** - Only if all caches miss
 
 ---
@@ -198,8 +198,8 @@ const handleLogout = () => {
 ## 🚢 Deployment Checklist
 
 - ✅ Build: `pnpm build` (8.3s, PWA included)
-- ✅ _headers file included in dist/ (Netlify auto-deployed)
-- ✅ netlify.toml configured with edge functions
+- ✅ _headers file included in dist/ (Cloudflare auto-deployed)
+- ✅ cloudflare.toml configured with edge functions
 - ✅ Service worker auto-updates enabled (registerType: "autoUpdate")
 - ✅ No breaking changes - fully backward compatible
 - ✅ Dev and production work independently
@@ -217,7 +217,7 @@ const handleLogout = () => {
    - Background sync for frequently-accessed translations
 
 3. **Compression**
-   - gzip API responses automatically (already in Netlify)
+   - gzip API responses automatically (already in Cloudflare)
    - Brotli support for modern browsers
 
 4. **Analytics**

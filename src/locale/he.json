@@ -930,7 +930,7 @@
         "passkeyCreatePromptMessage": "השתמשו בביומטריה של המכשיר או במנהל הסיסמאות כדי להתחבר מהר יותר בפעם הבאה.",
         "passkeyCreatePromptConfirm": "שמור מפתח גישה",
         "signInWithGitHub": "התחבר עם GitHub",
-        "signInWithNetlify": "התחבר עם Netlify Identity",
+        "signInWithCloudflare": "התחבר עם Cloudflare Identity",
         "appleSignInUnavailable": "התחברות עם Apple אינה זמינה כעת.",
         "socialSignInExpired": "תהליך ההתחברות פג תוקף או הופרע. נסו שוב.",
         "googleSignInExpired": "ההתחברות עם Google פגה תוקף או הופרעה. נסו שוב.",

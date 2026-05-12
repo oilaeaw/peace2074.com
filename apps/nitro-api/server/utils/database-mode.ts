@@ -15,14 +15,14 @@ export function isDatabaseRequired() {
     const requireDatabase = normalizeFlag(process.env.REQUIRE_DATABASE)
     const allowFallback = normalizeFlag(process.env.ALLOW_FALLBACK_AUTH_STORAGE)
     const nodeEnv = normalizeFlag(process.env.NODE_ENV)
-    const netlifyContext = normalizeFlag(process.env.CONTEXT)
+    const cloudflareContext = normalizeFlag(process.env.CONTEXT)
 
     if (requireDatabase === 'true') return true
     if (allowFallback === 'true') return false
     // Local MongoDB configured — safe to use as fallback even in production
     if (hasLocalDbFallback()) return false
 
-    return nodeEnv === 'production' || netlifyContext === 'production'
+    return nodeEnv === 'production' || cloudflareContext === 'production'
 }
 
 export function isFallbackAuthStorageAllowed() {

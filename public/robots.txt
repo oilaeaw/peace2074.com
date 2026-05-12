@@ -1,7 +1,7 @@
 User-agent: *
 Allow: /
 Disallow: /api/
-Disallow: /.netlify/
+Disallow: /.cloudflare/
 Disallow: /admin
 Disallow: /blog-editor
 Disallow: /chat

@@ -5,9 +5,9 @@
 GitHub detected exposed secrets in multiple commits and files:
 
 1. **MongoDB credentials** in `DATABASE_CONNECTION_FIX.md` (commit `58894985`)
-2. **Kimi API Key** in `netlify-env-setup.sh`
-3. **AUTH_SECRET** in `netlify-env-setup.sh`
-4. **NETLIFY_WEBHOOK_SECRET** in `netlify-env-setup.sh`
+2. **Kimi API Key** in `cloudflare-env-setup.sh`
+3. **AUTH_SECRET** in `cloudflare-env-setup.sh`
+4. **CLOUDFLARE_WEBHOOK_SECRET** in `cloudflare-env-setup.sh`
 
 **Status**: ✅ **FIXED** - All exposed credentials have been removed and replaced with placeholders.
 
@@ -30,13 +30,13 @@ GitHub detected exposed secrets in multiple commits and files:
 
 ### 4. Webhook Secret
 
-- ❌ NETLIFY_WEBHOOK_SECRET: `csesGwJx367WG37J8L6n`
+- ❌ CLOUDFLARE_WEBHOOK_SECRET: `csesGwJx367WG37J8L6n`
 - 🔐 **HIGH**: Rotate recommended
 
 ## Immediate Actions Taken
 
 1. ✅ Sanitized `DATABASE_CONNECTION_FIX.md` with generic placeholders
-2. ✅ Sanitized `netlify-env-setup.sh` with generic placeholders
+2. ✅ Sanitized `cloudflare-env-setup.sh` with generic placeholders
 3. ✅ Added security warnings to all template files
 4. ✅ Verified `.env` is properly gitignored
 
@@ -52,10 +52,10 @@ GitHub detected exposed secrets in multiple commits and files:
    ```bash
    KIMI_API_KEY="your-new-key-here"
    ```
-6. Update Netlify:
+6. Update Cloudflare:
    ```bash
-   netlify env:set KIMI_API_KEY "your-new-key-here"
-   netlify env:set NITRO_KIMI_API_KEY "your-new-key-here"
+   cloudflare env:set KIMI_API_KEY "your-new-key-here"
+   cloudflare env:set NITRO_KIMI_API_KEY "your-new-key-here"
    ```
 
 ### 2. Rotate AUTH_SECRET (HIGHEST PRIORITY)
@@ -73,14 +73,14 @@ Update everywhere:
 # Update .env
 AUTH_SECRET="your-new-secret-here"
 
-# Update Netlify
-netlify env:set AUTH_SECRET "your-new-secret-here"
-netlify env:set NITRO_AUTH_SECRET "your-new-secret-here"
+# Update Cloudflare
+cloudflare env:set AUTH_SECRET "your-new-secret-here"
+cloudflare env:set NITRO_AUTH_SECRET "your-new-secret-here"
 ```
 
 ⚠️ **Note**: Rotating AUTH_SECRET will **invalidate all existing user sessions**. Users will need to log in again.
 
-### 3. Rotate NETLIFY_WEBHOOK_SECRET (HIGH PRIORITY)
+### 3. Rotate CLOUDFLARE_WEBHOOK_SECRET (HIGH PRIORITY)
 
 Generate a new webhook secret:
 
@@ -93,10 +93,10 @@ Update:
 
 ```bash
 # Update .env
-NETLIFY_WEBHOOK_SECRET="your-new-secret-here"
+CLOUDFLARE_WEBHOOK_SECRET="your-new-secret-here"
 
-# Update Netlify
-netlify env:set NETLIFY_WEBHOOK_SECRET "your-new-secret-here"
+# Update Cloudflare
+cloudflare env:set CLOUDFLARE_WEBHOOK_SECRET "your-new-secret-here"
 
 # Update GitHub webhook settings
 # Go to: https://github.com/peace2074/peace2074.com/settings/hooks
@@ -128,17 +128,17 @@ netlify env:set NETLIFY_WEBHOOK_SECRET "your-new-secret-here"
 # DATABASE_URL="mongodb+srv://NEW_USERNAME:NEW_PASSWORD@YOUR_CLUSTER.mongodb.net/api?retryWrites=true&w=majority"
 ```
 
-### 3. Update Netlify Environment Variables
+### 3. Update Cloudflare Environment Variables
 
 ```bash
-# Login to Netlify
-netlify login
+# Login to Cloudflare
+cloudflare login
 
 # Update DATABASE_URL with new credentials
-netlify env:set DATABASE_URL "mongodb+srv://NEW_USERNAME:NEW_PASSWORD@YOUR_CLUSTER.mongodb.net/api?retryWrites=true&w=majority"
+cloudflare env:set DATABASE_URL "mongodb+srv://NEW_USERNAME:NEW_PASSWORD@YOUR_CLUSTER.mongodb.net/api?retryWrites=true&w=majority"
 
 # Redeploy
-netlify deploy --prod
+cloudflare deploy --prod
 ```
 
 ### 4. Delete Old MongoDB User (After Verification)
@@ -185,7 +185,7 @@ curl https://peace2074.com/api/auth/health | jq '.users.prismaReachable'
 
 3. **Use environment variables** for all secrets:
    - Store in `.env` locally (gitignored)
-   - Store in Netlify environment variables for production
+   - Store in Cloudflare environment variables for production
    - Never commit `.env` to git
 
 4. **Regular credential rotation**:
@@ -207,7 +207,7 @@ If you need help:
 
 - Check `.env.example` for the format
 - MongoDB Atlas docs: https://www.mongodb.com/docs/atlas/
-- Netlify env vars: https://docs.netlify.com/environment-variables/overview/
+- Cloudflare env vars: https://docs.cloudflare.com/environment-variables/overview/
 
 ---
 

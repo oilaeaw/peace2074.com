@@ -6,22 +6,22 @@ Blogs display locally but not in production after first login. Database has 3 Bl
 
 ## Root Cause
 
-Prisma Client was not being properly included in Netlify Functions bundle.
+Prisma Client was not being properly included in Cloudflare Functions bundle.
 
 ## Solution Applied
 
-### 1. Updated `scripts/netlify-prisma-setup.sh`
+### 1. Updated `scripts/cloudflare-prisma-setup.sh`
 
 - Now explicitly runs `prisma generate` during build
 - Copies `.prisma/client` folder to function directory
 - Updates package.json with correct relative path
 
-### 2. Verify Netlify Environment Variables
+### 2. Verify Cloudflare Environment Variables
 
-**Required:** Check that `DATABASE_URL` is set in Netlify:
+**Required:** Check that `DATABASE_URL` is set in Cloudflare:
 
 ```bash
-netlify env:list
+cloudflare env:list
 ```
 
 Should show:
@@ -33,7 +33,7 @@ DATABASE_URL: mongodb+srv://...
 **If missing, set it:**
 
 ```bash
-netlify env:set DATABASE_URL "mongodb+srv://YOUR_CONNECTION_STRING"
+cloudflare env:set DATABASE_URL "mongodb+srv://YOUR_CONNECTION_STRING"
 ```
 
 ### 3. Test Locally First
@@ -42,18 +42,18 @@ netlify env:set DATABASE_URL "mongodb+srv://YOUR_CONNECTION_STRING"
 # Simulate production build
 pnpm install -r
 pnpm build
-NETLIFY_BUILD=true pnpm --filter nitro-api build
-bash scripts/netlify-prisma-setup.sh
+CLOUDFLARE_BUILD=true pnpm --filter nitro-api build
+bash scripts/cloudflare-prisma-setup.sh
 
 # Check if .prisma folder was copied
-ls -la netlify/functions/server/node_modules/.prisma/client
+ls -la cloudflare/functions/server/node_modules/.prisma/client
 ```
 
 ### 4. Deploy to Production
 
 ```bash
 git add .
-git commit -m "fix: Ensure Prisma Client is included in Netlify Functions"
+git commit -m "fix: Ensure Prisma Client is included in Cloudflare Functions"
 git push
 ```
 
@@ -61,12 +61,12 @@ git push
 
 After deployment, check:
 
-1. **Netlify Build Logs** - Look for:
+1. **Cloudflare Build Logs** - Look for:
 
    ```
    📦 Generating Prisma Client...
    ✅ Copied .prisma/client to function directory
-   ✅ Prisma setup complete for Netlify Functions
+   ✅ Prisma setup complete for Cloudflare Functions
    ```
 
 2. **Test API Endpoint:**
@@ -88,7 +88,7 @@ After deployment, check:
    **Note:** `source: null` means database connected successfully
    **If:** `source: "seed-fallback"` means Prisma failed (check DATABASE_URL)
 
-3. **Check Function Logs in Netlify Dashboard:**
+3. **Check Function Logs in Cloudflare Dashboard:**
    - Go to Functions → server
    - Look for Prisma connection errors
 
@@ -103,11 +103,11 @@ This ensures blogs always display, even during database outages.
 
 ### Issue: "PrismaClientInitializationError"
 
-**Solution:** DATABASE_URL not set in Netlify environment variables
+**Solution:** DATABASE_URL not set in Cloudflare environment variables
 
 ### Issue: "Cannot find module '@prisma/client'"
 
-**Solution:** Prisma Client not generated during build. Check build logs for errors in `netlify-prisma-setup.sh`
+**Solution:** Prisma Client not generated during build. Check build logs for errors in `cloudflare-prisma-setup.sh`
 
 ### Issue: Empty blog list after login
 
@@ -115,11 +115,11 @@ This ensures blogs always display, even during database outages.
 
 1. Check DATABASE_URL is correct
 2. Verify database has BlogPost records
-3. Check Netlify Function logs for connection errors
+3. Check Cloudflare Function logs for connection errors
 
 ## Related Files
 
 - `apps/nitro-api/server/routes/blog.get.ts` - Blog API with fallback
 - `apps/nitro-api/server/utils/prisma.ts` - Prisma singleton
-- `scripts/netlify-prisma-setup.sh` - Build-time Prisma setup
-- `netlify.toml` - Build command configuration
+- `scripts/cloudflare-prisma-setup.sh` - Build-time Prisma setup
+- `cloudflare.toml` - Build command configuration

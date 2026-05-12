@@ -930,7 +930,7 @@
     "passkeyCreatePromptMessage": "Verwende die Biometrie deines Geräts oder deinen Passwortmanager für eine schnellere Anmeldung beim nächsten Mal.",
     "passkeyCreatePromptConfirm": "Passkey speichern",
     "signInWithGitHub": "Mit GitHub anmelden",
-    "signInWithNetlify": "Mit Netlify Identity anmelden",
+    "signInWithCloudflare": "Mit Cloudflare Identity anmelden",
     "appleSignInUnavailable": "Anmelden mit Apple ist derzeit nicht verfügbar.",
     "socialSignInExpired": "Die Anmeldung ist abgelaufen oder wurde unterbrochen. Bitte versuchen Sie es erneut.",
     "googleSignInExpired": "Die Google-Anmeldung ist abgelaufen oder wurde unterbrochen. Bitte versuchen Sie es erneut.",

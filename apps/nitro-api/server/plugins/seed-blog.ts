@@ -21,7 +21,7 @@ type SeedBlogPost = {
 
 /**
  * Nitro plugin that seeds blog posts on server startup
- * This ensures blog posts persist across deployments in stateless environments (like Netlify)
+ * This ensures blog posts persist across deployments in stateless environments (like Cloudflare)
  */
 export default defineNitroPlugin(async () => {
     if (import.meta.dev) {

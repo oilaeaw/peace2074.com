@@ -202,7 +202,7 @@ Always be respectful, concise, and spiritually thoughtful.`,
             });
             aiResponse = response?.response || response || '';
         }
-        // 2. Fallback to Cloudflare AI REST API if on Netlify or nitro dev
+        // 2. Fallback to Cloudflare AI REST API if on Cloudflare or nitro dev
         else {
             const baseUrl = firstUsableValue(
                 process.env.NITRO_KIMI_BASE_URL,

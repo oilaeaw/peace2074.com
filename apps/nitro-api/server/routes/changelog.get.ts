@@ -27,7 +27,7 @@ export default defineEventHandler(async () => {
 
         if (!content) {
             // Try multiple paths: bundled alongside the route file, then project root fallbacks.
-            // This keeps legacy Netlify builds working and provides a fallback for local tooling.
+            // This keeps legacy Cloudflare builds working and provides a fallback for local tooling.
             const candidates = [
                 join(dirname(fileURLToPath(import.meta.url)), '..', '..', '..', '..', '..', 'CHANGELOG.md'),
                 join(dirname(fileURLToPath(import.meta.url)), 'CHANGELOG.md'),

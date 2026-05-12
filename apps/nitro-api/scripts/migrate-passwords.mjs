@@ -24,7 +24,7 @@ function isPasswordHashed(password) {
   return password.includes(":") && password.split(":").length === 2;
 }
 
-// For KV storage (Netlify blob storage path)
+// For KV storage (Cloudflare blob storage path)
 const KV_NITRO_PATH = resolve(process.cwd(), "../../.data/kv/nitro");
 const KV_USERS_KEY = "db:users";
 

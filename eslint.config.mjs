@@ -9,7 +9,7 @@ export default antfu({
   ignores: [
     '.nuxt/**',
     '.output/**',
-    '.netlify/**',
+    '.cloudflare/**',
     'types/**',
     'public/**',
     'node_modules/**',

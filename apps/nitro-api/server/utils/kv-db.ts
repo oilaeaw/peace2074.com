@@ -23,7 +23,7 @@ async function readCollection(name: string) {
         const items = (await storage.getItem<JsonObject[]>(key)) || []
         return { storage, key, items }
     } catch {
-        // In serverless/read-only environments (e.g., Netlify), file-backed
+        // In serverless/read-only environments (e.g., Cloudflare), file-backed
         // storage may throw ENOENT. Fallback to process memory to avoid 500s.
         const items = getMemoryCollection(key)
         return { storage, key, items }

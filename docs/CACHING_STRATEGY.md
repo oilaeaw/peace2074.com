@@ -4,7 +4,7 @@
 Comprehensive multi-layer caching has been implemented across the Peace2074 application:
 1. **Browser Cache** - Service Worker + localStorage via Workbox
 2. **Server Cache** - API response memoization
-3. **CDN Cache** - Netlify edge caching with HTTP headers
+3. **CDN Cache** - Cloudflare edge caching with HTTP headers
 4. **Application Cache** - In-memory composable for dynamic data
 
 ---
@@ -82,10 +82,10 @@ export default {
 
 ---
 
-## Layer 3: CDN Edge Caching (Netlify)
+## Layer 3: CDN Edge Caching (Cloudflare)
 
 ### Location
-`public/_headers` (deployed to Netlify)
+`public/_headers` (deployed to Cloudflare)
 
 ### Cache Rules
 
@@ -183,12 +183,12 @@ assetFileNames: 'assets/[name].[hash][extname]'
 
 ---
 
-## Netlify Configuration
+## Cloudflare Configuration
 
 ### Edge Functions
 ```toml
 [functions]
-  directory = "netlify/functions"
+  directory = "cloudflare/functions"
   node_bundler = "esbuild"
 
 [context.production]
@@ -314,4 +314,4 @@ if (navigator.serviceWorker.controller) {
 - [Workbox Documentation](https://developers.google.com/web/tools/workbox)
 - [Cache API](https://developer.mozilla.org/en-US/docs/Web/API/Cache)
 - [HTTP Caching Headers](https://developer.mozilla.org/en-US/docs/Web/HTTP/Headers/Cache-Control)
-- [Netlify Edge Cache](https://docs.netlify.com/netlify-cdns/overview/)
+- [Cloudflare Edge Cache](https://docs.cloudflare.com/cloudflare-cdns/overview/)

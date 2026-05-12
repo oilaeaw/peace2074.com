@@ -96,7 +96,7 @@ How to configure and reuse it:
 Notes:
 
 - This value is **not a secret**, so it does not need redaction.
-- This is for **native iOS/Xcode Cloud builds**, not for the Netlify web deployment.
+- This is for **native iOS/Xcode Cloud builds**, not for the Cloudflare web deployment.
 - The repo also keeps a production mobile fallback to `https://peace2074.com/api`, but setting the variable makes the intended build-time config explicit.
 
 ---

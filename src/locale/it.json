@@ -911,7 +911,7 @@
         "passkeyCreatePromptMessage": "Usa la biometria del tuo dispositivo o il gestore password per accedere più velocemente la prossima volta.",
         "passkeyCreatePromptConfirm": "Salva passkey",
         "signInWithGitHub": "Accedi con GitHub",
-        "signInWithNetlify": "Accedi con Netlify Identity",
+        "signInWithCloudflare": "Accedi con Cloudflare Identity",
         "appleSignInUnavailable": "L'accesso con Apple non è attualmente disponibile.",
         "socialSignInExpired": "L'accesso social è scaduto o è stato interrotto. Riprova.",
         "googleSignInExpired": "L'accesso con Google è scaduto o è stato interrotto. Riprova.",

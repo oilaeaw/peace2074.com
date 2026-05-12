@@ -30,9 +30,9 @@ openssl rand -hex 32
 node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"
 ```
 
-Add the same secret to Netlify environment variables:
+Add the same secret to Cloudflare environment variables:
 
-- Go to: Netlify Dashboard → Site Settings → Environment Variables
+- Go to: Cloudflare Dashboard → Site Settings → Environment Variables
 - Add: `GITHUB_WEBHOOK_SECRET` with the same value
 
 ### 2. Set Up GitHub Webhook
@@ -108,17 +108,17 @@ const payload = JSON.stringify({
    - Look for error messages
 
 2. **Verify signature validation**:
-   - Ensure `GITHUB_WEBHOOK_SECRET` matches in both GitHub and Netlify
-   - Check Netlify function logs for signature errors
+   - Ensure `GITHUB_WEBHOOK_SECRET` matches in both GitHub and Cloudflare
+   - Check Cloudflare function logs for signature errors
 
-3. **Check Netlify function logs**:
-   - Netlify Dashboard → Functions → github-push
+3. **Check Cloudflare function logs**:
+   - Cloudflare Dashboard → Functions → github-push
    - Look for `[GitHub Webhook]` log messages
 
 ### No Subscribers Receiving Notifications
 
 1. **Verify VAPID keys are configured**:
-   - Check `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` in Netlify env vars
+   - Check `VAPID_PUBLIC_KEY` and `VAPID_PRIVATE_KEY` in Cloudflare env vars
 
 2. **Check if users are subscribed**:
    - Users must enable push notifications in the app

@@ -101,8 +101,6 @@ async function submit() {
             ref="formEl"
             name="contact"
             method="POST"
-            data-netlify="true"
-            data-netlify-honeypot="bot-field"
             autocomplete="on"
             @submit.prevent="submit"
             class="q-gutter-md"

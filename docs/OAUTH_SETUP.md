@@ -109,8 +109,8 @@ GOOGLE_CLIENT_ID=your-client-id.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_REDIRECT_URI=http://localhost:3000/api/auth/google/callback
 
-# Netlify (Production)
-# Add these in Netlify Dashboard → Site Settings → Environment Variables
+# Cloudflare (Production)
+# Add these in Cloudflare Dashboard → Site Settings → Environment Variables
 GOOGLE_CLIENT_ID=166860955615-i3oufoanjcpm3gakrtcqutnhjgn9ci30.apps.googleusercontent.com
 GOOGLE_CLIENT_SECRET=your-client-secret
 GOOGLE_REDIRECT_URI=https://peace2074.com/api/auth/google/callback
@@ -183,7 +183,7 @@ MIGTAgEAMBMGByqGSM49AgEGCCqGSM49AwEHBHkwdwIBAQQg...
 APPLE_REDIRECT_URI=http://localhost:3000/api/auth/apple/callback
 
 # NO DEVELOPMENT JUST PRODUCTION KEYS AND REDIRECTS!!!!!!!!!!!!!!!!!!!!!!!S
-# Netlify (Production)
+# Cloudflare (Production)
 APPLE_CLIENT_ID=com.peace2074.web
 APPLE_TEAM_ID=ABCDE12345
 APPLE_KEY_ID=XYZ9876543
@@ -194,7 +194,7 @@ PUBLIC_URL=https://peace2074.com
 
 **Important**: For `APPLE_PRIVATE_KEY`, either:
 
-- Replace newlines with `\n` (recommended for Netlify)
+- Replace newlines with `\n` (recommended for Cloudflare)
 - Or paste entire .p8 file contents as multiline string (development `.env` only)
 
 ---
@@ -225,13 +225,13 @@ PUBLIC_URL=https://peace2074.com
    - Check for `waelio_session` cookie (httpOnly)
    - Cookie should persist across page reloads
 
-### Production (Netlify)
+### Production (Cloudflare)
 
 1. **Deploy with environment variables set**:
 
    ```bash
    pnpm build
-   # Push to GitHub (auto-deploys via Netlify)
+   # Push to GitHub (auto-deploys via Cloudflare)
    ```
 
 2. **Test on production URL**:
@@ -373,7 +373,7 @@ Similarly for Apple Sign In with `apple_id`.
 - [ ] Set up Google Cloud Console project
 - [ ] Set up Apple Developer Services ID
 - [ ] Add environment variables to `.env` (development)
-- [ ] Add environment variables to Netlify (production)
+- [ ] Add environment variables to Cloudflare (production)
 - [ ] Test Google OAuth end-to-end
 - [ ] Test Apple OAuth end-to-end
 - [ ] Verify account linking works

@@ -19,7 +19,7 @@ if [[ ! $REPLY =~ ^[Yy]$ ]]; then
 fi
 
 echo ""
-echo "📋 Rotating secrets from .env to Netlify..."
+echo "📋 Rotating secrets from .env to Cloudflare..."
 echo ""
 
 # Check if .env exists
@@ -34,8 +34,8 @@ source .env
 # Rotate each secret
 echo "1️⃣  Rotating AUTH_SECRET..."
 if [ -n "$AUTH_SECRET" ]; then
-    netlify env:set AUTH_SECRET "$AUTH_SECRET"
-    netlify env:set NITRO_AUTH_SECRET "$AUTH_SECRET"
+    cloudflare env:set AUTH_SECRET "$AUTH_SECRET"
+    cloudflare env:set NITRO_AUTH_SECRET "$AUTH_SECRET"
     echo "   ✅ AUTH_SECRET updated"
 else
     echo "   ⚠️  AUTH_SECRET not found in .env"
@@ -44,8 +44,8 @@ fi
 echo ""
 echo "2️⃣  Rotating DEEPSEEK_API_KEY..."
 if [ -n "$DEEPSEEK_API_KEY" ]; then
-    netlify env:set DEEPSEEK_API_KEY "$DEEPSEEK_API_KEY"
-    netlify env:set NITRO_DEEPSEEK_API_KEY "$DEEPSEEK_API_KEY"
+    cloudflare env:set DEEPSEEK_API_KEY "$DEEPSEEK_API_KEY"
+    cloudflare env:set NITRO_DEEPSEEK_API_KEY "$DEEPSEEK_API_KEY"
     echo "   ✅ DEEPSEEK_API_KEY updated"
 else
     echo "   ⚠️  DEEPSEEK_API_KEY not found in .env"
@@ -54,19 +54,19 @@ fi
 echo ""
 echo "3️⃣  Rotating DATABASE_URL..."
 if [ -n "$DATABASE_URL" ]; then
-    netlify env:set DATABASE_URL "$DATABASE_URL"
+    cloudflare env:set DATABASE_URL "$DATABASE_URL"
     echo "   ✅ DATABASE_URL updated"
 else
     echo "   ⚠️  DATABASE_URL not found in .env"
 fi
 
 echo ""
-echo "4️⃣  Rotating NETLIFY_WEBHOOK_SECRET..."
-if [ -n "$NETLIFY_WEBHOOK_SECRET" ]; then
-    netlify env:set NETLIFY_WEBHOOK_SECRET "$NETLIFY_WEBHOOK_SECRET"
-    echo "   ✅ NETLIFY_WEBHOOK_SECRET updated"
+echo "4️⃣  Rotating CLOUDFLARE_WEBHOOK_SECRET..."
+if [ -n "$CLOUDFLARE_WEBHOOK_SECRET" ]; then
+    cloudflare env:set CLOUDFLARE_WEBHOOK_SECRET "$CLOUDFLARE_WEBHOOK_SECRET"
+    echo "   ✅ CLOUDFLARE_WEBHOOK_SECRET updated"
 else
-    echo "   ⚠️  NETLIFY_WEBHOOK_SECRET not found in .env"
+    echo "   ⚠️  CLOUDFLARE_WEBHOOK_SECRET not found in .env"
 fi
 
 echo ""
@@ -74,7 +74,7 @@ echo "━━━━━━━━━━━━━━━━━━━━━━━━�
 echo "✅ Secret rotation complete!"
 echo ""
 echo "Next steps:"
-echo "1. Redeploy your site: netlify deploy --prod"
+echo "1. Redeploy your site: cloudflare deploy --prod"
 echo "2. Test that everything works"
 echo "3. Update GitHub webhook secrets if needed"
 echo ""

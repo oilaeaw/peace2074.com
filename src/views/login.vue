@@ -13,12 +13,6 @@ type LoginViewEnv = {
   VITE_NITRO_BASE?: string
 }
 
-type IdentityWindow = Window & {
-  netlifyIdentity?: {
-    open: (view?: string) => void
-  }
-}
-
 type ErrorWithMessage = {
   name?: string
   message?: string

@@ -105,7 +105,7 @@ try {
     console.log('\n💡 Your database is properly configured.')
     console.log('   If signups are still failing, check:')
     console.log('   1. MongoDB Atlas Network Access (allow 0.0.0.0/0)')
-    console.log('   2. Netlify environment variables are set')
+    console.log('   2. Cloudflare environment variables are set')
     console.log('   3. Recent deployment after setting env vars')
 }
 catch (error) {

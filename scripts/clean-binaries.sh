@@ -8,7 +8,7 @@ TARGETS=(
   "$ROOT_DIR/node_modules"
   "$ROOT_DIR/peace2074-mobile/node_modules"
   "$ROOT_DIR/peace2074-mobile/platforms"
-  "$ROOT_DIR/netlify/functions/server"
+  "$ROOT_DIR/cloudflare/functions/server"
 )
 
 echo "Removing generated binary-heavy directories..."

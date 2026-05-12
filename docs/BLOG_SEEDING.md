@@ -2,7 +2,7 @@
 
 ## Problem
 
-In production (Netlify), the file system is read-only. This means:
+In production (Cloudflare), the file system is read-only. This means:
 
 - Blog posts stored locally in `.data/` directory don't persist across deployments
 - The `kv-db.ts` utility falls back to in-memory storage
@@ -101,11 +101,11 @@ pnpm dev
 curl http://localhost:3000/blog | jq '.posts | length'
 ```
 
-### Production (Netlify)
+### Production (Cloudflare)
 
 ```bash
-# Check Netlify function logs
-netlify functions:log
+# Check Cloudflare function logs
+cloudflare functions:log
 
 # Or check live API:
 curl https://peace2074.com/api/blog | jq '.posts | length'

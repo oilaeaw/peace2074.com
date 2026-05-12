@@ -961,7 +961,7 @@
     "passkeyCreatePromptMessage": "Используйте биометрию устройства или менеджер паролей, чтобы входить быстрее в следующий раз.",
     "passkeyCreatePromptConfirm": "Сохранить passkey",
     "signInWithGitHub": "Войти через GitHub",
-    "signInWithNetlify": "Войти через Netlify Identity",
+    "signInWithCloudflare": "Войти через Cloudflare Identity",
     "appleSignInUnavailable": "Вход через Apple сейчас недоступен.",
     "socialSignInExpired": "Вход истёк или был прерван. Попробуйте ещё раз.",
     "googleSignInExpired": "Вход через Google истёк или был прерван. Попробуйте ещё раз.",

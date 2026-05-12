@@ -966,7 +966,7 @@
     "passkeyCreatePromptMessage": "استخدم بصمة الجهاز أو مدير كلمات المرور لتسجيل دخول أسرع في المرة القادمة.",
     "passkeyCreatePromptConfirm": "حفظ مفتاح المرور",
     "signInWithGitHub": "تسجيل الدخول عبر GitHub",
-    "signInWithNetlify": "تسجيل الدخول عبر Netlify Identity",
+    "signInWithCloudflare": "تسجيل الدخول عبر Cloudflare Identity",
     "appleSignInUnavailable": "تسجيل الدخول عبر Apple غير متاح حالياً.",
     "socialSignInExpired": "انتهت مهلة تسجيل الدخول أو تمت مقاطعته. حاول مرة أخرى.",
     "googleSignInExpired": "انتهت مهلة تسجيل الدخول عبر Google أو تمت مقاطعته. حاول مرة أخرى.",

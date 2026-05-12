@@ -33,7 +33,7 @@
 ### Tech Stack
 
 - **Frontend**: Vue 3 + TypeScript + Vite + Quasar UI
-- **Backend**: Nitro API (apps/nitro-api) with Netlify preset
+- **Backend**: Nitro API (apps/nitro-api) with Cloudflare preset
 - **Mobile**: Capacitor (iOS + Android native wrappers)
 - **Data**: Prisma + MongoDB Atlas (fallback: Nitro KV)
 - **i18n**: 6 languages (en, ar, de, ru, he, tr)
@@ -266,7 +266,7 @@ All UI copy must exist in ALL 6 locale files:
 4. Go to "Credentials" → "Create Credentials" → "OAuth 2.0 Client ID"
 5. Add authorized redirect URIs: `https://peace2074.com/api/auth/google/callback`
 6. Copy Client ID and Client Secret
-7. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Netlify env vars
+7. Set `GOOGLE_CLIENT_ID` and `GOOGLE_CLIENT_SECRET` in Cloudflare env vars
 
 #### Setting up Apple Sign In:
 
@@ -276,13 +276,13 @@ All UI copy must exist in ALL 6 locale files:
 4. Configure domains and redirect URLs
 5. Create a Sign In with Apple key
 6. Download the .p8 key file
-7. Set `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY` (full .p8 contents) in Netlify env vars
+7. Set `APPLE_CLIENT_ID`, `APPLE_TEAM_ID`, `APPLE_KEY_ID`, and `APPLE_PRIVATE_KEY` (full .p8 contents) in Cloudflare env vars
 
 ### Security Rules
 
 - **NEVER** commit secrets to `.env` file
 - Use `.env.example` for patterns only
-- Store production secrets in Netlify dashboard
+- Store production secrets in Cloudflare dashboard
 - **NEVER** log or print API keys in console/terminal
 
 ---
@@ -346,7 +346,7 @@ Service layer handles:
 
 ---
 
-## 🚀 Deployment (Netlify)
+## 🚀 Deployment (Cloudflare)
 
 ### Build Settings
 
@@ -356,12 +356,12 @@ Service layer handles:
 
 ### Nitro Config
 
-- **Preset**: `netlify` in `apps/nitro-api/nitro.config.ts`
+- **Preset**: `cloudflare` in `apps/nitro-api/nitro.config.ts`
 - **API base**: Dev overrides with `VITE_NITRO_BASE`, prod uses `/api`
 
-### Required Netlify Env Vars
+### Required Cloudflare Env Vars
 
-Set in Netlify dashboard (Settings → Environment variables):
+Set in Cloudflare dashboard (Settings → Environment variables):
 
 - All vars from `.env.example`
 - `DISABLE_PRISMA=true` (if MongoDB unreachable)

@@ -45,11 +45,11 @@ Notes:
 - The App Store page becomes publicly installable once Apple approves and releases the listing.
 - The web homepage includes an iOS App Store button for quick access to the native app listing.
 
-## Deployment to Netlify
+## Deployment to Cloudflare
 
-This project is configured for deployment to Netlify. See:
+This project is configured for deployment to Cloudflare. See:
 
-- [NETLIFY_ENV.md](./NETLIFY_ENV.md) for environment variable setup
+- [CLOUDFLARE_ENV.md](./CLOUDFLARE_ENV.md) for environment variable setup
 - [DISABLE_LEGACY_PRERENDERING.md](./DISABLE_LEGACY_PRERENDERING.md) for instructions on disabling legacy prerendering (required action)
 
 ## Kimi integration

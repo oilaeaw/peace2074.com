@@ -44,19 +44,19 @@ That preserves the URLs already hardcoded into the mobile app and web app:
 
 - Frontend only: `pnpm build:frontend`
 - Nitro API for standalone Node host: `pnpm build:node-api`
-- Existing Netlify path: `pnpm build:netlify`
+- Existing Cloudflare path: `pnpm build:cloudflare`
 
 ## Fastest backend handoff today
 
-If Netlify needs to be retired today, the safest path is:
+If Cloudflare needs to be retired today, the safest path is:
 
-1. Re-enable Netlify first so production traffic is not broken while you migrate.
+1. Re-enable Cloudflare first so production traffic is not broken while you migrate.
 2. Deploy the API from `apps/nitro-api/Dockerfile` to a Node-friendly host (Render, Railway, Fly.io, etc.).
 3. Set the API host environment variables from `.env.example`.
 4. Verify the API host directly at `/api/health`.
 5. Update Cloudflare Pages `API_ORIGIN` to the new API host.
 6. Re-run `pnpm test:smoke:deployment` against the Cloudflare Pages URL.
-7. Only after smoke checks pass should Netlify be turned off again.
+7. Only after smoke checks pass should Cloudflare be turned off again.
 
 ## Local verification
 
@@ -90,13 +90,13 @@ After deploying Pages + the Node API to staging:
 4. Deploy the frontend to Cloudflare Pages.
 5. Run the smoke script and Playwright suite against staging.
 6. Move the custom domain only after staging is green.
-7. Keep Netlify available as rollback for at least a few days.
+7. Keep Cloudflare available as rollback for at least a few days.
 
 ## Rollback
 
 If anything looks wrong during cutover:
 
-1. Re-point the custom domain back to the previous Netlify deployment.
+1. Re-point the custom domain back to the previous Cloudflare deployment.
 2. Leave the Node API deployed so data and auth state stay intact.
 3. Re-run the smoke checks against the restored production URL.
 4. Fix staging before attempting cutover again.

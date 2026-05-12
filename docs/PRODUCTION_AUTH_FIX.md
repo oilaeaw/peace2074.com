@@ -6,13 +6,13 @@ Login fails in production because requests go to `https://api.waelio.com/auth/lo
 
 ## Root Cause
 
-`VITE_NITRO_BASE` environment variable in Netlify points to `api.waelio.com`, but that server doesn't have the auth endpoints.
+`VITE_NITRO_BASE` environment variable in Cloudflare points to `api.waelio.com`, but that server doesn't have the auth endpoints.
 
-## ✅ Solution: Use Netlify Functions (Same-Origin)
+## ✅ Solution: Use Cloudflare Functions (Same-Origin)
 
-### Step 1: Update Netlify Environment Variables
+### Step 1: Update Cloudflare Environment Variables
 
-In [Netlify Dashboard](https://app.netlify.com) → Your Site → Site Settings → Environment Variables:
+In [Cloudflare Dashboard](https://app.cloudflare.com) → Your Site → Site Settings → Environment Variables:
 
 **DELETE or UPDATE this variable:**
 
@@ -23,7 +23,7 @@ VITE_NITRO_BASE
 
 ### Step 2: Verify Build Configuration
 
-The [netlify.toml](../netlify.toml) is already correctly configured:
+The [cloudflare.toml](../cloudflare.toml) is already correctly configured:
 
 ```toml
 [build]
@@ -31,16 +31,16 @@ The [netlify.toml](../netlify.toml) is already correctly configured:
   publish = "dist"
   functions = "apps/nitro-api/.output/server"
 
-# Routes /api/* to Netlify Functions
+# Routes /api/* to Cloudflare Functions
 [[redirects]]
   from = "/api/*"
-  to = "/.netlify/functions/:splat"
+  to = "/.cloudflare/functions/:splat"
   status = 200
 ```
 
 ### Step 3: Ensure Environment Variables Are Set
 
-**Required in Netlify:**
+**Required in Cloudflare:**
 
 ```bash
 # Authentication
@@ -66,7 +66,7 @@ GITHUB_CLIENT_ID=your-client-id
 GITHUB_CLIENT_SECRET=your-client-secret
 ```
 
-See [NETLIFY_ENV.md](../NETLIFY_ENV.md) for complete list.
+See [CLOUDFLARE_ENV.md](../CLOUDFLARE_ENV.md) for complete list.
 
 ### Step 4: Deploy
 
@@ -75,7 +75,7 @@ After updating environment variables:
 ```bash
 # Trigger a new deployment
 git push origin main
-# Or use Netlify Dashboard → Deploys → Trigger deploy
+# Or use Cloudflare Dashboard → Deploys → Trigger deploy
 ```
 
 ## How It Works
@@ -89,7 +89,7 @@ git push origin main
    - Frontend: `https://peace2074.com`
    - API: `https://peace2074.com/api/*` (same origin)
    - Code detects production and uses relative URLs
-   - Netlify routes `/api/*` → Functions
+   - Cloudflare routes `/api/*` → Functions
 
 ## Testing Production Locally
 
@@ -144,7 +144,7 @@ If you prefer using a separate API domain:
    - `/contact` ✓
    - `/bookmarks` ✓
 
-4. Set in Netlify:
+4. Set in Cloudflare:
    ```bash
    VITE_NITRO_BASE=https://api.waelio.com
    ```
@@ -179,12 +179,12 @@ When `VITE_NITRO_BASE` is not set:
 
 ## Quick Fix Checklist
 
-- [ ] Remove `VITE_NITRO_BASE` from Netlify env vars
-- [ ] Verify `AUTH_SECRET` is set in Netlify
-- [ ] Verify `NITRO_AUTH_SECRET` is set in Netlify
+- [ ] Remove `VITE_NITRO_BASE` from Cloudflare env vars
+- [ ] Verify `AUTH_SECRET` is set in Cloudflare
+- [ ] Verify `NITRO_AUTH_SECRET` is set in Cloudflare
 - [ ] Trigger new deployment
 - [ ] Test login at https://peace2074.com
 
 ---
 
-**Recommended Action**: Remove `VITE_NITRO_BASE` from Netlify and redeploy. Everything else is already configured correctly.
+**Recommended Action**: Remove `VITE_NITRO_BASE` from Cloudflare and redeploy. Everything else is already configured correctly.

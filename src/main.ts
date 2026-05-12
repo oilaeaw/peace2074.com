@@ -550,7 +550,7 @@ if (
     })
 }
 
-// Netlify Identity has been replaced with custom OAuth (Google/Apple).
+// Custom OAuth (Google/Apple) implementation.
 // See: apps/nitro-api/server/routes/auth/*
 
 // Mount immediately so native runtimes don't sit on a blank screen while
