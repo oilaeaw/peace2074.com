@@ -144,7 +144,7 @@
     "vue": "^3.5.22",
     "vue-i18n": "^11.2.2",
     "vue-router": "^4.5.1",
-    "waelio-utils": "^5.0.3",
+    "waelio-utils": "^5.0.9",
     "workbox-window": "^7.4.0"
   }
 }

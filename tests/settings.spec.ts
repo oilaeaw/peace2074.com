@@ -49,7 +49,7 @@ test.describe('Settings page', () => {
     // ── Display ──────────────────────────────────────────────────────────────
 
     test('compact layout toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /compact layout/i })
+        const toggle = page.getByRole('switch', { name: /compact layout/i })
         await expect(toggle).toBeVisible()
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.compact)
@@ -60,14 +60,14 @@ test.describe('Settings page', () => {
     })
 
     test('reduce motion toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /reduce motion/i })
+        const toggle = page.getByRole('switch', { name: /reduce motion/i })
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.motion)
         expect(val).toBe('true')
     })
 
     test('dark mode toggle applies body--dark class and persists', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /dark mode/i })
+        const toggle = page.getByRole('switch', { name: /dark mode/i })
         await toggle.click()
         await expect(page.locator('body')).toHaveClass(/body--dark/)
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.darkMode)
@@ -80,7 +80,7 @@ test.describe('Settings page', () => {
     })
 
     test('show Quran translation toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /show quran translation/i })
+        const toggle = page.getByRole('switch', { name: /show quran translation/i })
         // Default is true; click to turn off
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.translation)
@@ -94,10 +94,13 @@ test.describe('Settings page', () => {
         const htmlClass = await page.evaluate(() => document.documentElement.className)
         expect(htmlClass).toContain('font-medium')
 
-        // Move slider to max (3 = Extra Large) using keyboard
-        const slider = page.locator('.q-slider').filter({ hasText: '' }).first()
-        await slider.focus()
-        await page.keyboard.press('End')
+        // Move slider to max (3 = Extra Large) by clicking at the right edge of the track
+        const slider = page.locator('.q-slider').first()
+        await expect(slider).toBeVisible()
+        const box = await slider.boundingBox()
+        if (!box) throw new Error('Slider not found')
+        // Click at the far right of the slider track to set value to max (3)
+        await page.mouse.click(box.x + box.width - 2, box.y + box.height / 2)
 
         await expect(page.locator('html')).toHaveClass(/font-xlarge/)
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.fontSize)
@@ -105,7 +108,7 @@ test.describe('Settings page', () => {
     })
 
     test('high contrast toggle applies high-contrast class to <html> and persists', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /high contrast/i })
+        const toggle = page.getByRole('switch', { name: /high contrast/i })
         await toggle.click()
         await expect(page.locator('html')).toHaveClass(/high-contrast/)
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.highContrast)
@@ -117,7 +120,7 @@ test.describe('Settings page', () => {
     // ── Navigation ────────────────────────────────────────────────────────────
 
     test('nav ordering toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /enable drag ordering/i })
+        const toggle = page.getByRole('switch', { name: /enable drag ordering/i })
         // Default is true; click to disable
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.navOrdering)
@@ -125,7 +128,7 @@ test.describe('Settings page', () => {
     })
 
     test('drawer open by default toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /open drawer on start/i })
+        const toggle = page.getByRole('switch', { name: /open drawer on start/i })
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.drawerDefault)
         expect(val).toBe('true')
@@ -134,14 +137,14 @@ test.describe('Settings page', () => {
     // ── Audio ─────────────────────────────────────────────────────────────────
 
     test('autoplay athan toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /autoplay athan/i })
+        const toggle = page.getByRole('switch', { name: /autoplay athan/i })
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.autoplayAthan)
         expect(val).toBe('true')
     })
 
     test('adhan at prayer times toggle persists to localStorage', async ({ page }) => {
-        const toggle = page.getByRole('checkbox', { name: /adhan at prayer times/i })
+        const toggle = page.getByRole('switch', { name: /adhan at prayer times/i })
         // Default is true; click to disable
         await toggle.click()
         const val = await page.evaluate((k) => window.localStorage.getItem(k), KEYS.autoplayPrayer)

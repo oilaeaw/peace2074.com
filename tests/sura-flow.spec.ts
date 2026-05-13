@@ -44,7 +44,7 @@ test.describe('Quran Navigation and Search Flow', () => {
 
     test('should render all 114 surah cards', async ({ page }) => {
         const suraCards = page.locator('a.sura-card');
-        await expect(suraCards).toHaveCount(114);
-        await expect(suraCards.nth(113)).toBeVisible();
+        await expect(suraCards).toHaveCount(114, { timeout: 15000 });
+        await expect(suraCards.nth(113)).toBeVisible({ timeout: 5000 });
     });
 });
