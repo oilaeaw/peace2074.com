@@ -1,0 +1,1518 @@
+# Instructions
+
+- Following Playwright test failed.
+- Explain why, be concise, respect Playwright best practices.
+- Provide a snippet of code with the fix, if possible.
+
+# Test info
+
+- Name: sura-flow.spec.ts >> Quran Navigation and Search Flow >> should display the sura list on load
+- Location: tests/sura-flow.spec.ts:8:5
+
+# Error details
+
+```
+Error: expect(locator).toBeVisible() failed
+
+Locator: locator('a.sura-card').first()
+Expected: visible
+Timeout: 5000ms
+Error: element(s) not found
+
+Call log:
+  - Expect "toBeVisible" with timeout 5000ms
+  - waiting for locator('a.sura-card').first()
+
+```
+
+# Page snapshot
+
+```yaml
+- generic [ref=e5]:
+  - banner [ref=e6]:
+    - toolbar [ref=e7]:
+      - button "Toggle menu" [ref=e8] [cursor=pointer]:
+        - img [ref=e10]: menu
+      - img "PEACE2074" [ref=e13]
+      - link "Peace2074" [ref=e15] [cursor=pointer]:
+        - /url: /
+      - button "Search…" [ref=e16] [cursor=pointer]:
+        - img [ref=e18]: search
+      - button "Play Athan" [ref=e19] [cursor=pointer]:
+        - img [ref=e21]: volume_up
+      - generic [ref=e24] [cursor=pointer]:
+        - generic [ref=e26]:
+          - generic [ref=e27]: 🇺🇸
+          - combobox "🇺🇸" [ref=e28]: 🇺🇸 English
+        - generic [ref=e30]: arrow_drop_down
+      - button "Login" [ref=e31] [cursor=pointer]:
+        - img [ref=e33]: login
+  - complementary [ref=e34]:
+    - generic [ref=e35]:
+      - generic [ref=e36]:
+        - generic [ref=e37]: Peace2074
+        - generic [ref=e38]: Navigation
+        - generic [ref=e39]: Control drawer ordering and visibility.
+      - separator [ref=e40]
+      - list [ref=e41]:
+        - listitem "Home" [ref=e42] [cursor=pointer]:
+          - generic [ref=e44]: home
+          - generic [ref=e45]:
+            - generic [ref=e46]: Home
+            - generic [ref=e47]: /
+          - button "Pin" [ref=e49]:
+            - generic [ref=e51]: Pin
+        - listitem "About" [ref=e52] [cursor=pointer]:
+          - generic [ref=e54]: info
+          - generic [ref=e55]:
+            - generic [ref=e56]: About
+            - generic [ref=e57]: /about
+          - button "Pin" [ref=e59]:
+            - generic [ref=e61]: Pin
+        - listitem "Quran" [ref=e62] [cursor=pointer]:
+          - generic [ref=e64]: menu_book
+          - generic [ref=e65]:
+            - generic [ref=e66]: Quran
+            - generic [ref=e67]: /quran
+          - button "Pin" [ref=e69]:
+            - generic [ref=e71]: Pin
+        - listitem "Holy Names" [ref=e72] [cursor=pointer]:
+          - generic [ref=e74]: auto_awesome
+          - generic [ref=e75]:
+            - generic [ref=e76]: Holy Names
+            - generic [ref=e77]: /holynames
+          - button "Pin" [ref=e79]:
+            - generic [ref=e81]: Pin
+        - listitem "Tasbeeh" [ref=e82] [cursor=pointer]:
+          - generic [ref=e84]: loop
+          - generic [ref=e85]:
+            - generic [ref=e86]: Tasbeeh
+            - generic [ref=e87]: /tasbeeh
+          - button "Pin" [ref=e89]:
+            - generic [ref=e91]: Pin
+        - listitem "Miracles" [ref=e92] [cursor=pointer]:
+          - generic [ref=e94]: lightbulb
+          - generic [ref=e95]:
+            - generic [ref=e96]: Miracles
+            - generic [ref=e97]: /miracles
+          - button "Pin" [ref=e99]:
+            - generic [ref=e101]: Pin
+        - listitem "Social" [ref=e102] [cursor=pointer]:
+          - generic [ref=e104]: share
+          - generic [ref=e105]:
+            - generic [ref=e106]: Social
+            - generic [ref=e107]: /social
+          - button "Pin" [ref=e109]:
+            - generic [ref=e111]: Pin
+        - listitem "Support" [ref=e112] [cursor=pointer]:
+          - generic [ref=e114]: volunteer_activism
+          - generic [ref=e115]:
+            - generic [ref=e116]: Support
+            - generic [ref=e117]: /support
+          - button "Pin" [ref=e119]:
+            - generic [ref=e121]: Pin
+        - listitem "Settings" [ref=e122] [cursor=pointer]:
+          - generic [ref=e124]: settings
+          - generic [ref=e125]:
+            - generic [ref=e126]: Settings
+            - generic [ref=e127]: /settings
+          - button "Pin" [ref=e129]:
+            - generic [ref=e131]: Pin
+        - listitem "Admin Page" [ref=e132] [cursor=pointer]:
+          - generic [ref=e134]: admin_panel_settings
+          - generic [ref=e135]:
+            - generic [ref=e136]: Admin Page
+            - generic [ref=e137]: /admin
+          - button "Pin" [ref=e139]:
+            - generic [ref=e141]: Pin
+        - listitem "Login" [ref=e142] [cursor=pointer]:
+          - generic [ref=e144]: login
+          - generic [ref=e145]:
+            - generic [ref=e146]: Login
+            - generic [ref=e147]: /login
+          - button "Pin" [ref=e149]:
+            - generic [ref=e151]: Pin
+        - listitem "Blog" [ref=e152] [cursor=pointer]:
+          - generic [ref=e154]: article
+          - generic [ref=e155]:
+            - generic [ref=e156]: Blog
+            - generic [ref=e157]: /blog
+          - button "Pin" [ref=e159]:
+            - generic [ref=e161]: Pin
+        - listitem "Deploys" [ref=e162] [cursor=pointer]:
+          - generic [ref=e164]: rocket_launch
+          - generic [ref=e165]:
+            - generic [ref=e166]: Deploys
+            - generic [ref=e167]: /deploys
+          - button "Pin" [ref=e169]:
+            - generic [ref=e171]: Pin
+        - listitem "Contact" [ref=e172] [cursor=pointer]:
+          - generic [ref=e174]: contact_mail
+          - generic [ref=e175]:
+            - generic [ref=e176]: Contact
+            - generic [ref=e177]: /contact
+          - button "Pin" [ref=e179]:
+            - generic [ref=e181]: Pin
+  - main [ref=e183]:
+    - heading "Quran" [level=1] [ref=e184]
+    - generic [ref=e185]:
+      - generic [ref=e187]:
+        - generic [ref=e188]: auto_stories
+        - generic [ref=e189]:
+          - generic [ref=e190]: Track Your Quran Completion
+          - generic [ref=e191]: 0 / 114 Surahs (0%)
+          - progressbar [ref=e192]
+      - generic [ref=e194]:
+        - button "Continue Reading" [ref=e195] [cursor=pointer]:
+          - generic [ref=e196]:
+            - img [ref=e197]: play_arrow
+            - generic [ref=e198]: Continue Reading
+        - button "Reset Progress" [ref=e199] [cursor=pointer]:
+          - generic [ref=e200]:
+            - img [ref=e201]: restart_alt
+            - generic [ref=e202]: Reset Progress
+    - generic [ref=e203]:
+      - link "1. The Opener الفاتحة 7 verses • meccan Bookmark sura Mark complete" [ref=e205] [cursor=pointer]:
+        - /url: /quran/1
+        - generic [ref=e206]:
+          - generic [ref=e207]: 1. The Opener
+          - generic [ref=e208]: الفاتحة
+          - generic [ref=e209]: 7 verses • meccan
+        - generic [ref=e210]:
+          - button "Bookmark sura" [ref=e211]:
+            - img [ref=e213]: bookmark_border
+          - button "Mark complete" [ref=e214]:
+            - img [ref=e216]: radio_button_unchecked
+      - link "2. The Cow البقرة 286 verses • medinan Bookmark sura Mark complete" [ref=e218] [cursor=pointer]:
+        - /url: /quran/2
+        - generic [ref=e219]:
+          - generic [ref=e220]: 2. The Cow
+          - generic [ref=e221]: البقرة
+          - generic [ref=e222]: 286 verses • medinan
+        - generic [ref=e223]:
+          - button "Bookmark sura" [ref=e224]:
+            - img [ref=e226]: bookmark_border
+          - button "Mark complete" [ref=e227]:
+            - img [ref=e229]: radio_button_unchecked
+      - link "3. Family of Imran آل عمران 200 verses • medinan Bookmark sura Mark complete" [ref=e231] [cursor=pointer]:
+        - /url: /quran/3
+        - generic [ref=e232]:
+          - generic [ref=e233]: 3. Family of Imran
+          - generic [ref=e234]: آل عمران
+          - generic [ref=e235]: 200 verses • medinan
+        - generic [ref=e236]:
+          - button "Bookmark sura" [ref=e237]:
+            - img [ref=e239]: bookmark_border
+          - button "Mark complete" [ref=e240]:
+            - img [ref=e242]: radio_button_unchecked
+      - link "4. The Women النساء 176 verses • medinan Bookmark sura Mark complete" [ref=e244] [cursor=pointer]:
+        - /url: /quran/4
+        - generic [ref=e245]:
+          - generic [ref=e246]: 4. The Women
+          - generic [ref=e247]: النساء
+          - generic [ref=e248]: 176 verses • medinan
+        - generic [ref=e249]:
+          - button "Bookmark sura" [ref=e250]:
+            - img [ref=e252]: bookmark_border
+          - button "Mark complete" [ref=e253]:
+            - img [ref=e255]: radio_button_unchecked
+      - link "5. The Table Spread المائدة 120 verses • medinan Bookmark sura Mark complete" [ref=e257] [cursor=pointer]:
+        - /url: /quran/5
+        - generic [ref=e258]:
+          - generic [ref=e259]: 5. The Table Spread
+          - generic [ref=e260]: المائدة
+          - generic [ref=e261]: 120 verses • medinan
+        - generic [ref=e262]:
+          - button "Bookmark sura" [ref=e263]:
+            - img [ref=e265]: bookmark_border
+          - button "Mark complete" [ref=e266]:
+            - img [ref=e268]: radio_button_unchecked
+      - link "6. The Cattle الأنعام 165 verses • meccan Bookmark sura Mark complete" [ref=e270] [cursor=pointer]:
+        - /url: /quran/6
+        - generic [ref=e271]:
+          - generic [ref=e272]: 6. The Cattle
+          - generic [ref=e273]: الأنعام
+          - generic [ref=e274]: 165 verses • meccan
+        - generic [ref=e275]:
+          - button "Bookmark sura" [ref=e276]:
+            - img [ref=e278]: bookmark_border
+          - button "Mark complete" [ref=e279]:
+            - img [ref=e281]: radio_button_unchecked
+      - link "7. The Heights الأعراف 206 verses • meccan Bookmark sura Mark complete" [ref=e283] [cursor=pointer]:
+        - /url: /quran/7
+        - generic [ref=e284]:
+          - generic [ref=e285]: 7. The Heights
+          - generic [ref=e286]: الأعراف
+          - generic [ref=e287]: 206 verses • meccan
+        - generic [ref=e288]:
+          - button "Bookmark sura" [ref=e289]:
+            - img [ref=e291]: bookmark_border
+          - button "Mark complete" [ref=e292]:
+            - img [ref=e294]: radio_button_unchecked
+      - link "8. The Spoils of War الأنفال 75 verses • medinan Bookmark sura Mark complete" [ref=e296] [cursor=pointer]:
+        - /url: /quran/8
+        - generic [ref=e297]:
+          - generic [ref=e298]: 8. The Spoils of War
+          - generic [ref=e299]: الأنفال
+          - generic [ref=e300]: 75 verses • medinan
+        - generic [ref=e301]:
+          - button "Bookmark sura" [ref=e302]:
+            - img [ref=e304]: bookmark_border
+          - button "Mark complete" [ref=e305]:
+            - img [ref=e307]: radio_button_unchecked
+      - link "9. The Repentance التوبة 129 verses • medinan Bookmark sura Mark complete" [ref=e309] [cursor=pointer]:
+        - /url: /quran/9
+        - generic [ref=e310]:
+          - generic [ref=e311]: 9. The Repentance
+          - generic [ref=e312]: التوبة
+          - generic [ref=e313]: 129 verses • medinan
+        - generic [ref=e314]:
+          - button "Bookmark sura" [ref=e315]:
+            - img [ref=e317]: bookmark_border
+          - button "Mark complete" [ref=e318]:
+            - img [ref=e320]: radio_button_unchecked
+      - link "10. Jonah يونس 109 verses • meccan Bookmark sura Mark complete" [ref=e322] [cursor=pointer]:
+        - /url: /quran/10
+        - generic [ref=e323]:
+          - generic [ref=e324]: 10. Jonah
+          - generic [ref=e325]: يونس
+          - generic [ref=e326]: 109 verses • meccan
+        - generic [ref=e327]:
+          - button "Bookmark sura" [ref=e328]:
+            - img [ref=e330]: bookmark_border
+          - button "Mark complete" [ref=e331]:
+            - img [ref=e333]: radio_button_unchecked
+      - link "11. Hud هود 123 verses • meccan Bookmark sura Mark complete" [ref=e335] [cursor=pointer]:
+        - /url: /quran/11
+        - generic [ref=e336]:
+          - generic [ref=e337]: 11. Hud
+          - generic [ref=e338]: هود
+          - generic [ref=e339]: 123 verses • meccan
+        - generic [ref=e340]:
+          - button "Bookmark sura" [ref=e341]:
+            - img [ref=e343]: bookmark_border
+          - button "Mark complete" [ref=e344]:
+            - img [ref=e346]: radio_button_unchecked
+      - link "12. Joseph يوسف 111 verses • meccan Bookmark sura Mark complete" [ref=e348] [cursor=pointer]:
+        - /url: /quran/12
+        - generic [ref=e349]:
+          - generic [ref=e350]: 12. Joseph
+          - generic [ref=e351]: يوسف
+          - generic [ref=e352]: 111 verses • meccan
+        - generic [ref=e353]:
+          - button "Bookmark sura" [ref=e354]:
+            - img [ref=e356]: bookmark_border
+          - button "Mark complete" [ref=e357]:
+            - img [ref=e359]: radio_button_unchecked
+      - link "13. The Thunder الرعد 43 verses • medinan Bookmark sura Mark complete" [ref=e361] [cursor=pointer]:
+        - /url: /quran/13
+        - generic [ref=e362]:
+          - generic [ref=e363]: 13. The Thunder
+          - generic [ref=e364]: الرعد
+          - generic [ref=e365]: 43 verses • medinan
+        - generic [ref=e366]:
+          - button "Bookmark sura" [ref=e367]:
+            - img [ref=e369]: bookmark_border
+          - button "Mark complete" [ref=e370]:
+            - img [ref=e372]: radio_button_unchecked
+      - link "14. Abraham ابراهيم 52 verses • meccan Bookmark sura Mark complete" [ref=e374] [cursor=pointer]:
+        - /url: /quran/14
+        - generic [ref=e375]:
+          - generic [ref=e376]: 14. Abraham
+          - generic [ref=e377]: ابراهيم
+          - generic [ref=e378]: 52 verses • meccan
+        - generic [ref=e379]:
+          - button "Bookmark sura" [ref=e380]:
+            - img [ref=e382]: bookmark_border
+          - button "Mark complete" [ref=e383]:
+            - img [ref=e385]: radio_button_unchecked
+      - link "15. The Rocky Tract الحجر 99 verses • meccan Bookmark sura Mark complete" [ref=e387] [cursor=pointer]:
+        - /url: /quran/15
+        - generic [ref=e388]:
+          - generic [ref=e389]: 15. The Rocky Tract
+          - generic [ref=e390]: الحجر
+          - generic [ref=e391]: 99 verses • meccan
+        - generic [ref=e392]:
+          - button "Bookmark sura" [ref=e393]:
+            - img [ref=e395]: bookmark_border
+          - button "Mark complete" [ref=e396]:
+            - img [ref=e398]: radio_button_unchecked
+      - link "16. The Bee النحل 128 verses • meccan Bookmark sura Mark complete" [ref=e400] [cursor=pointer]:
+        - /url: /quran/16
+        - generic [ref=e401]:
+          - generic [ref=e402]: 16. The Bee
+          - generic [ref=e403]: النحل
+          - generic [ref=e404]: 128 verses • meccan
+        - generic [ref=e405]:
+          - button "Bookmark sura" [ref=e406]:
+            - img [ref=e408]: bookmark_border
+          - button "Mark complete" [ref=e409]:
+            - img [ref=e411]: radio_button_unchecked
+      - link "17. The Night Journey الإسراء 111 verses • meccan Bookmark sura Mark complete" [ref=e413] [cursor=pointer]:
+        - /url: /quran/17
+        - generic [ref=e414]:
+          - generic [ref=e415]: 17. The Night Journey
+          - generic [ref=e416]: الإسراء
+          - generic [ref=e417]: 111 verses • meccan
+        - generic [ref=e418]:
+          - button "Bookmark sura" [ref=e419]:
+            - img [ref=e421]: bookmark_border
+          - button "Mark complete" [ref=e422]:
+            - img [ref=e424]: radio_button_unchecked
+      - link "18. The Cave الكهف 110 verses • meccan Bookmark sura Mark complete" [ref=e426] [cursor=pointer]:
+        - /url: /quran/18
+        - generic [ref=e427]:
+          - generic [ref=e428]: 18. The Cave
+          - generic [ref=e429]: الكهف
+          - generic [ref=e430]: 110 verses • meccan
+        - generic [ref=e431]:
+          - button "Bookmark sura" [ref=e432]:
+            - img [ref=e434]: bookmark_border
+          - button "Mark complete" [ref=e435]:
+            - img [ref=e437]: radio_button_unchecked
+      - link "19. Mary مريم 98 verses • meccan Bookmark sura Mark complete" [ref=e439] [cursor=pointer]:
+        - /url: /quran/19
+        - generic [ref=e440]:
+          - generic [ref=e441]: 19. Mary
+          - generic [ref=e442]: مريم
+          - generic [ref=e443]: 98 verses • meccan
+        - generic [ref=e444]:
+          - button "Bookmark sura" [ref=e445]:
+            - img [ref=e447]: bookmark_border
+          - button "Mark complete" [ref=e448]:
+            - img [ref=e450]: radio_button_unchecked
+      - link "20. Ta-Ha طه 135 verses • meccan Bookmark sura Mark complete" [ref=e452] [cursor=pointer]:
+        - /url: /quran/20
+        - generic [ref=e453]:
+          - generic [ref=e454]: 20. Ta-Ha
+          - generic [ref=e455]: طه
+          - generic [ref=e456]: 135 verses • meccan
+        - generic [ref=e457]:
+          - button "Bookmark sura" [ref=e458]:
+            - img [ref=e460]: bookmark_border
+          - button "Mark complete" [ref=e461]:
+            - img [ref=e463]: radio_button_unchecked
+      - link "21. The Prophets الأنبياء 112 verses • meccan Bookmark sura Mark complete" [ref=e465] [cursor=pointer]:
+        - /url: /quran/21
+        - generic [ref=e466]:
+          - generic [ref=e467]: 21. The Prophets
+          - generic [ref=e468]: الأنبياء
+          - generic [ref=e469]: 112 verses • meccan
+        - generic [ref=e470]:
+          - button "Bookmark sura" [ref=e471]:
+            - img [ref=e473]: bookmark_border
+          - button "Mark complete" [ref=e474]:
+            - img [ref=e476]: radio_button_unchecked
+      - link "22. The Pilgrimage الحج 78 verses • medinan Bookmark sura Mark complete" [ref=e478] [cursor=pointer]:
+        - /url: /quran/22
+        - generic [ref=e479]:
+          - generic [ref=e480]: 22. The Pilgrimage
+          - generic [ref=e481]: الحج
+          - generic [ref=e482]: 78 verses • medinan
+        - generic [ref=e483]:
+          - button "Bookmark sura" [ref=e484]:
+            - img [ref=e486]: bookmark_border
+          - button "Mark complete" [ref=e487]:
+            - img [ref=e489]: radio_button_unchecked
+      - link "23. The Believers المؤمنون 118 verses • meccan Bookmark sura Mark complete" [ref=e491] [cursor=pointer]:
+        - /url: /quran/23
+        - generic [ref=e492]:
+          - generic [ref=e493]: 23. The Believers
+          - generic [ref=e494]: المؤمنون
+          - generic [ref=e495]: 118 verses • meccan
+        - generic [ref=e496]:
+          - button "Bookmark sura" [ref=e497]:
+            - img [ref=e499]: bookmark_border
+          - button "Mark complete" [ref=e500]:
+            - img [ref=e502]: radio_button_unchecked
+      - link "24. The Light النور 64 verses • medinan Bookmark sura Mark complete" [ref=e504] [cursor=pointer]:
+        - /url: /quran/24
+        - generic [ref=e505]:
+          - generic [ref=e506]: 24. The Light
+          - generic [ref=e507]: النور
+          - generic [ref=e508]: 64 verses • medinan
+        - generic [ref=e509]:
+          - button "Bookmark sura" [ref=e510]:
+            - img [ref=e512]: bookmark_border
+          - button "Mark complete" [ref=e513]:
+            - img [ref=e515]: radio_button_unchecked
+      - link "25. The Criterion الفرقان 77 verses • meccan Bookmark sura Mark complete" [ref=e517] [cursor=pointer]:
+        - /url: /quran/25
+        - generic [ref=e518]:
+          - generic [ref=e519]: 25. The Criterion
+          - generic [ref=e520]: الفرقان
+          - generic [ref=e521]: 77 verses • meccan
+        - generic [ref=e522]:
+          - button "Bookmark sura" [ref=e523]:
+            - img [ref=e525]: bookmark_border
+          - button "Mark complete" [ref=e526]:
+            - img [ref=e528]: radio_button_unchecked
+      - link "26. The Poets الشعراء 227 verses • meccan Bookmark sura Mark complete" [ref=e530] [cursor=pointer]:
+        - /url: /quran/26
+        - generic [ref=e531]:
+          - generic [ref=e532]: 26. The Poets
+          - generic [ref=e533]: الشعراء
+          - generic [ref=e534]: 227 verses • meccan
+        - generic [ref=e535]:
+          - button "Bookmark sura" [ref=e536]:
+            - img [ref=e538]: bookmark_border
+          - button "Mark complete" [ref=e539]:
+            - img [ref=e541]: radio_button_unchecked
+      - link "27. The Ant النمل 93 verses • meccan Bookmark sura Mark complete" [ref=e543] [cursor=pointer]:
+        - /url: /quran/27
+        - generic [ref=e544]:
+          - generic [ref=e545]: 27. The Ant
+          - generic [ref=e546]: النمل
+          - generic [ref=e547]: 93 verses • meccan
+        - generic [ref=e548]:
+          - button "Bookmark sura" [ref=e549]:
+            - img [ref=e551]: bookmark_border
+          - button "Mark complete" [ref=e552]:
+            - img [ref=e554]: radio_button_unchecked
+      - link "28. The Stories القصص 88 verses • meccan Bookmark sura Mark complete" [ref=e556] [cursor=pointer]:
+        - /url: /quran/28
+        - generic [ref=e557]:
+          - generic [ref=e558]: 28. The Stories
+          - generic [ref=e559]: القصص
+          - generic [ref=e560]: 88 verses • meccan
+        - generic [ref=e561]:
+          - button "Bookmark sura" [ref=e562]:
+            - img [ref=e564]: bookmark_border
+          - button "Mark complete" [ref=e565]:
+            - img [ref=e567]: radio_button_unchecked
+      - link "29. The Spider العنكبوت 69 verses • meccan Bookmark sura Mark complete" [ref=e569] [cursor=pointer]:
+        - /url: /quran/29
+        - generic [ref=e570]:
+          - generic [ref=e571]: 29. The Spider
+          - generic [ref=e572]: العنكبوت
+          - generic [ref=e573]: 69 verses • meccan
+        - generic [ref=e574]:
+          - button "Bookmark sura" [ref=e575]:
+            - img [ref=e577]: bookmark_border
+          - button "Mark complete" [ref=e578]:
+            - img [ref=e580]: radio_button_unchecked
+      - link "30. The Romans الروم 60 verses • meccan Bookmark sura Mark complete" [ref=e582] [cursor=pointer]:
+        - /url: /quran/30
+        - generic [ref=e583]:
+          - generic [ref=e584]: 30. The Romans
+          - generic [ref=e585]: الروم
+          - generic [ref=e586]: 60 verses • meccan
+        - generic [ref=e587]:
+          - button "Bookmark sura" [ref=e588]:
+            - img [ref=e590]: bookmark_border
+          - button "Mark complete" [ref=e591]:
+            - img [ref=e593]: radio_button_unchecked
+      - link "31. Luqman لقمان 34 verses • meccan Bookmark sura Mark complete" [ref=e595] [cursor=pointer]:
+        - /url: /quran/31
+        - generic [ref=e596]:
+          - generic [ref=e597]: 31. Luqman
+          - generic [ref=e598]: لقمان
+          - generic [ref=e599]: 34 verses • meccan
+        - generic [ref=e600]:
+          - button "Bookmark sura" [ref=e601]:
+            - img [ref=e603]: bookmark_border
+          - button "Mark complete" [ref=e604]:
+            - img [ref=e606]: radio_button_unchecked
+      - link "32. The Prostration السجدة 30 verses • meccan Bookmark sura Mark complete" [ref=e608] [cursor=pointer]:
+        - /url: /quran/32
+        - generic [ref=e609]:
+          - generic [ref=e610]: 32. The Prostration
+          - generic [ref=e611]: السجدة
+          - generic [ref=e612]: 30 verses • meccan
+        - generic [ref=e613]:
+          - button "Bookmark sura" [ref=e614]:
+            - img [ref=e616]: bookmark_border
+          - button "Mark complete" [ref=e617]:
+            - img [ref=e619]: radio_button_unchecked
+      - link "33. The Combined Forces الأحزاب 73 verses • medinan Bookmark sura Mark complete" [ref=e621] [cursor=pointer]:
+        - /url: /quran/33
+        - generic [ref=e622]:
+          - generic [ref=e623]: 33. The Combined Forces
+          - generic [ref=e624]: الأحزاب
+          - generic [ref=e625]: 73 verses • medinan
+        - generic [ref=e626]:
+          - button "Bookmark sura" [ref=e627]:
+            - img [ref=e629]: bookmark_border
+          - button "Mark complete" [ref=e630]:
+            - img [ref=e632]: radio_button_unchecked
+      - link "34. Sheba سبإ 54 verses • meccan Bookmark sura Mark complete" [ref=e634] [cursor=pointer]:
+        - /url: /quran/34
+        - generic [ref=e635]:
+          - generic [ref=e636]: 34. Sheba
+          - generic [ref=e637]: سبإ
+          - generic [ref=e638]: 54 verses • meccan
+        - generic [ref=e639]:
+          - button "Bookmark sura" [ref=e640]:
+            - img [ref=e642]: bookmark_border
+          - button "Mark complete" [ref=e643]:
+            - img [ref=e645]: radio_button_unchecked
+      - link "35. Originator فاطر 45 verses • meccan Bookmark sura Mark complete" [ref=e647] [cursor=pointer]:
+        - /url: /quran/35
+        - generic [ref=e648]:
+          - generic [ref=e649]: 35. Originator
+          - generic [ref=e650]: فاطر
+          - generic [ref=e651]: 45 verses • meccan
+        - generic [ref=e652]:
+          - button "Bookmark sura" [ref=e653]:
+            - img [ref=e655]: bookmark_border
+          - button "Mark complete" [ref=e656]:
+            - img [ref=e658]: radio_button_unchecked
+      - link "36. Ya Sin يس 83 verses • meccan Bookmark sura Mark complete" [ref=e660] [cursor=pointer]:
+        - /url: /quran/36
+        - generic [ref=e661]:
+          - generic [ref=e662]: 36. Ya Sin
+          - generic [ref=e663]: يس
+          - generic [ref=e664]: 83 verses • meccan
+        - generic [ref=e665]:
+          - button "Bookmark sura" [ref=e666]:
+            - img [ref=e668]: bookmark_border
+          - button "Mark complete" [ref=e669]:
+            - img [ref=e671]: radio_button_unchecked
+      - link "37. Those who set the Ranks الصافات 182 verses • meccan Bookmark sura Mark complete" [ref=e673] [cursor=pointer]:
+        - /url: /quran/37
+        - generic [ref=e674]:
+          - generic [ref=e675]: 37. Those who set the Ranks
+          - generic [ref=e676]: الصافات
+          - generic [ref=e677]: 182 verses • meccan
+        - generic [ref=e678]:
+          - button "Bookmark sura" [ref=e679]:
+            - img [ref=e681]: bookmark_border
+          - button "Mark complete" [ref=e682]:
+            - img [ref=e684]: radio_button_unchecked
+      - link "38. The Letter \"Saad\" ص 88 verses • meccan Bookmark sura Mark complete" [ref=e686] [cursor=pointer]:
+        - /url: /quran/38
+        - generic [ref=e687]:
+          - generic [ref=e688]: 38. The Letter "Saad"
+          - generic [ref=e689]: ص
+          - generic [ref=e690]: 88 verses • meccan
+        - generic [ref=e691]:
+          - button "Bookmark sura" [ref=e692]:
+            - img [ref=e694]: bookmark_border
+          - button "Mark complete" [ref=e695]:
+            - img [ref=e697]: radio_button_unchecked
+      - link "39. The Troops الزمر 75 verses • meccan Bookmark sura Mark complete" [ref=e699] [cursor=pointer]:
+        - /url: /quran/39
+        - generic [ref=e700]:
+          - generic [ref=e701]: 39. The Troops
+          - generic [ref=e702]: الزمر
+          - generic [ref=e703]: 75 verses • meccan
+        - generic [ref=e704]:
+          - button "Bookmark sura" [ref=e705]:
+            - img [ref=e707]: bookmark_border
+          - button "Mark complete" [ref=e708]:
+            - img [ref=e710]: radio_button_unchecked
+      - link "40. The Forgiver غافر 85 verses • meccan Bookmark sura Mark complete" [ref=e712] [cursor=pointer]:
+        - /url: /quran/40
+        - generic [ref=e713]:
+          - generic [ref=e714]: 40. The Forgiver
+          - generic [ref=e715]: غافر
+          - generic [ref=e716]: 85 verses • meccan
+        - generic [ref=e717]:
+          - button "Bookmark sura" [ref=e718]:
+            - img [ref=e720]: bookmark_border
+          - button "Mark complete" [ref=e721]:
+            - img [ref=e723]: radio_button_unchecked
+      - link "41. Explained in Detail فصلت 54 verses • meccan Bookmark sura Mark complete" [ref=e725] [cursor=pointer]:
+        - /url: /quran/41
+        - generic [ref=e726]:
+          - generic [ref=e727]: 41. Explained in Detail
+          - generic [ref=e728]: فصلت
+          - generic [ref=e729]: 54 verses • meccan
+        - generic [ref=e730]:
+          - button "Bookmark sura" [ref=e731]:
+            - img [ref=e733]: bookmark_border
+          - button "Mark complete" [ref=e734]:
+            - img [ref=e736]: radio_button_unchecked
+      - link "42. The Consultation الشورى 53 verses • meccan Bookmark sura Mark complete" [ref=e738] [cursor=pointer]:
+        - /url: /quran/42
+        - generic [ref=e739]:
+          - generic [ref=e740]: 42. The Consultation
+          - generic [ref=e741]: الشورى
+          - generic [ref=e742]: 53 verses • meccan
+        - generic [ref=e743]:
+          - button "Bookmark sura" [ref=e744]:
+            - img [ref=e746]: bookmark_border
+          - button "Mark complete" [ref=e747]:
+            - img [ref=e749]: radio_button_unchecked
+      - link "43. The Ornaments of Gold الزخرف 89 verses • meccan Bookmark sura Mark complete" [ref=e751] [cursor=pointer]:
+        - /url: /quran/43
+        - generic [ref=e752]:
+          - generic [ref=e753]: 43. The Ornaments of Gold
+          - generic [ref=e754]: الزخرف
+          - generic [ref=e755]: 89 verses • meccan
+        - generic [ref=e756]:
+          - button "Bookmark sura" [ref=e757]:
+            - img [ref=e759]: bookmark_border
+          - button "Mark complete" [ref=e760]:
+            - img [ref=e762]: radio_button_unchecked
+      - link "44. The Smoke الدخان 59 verses • meccan Bookmark sura Mark complete" [ref=e764] [cursor=pointer]:
+        - /url: /quran/44
+        - generic [ref=e765]:
+          - generic [ref=e766]: 44. The Smoke
+          - generic [ref=e767]: الدخان
+          - generic [ref=e768]: 59 verses • meccan
+        - generic [ref=e769]:
+          - button "Bookmark sura" [ref=e770]:
+            - img [ref=e772]: bookmark_border
+          - button "Mark complete" [ref=e773]:
+            - img [ref=e775]: radio_button_unchecked
+      - link "45. The Crouching الجاثية 37 verses • meccan Bookmark sura Mark complete" [ref=e777] [cursor=pointer]:
+        - /url: /quran/45
+        - generic [ref=e778]:
+          - generic [ref=e779]: 45. The Crouching
+          - generic [ref=e780]: الجاثية
+          - generic [ref=e781]: 37 verses • meccan
+        - generic [ref=e782]:
+          - button "Bookmark sura" [ref=e783]:
+            - img [ref=e785]: bookmark_border
+          - button "Mark complete" [ref=e786]:
+            - img [ref=e788]: radio_button_unchecked
+      - link "46. The Wind-Curved Sandhills الأحقاف 35 verses • meccan Bookmark sura Mark complete" [ref=e790] [cursor=pointer]:
+        - /url: /quran/46
+        - generic [ref=e791]:
+          - generic [ref=e792]: 46. The Wind-Curved Sandhills
+          - generic [ref=e793]: الأحقاف
+          - generic [ref=e794]: 35 verses • meccan
+        - generic [ref=e795]:
+          - button "Bookmark sura" [ref=e796]:
+            - img [ref=e798]: bookmark_border
+          - button "Mark complete" [ref=e799]:
+            - img [ref=e801]: radio_button_unchecked
+      - link "47. Muhammad محمد 38 verses • medinan Bookmark sura Mark complete" [ref=e803] [cursor=pointer]:
+        - /url: /quran/47
+        - generic [ref=e804]:
+          - generic [ref=e805]: 47. Muhammad
+          - generic [ref=e806]: محمد
+          - generic [ref=e807]: 38 verses • medinan
+        - generic [ref=e808]:
+          - button "Bookmark sura" [ref=e809]:
+            - img [ref=e811]: bookmark_border
+          - button "Mark complete" [ref=e812]:
+            - img [ref=e814]: radio_button_unchecked
+      - link "48. The Victory الفتح 29 verses • medinan Bookmark sura Mark complete" [ref=e816] [cursor=pointer]:
+        - /url: /quran/48
+        - generic [ref=e817]:
+          - generic [ref=e818]: 48. The Victory
+          - generic [ref=e819]: الفتح
+          - generic [ref=e820]: 29 verses • medinan
+        - generic [ref=e821]:
+          - button "Bookmark sura" [ref=e822]:
+            - img [ref=e824]: bookmark_border
+          - button "Mark complete" [ref=e825]:
+            - img [ref=e827]: radio_button_unchecked
+      - link "49. The Rooms الحجرات 18 verses • medinan Bookmark sura Mark complete" [ref=e829] [cursor=pointer]:
+        - /url: /quran/49
+        - generic [ref=e830]:
+          - generic [ref=e831]: 49. The Rooms
+          - generic [ref=e832]: الحجرات
+          - generic [ref=e833]: 18 verses • medinan
+        - generic [ref=e834]:
+          - button "Bookmark sura" [ref=e835]:
+            - img [ref=e837]: bookmark_border
+          - button "Mark complete" [ref=e838]:
+            - img [ref=e840]: radio_button_unchecked
+      - link "50. The Letter \"Qaf\" ق 45 verses • meccan Bookmark sura Mark complete" [ref=e842] [cursor=pointer]:
+        - /url: /quran/50
+        - generic [ref=e843]:
+          - generic [ref=e844]: 50. The Letter "Qaf"
+          - generic [ref=e845]: ق
+          - generic [ref=e846]: 45 verses • meccan
+        - generic [ref=e847]:
+          - button "Bookmark sura" [ref=e848]:
+            - img [ref=e850]: bookmark_border
+          - button "Mark complete" [ref=e851]:
+            - img [ref=e853]: radio_button_unchecked
+      - link "51. The Winnowing Winds الذاريات 60 verses • meccan Bookmark sura Mark complete" [ref=e855] [cursor=pointer]:
+        - /url: /quran/51
+        - generic [ref=e856]:
+          - generic [ref=e857]: 51. The Winnowing Winds
+          - generic [ref=e858]: الذاريات
+          - generic [ref=e859]: 60 verses • meccan
+        - generic [ref=e860]:
+          - button "Bookmark sura" [ref=e861]:
+            - img [ref=e863]: bookmark_border
+          - button "Mark complete" [ref=e864]:
+            - img [ref=e866]: radio_button_unchecked
+      - link "52. The Mount الطور 49 verses • meccan Bookmark sura Mark complete" [ref=e868] [cursor=pointer]:
+        - /url: /quran/52
+        - generic [ref=e869]:
+          - generic [ref=e870]: 52. The Mount
+          - generic [ref=e871]: الطور
+          - generic [ref=e872]: 49 verses • meccan
+        - generic [ref=e873]:
+          - button "Bookmark sura" [ref=e874]:
+            - img [ref=e876]: bookmark_border
+          - button "Mark complete" [ref=e877]:
+            - img [ref=e879]: radio_button_unchecked
+      - link "53. The Star النجم 62 verses • meccan Bookmark sura Mark complete" [ref=e881] [cursor=pointer]:
+        - /url: /quran/53
+        - generic [ref=e882]:
+          - generic [ref=e883]: 53. The Star
+          - generic [ref=e884]: النجم
+          - generic [ref=e885]: 62 verses • meccan
+        - generic [ref=e886]:
+          - button "Bookmark sura" [ref=e887]:
+            - img [ref=e889]: bookmark_border
+          - button "Mark complete" [ref=e890]:
+            - img [ref=e892]: radio_button_unchecked
+      - link "54. The Moon القمر 55 verses • meccan Bookmark sura Mark complete" [ref=e894] [cursor=pointer]:
+        - /url: /quran/54
+        - generic [ref=e895]:
+          - generic [ref=e896]: 54. The Moon
+          - generic [ref=e897]: القمر
+          - generic [ref=e898]: 55 verses • meccan
+        - generic [ref=e899]:
+          - button "Bookmark sura" [ref=e900]:
+            - img [ref=e902]: bookmark_border
+          - button "Mark complete" [ref=e903]:
+            - img [ref=e905]: radio_button_unchecked
+      - link "55. The Beneficent الرحمن 78 verses • medinan Bookmark sura Mark complete" [ref=e907] [cursor=pointer]:
+        - /url: /quran/55
+        - generic [ref=e908]:
+          - generic [ref=e909]: 55. The Beneficent
+          - generic [ref=e910]: الرحمن
+          - generic [ref=e911]: 78 verses • medinan
+        - generic [ref=e912]:
+          - button "Bookmark sura" [ref=e913]:
+            - img [ref=e915]: bookmark_border
+          - button "Mark complete" [ref=e916]:
+            - img [ref=e918]: radio_button_unchecked
+      - link "56. The Inevitable الواقعة 96 verses • meccan Bookmark sura Mark complete" [ref=e920] [cursor=pointer]:
+        - /url: /quran/56
+        - generic [ref=e921]:
+          - generic [ref=e922]: 56. The Inevitable
+          - generic [ref=e923]: الواقعة
+          - generic [ref=e924]: 96 verses • meccan
+        - generic [ref=e925]:
+          - button "Bookmark sura" [ref=e926]:
+            - img [ref=e928]: bookmark_border
+          - button "Mark complete" [ref=e929]:
+            - img [ref=e931]: radio_button_unchecked
+      - link "57. The Iron الحديد 29 verses • medinan Bookmark sura Mark complete" [ref=e933] [cursor=pointer]:
+        - /url: /quran/57
+        - generic [ref=e934]:
+          - generic [ref=e935]: 57. The Iron
+          - generic [ref=e936]: الحديد
+          - generic [ref=e937]: 29 verses • medinan
+        - generic [ref=e938]:
+          - button "Bookmark sura" [ref=e939]:
+            - img [ref=e941]: bookmark_border
+          - button "Mark complete" [ref=e942]:
+            - img [ref=e944]: radio_button_unchecked
+      - link "58. The Pleading Woman المجادلة 22 verses • medinan Bookmark sura Mark complete" [ref=e946] [cursor=pointer]:
+        - /url: /quran/58
+        - generic [ref=e947]:
+          - generic [ref=e948]: 58. The Pleading Woman
+          - generic [ref=e949]: المجادلة
+          - generic [ref=e950]: 22 verses • medinan
+        - generic [ref=e951]:
+          - button "Bookmark sura" [ref=e952]:
+            - img [ref=e954]: bookmark_border
+          - button "Mark complete" [ref=e955]:
+            - img [ref=e957]: radio_button_unchecked
+      - link "59. The Exile الحشر 24 verses • medinan Bookmark sura Mark complete" [ref=e959] [cursor=pointer]:
+        - /url: /quran/59
+        - generic [ref=e960]:
+          - generic [ref=e961]: 59. The Exile
+          - generic [ref=e962]: الحشر
+          - generic [ref=e963]: 24 verses • medinan
+        - generic [ref=e964]:
+          - button "Bookmark sura" [ref=e965]:
+            - img [ref=e967]: bookmark_border
+          - button "Mark complete" [ref=e968]:
+            - img [ref=e970]: radio_button_unchecked
+      - link "60. She that is to be examined الممتحنة 13 verses • medinan Bookmark sura Mark complete" [ref=e972] [cursor=pointer]:
+        - /url: /quran/60
+        - generic [ref=e973]:
+          - generic [ref=e974]: 60. She that is to be examined
+          - generic [ref=e975]: الممتحنة
+          - generic [ref=e976]: 13 verses • medinan
+        - generic [ref=e977]:
+          - button "Bookmark sura" [ref=e978]:
+            - img [ref=e980]: bookmark_border
+          - button "Mark complete" [ref=e981]:
+            - img [ref=e983]: radio_button_unchecked
+      - link "61. The Ranks الصف 14 verses • medinan Bookmark sura Mark complete" [ref=e985] [cursor=pointer]:
+        - /url: /quran/61
+        - generic [ref=e986]:
+          - generic [ref=e987]: 61. The Ranks
+          - generic [ref=e988]: الصف
+          - generic [ref=e989]: 14 verses • medinan
+        - generic [ref=e990]:
+          - button "Bookmark sura" [ref=e991]:
+            - img [ref=e993]: bookmark_border
+          - button "Mark complete" [ref=e994]:
+            - img [ref=e996]: radio_button_unchecked
+      - link "62. The Congregation, Friday الجمعة 11 verses • medinan Bookmark sura Mark complete" [ref=e998] [cursor=pointer]:
+        - /url: /quran/62
+        - generic [ref=e999]:
+          - generic [ref=e1000]: 62. The Congregation, Friday
+          - generic [ref=e1001]: الجمعة
+          - generic [ref=e1002]: 11 verses • medinan
+        - generic [ref=e1003]:
+          - button "Bookmark sura" [ref=e1004]:
+            - img [ref=e1006]: bookmark_border
+          - button "Mark complete" [ref=e1007]:
+            - img [ref=e1009]: radio_button_unchecked
+      - link "63. The Hypocrites المنافقون 11 verses • medinan Bookmark sura Mark complete" [ref=e1011] [cursor=pointer]:
+        - /url: /quran/63
+        - generic [ref=e1012]:
+          - generic [ref=e1013]: 63. The Hypocrites
+          - generic [ref=e1014]: المنافقون
+          - generic [ref=e1015]: 11 verses • medinan
+        - generic [ref=e1016]:
+          - button "Bookmark sura" [ref=e1017]:
+            - img [ref=e1019]: bookmark_border
+          - button "Mark complete" [ref=e1020]:
+            - img [ref=e1022]: radio_button_unchecked
+      - link "64. The Mutual Disillusion التغابن 18 verses • medinan Bookmark sura Mark complete" [ref=e1024] [cursor=pointer]:
+        - /url: /quran/64
+        - generic [ref=e1025]:
+          - generic [ref=e1026]: 64. The Mutual Disillusion
+          - generic [ref=e1027]: التغابن
+          - generic [ref=e1028]: 18 verses • medinan
+        - generic [ref=e1029]:
+          - button "Bookmark sura" [ref=e1030]:
+            - img [ref=e1032]: bookmark_border
+          - button "Mark complete" [ref=e1033]:
+            - img [ref=e1035]: radio_button_unchecked
+      - link "65. The Divorce الطلاق 12 verses • medinan Bookmark sura Mark complete" [ref=e1037] [cursor=pointer]:
+        - /url: /quran/65
+        - generic [ref=e1038]:
+          - generic [ref=e1039]: 65. The Divorce
+          - generic [ref=e1040]: الطلاق
+          - generic [ref=e1041]: 12 verses • medinan
+        - generic [ref=e1042]:
+          - button "Bookmark sura" [ref=e1043]:
+            - img [ref=e1045]: bookmark_border
+          - button "Mark complete" [ref=e1046]:
+            - img [ref=e1048]: radio_button_unchecked
+      - link "66. The Prohibition التحريم 12 verses • medinan Bookmark sura Mark complete" [ref=e1050] [cursor=pointer]:
+        - /url: /quran/66
+        - generic [ref=e1051]:
+          - generic [ref=e1052]: 66. The Prohibition
+          - generic [ref=e1053]: التحريم
+          - generic [ref=e1054]: 12 verses • medinan
+        - generic [ref=e1055]:
+          - button "Bookmark sura" [ref=e1056]:
+            - img [ref=e1058]: bookmark_border
+          - button "Mark complete" [ref=e1059]:
+            - img [ref=e1061]: radio_button_unchecked
+      - link "67. The Sovereignty الملك 30 verses • meccan Bookmark sura Mark complete" [ref=e1063] [cursor=pointer]:
+        - /url: /quran/67
+        - generic [ref=e1064]:
+          - generic [ref=e1065]: 67. The Sovereignty
+          - generic [ref=e1066]: الملك
+          - generic [ref=e1067]: 30 verses • meccan
+        - generic [ref=e1068]:
+          - button "Bookmark sura" [ref=e1069]:
+            - img [ref=e1071]: bookmark_border
+          - button "Mark complete" [ref=e1072]:
+            - img [ref=e1074]: radio_button_unchecked
+      - link "68. The Pen القلم 52 verses • meccan Bookmark sura Mark complete" [ref=e1076] [cursor=pointer]:
+        - /url: /quran/68
+        - generic [ref=e1077]:
+          - generic [ref=e1078]: 68. The Pen
+          - generic [ref=e1079]: القلم
+          - generic [ref=e1080]: 52 verses • meccan
+        - generic [ref=e1081]:
+          - button "Bookmark sura" [ref=e1082]:
+            - img [ref=e1084]: bookmark_border
+          - button "Mark complete" [ref=e1085]:
+            - img [ref=e1087]: radio_button_unchecked
+      - link "69. The Reality الحاقة 52 verses • meccan Bookmark sura Mark complete" [ref=e1089] [cursor=pointer]:
+        - /url: /quran/69
+        - generic [ref=e1090]:
+          - generic [ref=e1091]: 69. The Reality
+          - generic [ref=e1092]: الحاقة
+          - generic [ref=e1093]: 52 verses • meccan
+        - generic [ref=e1094]:
+          - button "Bookmark sura" [ref=e1095]:
+            - img [ref=e1097]: bookmark_border
+          - button "Mark complete" [ref=e1098]:
+            - img [ref=e1100]: radio_button_unchecked
+      - link "70. The Ascending Stairways المعارج 44 verses • meccan Bookmark sura Mark complete" [ref=e1102] [cursor=pointer]:
+        - /url: /quran/70
+        - generic [ref=e1103]:
+          - generic [ref=e1104]: 70. The Ascending Stairways
+          - generic [ref=e1105]: المعارج
+          - generic [ref=e1106]: 44 verses • meccan
+        - generic [ref=e1107]:
+          - button "Bookmark sura" [ref=e1108]:
+            - img [ref=e1110]: bookmark_border
+          - button "Mark complete" [ref=e1111]:
+            - img [ref=e1113]: radio_button_unchecked
+      - link "71. Noah نوح 28 verses • meccan Bookmark sura Mark complete" [ref=e1115] [cursor=pointer]:
+        - /url: /quran/71
+        - generic [ref=e1116]:
+          - generic [ref=e1117]: 71. Noah
+          - generic [ref=e1118]: نوح
+          - generic [ref=e1119]: 28 verses • meccan
+        - generic [ref=e1120]:
+          - button "Bookmark sura" [ref=e1121]:
+            - img [ref=e1123]: bookmark_border
+          - button "Mark complete" [ref=e1124]:
+            - img [ref=e1126]: radio_button_unchecked
+      - link "72. The Jinn الجن 28 verses • meccan Bookmark sura Mark complete" [ref=e1128] [cursor=pointer]:
+        - /url: /quran/72
+        - generic [ref=e1129]:
+          - generic [ref=e1130]: 72. The Jinn
+          - generic [ref=e1131]: الجن
+          - generic [ref=e1132]: 28 verses • meccan
+        - generic [ref=e1133]:
+          - button "Bookmark sura" [ref=e1134]:
+            - img [ref=e1136]: bookmark_border
+          - button "Mark complete" [ref=e1137]:
+            - img [ref=e1139]: radio_button_unchecked
+      - link "73. The Enshrouded One المزمل 20 verses • meccan Bookmark sura Mark complete" [ref=e1141] [cursor=pointer]:
+        - /url: /quran/73
+        - generic [ref=e1142]:
+          - generic [ref=e1143]: 73. The Enshrouded One
+          - generic [ref=e1144]: المزمل
+          - generic [ref=e1145]: 20 verses • meccan
+        - generic [ref=e1146]:
+          - button "Bookmark sura" [ref=e1147]:
+            - img [ref=e1149]: bookmark_border
+          - button "Mark complete" [ref=e1150]:
+            - img [ref=e1152]: radio_button_unchecked
+      - link "74. The Cloaked One المدثر 56 verses • meccan Bookmark sura Mark complete" [ref=e1154] [cursor=pointer]:
+        - /url: /quran/74
+        - generic [ref=e1155]:
+          - generic [ref=e1156]: 74. The Cloaked One
+          - generic [ref=e1157]: المدثر
+          - generic [ref=e1158]: 56 verses • meccan
+        - generic [ref=e1159]:
+          - button "Bookmark sura" [ref=e1160]:
+            - img [ref=e1162]: bookmark_border
+          - button "Mark complete" [ref=e1163]:
+            - img [ref=e1165]: radio_button_unchecked
+      - link "75. The Resurrection القيامة 40 verses • meccan Bookmark sura Mark complete" [ref=e1167] [cursor=pointer]:
+        - /url: /quran/75
+        - generic [ref=e1168]:
+          - generic [ref=e1169]: 75. The Resurrection
+          - generic [ref=e1170]: القيامة
+          - generic [ref=e1171]: 40 verses • meccan
+        - generic [ref=e1172]:
+          - button "Bookmark sura" [ref=e1173]:
+            - img [ref=e1175]: bookmark_border
+          - button "Mark complete" [ref=e1176]:
+            - img [ref=e1178]: radio_button_unchecked
+      - link "76. The Man الانسان 31 verses • medinan Bookmark sura Mark complete" [ref=e1180] [cursor=pointer]:
+        - /url: /quran/76
+        - generic [ref=e1181]:
+          - generic [ref=e1182]: 76. The Man
+          - generic [ref=e1183]: الانسان
+          - generic [ref=e1184]: 31 verses • medinan
+        - generic [ref=e1185]:
+          - button "Bookmark sura" [ref=e1186]:
+            - img [ref=e1188]: bookmark_border
+          - button "Mark complete" [ref=e1189]:
+            - img [ref=e1191]: radio_button_unchecked
+      - link "77. The Emissaries المرسلات 50 verses • meccan Bookmark sura Mark complete" [ref=e1193] [cursor=pointer]:
+        - /url: /quran/77
+        - generic [ref=e1194]:
+          - generic [ref=e1195]: 77. The Emissaries
+          - generic [ref=e1196]: المرسلات
+          - generic [ref=e1197]: 50 verses • meccan
+        - generic [ref=e1198]:
+          - button "Bookmark sura" [ref=e1199]:
+            - img [ref=e1201]: bookmark_border
+          - button "Mark complete" [ref=e1202]:
+            - img [ref=e1204]: radio_button_unchecked
+      - link "78. The Tidings النبإ 40 verses • meccan Bookmark sura Mark complete" [ref=e1206] [cursor=pointer]:
+        - /url: /quran/78
+        - generic [ref=e1207]:
+          - generic [ref=e1208]: 78. The Tidings
+          - generic [ref=e1209]: النبإ
+          - generic [ref=e1210]: 40 verses • meccan
+        - generic [ref=e1211]:
+          - button "Bookmark sura" [ref=e1212]:
+            - img [ref=e1214]: bookmark_border
+          - button "Mark complete" [ref=e1215]:
+            - img [ref=e1217]: radio_button_unchecked
+      - link "79. Those who drag forth النازعات 46 verses • meccan Bookmark sura Mark complete" [ref=e1219] [cursor=pointer]:
+        - /url: /quran/79
+        - generic [ref=e1220]:
+          - generic [ref=e1221]: 79. Those who drag forth
+          - generic [ref=e1222]: النازعات
+          - generic [ref=e1223]: 46 verses • meccan
+        - generic [ref=e1224]:
+          - button "Bookmark sura" [ref=e1225]:
+            - img [ref=e1227]: bookmark_border
+          - button "Mark complete" [ref=e1228]:
+            - img [ref=e1230]: radio_button_unchecked
+      - link "80. He Frowned عبس 42 verses • meccan Bookmark sura Mark complete" [ref=e1232] [cursor=pointer]:
+        - /url: /quran/80
+        - generic [ref=e1233]:
+          - generic [ref=e1234]: 80. He Frowned
+          - generic [ref=e1235]: عبس
+          - generic [ref=e1236]: 42 verses • meccan
+        - generic [ref=e1237]:
+          - button "Bookmark sura" [ref=e1238]:
+            - img [ref=e1240]: bookmark_border
+          - button "Mark complete" [ref=e1241]:
+            - img [ref=e1243]: radio_button_unchecked
+      - link "81. The Overthrowing التكوير 29 verses • meccan Bookmark sura Mark complete" [ref=e1245] [cursor=pointer]:
+        - /url: /quran/81
+        - generic [ref=e1246]:
+          - generic [ref=e1247]: 81. The Overthrowing
+          - generic [ref=e1248]: التكوير
+          - generic [ref=e1249]: 29 verses • meccan
+        - generic [ref=e1250]:
+          - button "Bookmark sura" [ref=e1251]:
+            - img [ref=e1253]: bookmark_border
+          - button "Mark complete" [ref=e1254]:
+            - img [ref=e1256]: radio_button_unchecked
+      - link "82. The Cleaving الإنفطار 19 verses • meccan Bookmark sura Mark complete" [ref=e1258] [cursor=pointer]:
+        - /url: /quran/82
+        - generic [ref=e1259]:
+          - generic [ref=e1260]: 82. The Cleaving
+          - generic [ref=e1261]: الإنفطار
+          - generic [ref=e1262]: 19 verses • meccan
+        - generic [ref=e1263]:
+          - button "Bookmark sura" [ref=e1264]:
+            - img [ref=e1266]: bookmark_border
+          - button "Mark complete" [ref=e1267]:
+            - img [ref=e1269]: radio_button_unchecked
+      - link "83. The Defrauding المطففين 36 verses • meccan Bookmark sura Mark complete" [ref=e1271] [cursor=pointer]:
+        - /url: /quran/83
+        - generic [ref=e1272]:
+          - generic [ref=e1273]: 83. The Defrauding
+          - generic [ref=e1274]: المطففين
+          - generic [ref=e1275]: 36 verses • meccan
+        - generic [ref=e1276]:
+          - button "Bookmark sura" [ref=e1277]:
+            - img [ref=e1279]: bookmark_border
+          - button "Mark complete" [ref=e1280]:
+            - img [ref=e1282]: radio_button_unchecked
+      - link "84. The Sundering الإنشقاق 25 verses • meccan Bookmark sura Mark complete" [ref=e1284] [cursor=pointer]:
+        - /url: /quran/84
+        - generic [ref=e1285]:
+          - generic [ref=e1286]: 84. The Sundering
+          - generic [ref=e1287]: الإنشقاق
+          - generic [ref=e1288]: 25 verses • meccan
+        - generic [ref=e1289]:
+          - button "Bookmark sura" [ref=e1290]:
+            - img [ref=e1292]: bookmark_border
+          - button "Mark complete" [ref=e1293]:
+            - img [ref=e1295]: radio_button_unchecked
+      - link "85. The Mansions of the Stars البروج 22 verses • meccan Bookmark sura Mark complete" [ref=e1297] [cursor=pointer]:
+        - /url: /quran/85
+        - generic [ref=e1298]:
+          - generic [ref=e1299]: 85. The Mansions of the Stars
+          - generic [ref=e1300]: البروج
+          - generic [ref=e1301]: 22 verses • meccan
+        - generic [ref=e1302]:
+          - button "Bookmark sura" [ref=e1303]:
+            - img [ref=e1305]: bookmark_border
+          - button "Mark complete" [ref=e1306]:
+            - img [ref=e1308]: radio_button_unchecked
+      - link "86. The Nightcommer الطارق 17 verses • meccan Bookmark sura Mark complete" [ref=e1310] [cursor=pointer]:
+        - /url: /quran/86
+        - generic [ref=e1311]:
+          - generic [ref=e1312]: 86. The Nightcommer
+          - generic [ref=e1313]: الطارق
+          - generic [ref=e1314]: 17 verses • meccan
+        - generic [ref=e1315]:
+          - button "Bookmark sura" [ref=e1316]:
+            - img [ref=e1318]: bookmark_border
+          - button "Mark complete" [ref=e1319]:
+            - img [ref=e1321]: radio_button_unchecked
+      - link "87. The Most High الأعلى 19 verses • meccan Bookmark sura Mark complete" [ref=e1323] [cursor=pointer]:
+        - /url: /quran/87
+        - generic [ref=e1324]:
+          - generic [ref=e1325]: 87. The Most High
+          - generic [ref=e1326]: الأعلى
+          - generic [ref=e1327]: 19 verses • meccan
+        - generic [ref=e1328]:
+          - button "Bookmark sura" [ref=e1329]:
+            - img [ref=e1331]: bookmark_border
+          - button "Mark complete" [ref=e1332]:
+            - img [ref=e1334]: radio_button_unchecked
+      - link "88. The Overwhelming الغاشية 26 verses • meccan Bookmark sura Mark complete" [ref=e1336] [cursor=pointer]:
+        - /url: /quran/88
+        - generic [ref=e1337]:
+          - generic [ref=e1338]: 88. The Overwhelming
+          - generic [ref=e1339]: الغاشية
+          - generic [ref=e1340]: 26 verses • meccan
+        - generic [ref=e1341]:
+          - button "Bookmark sura" [ref=e1342]:
+            - img [ref=e1344]: bookmark_border
+          - button "Mark complete" [ref=e1345]:
+            - img [ref=e1347]: radio_button_unchecked
+      - link "89. The Dawn الفجر 30 verses • meccan Bookmark sura Mark complete" [ref=e1349] [cursor=pointer]:
+        - /url: /quran/89
+        - generic [ref=e1350]:
+          - generic [ref=e1351]: 89. The Dawn
+          - generic [ref=e1352]: الفجر
+          - generic [ref=e1353]: 30 verses • meccan
+        - generic [ref=e1354]:
+          - button "Bookmark sura" [ref=e1355]:
+            - img [ref=e1357]: bookmark_border
+          - button "Mark complete" [ref=e1358]:
+            - img [ref=e1360]: radio_button_unchecked
+      - link "90. The City البلد 20 verses • meccan Bookmark sura Mark complete" [ref=e1362] [cursor=pointer]:
+        - /url: /quran/90
+        - generic [ref=e1363]:
+          - generic [ref=e1364]: 90. The City
+          - generic [ref=e1365]: البلد
+          - generic [ref=e1366]: 20 verses • meccan
+        - generic [ref=e1367]:
+          - button "Bookmark sura" [ref=e1368]:
+            - img [ref=e1370]: bookmark_border
+          - button "Mark complete" [ref=e1371]:
+            - img [ref=e1373]: radio_button_unchecked
+      - link "91. The Sun الشمس 15 verses • meccan Bookmark sura Mark complete" [ref=e1375] [cursor=pointer]:
+        - /url: /quran/91
+        - generic [ref=e1376]:
+          - generic [ref=e1377]: 91. The Sun
+          - generic [ref=e1378]: الشمس
+          - generic [ref=e1379]: 15 verses • meccan
+        - generic [ref=e1380]:
+          - button "Bookmark sura" [ref=e1381]:
+            - img [ref=e1383]: bookmark_border
+          - button "Mark complete" [ref=e1384]:
+            - img [ref=e1386]: radio_button_unchecked
+      - link "92. The Night الليل 21 verses • meccan Bookmark sura Mark complete" [ref=e1388] [cursor=pointer]:
+        - /url: /quran/92
+        - generic [ref=e1389]:
+          - generic [ref=e1390]: 92. The Night
+          - generic [ref=e1391]: الليل
+          - generic [ref=e1392]: 21 verses • meccan
+        - generic [ref=e1393]:
+          - button "Bookmark sura" [ref=e1394]:
+            - img [ref=e1396]: bookmark_border
+          - button "Mark complete" [ref=e1397]:
+            - img [ref=e1399]: radio_button_unchecked
+      - link "93. The Morning Hours الضحى 11 verses • meccan Bookmark sura Mark complete" [ref=e1401] [cursor=pointer]:
+        - /url: /quran/93
+        - generic [ref=e1402]:
+          - generic [ref=e1403]: 93. The Morning Hours
+          - generic [ref=e1404]: الضحى
+          - generic [ref=e1405]: 11 verses • meccan
+        - generic [ref=e1406]:
+          - button "Bookmark sura" [ref=e1407]:
+            - img [ref=e1409]: bookmark_border
+          - button "Mark complete" [ref=e1410]:
+            - img [ref=e1412]: radio_button_unchecked
+      - link "94. The Relief الشرح 8 verses • meccan Bookmark sura Mark complete" [ref=e1414] [cursor=pointer]:
+        - /url: /quran/94
+        - generic [ref=e1415]:
+          - generic [ref=e1416]: 94. The Relief
+          - generic [ref=e1417]: الشرح
+          - generic [ref=e1418]: 8 verses • meccan
+        - generic [ref=e1419]:
+          - button "Bookmark sura" [ref=e1420]:
+            - img [ref=e1422]: bookmark_border
+          - button "Mark complete" [ref=e1423]:
+            - img [ref=e1425]: radio_button_unchecked
+      - link "95. The Fig التين 8 verses • meccan Bookmark sura Mark complete" [ref=e1427] [cursor=pointer]:
+        - /url: /quran/95
+        - generic [ref=e1428]:
+          - generic [ref=e1429]: 95. The Fig
+          - generic [ref=e1430]: التين
+          - generic [ref=e1431]: 8 verses • meccan
+        - generic [ref=e1432]:
+          - button "Bookmark sura" [ref=e1433]:
+            - img [ref=e1435]: bookmark_border
+          - button "Mark complete" [ref=e1436]:
+            - img [ref=e1438]: radio_button_unchecked
+      - link "96. The Clot العلق 19 verses • meccan Bookmark sura Mark complete" [ref=e1440] [cursor=pointer]:
+        - /url: /quran/96
+        - generic [ref=e1441]:
+          - generic [ref=e1442]: 96. The Clot
+          - generic [ref=e1443]: العلق
+          - generic [ref=e1444]: 19 verses • meccan
+        - generic [ref=e1445]:
+          - button "Bookmark sura" [ref=e1446]:
+            - img [ref=e1448]: bookmark_border
+          - button "Mark complete" [ref=e1449]:
+            - img [ref=e1451]: radio_button_unchecked
+      - link "97. The Power القدر 5 verses • meccan Bookmark sura Mark complete" [ref=e1453] [cursor=pointer]:
+        - /url: /quran/97
+        - generic [ref=e1454]:
+          - generic [ref=e1455]: 97. The Power
+          - generic [ref=e1456]: القدر
+          - generic [ref=e1457]: 5 verses • meccan
+        - generic [ref=e1458]:
+          - button "Bookmark sura" [ref=e1459]:
+            - img [ref=e1461]: bookmark_border
+          - button "Mark complete" [ref=e1462]:
+            - img [ref=e1464]: radio_button_unchecked
+      - link "98. The Clear Proof البينة 8 verses • medinan Bookmark sura Mark complete" [ref=e1466] [cursor=pointer]:
+        - /url: /quran/98
+        - generic [ref=e1467]:
+          - generic [ref=e1468]: 98. The Clear Proof
+          - generic [ref=e1469]: البينة
+          - generic [ref=e1470]: 8 verses • medinan
+        - generic [ref=e1471]:
+          - button "Bookmark sura" [ref=e1472]:
+            - img [ref=e1474]: bookmark_border
+          - button "Mark complete" [ref=e1475]:
+            - img [ref=e1477]: radio_button_unchecked
+      - link "99. The Earthquake الزلزلة 8 verses • medinan Bookmark sura Mark complete" [ref=e1479] [cursor=pointer]:
+        - /url: /quran/99
+        - generic [ref=e1480]:
+          - generic [ref=e1481]: 99. The Earthquake
+          - generic [ref=e1482]: الزلزلة
+          - generic [ref=e1483]: 8 verses • medinan
+        - generic [ref=e1484]:
+          - button "Bookmark sura" [ref=e1485]:
+            - img [ref=e1487]: bookmark_border
+          - button "Mark complete" [ref=e1488]:
+            - img [ref=e1490]: radio_button_unchecked
+      - link "100. The Courser العاديات 11 verses • meccan Bookmark sura Mark complete" [ref=e1492] [cursor=pointer]:
+        - /url: /quran/100
+        - generic [ref=e1493]:
+          - generic [ref=e1494]: 100. The Courser
+          - generic [ref=e1495]: العاديات
+          - generic [ref=e1496]: 11 verses • meccan
+        - generic [ref=e1497]:
+          - button "Bookmark sura" [ref=e1498]:
+            - img [ref=e1500]: bookmark_border
+          - button "Mark complete" [ref=e1501]:
+            - img [ref=e1503]: radio_button_unchecked
+      - link "101. The Calamity القارعة 11 verses • meccan Bookmark sura Mark complete" [ref=e1505] [cursor=pointer]:
+        - /url: /quran/101
+        - generic [ref=e1506]:
+          - generic [ref=e1507]: 101. The Calamity
+          - generic [ref=e1508]: القارعة
+          - generic [ref=e1509]: 11 verses • meccan
+        - generic [ref=e1510]:
+          - button "Bookmark sura" [ref=e1511]:
+            - img [ref=e1513]: bookmark_border
+          - button "Mark complete" [ref=e1514]:
+            - img [ref=e1516]: radio_button_unchecked
+      - link "102. The Rivalry in world increase التكاثر 8 verses • meccan Bookmark sura Mark complete" [ref=e1518] [cursor=pointer]:
+        - /url: /quran/102
+        - generic [ref=e1519]:
+          - generic [ref=e1520]: 102. The Rivalry in world increase
+          - generic [ref=e1521]: التكاثر
+          - generic [ref=e1522]: 8 verses • meccan
+        - generic [ref=e1523]:
+          - button "Bookmark sura" [ref=e1524]:
+            - img [ref=e1526]: bookmark_border
+          - button "Mark complete" [ref=e1527]:
+            - img [ref=e1529]: radio_button_unchecked
+      - link "103. The Declining Day العصر 3 verses • meccan Bookmark sura Mark complete" [ref=e1531] [cursor=pointer]:
+        - /url: /quran/103
+        - generic [ref=e1532]:
+          - generic [ref=e1533]: 103. The Declining Day
+          - generic [ref=e1534]: العصر
+          - generic [ref=e1535]: 3 verses • meccan
+        - generic [ref=e1536]:
+          - button "Bookmark sura" [ref=e1537]:
+            - img [ref=e1539]: bookmark_border
+          - button "Mark complete" [ref=e1540]:
+            - img [ref=e1542]: radio_button_unchecked
+      - link "104. The Traducer الهمزة 9 verses • meccan Bookmark sura Mark complete" [ref=e1544] [cursor=pointer]:
+        - /url: /quran/104
+        - generic [ref=e1545]:
+          - generic [ref=e1546]: 104. The Traducer
+          - generic [ref=e1547]: الهمزة
+          - generic [ref=e1548]: 9 verses • meccan
+        - generic [ref=e1549]:
+          - button "Bookmark sura" [ref=e1550]:
+            - img [ref=e1552]: bookmark_border
+          - button "Mark complete" [ref=e1553]:
+            - img [ref=e1555]: radio_button_unchecked
+      - link "105. The Elephant الفيل 5 verses • meccan Bookmark sura Mark complete" [ref=e1557] [cursor=pointer]:
+        - /url: /quran/105
+        - generic [ref=e1558]:
+          - generic [ref=e1559]: 105. The Elephant
+          - generic [ref=e1560]: الفيل
+          - generic [ref=e1561]: 5 verses • meccan
+        - generic [ref=e1562]:
+          - button "Bookmark sura" [ref=e1563]:
+            - img [ref=e1565]: bookmark_border
+          - button "Mark complete" [ref=e1566]:
+            - img [ref=e1568]: radio_button_unchecked
+      - link "106. Quraysh قريش 4 verses • meccan Bookmark sura Mark complete" [ref=e1570] [cursor=pointer]:
+        - /url: /quran/106
+        - generic [ref=e1571]:
+          - generic [ref=e1572]: 106. Quraysh
+          - generic [ref=e1573]: قريش
+          - generic [ref=e1574]: 4 verses • meccan
+        - generic [ref=e1575]:
+          - button "Bookmark sura" [ref=e1576]:
+            - img [ref=e1578]: bookmark_border
+          - button "Mark complete" [ref=e1579]:
+            - img [ref=e1581]: radio_button_unchecked
+      - link "107. The Small kindnesses الماعون 7 verses • meccan Bookmark sura Mark complete" [ref=e1583] [cursor=pointer]:
+        - /url: /quran/107
+        - generic [ref=e1584]:
+          - generic [ref=e1585]: 107. The Small kindnesses
+          - generic [ref=e1586]: الماعون
+          - generic [ref=e1587]: 7 verses • meccan
+        - generic [ref=e1588]:
+          - button "Bookmark sura" [ref=e1589]:
+            - img [ref=e1591]: bookmark_border
+          - button "Mark complete" [ref=e1592]:
+            - img [ref=e1594]: radio_button_unchecked
+      - link "108. The Abundance الكوثر 3 verses • meccan Bookmark sura Mark complete" [ref=e1596] [cursor=pointer]:
+        - /url: /quran/108
+        - generic [ref=e1597]:
+          - generic [ref=e1598]: 108. The Abundance
+          - generic [ref=e1599]: الكوثر
+          - generic [ref=e1600]: 3 verses • meccan
+        - generic [ref=e1601]:
+          - button "Bookmark sura" [ref=e1602]:
+            - img [ref=e1604]: bookmark_border
+          - button "Mark complete" [ref=e1605]:
+            - img [ref=e1607]: radio_button_unchecked
+      - link "109. The Disbelievers الكافرون 6 verses • meccan Bookmark sura Mark complete" [ref=e1609] [cursor=pointer]:
+        - /url: /quran/109
+        - generic [ref=e1610]:
+          - generic [ref=e1611]: 109. The Disbelievers
+          - generic [ref=e1612]: الكافرون
+          - generic [ref=e1613]: 6 verses • meccan
+        - generic [ref=e1614]:
+          - button "Bookmark sura" [ref=e1615]:
+            - img [ref=e1617]: bookmark_border
+          - button "Mark complete" [ref=e1618]:
+            - img [ref=e1620]: radio_button_unchecked
+      - link "110. The Divine Support النصر 3 verses • medinan Bookmark sura Mark complete" [ref=e1622] [cursor=pointer]:
+        - /url: /quran/110
+        - generic [ref=e1623]:
+          - generic [ref=e1624]: 110. The Divine Support
+          - generic [ref=e1625]: النصر
+          - generic [ref=e1626]: 3 verses • medinan
+        - generic [ref=e1627]:
+          - button "Bookmark sura" [ref=e1628]:
+            - img [ref=e1630]: bookmark_border
+          - button "Mark complete" [ref=e1631]:
+            - img [ref=e1633]: radio_button_unchecked
+      - link "111. The Palm Fiber المسد 5 verses • meccan Bookmark sura Mark complete" [ref=e1635] [cursor=pointer]:
+        - /url: /quran/111
+        - generic [ref=e1636]:
+          - generic [ref=e1637]: 111. The Palm Fiber
+          - generic [ref=e1638]: المسد
+          - generic [ref=e1639]: 5 verses • meccan
+        - generic [ref=e1640]:
+          - button "Bookmark sura" [ref=e1641]:
+            - img [ref=e1643]: bookmark_border
+          - button "Mark complete" [ref=e1644]:
+            - img [ref=e1646]: radio_button_unchecked
+      - link "112. The Sincerity الإخلاص 4 verses • meccan Bookmark sura Mark complete" [ref=e1648] [cursor=pointer]:
+        - /url: /quran/112
+        - generic [ref=e1649]:
+          - generic [ref=e1650]: 112. The Sincerity
+          - generic [ref=e1651]: الإخلاص
+          - generic [ref=e1652]: 4 verses • meccan
+        - generic [ref=e1653]:
+          - button "Bookmark sura" [ref=e1654]:
+            - img [ref=e1656]: bookmark_border
+          - button "Mark complete" [ref=e1657]:
+            - img [ref=e1659]: radio_button_unchecked
+      - link "113. The Daybreak الفلق 5 verses • meccan Bookmark sura Mark complete" [ref=e1661] [cursor=pointer]:
+        - /url: /quran/113
+        - generic [ref=e1662]:
+          - generic [ref=e1663]: 113. The Daybreak
+          - generic [ref=e1664]: الفلق
+          - generic [ref=e1665]: 5 verses • meccan
+        - generic [ref=e1666]:
+          - button "Bookmark sura" [ref=e1667]:
+            - img [ref=e1669]: bookmark_border
+          - button "Mark complete" [ref=e1670]:
+            - img [ref=e1672]: radio_button_unchecked
+      - link "114. Mankind الناس 6 verses • meccan Bookmark sura Mark complete" [ref=e1674] [cursor=pointer]:
+        - /url: /quran/114
+        - generic [ref=e1675]:
+          - generic [ref=e1676]: 114. Mankind
+          - generic [ref=e1677]: الناس
+          - generic [ref=e1678]: 6 verses • meccan
+        - generic [ref=e1679]:
+          - button "Bookmark sura" [ref=e1680]:
+            - img [ref=e1682]: bookmark_border
+          - button "Mark complete" [ref=e1683]:
+            - img [ref=e1685]: radio_button_unchecked
+    - generic [ref=e1686]: If content doesn't load, ensure the server API /api/quran is running.
+  - generic [ref=e1688]:
+    - button "AI Support" [ref=e1689] [cursor=pointer]:
+      - generic [ref=e1690]:
+        - img [ref=e1691]: smart_toy
+        - generic [ref=e1692]: AI Support
+    - button "close" [ref=e1693] [cursor=pointer]:
+      - img [ref=e1695]: close
+  - alert [ref=e1696]:
+    - generic [ref=e1698]:
+      - generic [ref=e1699]: We use cookies to improve your experience and analyze site usage.
+      - generic [ref=e1700]: By clicking 'Accept', you consent to our use of cookies for analytics.
+    - generic [ref=e1701]:
+      - button "Accept" [ref=e1702] [cursor=pointer]:
+        - generic [ref=e1704]: Accept
+      - button "Decline" [ref=e1705] [cursor=pointer]:
+        - generic [ref=e1707]: Decline
+  - contentinfo [ref=e1708]:
+    - generic [ref=e1709]:
+      - generic [ref=e1710]:
+        - img "decor" [ref=e1711]
+        - generic [ref=e1712]: © 2026 Peace2074 · v3.1.4
+      - navigation "Footer links" [ref=e1713]:
+        - link "About" [ref=e1714] [cursor=pointer]:
+          - /url: /about
+        - link "Quran" [ref=e1715] [cursor=pointer]:
+          - /url: /quran
+        - link "Terms and Conditions" [ref=e1716] [cursor=pointer]:
+          - /url: /terms
+        - link "Privacy Policy" [ref=e1717] [cursor=pointer]:
+          - /url: /privacy
+        - link "Contact" [ref=e1718] [cursor=pointer]:
+          - /url: /contact
+```
+
+# Test source
+
+```ts
+  1  | import { test, expect } from '@playwright/test';
+  2  | 
+  3  | test.describe('Quran Navigation and Search Flow', () => {
+  4  |     test.beforeEach(async ({ page }) => {
+  5  |         await page.goto('/quran');
+  6  |     });
+  7  | 
+  8  |     test('should display the sura list on load', async ({ page }) => {
+  9  |         const suraCards = page.locator('a.sura-card');
+> 10 |         await expect(suraCards.first()).toBeVisible();
+     |                                         ^ Error: expect(locator).toBeVisible() failed
+  11 |         await expect(suraCards).toHaveCount(114);
+  12 |     });
+  13 | 
+  14 |     test('should show Al-Fatiha as the first sura card', async ({ page }) => {
+  15 |         const firstCard = page.locator('a.sura-card').first();
+  16 |         await expect(firstCard).toBeVisible();
+  17 |         await expect(firstCard).toContainText(/The Opener|Fati/i);
+  18 |     });
+  19 | 
+  20 |     test('should navigate to a sura and render Arabic text', async ({ page }) => {
+  21 |         const firstCard = page.locator('a.sura-card').first();
+  22 |         await expect(firstCard).toBeVisible();
+  23 |         const href = await firstCard.getAttribute('href');
+  24 |         expect(href).toBeTruthy();
+  25 |         await page.goto(`${href}/reader`);
+  26 | 
+  27 |         await page.waitForURL(/\/quran\/\d+\/reader/);
+  28 | 
+  29 |         const arabicText = page.locator('.arabic-text').first();
+  30 |         await expect(arabicText).toBeVisible();
+  31 |         await expect(arabicText).toHaveText(/.+/, { timeout: 10000 });
+  32 |     });
+  33 | 
+  34 |     test('should apply RTL direction when switching to Arabic locale', async ({ page }) => {
+  35 |         await page.evaluate(() => {
+  36 |             localStorage.setItem('app-locale', 'ar');
+  37 |         });
+  38 |         await page.reload();
+  39 | 
+  40 |         const html = page.locator('html');
+  41 |         await expect(html).toHaveAttribute('dir', 'rtl');
+  42 |         await expect(html).toHaveAttribute('lang', 'ar');
+  43 |     });
+  44 | 
+  45 |     test('should render all 114 surah cards', async ({ page }) => {
+  46 |         const suraCards = page.locator('a.sura-card');
+  47 |         await expect(suraCards).toHaveCount(114);
+  48 |         await expect(suraCards.nth(113)).toBeVisible();
+  49 |     });
+  50 | });
+```
