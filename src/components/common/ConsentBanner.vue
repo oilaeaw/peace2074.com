@@ -2,8 +2,7 @@
 import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-
-import { Capacitor } from '@capacitor/core'
+import { isIOS, isAndroid } from '@nativescript/core'
 
 const CONSENT_KEY = 'consent-banner-v1'
 const show = ref(false)
@@ -12,7 +11,7 @@ const route = useRoute()
 
 onMounted(() => {
   try {
-    if (Capacitor.isNativePlatform() || route.query.native === '1') {
+    if (isIOS() || isAndroid() || route.query.native === '1') {
       show.value = false
       return
     }

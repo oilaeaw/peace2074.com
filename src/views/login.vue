@@ -3,9 +3,7 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
-import { Browser } from '@capacitor/browser'
-import { App as CapApp } from '@capacitor/app'
-import type { PluginListenerHandle } from '@capacitor/core'
+import { Utils, Application, isIOS, isAndroid } from '@nativescript/core'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useI18n } from 'vue-i18n'
 
@@ -38,7 +36,7 @@ const showPassword = ref(false)
 const rememberMe = ref(false)
 const passkeyLoading = ref(false)
 const appleConfigured = ref<boolean | null>(null)
-let appUrlOpenHandle: PluginListenerHandle | null = null
+let appUrlOpenHandle: (() => void) | null = null
 
 // Compute Nitro API base URL
 const env = (import.meta as ImportMeta & { env?: LoginViewEnv }).env || {}
@@ -57,12 +55,8 @@ function computeNitroBase() {
       return configured.replace(/\/$/, '')
     }
 
-    // Capacitor runtime is cross-origin from hosted API
-    if (
-      protocol === 'capacitor:' ||
-      protocol === 'ionic:' ||
-      protocol === 'app:'
-    ) {
+    // NativeScript runtime is cross-origin from hosted API
+    if (isIOS() || isAndroid()) {
       return DEFAULT_MOBILE_API_BASE
     }
 
@@ -75,12 +69,8 @@ function computeNitroBase() {
 
 const NITRO_BASE = computeNitroBase()
 
-function isCapacitorLikeRuntime() {
-  if (typeof window === 'undefined') return false
-  const protocol = window.location?.protocol
-  return (
-    protocol === 'capacitor:' || protocol === 'ionic:' || protocol === 'app:'
-  )
+function isNativeRuntime() {
+  return isIOS() || isAndroid()
 }
 
 const passkeysSupported = computed(() => {
@@ -90,7 +80,7 @@ const passkeysSupported = computed(() => {
     window.isSecureContext &&
     window.PublicKeyCredential &&
     window.navigator?.credentials &&
-    !isCapacitorLikeRuntime()
+    !isNativeRuntime()
   )
 })
 
@@ -391,7 +381,7 @@ async function loadAuthAvailability() {
       response = await authHealthRequest(NITRO_BASE)
     } catch (err: unknown) {
       if (
-        isCapacitorLikeRuntime() &&
+        isNativeRuntime() &&
         NITRO_BASE !== DEFAULT_MOBILE_API_BASE &&
         isNetworkLikeError(err)
       ) {
@@ -474,12 +464,9 @@ function openSocialLogin(provider: 'google' | 'apple') {
 
   const ts = Date.now()
 
-  if (isCapacitorLikeRuntime()) {
-    // On iOS native, use SFSafariViewController (in-app browser) as required by Apple Guideline 4.
-    // The ?native=1 param tells the server callback to redirect back via the peace2074:// deep link
-    // instead of https://peace2074.com/, which would take the user out of the native app.
+  if (isNativeRuntime()) {
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}&native=1`
-    void Browser.open({ url: oauthUrl, presentationStyle: 'fullscreen' })
+    Utils.openUrl(oauthUrl)
   } else {
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}`
     window.location.href = oauthUrl
@@ -492,9 +479,7 @@ async function handleNativeOAuthCallback(url: string) {
     const authComplete = parsed.searchParams.get('authComplete')
     const oauthError = parsed.searchParams.get('oauthError')
 
-    await Browser.close().catch(() => {
-      /* browser may already be closed */
-    })
+    // browser closed by the OS on redirect
 
     if (authComplete === '1') {
       const token = parsed.searchParams.get('token')
@@ -560,7 +545,7 @@ async function handleLogin() {
       // iOS WebView sometimes surfaces cross-origin/preflight/network issues as
       // generic "Load failed". Fallback to canonical mobile API base.
       if (
-        isCapacitorLikeRuntime() &&
+        isNativeRuntime() &&
         NITRO_BASE !== DEFAULT_MOBILE_API_BASE &&
         isNetworkLikeError(err)
       ) {
@@ -608,19 +593,19 @@ onMounted(() => {
   void loadAuthAvailability()
   void handleOAuthErrorFromRoute()
 
-  if (isCapacitorLikeRuntime()) {
-    void CapApp.addListener('appUrlOpen', ({ url }) => {
-      if (url.startsWith('peace2074://auth/callback')) {
-        void handleNativeOAuthCallback(url)
+  if (isNativeRuntime()) {
+    const handler = (args: { url: string }) => {
+      if (args.url.startsWith('peace2074://auth/callback')) {
+        void handleNativeOAuthCallback(args.url)
       }
-    }).then((handle) => {
-      appUrlOpenHandle = handle
-    })
+    }
+    Application.on('resume', handler)
+    appUrlOpenHandle = () => Application.off('resume', handler)
   }
 })
 
 onUnmounted(() => {
-  appUrlOpenHandle?.remove()
+  appUrlOpenHandle?.()
 })
 </script>
 

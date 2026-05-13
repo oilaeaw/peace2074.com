@@ -1,9 +1,3 @@
-import {
-  ConsentStatus,
-  ConsentType,
-  FirebaseAnalytics,
-} from '@capacitor-firebase/analytics'
-
 type AnalyticsScalar = string | number | boolean | null | undefined
 type AnalyticsValue = AnalyticsScalar | AnalyticsScalar[]
 type AnalyticsParams = Record<string, AnalyticsValue>
@@ -21,55 +15,11 @@ type GtagFunction = (
 const PAGEVIEW_DEDUPE_MS = 1500
 const MAX_TRACKED_PAGEVIEWS = 200
 const CONSENT_KEY = 'consent-banner-v1'
-const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
 const recentPageViews = new Map<string, number>()
 
 let analyticsBridgeInstalled = false
-let nativeAnalyticsConsentGranted = false
 let originalConsentGrantHandler: (() => void) | null = null
 let originalGtag: GtagFunction | null = null
-
-function isNativeAnalyticsRuntime() {
-  return (
-    typeof window !== 'undefined' &&
-    NATIVE_PROTOCOLS.has(String(window.location.protocol || ''))
-  )
-}
-
-function sanitizeScreenName(value: string) {
-  return value.trim().replace(/\s+/g, ' ').slice(0, 36) || 'PEACE2074'
-}
-
-async function setNativeAnalyticsConsent(granted: boolean) {
-  if (!isNativeAnalyticsRuntime()) return
-
-  if (!granted) {
-    nativeAnalyticsConsentGranted = false
-  }
-
-  const consentStatus = granted ? ConsentStatus.Granted : ConsentStatus.Denied
-  const consentTypes = [
-    ConsentType.AnalyticsStorage,
-    ConsentType.AdStorage,
-    ConsentType.AdUserData,
-    ConsentType.AdPersonalization,
-  ]
-
-  try {
-    await FirebaseAnalytics.setEnabled({ enabled: granted })
-    await Promise.all(
-      consentTypes.map((type) =>
-        FirebaseAnalytics.setConsent({
-          type,
-          status: consentStatus,
-        })
-      )
-    )
-    nativeAnalyticsConsentGranted = granted
-  } catch (error) {
-    console.warn('[analytics] Failed to update native analytics consent', error)
-  }
-}
 
 export function installAnalyticsBridge() {
   if (typeof window === 'undefined' || analyticsBridgeInstalled) return
@@ -81,43 +31,8 @@ export function installAnalyticsBridge() {
       : null
   originalGtag = typeof window.gtag === 'function' ? window.gtag.bind(window) : null
 
-  if (isNativeAnalyticsRuntime()) {
-    window.gtag = ((command, eventName, params) => {
-      if (command === 'event' && nativeAnalyticsConsentGranted) {
-        void FirebaseAnalytics.logEvent({
-          name: eventName,
-          params: sanitizeAnalyticsParams(params || {}),
-        }).catch((error) => {
-          console.warn('[analytics] Failed to log native event', error)
-        })
-      }
-
-      originalGtag?.(command, eventName, params)
-    }) as GtagFunction
-  }
-
   window.allConsentGranted = () => {
     originalConsentGrantHandler?.()
-    void setNativeAnalyticsConsent(true).finally(() => {
-      window.dispatchEvent(new CustomEvent('analytics-consent-granted'))
-    })
-  }
-}
-
-export async function syncAnalyticsConsentState() {
-  if (typeof window === 'undefined' || !isNativeAnalyticsRuntime()) return
-
-  let granted = false
-
-  try {
-    granted = window.localStorage.getItem(CONSENT_KEY) === 'accepted'
-  } catch {
-    granted = false
-  }
-
-  await setNativeAnalyticsConsent(granted)
-
-  if (granted) {
     window.dispatchEvent(new CustomEvent('analytics-consent-granted'))
   }
 }
@@ -176,10 +91,6 @@ export function trackAnalyticsEvent(
   eventName: string,
   params: AnalyticsParams = {}
 ) {
-  if (isNativeAnalyticsRuntime() && !nativeAnalyticsConsentGranted) {
-    return false
-  }
-
   const gtag = getGtag()
   if (!gtag) return false
 
@@ -197,10 +108,6 @@ export function trackAnalyticsPageView(
     dedupeMs?: number
   } & AnalyticsParams
 ) {
-  if (isNativeAnalyticsRuntime() && !nativeAnalyticsConsentGranted) {
-    return false
-  }
-
   const {
     pageTitle,
     pagePath,
@@ -221,15 +128,6 @@ export function trackAnalyticsPageView(
 
   recentPageViews.set(key, now)
   pruneRecentPageViews(now)
-
-  if (isNativeAnalyticsRuntime()) {
-    void FirebaseAnalytics.setCurrentScreen({
-      screenName: sanitizeScreenName(pageTitle || pagePath),
-      screenClassOverride: 'CapacitorWebView',
-    }).catch((error) => {
-      console.warn('[analytics] Failed to update native screen', error)
-    })
-  }
 
   return trackAnalyticsEvent('page_view', {
     page_title: pageTitle,
