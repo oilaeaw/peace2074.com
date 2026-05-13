@@ -122,6 +122,7 @@ watch(autoPlayAthan, (val) => {
 
 watch(autoPlayPrayerTimes, (val) => {
   persistAutoplayPrayerTimesPreference(val)
+  broadcastAutoplayPrayerTimesPreference(val)
 })
 
 watch(showQuranTranslation, (val) => {
@@ -284,6 +285,15 @@ function readAutoplayPrayerTimesPreference(): boolean {
 function persistAutoplayPrayerTimesPreference(val: boolean) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(AUTOPLAY_PRAYER_KEY, String(val))
+}
+
+function broadcastAutoplayPrayerTimesPreference(val: boolean) {
+  if (typeof window === 'undefined') return
+  window.dispatchEvent(
+    new CustomEvent('autoplay-prayer-times-changed', {
+      detail: { enabled: val },
+    })
+  )
 }
 
 function broadcastAutoplayPreference(val: boolean) {
@@ -656,9 +666,12 @@ async function reloadApp() {
         COMPACT_KEY,
         MOTION_KEY,
         AUTOPLAY_KEY,
+        AUTOPLAY_PRAYER_KEY,
         QURAN_TRANSLATION_KEY,
         NOTIFICATIONS_KEY,
         DARK_MODE_KEY,
+        FONT_SIZE_KEY,
+        HIGH_CONTRAST_KEY,
       ]
       const savedValues: Record<string, string> = {}
       criticalKeys.forEach((key) => {

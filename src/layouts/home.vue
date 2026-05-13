@@ -72,17 +72,13 @@
 <script setup lang="ts">
 import { computed } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { useRoute, useRouter } from 'vue-router'
 import {
   AVAILABLE_LOCALES,
-  buildLocalePath,
   normalizeLocale,
   persistLocale,
 } from '@/utils/locale-routing'
 
 const { locale, t } = useI18n({ useScope: 'global' })
-const route = useRoute()
-const router = useRouter()
 
 declare const __APP_VERSION__: string
 
@@ -122,14 +118,6 @@ function onLangChange(e: Event) {
 
   locale.value = normalized
   persistLocale(normalized)
-
-  void router
-    .replace({
-      path: buildLocalePath(route.path, normalized, { forcePrefix: true }),
-      query: route.query,
-      hash: route.hash,
-    })
-    .catch(() => {})
 }
 </script>
 

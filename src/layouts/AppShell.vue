@@ -424,20 +424,6 @@ const localeModel = computed({
 
     locale.value = normalized
     persistLocale(normalized)
-
-    const localizedPath = buildLocalePath(route.path, normalized, {
-      forcePrefix: true,
-    })
-
-    if (localizedPath === route.path) return
-
-    void router
-      .replace({
-        path: localizedPath,
-        query: route.query,
-        hash: route.hash,
-      })
-      .catch(() => {})
   },
 })
 
