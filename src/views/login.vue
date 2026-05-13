@@ -3,9 +3,10 @@ import { computed, onMounted, onUnmounted, ref } from 'vue'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { startAuthentication, startRegistration } from '@simplewebauthn/browser'
-import { Utils, Application, isIOS, isAndroid } from '@nativescript/core'
 import { useAuthStore } from '@/stores/auth.pinia'
 import { useI18n } from 'vue-i18n'
+
+const NATIVE_PROTOCOLS = new Set(['capacitor:', 'ionic:', 'app:'])
 
 type LoginViewEnv = {
   VITE_NITRO_BASE?: string
@@ -55,8 +56,8 @@ function computeNitroBase() {
       return configured.replace(/\/$/, '')
     }
 
-    // NativeScript runtime is cross-origin from hosted API
-    if (isIOS() || isAndroid()) {
+    // Native runtime is cross-origin from hosted API
+    if (NATIVE_PROTOCOLS.has(protocol)) {
       return DEFAULT_MOBILE_API_BASE
     }
 
@@ -70,7 +71,8 @@ function computeNitroBase() {
 const NITRO_BASE = computeNitroBase()
 
 function isNativeRuntime() {
-  return isIOS() || isAndroid()
+  if (typeof window === 'undefined') return false
+  return NATIVE_PROTOCOLS.has(String(window.location.protocol || ''))
 }
 
 const passkeysSupported = computed(() => {
@@ -466,7 +468,7 @@ function openSocialLogin(provider: 'google' | 'apple') {
 
   if (isNativeRuntime()) {
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}&native=1`
-    Utils.openUrl(oauthUrl)
+    window.location.href = oauthUrl
   } else {
     const oauthUrl = `${NITRO_BASE}/auth/${provider}?ts=${ts}`
     window.location.href = oauthUrl
@@ -594,13 +596,18 @@ onMounted(() => {
   void handleOAuthErrorFromRoute()
 
   if (isNativeRuntime()) {
-    const handler = (args: { url: string }) => {
-      if (args.url.startsWith('peace2074://auth/callback')) {
-        void handleNativeOAuthCallback(args.url)
+    const handler = (event: Event) => {
+      const url = (event as CustomEvent<string>).detail
+      if (
+        typeof url === 'string' &&
+        url.startsWith('peace2074://auth/callback')
+      ) {
+        void handleNativeOAuthCallback(url)
       }
     }
-    Application.on('resume', handler)
-    appUrlOpenHandle = () => Application.off('resume', handler)
+    window.addEventListener('peace2074:urlopen', handler)
+    appUrlOpenHandle = () =>
+      window.removeEventListener('peace2074:urlopen', handler)
   }
 })
 

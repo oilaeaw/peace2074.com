@@ -21,6 +21,14 @@ let analyticsBridgeInstalled = false
 let originalConsentGrantHandler: (() => void) | null = null
 let originalGtag: GtagFunction | null = null
 
+export async function syncAnalyticsConsentState(): Promise<void> {
+  if (typeof window === 'undefined') return
+  const granted = window.localStorage.getItem('consent-banner-v1') === 'accepted'
+  if (granted) {
+    window.dispatchEvent(new CustomEvent('analytics-consent-granted'))
+  }
+}
+
 export function installAnalyticsBridge() {
   if (typeof window === 'undefined' || analyticsBridgeInstalled) return
 

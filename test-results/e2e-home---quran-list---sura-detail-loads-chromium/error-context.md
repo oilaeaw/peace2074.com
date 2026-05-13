@@ -18,22 +18,14 @@ Test timeout of 30000ms exceeded.
 ```
 Error: expect(locator).toBeVisible() failed
 
-Locator: locator('a.sura-card').first()
+Locator: locator('.arabic-text').first()
 Expected: visible
 Error: element(s) not found
 
 Call log:
   - Expect "toBeVisible" with timeout 30000ms
-  - waiting for locator('a.sura-card').first()
+  - waiting for locator('.arabic-text').first()
 
-```
-
-# Page snapshot
-
-```yaml
-- generic [ref=e2]:
-  - generic [ref=e4]: Peace2074
-  - generic [ref=e5]: Loading...
 ```
 
 # Test source
@@ -51,14 +43,14 @@ Call log:
   10 |     await page.waitForURL(/\/quran$/)
   11 | 
   12 |     const list = page.locator('a.sura-card')
-> 13 |     await expect(list.first()).toBeVisible({ timeout: quranLoadTimeoutMs })
-     |                                ^ Error: expect(locator).toBeVisible() failed
+  13 |     await expect(list.first()).toBeVisible({ timeout: quranLoadTimeoutMs })
   14 |     await expect(list).toHaveCount(114, { timeout: quranLoadTimeoutMs })
   15 | 
   16 |     await page.goto('/quran/1/reader')
   17 |     await page.waitForURL(/\/quran\/1\/reader$/)
   18 | 
-  19 |     await expect(page.locator('.arabic-text').first()).toBeVisible({ timeout: quranLoadTimeoutMs })
+> 19 |     await expect(page.locator('.arabic-text').first()).toBeVisible({ timeout: quranLoadTimeoutMs })
+     |                                                        ^ Error: expect(locator).toBeVisible() failed
   20 | })
   21 | 
   22 | test('locale switch updates UI and persists', async ({ page }) => {
