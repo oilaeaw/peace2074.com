@@ -258,9 +258,17 @@ function getOAuthErrorMessage(code: string) {
 }
 
 function handleNativeCallback(url: string) {
-  if (!url.startsWith(nativeCallbackBase)) return
+  if (!url.startsWith('peace2074://')) return
 
   dismissIosAuthController()
+
+  // Handle generic deep links (e.g. peace2074://quran)
+  if (!url.startsWith(nativeCallbackBase)) {
+    const path = url.replace('peace2074://', '')
+    const webUrl = `${appOrigin}/${path}${path.includes('?') ? '&' : '?'}native=1`
+    reloadApp(webUrl)
+    return
+  }
 
   const parsed = new URL(url)
   const authComplete = parsed.searchParams.get('authComplete')
@@ -288,6 +296,25 @@ function handleNativeCallback(url: string) {
   }
 
   isLoading.value = false
+}
+
+function donateSiriActivity(activityType: string, title: string, suggestedInvocationPhrase: string) {
+  if (!isIOS) return
+  try {
+    const activity = NSUserActivity.alloc().initWithActivityType(activityType)
+    activity.title = title
+    activity.eligibleForSearch = true
+    activity.eligibleForPrediction = true
+    activity.suggestedInvocationPhrase = suggestedInvocationPhrase
+    
+    const controller = getPresentingController()
+    if (controller) {
+      controller.userActivity = activity
+    }
+    activity.becomeCurrent()
+  } catch (err) {
+    console.error('Failed to donate Siri activity:', err)
+  }
 }
 
 function handleIosOpenUrl(notification: NSNotification) {
@@ -332,7 +359,16 @@ const onLoadFinished = (event: LoadEventData) => {
   webView.value = event.object as NativeScriptWebView
 
   if (event.url) {
-    rememberCurrentAppUrl(String(event.url))
+    const loadedUrl = String(event.url)
+    rememberCurrentAppUrl(loadedUrl)
+    
+    if (isIOS) {
+      if (loadedUrl.includes('/quran')) {
+        donateSiriActivity('com.peace2074.quran', 'Read Quran', 'Open Quran in Peace')
+      } else if (loadedUrl.includes('/tasbeeh')) {
+        donateSiriActivity('com.peace2074.tasbeeh', 'Start Tasbeeh', 'Start Tasbeeh in Peace')
+      }
+    }
   }
 
   if (event.error) {
@@ -367,6 +403,21 @@ onMounted(() => {
           handleNativeCallback(callbackUrl)
         }
         return true
+      }
+    )
+
+    iosApp.addDelegateHandler(
+      'applicationContinueUserActivityRestorationHandler' as keyof UIApplicationDelegate,
+      (_application, userActivity) => {
+        const activityType = String((userActivity as any).activityType || '')
+        if (activityType === 'com.peace2074.quran') {
+          handleNativeCallback('peace2074://quran')
+          return true
+        } else if (activityType === 'com.peace2074.tasbeeh') {
+          handleNativeCallback('peace2074://tasbeeh')
+          return true
+        }
+        return false
       }
     )
 
