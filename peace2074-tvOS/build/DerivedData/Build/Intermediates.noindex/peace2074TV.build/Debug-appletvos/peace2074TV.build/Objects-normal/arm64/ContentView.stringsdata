@@ -1,0 +1,48 @@
+{
+  "source": "/Users/waelio/Code/GitHub/peace2074/peace2074.com/peace2074-tvOS/peace2074TV/ContentView.swift",
+  "tables": {
+    "Localizable": [
+      {
+        "comment": "",
+        "key": "PEACE2074",
+        "location": {
+          "startingColumn": 30,
+          "startingLine": 61
+        }
+      },
+      {
+        "comment": "",
+        "key": "PEACE2074",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 67
+        }
+      },
+      {
+        "comment": "",
+        "key": "Quran recitation, Tasbeeh, and Holy Names designed for a calm Apple TV experience.",
+        "location": {
+          "startingColumn": 18,
+          "startingLine": 70
+        }
+      },
+      {
+        "comment": "",
+        "key": "Native SwiftUI tvOS app",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 76
+        }
+      },
+      {
+        "comment": "",
+        "key": "Shared PEACE2074 product",
+        "location": {
+          "startingColumn": 23,
+          "startingLine": 77
+        }
+      }
+    ]
+  },
+  "version": 1
+}
