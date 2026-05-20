@@ -1,0 +1,3 @@
+app_identifier("com.peace2074.app")
+package_name("com.peace2074.app")
+apple_id "wahbehw@me.com"

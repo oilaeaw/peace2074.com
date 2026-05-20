@@ -1,0 +1,77 @@
+# Load the root .env file if it exists (for local deployments)
+require 'dotenv'
+Dotenv.load("../../../.env")
+
+default_platform(:ios)
+
+platform :ios do
+  desc "Push a new beta build to TestFlight"
+  lane :beta do
+    # 1. Setup the App Store Connect API Key
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      in_house: false
+    )
+
+    # 2. Build the app using NativeScript prepared Xcode project
+    build_app(
+      project: "platforms/ios/peace2074mobile.xcodeproj",
+      scheme: "peace2074mobile",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store"
+    )
+
+    # 3. Upload to TestFlight
+    upload_to_testflight
+  end
+  
+  desc "Push a new release directly to the App Store"
+  lane :release do
+    # 1. Setup the App Store Connect API Key
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      in_house: false
+    )
+
+    # 2. Build the app
+    build_app(
+      project: "platforms/ios/peace2074mobile.xcodeproj",
+      scheme: "peace2074mobile",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}"
+    )
+
+    # 3. Upload to App Store
+    upload_to_app_store(
+      submit_for_review: false,
+      automatic_release: false
+    )
+  end
+end
+
+platform :android do
+  desc "Push a new release to the Google Play Store"
+  lane :release do
+    # 1. Build the Android app bundle in release mode
+    # NativeScript handles the build before fastlane runs, or we can use gradle here if needed.
+    # We will assume the build step is done before fastlane, which is typical for NativeScript.
+    
+    # 2. Upload to Google Play Store using supply
+    # Requires a JSON key for the Google Play Developer API
+    upload_to_play_store(
+      track: 'production',
+      aab: '../platforms/android/app/build/outputs/bundle/release/app-release.aab',
+      json_key_data: ENV["GOOGLE_PLAY_JSON_KEY_CONTENT"] # Pass the JSON key directly from env
+      # Alternatively use json_key: ENV["GOOGLE_PLAY_JSON_KEY_PATH"]
+    )
+  end
+end

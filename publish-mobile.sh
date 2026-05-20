@@ -13,7 +13,7 @@ if [ -f ".env" ]; then
 fi
 
 # Go to the mobile directory
-cd /Users/waelio/Code/GitHub/peace2074/peace2074.com/ios/peace2074-mobile
+cd /Users/waelio/Code/GitHub/peace2074/peace2074.com/ios
 
 echo "Installing NativeScript dependencies..."
 npm install

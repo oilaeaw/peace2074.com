@@ -226,7 +226,7 @@ importers:
         specifier: ^3.6.7
         version: 3.6.7
 
-  ios/peace2074-mobile:
+  ios:
     dependencies:
       '@nativescript/core':
         specifier: ~9.0.0

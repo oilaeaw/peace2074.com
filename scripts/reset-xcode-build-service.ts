@@ -124,7 +124,7 @@ async function main() {
     }
 
     if (xcodeWasQuit) {
-        console.log('Reopen ios/App/App.xcworkspace and build again.');
+        console.log('Reopen ios/platforms/ios/peace2074mobile.xcworkspace and build again.');
         return;
     }
 

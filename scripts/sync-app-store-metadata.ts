@@ -13,7 +13,7 @@ import {
 const __filename = fileURLToPath(import.meta.url)
 const __dirname = path.dirname(__filename)
 const repoRoot = path.resolve(__dirname, '..')
-const metadataRoot = path.join(repoRoot, 'ios', 'App', 'fastlane', 'metadata')
+const metadataRoot = path.join(repoRoot, 'ios', 'fastlane', 'metadata')
 const defaultDir = path.join(metadataRoot, 'default')
 const primaryLocaleDir = path.join(metadataRoot, 'en-US')
 const localeSpecificUrlPaths = {

@@ -30,7 +30,7 @@ const configuredBaseUrl = process.env.SCREENSHOT_BASE_URL
 const candidateBaseUrls = configuredBaseUrl
     ? [configuredBaseUrl]
     : ['http://127.0.0.1:4000', 'https://peace2074.com']
-const outputDir = path.join(repoRoot, 'ios', 'App', 'fastlane', 'screenshots', 'en-US')
+const outputDir = path.join(repoRoot, 'ios', 'fastlane', 'screenshots', 'en-US')
 
 const deviceConfigs: DeviceConfig[] = [
     {
