@@ -20,7 +20,7 @@ Timeout: 5000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 5000ms
-    9 × unexpected value "http://127.0.0.1:4000/signup"
+    7 × unexpected value "http://127.0.0.1:4000/signup"
 
 ```
 
@@ -152,89 +152,28 @@ Call log:
             - generic [ref=e177]: /contact
           - button "Pin" [ref=e179]:
             - generic [ref=e181]: Pin
-  - generic [ref=e188]:
-    - generic [ref=e189]:
-      - generic [ref=e191]: mosque
-      - generic [ref=e192]: Peace2074
-      - generic [ref=e193]: Create your account
-    - generic [ref=e195]:
-      - generic [ref=e197]:
-        - generic:
-          - generic:
-            - generic: person
-          - generic:
-            - generic: Username
-            - textbox "Username" [disabled]:
-              - /placeholder: Enter your username
-              - text: e2e_1779253761329-5cxiqf
-      - generic [ref=e200]:
-        - generic:
-          - generic:
-            - generic: email
-          - generic:
-            - generic: Email
-            - textbox "Email" [disabled]:
-              - /placeholder: Enter your email
-              - text: e2e_1779253761329-5cxiqf@example.com
-      - generic [ref=e203]:
-        - generic:
-          - generic:
-            - generic: lock
-          - generic:
-            - generic: Password
-            - textbox "Password" [disabled]:
-              - /placeholder: Enter your password
-              - text: Auth_1779253761329-5cxiqf!42
-          - generic:
-            - generic: visibility
-      - generic [ref=e206]:
-        - generic:
-          - generic:
-            - generic: lock
-          - generic:
-            - generic: Confirm Password
-            - textbox "Confirm Password" [disabled]:
-              - /placeholder: Confirm password
-              - text: Auth_1779253761329-5cxiqf!42
-          - generic:
-            - generic: visibility
-      - checkbox "I accept the terms and conditions" [checked] [ref=e208] [cursor=pointer]:
-        - img [ref=e211]
-      - generic [ref=e213]:
-        - generic [ref=e214]: I accept the
-        - link "terms and conditions" [ref=e215] [cursor=pointer]:
-          - /url: /terms
-      - button "Sign Up" [ref=e216]:
-        - generic:
-          - generic: Sign Up
-        - img [ref=e218]
-      - generic [ref=e222]:
-        - text: Already have an account?
-        - link "Sign In" [ref=e223] [cursor=pointer]:
-          - /url: /login
-          - generic [ref=e225]: Sign In
-  - generic [ref=e227]:
-    - button "AI Support" [ref=e228] [cursor=pointer]:
-      - generic [ref=e229]:
-        - img [ref=e230]: smart_toy
-        - generic [ref=e231]: AI Support
-    - button "close" [ref=e232] [cursor=pointer]:
-      - img [ref=e234]: close
-  - contentinfo [ref=e235]:
-    - generic [ref=e236]:
-      - generic [ref=e237]:
-        - img "decor" [ref=e238]
-        - generic [ref=e239]: © 2026 Peace2074 · v3.1.4
-      - navigation "Footer links" [ref=e240]:
-        - link "About" [ref=e241] [cursor=pointer]:
+  - generic [ref=e184]:
+    - button "AI Support" [ref=e185] [cursor=pointer]:
+      - generic [ref=e186]:
+        - img [ref=e187]: smart_toy
+        - generic [ref=e188]: AI Support
+    - button "close" [ref=e189] [cursor=pointer]:
+      - img [ref=e191]: close
+  - contentinfo [ref=e192]:
+    - generic [ref=e193]:
+      - generic [ref=e194]:
+        - img "decor" [ref=e195]
+        - generic [ref=e196]: © 2026 Peace2074 · v3.1.4
+      - navigation "Footer links" [ref=e197]:
+        - link "About" [ref=e198] [cursor=pointer]:
           - /url: /about
-        - link "Quran" [ref=e242] [cursor=pointer]:
+        - link "Quran" [ref=e199] [cursor=pointer]:
           - /url: /quran
-        - link "Terms and Conditions" [ref=e243] [cursor=pointer]:
+        - link "Terms and Conditions" [ref=e200] [cursor=pointer]:
           - /url: /terms
-        - link "Privacy Policy" [ref=e244] [cursor=pointer]:
+        - link "Privacy Policy" [ref=e201] [cursor=pointer]:
           - /url: /privacy
-        - link "Contact" [ref=e245] [cursor=pointer]:
+        - link "Contact" [ref=e202] [cursor=pointer]:
           - /url: /contact
 ```
 
