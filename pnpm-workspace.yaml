@@ -1,3 +1,12 @@
 packages:
   - 'apps/*'
   - 'ios/peace2074-mobile'
+allowBuilds:
+  '@firebase/util': true
+  '@nativescript/core': true
+  '@parcel/watcher': true
+  core-js-pure: true
+  electron: true
+  esbuild: true
+  protobufjs: true
+  utf-8-validate: true
