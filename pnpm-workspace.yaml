@@ -1,6 +1,7 @@
 packages:
   - 'apps/*'
   - 'ios/peace2074-mobile'
+  - 'waelio-data-ts'
 allowBuilds:
   '@firebase/util': true
   '@nativescript/core': true
