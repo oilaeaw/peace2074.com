@@ -1,6 +1,6 @@
 # Load the root .env file if it exists (for local deployments)
 require 'dotenv'
-Dotenv.load(File.expand_path('../../.env', __FILE__))
+Dotenv.load(File.expand_path('../../../.env', __FILE__))
 
 default_platform(:ios)
 
