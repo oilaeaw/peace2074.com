@@ -65,6 +65,7 @@
     "ns:ios:device": "pnpm --dir ios exec ns run ios --device $IOS_DEVICE_ID",
     "ns:ios:xcode": "open ios/platforms/ios/peace2074mobile.xcodeproj",
     "ios:release": "cd ios && if bundle exec fastlane --version >/dev/null 2>&1; then bundle exec fastlane ios release; else fastlane ios release; fi",
+    "ios:upload": "pnpm --dir ios exec fastlane ios upload",
     "ios:archive": "xcodebuild -workspace ios/platforms/ios/peace2074mobile.xcworkspace -scheme peace2074mobile -configuration Release -destination 'generic/platform=iOS' -archivePath ios/platforms/ios/build/peace2074mobile.xcarchive archive | xcpretty || xcodebuild -workspace ios/platforms/ios/peace2074mobile.xcworkspace -scheme peace2074mobile -configuration Release -destination 'generic/platform=iOS' -archivePath ios/platforms/ios/build/peace2074mobile.xcarchive archive",
     "demo:datocms": "node --env-file=.env scripts/demo-datocms-cma.mjs",
     "create:datocms:post": "node --env-file=.env scripts/create-datocms-post.mjs"
