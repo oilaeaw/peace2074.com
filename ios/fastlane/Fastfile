@@ -1,6 +1,6 @@
 # Load the root .env file if it exists (for local deployments)
 require 'dotenv'
-Dotenv.load("../../../.env")
+Dotenv.load(File.expand_path('../../.env', __FILE__))
 
 default_platform(:ios)
 
@@ -11,7 +11,7 @@ platform :ios do
     app_store_connect_api_key(
       key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
       issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
-      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_PATH"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
       key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
       in_house: false
     )
