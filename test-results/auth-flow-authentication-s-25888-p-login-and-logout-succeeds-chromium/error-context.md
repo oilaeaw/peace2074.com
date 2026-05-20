@@ -12,18 +12,15 @@
 # Error details
 
 ```
-Test timeout of 30000ms exceeded.
-```
-
-```
 Error: expect(page).toHaveURL(expected) failed
 
 Expected pattern: /\/login$/
 Received string:  "http://127.0.0.1:4000/signup"
+Timeout: 5000ms
 
 Call log:
   - Expect "toHaveURL" with timeout 5000ms
-    8 × unexpected value "http://127.0.0.1:4000/signup"
+    9 × unexpected value "http://127.0.0.1:4000/signup"
 
 ```
 
@@ -169,7 +166,7 @@ Call log:
             - generic: Username
             - textbox "Username" [disabled]:
               - /placeholder: Enter your username
-              - text: e2e_1779253105892-yxlqs4
+              - text: e2e_1779253761329-5cxiqf
       - generic [ref=e200]:
         - generic:
           - generic:
@@ -178,7 +175,7 @@ Call log:
             - generic: Email
             - textbox "Email" [disabled]:
               - /placeholder: Enter your email
-              - text: e2e_1779253105892-yxlqs4@example.com
+              - text: e2e_1779253761329-5cxiqf@example.com
       - generic [ref=e203]:
         - generic:
           - generic:
@@ -187,7 +184,7 @@ Call log:
             - generic: Password
             - textbox "Password" [disabled]:
               - /placeholder: Enter your password
-              - text: Auth_1779253105892-yxlqs4!42
+              - text: Auth_1779253761329-5cxiqf!42
           - generic:
             - generic: visibility
       - generic [ref=e206]:
@@ -198,7 +195,7 @@ Call log:
             - generic: Confirm Password
             - textbox "Confirm Password" [disabled]:
               - /placeholder: Confirm password
-              - text: Auth_1779253105892-yxlqs4!42
+              - text: Auth_1779253761329-5cxiqf!42
           - generic:
             - generic: visibility
       - checkbox "I accept the terms and conditions" [checked] [ref=e208] [cursor=pointer]:

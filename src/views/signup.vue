@@ -1,14 +1,13 @@
 <script setup lang="ts">
 import { ref } from 'vue'
 import { useRouter } from 'vue-router'
-import { useQuasar, QForm } from 'quasar'
+import { useQuasar } from 'quasar'
 import { useI18n } from 'vue-i18n'
 
 const { t } = useI18n()
 const router = useRouter()
 const $q = useQuasar()
 
-const formRef = ref<InstanceType<typeof QForm> | null>(null)
 const username = ref('')
 const email = ref('')
 const password = ref('')
@@ -77,11 +76,6 @@ async function signupRequest(base: string) {
       password: password.value,
     }),
   })
-}
-
-function onFormSubmit(evt: Event) {
-  evt.preventDefault()
-  handleSignup()
 }
 
 async function handleSignup() {
@@ -158,10 +152,7 @@ async function handleSignup() {
     })
 
     // Navigation happens after the API call succeeds
-    // Use window.location for more reliable navigation
-    setTimeout(() => {
-      window.location.href = '/login'
-    }, 500)
+    window.location.href = '/login'
   } catch (err: any) {
     const message = isNetworkLikeError(err)
       ? 'Unable to reach the server. Please check your connection and try again.'
@@ -199,12 +190,7 @@ async function handleSignup() {
         </q-card-section>
 
         <q-card-section class="q-pt-md">
-          <q-form
-            ref="formRef"
-            @submit="onFormSubmit"
-            class="q-form q-gutter-md"
-            no-error-focus
-          >
+          <form @submit.prevent="handleSignup" class="q-form q-gutter-md">
             <q-input
               v-model="username"
               data-testid="signup-username"
@@ -345,7 +331,7 @@ async function handleSignup() {
                 to="/login"
               />
             </div>
-          </q-form>
+          </form>
         </q-card-section>
       </q-card>
     </div>
