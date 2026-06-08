@@ -664,24 +664,37 @@ async function reloadApp() {
   $q.notify({
     type: 'info',
     message: t('pages.settings.clearingCache'),
-    timeout: 2000,
+    timeout: 3000,
     position: 'top',
   })
 
   try {
-    // Clear all caches
+    // 1. Unregister ALL service workers (not just update — full nuke)
+    if (!isNativeRuntime() && 'serviceWorker' in navigator) {
+      const regs = await navigator.serviceWorker.getRegistrations()
+      await Promise.all(
+        regs.map(async (reg) => {
+          // Tell any waiting SW to activate immediately
+          reg.waiting?.postMessage({ type: 'SKIP_WAITING' })
+          await reg.unregister()
+        })
+      )
+      console.log(`[Settings] Unregistered ${regs.length} service worker(s)`)
+    }
+
+    // 2. Delete ALL browser caches (Cache API)
     if ('caches' in window) {
       const cacheNames = await caches.keys()
       await Promise.all(cacheNames.map((name) => caches.delete(name)))
-      console.log(`[Settings] Cleared ${cacheNames.length} cache(s)`)
+      console.log(`[Settings] Deleted ${cacheNames.length} cache(s)`)
     }
 
-    // Clear localStorage (except critical settings)
+    // 3. Clear localStorage (preserve critical user settings)
     if (typeof window !== 'undefined' && window.localStorage) {
-      // Save critical keys before clearing
       const criticalKeys = [
         'app-locale',
         'theme-mode',
+        'pref-athan-reciter',
         NAV_ORDERING_KEY,
         DRAWER_OPEN_KEY,
         COMPACT_KEY,
@@ -694,40 +707,27 @@ async function reloadApp() {
         FONT_SIZE_KEY,
         HIGH_CONTRAST_KEY,
       ]
-      const savedValues: Record<string, string> = {}
+      const saved: Record<string, string> = {}
       criticalKeys.forEach((key) => {
         const val = window.localStorage.getItem(key)
-        if (val !== null) savedValues[key] = val
+        if (val !== null) saved[key] = val
       })
-
-      // Clear all
       window.localStorage.clear()
-
-      // Restore critical settings
-      Object.entries(savedValues).forEach(([key, val]) => {
+      Object.entries(saved).forEach(([key, val]) => {
         window.localStorage.setItem(key, val)
       })
-
-      console.log('[Settings] Cleared localStorage (kept critical settings)')
+      console.log('[Settings] Cleared localStorage (critical settings preserved)')
     }
 
-    // Clear sessionStorage
+    // 4. Clear sessionStorage
     if (typeof window !== 'undefined' && window.sessionStorage) {
       window.sessionStorage.clear()
-      console.log('[Settings] Cleared sessionStorage')
-    }
-
-    // Update service workers
-    if (!isNativeRuntime() && 'serviceWorker' in navigator) {
-      const regs = await navigator.serviceWorker.getRegistrations()
-      await Promise.all(regs.map((r) => r.update().catch(() => {})))
-      console.log('[Settings] Updated service workers')
     }
   } catch (err) {
-    console.error('[Settings] Error clearing cache:', err)
+    console.error('[Settings] Error during cache clear:', err)
   }
 
-  // Hard reload with cache bypass
+  // 5. Hard reload — bypasses HTTP cache, fetches fresh from server
   window.location.reload()
 }
 </script>
