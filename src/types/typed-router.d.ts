@@ -79,6 +79,13 @@ declare module 'vue-router/auto-routes' {
       Record<never, never>,
       | never
     >,
+    '/credits': RouteRecordInfo<
+      '/credits',
+      '/credits',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/holynames': RouteRecordInfo<
       '/holynames',
       '/holynames',
@@ -242,6 +249,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/contact.vue': {
       routes:
         | '/contact'
+      views:
+        | never
+    }
+    'src/views/credits.vue': {
+      routes:
+        | '/credits'
       views:
         | never
     }

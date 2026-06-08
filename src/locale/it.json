@@ -53,7 +53,9 @@
             "blog": "Blog",
             "contact": "Contatti",
             "deploys": "Distribuzioni",
-            "social": "Social"
+            "social": "Social",
+      "credits": "Créditos",
+      "credits": "Credits"
         }
     },
     "navigation": {

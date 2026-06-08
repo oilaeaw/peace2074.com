@@ -358,9 +358,8 @@
           <RouterLink to="/privacy" class="footer-link">{{
             t('privacy_policy')
           }}</RouterLink>
-          <RouterLink to="/contact" class="footer-link">{{
-            t('appShell.nav.contact')
-          }}</RouterLink>
+          <RouterLink to="/contact" class="footer-link">{{ t('appShell.nav.contact') }}</RouterLink>
+          <RouterLink to="/credits" class="footer-link">{{ t('appShell.nav.credits') }}</RouterLink>
         </nav>
       </div>
     </q-footer>
@@ -511,6 +510,12 @@ const defaultNavItems = [
     labelKey: 'appShell.nav.contact',
     to: '/contact',
     icon: 'contact_mail',
+  },
+  {
+    key: 'credits',
+    labelKey: 'appShell.nav.credits',
+    to: '/credits',
+    icon: 'volunteer_activism',
   },
 ]
 
