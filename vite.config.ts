@@ -165,6 +165,8 @@ export default defineConfig({
       "~/store": fileURLToPath(new URL("./src/stores", import.meta.url)),
       "~/app": fileURLToPath(new URL("./src", import.meta.url)),
       "@shared": fileURLToPath(new URL("./src/shared", import.meta.url)),
+      // @waelio/realdb v0.1.0 ships CJS only — point Vite to the correct entry
+      "@waelio/realdb": fileURLToPath(new URL("./node_modules/@waelio/realdb/lib/index.js", import.meta.url)),
     },
   },
 
@@ -173,7 +175,7 @@ export default defineConfig({
   },
 
   optimizeDeps: {
-    include: ['vue', 'vue-router', 'pinia', 'quasar', 'vue-i18n'],
+    include: ['vue', 'vue-router', 'pinia', 'quasar', 'vue-i18n', '@waelio/realdb'],
     exclude: ['three'],
     esbuildOptions: {
       target: 'esnext',

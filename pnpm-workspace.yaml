@@ -11,3 +11,5 @@ allowBuilds:
   esbuild: true
   protobufjs: true
   utf-8-validate: true
+minimumReleaseAgeExclude:
+  - '@waelio/realdb@0.1.0'

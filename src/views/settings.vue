@@ -3,6 +3,7 @@ import { onMounted, ref, computed, watch } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { useQuasar } from 'quasar'
 import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
+import { useAthanPlayer, type AthanReciterId } from '@/composables/useAthanPlayer'
 import {
   QURAN_TRANSLATORS,
   TRANSLATOR_PREF_KEY,
@@ -41,6 +42,26 @@ const compactLayout = ref(readCompactPreference())
 const reduceMotion = ref(readReduceMotionPreference())
 const autoPlayAthan = ref(readAutoplayAthanPreference())
 const autoPlayPrayerTimes = ref(readAutoplayPrayerTimesPreference())
+
+const {
+  reciters,
+  selectedReciterId,
+  selectedReciter,
+  isPlaying: athanIsPlaying,
+  isLoading: athanIsLoading,
+  toggle: toggleAthanPreview,
+  stop: stopAthanPreview,
+  setReciter,
+} = useAthanPlayer()
+
+const reciterOptions = computed(() =>
+  reciters.map((r) => ({ value: r.id, label: r.name, sublabel: r.nameAr }))
+)
+
+function onReciterChange(id: AthanReciterId) {
+  stopAthanPreview()
+  setReciter(id)
+}
 const showQuranTranslation = ref(readQuranTranslationPreference())
 const darkMode = ref(readDarkModePreference())
 const fontSize = ref(readFontSizePreference())
@@ -993,6 +1014,55 @@ async function reloadApp() {
                 color="primary"
                 :aria-label="t('pages.settings.audio.autoPlayPrayerTimes')"
               />
+            </div>
+            <q-separator spaced />
+            <!-- Athan Reciter Selection -->
+            <div>
+              <div class="text-subtitle1 q-mb-xs">Athan Reciter</div>
+              <div class="text-caption setting-hint q-mb-sm">
+                Choose your preferred Athan voice. Click ▶ to preview.
+              </div>
+              <div class="row items-center q-gutter-sm no-wrap">
+                <q-select
+                  :model-value="selectedReciterId"
+                  :options="reciterOptions"
+                  option-value="value"
+                  option-label="label"
+                  emit-value
+                  map-options
+                  outlined
+                  dense
+                  class="col"
+                  label="Reciter"
+                  aria-label="Select Athan reciter"
+                  @update:model-value="onReciterChange"
+                >
+                  <template #option="scope">
+                    <q-item v-bind="scope.itemProps">
+                      <q-item-section>
+                        <q-item-label>{{ scope.opt.label }}</q-item-label>
+                        <q-item-label caption class="text-right" style="direction:rtl">{{ scope.opt.sublabel }}</q-item-label>
+                      </q-item-section>
+                      <q-item-section side v-if="scope.opt.value === selectedReciterId">
+                        <q-icon name="check" color="primary" />
+                      </q-item-section>
+                    </q-item>
+                  </template>
+                </q-select>
+                <q-btn
+                  :icon="athanIsPlaying ? 'stop' : 'play_arrow'"
+                  :loading="athanIsLoading"
+                  :color="athanIsPlaying ? 'negative' : 'primary'"
+                  round
+                  unelevated
+                  size="md"
+                  :aria-label="athanIsPlaying ? 'Stop preview' : 'Preview athan'"
+                  @click="toggleAthanPreview"
+                />
+              </div>
+              <div v-if="selectedReciter" class="text-caption q-mt-xs text-right" style="direction:rtl">
+                {{ selectedReciter.nameAr }}
+              </div>
             </div>
             <q-separator spaced />
             <div class="setting-row">

@@ -6,6 +6,7 @@
 // biome-ignore lint: disable
 export {}
 declare global {
+  const ATHAN_RECITERS: typeof import('../composables/useAthanPlayer').ATHAN_RECITERS
   const EffectScope: typeof import('vue').EffectScope
   const TOTAL_QURAN_SURAS: typeof import('../composables/useOfflineRecitation').TOTAL_QURAN_SURAS
   const acceptHMRUpdate: typeof import('pinia').acceptHMRUpdate
@@ -263,6 +264,7 @@ declare global {
   const usePrevious: typeof import('@vueuse/core')['usePrevious']
   const useProfileSettings: typeof import('../composables/useProfileSettings').useProfileSettings
   const useQ2P: typeof import('../composables/useQ2P').default
+  const useQuranSync: typeof import('../composables/useQuranSync').default
   const useQuranTree: typeof import('../composables/useQuranTree').useQuranTree
   const useRafFn: typeof import('@vueuse/core')['useRafFn']
   const useRefHistory: typeof import('@vueuse/core')['useRefHistory']
@@ -344,11 +346,17 @@ declare global {
   export type { Component, Slot, Slots, ComponentPublicInstance, ComputedRef, DirectiveBinding, ExtractDefaultPropTypes, ExtractPropTypes, ExtractPublicPropTypes, InjectionKey, PropType, Ref, ShallowRef, MaybeRef, MaybeRefOrGetter, VNode, WritableComputedRef } from 'vue'
   import('vue')
   // @ts-ignore
+  export type { AthanReciter, AthanReciterId } from '../composables/useAthanPlayer'
+  import('../composables/useAthanPlayer')
+  // @ts-ignore
   export type { RecitationDownloadProgress, RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
   import('../composables/useOfflineRecitation')
   // @ts-ignore
   export type { QuranHighlightMode } from '../composables/useProfileSettings'
   import('../composables/useProfileSettings')
+  // @ts-ignore
+  export type { QuranReadingPosition, QuranSyncPayload } from '../composables/useQuranSync'
+  import('../composables/useQuranSync')
   // @ts-ignore
   export type { QuranVerse } from '../composables/useQuranTree'
   import('../composables/useQuranTree')
@@ -362,6 +370,7 @@ import { UnwrapRef } from 'vue'
 declare module 'vue' {
   interface GlobalComponents {}
   interface ComponentCustomProperties {
+    readonly ATHAN_RECITERS: UnwrapRef<typeof import('../composables/useAthanPlayer')['ATHAN_RECITERS']>
     readonly EffectScope: UnwrapRef<typeof import('vue')['EffectScope']>
     readonly TOTAL_QURAN_SURAS: UnwrapRef<typeof import('../composables/useOfflineRecitation')['TOTAL_QURAN_SURAS']>
     readonly acceptHMRUpdate: UnwrapRef<typeof import('pinia')['acceptHMRUpdate']>
@@ -444,6 +453,7 @@ declare module 'vue' {
     readonly usePrayerTimes: UnwrapRef<typeof import('../composables/usePrayerTimes')['default']>
     readonly useProfileSettings: UnwrapRef<typeof import('../composables/useProfileSettings')['useProfileSettings']>
     readonly useQ2P: UnwrapRef<typeof import('../composables/useQ2P')['default']>
+    readonly useQuranSync: UnwrapRef<typeof import('../composables/useQuranSync')['default']>
     readonly useQuranTree: UnwrapRef<typeof import('../composables/useQuranTree')['useQuranTree']>
     readonly useRoute: UnwrapRef<typeof import('vue-router')['useRoute']>
     readonly useRouter: UnwrapRef<typeof import('vue-router')['useRouter']>
