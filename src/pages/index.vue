@@ -5,75 +5,9 @@
 </route>
 
 <script setup lang="ts">
-import { computed, ref } from 'vue'
 import { useI18n } from 'vue-i18n'
-import { sendKimiChat } from '@/stores/services'
 
-const { t, tm } = useI18n()
-const userPrompt = ref('')
-const aiResponse = ref<string | null>(null)
-const isLoading = ref(false)
-const errorMessage = ref<string | null>(null)
-
-const systemPrompt = `You are the PEACE2074 AI assistant. Use the Quran corpus available in the app (chapters, ayat, metadata) and guide users to relevant sections such as /quran or specific surah cards. Keep replies concise (<= 120 words).`
-
-const canSubmit = computed(
-  () => userPrompt.value.trim().length > 4 && !isLoading.value
-)
-const promptExamples = computed<string[]>(() => {
-  const raw = tm('pages.home.ai.examples') as unknown
-  if (Array.isArray(raw)) return raw as string[]
-  if (typeof raw === 'string') return [raw]
-  return []
-})
-
-async function askPeaceAI() {
-  if (!canSubmit.value) return
-
-  isLoading.value = true
-  errorMessage.value = null
-
-  try {
-    const response = await sendKimiChat({
-      messages: [
-        { role: 'system', content: systemPrompt },
-        { role: 'user', content: userPrompt.value.trim() },
-      ],
-    })
-
-    // Check for API error
-    if (response?.error) {
-      const errorMsg =
-        response.error.message ||
-        response.error.data ||
-        (typeof response.error === 'string' ? response.error : 'API error')
-      throw new Error(errorMsg)
-    }
-
-    // Extract text content from response
-    const text =
-      response?.message?.content ||
-      response?.choices?.[0]?.message?.content ||
-      response?.raw?.[0]?.message?.content ||
-      (typeof response?.message === 'string' ? response.message : null)
-
-    aiResponse.value = text || t('pages.home.ai.noReply')
-  } catch (error: any) {
-    errorMessage.value =
-      error?.message || String(error) || t('pages.home.ai.requestFailed')
-  } finally {
-    isLoading.value = false
-  }
-}
-
-function setPromptExample() {
-  if (isLoading.value) return
-  const example = promptExamples.value[0]
-  if (!example) return
-  userPrompt.value = example
-  aiResponse.value = null
-  errorMessage.value = null
-}
+const { t } = useI18n()
 </script>
 
 <template>
@@ -107,40 +41,6 @@ function setPromptExample() {
         </div>
       </div>
 
-      <section class="ai-card">
-        <div class="ai-header">
-          <div>
-            <p class="ai-title">{{ t('pages.home.ai.title') }}</p>
-            <small>{{ t('pages.home.ai.subtitle') }}</small>
-          </div>
-          <button type="button" class="chip mini" @click="setPromptExample">
-            {{ t('pages.home.ai.tryAnother') }}
-          </button>
-        </div>
-
-        <form class="ai-form" @submit.prevent="askPeaceAI">
-          <label class="sr-only" for="peace-ai-input">{{
-            t('pages.home.ai.title')
-          }}</label>
-          <textarea
-            id="peace-ai-input"
-            v-model="userPrompt"
-            class="ai-textarea"
-            rows="3"
-            :placeholder="t('pages.home.ai.placeholder')"
-          />
-          <button type="submit" class="ask-btn" :disabled="!canSubmit">
-            <span v-if="!isLoading">{{ t('pages.home.ai.ask') }}</span>
-            <span v-else>{{ t('pages.home.ai.thinking') }}</span>
-          </button>
-        </form>
-
-        <p v-if="errorMessage" class="error">{{ errorMessage }}</p>
-
-        <div v-if="aiResponse" class="ai-response">
-          <p class="ai-response-text">{{ aiResponse }}</p>
-        </div>
-      </section>
 
       <section class="video-section">
         <h2 class="section-title">

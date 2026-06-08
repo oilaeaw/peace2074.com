@@ -332,7 +332,6 @@
       </RouterView>
     </q-page-container>
 
-    <SupportAIWidget v-if="showLazyWidgets" />
     <ConsentBanner v-if="showLazyWidgets" />
 
     <q-footer class="app-footer q-pa-sm" elevated :reveal="!isNativeRuntime">
@@ -387,9 +386,6 @@ import {
   normalizeLocale,
   persistLocale,
 } from '@/utils/locale-routing'
-const SupportAIWidget = defineAsyncComponent(
-  () => import('@/components/common/SupportAIWidget.vue')
-)
 const ConsentBanner = defineAsyncComponent(
   () => import('@/components/common/ConsentBanner.vue')
 )
