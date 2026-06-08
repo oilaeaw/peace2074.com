@@ -378,6 +378,7 @@ import { useI18n } from 'vue-i18n'
 import { useRoute, useRouter } from 'vue-router'
 import { useQuasar } from 'quasar'
 import { useAthanPlayer } from '@/composables/useAthanPlayer'
+import { usePrayerTimes } from '@/composables/usePrayerTimes'
 import { useSiteSearch } from '@/composables/useSiteSearch'
 import { useAuthStore } from '@/stores/auth.pinia'
 import {
@@ -571,6 +572,10 @@ onMounted(() => {
   applyReduceMotion(reduceMotion.value)
   applyAutoplay(autoPlayAthan.value)
 
+  // Start prayer time scheduler using user's real GPS location
+  updateLocationToCurrent()
+  startAthanScheduler()
+
   // Defer optional widgets until after first paint to shrink initial payload
   requestAnimationFrame(() => {
     showLazyWidgets.value = true
@@ -607,6 +612,8 @@ const {
   stop: stopAthan,
   isPlaying: isAthanPlaying,
 } = useAthanPlayer()
+
+const { updateLocationToCurrent, startAthanScheduler } = usePrayerTimes()
 
 const appVersionRaw = __APP_VERSION__ || '0.0.0'
 const appVersion = appVersionRaw
