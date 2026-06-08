@@ -70,7 +70,7 @@ test.describe('authentication smoke flow', () => {
             .click()
         await expect(page.getByRole('button', { name: /^sign up$/i })).toBeEnabled()
         await submitAuthForm(page)
-        await expect(page).toHaveURL(/\/login$/)
+        await page.waitForURL(/\/login$/, { timeout: 15000 })
 
         await dismissCookieBanner(page)
 

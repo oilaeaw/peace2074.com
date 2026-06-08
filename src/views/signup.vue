@@ -152,7 +152,7 @@ async function handleSignup() {
     })
 
     // Navigation happens after the API call succeeds
-    window.location.href = '/login'
+    await router.push('/login')
   } catch (err: any) {
     const message = isNetworkLikeError(err)
       ? 'Unable to reach the server. Please check your connection and try again.'
