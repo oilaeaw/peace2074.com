@@ -346,19 +346,6 @@ const baseRoutes: Array<RouteRecordRaw> = [
     },
   },
   {
-    path: '/admin',
-    name: 'Admin',
-    component: () => import('@/views/admin.vue'),
-    meta: {
-      title: 'Admin Panel',
-      description: 'Internal PEACE2074 administration area.',
-      keywords: ['admin'],
-      robots: 'noindex,nofollow,noarchive',
-      contentGroup: 'admin',
-      schemaType: 'WebPage',
-    },
-  },
-  {
     path: '/blog',
     name: 'BlogList',
     component: () => import('@/views/blog/index.vue'),

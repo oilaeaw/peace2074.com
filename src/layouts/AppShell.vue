@@ -487,12 +487,6 @@ const defaultNavItems = [
     to: '/settings',
     icon: 'settings',
   },
-  {
-    key: 'admin',
-    labelKey: 'navigation.AdminPage',
-    to: '/admin',
-    icon: 'admin_panel_settings',
-  },
   { key: 'login', labelKey: 'appShell.nav.login', to: '/login', icon: 'login' },
   { key: 'blog', labelKey: 'appShell.nav.blog', to: '/blog', icon: 'article' },
   {
