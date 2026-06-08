@@ -87,136 +87,70 @@ export default defineConfig({
     }),
 
     // PWA configuration
+    // strategies: 'injectManifest' — we own src/sw.ts; Workbox is bundled
+    // locally so the SW never fetches from the CDN (which breaks offline).
+    // registerType: 'prompt' — the app NEVER auto-reloads mid-navigation;
+    // users see the "Update available" banner and choose when to refresh.
     VitePWA({
       strategies: 'injectManifest',
-      srcDir: 'public',
-      filename: 'sw.js',
-      registerType: "autoUpdate",
+      srcDir: 'src',
+      filename: 'sw.ts',
+      registerType: 'prompt',
       injectRegister: 'auto',
-      includeAssets: ["favicon.ico", "apple-touch-icon.png", "masked-icon.svg"],
+      includeAssets: ['favicon.ico', 'apple-touch-icon.png', 'masked-icon.svg'],
       injectManifest: {
-        globPatterns: ['**/*.{js,css,html,ico,png,svg,json}'],
-        globIgnores: ['**/node_modules/**/*', 'sw.js', 'workbox-*.js', '**/data/quran.json'],
+        globPatterns: ['**/*.{js,css,html,ico,png,svg,json,woff,woff2}'],
+        globIgnores: [
+          '**/node_modules/**/*',
+          'sw.js',
+          'workbox-*.js',
+          '**/data/quran.json',
+        ],
         // Locale bundles can exceed Workbox's default 2 MiB precache cap.
-        // Keep them precacheable so Cloudflare production builds do not fail.
         maximumFileSizeToCacheInBytes: 3 * 1024 * 1024,
       },
       manifest: {
-        name: "Peace2074 - Islamic Knowledge Platform",
-        short_name: "Peace2074",
+        name: 'Peace2074 - Islamic Knowledge Platform',
+        short_name: 'Peace2074',
         description:
-          "Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more",
-        theme_color: "#ffffff",
-        background_color: "#ffffff",
-        display: "standalone",
-        scope: "/",
-        start_url: "/",
+          'Multi-language Islamic knowledge platform featuring Quran, Tasbeeh, and more',
+        theme_color: '#ffffff',
+        background_color: '#ffffff',
+        display: 'standalone',
+        scope: '/',
+        start_url: '/',
         icons: [
           {
-            src: "/android-chrome-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "any",
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'any',
           },
           {
-            src: "/512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            purpose: "any",
+            src: '/512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            purpose: 'any',
           },
           {
-            src: "/maskable-icon.png",
-            sizes: "192x192",
-            type: "image/png",
-            purpose: "maskable",
+            src: '/maskable-icon.png',
+            sizes: '192x192',
+            type: 'image/png',
+            purpose: 'maskable',
           },
         ],
         screenshots: [
           {
-            src: "/512x512.png",
-            sizes: "512x512",
-            type: "image/png",
-            form_factor: "wide",
+            src: '/512x512.png',
+            sizes: '512x512',
+            type: 'image/png',
+            form_factor: 'wide',
           },
           {
-            src: "/android-chrome-192x192.png",
-            sizes: "192x192",
-            type: "image/png",
-            form_factor: "narrow",
-          },
-        ],
-      },
-      workbox: {
-        globPatterns: ["**/*.{js,css,html,ico,png,svg,json}"],
-        globIgnores: ['**/data/quran.json'],
-        navigateFallbackDenylist: [/^\/auth\//, /^\/api\//],
-        cleanupOutdatedCaches: true,
-        clientsClaim: true,
-        skipWaiting: true,
-        runtimeCaching: [
-          // API requests - Network first with cache fallback
-          {
-            urlPattern: /^http:\/\/localhost:3000|^https:\/\/peace2074\.com\/api\/.*/i,
-            handler: "NetworkFirst",
-            options: {
-              cacheName: "api-cache-v1",
-              networkTimeoutSeconds: 5,
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 12 * 60 * 60, // 12 hours
-              },
-              cacheableResponse: {
-                statuses: [0, 200],
-              },
-            },
-          },
-          // Quran data - Cache first (static)
-          {
-            urlPattern: /quran|\/data\/.*/i,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "quran-data-v2",
-              expiration: {
-                maxEntries: 500,
-                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
-              },
-            },
-          },
-          // Images - Cache first with long expiration
-          {
-            urlPattern: /\.(?:png|gif|jpg|jpeg|svg|webp|ico)$/,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "image-cache-v1",
-              expiration: {
-                maxEntries: 200,
-                maxAgeSeconds: 60 * 24 * 60 * 60, // 60 days
-              },
-            },
-          },
-          // Fonts - Cache first with long expiration
-          {
-            urlPattern: /\.(?:woff|woff2|ttf|otf|eot)$/,
-            handler: "CacheFirst",
-            options: {
-              cacheName: "font-cache-v1",
-              expiration: {
-                maxEntries: 50,
-                maxAgeSeconds: 90 * 24 * 60 * 60, // 90 days
-              },
-            },
-          },
-          // CSS and JS bundles - Stale while revalidate
-          {
-            urlPattern: /\.(?:js|css)$/,
-            handler: "StaleWhileRevalidate",
-            options: {
-              cacheName: "bundle-cache-v1",
-              expiration: {
-                maxEntries: 100,
-                maxAgeSeconds: 30 * 24 * 60 * 60, // 30 days
-              },
-            },
+            src: '/android-chrome-192x192.png',
+            sizes: '192x192',
+            type: 'image/png',
+            form_factor: 'narrow',
           },
         ],
       },

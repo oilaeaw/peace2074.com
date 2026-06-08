@@ -280,9 +280,11 @@ test.describe('Cross-page navigation', () => {
 
         await page.goto('/quran')
         await page.waitForURL(/\/quran$/)
+        // Wait for the sura list to finish rendering (it may lazy-load)
+        await page.waitForLoadState('networkidle')
 
         const firstSura = page.locator('a.sura-card').first()
-        await expect(firstSura).toBeVisible()
+        await expect(firstSura).toBeVisible({ timeout: 15_000 })
 
         // Navigate to first sura
         await firstSura.click()
@@ -291,7 +293,8 @@ test.describe('Cross-page navigation', () => {
         // Navigate back
         await page.goBack()
         await page.waitForURL(/\/quran$/)
-        await expect(page.locator('a.sura-card').first()).toBeVisible()
+        await page.waitForLoadState('networkidle')
+        await expect(page.locator('a.sura-card').first()).toBeVisible({ timeout: 15_000 })
     })
 
     test('about page CTA links navigate correctly', async ({ page }) => {
