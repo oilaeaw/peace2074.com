@@ -459,6 +459,20 @@ const baseRoutes: Array<RouteRecordRaw> = [
       schemaType: 'WebPage',
     },
   },
+  {
+    path: '/credits',
+    name: 'Credits',
+    component: () => import('@/views/credits.vue'),
+    meta: {
+      title: 'Credits',
+      titleKey: 'appShell.nav.credits',
+      description:
+        'Open source credits and acknowledgements for all vendors, libraries, and services that power PEACE2074.',
+      keywords: ['open source', 'credits', 'acknowledgements', 'libraries'],
+      contentGroup: 'credits',
+      schemaType: 'WebPage',
+    },
+  },
 ]
 
 export const routes: Array<RouteRecordRaw> = baseRoutes.map(withLocaleAlias)
