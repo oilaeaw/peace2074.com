@@ -333,6 +333,7 @@
     </q-page-container>
 
     <ConsentBanner v-if="showLazyWidgets" />
+    <CursorTrail v-if="showLazyWidgets" />
 
     <q-footer class="app-footer q-pa-sm" elevated :reveal="!isNativeRuntime">
       <div class="footer-inner">
@@ -389,6 +390,9 @@ import {
 } from '@/utils/locale-routing'
 const ConsentBanner = defineAsyncComponent(
   () => import('@/components/common/ConsentBanner.vue')
+)
+const CursorTrail = defineAsyncComponent(
+  () => import('@/components/common/CursorTrail.vue')
 )
 
 declare const __APP_VERSION__: string
