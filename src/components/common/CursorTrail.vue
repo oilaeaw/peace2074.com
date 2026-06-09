@@ -11,7 +11,14 @@ let animFrame: number
 let particles: Particle[] = []
 
 const TEXT = 'رحمة الله عليكي يا امي'
-const WORDS = TEXT.split(' ')
+const WORDS = [
+  // Arabic
+  'رحمة', 'الله', 'عليكي', 'يا', 'امي',
+  // English
+  'May', 'Allah', 'have', 'mercy', 'on', 'you,', 'my', 'mother',
+  // ♡
+  '♡', '🤍',
+]
 const COLORS = [
   '#b9f2ff', '#e0f7fa', '#ffffff',
   '#80deea', '#4dd0e1', '#aef0fb',
