@@ -7,8 +7,11 @@ import { ref, onMounted, onUnmounted } from 'vue'
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 let ctx: CanvasRenderingContext2D | null = null
-let animFrame: number
-let particles: Particle[] = []
+let animFrame: number | null = null
+let animating = false
+let lastSpawn = 0
+const THROTTLE_MS = 40   // spawn at most every 40ms
+const MAX_PARTICLES = 60 // hard cap — prevents memory/CPU spiral
 
 const TEXT = 'رحمة الله عليكي يا امي'
 const WORDS = [
@@ -49,7 +52,8 @@ function resize() {
 }
 
 function spawnParticles(x: number, y: number) {
-  const count = 2 + Math.floor(Math.random() * 2)
+  if (particles.length >= MAX_PARTICLES) return
+  const count = 1 + Math.floor(Math.random() * 2)
   for (let i = 0; i < count; i++) {
     const word = WORDS[Math.floor(Math.random() * WORDS.length)]!
     const maxLife = 90 + Math.random() * 60
@@ -77,6 +81,13 @@ function draw() {
   ctx.clearRect(0, 0, canvas.value.width, canvas.value.height)
 
   particles = particles.filter(p => p.life < p.maxLife)
+
+  if (particles.length === 0) {
+    // Nothing to draw — pause the loop to save CPU
+    animating = false
+    animFrame = null
+    return
+  }
 
   for (const p of particles) {
     p.life++
@@ -116,9 +127,18 @@ function draw() {
 
   animFrame = requestAnimationFrame(draw)
 }
+}
 
 function onMouseMove(e: MouseEvent) {
+  const now = Date.now()
+  if (now - lastSpawn < THROTTLE_MS) return
+  lastSpawn = now
   spawnParticles(e.clientX, e.clientY)
+  // Restart the draw loop if it paused
+  if (!animating) {
+    animating = true
+    animFrame = requestAnimationFrame(draw)
+  }
 }
 
 onMounted(() => {
@@ -126,14 +146,14 @@ onMounted(() => {
   ctx = canvas.value.getContext('2d')
   resize()
   window.addEventListener('resize', resize)
-  window.addEventListener('mousemove', onMouseMove)
-  draw()
+  window.addEventListener('mousemove', onMouseMove, { passive: true })
+  // Don't start the loop — it will start on first mouse move
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
   window.removeEventListener('mousemove', onMouseMove)
-  cancelAnimationFrame(animFrame)
+  if (animFrame !== null) cancelAnimationFrame(animFrame)
 })
 </script>
 
