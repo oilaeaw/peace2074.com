@@ -5,76 +5,106 @@ Dotenv.load(File.expand_path('../../../.env', __FILE__))
 default_platform(:ios)
 
 platform :ios do
+  BUNDLE_ID = "com.peace2074.app"
+
+  def setup_api_key
+    app_store_connect_api_key(
+      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
+      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
+      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
+      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
+      in_house: false
+    )
+  end
+
   desc "Push a new beta build to TestFlight"
   lane :beta do
-    # 1. Setup the App Store Connect API Key
-    app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
-      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      in_house: false
+    setup_api_key
+
+    # Download/refresh provisioning profile
+    get_provisioning_profile(
+      app_identifier: BUNDLE_ID,
+      adhoc: false,
+      force: true
     )
 
-    # 2. Build the app using NativeScript prepared Xcode project
-    build_app(
-      project: "platforms/ios/peace2074mobile.xcodeproj",
-      scheme: "peace2074mobile",
-      configuration: "Release",
-      clean: true,
-      export_method: "app-store"
+    # Bump build number to current timestamp
+    increment_build_number(
+      build_number: Time.now.strftime("%Y%m%d%H%M"),
+      xcodeproj: "platforms/ios/peace2074mobile.xcodeproj"
     )
 
-    # 3. Upload to TestFlight
-    upload_to_testflight
-  end
-
-  desc "Upload existing ipa to TestFlight"
-  lane :upload do
-    # 1. Setup the App Store Connect API Key
-    app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
-      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      in_house: false
-    )
-
-    # 2. Upload the existing ipa
-    pilot(
-      ipa: "peace2074mobile.ipa",
-      skip_waiting_for_build_processing: true
-    )
-  end
-  
-  desc "Push a new release directly to the App Store"
-  lane :release do
-    # 1. Setup the App Store Connect API Key
-    app_store_connect_api_key(
-      key_id: ENV["APP_STORE_CONNECT_API_KEY_ID"],
-      issuer_id: ENV["APP_STORE_CONNECT_API_ISSUER_ID"],
-      key_filepath: ENV["APP_STORE_CONNECT_API_KEY_FILEPATH"],
-      key_content: ENV["APP_STORE_CONNECT_API_KEY_CONTENT"],
-      in_house: false
-    )
-
-    # 2. Build the app
     build_app(
       project: "platforms/ios/peace2074mobile.xcodeproj",
       scheme: "peace2074mobile",
       configuration: "Release",
       clean: true,
       export_method: "app-store",
+      export_options: {
+        method: "app-store",
+        teamID: ENV["APPLE_TEAM_ID"]
+      }
+    )
+
+    upload_to_testflight(skip_waiting_for_build_processing: true)
+  end
+
+  desc "Upload existing ipa to TestFlight"
+  lane :upload do
+    setup_api_key
+
+    pilot(
+      ipa: "peace2074mobile.ipa",
+      skip_waiting_for_build_processing: true
+    )
+  end
+
+  desc "Push a new release directly to the App Store"
+  lane :release do
+    setup_api_key
+
+    # Download/refresh App Store provisioning profile
+    get_provisioning_profile(
+      app_identifier: BUNDLE_ID,
+      adhoc: false,
+      force: true
+    )
+
+    # Bump build number to current timestamp YYYYMMDDHHMM
+    increment_build_number(
+      build_number: Time.now.strftime("%Y%m%d%H%M"),
+      xcodeproj: "platforms/ios/peace2074mobile.xcodeproj"
+    )
+
+    # Build the app with correct signing
+    build_app(
+      project: "platforms/ios/peace2074mobile.xcodeproj",
+      scheme: "peace2074mobile",
+      configuration: "Release",
+      clean: true,
+      export_method: "app-store",
+      export_options: {
+        method: "app-store",
+        teamID: ENV["APPLE_TEAM_ID"],
+        provisioningProfiles: {
+          BUNDLE_ID => "#{BUNDLE_ID} AppStore"
+        }
+      },
       xcargs: "DEVELOPMENT_TEAM=#{ENV['APPLE_TEAM_ID']}"
     )
 
-    # 3. Upload to App Store
+    # Upload to App Store
     upload_to_app_store(
       submit_for_review: false,
-      automatic_release: false
+      automatic_release: false,
+      skip_screenshots: true,
+      skip_metadata: true,
+      run_precheck_before_submit: false,
+      precheck_include_in_app_purchases: false
     )
   end
 end
+
 
 platform :android do
   desc "Push a new release to the Google Play Store"
