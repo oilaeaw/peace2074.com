@@ -1,22 +1,22 @@
 {
-    "name": "nitro-api",
-    "version": "3.3.0",
-    "private": true,
-    "type": "module",
-    "scripts": {
-        "dev": "pnpm exec dotenv -e ../../.env -- pnpm exec nitro dev --port 3000",
-        "build": "pnpm exec nitro build",
-        "preview": "pnpm exec nitro preview --port 3000",
-        "migrate:chat-permissions": "pnpm exec dotenv -e ../../.env -- node --experimental-strip-types ./scripts/migrate-chat-permissions.ts",
-        "hash:password": "node --experimental-strip-types ./scripts/hash-password.ts"
-    },
-    "dependencies": {
-        "@simplewebauthn/server": "^13.3.0",
-        "arctic": "^3.7.0",
-        "mongoose": "^8.13.2",
-        "nitropack": "^2.9.7",
-        "nodemailer": "^6.9.15",
-        "openai": "^6.15.0",
-        "web-push": "^3.6.7"
-    }
+  "name": "nitro-api",
+  "version": "3.3.1",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "dev": "pnpm exec dotenv -e ../../.env -- pnpm exec nitro dev --port 3000",
+    "build": "pnpm exec nitro build",
+    "preview": "pnpm exec nitro preview --port 3000",
+    "migrate:chat-permissions": "pnpm exec dotenv -e ../../.env -- node --experimental-strip-types ./scripts/migrate-chat-permissions.ts",
+    "hash:password": "node --experimental-strip-types ./scripts/hash-password.ts"
+  },
+  "dependencies": {
+    "@simplewebauthn/server": "^13.3.0",
+    "arctic": "^3.7.0",
+    "mongoose": "^8.13.2",
+    "nitropack": "^2.9.7",
+    "nodemailer": "^6.9.15",
+    "openai": "^6.15.0",
+    "web-push": "^3.6.7"
+  }
 }
