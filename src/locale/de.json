@@ -1445,5 +1445,15 @@
   "push_notifications": "Push-Benachrichtigungen",
   "push_notifications_text": "Die App kann Ihnen Push-Benachrichtigungen senden, um Sie auf den Beginn einer Gebetszeit hinzuweisen, damit der Adhan pünktlich abgespielt wird. Benachrichtigungen werden nur gesendet, wenn Sie explizit zustimmen. Sie können sie jederzeit in den Geräteeinstellungen oder in der App deaktivieren.",
   "terms_location": "Standort & Benachrichtigungen",
-  "terms_location_text": "Durch die Aktivierung von Gebetszeit-Benachrichtigungen stimmen Sie zu, dass die App ausschließlich zur lokalen Berechnung von Gebetszeiten auf Ihren Gerätestandort zugreift. Diese Daten werden nicht gespeichert oder weitergegeben. Sie können die Standort- oder Benachrichtigungsberechtigung jederzeit in den Geräteeinstellungen widerrufen."
+  "terms_location_text": "Durch die Aktivierung von Gebetszeit-Benachrichtigungen stimmen Sie zu, dass die App ausschließlich zur lokalen Berechnung von Gebetszeiten auf Ihren Gerätestandort zugreift. Diese Daten werden nicht gespeichert oder weitergegeben. Sie können die Standort- oder Benachrichtigungsberechtigung jederzeit in den Geräteeinstellungen widerrufen.",
+  "cursorTrail": {
+    "blessing": "Gott segne meine Mama",
+    "words": [
+      "Gott",
+      "segne",
+      "meine",
+      "Mama",
+      "♡"
+    ]
+  }
 }

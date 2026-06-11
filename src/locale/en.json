@@ -1445,5 +1445,16 @@
     "details": "By clicking 'Accept', you consent to our use of cookies for analytics.",
     "accept": "Accept",
     "decline": "Decline"
+  },
+  "cursorTrail": {
+    "blessing": "God bless my mom",
+    "words": [
+      "God",
+      "bless",
+      "my",
+      "mom",
+      "♡",
+      "God bless my mom"
+    ]
   }
 }
