@@ -6,6 +6,10 @@
 
 body {
   background-color: #fdfdfd;
+  font-family: var(--font-family);
+  font-size: 18px;
+  line-height: 1.6;
+  -webkit-text-size-adjust: 100%;
 }
 
 a {

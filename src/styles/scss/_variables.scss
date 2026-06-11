@@ -7,4 +7,17 @@
   --red-color: rgb(241, 47, 47);
   --gray-color: rgb(209, 209, 209);
   --black-color: #000;
+
+  /* Typography */
+  --font-family: 'Segoe UI', system-ui, -apple-system, BlinkMacSystemFont, Roboto, Oxygen, Ubuntu, sans-serif;
+  --font-family-arabic: 'Amiri', 'Traditional Arabic', 'Scheherazade New', serif;
+
+  /* Font size scale — base is 18px for comfortable reading */
+  --font-xs:   0.8rem;   /* ~14px */
+  --font-sm:   0.9rem;   /* ~16px */
+  --font-md:   1rem;     /* 18px  */
+  --font-lg:   1.25rem;  /* ~22px */
+  --font-xl:   1.5rem;   /* 27px  */
+  --font-2xl:  2rem;     /* 36px  */
+  --font-3xl:  2.5rem;   /* 45px  */
 }
