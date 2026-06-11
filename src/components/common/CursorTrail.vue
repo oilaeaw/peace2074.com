@@ -11,7 +11,7 @@ const { t, locale } = useI18n()
 
 // Reactive blessing text and word list — updates when locale changes
 const blessing = computed(() => t('cursorTrail.blessing'))
-const blessingWords = computed<string[]>(() => t('cursorTrail.words', [], { returnObjects: true }) as string[])
+const blessingWords = computed<string[]>(() => t('cursorTrail.words', [], { returnObjects: true }) as unknown as string[])
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const label = ref<HTMLDivElement | null>(null)
