@@ -14,6 +14,9 @@ updateLocationToCurrent()
 const ThreeBackground = defineAsyncComponent(
   () => import('@/components/common/ThreeBackground.vue')
 )
+const CursorTrail = defineAsyncComponent(
+  () => import('@/components/common/CursorTrail.vue')
+)
 
 const route = useRoute()
 const showBackground = ref(false)
@@ -179,6 +182,7 @@ if (typeof window !== 'undefined') {
     </Transition>
     <ThreeBackground v-if="showBackground && !isNativeRuntime" />
     <component :is="CurrentLayout" />
+    <CursorTrail v-if="!showSplash" />
   </div>
 </template>
 

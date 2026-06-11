@@ -7,15 +7,10 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t, locale, messages } = useI18n()
+const { t, locale } = useI18n()
 
-// Reactive blessing text and word list — updates when locale changes
+// Reactive blessing text — updates when locale changes
 const blessing = computed(() => t('cursorTrail.blessing'))
-// Read words array directly from messages to avoid type-cast issues with t() + returnObjects
-const blessingWords = computed<string[]>(() => {
-  const m = messages.value[locale.value] as Record<string, { words?: string[] }>
-  return m?.cursorTrail?.words ?? ['♡']
-})
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const label = ref<HTMLDivElement | null>(null)
@@ -33,10 +28,8 @@ const COLORS = [
   '#fff9c4', '#f8bbd9', '#e1bee7',
 ]
 
-type ParticleType = 'diamond' | 'text'
-
 interface Particle {
-  type: ParticleType
+  type: 'diamond'
   x: number
   y: number
   size: number
@@ -50,7 +43,6 @@ interface Particle {
   maxLife: number
   shimmer: number
   shimmerDir: number
-  word?: string
 }
 
 let particles: Particle[] = []
@@ -62,18 +54,16 @@ function resize() {
 }
 
 function drawDiamond(c: CanvasRenderingContext2D, size: number) {
+  // Brilliant-cut gem silhouette: flat table on top, faceted crown, pointed culet
+  const w = size * 0.7
+  const tableY = -size * 0.55
   c.beginPath()
-  c.moveTo(0, -size)
-  c.lineTo(size * 0.6, 0)
+  c.moveTo(-w * 0.5, tableY)
+  c.lineTo(w * 0.5, tableY)
+  c.lineTo(w, -size * 0.2)
   c.lineTo(0, size)
-  c.lineTo(-size * 0.6, 0)
+  c.lineTo(-w, -size * 0.2)
   c.closePath()
-}
-
-function pickWord(): string {
-  const words = blessingWords.value
-  if (!words?.length) return '♡'
-  return words[Math.floor(Math.random() * words.length)]!
 }
 
 function spawnParticles(x: number, y: number) {
@@ -81,12 +71,11 @@ function spawnParticles(x: number, y: number) {
   const count = 2 + Math.floor(Math.random() * 3)
   for (let i = 0; i < count; i++) {
     const maxLife = 90 + Math.random() * 70
-    const isDiamond = Math.random() < 0.3
     particles.push({
-      type: isDiamond ? 'diamond' : 'text',
+      type: 'diamond',
       x: x + (Math.random() - 0.5) * 28,
       y: y + (Math.random() - 0.5) * 12,
-      size: isDiamond ? (5 + Math.random() * 10) : (11 + Math.random() * 7),
+      size: 6 + Math.random() * 11,
       color: COLORS[Math.floor(Math.random() * COLORS.length)]!,
       alpha: 0.82 + Math.random() * 0.18,
       vy: 0.9 + Math.random() * 2.0,
@@ -97,7 +86,6 @@ function spawnParticles(x: number, y: number) {
       maxLife,
       shimmer: Math.random(),
       shimmerDir: Math.random() > 0.5 ? 1 : -1,
-      word: isDiamond ? undefined : pickWord(),
     })
   }
 }
@@ -135,23 +123,15 @@ function draw() {
     ctx.shadowBlur = 5 + p.shimmer * 12
     ctx.globalAlpha = alpha
 
-    if (p.type === 'diamond') {
-      ctx.rotate(p.rotation)
-      ctx.fillStyle = p.color
-      drawDiamond(ctx, p.size)
-      ctx.fill()
-      ctx.shadowBlur = 0
-      ctx.globalAlpha = alpha * 0.4
-      ctx.fillStyle = '#ffffff'
-      drawDiamond(ctx, p.size * 0.38)
-      ctx.fill()
-    } else {
-      ctx.font = `${p.size}px "Noto Naskh Arabic", "Georgia", "Amiri", serif`
-      ctx.textAlign = 'center'
-      ctx.direction = locale.value === 'ar' || locale.value === 'he' ? 'rtl' : 'ltr'
-      ctx.fillStyle = p.color
-      ctx.fillText(p.word ?? '♡', 0, 0)
-    }
+    ctx.rotate(p.rotation)
+    ctx.fillStyle = p.color
+    drawDiamond(ctx, p.size)
+    ctx.fill()
+    ctx.shadowBlur = 0
+    ctx.globalAlpha = alpha * 0.45
+    ctx.fillStyle = '#ffffff'
+    drawDiamond(ctx, p.size * 0.4)
+    ctx.fill()
 
     ctx.restore()
   }
@@ -159,10 +139,10 @@ function draw() {
   animFrame = requestAnimationFrame(draw)
 }
 
-function onMouseMove(e: MouseEvent) {
+function emit(clientX: number, clientY: number) {
   if (label.value) {
-    label.value.style.left = `${e.clientX + 18}px`
-    label.value.style.top = `${e.clientY - 14}px`
+    label.value.style.left = `${clientX + 18}px`
+    label.value.style.top = `${clientY - 14}px`
     label.value.style.opacity = '1'
   }
 
@@ -170,12 +150,21 @@ function onMouseMove(e: MouseEvent) {
   if (now - lastSpawn < THROTTLE_MS) return
   lastSpawn = now
 
-  spawnParticles(e.clientX, e.clientY)
+  spawnParticles(clientX, clientY)
 
   if (!animating) {
     animating = true
     animFrame = requestAnimationFrame(draw)
   }
+}
+
+function onMouseMove(e: MouseEvent) {
+  emit(e.clientX, e.clientY)
+}
+
+function onTouchMove(e: TouchEvent) {
+  const touch = e.touches[0]
+  if (touch) emit(touch.clientX, touch.clientY)
 }
 
 // Clear particles when locale changes so old-language words disappear
@@ -187,11 +176,13 @@ onMounted(() => {
   resize()
   window.addEventListener('resize', resize)
   window.addEventListener('mousemove', onMouseMove, { passive: true })
+  window.addEventListener('touchmove', onTouchMove, { passive: true })
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
   window.removeEventListener('mousemove', onMouseMove)
+  window.removeEventListener('touchmove', onTouchMove)
   if (animFrame !== null) cancelAnimationFrame(animFrame)
 })
 </script>

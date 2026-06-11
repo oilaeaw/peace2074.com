@@ -2,6 +2,18 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.3.0 (2026-06-11)
+
+### Features
+
+- add a cursor diamond trail that spawns falling, shimmering diamonds at the pointer with a "God bless my mom" blessing label
+- render the cursor trail globally across every layout, including the plain Quran reader pages
+- support touch devices so the diamond trail follows finger movement on mobile and tablet
+
+### Chores
+
+- bump root and Nitro API package versions to `3.3.0`
+
 ## 3.2.0 (2026-05-06)
 
 ### Features

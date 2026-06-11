@@ -37,6 +37,7 @@ const showPassword = ref(false)
 const rememberMe = ref(false)
 const passkeyLoading = ref(false)
 const appleConfigured = ref<boolean | null>(null)
+const googleConfigured = ref<boolean | null>(null)
 let appUrlOpenHandle: (() => void) | null = null
 
 // Compute Nitro API base URL
@@ -87,6 +88,7 @@ const passkeysSupported = computed(() => {
 })
 
 const appleAvailable = computed(() => appleConfigured.value === true)
+const googleAvailable = computed(() => googleConfigured.value === true)
 
 function getErrorMessage(err: unknown) {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -396,6 +398,10 @@ async function loadAuthAvailability() {
     if (!response.ok) return
 
     const data = (await response.json().catch(() => ({}))) as AuthHealthResponse
+
+    if (typeof data?.oauth?.google === 'boolean') {
+      googleConfigured.value = data.oauth.google
+    }
 
     if (typeof data?.oauth?.apple === 'boolean') {
       appleConfigured.value = data.oauth.apple
@@ -738,6 +744,7 @@ onUnmounted(() => {
               </div>
 
               <q-btn
+                v-if="googleAvailable"
                 unelevated
                 data-testid="login-google"
                 color="primary"
@@ -751,24 +758,18 @@ onUnmounted(() => {
               </q-btn>
 
               <q-btn
+                v-if="appleAvailable"
                 outline
                 data-testid="login-apple"
                 color="dark"
                 class="full-width q-mt-sm"
                 size="md"
-                :disable="loading || !appleAvailable"
+                :disable="loading"
                 @click="handleAppleLogin"
               >
                 <font-awesome-icon :icon="['fab', 'apple']" class="q-mr-sm" />
                 {{ t('auth.signInWithApple', 'Sign in with Apple') }}
               </q-btn>
-
-              <div
-                v-if="!appleAvailable"
-                class="text-caption text-negative q-mt-xs"
-              >
-                {{ t('auth.appleSignInUnavailable') }}
-              </div>
             </div>
 
             <div class="text-center q-mt-md">
