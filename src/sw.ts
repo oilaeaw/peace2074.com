@@ -171,7 +171,7 @@ self.addEventListener('push', (event) => {
       tag: notificationData.tag,
       requireInteraction: notificationData.requireInteraction,
       vibrate: [200, 100, 200],
-    })
+    } as NotificationOptions & { vibrate?: number[] })
   )
 })
 

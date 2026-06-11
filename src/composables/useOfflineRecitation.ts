@@ -180,10 +180,13 @@ export function useOfflineRecitation() {
   async function markSuraCached(suraId: number, quality: RecitationQuality, verseCount: number) {
     const col = await getSuraCollection()
     // Use suraId+quality as logical key — upsert by finding existing
-    const existing = await col.findOne([
-      { field: 'suraId', op: 'eq', value: suraId },
-      { field: 'quality', op: 'eq', value: quality },
-    ])
+    const results = await col.find({
+      filter: [
+        { field: 'suraId', op: 'eq', value: suraId },
+        { field: 'quality', op: 'eq', value: quality as string },
+      ],
+    })
+    const existing = results[0] ?? null
 
     if (existing) {
       await col.update(existing.id, { cachedAt: new Date().toISOString(), verseCount })
@@ -202,10 +205,12 @@ export function useOfflineRecitation() {
    */
   async function unmarkSuraCached(suraId: number, quality: RecitationQuality) {
     const col = await getSuraCollection()
-    const records = await col.find([
-      { field: 'suraId', op: 'eq', value: suraId },
-      { field: 'quality', op: 'eq', value: quality },
-    ])
+    const records = await col.find({
+      filter: [
+        { field: 'suraId', op: 'eq', value: suraId },
+        { field: 'quality', op: 'eq', value: quality as string },
+      ],
+    })
     await Promise.all(records.map((r) => col.delete(r.id)))
 
     if (quality === selectedQuality.value) {
@@ -221,7 +226,9 @@ export function useOfflineRecitation() {
   async function getCachedSurasFromDB(quality: RecitationQuality): Promise<Set<number>> {
     try {
       const col = await getSuraCollection()
-      const records = await col.find([{ field: 'quality', op: 'eq', value: quality }])
+      const records = await col.find({
+        filter: [{ field: 'quality', op: 'eq', value: quality as string }],
+      })
       return new Set(records.map((r) => r.suraId))
     } catch {
       return new Set()
