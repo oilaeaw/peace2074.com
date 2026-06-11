@@ -7,11 +7,15 @@
 import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 
-const { t, locale } = useI18n()
+const { t, locale, messages } = useI18n()
 
 // Reactive blessing text and word list — updates when locale changes
 const blessing = computed(() => t('cursorTrail.blessing'))
-const blessingWords = computed<string[]>(() => t('cursorTrail.words', [], { returnObjects: true }) as unknown as string[])
+// Read words array directly from messages to avoid type-cast issues with t() + returnObjects
+const blessingWords = computed<string[]>(() => {
+  const m = messages.value[locale.value] as Record<string, { words?: string[] }>
+  return m?.cursorTrail?.words ?? ['♡']
+})
 
 const canvas = ref<HTMLCanvasElement | null>(null)
 const label = ref<HTMLDivElement | null>(null)
