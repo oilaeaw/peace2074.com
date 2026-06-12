@@ -459,6 +459,12 @@ const defaultNavItems = [
     icon: 'auto_awesome',
   },
   {
+    key: 'recitations',
+    labelKey: 'appShell.nav.recitations',
+    to: '/recitations',
+    icon: 'play_circle',
+  },
+  {
     key: 'tasbeeh',
     labelKey: 'appShell.nav.tasbeeh',
     to: '/tasbeeh',

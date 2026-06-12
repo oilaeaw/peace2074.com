@@ -54,7 +54,8 @@
       "contact": "İletişim",
       "deploys": "Dağıtımlar",
       "social": "Sosyal",
-      "credits": "Katkıda Bulunanlar"
+      "credits": "Katkıda Bulunanlar",
+      "recitations": "Sünnet Okumaları"
     }
   },
   "navigation": {
@@ -93,6 +94,72 @@
     "AdminPage": "Yönetim Sayfası"
   },
   "pages": {
+    "recitations": {
+      "title": "Sünnet Okumaları",
+      "hero": {
+        "eyebrow": "Sünnet Okumaları",
+        "title": "Sünnetten Okumalar",
+        "lead": "Peygamber ﷺ'in teşvik ettiği sahih okumalar. Açıp dinlemeye başlamak için herhangi bir sureye dokunun."
+      },
+      "playHint": "Açmak ve oynatmak için bir sureye dokunun.",
+      "suraNames": {
+        "kahf": "Kehf",
+        "mulk": "Mülk",
+        "sajdah": "Secde",
+        "baqarah": "Bakara",
+        "ikhlas": "İhlâs",
+        "falaq": "Felak",
+        "nas": "Nâs"
+      },
+      "sections": {
+        "friday": {
+          "title": "Cuma",
+          "subtitle": "Cuma günü okunur."
+        },
+        "sleep": {
+          "title": "Uyumadan Önce",
+          "subtitle": "Her gece korunma için gecelik bir rutin."
+        },
+        "morningEvening": {
+          "title": "Sabah ve Akşam",
+          "subtitle": "Günlük zikir ve korunma."
+        }
+      },
+      "items": {
+        "kahf": {
+          "detail": "İki cuma arasında bir nur olması için Kehf suresini perşembe akşamı ile cuma akşamı arasında okuyun.",
+          "source": "En sağlam görüşe göre Ebû Saîd el-Hudrî'nin sözüdür; el-Elbânî tarafından sahih derecelendirilmiştir (Sahîhu'l-Câmi). [al-Hakim 2/399; al-Bayhaqi; al-Darimi 3407]. Âlimler bunun doğrudan Peygamber ﷺ'e ait olup olmadığında ihtilaf etmiştir, ancak hepsi onunla amel eder."
+        },
+        "mulk": {
+          "detail": "Mülk suresi Koruyucu'dur (el-Mânia); kabir azabından korur.",
+          "source": "[Tirmidhi 2891; Nasaʾi 10479 — sahih, al-Albani]"
+        },
+        "sajdahMulk": {
+          "detail": "Peygamber ﷺ hem Secde'yi hem de Mülk'ü okumadan uyumazdı.",
+          "source": "[Tirmidhi 2892 — sahih]"
+        },
+        "baqarahLast": {
+          "detail": "Bakara suresinin son iki ayeti, onları geceleyin okuyana yeter.",
+          "source": "[Bukhari 5009; Muslim 808 — sahih]"
+        },
+        "quls": {
+          "detail": "Üç Kul'u — İhlâs, Felak ve Nâs — üçer kez okuyun, sonra avuçlarınıza üfleyip bedeninize sürün.",
+          "source": "[Bukhari 5017 — sahih]"
+        },
+        "ayatAlKursiSleep": {
+          "detail": "Sabaha kadar korunmak için uyumadan önce Âyetü'l-Kürsî'yi okuyun.",
+          "source": "[Bukhari 2311 — sahih]"
+        },
+        "ayatAlKursiPrayer": {
+          "detail": "Her farz namazın ardından Âyetü'l-Kürsî'yi okuyun.",
+          "source": "[Nasaʾi — sahih]"
+        },
+        "qulsMorningEvening": {
+          "detail": "Üç Kul'u — İhlâs, Felak ve Nâs — sabah akşam üçer kez okuyun.",
+          "source": "[Abu Dawud 5082; Tirmidhi 3575 — hasan/sahih]"
+        }
+      }
+    },
     "about": {
       "title": "PEACE2074 Hakkında",
       "hero": {

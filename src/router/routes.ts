@@ -122,6 +122,25 @@ const baseRoutes: Array<RouteRecordRaw> = [
     },
   },
   {
+    path: '/recitations',
+    name: 'Recitations',
+    component: () => import('@/views/recitations.vue'),
+    meta: {
+      title: 'Sunnah Recitations',
+      titleKey: 'pages.recitations.title',
+      description:
+        'Authentic Sunnah recitations the Prophet ﷺ encouraged—Surah Al-Kahf on Fridays, Al-Mulk and the protective surahs before sleep, and morning and evening remembrance, with tap-to-play and verified sources.',
+      keywords: [
+        'Sunnah recitations',
+        'Surah Al-Kahf Friday',
+        'Surah Al-Mulk before sleep',
+        'morning evening adhkar',
+      ],
+      contentGroup: 'recitations',
+      schemaType: 'CollectionPage',
+    },
+  },
+  {
     path: '/quran',
     name: 'QuranList',
     component: () => import('@/pages/quran/index.vue'),

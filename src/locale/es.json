@@ -54,7 +54,8 @@
       "contact": "Contacto",
       "deploys": "Despliegues",
       "social": "Social",
-      "credits": "Credits"
+      "credits": "Credits",
+      "recitations": "Recitaciones de la Sunnah"
     }
   },
   "navigation": {
@@ -93,6 +94,72 @@
     "AdminPage": "Página de Administración"
   },
   "pages": {
+    "recitations": {
+      "title": "Recitaciones de la Sunnah",
+      "hero": {
+        "eyebrow": "Recitaciones de la Sunnah",
+        "title": "Recitaciones de la Sunnah",
+        "lead": "Recitaciones auténticas que el Profeta ﷺ alentó. Toca cualquier sura para abrirla y empezar a escuchar."
+      },
+      "playHint": "Toca una sura para abrirla y reproducirla.",
+      "suraNames": {
+        "kahf": "Al-Kahf",
+        "mulk": "Al-Mulk",
+        "sajdah": "As-Sajdah",
+        "baqarah": "Al-Baqarah",
+        "ikhlas": "Al-Ikhlas",
+        "falaq": "Al-Falaq",
+        "nas": "An-Nas"
+      },
+      "sections": {
+        "friday": {
+          "title": "Viernes",
+          "subtitle": "Se recita el día del Yumuʿah."
+        },
+        "sleep": {
+          "title": "Antes de dormir",
+          "subtitle": "Una rutina nocturna de protección, cada noche."
+        },
+        "morningEvening": {
+          "title": "Mañana y tarde",
+          "subtitle": "Recuerdo y protección diarios."
+        }
+      },
+      "items": {
+        "kahf": {
+          "detail": "Recita la sura Al-Kahf entre el Magrib del jueves y el Magrib del viernes para tener una luz entre los dos viernes.",
+          "source": "Más sólido como dicho de Abu Saʿid al-Khudri; clasificado como sahih por al-Albani (Sahih al-Jamiʿ). [al-Hakim 2/399; al-Bayhaqi; al-Darimi 3407]. Los sabios difieren sobre si procede directamente del Profeta ﷺ, pero todos lo aplican."
+        },
+        "mulk": {
+          "detail": "La sura Al-Mulk es la Protectora (al-Maniʿah); protege del castigo de la tumba.",
+          "source": "[Tirmidhi 2891; Nasaʾi 10479 — sahih, al-Albani]"
+        },
+        "sajdahMulk": {
+          "detail": "El Profeta ﷺ no dormía sin recitar tanto As-Sajdah como Al-Mulk.",
+          "source": "[Tirmidhi 2892 — sahih]"
+        },
+        "baqarahLast": {
+          "detail": "Los dos últimos versículos de la sura Al-Baqarah bastan a quien los recita por la noche.",
+          "source": "[Bukhari 5009; Muslim 808 — sahih]"
+        },
+        "quls": {
+          "detail": "Recita los tres Qul — Al-Ikhlas, Al-Falaq y An-Nas — tres veces, luego sopla en las palmas y pásalas por el cuerpo.",
+          "source": "[Bukhari 5017 — sahih]"
+        },
+        "ayatAlKursiSleep": {
+          "detail": "Recita Ayat al-Kursi antes de dormir para tener protección hasta la mañana.",
+          "source": "[Bukhari 2311 — sahih]"
+        },
+        "ayatAlKursiPrayer": {
+          "detail": "Recita Ayat al-Kursi después de cada oración obligatoria.",
+          "source": "[Nasaʾi — sahih]"
+        },
+        "qulsMorningEvening": {
+          "detail": "Recita los tres Qul — Al-Ikhlas, Al-Falaq y An-Nas — tres veces cada uno, mañana y tarde.",
+          "source": "[Abu Dawud 5082; Tirmidhi 3575 — hasan/sahih]"
+        }
+      }
+    },
     "about": {
       "title": "Acerca de PEACE2074",
       "hero": {

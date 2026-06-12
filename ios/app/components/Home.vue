@@ -13,7 +13,7 @@
         :iosOverflowSafeArea="true"
         :iosOverflowSafeAreaEnabled="true"
       >
-        <WebView
+        <AutoplayWebView
           row="0"
           class="app-webview"
           :key="webViewKey"
@@ -78,6 +78,7 @@
 <script setup lang="ts">
 import { onMounted, onUnmounted, ref } from 'nativescript-vue'
 import {
+  Application,
   Utils,
   Screen,
   android as androidApp,
@@ -92,6 +93,11 @@ type OAuthProvider = 'google' | 'apple'
 
 const appOrigin = 'https://peace2074.com'
 const nativeCallbackBase = 'peace2074://auth/callback'
+// Written by the "Recite Surah" App Intent (see ReciteSurahIntent.swift) so the
+// pending deep link survives a cold start where the WebView/notification
+// observer is not ready yet.
+const PENDING_DEEP_LINK_KEY = 'peace2074.pendingDeepLink'
+const RECITE_NOTIFICATION = 'Peace2074ReciteSurah'
 const CARD_SIDE_MARGIN = 32
 const LOADING_CARD_MAX_WIDTH = 360
 const ERROR_CARD_MAX_WIDTH = 420
@@ -105,6 +111,7 @@ const oauthInProgress = ref<OAuthProvider | null>(null)
 const currentAppUrl = ref(appOrigin)
 
 let iosOpenUrlObserver: unknown = null
+let iosReciteObserver: unknown = null
 let androidIntentHandler: ((args: unknown) => void) | null = null
 let safariAuthController: SFSafariViewController | null = null
 
@@ -327,6 +334,68 @@ function handleIosOpenUrl(notification: NSNotification) {
   }
 }
 
+// Drains the deep link the App Intent stored in UserDefaults. Used on cold
+// start, resume, and foreground, since the intent runs in a separate execution
+// context: UserDefaults.standard is shared with the app, but the intent's
+// NotificationCenter post usually does NOT reach us. UserDefaults is therefore
+// the reliable channel. Returns true when a link was consumed.
+function consumePendingDeepLink(): boolean {
+  if (!isIOS) return false
+
+  const defaults = NSUserDefaults.standardUserDefaults
+  const url = String(defaults.stringForKey(PENDING_DEEP_LINK_KEY) || '')
+  if (!url) return false
+
+  defaults.removeObjectForKey(PENDING_DEEP_LINK_KEY)
+  defaults.synchronize()
+  handleNativeCallback(url)
+  return true
+}
+
+// Cold-start race: when Siri launches the app via openAppWhenRun, perform()
+// may write the pending link slightly AFTER the WebView mounts. A single read
+// on mount misses it, so poll briefly until it lands (or the budget runs out).
+let pendingPollTimer: ReturnType<typeof setTimeout> | null = null
+let pendingPollAttempts = 0
+
+function stopPendingDeepLinkPolling() {
+  if (pendingPollTimer) {
+    clearTimeout(pendingPollTimer)
+    pendingPollTimer = null
+  }
+}
+
+function startPendingDeepLinkPolling() {
+  if (!isIOS) return
+  stopPendingDeepLinkPolling()
+  pendingPollAttempts = 0
+
+  const tick = () => {
+    pendingPollTimer = null
+    if (consumePendingDeepLink()) return
+    pendingPollAttempts += 1
+    if (pendingPollAttempts < 24) {
+      pendingPollTimer = setTimeout(tick, 250)
+    }
+  }
+
+  tick()
+}
+
+// Warm-start path: the intent posts this notification while the app is already
+// running, so route immediately and clear the pending key.
+function handleIosReciteNotification(notification: NSNotification) {
+  const userInfo = notification.userInfo
+  const value = userInfo?.objectForKey?.('url')
+  const url = String(value || '')
+
+  NSUserDefaults.standardUserDefaults.removeObjectForKey(PENDING_DEEP_LINK_KEY)
+
+  if (url) {
+    handleNativeCallback(url)
+  }
+}
+
 function handleAndroidIntent(args: unknown) {
   const intent = (args as { intent?: android.content.Intent | null })?.intent
   const url =
@@ -425,6 +494,21 @@ onMounted(() => {
       'NativeScriptOpenURL',
       handleIosOpenUrl
     )
+
+    iosReciteObserver = iosApp.addNotificationObserver(
+      RECITE_NOTIFICATION,
+      handleIosReciteNotification
+    )
+
+    // Re-drain whenever the app comes forward. Siri/openAppWhenRun brings the
+    // app to the foreground after perform() writes the link, so these events are
+    // the reliable trigger (the intent's notification often never reaches us).
+    Application.on(Application.resumeEvent, startPendingDeepLinkPolling)
+    Application.on(Application.foregroundEvent, startPendingDeepLinkPolling)
+    Application.on(Application.displayedEvent, startPendingDeepLinkPolling)
+
+    // Cold start: poll until the intent's pending link lands.
+    startPendingDeepLinkPolling()
   }
 
   if (isAndroid) {
@@ -442,6 +526,15 @@ onUnmounted(() => {
   if (isIOS && iosOpenUrlObserver) {
     iosApp.removeNotificationObserver(iosOpenUrlObserver, 'NativeScriptOpenURL')
     iosOpenUrlObserver = null
+  }
+
+  if (isIOS && iosReciteObserver) {
+    iosApp.removeNotificationObserver(iosReciteObserver, RECITE_NOTIFICATION)
+    iosReciteObserver = null
+    Application.off(Application.resumeEvent, startPendingDeepLinkPolling)
+    Application.off(Application.foregroundEvent, startPendingDeepLinkPolling)
+    Application.off(Application.displayedEvent, startPendingDeepLinkPolling)
+    stopPendingDeepLinkPolling()
   }
 
   if (isAndroid && androidIntentHandler) {
