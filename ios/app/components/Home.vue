@@ -335,17 +335,51 @@ function handleIosOpenUrl(notification: NSNotification) {
 }
 
 // Drains the deep link the App Intent stored in UserDefaults. Used on cold
-// start and on resume, since the intent runs (and posts) before the WebView and
-// notification observers exist on a fresh launch.
-function consumePendingDeepLink() {
-  if (!isIOS) return
+// start, resume, and foreground, since the intent runs in a separate execution
+// context: UserDefaults.standard is shared with the app, but the intent's
+// NotificationCenter post usually does NOT reach us. UserDefaults is therefore
+// the reliable channel. Returns true when a link was consumed.
+function consumePendingDeepLink(): boolean {
+  if (!isIOS) return false
 
   const defaults = NSUserDefaults.standardUserDefaults
   const url = String(defaults.stringForKey(PENDING_DEEP_LINK_KEY) || '')
-  if (!url) return
+  if (!url) return false
 
   defaults.removeObjectForKey(PENDING_DEEP_LINK_KEY)
+  defaults.synchronize()
   handleNativeCallback(url)
+  return true
+}
+
+// Cold-start race: when Siri launches the app via openAppWhenRun, perform()
+// may write the pending link slightly AFTER the WebView mounts. A single read
+// on mount misses it, so poll briefly until it lands (or the budget runs out).
+let pendingPollTimer: ReturnType<typeof setTimeout> | null = null
+let pendingPollAttempts = 0
+
+function stopPendingDeepLinkPolling() {
+  if (pendingPollTimer) {
+    clearTimeout(pendingPollTimer)
+    pendingPollTimer = null
+  }
+}
+
+function startPendingDeepLinkPolling() {
+  if (!isIOS) return
+  stopPendingDeepLinkPolling()
+  pendingPollAttempts = 0
+
+  const tick = () => {
+    pendingPollTimer = null
+    if (consumePendingDeepLink()) return
+    pendingPollAttempts += 1
+    if (pendingPollAttempts < 24) {
+      pendingPollTimer = setTimeout(tick, 250)
+    }
+  }
+
+  tick()
 }
 
 // Warm-start path: the intent posts this notification while the app is already
@@ -466,12 +500,15 @@ onMounted(() => {
       handleIosReciteNotification
     )
 
-    // Re-drain on resume in case the intent ran while the app was backgrounded
-    // (e.g. Siri stored the link but the warm-start notification was missed).
-    Application.on(Application.resumeEvent, consumePendingDeepLink)
+    // Re-drain whenever the app comes forward. Siri/openAppWhenRun brings the
+    // app to the foreground after perform() writes the link, so these events are
+    // the reliable trigger (the intent's notification often never reaches us).
+    Application.on(Application.resumeEvent, startPendingDeepLinkPolling)
+    Application.on(Application.foregroundEvent, startPendingDeepLinkPolling)
+    Application.on(Application.displayedEvent, startPendingDeepLinkPolling)
 
-    // Cold start: the intent already wrote the pending link before we mounted.
-    consumePendingDeepLink()
+    // Cold start: poll until the intent's pending link lands.
+    startPendingDeepLinkPolling()
   }
 
   if (isAndroid) {
@@ -494,7 +531,10 @@ onUnmounted(() => {
   if (isIOS && iosReciteObserver) {
     iosApp.removeNotificationObserver(iosReciteObserver, RECITE_NOTIFICATION)
     iosReciteObserver = null
-    Application.off(Application.resumeEvent, consumePendingDeepLink)
+    Application.off(Application.resumeEvent, startPendingDeepLinkPolling)
+    Application.off(Application.foregroundEvent, startPendingDeepLinkPolling)
+    Application.off(Application.displayedEvent, startPendingDeepLinkPolling)
+    stopPendingDeepLinkPolling()
   }
 
   if (isAndroid && androidIntentHandler) {

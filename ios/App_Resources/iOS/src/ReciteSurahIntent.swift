@@ -207,6 +207,9 @@ struct ReciteSurahIntent: AppIntent {
         let urlString = "peace2074://quran/\(id)?autoplay=true"
         let defaults = UserDefaults.standard
         defaults.set(urlString, forKey: SurahResolver.pendingDeepLinkKey)
+        // Flush immediately: perform() may run in a separate execution context,
+        // and the app process polls UserDefaults to pick this up.
+        defaults.synchronize()
 
         NotificationCenter.default.post(
             name: SurahResolver.reciteNotification,
