@@ -17,6 +17,7 @@
     "nitropack": "^2.9.7",
     "nodemailer": "^6.9.15",
     "openai": "^6.15.0",
+    "reflect-metadata": "^0.2.2",
     "web-push": "^3.6.7"
   }
 }

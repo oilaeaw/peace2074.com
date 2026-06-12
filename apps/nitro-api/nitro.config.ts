@@ -1,5 +1,20 @@
 import { fileURLToPath } from 'node:url'
+import { readFileSync } from 'node:fs'
+import { createRequire } from 'node:module'
 import { defineNitroConfig } from 'nitropack'
+
+// Load the reflect-metadata polyfill source so it can be injected at the top of
+// the Cloudflare Worker entry. @simplewebauthn/server → @peculiar/x509 → tsyringe
+// require `Reflect.getMetadata` at module-init; on the Workers runtime the bare
+// `import "reflect-metadata"` side-effect gets tree-shaken, so we inline it.
+const reflectMetadataPolyfill = (() => {
+    try {
+        const require = createRequire(import.meta.url)
+        return readFileSync(require.resolve('reflect-metadata'), 'utf8')
+    } catch {
+        return ''
+    }
+})()
 
 const DEFAULT_PORT = 3000
 const requestedPreset =
@@ -62,6 +77,21 @@ export default defineNitroConfig({
             },
             rollupConfig: {
                 plugins: [
+                    {
+                        // Inject the reflect-metadata polyfill at the very top of the Worker
+                        // entry chunk so global Reflect is patched before any lazy route chunk
+                        // (passkeys → @peculiar/x509 → tsyringe) is imported. Wrapped in an IIFE
+                        // so the polyfill's top-level `var Reflect` cannot shadow the global
+                        // Reflect inside the ESM chunk; it still patches globalThis.Reflect.
+                        name: 'inject-reflect-metadata-polyfill',
+                        renderChunk(code: string, chunk: { isEntry?: boolean }) {
+                            if (!chunk.isEntry || !reflectMetadataPolyfill) return null
+                            return {
+                                code: `;(function(){${reflectMetadataPolyfill}\n})();\n${code}`,
+                                map: null,
+                            }
+                        },
+                    },
                     {
                         // MongoDB has 8 optional native/cloud deps that aren't installed and
                         // cannot be externals in CF Workers — stub them all as empty modules.

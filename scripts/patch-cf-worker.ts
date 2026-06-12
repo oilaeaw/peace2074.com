@@ -29,34 +29,42 @@ try {
     process.exit(0)
 }
 
-const patches: Array<[string, string]> = [
-    // DataStream$2 base class (jws / safe-buffer interop)
-    ['SC=bc;function DataStream$2', 'SC=T.Transform;function DataStream$2'],
-    // SignStream$1 base class (jws)
-    [',FC=bc,VC=tostring,zC=Ys', ',FC=T.Transform,VC=tostring,zC=Ys'],
-    // VerifyStream$1 base class (jws)
-    ['KC=bC,GC=jwa$2,QC=bc,YC=tostring', 'KC=bC,GC=jwa$2,QC=T.Transform,YC=tostring'],
-]
+// The jws package defines three Transform subclasses (DataStream, SignStream,
+// VerifyStream) via `util.inherits(Ctor, Stream)`. Rollup rewrites the base to
+// `getDefaultExportFromNamespaceIfNotNamed(node:stream)`, which on the CF Workers
+// runtime resolves to the namespace object (no `.prototype`) and throws a
+// TypeError at module-init. Fix: point each base at the real `Transform` class.
+//
+// Minifier names change on every build, so resolve them dynamically instead of
+// hard-coding string literals (which silently no-op when the names drift).
 
-let patched = src
+// 1. Find the node:stream namespace import alias, e.g. `import*as M from"node:stream"`.
+const streamNsMatch = src.match(/import\s*\*\s*as\s+([A-Za-z0-9_$]+)\s+from\s*["']node:stream["']/)
+if (!streamNsMatch) {
+    console.error('[patch-cf-worker] ✗ Could not locate the node:stream namespace import — jws would crash on Workers. Aborting.')
+    process.exit(1)
+}
+const streamNs = streamNsMatch[1]
+
+// 2. Rewrite `<inherits>(<DataStream|SignStream|VerifyStream>$N, <base>)` so the
+//    base class is `<streamNs>.Transform`. Matches a function call whose first
+//    arg is one of the jws constructors and whose second arg is a bare identifier.
+const inheritsPattern =
+    /([A-Za-z0-9_$]+\((?:DataStream|SignStream|VerifyStream)\$\d+,)[A-Za-z0-9_$.]+(\))/g
+
 let appliedCount = 0
+const patched = src.replace(inheritsPattern, (_match, prefix, suffix) => {
+    appliedCount++
+    return `${prefix}${streamNs}.Transform${suffix}`
+})
 
-for (const [from, to] of patches) {
-    const count = patched.split(from).length - 1
-    if (count === 1) {
-        patched = patched.replace(from, to)
-        appliedCount++
-        console.log(`[patch-cf-worker] ✓ Applied: ${from.slice(0, 40)}...`)
-    } else if (count === 0) {
-        console.warn(`[patch-cf-worker] ⚠ Target not found (already patched?): ${from.slice(0, 40)}...`)
-    } else {
-        console.error(`[patch-cf-worker] ✗ Unexpected ${count} occurrences: ${from.slice(0, 40)}`)
-        process.exit(1)
-    }
+if (appliedCount === 0) {
+    console.error('[patch-cf-worker] ✗ No jws stream inherits() calls found — bundle layout changed. Review patch-cf-worker.ts before deploying.')
+    process.exit(1)
 }
 
 writeFileSync(workerPath, patched, 'utf8')
-console.log(`[patch-cf-worker] Done – applied ${appliedCount}/${patches.length} patches.`)
+console.log(`[patch-cf-worker] Done – rewrote ${appliedCount} jws stream base class(es) to ${streamNs}.Transform.`)
 
 // Fix _routes.json: only route /api/* through the Worker.
 // Nitro generates include:["/*"] which causes it to intercept SPA requests

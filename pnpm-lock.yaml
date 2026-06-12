@@ -252,6 +252,9 @@ importers:
       openai:
         specifier: ^6.15.0
         version: 6.38.0(ws@8.20.1(utf-8-validate@5.0.10))(zod@3.25.76)
+      reflect-metadata:
+        specifier: ^0.2.2
+        version: 0.2.2
       web-push:
         specifier: ^3.6.7
         version: 3.6.7
