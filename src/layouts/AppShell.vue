@@ -83,11 +83,16 @@
 
               <!-- Language Picker -->
               <q-item class="lang-picker-item" dense>
-                <q-item-section avatar>
-                  <q-icon name="language" size="20px" />
-                </q-item-section>
                 <q-item-section>
-                  <div class="lang-chip-row" role="listbox">
+                  <div class="lang-picker-label">
+                    <q-icon name="language" size="18px" />
+                    <span>{{ t('general.languages') }}</span>
+                  </div>
+                  <div
+                    class="lang-chip-row locale-plate"
+                    role="listbox"
+                    tabindex="0"
+                  >
                     <button
                       v-for="lang in langs"
                       :key="lang.value"
@@ -96,14 +101,16 @@
                       :title="lang.name"
                       :aria-label="lang.name"
                       :aria-selected="lang.value === localeModel"
-                      class="lang-chip"
+                      class="lang-chip locale-cell"
                       :class="{ active: lang.value === localeModel }"
                       @click="selectLocale(lang.value)"
                     >
-                      <span class="lang-chip-flag" aria-hidden="true">{{
+                      <span class="lang-chip-flag locale-cell-flag" aria-hidden="true">{{
                         lang.flag
                       }}</span>
-                      <span class="lang-chip-name">{{ lang.name }}</span>
+                      <span class="lang-chip-name locale-cell-name">{{
+                        lang.name
+                      }}</span>
                     </button>
                   </div>
                 </q-item-section>
@@ -1238,41 +1245,83 @@ const orderedNavItems = computed(() => {
 
 .lang-picker-item {
   align-items: flex-start;
+  padding-inline: 8px 12px;
 }
 
-.lang-chip-row {
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
+.lang-picker-item :deep(.q-item__section) {
   width: 100%;
+}
+
+.lang-picker-label {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 8px;
+  font-size: 0.82rem;
+  font-weight: 600;
+  color: inherit;
+}
+
+.lang-chip-row,
+.locale-plate {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: nowrap;
+  align-items: stretch;
+  gap: 8px;
+  width: min(92vw, 340px);
+  max-width: 100%;
+  padding: 8px 4px;
+  overflow-x: auto;
+  overflow-y: hidden;
+  overscroll-behavior-x: contain;
+  -webkit-overflow-scrolling: touch;
+  scroll-snap-type: x proximity;
+  border-radius: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.12);
+  background: rgba(0, 0, 0, 0.03);
+}
+
+body.body--dark .lang-chip-row,
+body.body--dark .locale-plate {
+  border-color: rgba(255, 255, 255, 0.18);
+  background: rgba(255, 255, 255, 0.04);
 }
 
 .lang-chip {
   display: flex;
+  flex-direction: column;
   align-items: center;
-  gap: 8px;
-  width: 100%;
-  padding: 8px 10px;
+  justify-content: center;
+  flex: 0 0 auto;
+  min-width: 72px;
+  max-width: 92px;
+  gap: 4px;
+  padding: 8px 6px;
   border: 2px solid rgba(0, 0, 0, 0.18);
   border-radius: 10px;
   background: #fff;
   color: #111;
   cursor: pointer;
-  text-align: start;
+  text-align: center;
+  scroll-snap-align: start;
 }
 
 .lang-chip-flag {
   flex-shrink: 0;
-  font-size: 1.2rem;
+  font-size: 1.45rem;
   line-height: 1;
 }
 
 .lang-chip-name {
-  flex: 1;
-  font-size: 0.95rem;
-  font-weight: 600;
-  line-height: 1.2;
+  font-size: 0.72rem;
+  font-weight: 700;
+  line-height: 1.15;
   color: #111;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  max-width: 100%;
 }
 
 .lang-chip.active {
@@ -1293,5 +1342,16 @@ body.body--dark .lang-chip-name {
 body.body--dark .lang-chip.active {
   border-color: #4ade80;
   background: #14532d;
+}
+
+.user-menu .lang-chip-row::-webkit-scrollbar,
+.user-menu .locale-plate::-webkit-scrollbar {
+  height: 6px;
+}
+
+.user-menu .lang-chip-row::-webkit-scrollbar-thumb,
+.user-menu .locale-plate::-webkit-scrollbar-thumb {
+  border-radius: 999px;
+  background: rgba(0, 0, 0, 0.25);
 }
 </style>
