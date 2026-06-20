@@ -11,6 +11,14 @@ import {
   persistTranslatorIdForLocale,
   type QuranTranslator,
 } from '@shared/data/quran-translators'
+import {
+  FONT_SIZE_KEY,
+  HIGH_CONTRAST_KEY,
+  applyFontSize,
+  applyHighContrast,
+  readFontSizePreference,
+  readHighContrastPreference,
+} from '@/utils/accessibility-preferences'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -21,8 +29,6 @@ const AUTOPLAY_PRAYER_KEY = 'pref-autoplay-prayer-times'
 const QURAN_TRANSLATION_KEY = 'quran-show-translation'
 const NOTIFICATIONS_KEY = 'pref-enable-notifications'
 const DARK_MODE_KEY = 'pref-dark-mode'
-const FONT_SIZE_KEY = 'pref-font-size'
-const HIGH_CONTRAST_KEY = 'pref-high-contrast'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
@@ -369,49 +375,14 @@ function persistDarkModePreference(val: boolean) {
   window.localStorage.setItem(DARK_MODE_KEY, String(val))
 }
 
-function readFontSizePreference(): number {
-  if (typeof window === 'undefined') return 1
-  const stored = window.localStorage.getItem(FONT_SIZE_KEY)
-  return stored ? parseInt(stored, 10) : 1
-}
-
 function persistFontSizePreference(val: number) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(FONT_SIZE_KEY, String(val))
 }
 
-function applyFontSize(size: number) {
-  if (typeof document === 'undefined') return
-  const sizes = ['small', 'medium', 'large', 'xlarge']
-  const root = document.documentElement
-  root.classList.remove(
-    'font-small',
-    'font-medium',
-    'font-large',
-    'font-xlarge'
-  )
-  root.classList.add(`font-${sizes[size]}`)
-}
-
-function readHighContrastPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(HIGH_CONTRAST_KEY)
-  return stored === 'true'
-}
-
 function persistHighContrastPreference(val: boolean) {
   if (typeof window === 'undefined') return
   window.localStorage.setItem(HIGH_CONTRAST_KEY, String(val))
-}
-
-function applyHighContrast(enabled: boolean) {
-  if (typeof document === 'undefined') return
-  const root = document.documentElement
-  if (enabled) {
-    root.classList.add('high-contrast')
-  } else {
-    root.classList.remove('high-contrast')
-  }
 }
 
 async function ensureNotificationsPermission(): Promise<boolean> {
