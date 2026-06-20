@@ -68,32 +68,17 @@
 
         <q-dialog v-model="langPickerOpen">
           <q-card class="locale-grid-card" dark>
-            <q-card-section class="row items-center no-wrap q-pb-sm">
-              <div class="text-subtitle1 text-weight-medium">
+            <q-card-section class="row items-center no-wrap q-pb-xs q-pt-sm q-px-md">
+              <div class="text-subtitle2 text-weight-medium">
                 {{ t('general.languages') }}
               </div>
               <q-space />
-              <q-btn v-close-popup dense flat round icon="close" />
+              <q-btn v-close-popup dense flat round icon="close" size="sm" />
             </q-card-section>
-            <q-card-section class="q-py-none">
-              <q-input
-                v-model="langQuery"
-                dense
-                dark
-                outlined
-                clearable
-                autofocus
-                :placeholder="t('general.searching')"
-              >
-                <template #prepend>
-                  <q-icon name="search" />
-                </template>
-              </q-input>
-            </q-card-section>
-            <q-card-section class="locale-grid-scroll q-pt-sm">
+            <q-card-section class="q-pt-xs q-pb-sm q-px-sm">
               <div class="locale-grid" role="listbox">
                 <button
-                  v-for="lang in filteredLangs"
+                  v-for="lang in langs"
                   :key="lang.value"
                   type="button"
                   role="option"
@@ -107,12 +92,6 @@
                     lang.label.replace(lang.flag, '').trim()
                   }}</span>
                 </button>
-              </div>
-              <div
-                v-if="filteredLangs.length === 0"
-                class="text-center text-grey-5 q-pa-md"
-              >
-                —
               </div>
             </q-card-section>
           </q-card>
@@ -1073,41 +1052,28 @@ const orderedNavItems = computed(() => {
 }
 
 .locale-grid-card {
-  width: min(94vw, 460px);
-  max-height: 85dvh;
-  display: flex;
-  flex-direction: column;
+  width: min(94vw, 320px);
   background: #0f172a;
   color: #fff;
-}
-
-/* Grid scrolls INSIDE the dialog so it never gets cut off, and scales to
-   any number of locales. Search filters the list for large sets. */
-.locale-grid-scroll {
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
-  flex: 1 1 auto;
-  min-height: 0;
+  border-radius: 16px;
 }
 
 .locale-grid {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 10px;
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 6px;
 }
 
 .locale-cell {
   display: flex;
-  flex-direction: row;
+  flex-direction: column;
   align-items: center;
-  justify-content: flex-start;
-  gap: 10px;
-  padding: 10px 16px;
-  min-height: 48px;
-  border-radius: 999px;
-  border: 1px solid rgba(255, 255, 255, 0.14);
-  background: rgba(255, 255, 255, 0.05);
+  justify-content: center;
+  gap: 4px;
+  padding: 8px 4px;
+  border-radius: 10px;
+  border: 1px solid rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.04);
   color: #fff;
   cursor: pointer;
   transition:
@@ -1117,28 +1083,29 @@ const orderedNavItems = computed(() => {
 }
 
 .locale-cell:hover {
-  background: rgba(255, 255, 255, 0.12);
+  background: rgba(255, 255, 255, 0.1);
 }
 
 .locale-cell:active {
-  transform: scale(0.97);
+  transform: scale(0.95);
 }
 
 .locale-cell.active {
   border-color: #22c55e;
-  background: rgba(34, 197, 94, 0.18);
+  background: rgba(34, 197, 94, 0.16);
 }
 
 .locale-cell-flag {
-  font-size: 24px;
+  font-size: 28px;
   line-height: 1;
 }
 
 .locale-cell-name {
-  font-size: 14px;
-  text-align: left;
+  font-size: 10px;
+  text-align: center;
   line-height: 1.2;
   white-space: nowrap;
+  color: rgba(255,255,255,0.8);
 }
 
 .app-drawer {

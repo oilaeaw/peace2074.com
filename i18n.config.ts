@@ -1,4 +1,4 @@
-import { ar, de, en, es, he, it, ru, tr } from './src/locale'
+import { ar, de, en, es, he, it, ru, tr, uz } from './src/locale'
 
 export interface LocaleT {
   code: string
@@ -51,6 +51,11 @@ export default defineI18nConfig(() => ({
       name: 'Türkçe',
       messages: tr,
     },
+    {
+      code: 'uz',
+      name: 'Oʻzbekcha',
+      messages: uz,
+    },
   ],
   messages: {
     en,
@@ -61,5 +66,6 @@ export default defineI18nConfig(() => ({
     he,
     it,
     tr,
+    uz,
   },
 }))
