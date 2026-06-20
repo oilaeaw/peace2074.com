@@ -248,44 +248,58 @@ body.reduce-motion *::after {
 
 /* Accessibility: Font Size Controls */
 :root.font-small {
-  font-size: 14px;
+  font-size: 16px;
 }
 
 :root.font-medium {
-  font-size: 16px; /* default */
-}
-
-:root.font-large {
   font-size: 18px;
 }
 
-:root.font-xlarge {
+:root.font-large {
   font-size: 22px;
+}
+
+:root.font-xlarge {
+  font-size: 28px;
 }
 
 /* Accessibility: High Contrast Mode */
 :root.high-contrast {
   --q-color-primary: #0066cc;
   --q-color-secondary: #ff6600;
+  --background-pattern: none !important;
+
+  body.body--light &,
+  &.body--light {
+    background-image: none !important;
+  }
 
   .q-card {
     border: 2px solid currentColor !important;
   }
 
   .text-grey-6,
-  .text-grey-7 {
+  .text-grey-7,
+  .text-subtitle2,
+  .text-caption,
+  .q-item__label--caption {
     color: inherit !important;
-    opacity: 0.9;
+    opacity: 1 !important;
   }
 
   a {
     text-decoration: underline;
-    font-weight: 600;
+    font-weight: 700;
   }
 
   button,
   .q-btn {
     border: 2px solid currentColor !important;
+    font-weight: 700;
+  }
+
+  * {
+    text-shadow: none !important;
   }
 }
 

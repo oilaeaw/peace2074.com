@@ -1,5 +1,6 @@
 import { createApp, watch } from 'vue'
 import type { RouteLocationNormalizedLoaded } from 'vue-router'
+import '@/utils/accessibility-preferences'
 import App from './App.vue'
 import router from '@/router'
 import { initFaLibrary, FontAwesomeIcon } from '@/plugins/font-awesome'
