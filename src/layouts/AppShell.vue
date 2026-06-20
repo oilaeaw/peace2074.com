@@ -53,42 +53,7 @@
           @click="stopAthan"
         />
 
-        <q-btn
-          flat
-          dense
-          round
-          class="locale-trigger"
-          :aria-label="t('general.languages')"
-        >
-          <span class="locale-trigger-flag">{{ languageFlags[localeModel] }}</span>
-          <q-menu
-            class="locale-menu"
-            anchor="bottom right"
-            self="top right"
-            :offset="[0, 6]"
-            transition-show="jump-down"
-            transition-hide="jump-up"
-          >
-            <div class="locale-grid" role="listbox">
-              <button
-                v-for="lang in langs"
-                :key="lang.value"
-                v-close-popup
-                type="button"
-                role="option"
-                :aria-selected="lang.value === localeModel"
-                class="locale-cell"
-                :class="{ active: lang.value === localeModel }"
-                @click="selectLocale(lang.value)"
-              >
-                <span class="locale-cell-flag">{{ lang.flag }}</span>
-                <span class="locale-cell-name">{{ lang.label.replace(lang.flag, '').trim() }}</span>
-              </button>
-            </div>
-          </q-menu>
-        </q-btn>
 
-        <!-- User Profile Button -->
         <q-btn
           dense
           round
@@ -101,8 +66,8 @@
           :color="isAuthenticated ? 'positive' : 'white'"
           :icon="isAuthenticated ? 'account_circle' : 'login'"
         >
-          <q-menu>
-            <q-list style="min-width: 200px">
+          <q-menu class="user-menu">
+            <q-list style="min-width: 220px">
               <q-item v-if="isAuthenticated">
                 <q-item-section avatar>
                   <q-avatar color="primary" text-color="white" icon="person" />
@@ -115,6 +80,31 @@
                 </q-item-section>
               </q-item>
               <q-separator v-if="isAuthenticated" />
+
+              <!-- Language Picker -->
+              <q-item class="lang-picker-item" dense>
+                <q-item-section avatar>
+                  <q-icon name="language" size="20px" />
+                </q-item-section>
+                <q-item-section>
+                  <div class="lang-chip-row" role="listbox">
+                    <button
+                      v-for="lang in langs"
+                      :key="lang.value"
+                      type="button"
+                      role="option"
+                      :title="lang.label.replace(lang.flag, '').trim()"
+                      :aria-selected="lang.value === localeModel"
+                      class="lang-chip"
+                      :class="{ active: lang.value === localeModel }"
+                      @click="selectLocale(lang.value)"
+                    >
+                      {{ lang.flag }}
+                    </button>
+                  </div>
+                </q-item-section>
+              </q-item>
+              <q-separator />
 
               <q-item
                 v-if="!isAuthenticated"
