@@ -298,3 +298,24 @@ body.reduce-motion *::after {
   color: #fff !important;
   background-color: #000 !important;
 }
+
+/* Gradient titles can render as hollow outlines when clip/fill fails */
+:root.high-contrast .hero-title,
+:root.high-contrast [class*='hero-title'] {
+  background: none !important;
+  -webkit-background-clip: initial !important;
+  background-clip: initial !important;
+  -webkit-text-fill-color: currentColor !important;
+  color: inherit !important;
+}
+
+@media (prefers-contrast: more) {
+  .hero-title,
+  [class*='hero-title'] {
+    background: none !important;
+    -webkit-background-clip: initial !important;
+    background-clip: initial !important;
+    -webkit-text-fill-color: currentColor !important;
+    color: inherit !important;
+  }
+}

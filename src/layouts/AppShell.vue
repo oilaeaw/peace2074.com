@@ -93,13 +93,17 @@
                       :key="lang.value"
                       type="button"
                       role="option"
-                      :title="lang.label.replace(lang.flag, '').trim()"
+                      :title="lang.name"
+                      :aria-label="lang.name"
                       :aria-selected="lang.value === localeModel"
                       class="lang-chip"
                       :class="{ active: lang.value === localeModel }"
                       @click="selectLocale(lang.value)"
                     >
-                      {{ lang.flag }}
+                      <span class="lang-chip-flag" aria-hidden="true">{{
+                        lang.flag
+                      }}</span>
+                      <span class="lang-chip-name">{{ lang.name }}</span>
                     </button>
                   </div>
                 </q-item-section>
@@ -441,6 +445,7 @@ const langs = computed(() => {
   locale.value
   return languageCodes.map((code) => ({
     value: code,
+    name: t(`general.languageNames.${code}`),
     label: `${languageFlags[code] || ''} ${t(`general.languageNames.${code}`)}`,
     flag: languageFlags[code],
   }))
@@ -1229,5 +1234,64 @@ const orderedNavItems = computed(() => {
 }
 .q-drawer .q-item.drag-disabled {
   cursor: not-allowed;
+}
+
+.lang-picker-item {
+  align-items: flex-start;
+}
+
+.lang-chip-row {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  width: 100%;
+}
+
+.lang-chip {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 8px 10px;
+  border: 2px solid rgba(0, 0, 0, 0.18);
+  border-radius: 10px;
+  background: #fff;
+  color: #111;
+  cursor: pointer;
+  text-align: start;
+}
+
+.lang-chip-flag {
+  flex-shrink: 0;
+  font-size: 1.2rem;
+  line-height: 1;
+}
+
+.lang-chip-name {
+  flex: 1;
+  font-size: 0.95rem;
+  font-weight: 600;
+  line-height: 1.2;
+  color: #111;
+}
+
+.lang-chip.active {
+  border-color: #155724;
+  background: #e8f5e9;
+}
+
+body.body--dark .lang-chip {
+  background: #111;
+  border-color: rgba(255, 255, 255, 0.35);
+  color: #fff;
+}
+
+body.body--dark .lang-chip-name {
+  color: #fff;
+}
+
+body.body--dark .lang-chip.active {
+  border-color: #4ade80;
+  background: #14532d;
 }
 </style>
