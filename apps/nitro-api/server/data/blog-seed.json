@@ -1,6 +1,27 @@
 [
     {
-        "id": "peace2074-release-progress-april-2026",
+        "id": "you-are-not-alone-gentle-word",
+        "slug": "you-are-not-alone-gentle-word",
+        "title": "You Are Not Alone — A Gentle Word on Hard Days",
+        "excerpt": "Short lines of hope for days when reading, writing, or seeing feels hard. You still belong here.",
+        "content": "Assalamu alaikum,\n\nSome days are heavy.\n\nMaybe your body is tired.\nMaybe your eyes are tired.\nMaybe words feel new or far away.\n\nThat is okay.\n\nAllah sees your effort — even a small one.\n\n\"With hardship comes ease.\"\n(Quran 94:6)\n\nYou are not half a person.\nYou are not forgotten.\n\nPeace2074 is here for quiet moments:\n\n• Listen to Quran\n• Count dhikr with tasbeeh\n• Read one short daily message\n• Rest. Breathe. Return when you can.\n\nYou do not need perfect words to belong.\n\nIf one day you want to share your story on this blog, we welcome it — in any language, even a few sentences.\n\nUntil then, let this page be a light for you.\n\nYou are not alone.\n\n— Wael\npeace2074.com",
+        "tags": [
+            "hope",
+            "community",
+            "welcome",
+            "inspiration",
+            "accessibility"
+        ],
+        "date": "2026-06-20",
+        "author": "Wael",
+        "createdAt": "2026-06-20T18:00:00.000Z",
+        "updatedAt": "2026-06-20T18:00:00.000Z",
+        "notifySubscribers": true,
+        "notificationTitle": "A gentle post for hard days",
+        "notificationBody": "You Are Not Alone — new on the Peace2074 blog.",
+        "notificationUrl": "/blog/you-are-not-alone-gentle-word"
+    },
+    {
         "slug": "peace2074-release-progress-april-2026",
         "title": "Peace2074 release progress: localized storefront links, iOS sync, and submission cleanup",
         "excerpt": "A quick accomplishment report covering locale-aware public URLs, App Store metadata improvements, cleaner iOS export compliance, and native release prep.",
