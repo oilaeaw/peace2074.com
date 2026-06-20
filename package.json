@@ -43,6 +43,7 @@
     "build:api": "pnpm --filter nitro-api build",
     "build:node-api": "NITRO_PRESET=node_server NITRO_APP_BASE_URL=/api pnpm build:api",
     "build:cf": "pnpm sync:quran:data && vite build && NITRO_PRESET=cloudflare-pages NITRO_APP_BASE_URL=/api pnpm build:api && cp -r dist/. apps/nitro-api/dist/ && pnpm patch:cf:worker",
+    "build:cloudflare": "pnpm build:cf",
     "patch:cf:worker": "node --experimental-strip-types scripts/patch-cf-worker.ts",
     "preview": "vite preview",
     "lint": "eslint . --fix",
