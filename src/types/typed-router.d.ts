@@ -142,6 +142,13 @@ declare module 'vue-router/auto-routes' {
       { lok: ParamValue<false> },
       | never
     >,
+    '/recitations': RouteRecordInfo<
+      '/recitations',
+      '/recitations',
+      Record<never, never>,
+      Record<never, never>,
+      | never
+    >,
     '/settings': RouteRecordInfo<
       '/settings',
       '/settings',
@@ -296,6 +303,12 @@ declare module 'vue-router/auto-routes' {
     'src/views/quran/[...lok].vue': {
       routes:
         | '/quran/[...lok]'
+      views:
+        | never
+    }
+    'src/views/recitations.vue': {
+      routes:
+        | '/recitations'
       views:
         | never
     }
