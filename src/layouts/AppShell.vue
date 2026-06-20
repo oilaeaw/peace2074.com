@@ -84,13 +84,10 @@
               <!-- Language Picker -->
               <q-item class="lang-picker-item" dense>
                 <q-item-section>
-                  <div class="lang-picker-label">
-                    <q-icon name="language" size="18px" />
-                    <span>{{ t('general.languages') }}</span>
-                  </div>
                   <div
-                    class="lang-chip-row locale-plate"
+                    class="lang-chip-row"
                     role="listbox"
+                    :aria-label="t('general.languages')"
                     tabindex="0"
                   >
                     <button
@@ -101,15 +98,12 @@
                       :title="lang.name"
                       :aria-label="lang.name"
                       :aria-selected="lang.value === localeModel"
-                      class="lang-chip locale-cell"
+                      class="lang-chip"
                       :class="{ active: lang.value === localeModel }"
                       @click="selectLocale(lang.value)"
                     >
-                      <span class="lang-chip-flag locale-cell-flag" aria-hidden="true">{{
+                      <span class="lang-chip-flag" aria-hidden="true">{{
                         lang.flag
-                      }}</span>
-                      <span class="lang-chip-name locale-cell-name">{{
-                        lang.name
                       }}</span>
                     </button>
                   </div>
@@ -1244,99 +1238,70 @@ const orderedNavItems = computed(() => {
 }
 
 .lang-picker-item {
-  align-items: flex-start;
-  padding-inline: 8px 12px;
+  align-items: center;
+  padding: 4px 8px 8px;
+  min-height: 0;
 }
 
 .lang-picker-item :deep(.q-item__section) {
   width: 100%;
+  padding: 0;
 }
 
-.lang-picker-label {
-  display: inline-flex;
-  align-items: center;
-  gap: 6px;
-  margin-bottom: 8px;
-  font-size: 0.82rem;
-  font-weight: 600;
-  color: inherit;
-}
-
-.lang-chip-row,
-.locale-plate {
+.lang-chip-row {
   display: flex;
   flex-direction: row;
   flex-wrap: nowrap;
-  align-items: stretch;
-  gap: 8px;
-  width: min(92vw, 340px);
+  align-items: center;
+  gap: 6px;
+  width: min(92vw, 320px);
   max-width: 100%;
-  padding: 8px 4px;
+  padding: 6px;
   overflow-x: auto;
   overflow-y: hidden;
   overscroll-behavior-x: contain;
   -webkit-overflow-scrolling: touch;
   scroll-snap-type: x proximity;
-  border-radius: 12px;
+  border-radius: 999px;
   border: 1px solid rgba(0, 0, 0, 0.12);
   background: rgba(0, 0, 0, 0.03);
 }
 
-body.body--dark .lang-chip-row,
-body.body--dark .locale-plate {
+body.body--dark .lang-chip-row {
   border-color: rgba(255, 255, 255, 0.18);
   background: rgba(255, 255, 255, 0.04);
 }
 
 .lang-chip {
-  display: flex;
-  flex-direction: column;
+  display: inline-flex;
   align-items: center;
   justify-content: center;
   flex: 0 0 auto;
-  min-width: 72px;
-  max-width: 92px;
-  gap: 4px;
-  padding: 8px 6px;
-  border: 2px solid rgba(0, 0, 0, 0.18);
-  border-radius: 10px;
+  width: 44px;
+  height: 44px;
+  padding: 0;
+  border: 2px solid rgba(0, 0, 0, 0.15);
+  border-radius: 999px;
   background: #fff;
   color: #111;
   cursor: pointer;
-  text-align: center;
-  scroll-snap-align: start;
+  scroll-snap-align: center;
 }
 
 .lang-chip-flag {
-  flex-shrink: 0;
-  font-size: 1.45rem;
+  font-size: 1.5rem;
   line-height: 1;
-}
-
-.lang-chip-name {
-  font-size: 0.72rem;
-  font-weight: 700;
-  line-height: 1.15;
-  color: #111;
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  max-width: 100%;
 }
 
 .lang-chip.active {
   border-color: #155724;
   background: #e8f5e9;
+  box-shadow: 0 0 0 2px rgba(21, 87, 36, 0.25);
 }
 
 body.body--dark .lang-chip {
   background: #111;
   border-color: rgba(255, 255, 255, 0.35);
-  color: #fff;
-}
-
-body.body--dark .lang-chip-name {
-  color: #fff;
 }
 
 body.body--dark .lang-chip.active {
@@ -1344,13 +1309,11 @@ body.body--dark .lang-chip.active {
   background: #14532d;
 }
 
-.user-menu .lang-chip-row::-webkit-scrollbar,
-.user-menu .locale-plate::-webkit-scrollbar {
-  height: 6px;
+.user-menu .lang-chip-row::-webkit-scrollbar {
+  height: 4px;
 }
 
-.user-menu .lang-chip-row::-webkit-scrollbar-thumb,
-.user-menu .locale-plate::-webkit-scrollbar-thumb {
+.user-menu .lang-chip-row::-webkit-scrollbar-thumb {
   border-radius: 999px;
   background: rgba(0, 0, 0, 0.25);
 }
