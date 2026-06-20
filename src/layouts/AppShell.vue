@@ -1092,20 +1092,20 @@ const orderedNavItems = computed(() => {
 }
 
 .locale-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  display: flex;
+  flex-wrap: wrap;
   gap: 10px;
 }
 
 .locale-cell {
   display: flex;
-  flex-direction: column;
+  flex-direction: row;
   align-items: center;
-  justify-content: center;
-  gap: 6px;
-  padding: 14px 8px;
-  min-height: 76px;
-  border-radius: 12px;
+  justify-content: flex-start;
+  gap: 10px;
+  padding: 10px 16px;
+  min-height: 48px;
+  border-radius: 999px;
   border: 1px solid rgba(255, 255, 255, 0.14);
   background: rgba(255, 255, 255, 0.05);
   color: #fff;
@@ -1130,14 +1130,15 @@ const orderedNavItems = computed(() => {
 }
 
 .locale-cell-flag {
-  font-size: 30px;
+  font-size: 24px;
   line-height: 1;
 }
 
 .locale-cell-name {
-  font-size: 13px;
-  text-align: center;
+  font-size: 14px;
+  text-align: left;
   line-height: 1.2;
+  white-space: nowrap;
 }
 
 .app-drawer {
