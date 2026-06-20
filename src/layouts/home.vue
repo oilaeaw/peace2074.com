@@ -100,6 +100,7 @@ const languageFlags: Record<string, string> = {
   he: '🇮🇱',
   it: '🇮🇹',
   tr: '🇹🇷',
+  uz: '🇺🇿',
 }
 
 const langs = computed(() => {

@@ -65,6 +65,8 @@
           emit-value
           map-options
           class="glassy-field locale-select"
+          behavior="dialog"
+          popup-content-class="locale-select-popup"
         >
           <template #selected>
             <span>{{ languageFlags[localeModel] }}</span>
@@ -432,6 +434,7 @@ const languageFlags: Record<string, string> = {
   he: '🇮🇱',
   it: '🇮🇹',
   tr: '🇹🇷',
+  uz: '🇺🇿',
 }
 
 const langs = computed(() => {
@@ -1010,6 +1013,15 @@ const orderedNavItems = computed(() => {
 .locale-select {
   max-width: 160px;
   min-width: 120px;
+}
+
+:global(.locale-select-popup) {
+  max-height: 85vh;
+  overflow-y: auto;
+}
+
+:global(.locale-select-popup .q-item) {
+  min-height: 56px;
 }
 
 .app-drawer {
