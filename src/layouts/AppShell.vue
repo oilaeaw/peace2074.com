@@ -53,37 +53,70 @@
           @click="stopAthan"
         />
 
-        <q-select
-          :key="`lang-select-${locale}`"
-          v-model="localeModel"
+        <q-btn
+          flat
           dense
-          outlined
-          dark
-          :options="langs"
-          option-label="label"
-          option-value="value"
-          emit-value
-          map-options
-          class="glassy-field locale-select"
-          behavior="dialog"
-          popup-content-class="locale-select-popup"
+          round
+          class="locale-trigger"
+          :aria-label="t('general.languages')"
+          @click="langPickerOpen = true"
         >
-          <template #selected>
-            <span>{{ languageFlags[localeModel] }}</span>
-          </template>
-          <template #option="scope">
-            <q-item v-bind="scope.itemProps">
-              <q-item-section avatar>
-                <span class="text-h6">{{ scope.opt.flag }}</span>
-              </q-item-section>
-              <q-item-section>
-                <q-item-label>{{
-                  scope.opt.label.replace(scope.opt.flag, '').trim()
-                }}</q-item-label>
-              </q-item-section>
-            </q-item>
-          </template>
-        </q-select>
+          <span class="locale-trigger-flag">{{
+            languageFlags[localeModel]
+          }}</span>
+        </q-btn>
+
+        <q-dialog v-model="langPickerOpen">
+          <q-card class="locale-grid-card" dark>
+            <q-card-section class="row items-center no-wrap q-pb-sm">
+              <div class="text-subtitle1 text-weight-medium">
+                {{ t('general.languages') }}
+              </div>
+              <q-space />
+              <q-btn v-close-popup dense flat round icon="close" />
+            </q-card-section>
+            <q-card-section class="q-py-none">
+              <q-input
+                v-model="langQuery"
+                dense
+                dark
+                outlined
+                clearable
+                autofocus
+                :placeholder="t('general.searching')"
+              >
+                <template #prepend>
+                  <q-icon name="search" />
+                </template>
+              </q-input>
+            </q-card-section>
+            <q-card-section class="locale-grid-scroll q-pt-sm">
+              <div class="locale-grid" role="listbox">
+                <button
+                  v-for="lang in filteredLangs"
+                  :key="lang.value"
+                  type="button"
+                  role="option"
+                  :aria-selected="lang.value === localeModel"
+                  class="locale-cell"
+                  :class="{ active: lang.value === localeModel }"
+                  @click="selectLocale(lang.value)"
+                >
+                  <span class="locale-cell-flag">{{ lang.flag }}</span>
+                  <span class="locale-cell-name">{{
+                    lang.label.replace(lang.flag, '').trim()
+                  }}</span>
+                </button>
+              </div>
+              <div
+                v-if="filteredLangs.length === 0"
+                class="text-center text-grey-5 q-pa-md"
+              >
+                —
+              </div>
+            </q-card-section>
+          </q-card>
+        </q-dialog>
 
         <!-- User Profile Button -->
         <q-btn
@@ -424,6 +457,25 @@ const localeModel = computed({
     persistLocale(normalized)
   },
 })
+
+const langPickerOpen = ref(false)
+const langQuery = ref('')
+
+const filteredLangs = computed(() => {
+  const q = langQuery.value.trim().toLowerCase()
+  if (!q) return langs.value
+  return langs.value.filter(
+    (lang) =>
+      lang.label.toLowerCase().includes(q) ||
+      lang.value.toLowerCase().includes(q),
+  )
+})
+
+function selectLocale(code: string) {
+  localeModel.value = code
+  langPickerOpen.value = false
+  langQuery.value = ''
+}
 
 const languageFlags: Record<string, string> = {
   en: '🇺🇸',
@@ -1010,31 +1062,82 @@ const orderedNavItems = computed(() => {
   color: rgba(255, 255, 255, 0.65);
 }
 
-.locale-select {
-  max-width: 160px;
-  min-width: 120px;
+.locale-trigger {
+  font-size: 20px;
+  line-height: 1;
 }
 
-:global(.locale-select-popup) {
-  max-height: 75vh;
-  max-height: 75dvh;
-  overflow-y: auto !important;
-  -webkit-overflow-scrolling: touch;
-  overscroll-behavior: contain;
+.locale-trigger-flag {
+  font-size: 22px;
+  line-height: 1;
 }
 
-/* iOS WebView: dialog can grow taller than the screen and trap scrolling.
-   Cap the dialog inner and let the option list itself scroll with momentum. */
-:global(.q-dialog__inner > .locale-select-popup),
-:global(.q-dialog__inner--minimized > .locale-select-popup) {
-  max-height: 80dvh;
-  width: min(92vw, 360px);
+.locale-grid-card {
+  width: min(94vw, 460px);
+  max-height: 85dvh;
   display: flex;
   flex-direction: column;
+  background: #0f172a;
+  color: #fff;
 }
 
-:global(.locale-select-popup .q-item) {
-  min-height: 56px;
+/* Grid scrolls INSIDE the dialog so it never gets cut off, and scales to
+   any number of locales. Search filters the list for large sets. */
+.locale-grid-scroll {
+  overflow-y: auto;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+  flex: 1 1 auto;
+  min-height: 0;
+}
+
+.locale-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: 10px;
+}
+
+.locale-cell {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 14px 8px;
+  min-height: 76px;
+  border-radius: 12px;
+  border: 1px solid rgba(255, 255, 255, 0.14);
+  background: rgba(255, 255, 255, 0.05);
+  color: #fff;
+  cursor: pointer;
+  transition:
+    background 0.15s ease,
+    border-color 0.15s ease,
+    transform 0.1s ease;
+}
+
+.locale-cell:hover {
+  background: rgba(255, 255, 255, 0.12);
+}
+
+.locale-cell:active {
+  transform: scale(0.97);
+}
+
+.locale-cell.active {
+  border-color: #22c55e;
+  background: rgba(34, 197, 94, 0.18);
+}
+
+.locale-cell-flag {
+  font-size: 30px;
+  line-height: 1;
+}
+
+.locale-cell-name {
+  font-size: 13px;
+  text-align: center;
+  line-height: 1.2;
 }
 
 .app-drawer {
@@ -1112,9 +1215,7 @@ const orderedNavItems = computed(() => {
     min-width: 0;
   }
 
-  .locale-select {
-    min-width: 60px;
-    max-width: 72px;
+  .locale-trigger {
     flex-shrink: 0;
   }
 }
