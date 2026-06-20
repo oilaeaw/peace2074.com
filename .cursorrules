@@ -12,3 +12,25 @@ The user operates with a physical disability. Minimize typing, scrolling, and ma
 **4. APP STORE RULES:** 
 - Promotional text MUST be under 140 characters. 
 - Prepared screenshots are in `STUPIDSOTS/Apple_Watch/AppStore` and `STUPIDSOTS/Apple_TV/AppStore`.
+
+# PROJECT FACTS (do not re-ask the user these)
+
+**MACHINE:** User's laptop is resource-constrained. NEVER run `pnpm dev` / dev servers, and avoid local `vite build` / `build:cf` unless essential — they hang or force restarts. The real build runs on Cloudflare's servers, not locally.
+
+**HOW THE APPS LOAD:** The iOS (NativeScript) app and Apple TV app are wrappers whose WebView loads the LIVE site `https://peace2074.com` (`ios/app/components/Home.vue`: `appOrigin = 'https://peace2074.com'`). Rebuilding in Xcode does NOT bundle web code — it just reloads the live site. So web/locale fixes only appear after the live site is deployed.
+
+**DEPLOY (Cloudflare Pages, git-connected to branch `one`):**
+- Deploy = commit + `git push origin one`; Cloudflare Pages builds on its own servers.
+- CORRECT build settings (in Cloudflare dashboard → the project → Build settings):
+  - Build command: `pnpm run build:cf`
+  - Build output directory: `apps/nitro-api/dist` (nitro cloudflare-pages preset writes `_worker.js` + `_routes.json` + copied frontend here)
+  - Deploy command: EMPTY. A `npx wrangler deploy` deploy command BREAKS it (no wrangler config, wrong command for Pages) and silently fails, leaving the site stuck on an OLD build (symptom seen: live stuck on v3.3.2 despite many pushes).
+- Cloudflare account ID: `f8e411adbc0ac8c96ac4e00beaacd9cd`.
+- `KIMI_API_KEY` in `.env` is a Cloudflare AI-only key; it CANNOT deploy Pages. `.env` has a `CLOUDFLARE_API_TOKEN=` slot (needs Pages:Edit) for direct `wrangler pages deploy` if ever needed.
+- Verify live: `curl -s https://peace2074.com/ | grep -oE '/assets/index\.[^\"]+\.js'` then check that asset for the change (e.g. `locale-cell`). PWA service worker caches aggressively — a stale SW can keep serving old code; unregister SW + clear caches when testing.
+
+**ADD A LOCALE (e.g. uz):** create `src/locale/<code>.json` (mirror `en.json` keys); add the name to `general.languageNames` in EVERY `src/locale/*.json`; register in `src/locale/index.ts`, `src/i18n.ts`, `src/stores/langs.pinia.ts`, `scripts/check-locales.ts`; add a flag to `languageFlags` in `src/layouts/AppShell.vue` and `src/layouts/home.vue`. Run `pnpm check:locales`.
+
+**LANGUAGE PICKER:** In `src/layouts/AppShell.vue` it is a "Languages" button opening a dialog with a searchable horizontal flag-chip grid (`.locale-cell`) — all locales visible, scrolls inside the dialog, scales to many locales. Do NOT revert to a `q-select` dropdown (it clipped/couldn't scroll on iPhone).
+
+**CI:** GitHub Actions `release.yml` fails at the tag-push step due to branch protection rules (cannot create/force tag `v3.x`), and E2E can OOM (exit 137). These do NOT deploy Cloudflare and do NOT block the live site.
