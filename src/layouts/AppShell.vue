@@ -59,43 +59,34 @@
           round
           class="locale-trigger"
           :aria-label="t('general.languages')"
-          @click="langPickerOpen = true"
         >
-          <span class="locale-trigger-flag">{{
-            languageFlags[localeModel]
-          }}</span>
+          <span class="locale-trigger-flag">{{ languageFlags[localeModel] }}</span>
+          <q-menu
+            class="locale-menu"
+            anchor="bottom right"
+            self="top right"
+            :offset="[0, 6]"
+            transition-show="jump-down"
+            transition-hide="jump-up"
+          >
+            <div class="locale-grid" role="listbox">
+              <button
+                v-for="lang in langs"
+                :key="lang.value"
+                v-close-popup
+                type="button"
+                role="option"
+                :aria-selected="lang.value === localeModel"
+                class="locale-cell"
+                :class="{ active: lang.value === localeModel }"
+                @click="selectLocale(lang.value)"
+              >
+                <span class="locale-cell-flag">{{ lang.flag }}</span>
+                <span class="locale-cell-name">{{ lang.label.replace(lang.flag, '').trim() }}</span>
+              </button>
+            </div>
+          </q-menu>
         </q-btn>
-
-        <q-dialog v-model="langPickerOpen">
-          <q-card class="locale-grid-card" dark>
-            <q-card-section class="row items-center no-wrap q-pb-xs q-pt-sm q-px-md">
-              <div class="text-subtitle2 text-weight-medium">
-                {{ t('general.languages') }}
-              </div>
-              <q-space />
-              <q-btn v-close-popup dense flat round icon="close" size="sm" />
-            </q-card-section>
-            <q-card-section class="q-pt-xs q-pb-sm q-px-sm">
-              <div class="locale-grid" role="listbox">
-                <button
-                  v-for="lang in langs"
-                  :key="lang.value"
-                  type="button"
-                  role="option"
-                  :aria-selected="lang.value === localeModel"
-                  class="locale-cell"
-                  :class="{ active: lang.value === localeModel }"
-                  @click="selectLocale(lang.value)"
-                >
-                  <span class="locale-cell-flag">{{ lang.flag }}</span>
-                  <span class="locale-cell-name">{{
-                    lang.label.replace(lang.flag, '').trim()
-                  }}</span>
-                </button>
-              </div>
-            </q-card-section>
-          </q-card>
-        </q-dialog>
 
         <!-- User Profile Button -->
         <q-btn
@@ -438,22 +429,10 @@ const localeModel = computed({
 })
 
 const langPickerOpen = ref(false)
-const langQuery = ref('')
-
-const filteredLangs = computed(() => {
-  const q = langQuery.value.trim().toLowerCase()
-  if (!q) return langs.value
-  return langs.value.filter(
-    (lang) =>
-      lang.label.toLowerCase().includes(q) ||
-      lang.value.toLowerCase().includes(q),
-  )
-})
 
 function selectLocale(code: string) {
   localeModel.value = code
   langPickerOpen.value = false
-  langQuery.value = ''
 }
 
 const languageFlags: Record<string, string> = {
@@ -1051,17 +1030,19 @@ const orderedNavItems = computed(() => {
   line-height: 1;
 }
 
-.locale-grid-card {
-  width: min(94vw, 320px);
+.locale-menu {
   background: #0f172a;
-  color: #fff;
-  border-radius: 16px;
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 14px;
+  padding: 8px;
+  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.45);
 }
 
 .locale-grid {
   display: grid;
   grid-template-columns: repeat(3, 1fr);
   gap: 6px;
+  width: 220px;
 }
 
 .locale-cell {
