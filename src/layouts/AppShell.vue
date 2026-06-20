@@ -1016,8 +1016,21 @@ const orderedNavItems = computed(() => {
 }
 
 :global(.locale-select-popup) {
-  max-height: 85vh;
-  overflow-y: auto;
+  max-height: 75vh;
+  max-height: 75dvh;
+  overflow-y: auto !important;
+  -webkit-overflow-scrolling: touch;
+  overscroll-behavior: contain;
+}
+
+/* iOS WebView: dialog can grow taller than the screen and trap scrolling.
+   Cap the dialog inner and let the option list itself scroll with momentum. */
+:global(.q-dialog__inner > .locale-select-popup),
+:global(.q-dialog__inner--minimized > .locale-select-popup) {
+  max-height: 80dvh;
+  width: min(92vw, 360px);
+  display: flex;
+  flex-direction: column;
 }
 
 :global(.locale-select-popup .q-item) {
