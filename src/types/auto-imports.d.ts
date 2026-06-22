@@ -50,6 +50,7 @@ declare global {
   const exampleReactiveStorage: typeof import('../composables/useUStore.examples').exampleReactiveStorage
   const exampleUserPreferences: typeof import('../composables/useUStore.examples').exampleUserPreferences
   const extendRef: typeof import('@vueuse/core')['extendRef']
+  const filterVerifiedOfflineSuras: typeof import('../composables/useOfflineRecitation').filterVerifiedOfflineSuras
   const getActivePinia: typeof import('pinia').getActivePinia
   const getCacheStats: typeof import('../composables/useCache').getCacheStats
   const getCurrentInstance: typeof import('vue').getCurrentInstance
@@ -383,6 +384,7 @@ declare module 'vue' {
     readonly defineComponent: UnwrapRef<typeof import('vue')['defineComponent']>
     readonly defineStore: UnwrapRef<typeof import('pinia')['defineStore']>
     readonly effectScope: UnwrapRef<typeof import('vue')['effectScope']>
+    readonly filterVerifiedOfflineSuras: UnwrapRef<typeof import('../composables/useOfflineRecitation')['filterVerifiedOfflineSuras']>
     readonly getActivePinia: UnwrapRef<typeof import('pinia')['getActivePinia']>
     readonly getCacheStats: UnwrapRef<typeof import('../composables/useCache')['getCacheStats']>
     readonly getCurrentInstance: UnwrapRef<typeof import('vue')['getCurrentInstance']>
