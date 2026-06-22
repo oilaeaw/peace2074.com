@@ -653,11 +653,14 @@ async function reloadApp() {
       console.log(`[Settings] Unregistered ${regs.length} service worker(s)`)
     }
 
-    // 2. Delete ALL browser caches (Cache API)
+    // 2. Delete browser caches (preserve offline recitation audio)
     if ('caches' in window) {
       const cacheNames = await caches.keys()
-      await Promise.all(cacheNames.map((name) => caches.delete(name)))
-      console.log(`[Settings] Deleted ${cacheNames.length} cache(s)`)
+      const cachesToDelete = cacheNames.filter((name) => !name.startsWith('quran-audio-offline'))
+      await Promise.all(cachesToDelete.map((name) => caches.delete(name)))
+      console.log(
+        `[Settings] Deleted ${cachesToDelete.length} cache(s) (${cacheNames.length - cachesToDelete.length} offline recitation cache(s) preserved)`
+      )
     }
 
     // 3. Clear localStorage (preserve critical user settings)
@@ -677,6 +680,9 @@ async function reloadApp() {
         DARK_MODE_KEY,
         FONT_SIZE_KEY,
         HIGH_CONTRAST_KEY,
+        'peace2074-audio',
+        'peace2074-offline-suras-v1',
+        'quran-offline-recitation-quality',
       ]
       const saved: Record<string, string> = {}
       criticalKeys.forEach((key) => {

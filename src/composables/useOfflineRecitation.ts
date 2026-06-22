@@ -61,7 +61,76 @@ function getDB(): Promise<RealDB> {
 export const TOTAL_QURAN_SURAS = 114
 const RECITATION_QUALITIES: RecitationQuality[] = ['regular', 'hiq']
 const OFFLINE_RECITATION_QUALITY_STORAGE_KEY = 'quran-offline-recitation-quality'
+const OFFLINE_SURAS_MANIFEST_KEY = 'peace2074-offline-suras-v1'
 const CACHE_NAME_PREFIX = 'quran-audio-offline'
+
+interface OfflineSurasManifest {
+  regular: number[]
+  hiq: number[]
+}
+
+const EMPTY_OFFLINE_SURAS_MANIFEST: OfflineSurasManifest = { regular: [], hiq: [] }
+
+function readOfflineSurasManifest(): OfflineSurasManifest {
+  if (typeof window === 'undefined') return { ...EMPTY_OFFLINE_SURAS_MANIFEST }
+  try {
+    const raw = window.localStorage.getItem(OFFLINE_SURAS_MANIFEST_KEY)
+    if (!raw) return { ...EMPTY_OFFLINE_SURAS_MANIFEST }
+    const parsed = JSON.parse(raw) as Partial<OfflineSurasManifest>
+    return {
+      regular: Array.isArray(parsed.regular)
+        ? parsed.regular.filter((id): id is number => typeof id === 'number' && Number.isFinite(id))
+        : [],
+      hiq: Array.isArray(parsed.hiq)
+        ? parsed.hiq.filter((id): id is number => typeof id === 'number' && Number.isFinite(id))
+        : [],
+    }
+  } catch {
+    return { ...EMPTY_OFFLINE_SURAS_MANIFEST }
+  }
+}
+
+function writeOfflineSurasManifest(manifest: OfflineSurasManifest) {
+  if (typeof window === 'undefined') return
+  window.localStorage.setItem(OFFLINE_SURAS_MANIFEST_KEY, JSON.stringify(manifest))
+}
+
+function getManifestSurasForQuality(quality: RecitationQuality): Set<number> {
+  const manifest = readOfflineSurasManifest()
+  return new Set(manifest[quality])
+}
+
+function addSuraToManifest(suraId: number, quality: RecitationQuality) {
+  const manifest = readOfflineSurasManifest()
+  if (!manifest[quality].includes(suraId)) {
+    manifest[quality] = [...manifest[quality], suraId].sort((a, b) => a - b)
+    writeOfflineSurasManifest(manifest)
+  }
+}
+
+function removeSuraFromManifest(suraId: number, quality: RecitationQuality) {
+  const manifest = readOfflineSurasManifest()
+  manifest[quality] = manifest[quality].filter((id) => id !== suraId)
+  writeOfflineSurasManifest(manifest)
+}
+
+function clearOfflineSurasManifest() {
+  writeOfflineSurasManifest({ ...EMPTY_OFFLINE_SURAS_MANIFEST })
+}
+
+async function ensurePersistentStorage(): Promise<void> {
+  if (typeof navigator === 'undefined' || !navigator.storage?.persist) return
+  try {
+    const alreadyPersisted = navigator.storage.persisted
+      ? await navigator.storage.persisted()
+      : false
+    if (!alreadyPersisted) {
+      await navigator.storage.persist()
+    }
+  } catch (err) {
+    console.warn('[Offline Audio] Could not request persistent storage:', err)
+  }
+}
 
 interface RecitationQualityInfo {
   bitrate: string
@@ -104,6 +173,46 @@ function extractSuraIdsFromRequests(requests: readonly Request[]): Set<number> {
     if (match) suraIds.add(parseInt(match[1], 10))
   })
   return suraIds
+}
+
+function buildCacheKey(suraId: number, verseNumber: number, quality: RecitationQuality): string {
+  const reciter = quality === 'hiq' ? 'Alafasy_128kbps' : 'Alafasy_64kbps'
+  const paddedSura = String(suraId).padStart(3, '0')
+  const paddedVerse = String(verseNumber).padStart(3, '0')
+  return `https://everyayah.com/data/${reciter}/${paddedSura}${paddedVerse}.mp3`
+}
+
+async function isVerseCached(
+  suraId: number,
+  verse: number,
+  quality: RecitationQuality
+): Promise<boolean> {
+  if (!('caches' in window)) return false
+  try {
+    const cache = await caches.open(getCacheName(quality))
+    const response = await cache.match(buildCacheKey(suraId, verse, quality))
+    return !!response
+  } catch {
+    return false
+  }
+}
+
+/** Exported for unit tests — verifies cache blobs exist for metadata candidates. */
+export async function filterVerifiedOfflineSuras(
+  quality: RecitationQuality,
+  candidates: Iterable<number>,
+  hasVerse: (suraId: number, verse: number, quality: RecitationQuality) => Promise<boolean>,
+  onStale: (suraId: number, quality: RecitationQuality) => void | Promise<void>
+): Promise<Set<number>> {
+  const verified = new Set<number>()
+  for (const suraId of candidates) {
+    if (await hasVerse(suraId, 1, quality)) {
+      verified.add(suraId)
+    } else {
+      await onStale(suraId, quality)
+    }
+  }
+  return verified
 }
 
 export function resolveOfflineRecitationStatus({
@@ -194,6 +303,8 @@ export function useOfflineRecitation() {
       await col.insert({ suraId, quality, verseCount, cachedAt: new Date().toISOString() })
     }
 
+    addSuraToManifest(suraId, quality)
+
     // Keep reactive ref in sync
     if (quality === selectedQuality.value) {
       downloadedSuras.value = new Set([...downloadedSuras.value, suraId])
@@ -212,6 +323,7 @@ export function useOfflineRecitation() {
       ],
     })
     await Promise.all(records.map((r) => col.delete(r.id)))
+    removeSuraFromManifest(suraId, quality)
 
     if (quality === selectedQuality.value) {
       const next = new Set(downloadedSuras.value)
@@ -238,19 +350,25 @@ export function useOfflineRecitation() {
   // ── Cache API helpers (audio blobs) ──────────────────────────────────────
 
   async function getCachedSurasForQuality(quality: RecitationQuality): Promise<Set<number>> {
-    // Primary source: RealDB (fast, reactive)
     const fromDB = await getCachedSurasFromDB(quality)
-    if (fromDB.size > 0) return fromDB
+    const fromManifest = getManifestSurasForQuality(quality)
+    const candidates = new Set([...fromDB, ...fromManifest])
 
-    // Fallback: scan Cache API (for data cached before this upgrade)
-    if (!('caches' in window)) return new Set()
-    try {
-      const cache = await caches.open(getCacheName(quality))
-      const keys = await cache.keys()
-      return extractSuraIdsFromRequests(keys)
-    } catch {
-      return new Set()
+    if (candidates.size === 0 && 'caches' in window) {
+      try {
+        const cache = await caches.open(getCacheName(quality))
+        const keys = await cache.keys()
+        for (const suraId of extractSuraIdsFromRequests(keys)) {
+          candidates.add(suraId)
+        }
+      } catch {
+        // ignore cache scan errors
+      }
     }
+
+    return filterVerifiedOfflineSuras(quality, candidates, isVerseCached, (suraId, q) =>
+      unmarkSuraCached(suraId, q)
+    )
   }
 
   async function isSuraCached(suraId: number, quality: RecitationQuality): Promise<boolean> {
@@ -278,13 +396,6 @@ export function useOfflineRecitation() {
     return null
   }
 
-  function buildCacheKey(suraId: number, verseNumber: number, quality: RecitationQuality): string {
-    const reciter = quality === 'hiq' ? 'Alafasy_128kbps' : 'Alafasy_64kbps'
-    const paddedSura = String(suraId).padStart(3, '0')
-    const paddedVerse = String(verseNumber).padStart(3, '0')
-    return `https://everyayah.com/data/${reciter}/${paddedSura}${paddedVerse}.mp3`
-  }
-
   // ── Download ──────────────────────────────────────────────────────────────
 
   async function downloadSura(suraId: number, totalVerses: number): Promise<boolean> {
@@ -292,6 +403,8 @@ export function useOfflineRecitation() {
       $q.notify({ type: 'negative', message: 'Offline storage not supported in this browser', position: 'top' })
       return false
     }
+
+    await ensurePersistentStorage()
 
     try {
       const cache = await caches.open(getCacheName(selectedQuality.value))
@@ -411,6 +524,7 @@ export function useOfflineRecitation() {
       const col = await getSuraCollection()
       const all = await col.findAll()
       await Promise.all(all.map((r) => col.delete(r.id)))
+      clearOfflineSurasManifest()
 
       downloadedSuras.value = new Set()
       downloadProgress.value.clear()
