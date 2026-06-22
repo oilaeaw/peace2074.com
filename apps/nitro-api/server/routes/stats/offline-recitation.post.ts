@@ -1,6 +1,6 @@
 import { defineEventHandler, readBody } from 'h3'
-import { applyCors } from '../../../utils/cors'
-import { recordOfflineRecitationDownload } from '../../../utils/offline-download-stats'
+import { applyCors } from '../../utils/cors'
+import { recordOfflineRecitationDownload } from '../../utils/offline-download-stats'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
