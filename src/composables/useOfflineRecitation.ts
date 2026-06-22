@@ -132,6 +132,17 @@ async function ensurePersistentStorage(): Promise<void> {
   }
 }
 
+function recordOfflineDownloadStat(suraId: number, quality: RecitationQuality) {
+  if (typeof window === 'undefined') return
+  void fetch('/api/stats/offline-recitation', {
+    method: 'POST',
+    headers: { 'Content-Type': 'application/json' },
+    body: JSON.stringify({ suraId, quality }),
+  }).catch(() => {
+    // Non-blocking — stats must not interrupt downloads
+  })
+}
+
 interface RecitationQualityInfo {
   bitrate: string
   estimatedSizePerSura: string
@@ -465,6 +476,7 @@ export function useOfflineRecitation() {
       if (failCount === 0) {
         // ✅ Record success in @waelio/realdb
         await markSuraCached(suraId, quality, totalVerses)
+        recordOfflineDownloadStat(suraId, quality)
         return true
       } else {
         console.warn(`[Offline Audio] Sura ${suraId}: ${successCount} OK, ${failCount} failed`)
