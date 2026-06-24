@@ -2,7 +2,7 @@
 import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
 import { useI18n } from 'vue-i18n'
-import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
+import { ref, onMounted, onUnmounted, onActivated, onDeactivated, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
@@ -2014,8 +2014,11 @@ function getRecitationScrollOffset() {
   const headingHeight = heading?.getBoundingClientRect().height || 0
   const appHeader =
     document.querySelector('.q-header')?.getBoundingClientRect().height || 56
+  const safeTop = isIOSRuntime.value
+    ? Math.max(0, window.visualViewport?.offsetTop || 0)
+    : 0
 
-  return Math.ceil(headingHeight + appHeader + 16)
+  return Math.ceil(headingHeight + appHeader + safeTop + 16)
 }
 
 function persistRecitationBeforeLeave() {
@@ -2803,8 +2806,35 @@ const handleRecitationBeforeUnload = () => {
   persistRecitationBeforeLeave()
 }
 
+const handlePageHidden = () => {
+  if (typeof document === 'undefined') return
+  if (document.visibilityState !== 'hidden') return
+  if (currentAyahIndex.value >= 0) {
+    savePlaybackPosition(true)
+  }
+  if (isPlayingAudio.value) {
+    pauseAudio()
+  } else if (isTTSPlaying.value) {
+    pauseTTS()
+  }
+}
+
 onBeforeRouteLeave(() => {
   persistRecitationBeforeLeave()
+})
+
+// Keep-alive hooks (AppShell wraps QuranDetail) — onUnmounted does NOT run when cached
+onDeactivated(() => {
+  if (currentAyahIndex.value >= 0) {
+    savePlaybackPosition(true)
+  }
+})
+
+onActivated(async () => {
+  await loadProfileSettings(true)
+  if (currentWordIndex.value >= 0 && currentAyahIndex.value >= 0) {
+    scrollToCurrentWord(currentAyahIndex.value, currentWordIndex.value)
+  }
 })
 
 onMounted(async () => {
@@ -2813,6 +2843,8 @@ onMounted(async () => {
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
     window.addEventListener('beforeunload', handleRecitationBeforeUnload)
+    window.addEventListener('pagehide', handleRecitationBeforeUnload)
+    document.addEventListener('visibilitychange', handlePageHidden)
     window.addEventListener(
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
@@ -2886,6 +2918,8 @@ onUnmounted(() => {
   persistRecitationBeforeLeave()
   if (typeof window !== 'undefined') {
     window.removeEventListener('beforeunload', handleRecitationBeforeUnload)
+    window.removeEventListener('pagehide', handleRecitationBeforeUnload)
+    document.removeEventListener('visibilitychange', handlePageHidden)
     window.removeEventListener(
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
