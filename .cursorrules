@@ -34,3 +34,5 @@ The user operates with a physical disability. Minimize typing, scrolling, and ma
 **LANGUAGE PICKER:** In `src/layouts/AppShell.vue` it is a "Languages" button opening a dialog with a searchable horizontal flag-chip grid (`.locale-cell`) — all locales visible, scrolls inside the dialog, scales to many locales. Do NOT revert to a `q-select` dropdown (it clipped/couldn't scroll on iPhone).
 
 **CI:** GitHub Actions `release.yml` fails at the tag-push step due to branch protection rules (cannot create/force tag `v3.x`), and E2E can OOM (exit 137). These do NOT deploy Cloudflare and do NOT block the live site.
+
+**NO ADS — EVER:** peace2074.com is free. NEVER add AdSense, banner ads, ad networks, sponsored slots, Instagram promos, or any monetization ads. Google Analytics (gtag) for usage stats is OK — that is not ads.

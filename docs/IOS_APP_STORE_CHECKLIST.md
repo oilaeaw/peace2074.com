@@ -99,7 +99,7 @@ Location: `ios/App/App/Assets.xcassets/AppIcon.appiconset/`
 - [ ] `NSCameraUsageDescription` (if using camera)
 - [ ] `NSPhotoLibraryUsageDescription` (if using photos)
 - [ ] `NSLocationWhenInUseUsageDescription` (if using location)
-- [ ] `NSUserTrackingUsageDescription` (if tracking - required for ads)
+- [ ] `NSUserTrackingUsageDescription` (only if App Tracking Transparency is used)
 - [ ] All descriptions are clear and user-friendly
 
 #### App Capabilities (Xcode → Signing & Capabilities)

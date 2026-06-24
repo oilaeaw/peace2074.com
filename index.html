@@ -151,12 +151,8 @@
         // show as "(not set)". url_passthrough preserves UTM/gclid params
         // in links when analytics_storage is denied.
         gtag('consent', 'default', {
-          ad_user_data: 'denied',
-          ad_personalization: 'denied',
-          ad_storage: 'denied',
           analytics_storage: 'denied',
           url_passthrough: true,
-          ads_data_redaction: true,
         })
 
         const gaScript = document.createElement('script')
@@ -168,12 +164,9 @@
         gtag('js', new Date())
         gtag('config', 'G-XN9FGVQBKX')
 
-        // Function to grant all consent
+        // Function to grant analytics consent only (no ads)
         window.allConsentGranted = function () {
           gtag('consent', 'update', {
-            ad_user_data: 'granted',
-            ad_personalization: 'granted',
-            ad_storage: 'granted',
             analytics_storage: 'granted',
           })
           window.dispatchEvent(new CustomEvent('analytics-consent-granted'))

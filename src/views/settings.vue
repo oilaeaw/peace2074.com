@@ -19,6 +19,10 @@ import {
   readFontSizePreference,
   readHighContrastPreference,
 } from '@/utils/accessibility-preferences'
+import {
+  useProfileSettings,
+  type QuranHighlightMode,
+} from '@/composables/useProfileSettings'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -32,6 +36,16 @@ const DARK_MODE_KEY = 'pref-dark-mode'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
+const { highlightMode, loadProfileSettings, setHighlightMode } =
+  useProfileSettings()
+const selectedHighlightMode = computed<QuranHighlightMode>({
+  get: () => highlightMode.value,
+  set: (mode) => {
+    void setHighlightMode(mode).catch((error) => {
+      console.warn('Failed to save highlight mode:', error)
+    })
+  },
+})
 
 function isNativeRuntime(): boolean {
   if (typeof window === 'undefined') return false
@@ -190,6 +204,7 @@ watch(enableNotifications, async (val) => {
 onMounted(async () => {
   applyFontSize(fontSize.value)
   applyHighContrast(highContrast.value)
+  await loadProfileSettings()
   fetchTranslators()
 
   if (!enableNotifications.value) return
@@ -816,6 +831,35 @@ async function reloadApp() {
                   class="q-mt-sm"
                   style="max-width: 320px"
                   :aria-label="t('pages.settings.display.translator')"
+                />
+              </div>
+            </div>
+            <q-separator spaced />
+            <div class="setting-row">
+              <div style="flex: 1">
+                <div class="text-subtitle1">
+                  {{ t('pages.preferences.quran.highlightMode') }}
+                </div>
+                <div class="text-caption setting-hint">
+                  {{ t('pages.preferences.quran.hint') }}
+                </div>
+                <q-btn-toggle
+                  v-model="selectedHighlightMode"
+                  class="q-mt-sm"
+                  :options="[
+                    {
+                      label: t('pages.preferences.quran.highlightWord'),
+                      value: 'word',
+                    },
+                    {
+                      label: t('pages.preferences.quran.highlightSentence'),
+                      value: 'ayah',
+                    },
+                  ]"
+                  color="primary"
+                  toggle-color="primary"
+                  unelevated
+                  outline
                 />
               </div>
             </div>

@@ -1,12 +1,13 @@
 <script setup lang="ts">
-import { useRoute, useRouter } from 'vue-router'
+import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, onUnmounted, watch, computed, nextTick } from 'vue'
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
-import { useProfileSettings } from '@/composables/useProfileSettings'
+import { useProfileSettings, type RecitationPlaybackPosition } from '@/composables/useProfileSettings'
+import { useAuthStore } from '@/stores/auth.pinia'
 import {
   applySeoMeta,
   buildBreadcrumbStructuredData,
@@ -44,6 +45,7 @@ const router = useRouter()
 const q2p = useQ2P()
 const $q = useQuasar()
 const bookmarksStore = useBookmarksStore()
+const authStore = useAuthStore()
 const QURAN_TRANSLATION_KEY = 'quran-show-translation'
 
 /** Strip HTML tags that quran.com injects into some translation texts (e.g. <sup> footnotes). */
@@ -520,12 +522,7 @@ const isLoadingFromCache = ref(false)
 const offlineRecitationStatus = ref<OfflineRecitationStatus | null>(null)
 
 // Persistent playback position
-interface PlaybackPosition {
-  suraId: number
-  ayahIndex: number
-  audioTime: number
-  timestamp: number
-}
+interface PlaybackPosition extends RecitationPlaybackPosition {}
 const PLAYBACK_POSITION_KEY = 'quran-playback-position'
 const playbackPositionStore = useStorageRef<PlaybackPosition | null>(
   PLAYBACK_POSITION_KEY,
@@ -541,7 +538,8 @@ const autoContinueEnabled = computed({
 })
 
 // Highlight mode is sourced from the authenticated profile settings in MongoDB.
-const { highlightMode, loadProfileSettings } = useProfileSettings()
+const { highlightMode, loadProfileSettings, saveRecitationProgress, savedPlaybackPosition } =
+  useProfileSettings()
 
 // Ayah action hover/tap widget state.
 // This is a supported Quran reading interaction and should not be removed
@@ -1800,7 +1798,10 @@ function playAyah(index: number) {
     // Preload next ayah for seamless playback
     preloadNextAyah(index + 1)
 
-    el.ontimeupdate = () => updateCurrentWord(el.currentTime)
+    el.ontimeupdate = () => {
+      updateCurrentWord(el.currentTime)
+      savePlaybackPosition()
+    }
     el.onended = () => {
       if (stopRequested.value) {
         stopAudio()
@@ -1898,37 +1899,72 @@ function stopAudio() {
   clearPlaybackPosition()
 }
 
-function savePlaybackPosition() {
-  if (currentAyahIndex.value >= 0 && currentSuraId.value) {
-    const position: PlaybackPosition = {
-      suraId: currentSuraId.value,
-      ayahIndex: currentAyahIndex.value,
-      audioTime: audioEl.value?.currentTime || 0,
-      timestamp: Date.now(),
-    }
-    playbackPositionStore.set(position)
+let lastPlaybackSaveAt = 0
+
+function pickSavedPlaybackPosition(): PlaybackPosition | null {
+  const local = playbackPositionStore.value.value
+  const remote = savedPlaybackPosition.value
+
+  if (!local) return remote
+  if (!remote) return local
+
+  return local.timestamp >= remote.timestamp ? local : remote
+}
+
+function savePlaybackPosition(force = false) {
+  if (currentAyahIndex.value < 0 || !currentSuraId.value) {
+    return
+  }
+
+  const position: PlaybackPosition = {
+    suraId: currentSuraId.value,
+    ayahIndex: currentAyahIndex.value,
+    wordIndex: currentWordIndex.value,
+    audioTime: audioEl.value?.currentTime || 0,
+    timestamp: Date.now(),
+    readerMode: readerMode.value,
+  }
+
+  playbackPositionStore.set(position)
+
+  const now = Date.now()
+  if (!force && now - lastPlaybackSaveAt < 2500) {
+    return
+  }
+  lastPlaybackSaveAt = now
+
+  if (authStore.isAuthenticated) {
+    void saveRecitationProgress(position)
   }
 }
 
 function clearPlaybackPosition() {
   playbackPositionStore.set(null)
+  if (authStore.isAuthenticated) {
+    void saveRecitationProgress(null)
+  }
 }
 
 async function restorePlaybackPosition() {
-  const saved = playbackPositionStore.value.value
+  const saved = pickSavedPlaybackPosition()
   if (!saved || saved.suraId !== currentSuraId.value) {
     return false
   }
 
-  // Check if position is not too old (within last 24 hours)
+  // Check if position is not too old (within last 7 days)
   const hoursSinceLastPlay = (Date.now() - saved.timestamp) / (1000 * 60 * 60)
-  if (hoursSinceLastPlay > 24) {
+  if (hoursSinceLastPlay > 24 * 7) {
     clearPlaybackPosition()
     return false
   }
 
   // Restore position
   currentAyahIndex.value = saved.ayahIndex
+  currentWordIndex.value =
+    typeof saved.wordIndex === 'number' ? saved.wordIndex : -1
+  if (saved.readerMode === 'audio' || saved.readerMode === 'tts') {
+    readerMode.value = saved.readerMode
+  }
 
   // Show notification asking if they want to resume
   $q.notify({
@@ -1948,6 +1984,9 @@ async function restorePlaybackPosition() {
           // Seek to saved time if available
           if (audioEl.value && saved.audioTime > 0) {
             audioEl.value.currentTime = saved.audioTime
+            updateCurrentWord(saved.audioTime)
+          } else if (currentWordIndex.value >= 0) {
+            scrollToCurrentWord(saved.ayahIndex, currentWordIndex.value)
           }
         },
       },
@@ -1957,12 +1996,38 @@ async function restorePlaybackPosition() {
         handler: () => {
           clearPlaybackPosition()
           currentAyahIndex.value = -1
+          currentWordIndex.value = -1
         },
       },
     ],
   })
 
   return true
+}
+
+function getRecitationScrollOffset() {
+  if (typeof window === 'undefined') {
+    return 120
+  }
+
+  const heading = document.querySelector('.sura-heading.is-reciting')
+  const headingHeight = heading?.getBoundingClientRect().height || 0
+  const appHeader =
+    document.querySelector('.q-header')?.getBoundingClientRect().height || 56
+
+  return Math.ceil(headingHeight + appHeader + 16)
+}
+
+function persistRecitationBeforeLeave() {
+  if (currentAyahIndex.value >= 0) {
+    savePlaybackPosition(true)
+  }
+
+  if (isPlayingAudio.value) {
+    pauseAudio()
+  } else if (isTTSPlaying.value) {
+    pauseTTS()
+  }
 }
 
 function canStartHoveredVerse(verse: number) {
@@ -2343,6 +2408,13 @@ const isPaused = computed(() => {
   }
 })
 
+const showRecitationStickyHeader = computed(
+  () =>
+    isReading.value ||
+    isPaused.value ||
+    (currentAyahIndex.value >= 0 && highlightMode.value === 'word')
+)
+
 const isHoverAudioPaused = computed(
   () => Boolean(audioEl.value?.paused) && currentAyahIndex.value >= 0
 )
@@ -2485,7 +2557,7 @@ function pauseAudio() {
     audioEl.value.pause()
     isPlayingAudio.value = false
     // Save position for later resumption
-    savePlaybackPosition()
+    savePlaybackPosition(true)
     notify({
       type: 'info',
       message: t('pages.quran.paused') || 'Paused',
@@ -2519,7 +2591,7 @@ function pauseTTS() {
     window.speechSynthesis.pause()
     isTTSPlaying.value = false
     // Save position for TTS as well
-    savePlaybackPosition()
+    savePlaybackPosition(true)
     notify({
       type: 'info',
       message: t('pages.quran.paused') || 'Paused',
@@ -2588,23 +2660,26 @@ function scrollToCurrentWord(ayahIndex: number, wordIndex: number) {
   }
 
   const el = document.getElementById(wordId)
-  if (el) {
-    const rect = el.getBoundingClientRect()
-    const verticalMargin = Math.min(window.innerHeight * 0.18, 140)
-    const isWithinViewport =
-      rect.top >= verticalMargin &&
-      rect.bottom <= window.innerHeight - verticalMargin
+  if (!el) return
 
-    if (isWithinViewport) {
-      return
-    }
+  const offset = getRecitationScrollOffset()
+  const rect = el.getBoundingClientRect()
+  const viewportBandTop = offset
+  const viewportBandBottom = window.innerHeight - Math.min(window.innerHeight * 0.2, 120)
+  const isWithinViewport =
+    rect.top >= viewportBandTop && rect.bottom <= viewportBandBottom
 
-    el.scrollIntoView({
-      behavior: 'smooth',
-      block: 'center',
-      inline: 'nearest',
-    })
+  if (isWithinViewport) {
+    return
   }
+
+  const targetTop =
+    window.scrollY + rect.top - offset - (window.innerHeight - offset) * 0.32
+
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: 'smooth',
+  })
 }
 
 function getHoverWidgetStyle() {
@@ -2724,10 +2799,20 @@ function handleOfflineDownloadStatus(status: {
   }
 }
 
+const handleRecitationBeforeUnload = () => {
+  persistRecitationBeforeLeave()
+}
+
+onBeforeRouteLeave(() => {
+  persistRecitationBeforeLeave()
+})
+
 onMounted(async () => {
+  await authStore.hydrateSession()
   await loadProfileSettings()
   syncShowTranslationPreference()
   if (typeof window !== 'undefined') {
+    window.addEventListener('beforeunload', handleRecitationBeforeUnload)
     window.addEventListener(
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
@@ -2798,7 +2883,9 @@ onMounted(async () => {
 })
 
 onUnmounted(() => {
+  persistRecitationBeforeLeave()
   if (typeof window !== 'undefined') {
+    window.removeEventListener('beforeunload', handleRecitationBeforeUnload)
     window.removeEventListener(
       'quran-translation-visibility-changed',
       syncShowTranslationPreference
@@ -2978,7 +3065,7 @@ watch(
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
-      <div class="sura-heading">
+      <div class="sura-heading" :class="{ 'is-reciting': showRecitationStickyHeader }">
         <div>
           <div
             class="text-h5 sura-title-swipeable"
@@ -3723,6 +3810,19 @@ watch(
   flex-wrap: wrap;
 }
 
+.sura-heading.is-reciting {
+  position: sticky;
+  top: calc(env(safe-area-inset-top, 0px) + 56px);
+  z-index: 25;
+  margin: -16px -16px 12px;
+  padding: 12px 16px 10px;
+  border-radius: 0 0 16px 16px;
+  background: rgba(253, 251, 246, 0.96);
+  backdrop-filter: blur(8px);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.08);
+  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
 .sura-title-swipeable {
   user-select: none;
   touch-action: pan-y;
@@ -4158,6 +4258,18 @@ watch(
   border-radius: 6px;
   transition: background 0.15s ease;
   box-shadow: 0 2px 4px rgba(255, 193, 7, 0.4);
+}
+
+body.body--dark .is-current-word {
+  background: #ffb300;
+  color: #111111;
+  box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.45);
+}
+
+body.body--dark .sura-heading.is-reciting {
+  background: rgba(18, 18, 18, 0.96);
+  border-bottom-color: rgba(255, 255, 255, 0.12);
+  box-shadow: 0 10px 24px rgba(0, 0, 0, 0.45);
 }
 
 .audio-hover-widget {
