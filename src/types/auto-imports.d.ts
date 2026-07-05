@@ -353,7 +353,7 @@ declare global {
   export type { RecitationDownloadProgress, RecitationQuality, OfflineRecitationStatus } from '../composables/useOfflineRecitation'
   import('../composables/useOfflineRecitation')
   // @ts-ignore
-  export type { QuranHighlightMode } from '../composables/useProfileSettings'
+  export type { QuranHighlightMode, RecitationPlaybackPosition } from '../composables/useProfileSettings'
   import('../composables/useProfileSettings')
   // @ts-ignore
   export type { QuranReadingPosition, QuranSyncPayload } from '../composables/useQuranSync'
