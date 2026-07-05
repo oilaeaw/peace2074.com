@@ -1,19 +1,15 @@
-// Mongoose-backed user storage.
-// Primary: MongoDB Atlas (DATABASE_URL)
-// Fallback: local MongoDB (DATABASE_URL_LOCAL) — used when Atlas is unreachable.
-// Writes during outage are queued and flushed back to Atlas on recovery.
+/**
+ * User storage backed by @waelio/realdb (NitroStorageAdapter).
+ * Data is persisted to Nitro's .data/ directory and falls back to
+ * in-process memory on edge runtimes (Cloudflare Workers).
+ *
+ * No MongoDB required.
+ */
 
-import { createDatabaseRequiredError, isFallbackAuthStorageAllowed, hasLocalDbFallback } from './database-mode'
-import { getMongoose } from './mongoose'
-import { getLocalConnection, queueWrite, isLocalConnected } from './mongoose-local'
-import { UserModel } from '../models/User'
-import { ReaderStatsModel } from '../models/ReaderStats'
-import { DeployLikeModel } from '../models/DeployLike'
-import { BlogLikeModel } from '../models/BlogLike'
-import { QuranProgressModel } from '../models/QuranProgress'
-import { TasbeehModel } from '../models/Tasbeeh'
-import { ProfileModel } from '../models/Profile'
-import { createProfile, getProfile, updateProfile } from './profile'
+import { getDb } from './realdb'
+import { createProfile, getProfile, updateProfile, deleteProfileByUserId } from './profile'
+import { deleteReaderStatsByUserId } from './reader-stats'
+import { deleteTasbeehByUserId } from './tasbeeh'
 import { isCloudinaryAssetUrl, isLikelyOAuthAvatarUrl, resolveOAuthAvatarUrl } from './cloudinary'
 
 export interface User {
@@ -29,6 +25,9 @@ export interface User {
     last_name?: string
     avatar_url?: string
     github_id?: string
+    banned?: boolean
+    bannedAt?: string | null
+    bannedReason?: string | null
     tasbeeh?: any[]
     bookmarks?: any[]
 }
@@ -37,6 +36,8 @@ export interface UserPermission {
     action: string
     subject: string
 }
+
+// ── Permissions ───────────────────────────────────────────────────────────────
 
 const DEFAULT_USER_PERMISSIONS: UserPermission[] = [
     { action: 'read', subject: 'category' },
@@ -57,21 +58,19 @@ const EDITOR_EXTRA_PERMISSIONS: UserPermission[] = [
 ]
 
 function clonePermissions(permissions: UserPermission[]) {
-    return permissions.map((permission) => ({ ...permission }))
+    return permissions.map((p) => ({ ...p }))
 }
 
-function isPermissionEntry(permission: unknown): permission is UserPermission {
-    if (!permission || typeof permission !== 'object') return false
-
-    const candidate = permission as UserPermission
-    return typeof candidate.action === 'string' && typeof candidate.subject === 'string'
+function isPermissionEntry(p: unknown): p is UserPermission {
+    if (!p || typeof p !== 'object') return false
+    const c = p as UserPermission
+    return typeof c.action === 'string' && typeof c.subject === 'string'
 }
 
 function dedupePermissions(permissions: UserPermission[]) {
     const seen = new Set<string>()
-
-    return permissions.filter((permission) => {
-        const key = `${permission.action}:${permission.subject}`
+    return permissions.filter((p) => {
+        const key = `${p.action}:${p.subject}`
         if (seen.has(key)) return false
         seen.add(key)
         return true
@@ -80,26 +79,19 @@ function dedupePermissions(permissions: UserPermission[]) {
 
 export function getRolePermissions(role: string = 'user') {
     const permissions = clonePermissions(DEFAULT_USER_PERMISSIONS)
-
-    if (role === 'admin') {
-        permissions.push(...clonePermissions(ADMIN_EXTRA_PERMISSIONS))
-    } else if (role === 'editor') {
-        permissions.push(...clonePermissions(EDITOR_EXTRA_PERMISSIONS))
-    }
-
+    if (role === 'admin') permissions.push(...clonePermissions(ADMIN_EXTRA_PERMISSIONS))
+    else if (role === 'editor') permissions.push(...clonePermissions(EDITOR_EXTRA_PERMISSIONS))
     return dedupePermissions(permissions)
 }
 
 export function resolveUserPermissions(user?: Pick<User, 'role' | 'permissions'> | null) {
-    const storedPermissions = Array.isArray(user?.permissions)
-        ? user.permissions.filter(isPermissionEntry).map((permission) => ({ ...permission }))
+    const stored = Array.isArray(user?.permissions)
+        ? user.permissions.filter(isPermissionEntry).map((p) => ({ ...p }))
         : []
-
-    return dedupePermissions([
-        ...getRolePermissions(user?.role || 'user'),
-        ...storedPermissions,
-    ])
+    return dedupePermissions([...getRolePermissions(user?.role || 'user'), ...stored])
 }
+
+// ── Default seed users ────────────────────────────────────────────────────────
 
 const DEFAULT_USERS: User[] = [
     {
@@ -108,117 +100,15 @@ const DEFAULT_USERS: User[] = [
         password: 'gLHVHtMcSY8Sum+H',
         email: 'wael@peace2074.com',
         role: 'admin',
-        permissions: getRolePermissions('admin')
-    }
+        permissions: getRolePermissions('admin'),
+    },
 ]
 
-const USERS_KEY = 'db:users'
-let initPromise: Promise<void> | null = null
-let memoryUsers: User[] | null = null
-let dbFailureLogged = false
+// ── Helpers ───────────────────────────────────────────────────────────────────
 
-function markDbUnavailable(error: unknown) {
-    initPromise = null
-    if (!dbFailureLogged) {
-        dbFailureLogged = true
-        console.warn('[users] MongoDB unavailable, falling back to Nitro storage:', error)
-    }
-}
-
-function repairUsers(users: User[]) {
-    if (!Array.isArray(users) || !users.length) return { users, changed: false }
-
-    const defaultsById = new Map(DEFAULT_USERS.map((u) => [u.id, u]))
-    let changed = false
-
-    const repaired = users.map((user) => {
-        const fallback = defaultsById.get(user.id)
-        if (!user.password && fallback?.password) {
-            changed = true
-            return { ...user, password: fallback.password }
-        }
-        return user
-    })
-
-    return { users: repaired, changed }
-}
-
-async function loadFallbackUsers(): Promise<User[]> {
-    if (!isFallbackAuthStorageAllowed()) {
-        throw createDatabaseRequiredError()
-    }
-
-    if (memoryUsers && memoryUsers.length > 0) {
-        const repaired = repairUsers(memoryUsers)
-        if (repaired.changed) {
-            memoryUsers = repaired.users
-        }
-        return memoryUsers
-    }
-
-    try {
-        const storage = useStorage('data')
-        const existing = await storage.getItem<User[]>(USERS_KEY)
-        if (Array.isArray(existing) && existing.length > 0) {
-            const repaired = repairUsers(existing.map(normalizeUser))
-            memoryUsers = repaired.users
-            if (repaired.changed) {
-                try {
-                    await storage.setItem(USERS_KEY, memoryUsers)
-                } catch {
-                    /* noop - in-memory fallback only */
-                }
-            }
-            return memoryUsers
-        }
-
-        memoryUsers = [...DEFAULT_USERS]
-        try {
-            await storage.setItem(USERS_KEY, memoryUsers)
-        } catch {
-            /* noop - in-memory fallback only */
-        }
-        return memoryUsers
-    } catch {
-        memoryUsers = [...DEFAULT_USERS]
-        return memoryUsers
-    }
-}
-
-async function saveFallbackUsers(users: User[]) {
-    if (!isFallbackAuthStorageAllowed()) {
-        throw createDatabaseRequiredError()
-    }
-
-    memoryUsers = users
-    try {
-        const storage = useStorage('data')
-        await storage.setItem(USERS_KEY, users)
-    } catch {
-        /* noop - in-memory fallback only */
-    }
-}
-
-function toAppUser(user: any): User {
-    return {
-        id: user._id || user.id,
-        username: user.username,
-        password: user.password,
-        email: user.email,
-        role: user.role,
-        first_name: user.first_name || undefined,
-        last_name: user.last_name || undefined,
-        tasbeeh: Array.isArray(user.tasbeeh) ? user.tasbeeh : [],
-        bookmarks: Array.isArray(user.bookmarks) ? user.bookmarks : [],
-        avatar_url: user.avatar_url || undefined,
-        github_id: user.github_id || undefined,
-        google_id: user.google_id || undefined,
-        apple_id: user.apple_id || undefined,
-        permissions: resolveUserPermissions({
-            role: user.role,
-            permissions: Array.isArray(user.permissions) ? user.permissions : [],
-        }),
-    }
+async function usersCollection() {
+    const db = await getDb()
+    return db.collection<User>('users')
 }
 
 function normalizeUser(input: Partial<User>): User {
@@ -236,6 +126,9 @@ function normalizeUser(input: Partial<User>): User {
         github_id: input.github_id,
         google_id: input.google_id,
         apple_id: input.apple_id,
+        banned: input.banned ?? false,
+        bannedAt: input.bannedAt ?? null,
+        bannedReason: input.bannedReason ?? null,
         permissions: resolveUserPermissions({
             role: String(input.role || 'user'),
             permissions: Array.isArray(input.permissions) ? input.permissions : [],
@@ -245,25 +138,15 @@ function normalizeUser(input: Partial<User>): User {
 
 function normalizeOptionalText(value: unknown): string | undefined {
     if (typeof value !== 'string') return undefined
-
-    const normalized = value.trim()
-    return normalized || undefined
+    const n = value.trim()
+    return n || undefined
 }
 
 function splitDisplayName(name: string) {
-    const normalized = name.trim().replace(/\s+/g, ' ')
-    if (!normalized) {
-        return {
-            firstName: undefined,
-            lastName: undefined,
-        }
-    }
-
-    const [firstName, ...rest] = normalized.split(' ')
-    return {
-        firstName: firstName || undefined,
-        lastName: rest.join(' ').trim() || undefined,
-    }
+    const n = name.trim().replace(/\s+/g, ' ')
+    if (!n) return { firstName: undefined, lastName: undefined }
+    const [firstName, ...rest] = n.split(' ')
+    return { firstName: firstName || undefined, lastName: rest.join(' ').trim() || undefined }
 }
 
 function getOAuthNameParts(oauthInfo: {
@@ -276,7 +159,6 @@ function getOAuthNameParts(oauthInfo: {
     const explicitLastName = normalizeOptionalText(oauthInfo.lastName)
     const splitName = splitDisplayName(oauthInfo.name || '')
     const emailUsername = normalizeOptionalText(oauthInfo.email.split('@')[0]) || 'user'
-
     return {
         firstName: explicitFirstName || splitName.firstName || emailUsername,
         lastName: explicitLastName || splitName.lastName,
@@ -286,7 +168,6 @@ function getOAuthNameParts(oauthInfo: {
 function shouldAttemptAvatarRefresh(currentAvatar: string | undefined, nextAvatar: string | undefined) {
     const current = normalizeOptionalText(currentAvatar)
     const next = normalizeOptionalText(nextAvatar)
-
     if (!next) return false
     if (!current) return true
     if (current === next) return true
@@ -296,7 +177,6 @@ function shouldAttemptAvatarRefresh(currentAvatar: string | undefined, nextAvata
 function shouldPersistAvatar(currentAvatar: string | undefined, nextAvatar: string | undefined) {
     const current = normalizeOptionalText(currentAvatar)
     const next = normalizeOptionalText(nextAvatar)
-
     if (!next) return false
     if (!current) return true
     if (current === next) return false
@@ -319,37 +199,32 @@ function createOAuthUserId(provider: 'google' | 'apple' | 'github', providerId: 
 }
 
 async function resolvePersistedOAuthAvatar(
-    oauthInfo: {
-        provider: 'google' | 'apple' | 'github'
-        providerId: string
-        picture?: string
-    },
+    oauthInfo: { provider: 'google' | 'apple' | 'github'; providerId: string; picture?: string },
     currentAvatar?: string
 ) {
-    if (!shouldAttemptAvatarRefresh(currentAvatar, oauthInfo.picture)) {
-        return undefined
-    }
-
-    return await resolveOAuthAvatarUrl({
+    if (!shouldAttemptAvatarRefresh(currentAvatar, oauthInfo.picture)) return undefined
+    return resolveOAuthAvatarUrl({
         provider: oauthInfo.provider,
         providerId: oauthInfo.providerId,
         imageUrl: oauthInfo.picture,
     })
 }
 
-async function syncOAuthProfile(userId: string, oauthInfo: {
-    provider: 'google' | 'apple' | 'github'
-    providerId: string
-    email: string
-    name: string
-    firstName?: string
-    lastName?: string
-}, avatarUrl?: string) {
+async function syncOAuthProfile(
+    userId: string,
+    oauthInfo: {
+        provider: 'google' | 'apple' | 'github'
+        providerId: string
+        email: string
+        name: string
+        firstName?: string
+        lastName?: string
+    },
+    avatarUrl?: string
+) {
     const { firstName, lastName } = getOAuthNameParts(oauthInfo)
-
     try {
         const profile = await getProfile(userId)
-
         if (!profile) {
             await createProfile({
                 userId,
@@ -360,304 +235,170 @@ async function syncOAuthProfile(userId: string, oauthInfo: {
             })
             return
         }
-
         const updates: Record<string, any> = {}
-
-        if (!profile.first_name && firstName) {
-            updates.first_name = firstName
-        }
-
-        if (!profile.last_name && lastName) {
-            updates.last_name = lastName
-        }
-
-        if (shouldPersistAvatar(profile.avatar_url || undefined, avatarUrl)) {
-            updates.avatar_url = avatarUrl
-        }
-
-        if (oauthInfo.provider === 'github' && !profile.github_id) {
-            updates.github_id = oauthInfo.providerId
-        }
-
-        if (Object.keys(updates).length > 0) {
-            await updateProfile(userId, updates)
-        }
+        if (!profile.first_name && firstName) updates.first_name = firstName
+        if (!profile.last_name && lastName) updates.last_name = lastName
+        if (shouldPersistAvatar(profile.avatar_url, avatarUrl)) updates.avatar_url = avatarUrl
+        if (oauthInfo.provider === 'github' && !profile.github_id) updates.github_id = oauthInfo.providerId
+        if (Object.keys(updates).length > 0) await updateProfile(userId, updates)
     } catch (error) {
-        console.warn('[findOrCreateOAuthUser] Profile sync failed', {
-            userId,
-            provider: oauthInfo.provider,
-            error,
+        console.warn('[syncOAuthProfile] Profile sync failed', { userId, provider: oauthInfo.provider, error })
+    }
+}
+
+/** Ensure default seed users exist in the database */
+let seeded = false
+async function ensureSeeded() {
+    if (seeded) return
+    seeded = true
+
+    const col = await usersCollection()
+    for (const seedUser of DEFAULT_USERS) {
+        const existing = await col.find({
+            filter: [{ field: 'id', op: 'eq', value: seedUser.id }],
         })
-    }
-}
-
-async function readLegacyUsers(): Promise<User[]> {
-    try {
-        const storage = useStorage('data')
-        const existing = await storage.getItem<User[]>(USERS_KEY)
-        if (!Array.isArray(existing)) return []
-        return existing.map(normalizeUser).filter((u) => u.id && u.username && u.email)
-    } catch {
-        return []
-    }
-}
-
-async function upsertByIdentity(user: User) {
-    const existing = await UserModel.findOne({
-        $or: [{ _id: user.id }, { username: user.username }, { email: user.email }],
-    }).lean()
-
-    const payload = {
-        username: user.username,
-        password: user.password,
-        email: user.email,
-        role: user.role,
-        google_id: user.google_id || null,
-        apple_id: user.apple_id || null,
-        first_name: user.first_name || null,
-        last_name: user.last_name || null,
-        avatar_url: user.avatar_url || null,
-        github_id: user.github_id || null,
-        permissions: resolveUserPermissions(user),
-    }
-
-    if (existing) {
-        await UserModel.findByIdAndUpdate((existing as any)._id, {
-            ...payload,
-            password: payload.password || (existing as any).password,
-        })
-        return
-    }
-
-    await UserModel.create({ _id: user.id, ...payload })
-}
-
-async function repairExistingPasswords() {
-    const allUsers = await UserModel.find().lean()
-    const usersNeedingRepair = allUsers.filter((u: any) => !u.password || u.password === '')
-
-    if (!usersNeedingRepair.length) return
-
-    const defaultsById = new Map(DEFAULT_USERS.map((u) => [u.id, u]))
-    for (const user of usersNeedingRepair) {
-        const fallback = defaultsById.get((user as any)._id)
-        if (!fallback?.password) continue
-        await UserModel.findByIdAndUpdate((user as any)._id, { password: fallback.password })
-    }
-}
-
-async function ensureInitialized() {
-    if (initPromise) return initPromise
-
-    initPromise = (async () => {
-        try {
-            await UserModel.countDocuments()
-            const legacyUsers = await readLegacyUsers()
-            const merged = repairUsers([...legacyUsers, ...DEFAULT_USERS]).users
-
-            const deduped = new Map<string, User>()
-            for (const user of merged) {
-                const normalized = normalizeUser(user)
-                if (!normalized.id || !normalized.username || !normalized.email) continue
-                if (!deduped.has(normalized.id)) {
-                    deduped.set(normalized.id, normalized)
-                }
-            }
-
-            for (const user of deduped.values()) {
-                await upsertByIdentity(user)
-            }
-        } catch (error) {
-            initPromise = null
-            throw error
+        if (!existing.length) {
+            await col.insert(normalizeUser(seedUser))
+        } else if (!existing[0]?.password && seedUser.password) {
+            // Repair missing password
+            await col.update(existing[0].id!, { password: seedUser.password })
         }
-    })()
-
-    return initPromise
-}
-
-async function isDbReady() {
-    try {
-        await getMongoose()
-        await ensureInitialized()
-        dbFailureLogged = false
-        return true
-    } catch (error) {
-        markDbUnavailable(error)
-        return false
     }
 }
 
-/** Returns a UserModel bound to the local MongoDB connection, or null if unavailable. */
-async function getLocalUserModel() {
-    if (!hasLocalDbFallback()) return null
-    try {
-        const conn = await getLocalConnection()
-        if (!conn) return null
-        // Re-use existing model on this connection or register it
-        return conn.models['User'] ?? conn.model('User', UserModel.schema)
-    } catch {
-        return null
-    }
-}
+// ── Public API ────────────────────────────────────────────────────────────────
 
 export async function getAllUsers(): Promise<User[]> {
-    if (await isDbReady()) {
-        try {
-            const users = await UserModel.find().lean()
-            return users.map(toAppUser)
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    return await loadFallbackUsers()
+    await ensureSeeded()
+    const col = await usersCollection()
+    const docs = await col.findAll()
+    return docs as unknown as User[]
 }
 
-export async function findUserByUsername(username: string) {
-    if (await isDbReady()) {
-        try {
-            const user = await UserModel.findOne({ username }).lean()
-            return user ? toAppUser(user) : undefined
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    const users = await loadFallbackUsers()
-    return users.find((u) => u.username === username)
+export async function findUserByUsername(username: string): Promise<User | undefined> {
+    await ensureSeeded()
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'username', op: 'eq', value: username }],
+    })
+    return results[0] as unknown as User | undefined
 }
 
-export async function findUserByEmail(email: string) {
-    if (await isDbReady()) {
-        try {
-            const user = await UserModel.findOne({ email }).lean()
-            return user ? toAppUser(user) : undefined
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    const users = await loadFallbackUsers()
-    return users.find((u) => u.email === email)
+export async function findUserByEmail(email: string): Promise<User | undefined> {
+    await ensureSeeded()
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'email', op: 'eq', value: email }],
+    })
+    return results[0] as unknown as User | undefined
 }
 
-export async function findUserById(id: string) {
-    if (await isDbReady()) {
-        try {
-            const user = await UserModel.findById(id).lean()
-            return user ? toAppUser(user) : undefined
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    const users = await loadFallbackUsers()
-    return users.find((u) => u.id === id)
+export async function findUserById(id: string): Promise<User | undefined> {
+    await ensureSeeded()
+    const col = await usersCollection()
+    // RealDB uses its own auto-generated `id` field, but our users use a custom `id`.
+    // We stored the app id as a field named `id`, so search by field.
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: id }],
+    })
+    return results[0] as unknown as User | undefined
 }
 
-export async function updateUserPassword(userId: string, newPassword: string) {
-    if (await isDbReady()) {
-        try {
-            const result = await UserModel.findByIdAndUpdate(userId, { password: newPassword })
-            if (!result) return false
-            return true
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    const users = await loadFallbackUsers()
-    const user = users.find((u) => u.id === userId)
-    if (!user) return false
-    user.password = newPassword
-    await saveFallbackUsers(users)
+export async function updateUserPassword(userId: string, newPassword: string): Promise<boolean> {
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: userId }],
+    })
+    if (!results[0]?.id) return false
+    await col.update(results[0].id!, { password: newPassword })
     return true
 }
 
-export async function deleteUserById(userId: string) {
-    if (await isDbReady()) {
-        try {
-            await ReaderStatsModel.deleteMany({ userId })
-            await DeployLikeModel.deleteMany({ userId })
-            await BlogLikeModel.deleteMany({ userId })
-            await QuranProgressModel.deleteMany({ userId })
-            await TasbeehModel.deleteMany({ userId })
-            await ProfileModel.deleteMany({ userId })
+export async function deleteUserById(userId: string): Promise<boolean> {
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: userId }],
+    })
+    if (!results[0]?.id) return false
 
-            const result = await UserModel.findByIdAndDelete(userId)
-            return !!result
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
+    // Delete related records first
+    await Promise.allSettled([
+        deleteReaderStatsByUserId(userId),
+        deleteTasbeehByUserId(userId),
+        deleteProfileByUserId(userId),
+    ])
 
-    const users = await loadFallbackUsers()
-    const nextUsers = users.filter((u) => u.id !== userId)
-
-    if (nextUsers.length === users.length) {
-        return false
-    }
-
-    await saveFallbackUsers(nextUsers)
+    await col.delete(results[0].id!)
     return true
 }
 
-export async function addUser(user: User) {
+export async function addUser(user: User): Promise<void> {
     const normalized = normalizeUser(user)
-
-    if (await isDbReady()) {
-        try {
-            await UserModel.create({
-                _id: normalized.id,
-                username: normalized.username,
-                password: normalized.password,
-                email: normalized.email,
-                role: normalized.role,
-                google_id: normalized.google_id || null,
-                apple_id: normalized.apple_id || null,
-                first_name: normalized.first_name || null,
-                last_name: normalized.last_name || null,
-                avatar_url: normalized.avatar_url || null,
-                github_id: normalized.github_id || null,
-                permissions: normalized.permissions || [],
-            })
-            return
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    const users = await loadFallbackUsers()
-    users.push(normalized)
-    await saveFallbackUsers(users)
+    const col = await usersCollection()
+    await col.insert(normalized)
 }
 
 export async function getUserStorageDiagnostics(): Promise<{
-    source: 'mongoose' | 'fallback' | 'database-required'
+    source: 'realdb'
     usersCount: number
     dbReachable: boolean
     fallbackAllowed: boolean
 }> {
-    const dbReachable = await isDbReady()
-    const fallbackAllowed = isFallbackAuthStorageAllowed()
-
-    if (dbReachable) {
-        try {
-            const usersCount = await UserModel.countDocuments()
-            return { source: 'mongoose', usersCount, dbReachable: true, fallbackAllowed }
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    if (!fallbackAllowed) {
-        return { source: 'database-required', usersCount: 0, dbReachable: false, fallbackAllowed: false }
-    }
-
-    const users = await loadFallbackUsers()
-    return { source: 'fallback', usersCount: users.length, dbReachable: false, fallbackAllowed: true }
+    const col = await usersCollection()
+    const usersCount = await col.count()
+    return { source: 'realdb', usersCount, dbReachable: true, fallbackAllowed: true }
 }
+
+export async function updateUserRoleAndPermissions(
+    userId: string,
+    updates: { role?: string; permissions?: Array<{ action: string; subject: string }> }
+): Promise<User | null> {
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: userId }],
+    })
+    if (!results[0]?.id) return null
+
+    const payload: Partial<User> = {}
+    if (updates.role) {
+        payload.role = updates.role
+        payload.permissions = resolveUserPermissions({ role: updates.role, permissions: updates.permissions ?? [] })
+    } else if (updates.permissions) {
+        payload.permissions = updates.permissions
+    }
+
+    const updated = await col.update(results[0].id!, payload)
+    return updated as unknown as User
+}
+
+export async function banUser(userId: string, reason?: string): Promise<User | null> {
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: userId }],
+    })
+    if (!results[0]?.id) return null
+    const updated = await col.update(results[0].id!, {
+        banned: true,
+        bannedAt: new Date().toISOString(),
+        bannedReason: reason ?? null,
+    })
+    return updated as unknown as User
+}
+
+export async function unbanUser(userId: string): Promise<User | null> {
+    const col = await usersCollection()
+    const results = await col.find({
+        filter: [{ field: 'id', op: 'eq', value: userId }],
+    })
+    if (!results[0]?.id) return null
+    const updated = await col.update(results[0].id!, {
+        banned: false,
+        bannedAt: null,
+        bannedReason: null,
+    })
+    return updated as unknown as User
+}
+
 export async function findOrCreateOAuthUser(oauthInfo: {
     provider: 'google' | 'apple' | 'github'
     providerId: string
@@ -669,230 +410,71 @@ export async function findOrCreateOAuthUser(oauthInfo: {
 }): Promise<User> {
     const { provider, providerId, email, picture } = oauthInfo
     const { firstName, lastName } = getOAuthNameParts(oauthInfo)
-    const providerField = getOAuthProviderField(provider)
+    const providerField = getOAuthProviderField(provider) as keyof User
 
-    if (await isDbReady()) {
-        try {
-            // Check by provider ID first
-            const existingByProvider = await UserModel.findOne({ [providerField]: providerId }).lean()
+    await ensureSeeded()
+    const col = await usersCollection()
 
-            if (existingByProvider) {
-                const rec = existingByProvider as any
-                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url || undefined)
-                const updates: Record<string, any> = {}
+    // 1. Find by provider ID
+    let existingDocs = await col.find({
+        filter: [{ field: providerField as string, op: 'eq', value: providerId }],
+    })
 
-                if (!rec.first_name && firstName) updates.first_name = firstName
-                if (!rec.last_name && lastName) updates.last_name = lastName
-                if (shouldPersistAvatar(rec.avatar_url || undefined, persistedAvatar)) updates.avatar_url = persistedAvatar
+    if (existingDocs[0]) {
+        const rec = existingDocs[0] as unknown as User
+        const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url)
+        const updates: Partial<User> = {}
+        if (!rec.first_name && firstName) updates.first_name = firstName
+        if (!rec.last_name && lastName) updates.last_name = lastName
+        if (shouldPersistAvatar(rec.avatar_url, persistedAvatar)) updates.avatar_url = persistedAvatar
 
-                const userRecord = Object.keys(updates).length > 0
-                    ? await UserModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean()
-                    : rec
-
-                await syncOAuthProfile(rec._id, oauthInfo, persistedAvatar || (userRecord as any)?.avatar_url || undefined)
-                return toAppUser(userRecord)
-            }
-
-            // Check by email (link existing account)
-            const existingByEmail = await UserModel.findOne({ email }).lean()
-
-            if (existingByEmail) {
-                const rec = existingByEmail as any
-                const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url || undefined)
-                const updates: Record<string, any> = { [providerField]: providerId }
-
-                if (!rec.first_name && firstName) updates.first_name = firstName
-                if (!rec.last_name && lastName) updates.last_name = lastName
-                if (shouldPersistAvatar(rec.avatar_url || undefined, persistedAvatar)) updates.avatar_url = persistedAvatar
-
-                const updated = await UserModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean() as any
-                await syncOAuthProfile(updated._id, oauthInfo, persistedAvatar || updated.avatar_url || undefined)
-                return toAppUser(updated)
-            }
-
-            // Create new user
-            const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo)
-            const username = createOAuthUsername(email)
-            const userId = createOAuthUserId(provider, providerId)
-            const newUser = await UserModel.create({
-                _id: userId,
-                username,
-                email,
-                password: '',
-                role: 'user',
-                first_name: firstName || null,
-                last_name: lastName || null,
-                avatar_url: persistedAvatar || picture || null,
-                [providerField]: providerId,
-                permissions: getRolePermissions('user'),
-            })
-
-            await syncOAuthProfile(userId, oauthInfo, persistedAvatar || picture)
-            return toAppUser(newUser.toObject())
-        } catch (error) {
-            console.error('[findOrCreateOAuthUser] MongoDB error:', error)
-            markDbUnavailable(error)
+        let user = rec
+        if (Object.keys(updates).length > 0) {
+            await col.update(existingDocs[0].id!, updates)
+            user = { ...rec, ...updates }
         }
-    }
-
-    // Local MongoDB fallback (Atlas unreachable)
-    const localModel = await getLocalUserModel()
-    if (localModel) {
-        try {
-            let rec = await localModel.findOne({ [providerField]: providerId }).lean() as any
-            if (!rec) rec = await localModel.findOne({ email }).lean() as any
-
-            if (rec) {
-                const updates: Record<string, any> = { [providerField]: providerId }
-                if (!rec.first_name && firstName) updates.first_name = firstName
-                if (!rec.last_name && lastName) updates.last_name = lastName
-                if (shouldPersistAvatar(rec.avatar_url, picture)) updates.avatar_url = picture
-                const updated = await localModel.findByIdAndUpdate(rec._id, updates, { new: true }).lean() as any
-                const appUser = toAppUser(updated)
-                // Queue sync back to Atlas
-                queueWrite(async () => {
-                    await UserModel.findByIdAndUpdate(appUser.id, updates, { upsert: false })
-                })
-                return appUser
-            }
-
-            // Create new user in local DB
-            const username = createOAuthUsername(email)
-            const userId = createOAuthUserId(provider, providerId)
-            const newDoc = {
-                _id: userId,
-                username,
-                email,
-                password: '',
-                role: 'user',
-                first_name: firstName || null,
-                last_name: lastName || null,
-                avatar_url: picture || null,
-                [providerField]: providerId,
-                permissions: getRolePermissions('user'),
-            }
-            await localModel.create(newDoc)
-            const appUser = toAppUser(newDoc)
-            // Queue creation sync back to Atlas
-            queueWrite(async () => {
-                const exists = await UserModel.findById(userId).lean()
-                if (!exists) await UserModel.create(newDoc)
-            })
-            return appUser
-        } catch (localErr) {
-            console.error('[findOrCreateOAuthUser] Local MongoDB error:', localErr)
-        }
-    }
-
-    // Last resort: file/memory fallback storage
-    const users = await loadFallbackUsers()
-
-    let user = users.find((u: any) => u[providerField] === providerId)
-    if (user) {
-        if (!user.first_name && firstName) user.first_name = firstName
-        if (!user.last_name && lastName) user.last_name = lastName
-        if (shouldPersistAvatar(user.avatar_url, picture)) user.avatar_url = picture
-        await saveFallbackUsers(users)
+        await syncOAuthProfile(rec.id, oauthInfo, persistedAvatar || rec.avatar_url)
         return user
     }
 
-    user = users.find((u) => u.email === email)
-    if (user) {
-        ; (user as any)[providerField] = providerId
-        if (!user.first_name && firstName) user.first_name = firstName
-        if (!user.last_name && lastName) user.last_name = lastName
-        if (shouldPersistAvatar(user.avatar_url, picture)) user.avatar_url = picture
-        await saveFallbackUsers(users)
+    // 2. Find by email (link existing account)
+    existingDocs = await col.find({
+        filter: [{ field: 'email', op: 'eq', value: email }],
+    })
+
+    if (existingDocs[0]) {
+        const rec = existingDocs[0] as unknown as User
+        const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo, rec.avatar_url)
+        const updates: Partial<User> = { [providerField]: providerId }
+        if (!rec.first_name && firstName) updates.first_name = firstName
+        if (!rec.last_name && lastName) updates.last_name = lastName
+        if (shouldPersistAvatar(rec.avatar_url, persistedAvatar)) updates.avatar_url = persistedAvatar
+
+        await col.update(existingDocs[0].id!, updates)
+        const user = { ...rec, ...updates }
+        await syncOAuthProfile(rec.id, oauthInfo, persistedAvatar || rec.avatar_url)
         return user
     }
 
+    // 3. Create new user
+    const persistedAvatar = await resolvePersistedOAuthAvatar(oauthInfo)
     const username = createOAuthUsername(email)
-    const newUser: User = {
-        id: createOAuthUserId(provider, providerId),
+    const userId = createOAuthUserId(provider, providerId)
+
+    const newUser = normalizeUser({
+        id: userId,
         username,
         email,
         password: '',
         role: 'user',
         first_name: firstName,
         last_name: lastName,
-        avatar_url: picture,
+        avatar_url: persistedAvatar || picture,
         [providerField]: providerId,
         permissions: getRolePermissions('user'),
-    }
+    })
 
-    users.push(newUser)
-    await saveFallbackUsers(users)
+    await col.insert(newUser)
+    await syncOAuthProfile(userId, oauthInfo, persistedAvatar || picture)
     return newUser
-}
-
-export async function updateUserRoleAndPermissions(
-    userId: string,
-    updates: { role?: string; permissions?: Array<{ action: string; subject: string }> }
-): Promise<User | null> {
-    const payload: Record<string, any> = {}
-
-    if (updates.role) {
-        payload.role = updates.role
-        // Rebuild baseline permissions for the new role
-        payload.permissions = resolveUserPermissions({
-            role: updates.role,
-            permissions: updates.permissions ?? [],
-        })
-    } else if (updates.permissions) {
-        payload.permissions = updates.permissions
-    }
-
-    if (await isDbReady()) {
-        try {
-            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
-            return result ? toAppUser(result) : null
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-
-    // Fallback
-    const users = await loadFallbackUsers()
-    const user = users.find((u) => u.id === userId)
-    if (!user) return null
-    if (payload.role) user.role = payload.role
-    if (payload.permissions) user.permissions = payload.permissions
-    await saveFallbackUsers(users)
-    return user
-}
-
-export async function banUser(userId: string, reason?: string): Promise<User | null> {
-    const payload = { banned: true, bannedAt: new Date(), bannedReason: reason ?? null }
-    if (await isDbReady()) {
-        try {
-            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
-            return result ? toAppUser(result) : null
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-    const users = await loadFallbackUsers()
-    const user = users.find((u) => u.id === userId)
-    if (!user) return null
-    Object.assign(user, payload)
-    await saveFallbackUsers(users)
-    return user
-}
-
-export async function unbanUser(userId: string): Promise<User | null> {
-    const payload = { banned: false, bannedAt: null, bannedReason: null }
-    if (await isDbReady()) {
-        try {
-            const result = await UserModel.findByIdAndUpdate(userId, { $set: payload }, { new: true }).lean()
-            return result ? toAppUser(result) : null
-        } catch (error) {
-            markDbUnavailable(error)
-        }
-    }
-    const users = await loadFallbackUsers()
-    const user = users.find((u) => u.id === userId)
-    if (!user) return null
-    Object.assign(user, payload)
-    await saveFallbackUsers(users)
-    return user
 }

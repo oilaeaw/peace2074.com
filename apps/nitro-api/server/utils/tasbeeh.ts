@@ -1,5 +1,4 @@
-import { getMongoose } from './mongoose'
-import { TasbeehModel } from '../models/Tasbeeh'
+import { getDb } from './realdb'
 import { updateTasbeehSummary } from './profile'
 
 export interface TasbeehSession {
@@ -20,53 +19,51 @@ export interface TasbeehRecord {
     userId: string
     daily?: TasbeehDaily[]
     sessions?: TasbeehSession[]
-    createdAt?: Date
-    updatedAt?: Date
 }
 
-async function isDbReady(): Promise<boolean> {
-    try {
-        await getMongoose()
-        return true
-    } catch {
-        return false
-    }
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+async function tasbeehCollection() {
+    const db = await getDb()
+    return db.collection<TasbeehRecord>('tasbeeh')
 }
+
+// ── Public API ────────────────────────────────────────────────────────────────
 
 export async function getTasbeehByUserId(userId: string): Promise<TasbeehRecord | null> {
-    if (await isDbReady()) {
-        try {
-            const tasbeeh = await TasbeehModel.findOne({ userId }).lean()
-            return tasbeeh as any
-        } catch (e) {
-            console.error('Failed to get tasbeeh:', e)
-        }
+    try {
+        const tasbeeh = await tasbeehCollection()
+        const results = await tasbeeh.find({
+            filter: [{ field: 'userId', op: 'eq', value: userId }],
+        })
+        return results[0] ?? null
+    } catch (e) {
+        console.error('Failed to get tasbeeh:', e)
+        return null
     }
-    return null
 }
 
 export async function createTasbeehRecord(userId: string): Promise<TasbeehRecord | null> {
-    if (await isDbReady()) {
-        try {
-            const created = await TasbeehModel.create({ userId, daily: [], sessions: [] })
-            return created.toObject() as any
-        } catch (e) {
-            console.error('Failed to create tasbeeh record:', e)
-        }
+    try {
+        const tasbeeh = await tasbeehCollection()
+        const created = await tasbeeh.insert({ userId, daily: [], sessions: [] })
+        return created as unknown as TasbeehRecord
+    } catch (e) {
+        console.error('Failed to create tasbeeh record:', e)
+        return null
     }
-    return null
 }
 
 export async function addTasbeehDaily(userId: string, daily: TasbeehDaily): Promise<boolean> {
-    let tasbeeh = await getTasbeehByUserId(userId)
-
-    if (!tasbeeh) {
-        tasbeeh = await createTasbeehRecord(userId)
-        if (!tasbeeh) return false
+    let record = await getTasbeehByUserId(userId)
+    if (!record) {
+        record = await createTasbeehRecord(userId)
+        if (!record) return false
     }
 
-    const dailyArray = Array.isArray(tasbeeh.daily) ? [...tasbeeh.daily] : []
-    const existingIndex = dailyArray.findIndex((d: TasbeehDaily) => d.date === daily.date)
+    const dailyArray = Array.isArray(record.daily) ? [...record.daily] : []
+    const existingIndex = dailyArray.findIndex((d) => d.date === daily.date)
+    const prevTotal = existingIndex >= 0 ? dailyArray[existingIndex].total : 0
 
     if (existingIndex >= 0) {
         dailyArray[existingIndex] = daily
@@ -79,29 +76,25 @@ export async function addTasbeehDaily(userId: string, daily: TasbeehDaily): Prom
         dailyArray.splice(0, dailyArray.length - 30)
     }
 
-    if (await isDbReady()) {
-        try {
-            await TasbeehModel.updateOne({ userId }, { $set: { daily: dailyArray } })
-
-            // Update profile summary
-            await updateTasbeehSummary(userId, daily.total - (existingIndex >= 0 ? dailyArray[existingIndex].total : 0), false)
-            return true
-        } catch (e) {
-            console.error('Failed to update tasbeeh daily:', e)
-        }
+    try {
+        const tasbeeh = await tasbeehCollection()
+        await tasbeeh.update(record.id!, { daily: dailyArray })
+        await updateTasbeehSummary(userId, daily.total - prevTotal, false)
+        return true
+    } catch (e) {
+        console.error('Failed to update tasbeeh daily:', e)
+        return false
     }
-    return false
 }
 
 export async function addTasbeehSession(userId: string, session: TasbeehSession): Promise<boolean> {
-    let tasbeeh = await getTasbeehByUserId(userId)
-
-    if (!tasbeeh) {
-        tasbeeh = await createTasbeehRecord(userId)
-        if (!tasbeeh) return false
+    let record = await getTasbeehByUserId(userId)
+    if (!record) {
+        record = await createTasbeehRecord(userId)
+        if (!record) return false
     }
 
-    const sessions = Array.isArray(tasbeeh.sessions) ? [...tasbeeh.sessions] : []
+    const sessions = Array.isArray(record.sessions) ? [...record.sessions] : []
     sessions.push(session)
 
     // Keep last 100 sessions
@@ -109,27 +102,35 @@ export async function addTasbeehSession(userId: string, session: TasbeehSession)
         sessions.splice(0, sessions.length - 100)
     }
 
-    if (await isDbReady()) {
-        try {
-            await TasbeehModel.updateOne({ userId }, { $set: { sessions } })
-
-            // Update profile summary
-            await updateTasbeehSummary(userId, session.count, true)
-            return true
-        } catch (e) {
-            console.error('Failed to update tasbeeh session:', e)
-        }
+    try {
+        const tasbeeh = await tasbeehCollection()
+        await tasbeeh.update(record.id!, { sessions })
+        await updateTasbeehSummary(userId, session.count, true)
+        return true
+    } catch (e) {
+        console.error('Failed to update tasbeeh session:', e)
+        return false
     }
-    return false
 }
 
 export async function getTasbeehDaily(userId: string): Promise<TasbeehDaily[]> {
-    const tasbeeh = await getTasbeehByUserId(userId)
-    return tasbeeh?.daily || []
+    const record = await getTasbeehByUserId(userId)
+    return record?.daily ?? []
 }
 
 export async function getTasbeehSessions(userId: string, limit: number = 10): Promise<TasbeehSession[]> {
-    const tasbeeh = await getTasbeehByUserId(userId)
-    const sessions = tasbeeh?.sessions || []
+    const record = await getTasbeehByUserId(userId)
+    const sessions = record?.sessions ?? []
     return sessions.slice(-limit)
+}
+
+export async function deleteTasbeehByUserId(userId: string): Promise<void> {
+    try {
+        const tasbeeh = await tasbeehCollection()
+        await tasbeeh.deleteMany({
+            filter: [{ field: 'userId', op: 'eq', value: userId }],
+        })
+    } catch (e) {
+        console.error('Failed to delete tasbeeh:', e)
+    }
 }

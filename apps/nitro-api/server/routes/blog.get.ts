@@ -1,85 +1,47 @@
 import { defineEventHandler, getQuery } from 'h3'
-import { getMongoose } from '../utils/mongoose'
-import { BlogPostModel } from '../models/BlogPost'
+import { getDb } from '../utils/realdb'
 import blogSeedData from '../data/blog-seed.json'
 import { fetchDatoCmsBlogPosts } from '../utils/datocms'
 
 type BlogSeedPost = {
-    id?: string
-    slug?: string
-    title?: string
-    excerpt?: string
-    content?: string
-    tags?: string[]
-    date?: string
-    author?: string
-    createdAt?: string
-    updatedAt?: string
-    notifySubscribers?: boolean
-    notificationTitle?: string
-    notificationBody?: string
-    notificationUrl?: string
+    id?: string; slug?: string; title?: string; excerpt?: string
+    content?: string; tags?: string[]; date?: string; author?: string
+    createdAt?: string; updatedAt?: string
+    notifySubscribers?: boolean; notificationTitle?: string
+    notificationBody?: string; notificationUrl?: string
 }
-
-type PublicBlogSeedPost = Omit<
-    BlogSeedPost,
-    'notifySubscribers' | 'notificationTitle' | 'notificationBody' | 'notificationUrl'
->
 
 function buildSlugVariants(slug?: string) {
     const raw = String(slug || '').trim()
     if (!raw) return []
-
     const variants = new Set<string>([
-        raw,
-        raw.toLowerCase(),
-        raw.replace(/\s+/g, '-'),
-        raw.toLowerCase().replace(/\s+/g, '-'),
-        raw.replace(/-/g, ' '),
-        raw.toLowerCase().replace(/-/g, ' '),
-        `${raw} `,
-        `${raw.toLowerCase()} `,
+        raw, raw.toLowerCase(),
+        raw.replace(/\s+/g, '-'), raw.toLowerCase().replace(/\s+/g, '-'),
+        raw.replace(/-/g, ' '), raw.toLowerCase().replace(/-/g, ' '),
+        `${raw} `, `${raw.toLowerCase()} `,
     ])
-
     return [...variants].filter(Boolean)
 }
 
 function toCanonicalSlug(value?: string) {
-    return String(value || '')
-        .trim()
-        .toLowerCase()
-        .replace(/\s+/g, '-')
-        .replace(/-+/g, '-')
+    return String(value || '').trim().toLowerCase().replace(/\s+/g, '-').replace(/-+/g, '-')
 }
 
-function toPublicSeedPost(post: BlogSeedPost): PublicBlogSeedPost {
-    return {
-        id: post.id,
-        slug: post.slug,
-        title: post.title,
-        excerpt: post.excerpt,
-        content: post.content,
-        tags: post.tags,
-        date: post.date,
-        author: post.author,
-        createdAt: post.createdAt,
-        updatedAt: post.updatedAt,
-    }
+function toPublicPost(post: BlogSeedPost) {
+    const { notifySubscribers, notificationTitle, notificationBody, notificationUrl, ...pub } = post
+    return pub
 }
 
-function loadSeedPosts(): PublicBlogSeedPost[] {
+function loadSeedPosts() {
     try {
-        // Import the JSON directly so it gets bundled
-        return Array.isArray(blogSeedData) ? blogSeedData.map(toPublicSeedPost) : []
-    } catch (error) {
-        console.warn('[Blog GET] Seed fallback load failed:', error instanceof Error ? error.message : 'unknown')
+        return Array.isArray(blogSeedData) ? blogSeedData.map(toPublicPost) : []
+    } catch {
         return []
     }
 }
 
 /**
  * GET /api/blog
- * Returns all blog posts or a single post by slug
  */
 export default defineEventHandler(async (event) => {
     const query = getQuery(event)
@@ -89,83 +51,58 @@ export default defineEventHandler(async (event) => {
     const slugVariants = buildSlugVariants(normalizedSlug)
 
     try {
-        // 1) Prefer MongoDB as primary source
+        // 1) Primary: @waelio/realdb (backed by @waelio/data JSON file)
         try {
-            await getMongoose()
+            const db = await getDb()
+            const blogPosts = db.collection('blogPosts')
 
             if (normalizedSlug) {
-                let post = await BlogPostModel.findOne({ slug: normalizedSlug }).lean()
-                if (!post && slugVariants.length) {
-                    post = await BlogPostModel.findOne({ slug: { $in: slugVariants } }).lean()
+                let results = await blogPosts.find({
+                    filter: [{ field: 'slug', op: 'eq', value: normalizedSlug }],
+                })
+                if (!results.length && slugVariants.length > 1) {
+                    const all = await blogPosts.findAll()
+                    results = all.filter((p: any) => slugVariants.includes(p.slug))
                 }
-                if (post) {
-                    return {
-                        ok: true,
-                        post,
-                        source: 'mongodb',
-                        canonicalSlug: toCanonicalSlug((post as any)?.slug),
-                    }
-                }
-            }
-
-            const posts = await BlogPostModel.find().sort({ date: -1 }).lean()
-
-            if (!normalizedSlug && posts.length) {
-                return { ok: true, posts, source: 'mongodb' }
-            }
-        } catch (error) {
-            console.warn('[Blog GET] MongoDB read failed, falling back:', error instanceof Error ? error.message : 'unknown')
-        }
-
-        // 2) Fallback to DatoCMS when Prisma has no data or no match
-        try {
-            if (normalizedSlug) {
-                const candidateSlugs = slugVariants.length ? slugVariants : [normalizedSlug]
-                for (const candidate of candidateSlugs) {
-                    const datocmsPost = await fetchDatoCmsBlogPosts({ slug: candidate })
-                    if (datocmsPost) {
-                        return {
-                            ok: true,
-                            post: datocmsPost,
-                            source: 'datocms',
-                            canonicalSlug: toCanonicalSlug((datocmsPost as any)?.slug),
-                        }
-                    }
+                if (results[0]) {
+                    return { ok: true, post: results[0], source: 'realdb', canonicalSlug: toCanonicalSlug((results[0] as any).slug) }
                 }
             } else {
-                const datocmsPosts = await fetchDatoCmsBlogPosts()
-                if (Array.isArray(datocmsPosts) && datocmsPosts.length) {
-                    return { ok: true, posts: datocmsPosts, source: 'datocms' }
-                }
+                const posts = await blogPosts.find({ sort: [{ field: 'date', direction: 'desc' }] })
+                if (posts.length) return { ok: true, posts, source: 'realdb' }
             }
-        } catch (error) {
-            console.warn('[Blog GET] DatoCMS read failed, falling back:', error instanceof Error ? error.message : 'unknown')
+        } catch (err) {
+            console.warn('[Blog GET] realdb read failed, falling back:', err instanceof Error ? err.message : 'unknown')
         }
 
-        // 3) Seed fallback
+        // 2) Fallback: DatoCMS
+        try {
+            if (normalizedSlug) {
+                const candidates = slugVariants.length ? slugVariants : [normalizedSlug]
+                for (const c of candidates) {
+                    const post = await fetchDatoCmsBlogPosts({ slug: c })
+                    if (post) return { ok: true, post, source: 'datocms', canonicalSlug: toCanonicalSlug((post as any)?.slug) }
+                }
+            } else {
+                const posts = await fetchDatoCmsBlogPosts()
+                if (Array.isArray(posts) && posts.length) return { ok: true, posts, source: 'datocms' }
+            }
+        } catch (err) {
+            console.warn('[Blog GET] DatoCMS fallback failed:', err instanceof Error ? err.message : 'unknown')
+        }
+
+        // 3) Static seed fallback
         if (normalizedSlug) {
-            const fallbackPost = fallbackPosts.find((post) => {
-                const postSlug = String(post?.slug || '')
-                return slugVariants.includes(postSlug) || slugVariants.includes(postSlug.trim())
-            })
-            if (!fallbackPost) {
-                return { ok: false, error: 'Post not found' }
-            }
-            return {
-                ok: true,
-                post: fallbackPost,
-                source: 'seed-fallback',
-                canonicalSlug: toCanonicalSlug((fallbackPost as any)?.slug),
-            }
+            const found = fallbackPosts.find((p: any) => slugVariants.includes(String(p?.slug || '').trim()))
+            if (!found) return { ok: false, error: 'Post not found' }
+            return { ok: true, post: found, source: 'seed-fallback', canonicalSlug: toCanonicalSlug((found as any)?.slug) }
         }
 
         if (fallbackPosts.length) {
-            const sortedFallback = [...fallbackPosts].sort((a, b) => {
-                const ad = new Date(String(a?.date || a?.createdAt || 0)).getTime()
-                const bd = new Date(String(b?.date || b?.createdAt || 0)).getTime()
-                return bd - ad
-            })
-            return { ok: true, posts: sortedFallback, source: 'seed-fallback' }
+            const sorted = [...fallbackPosts].sort((a: any, b: any) =>
+                new Date(String(b?.date || b?.createdAt || 0)).getTime() - new Date(String(a?.date || a?.createdAt || 0)).getTime()
+            )
+            return { ok: true, posts: sorted, source: 'seed-fallback' }
         }
 
         return { ok: true, posts: [], source: 'empty' }

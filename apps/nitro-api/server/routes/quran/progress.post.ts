@@ -1,7 +1,12 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../../utils/auth'
-import { getMongoose } from '../../utils/mongoose'
-import { QuranProgressModel } from '../../models/QuranProgress'
+import { getDb } from '../../utils/realdb'
+
+interface QuranProgress {
+    userId: string
+    completedSuras: number[]
+    lastUpdated: string
+}
 
 export default defineEventHandler(async (event) => {
     try {
@@ -12,33 +17,27 @@ export default defineEventHandler(async (event) => {
             ? body.completedSuras.filter((id: any) => typeof id === 'number')
             : []
 
-        await getMongoose()
+        const db = await getDb()
+        const progress = db.collection<QuranProgress>('quranProgress')
 
-        const progress = await QuranProgressModel.findOneAndUpdate(
-            { userId },
-            { completedSuras, lastUpdated: new Date() },
-            { upsert: true, new: true }
-        ).lean() as any
+        const existing = await progress.find({
+            filter: [{ field: 'userId', op: 'eq', value: userId }],
+        })
 
-        return {
-            ok: true,
-            completedSuras: progress.completedSuras,
-            lastUpdated: progress.lastUpdated
+        const lastUpdated = new Date().toISOString()
+
+        if (existing[0]?.id) {
+            await progress.update(existing[0].id!, { completedSuras, lastUpdated })
+        } else {
+            await progress.insert({ userId, completedSuras, lastUpdated })
         }
+
+        return { ok: true, completedSuras, lastUpdated }
     } catch (error: any) {
         if (error?.statusCode === 401) {
-            return {
-                ok: false,
-                authRequired: true,
-                message: 'Authentication required'
-            }
+            return { ok: false, authRequired: true, message: 'Authentication required' }
         }
-
         console.error('Failed to save Quran progress:', error)
-        return {
-            ok: false,
-            error: error?.message || 'Failed to save progress'
-        }
+        return { ok: false, error: error?.message || 'Failed to save progress' }
     }
 })
-

@@ -1,5 +1,5 @@
 #!/usr/bin/env bash
-# Backup Atlas → local MongoDB (disaster recovery / offline mode)
+# Backup / restore local MongoDB (or migrate from a legacy remote dump)
 # Usage:
 #   ./scripts/backup-db.sh            # dump Atlas → local
 #   ./scripts/backup-db.sh --restore  # restore latest dump into local Mongo
@@ -34,7 +34,7 @@ if [[ "${1:-}" == "--restore" ]]; then
     --quiet
   echo "✅ Restore complete. Local MongoDB is up to date."
 else
-  echo "📦 Dumping Atlas → ${DUMP_DIR}/latest ..."
+  echo "📦 Dumping ${DATABASE_URL} → ${DUMP_DIR}/latest ..."
   mongodump \
     --uri="$DATABASE_URL" \
     --out="$DUMP_DIR/latest" \

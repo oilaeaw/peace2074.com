@@ -1,39 +1,35 @@
 import { defineEventHandler } from 'h3'
 import { readSession } from '../../utils/auth'
-import { getMongoose } from '../../utils/mongoose'
-import { QuranProgressModel } from '../../models/QuranProgress'
+import { getDb } from '../../utils/realdb'
+
+interface QuranProgress {
+    userId: string
+    completedSuras: number[]
+    lastUpdated: string
+}
 
 export default defineEventHandler(async (event) => {
     try {
         const session = await readSession(event)
 
         if (!session?.userId) {
-            return {
-                ok: false,
-                completedSuras: [],
-                message: 'Not authenticated'
-            }
+            return { ok: false, completedSuras: [], message: 'Not authenticated' }
         }
 
-        await getMongoose()
+        const db = await getDb()
+        const progress = db.collection<QuranProgress>('quranProgress')
 
-        const progress = await QuranProgressModel.findOne(
-            { userId: session.userId },
-            { completedSuras: 1, lastUpdated: 1 }
-        ).lean()
+        const results = await progress.find({
+            filter: [{ field: 'userId', op: 'eq', value: session.userId }],
+        })
 
         return {
             ok: true,
-            completedSuras: (progress as any)?.completedSuras || [],
-            lastUpdated: (progress as any)?.lastUpdated || null
+            completedSuras: results[0]?.completedSuras ?? [],
+            lastUpdated: results[0]?.lastUpdated ?? null,
         }
     } catch (error: any) {
         console.error('Failed to fetch Quran progress:', error)
-        return {
-            ok: false,
-            completedSuras: [],
-            error: error?.message || 'Failed to fetch progress'
-        }
+        return { ok: false, completedSuras: [], error: error?.message || 'Failed to fetch progress' }
     }
 })
-

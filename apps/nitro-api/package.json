@@ -12,8 +12,8 @@
   },
   "dependencies": {
     "@simplewebauthn/server": "^13.3.0",
+    "@waelio/realdb": "^0.1.0",
     "arctic": "^3.7.0",
-    "mongoose": "^8.13.2",
     "nitropack": "^2.9.7",
     "nodemailer": "^6.9.15",
     "openai": "^6.15.0",

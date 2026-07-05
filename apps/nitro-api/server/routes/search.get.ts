@@ -5,42 +5,27 @@ import chaptersDe from '../../../../src/shared/data/chapters/de.json';
 import chaptersHe from '../../../../src/shared/data/chapters/he.json';
 import chaptersEs from '../../../../src/shared/data/chapters/es.json';
 import chaptersTr from '../../../../src/shared/data/chapters/tr.json';
-import { getMongoose } from '../utils/mongoose';
-import { BlogPostModel } from '../models/BlogPost';
+import { getDb } from '../utils/realdb';
 import { loadQuranData } from '../utils/quran-data';
 
-// Pre-loaded chapters by locale
 const chaptersMap: Record<string, any[]> = {
-    en: chaptersEn as any[],
-    ru: chaptersRu as any[],
-    de: chaptersDe as any[],
-    he: chaptersHe as any[],
-    es: chaptersEs as any[],
-    tr: chaptersTr as any[],
-    ar: chaptersEn as any[], // Arabic sura names are in the 'name' field of all chapter files
-    it: chaptersEn as any[], // Italian fallback to English
+    en: chaptersEn as any[], ru: chaptersRu as any[], de: chaptersDe as any[],
+    he: chaptersHe as any[], es: chaptersEs as any[], tr: chaptersTr as any[],
+    ar: chaptersEn as any[], it: chaptersEn as any[],
 };
 
 function normalizeText(str: string) {
-    const noHarakat = str
-        // Remove Arabic diacritics / tatweel
+    return str
         .replace(/[\u0610-\u061A\u064B-\u065F\u0670\u06D6-\u06ED\u0640]/g, "")
-        // Normalize Arabic hamza forms
         .replace(/[\u0622\u0623\u0624\u0625\u0626]/g, "ا")
-        // Keep letters/numbers/spaces; drop most punctuation
-        .replace(/[^\p{L}\p{N}\s]/gu, " ");
-    return noHarakat.toLowerCase().trim();
+        .replace(/[^\p{L}\p{N}\s]/gu, " ")
+        .toLowerCase().trim();
 }
 
 function normalizeLang(lang?: string) {
     if (!lang) return "en";
     const short = String(lang).toLowerCase().split("-")[0];
-    if (chaptersMap[short]) return short;
-    return "en";
-}
-
-function getChapters(lang: string): any[] {
-    return chaptersMap[normalizeLang(lang)] || chaptersMap.en;
+    return chaptersMap[short] ? short : "en";
 }
 
 export default defineEventHandler(async (event) => {
@@ -53,11 +38,10 @@ export default defineEventHandler(async (event) => {
     if (!query) return { results: [] };
 
     const loc = normalizeLang(String(lang));
-    const chapters = getChapters(loc);
-
+    const chapters = chaptersMap[loc] || chaptersMap.en;
     const results: any[] = [];
 
-    // Match surah names/translations
+    // Match surah names
     for (const c of chapters) {
         const name = String(c.name || "");
         const transliteration = String(c.transliteration || "");
@@ -66,8 +50,7 @@ export default defineEventHandler(async (event) => {
         const hayNorm = normalizeText(`${name} ${transliteration} ${translation}`);
         if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
             results.push({
-                type: "sura",
-                id: c.id,
+                type: "sura", id: c.id,
                 title: `${c.id}. ${transliteration || translation || name}`.trim(),
                 subtitle: translation || name,
                 path: `/quran/${c.id}`,
@@ -76,20 +59,18 @@ export default defineEventHandler(async (event) => {
         if (results.length >= max) break;
     }
 
-    // Match verses (light scan; stop at limit)
+    // Match verses
     try {
         const quran = await loadQuranData(event);
-
         outer: for (const [suraId, verses] of Object.entries(quran)) {
-            for (const verse of verses || []) {
+            for (const verse of (verses as any[]) || []) {
                 const text = String(verse.text || "");
                 const hay = text.toLowerCase();
                 const hayNorm = normalizeText(text);
                 if (hay.includes(query) || (normQuery && hayNorm.includes(normQuery))) {
                     const id = `${suraId}:${verse.verse || ""}`;
                     results.push({
-                        type: "verse",
-                        id,
+                        type: "verse", id,
                         title: `Ayah ${id}`,
                         subtitle: text.slice(0, 140),
                         path: `/quran/${suraId}#${suraId}_${verse.verse || ""}`,
@@ -98,20 +79,20 @@ export default defineEventHandler(async (event) => {
                 }
             }
         }
-    } catch (_err) {
-        // Verse search is best-effort; keep sura/page/blog results working.
-    }
+    } catch { /* verse search is best-effort */ }
 
     // Search blog posts
     try {
-        await getMongoose();
-        const blogs = await BlogPostModel.find({
-            $or: [
-                { title: { $regex: rawQuery, $options: 'i' } },
-                { excerpt: { $regex: rawQuery, $options: 'i' } },
-            ],
-        }).select('slug title excerpt tags').limit(5).lean() as any[];
-        for (const post of blogs) {
+        const db = await getDb();
+        const blogPosts = db.collection('blogPosts');
+        const all = await blogPosts.findAll() as any[];
+        const lq = rawQuery.toLowerCase();
+        const matched = all.filter((p) =>
+            String(p.title || '').toLowerCase().includes(lq) ||
+            String(p.excerpt || '').toLowerCase().includes(lq)
+        ).slice(0, 5);
+
+        for (const post of matched) {
             results.push({
                 type: 'page',
                 id: `blog-${post.slug}`,
@@ -121,9 +102,7 @@ export default defineEventHandler(async (event) => {
             });
             if (results.length >= max) break;
         }
-    } catch (_err) {
-        // Blog search is best-effort; don't fail the whole request
-    }
+    } catch { /* blog search is best-effort */ }
 
     return { results: results.slice(0, max) };
 });

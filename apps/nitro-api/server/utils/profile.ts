@@ -1,9 +1,4 @@
-import {
-    createDatabaseRequiredError,
-    isDatabaseRequired,
-} from './database-mode'
-import { getMongoose } from './mongoose'
-import { ProfileModel } from '../models/Profile'
+import { getDb } from './realdb'
 
 export interface Profile {
     id?: string
@@ -20,74 +15,83 @@ export interface Profile {
     }
 }
 
-async function isDbReady(): Promise<boolean> {
-    try {
-        await getMongoose()
-        return true
-    } catch {
-        if (isDatabaseRequired()) throw createDatabaseRequiredError()
-        return false
-    }
+// ── Helpers ──────────────────────────────────────────────────────────────────
+
+async function profilesCollection() {
+    const db = await getDb()
+    return db.collection<Profile>('profiles')
 }
 
+// ── Public API ────────────────────────────────────────────────────────────────
+
 export async function getProfile(userId: string): Promise<Profile | null> {
-    if (await isDbReady()) {
-        try {
-            const profile = await ProfileModel.findOne({ userId }).lean()
-            return profile as any
-        } catch (e) {
-            console.error('Failed to get profile:', e)
-            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
-        }
+    try {
+        const profiles = await profilesCollection()
+        const results = await profiles.find({
+            filter: [{ field: 'userId', op: 'eq', value: userId }],
+        })
+        return results[0] ?? null
+    } catch (e) {
+        console.error('Failed to get profile:', e)
+        return null
     }
-    return null
 }
 
 export async function createProfile(profile: Profile): Promise<Profile | null> {
-    if (await isDbReady()) {
-        try {
-            const created = await ProfileModel.create({
-                userId: profile.userId,
-                first_name: profile.first_name,
-                last_name: profile.last_name,
-                avatar_url: profile.avatar_url,
-                github_id: profile.github_id,
-                bookmarks: profile.bookmarks || [],
-                settings: profile.settings || {},
-                tasbeeh_summary: profile.tasbeeh_summary || { total: 0, sessions: 0 },
-            })
-            return created.toObject() as any
-        } catch (e) {
-            console.error('Failed to create profile:', e)
-            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
-        }
+    try {
+        const profiles = await profilesCollection()
+        const created = await profiles.insert({
+            userId: profile.userId,
+            first_name: profile.first_name,
+            last_name: profile.last_name,
+            avatar_url: profile.avatar_url,
+            github_id: profile.github_id,
+            bookmarks: profile.bookmarks ?? [],
+            settings: profile.settings ?? {},
+            tasbeeh_summary: profile.tasbeeh_summary ?? { total: 0, sessions: 0 },
+        })
+        return created as unknown as Profile
+    } catch (e) {
+        console.error('Failed to create profile:', e)
+        return null
     }
-    return null
 }
 
 export async function updateProfile(
     userId: string,
     updates: Partial<Profile>
 ): Promise<Profile | null> {
-    if (await isDbReady()) {
-        try {
-            const updated = await ProfileModel.findOneAndUpdate(
-                { userId },
-                { $set: updates },
-                { new: true, upsert: true }
-            ).lean()
-            return updated as any
-        } catch (e) {
-            console.error('Failed to update profile:', e)
-            if (isDatabaseRequired()) throw createDatabaseRequiredError(e)
+    try {
+        const profiles = await profilesCollection()
+        const existing = await getProfile(userId)
+
+        if (!existing?.id) {
+            // Upsert: create if not found
+            return await createProfile({ userId, ...updates })
         }
+
+        const updated = await profiles.update(existing.id, updates)
+        return updated as unknown as Profile
+    } catch (e) {
+        console.error('Failed to update profile:', e)
+        return null
     }
-    return null
+}
+
+export async function deleteProfileByUserId(userId: string): Promise<void> {
+    try {
+        const profiles = await profilesCollection()
+        await profiles.deleteMany({
+            filter: [{ field: 'userId', op: 'eq', value: userId }],
+        })
+    } catch (e) {
+        console.error('Failed to delete profile:', e)
+    }
 }
 
 export async function getBookmarks(userId: string): Promise<any[]> {
     const profile = await getProfile(userId)
-    return profile?.bookmarks || []
+    return profile?.bookmarks ?? []
 }
 
 export async function addBookmark(
@@ -97,9 +101,7 @@ export async function addBookmark(
     const profile = await getProfile(userId)
     if (!profile) return null
 
-    const bookmarks = Array.isArray(profile.bookmarks)
-        ? [...profile.bookmarks]
-        : []
+    const bookmarks = Array.isArray(profile.bookmarks) ? [...profile.bookmarks] : []
     const existing = bookmarks.find((b: any) => b.bookmark === bookmark)
     if (existing) return existing
 
@@ -121,9 +123,7 @@ export async function removeBookmark(
     const profile = await getProfile(userId)
     if (!profile) return false
 
-    const bookmarks = Array.isArray(profile.bookmarks)
-        ? [...profile.bookmarks]
-        : []
+    const bookmarks = Array.isArray(profile.bookmarks) ? [...profile.bookmarks] : []
     const filtered = bookmarks.filter((b: any) => b._id !== bookmarkId)
 
     if (filtered.length === bookmarks.length) return false
@@ -140,7 +140,7 @@ export async function updateTasbeehSummary(
     const profile = await getProfile(userId)
     if (!profile) return
 
-    const summary = profile.tasbeeh_summary || { total: 0, sessions: 0 }
+    const summary = profile.tasbeeh_summary ?? { total: 0, sessions: 0 }
     summary.total += increment
     if (sessionComplete) {
         summary.sessions += 1

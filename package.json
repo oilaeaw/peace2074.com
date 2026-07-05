@@ -31,7 +31,7 @@
   "scripts": {
     "predev": "node -e \"const [maj, min, patch] = process.versions.node.split('.') ; if (Number(maj) < 22 || (Number(maj)==22 && Number(min)<12)) { console.error('Node 22.12+ required. Current:', process.versions.node); process.exit(1)}\" && pkill -9 -f 'vite --strictPort' 2>/dev/null; pkill -9 -f 'nitro dev' 2>/dev/null; for port in 4000 3000; do lsof -ti:$port 2>/dev/null | xargs kill -9 2>/dev/null; done; sleep 3; pnpm sync:quran:data",
     "dev": "pnpm predev && concurrently \"pnpm:dev:vite\" \"pnpm:dev:nitro\"",
-    "dev:offline": "DATABASE_URL=mongodb://localhost:27017/peace2074 pnpm predev && concurrently \"pnpm:dev:vite\" \"pnpm:dev:nitro\"",
+    "dev:offline": "pnpm dev",
     "db:backup": "bash scripts/backup-db.sh",
     "db:restore": "bash scripts/backup-db.sh --restore",
     "dev:vite": "vite --strictPort",

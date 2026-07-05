@@ -1,7 +1,11 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getMongoose } from '../../utils/mongoose'
-import { BlogLikeModel } from '../../models/BlogLike'
+import { getDb } from '../../utils/realdb'
 import { requireAuth } from '../../utils/auth'
+
+interface BlogLike {
+    slug: string
+    userId: string
+}
 
 /**
  * POST /api/blog/likes
@@ -16,52 +20,35 @@ export default defineEventHandler(async (event) => {
         const { slug } = body
 
         if (!slug || typeof slug !== 'string') {
-            return {
-                ok: false,
-                error: 'Slug is required'
-            }
+            return { ok: false, error: 'Slug is required' }
         }
 
-        await getMongoose()
+        const db = await getDb()
+        const likes = db.collection<BlogLike>('blogLikes')
 
-        const existingLike = await BlogLikeModel.findOne({ slug, userId }).lean()
+        const existing = await likes.find({
+            filter: [
+                { field: 'slug', op: 'eq', value: slug },
+                { field: 'userId', op: 'eq', value: userId },
+            ],
+        })
 
-        if (existingLike) {
+        if (existing[0]?.id) {
             // Unlike
-            await BlogLikeModel.findByIdAndDelete((existingLike as any)._id)
-            const count = await BlogLikeModel.countDocuments({ slug })
-
-            return {
-                ok: true,
-                liked: false,
-                count
-            }
+            await likes.delete(existing[0].id!)
+            const count = await likes.count({ filter: [{ field: 'slug', op: 'eq', value: slug }] })
+            return { ok: true, liked: false, count }
         } else {
             // Like
-            await BlogLikeModel.create({ slug, userId })
-            const count = await BlogLikeModel.countDocuments({ slug })
-
-            return {
-                ok: true,
-                liked: true,
-                count
-            }
+            await likes.insert({ slug, userId })
+            const count = await likes.count({ filter: [{ field: 'slug', op: 'eq', value: slug }] })
+            return { ok: true, liked: true, count }
         }
     } catch (err: any) {
         console.error('[Blog Likes POST] Error:', err)
-
-        // Handle auth errors
         if (err.statusCode === 401) {
-            return {
-                ok: false,
-                error: 'Authentication required',
-                authRequired: true
-            }
+            return { ok: false, error: 'Authentication required', authRequired: true }
         }
-
-        return {
-            ok: false,
-            error: err?.message || 'Failed to toggle like'
-        }
+        return { ok: false, error: err?.message || 'Failed to toggle like' }
     }
 })

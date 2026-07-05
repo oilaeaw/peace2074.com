@@ -1,7 +1,11 @@
 import { defineEventHandler } from 'h3'
-import { getMongoose } from '../../utils/mongoose'
-import { DeployLikeModel } from '../../models/DeployLike'
+import { getDb } from '../../utils/realdb'
 import { readSession } from '../../utils/auth'
+
+interface DeployLike {
+    version: string
+    userId: string
+}
 
 /**
  * GET /api/deploys/likes
@@ -9,36 +13,29 @@ import { readSession } from '../../utils/auth'
  */
 export default defineEventHandler(async (event) => {
     try {
-        await getMongoose()
-
         const session = readSession(event)
         const userId = session?.id
 
-        const grouped = await DeployLikeModel.aggregate([
-            { $group: { _id: '$version', count: { $sum: 1 } } }
-        ])
+        const db = await getDb()
+        const likes = db.collection<DeployLike>('deployLikes')
+        const allLikes = await likes.findAll()
 
-        const likeCounts = grouped.reduce((acc: Record<string, number>, item: any) => {
-            acc[item._id] = item.count
-            return acc
-        }, {})
+        // Group by version
+        const likeCounts: Record<string, number> = {}
+        for (const like of allLikes) {
+            likeCounts[like.version] = (likeCounts[like.version] ?? 0) + 1
+        }
 
         let userLiked: string[] = []
         if (userId) {
-            const userLikes = await DeployLikeModel.find({ userId }, { version: 1 }).lean()
-            userLiked = userLikes.map((l: any) => l.version)
+            userLiked = allLikes
+                .filter((l) => l.userId === userId)
+                .map((l) => l.version)
         }
 
-        return {
-            ok: true,
-            likeCounts,
-            userLiked
-        }
+        return { ok: true, likeCounts, userLiked }
     } catch (err: any) {
         console.error('[Deploys Likes GET] Error:', err)
-        return {
-            ok: false,
-            error: err?.message || 'Failed to fetch likes'
-        }
+        return { ok: false, error: err?.message || 'Failed to fetch likes' }
     }
 })

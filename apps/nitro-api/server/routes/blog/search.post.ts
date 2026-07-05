@@ -1,10 +1,10 @@
 import { defineEventHandler, readBody } from 'h3'
-import { getMongoose } from '../../utils/mongoose'
+import { getDb } from '../../utils/realdb'
 import { generateEmbedding } from '../../utils/embeddings'
 
 /**
  * POST /api/blog/search
- * Semantic vector search over blog posts using Atlas Vector Search
+ * Keyword + tag search over blog posts (replaces Atlas Vector Search).
  */
 export default defineEventHandler(async (event) => {
     try {
@@ -19,42 +19,35 @@ export default defineEventHandler(async (event) => {
             return { ok: false, error: 'Missing query' }
         }
 
-        const conn = await getMongoose()
+        const db = await getDb()
+        const blogPosts = db.collection('blogPosts')
+        const all = await blogPosts.findAll() as any[]
 
-        const queryEmbedding = await generateEmbedding(query.trim())
+        const lq = query.trim().toLowerCase()
 
-        const pipeline: object[] = [
-            {
-                $vectorSearch: {
-                    index: 'blog_vector_index',
-                    path: 'embedding',
-                    queryVector: queryEmbedding,
-                    numCandidates: Math.min(limit * 10, 150),
-                    limit,
-                    ...(tags?.length ? { filter: { tags: { $in: tags } } } : {}),
-                },
-            },
-            {
-                $project: {
-                    _id: 0,
-                    id: '$_id',
-                    slug: 1,
-                    title: 1,
-                    excerpt: 1,
-                    tags: 1,
-                    date: 1,
-                    author: 1,
-                    score: { $meta: 'vectorSearchScore' },
-                },
-            },
-        ]
+        const filtered = all.filter((post) => {
+            const matchesText =
+                String(post.title || '').toLowerCase().includes(lq) ||
+                String(post.excerpt || '').toLowerCase().includes(lq) ||
+                String(post.content || '').toLowerCase().includes(lq)
 
-        const results = await conn.connection.db!.collection('BlogPost').aggregate(pipeline).toArray()
+            const matchesTags = !tags?.length ||
+                (Array.isArray(post.tags) && tags.some((t) => post.tags.includes(t)))
 
-        return {
-            ok: true,
-            results,
-        }
+            return matchesText && matchesTags
+        })
+
+        const results = filtered.slice(0, limit).map((post) => ({
+            id: post.id,
+            slug: post.slug,
+            title: post.title,
+            excerpt: post.excerpt,
+            tags: post.tags,
+            date: post.date,
+            author: post.author,
+        }))
+
+        return { ok: true, results }
     } catch (err: unknown) {
         console.error('[Blog Search] Error:', err)
         return { ok: false, error: err instanceof Error ? err.message : 'Search failed' }

@@ -1,6 +1,5 @@
-import { ReaderStatsModel } from '../models/ReaderStats'
+import { getReaderStatsCounts } from './reader-stats'
 import { getOfflineRecitationDownloadStats } from './offline-download-stats'
-import { getMongoose } from './mongoose'
 
 export interface Peace2074PublicStats {
     downloadsWeek: number
@@ -19,26 +18,14 @@ function weekAgoDate(): Date {
 }
 
 export async function getPeace2074PublicStats(): Promise<Peace2074PublicStats> {
-    const offline = await getOfflineRecitationDownloadStats()
+    const [offline, readerCounts] = await Promise.all([
+        getOfflineRecitationDownloadStats(),
+        getReaderStatsCounts(weekAgoDate()).catch(() => ({ week: 0, total: 0, activeUserIds: [] as string[] })),
+    ])
 
-    let quranReadsWeek = 0
-    let quranReadsTotal = 0
-    let activeUsersWeek = 0
-
-    try {
-        await getMongoose()
-        const since = weekAgoDate()
-        const [readsWeek, readsTotal, activeUsers] = await Promise.all([
-            ReaderStatsModel.countDocuments({ timestamp: { $gte: since } }),
-            ReaderStatsModel.countDocuments({}),
-            ReaderStatsModel.distinct('userId', { timestamp: { $gte: since } }),
-        ])
-        quranReadsWeek = readsWeek
-        quranReadsTotal = readsTotal
-        activeUsersWeek = activeUsers.length
-    } catch (err) {
-        console.error('[Peace2074 Public Stats] Reader stats fetch failed:', err)
-    }
+    const quranReadsWeek = readerCounts.week
+    const quranReadsTotal = readerCounts.total
+    const activeUsersWeek = readerCounts.activeUserIds.length
 
     const downloadsWeek = offline.downloadsWeek + quranReadsWeek
     const downloadsTotal = offline.downloadsTotal + quranReadsTotal

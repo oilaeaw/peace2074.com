@@ -1,60 +1,40 @@
 import { defineEventHandler, getQuery } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getMongoose } from '../utils/mongoose'
-import { BlogPostModel } from '../models/BlogPost'
+import { getDb } from '../utils/realdb'
 import { deleteDatoCmsBlogPostBySlug } from '../utils/datocms'
 
 /**
  * DELETE /api/blog?slug=xxx
- * Deletes a blog post (requires authentication)
  */
 export default defineEventHandler(async (event) => {
-    // Require authentication
     const user = requireAuth(event)
-    if (!user) {
-        return { ok: false, error: 'Unauthorized' }
-    }
+    if (!user) return { ok: false, error: 'Unauthorized' }
 
     try {
-        const query = getQuery(event)
-        const { slug } = query
-
-        if (!slug || typeof slug !== 'string') {
-            return { ok: false, error: 'Missing slug parameter' }
-        }
+        const { slug } = getQuery(event)
+        if (!slug || typeof slug !== 'string') return { ok: false, error: 'Missing slug parameter' }
 
         const normalizedSlug = String(slug).trim()
 
-        // MongoDB primary path
-        try {
-            await getMongoose()
-            await BlogPostModel.findOneAndDelete({ slug: normalizedSlug })
+        const db = await getDb()
+        const blogPosts = db.collection('blogPosts')
 
-            // Mirror delete to DatoCMS (best effort)
-            let datocmsSynced = false
-            try {
-                const datocmsDelete = await deleteDatoCmsBlogPostBySlug(normalizedSlug)
-                datocmsSynced = !!datocmsDelete
-            } catch (err) {
-                console.warn('[Blog DELETE] MongoDB delete succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
-            }
-
-            return { ok: true, message: 'Post deleted successfully', source: 'mongodb', datocmsSynced }
-        } catch (dbErr) {
-            console.warn('[Blog DELETE] MongoDB delete failed, trying DatoCMS fallback:', dbErr instanceof Error ? dbErr.message : 'unknown')
+        const existing = await blogPosts.find({
+            filter: [{ field: 'slug', op: 'eq', value: normalizedSlug }],
+        })
+        if (existing[0]?.id) {
+            await blogPosts.delete(existing[0].id!)
         }
 
-        // DB unavailable: optional DatoCMS fallback
+        let datocmsSynced = false
         try {
-            const datocmsDelete = await deleteDatoCmsBlogPostBySlug(normalizedSlug)
-            if (datocmsDelete) {
-                return { ok: true, message: 'Post deleted successfully', source: 'datocms-fallback' }
-            }
+            const del = await deleteDatoCmsBlogPostBySlug(normalizedSlug)
+            datocmsSynced = !!del
         } catch (err) {
-            console.warn('[Blog DELETE] DatoCMS fallback failed:', err instanceof Error ? err.message : 'unknown')
+            console.warn('[Blog DELETE] DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
         }
 
-        return { ok: false, error: 'Database not available' }
+        return { ok: true, message: 'Post deleted successfully', source: 'realdb', datocmsSynced }
     } catch (err: any) {
         console.error('[Blog DELETE] Error:', err)
         return { ok: false, error: err?.message || 'Failed to delete post' }

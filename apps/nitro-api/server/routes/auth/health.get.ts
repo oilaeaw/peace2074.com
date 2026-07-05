@@ -2,6 +2,7 @@ import { defineEventHandler } from 'h3'
 import { applyCors } from '../../utils/cors'
 import { getOAuthAvailability } from '../../utils/oauth'
 import { getUserStorageDiagnostics } from '../../utils/users'
+import { resolvePrimaryDatabaseUri } from '../../utils/database-uri'
 
 export default defineEventHandler(async (event) => {
     applyCors(event)
@@ -21,7 +22,7 @@ export default defineEventHandler(async (event) => {
         || process.env.AUTH_PASSCODE
         || ''
 
-    const databaseUrl = process.env.DATABASE_URL || ''
+    const databaseUrl = resolvePrimaryDatabaseUri()
     const users = await getUserStorageDiagnostics()
 
     return {

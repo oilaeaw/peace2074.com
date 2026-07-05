@@ -1,5 +1,4 @@
-import { getMongoose } from '../utils/mongoose'
-import { BlogPostModel } from '../models/BlogPost'
+import { getDb } from '../utils/realdb'
 import { sendBlogPostNotification } from '../utils/blog-notifications'
 
 type SeedBlogPost = {
@@ -20,8 +19,7 @@ type SeedBlogPost = {
 }
 
 /**
- * Nitro plugin that seeds blog posts on server startup
- * This ensures blog posts persist across deployments in stateless environments (like Cloudflare)
+ * Nitro plugin — seeds blog posts from JSON on server startup.
  */
 export default defineNitroPlugin(async () => {
     if (import.meta.dev) {
@@ -32,21 +30,19 @@ export default defineNitroPlugin(async () => {
     try {
         console.log('[Blog Seed] Checking blog posts...')
 
-        await getMongoose()
-
-        // Import seed data
+        const db = await getDb()
+        const blogPosts = db.collection('blogPosts')
         const seedData = await import('../data/blog-seed.json').then(m => m.default as SeedBlogPost[])
 
-        // Check which posts need to be seeded
         let seededCount = 0
 
         for (const post of seedData) {
-            const existing = await BlogPostModel.findOne({ slug: post.slug }).lean()
+            const existing = await blogPosts.find({
+                filter: [{ field: 'slug', op: 'eq', value: post.slug }],
+            })
 
-            if (!existing) {
-                // Add post with dates
-                await BlogPostModel.create({
-                    _id: post.id,
+            if (!existing.length) {
+                await blogPosts.insert({
                     slug: post.slug,
                     title: post.title,
                     excerpt: post.excerpt || '',
@@ -54,46 +50,33 @@ export default defineNitroPlugin(async () => {
                     tags: post.tags || [],
                     date: post.date,
                     author: post.author,
-                    createdAt: post.createdAt ? new Date(post.createdAt) : new Date(),
-                    updatedAt: post.updatedAt ? new Date(post.updatedAt) : new Date(),
                 })
                 seededCount++
                 console.log(`[Blog Seed] ✓ Seeded: ${post.title}`)
 
                 if (post.notifySubscribers === true) {
                     try {
-                        const notificationResult = await sendBlogPostNotification({
+                        const result = await sendBlogPostNotification({
                             slug: post.slug,
                             title: post.title,
                             notificationTitle: post.notificationTitle,
                             notificationBody: post.notificationBody,
                             notificationUrl: post.notificationUrl,
                         })
-
-                        console.log(
-                            `[Blog Seed] Notification ${notificationResult.ok ? 'sent' : 'skipped'} for: ${post.title} (${notificationResult.reason})`
-                        )
-                    } catch (error: any) {
-                        console.error(
-                            `[Blog Seed] Failed to notify subscribers for ${post.title}:`,
-                            error?.message || error
-                        )
+                        console.log(`[Blog Seed] Notification ${result.ok ? 'sent' : 'skipped'} for: ${post.title}`)
+                    } catch (err: any) {
+                        console.error(`[Blog Seed] Notify failed for ${post.title}:`, err?.message)
                     }
                 }
             }
         }
 
-        if (seededCount > 0) {
-            console.log(`[Blog Seed] ✓ Seeded ${seededCount} blog post(s)`)
-        } else {
-            console.log('[Blog Seed] ✓ All blog posts already exist')
-        }
+        const total = await blogPosts.count()
+        console.log(seededCount > 0
+            ? `[Blog Seed] ✓ Seeded ${seededCount} post(s). Total: ${total}`
+            : `[Blog Seed] ✓ All posts already exist. Total: ${total}`)
 
-        // Log total count
-        const total = await BlogPostModel.countDocuments()
-        console.log(`[Blog Seed] Total blog posts: ${total}`)
-
-    } catch (error: any) {
-        console.error('[Blog Seed] Error seeding blog posts:', error?.message || error)
+    } catch (err: any) {
+        console.error('[Blog Seed] Error:', err?.message || err)
     }
 })

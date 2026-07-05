@@ -1,5 +1,12 @@
-import { OfflineDownloadDailyModel } from '../models/OfflineDownloadDaily'
-import { getMongoose } from './mongoose'
+import { getDb } from './realdb'
+
+export interface OfflineDownloadDaily {
+    id?: string
+    date: string   // YYYY-MM-DD UTC
+    count: number
+}
+
+// ── Helpers ──────────────────────────────────────────────────────────────────
 
 function formatUtcDate(date: Date): string {
     return date.toISOString().slice(0, 10)
@@ -15,15 +22,26 @@ function rollingWeekDates(endDate = new Date()): string[] {
     return dates
 }
 
+async function offlineCollection() {
+    const db = await getDb()
+    return db.collection<OfflineDownloadDaily>('offlineDownloads')
+}
+
+// ── Public API ────────────────────────────────────────────────────────────────
+
 export async function recordOfflineRecitationDownload(): Promise<boolean> {
     try {
-        await getMongoose()
+        const col = await offlineCollection()
         const today = formatUtcDate(new Date())
-        await OfflineDownloadDailyModel.findOneAndUpdate(
-            { date: today },
-            { $inc: { count: 1 } },
-            { upsert: true, new: true }
-        )
+        const results = await col.find({
+            filter: [{ field: 'date', op: 'eq', value: today }],
+        })
+
+        if (results[0]?.id) {
+            await col.update(results[0].id, { count: (results[0].count ?? 0) + 1 })
+        } else {
+            await col.insert({ date: today, count: 1 })
+        }
         return true
     } catch (err) {
         console.error('[Offline Download Stats] Record failed:', err)
@@ -36,18 +54,15 @@ export async function getOfflineRecitationDownloadStats(): Promise<{
     downloadsTotal: number
 }> {
     try {
-        await getMongoose()
+        const col = await offlineCollection()
         const weekDates = rollingWeekDates()
-        const [weeklyRows, totalAgg] = await Promise.all([
-            OfflineDownloadDailyModel.find({ date: { $in: weekDates } }, { date: 1, count: 1 }).lean(),
-            OfflineDownloadDailyModel.aggregate([{ $group: { _id: null, total: { $sum: '$count' } } }]),
-        ])
+        const all = await col.findAll()
 
-        const downloadsWeek = weeklyRows.reduce(
-            (sum, row) => sum + Number((row as { count?: number }).count || 0),
-            0
-        )
-        const downloadsTotal = Number(totalAgg[0]?.total || 0)
+        const downloadsWeek = all
+            .filter((row) => weekDates.includes(row.date))
+            .reduce((sum, row) => sum + (row.count ?? 0), 0)
+
+        const downloadsTotal = all.reduce((sum, row) => sum + (row.count ?? 0), 0)
 
         return { downloadsWeek, downloadsTotal }
     } catch (err) {

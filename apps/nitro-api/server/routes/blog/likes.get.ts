@@ -1,7 +1,11 @@
 import { defineEventHandler } from 'h3'
-import { getMongoose } from '../../utils/mongoose'
-import { BlogLikeModel } from '../../models/BlogLike'
+import { getDb } from '../../utils/realdb'
 import { readSession } from '../../utils/auth'
+
+interface BlogLike {
+    slug: string
+    userId: string
+}
 
 /**
  * GET /api/blog/likes
@@ -9,38 +13,30 @@ import { readSession } from '../../utils/auth'
  */
 export default defineEventHandler(async (event) => {
     try {
-        await getMongoose()
-
         const session = readSession(event)
         const userId = session?.id
 
-        // Get all likes grouped by slug
-        const grouped = await BlogLikeModel.aggregate([
-            { $group: { _id: '$slug', count: { $sum: 1 } } }
-        ])
+        const db = await getDb()
+        const likes = db.collection<BlogLike>('blogLikes')
+        const allLikes = await likes.findAll()
 
-        const likeCounts = grouped.reduce((acc: Record<string, number>, item: any) => {
-            acc[item._id] = item.count
-            return acc
-        }, {})
+        // Group by slug
+        const likeCounts: Record<string, number> = {}
+        for (const like of allLikes) {
+            likeCounts[like.slug] = (likeCounts[like.slug] ?? 0) + 1
+        }
 
         // Get user's liked posts if authenticated
         let userLiked: string[] = []
         if (userId) {
-            const userLikes = await BlogLikeModel.find({ userId }, { slug: 1 }).lean()
-            userLiked = userLikes.map((l: any) => l.slug)
+            userLiked = allLikes
+                .filter((l) => l.userId === userId)
+                .map((l) => l.slug)
         }
 
-        return {
-            ok: true,
-            likeCounts,
-            userLiked
-        }
+        return { ok: true, likeCounts, userLiked }
     } catch (err: any) {
         console.error('[Blog Likes GET] Error:', err)
-        return {
-            ok: false,
-            error: err?.message || 'Failed to fetch likes'
-        }
+        return { ok: false, error: err?.message || 'Failed to fetch likes' }
     }
 })

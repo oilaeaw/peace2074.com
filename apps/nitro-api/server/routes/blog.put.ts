@@ -1,110 +1,65 @@
 import { defineEventHandler, readBody } from 'h3'
 import { requireAuth } from '../utils/auth'
-import { getMongoose } from '../utils/mongoose'
-import { BlogPostModel } from '../models/BlogPost'
+import { getDb } from '../utils/realdb'
 import { updateDatoCmsBlogPostBySlug } from '../utils/datocms'
 import { generateEmbedding, blogPostEmbeddingText } from '../utils/embeddings'
 
 /**
  * PUT /api/blog
- * Updates an existing blog post (requires authentication)
  */
 export default defineEventHandler(async (event) => {
-    // Require authentication
     const user = requireAuth(event)
-    if (!user) {
-        return { ok: false, error: 'Unauthorized' }
-    }
+    if (!user) return { ok: false, error: 'Unauthorized' }
 
     try {
         const body = await readBody(event)
         const { slug, title, excerpt, content, tags } = body
 
-        if (!slug) {
-            return { ok: false, error: 'Missing slug parameter' }
-        }
+        if (!slug) return { ok: false, error: 'Missing slug parameter' }
 
         const normalizedSlug = String(slug).trim()
-
         const updateTags = tags ? (Array.isArray(tags) ? tags : []) : undefined
 
-        // MongoDB primary path
-        try {
-            await getMongoose()
+        const db = await getDb()
+        const blogPosts = db.collection('blogPosts')
 
-            // Build update object (only include provided fields)
-            const update: any = {}
+        const existing = await blogPosts.find({
+            filter: [{ field: 'slug', op: 'eq', value: normalizedSlug }],
+        })
+        if (!existing[0]?.id) return { ok: false, error: 'Post not found' }
 
-            if (title) update.title = title
-            if (excerpt !== undefined) update.excerpt = excerpt
-            if (content) update.content = content
-            if (updateTags !== undefined) update.tags = updateTags
+        const current = existing[0] as any
+        const patch: Record<string, any> = {}
+        if (title) patch.title = title
+        if (excerpt !== undefined) patch.excerpt = excerpt
+        if (content) patch.content = content
+        if (updateTags !== undefined) patch.tags = updateTags
 
-            // Regenerate embedding if any text field changed
-            if (title || excerpt !== undefined || content || updateTags !== undefined) {
-                try {
-                    const current = await BlogPostModel.findOne({ slug: normalizedSlug }).lean() as any
-                    if (current) {
-                        update.embedding = await generateEmbedding(
-                            blogPostEmbeddingText({
-                                title: title ?? current.title,
-                                excerpt: excerpt !== undefined ? excerpt : current.excerpt,
-                                content: content ?? current.content,
-                                tags: updateTags !== undefined ? updateTags : current.tags,
-                            })
-                        )
-                    }
-                } catch (err) {
-                    console.warn('[Blog PUT] Embedding generation failed:', err instanceof Error ? err.message : 'unknown')
-                }
-            }
-
-            const result = await BlogPostModel.findOneAndUpdate(
-                { slug: normalizedSlug },
-                { $set: update },
-                { new: true }
-            ).lean()
-
-            if (!result) {
-                return { ok: false, error: 'Post not found' }
-            }
-
-            // Mirror update to DatoCMS (best effort)
-            let datocmsSynced = false
+        // Regenerate embedding if text changed
+        if (title || excerpt !== undefined || content || updateTags !== undefined) {
             try {
-                const datocmsPost = await updateDatoCmsBlogPostBySlug(normalizedSlug, {
-                    title,
-                    excerpt,
-                    content,
-                    tags: updateTags,
-                })
-                datocmsSynced = !!datocmsPost
+                patch.embedding = await generateEmbedding(blogPostEmbeddingText({
+                    title: title ?? current.title,
+                    excerpt: excerpt !== undefined ? excerpt : current.excerpt,
+                    content: content ?? current.content,
+                    tags: updateTags !== undefined ? updateTags : current.tags,
+                }))
             } catch (err) {
-                console.warn('[Blog PUT] MongoDB update succeeded but DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
+                console.warn('[Blog PUT] Embedding failed:', err instanceof Error ? err.message : 'unknown')
             }
-
-            return { ok: true, post: result, source: 'mongodb', datocmsSynced }
-        } catch (dbErr) {
-            console.warn('[Blog PUT] MongoDB update failed, trying DatoCMS fallback:', dbErr instanceof Error ? dbErr.message : 'unknown')
         }
 
-        // DB unavailable: optional DatoCMS fallback
+        const updated = await blogPosts.update(existing[0].id!, patch)
+
+        let datocmsSynced = false
         try {
-            const datocmsPost = await updateDatoCmsBlogPostBySlug(normalizedSlug, {
-                title,
-                excerpt,
-                content,
-                tags: updateTags,
-            })
-
-            if (datocmsPost) {
-                return { ok: true, post: datocmsPost, source: 'datocms-fallback' }
-            }
+            const datocmsPost = await updateDatoCmsBlogPostBySlug(normalizedSlug, { title, excerpt, content, tags: updateTags })
+            datocmsSynced = !!datocmsPost
         } catch (err) {
-            console.warn('[Blog PUT] DatoCMS fallback failed:', err instanceof Error ? err.message : 'unknown')
+            console.warn('[Blog PUT] DatoCMS sync failed:', err instanceof Error ? err.message : 'unknown')
         }
 
-        return { ok: false, error: 'Database not available' }
+        return { ok: true, post: updated, source: 'realdb', datocmsSynced }
     } catch (err: any) {
         console.error('[Blog PUT] Error:', err)
         return { ok: false, error: err?.message || 'Failed to update post' }
