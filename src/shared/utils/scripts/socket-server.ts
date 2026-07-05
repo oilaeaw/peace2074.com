@@ -1,101 +1,201 @@
 import http, { type IncomingMessage, type ServerResponse } from 'node:http'
-import { createRequire } from 'node:module'
 import process from 'node:process'
+import { WebSocketServer, WebSocket } from 'ws'
 
-type ClientEventPayload = unknown
+// ─── Types ──────────────────────────────────────────────────────────────────
 
-type ChatMessagePayload = {
-  text?: unknown
-  author?: unknown
-} | null | undefined
+type MessageType =
+  | 'chat:message'
+  | 'client:event'
+  | 'find:messages'
+  | 'join:room'
+  | 'server:id'
+  | 'health'
+  | 'server:ack'
+  | 'history'
+  | 'user-list'
+  | 'user-joined'
+  | 'user-left'
 
-type ChatAck = (response: {
-  ok: boolean
-  error?: string
-}) => void
+interface WsMessage {
+  type: MessageType
+  [key: string]: unknown
+}
 
-type DevSocket = {
+interface StoredMessage {
   id: string
-  emit: (event: string, payload?: unknown) => void
-  on: (event: string, handler: (...args: any[]) => void) => void
+  text: string
+  author: string
+  from: string
+  room?: string
+  to?: string
+  ts: string
 }
 
-type SocketServerInstance = {
-  on: (event: 'connection', handler: (socket: DevSocket) => void) => void
-  emit: (event: string, payload: unknown) => void
-}
-
-const require = createRequire(import.meta.url)
-const { Server } = require('socket.io') as {
-  Server: new (...args: any[]) => SocketServerInstance
-}
+// ─── State ──────────────────────────────────────────────────────────────────
 
 const PORT = Number(process.env.SOCKET_PORT || 3100)
+const MAX_HISTORY = 200
+
+const clients = new Map<string, WebSocket>()
+const history: StoredMessage[] = []
+
+let idCounter = 0
+function makeId(): string {
+  return `${Date.now().toString(36)}-${(++idCounter).toString(36)}`
+}
+
+// ─── Helpers ─────────────────────────────────────────────────────────────────
+
+function send(ws: WebSocket, payload: object): void {
+  if (ws.readyState === WebSocket.OPEN) {
+    ws.send(JSON.stringify(payload))
+  }
+}
+
+function broadcast(payload: object, exclude?: WebSocket): void {
+  const raw = JSON.stringify(payload)
+  for (const [, client] of clients) {
+    if (client !== exclude && client.readyState === WebSocket.OPEN) {
+      client.send(raw)
+    }
+  }
+}
+
+function broadcastAll(payload: object): void {
+  const raw = JSON.stringify(payload)
+  for (const [, client] of clients) {
+    if (client.readyState === WebSocket.OPEN) {
+      client.send(raw)
+    }
+  }
+}
+
+function broadcastUserList(): void {
+  broadcastAll({ type: 'user-list', users: [...clients.keys()] })
+}
+
+// ─── Server ──────────────────────────────────────────────────────────────────
 
 const server = http.createServer(
   (_req: IncomingMessage, res: ServerResponse) => {
     res.writeHead(200, { 'Content-Type': 'text/plain' })
-    res.end('Socket server running')
+    res.end('WebSocket server running')
   }
 )
 
-const io = new Server(server, {
-  cors: {
-    origin: '*',
-    methods: ['GET', 'POST'],
-  },
-})
+const wss = new WebSocketServer({ server })
 
-io.on('connection', (socket: DevSocket) => {
-  console.log('socket connected', socket.id)
+wss.on('connection', (ws: WebSocket) => {
+  const id = makeId()
+  clients.set(id, ws)
 
-  try {
-    socket.emit('server:id', socket.id)
-  } catch {
-    // ignore fire-and-forget emit failures
-  }
+  console.log(`[ws] connected  id=${id}  total=${clients.size}`)
 
-  const interval = setInterval(() => {
-    socket.emit('health', {
+  // Greet the client with its assigned ID
+  send(ws, { type: 'server:id', id })
+
+  // Broadcast updated user list to everyone
+  broadcastUserList()
+
+  // Notify others that a new user joined
+  broadcast({ type: 'user-joined', id }, ws)
+
+  // Health heartbeat every 10s
+  const heartbeat = setInterval(() => {
+    send(ws, {
+      type: 'health',
       timestamp: new Date().toISOString(),
-      id: socket.id,
+      id,
     })
-  }, 10000)
+  }, 10_000)
 
-  socket.on('client:event', (data: ClientEventPayload) => {
-    console.log('client:event', data)
-    socket.emit('server:ack', { received: true, data })
-  })
+  ws.on('message', (raw: Buffer | string) => {
+    let msg: WsMessage
 
-  socket.on('chat:message', (payload: ChatMessagePayload, ack?: ChatAck) => {
     try {
-      const normalized = {
-        id: socket.id,
-        text: String(payload?.text ?? ''),
-        author: String(payload?.author ?? 'anonymous'),
-        ts: new Date().toISOString(),
+      msg = JSON.parse(raw.toString()) as WsMessage
+    } catch {
+      send(ws, { type: 'server:ack', ok: false, error: 'Invalid JSON' })
+      return
+    }
+
+    switch (msg.type) {
+      // ── Generic client event ────────────────────────────────────────────
+      case 'client:event': {
+        console.log(`[ws] client:event from=${id}`, msg.data)
+        send(ws, { type: 'server:ack', received: true, data: msg.data })
+        break
       }
 
-      io.emit('chat:message', normalized)
-      if (typeof ack === 'function') {
-        ack({ ok: true })
+      // ── Chat broadcast / DM ─────────────────────────────────────────────
+      case 'chat:message': {
+        const stored: StoredMessage = {
+          id: makeId(),
+          text: typeof msg.text === 'string' ? msg.text : '',
+          author: typeof msg.author === 'string' ? msg.author : 'anonymous',
+          from: id,
+          room: typeof msg.room === 'string' ? msg.room : undefined,
+          to: typeof msg.to === 'string' ? msg.to : undefined,
+          ts: new Date().toISOString(),
+        }
+
+        // Save to history
+        history.push(stored)
+        if (history.length > MAX_HISTORY) {
+          history.splice(0, history.length - MAX_HISTORY)
+        }
+
+        const envelope = { type: 'chat:message' as const, ...stored }
+
+        if (stored.to) {
+          // Direct message — only to recipient (+ echo to sender)
+          const recipientWs = clients.get(stored.to)
+          if (recipientWs) send(recipientWs, envelope)
+          send(ws, envelope)
+        } else {
+          // Broadcast to all
+          broadcastAll(envelope)
+        }
+        break
       }
-    } catch (error) {
-      if (typeof ack === 'function') {
-        ack({
-          ok: false,
-          error: error instanceof Error ? error.message : 'error',
-        })
+
+      // ── History request ──────────────────────────────────────────────────
+      case 'find:messages': {
+        send(ws, { type: 'history', messages: history.slice(-MAX_HISTORY) })
+        break
       }
+
+      // ── Room join (informational, stored client-side) ────────────────────
+      case 'join:room': {
+        const room = typeof msg.room === 'string' ? msg.room.trim() : ''
+        if (room) {
+          console.log(`[ws] ${id} joined room=${room}`)
+          send(ws, { type: 'server:ack', received: true, room })
+        }
+        break
+      }
+
+      default:
+        console.warn(`[ws] unknown message type="${msg.type}" from=${id}`)
     }
   })
 
-  socket.on('disconnect', (reason: string) => {
-    console.log('socket disconnected', socket.id, reason)
-    clearInterval(interval)
+  ws.on('close', () => {
+    clearInterval(heartbeat)
+    clients.delete(id)
+    console.log(`[ws] disconnected id=${id}  total=${clients.size}`)
+
+    // Notify remaining clients
+    broadcast({ type: 'user-left', id })
+    broadcastUserList()
+  })
+
+  ws.on('error', (err: Error) => {
+    console.error(`[ws] error id=${id}`, err.message)
   })
 })
 
 server.listen(PORT, () => {
-  console.log(`Socket IO server listening on http://localhost:${PORT}`)
+  console.log(`WebSocket server listening on ws://localhost:${PORT}`)
 })
