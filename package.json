@@ -46,6 +46,7 @@
     "build:cf": "pnpm sync:quran:data && vite build && NITRO_PRESET=cloudflare-pages NITRO_APP_BASE_URL=/api pnpm build:api && cp -r dist/. apps/nitro-api/dist/ && pnpm patch:cf:worker",
     "build:cloudflare": "pnpm build:cf",
     "patch:cf:worker": "node --experimental-strip-types scripts/patch-cf-worker.ts",
+    "deploy": "npx wrangler pages deploy apps/nitro-api/dist --project-name peace2074-com --branch one --commit-dirty=true",
     "preview": "vite preview",
     "lint": "eslint . --fix",
     "typecheck": "vue-tsc --noEmit",
