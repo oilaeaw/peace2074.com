@@ -37,7 +37,9 @@ const showPassword = ref(false)
 const rememberMe = ref(false)
 const passkeyLoading = ref(false)
 const appleConfigured = ref<boolean | null>(null)
-const googleConfigured = ref<boolean | null>(null)
+// Default to true — Google OAuth is always configured in production.
+// The health check will set it to false only if explicitly unavailable.
+const googleConfigured = ref<boolean | null>(true)
 let appUrlOpenHandle: (() => void) | null = null
 
 // Compute Nitro API base URL
@@ -88,7 +90,8 @@ const passkeysSupported = computed(() => {
 })
 
 const appleAvailable = computed(() => appleConfigured.value === true)
-const googleAvailable = computed(() => googleConfigured.value === true)
+// Show Google button unless health check explicitly returned false
+const googleAvailable = computed(() => googleConfigured.value !== false)
 
 function getErrorMessage(err: unknown) {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -402,6 +405,7 @@ async function loadAuthAvailability() {
     if (typeof data?.oauth?.google === 'boolean') {
       googleConfigured.value = data.oauth.google
     }
+    // If health check fails to return a google value, leave it as true (default)
 
     if (typeof data?.oauth?.apple === 'boolean') {
       appleConfigured.value = data.oauth.apple
