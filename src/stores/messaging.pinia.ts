@@ -46,8 +46,24 @@ export interface ChatMessage {
 // ─── Config ───────────────────────────────────────────────────────────────────
 
 const env = (import.meta as any)?.env || {};
-const DEFAULT_WS_URL: string =
-    (env.VITE_MESSAGING_URL as string) || "wss://waelio-messagin-live.onrender.com";
+
+/**
+ * Derive the WebSocket URL at runtime:
+ *  1. Honour explicit VITE_MESSAGING_URL env var (custom deployments / overrides).
+ *  2. Otherwise build a same-origin URL from window.location so it works
+ *     automatically in dev (ws://localhost:4000/api/chat via Vite proxy) and
+ *     in production (wss://peace2074.com/api/chat → Cloudflare Worker).
+ */
+function resolveWsUrl(): string {
+    const explicit = (env.VITE_MESSAGING_URL as string | undefined)?.trim();
+    if (explicit) return explicit;
+    if (typeof window !== "undefined") {
+        const proto = window.location.protocol === "https:" ? "wss" : "ws";
+        return `${proto}://${window.location.host}/api/chat`;
+    }
+    return "ws://localhost:3000/chat";
+}
+
 const MAX_MESSAGES = 200;
 const MAX_RECONNECT_ATTEMPTS = 6;
 const BASE_RECONNECT_DELAY_MS = 1_500;
@@ -95,7 +111,7 @@ function toMessage(env: WsEnvelope): ChatMessage {
 
 export const useMessagingStore = defineStore("messaging", () => {
     const socket = ref<WebSocket | null>(null);
-    const url = ref<string>(DEFAULT_WS_URL);
+    const url = ref<string>(resolveWsUrl());
     const connected = ref(false);
     const connecting = ref(false);
     const error = ref<string | null>(null);
