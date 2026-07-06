@@ -17,6 +17,9 @@ const realdbCjs = resolve('../../node_modules/@waelio/realdb/lib/index.js')
 export default defineNitroConfig({
     compatibilityDate: '2024-10-01',
     srcDir: 'server',
+    experimental: {
+        websocket: true,
+    },
     alias: {
         '@waelio/realdb': realdbCjs,
     },
