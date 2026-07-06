@@ -86,6 +86,10 @@ console.log(`[patch-cf-worker] ✓ Rewrote ${hasOwnCount} hasOwnProperty call(s)
 // Nitro generates include:["/*"] which causes it to intercept SPA requests
 // and 302-redirect / → /api/ (the baseURL). Restricting to /api/* lets
 // Cloudflare Pages serve static assets and the SPA index.html directly.
+const routesJson = JSON.stringify({ version: 1, include: ['/api/*'], exclude: [] }, null, 2) + '\n'
+// Write to both dist locations — build:cf deploys from root dist/
 const routesPath = resolve('apps/nitro-api/dist/_routes.json')
-writeFileSync(routesPath, JSON.stringify({ version: 1, include: ['/api/*'], exclude: [] }, null, 2) + '\n', 'utf8')
-console.log('[patch-cf-worker] ✓ Fixed _routes.json → include: ["/api/*"]')
+const rootRoutesPath = resolve('dist/_routes.json')
+writeFileSync(routesPath, routesJson, 'utf8')
+writeFileSync(rootRoutesPath, routesJson, 'utf8')
+console.log('[patch-cf-worker] ✓ Fixed _routes.json → include: ["/api/*"] (both dist/ and apps/nitro-api/dist/)')
