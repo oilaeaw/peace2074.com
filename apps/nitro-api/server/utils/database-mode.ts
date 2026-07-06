@@ -14,3 +14,18 @@ export function createDatabaseRequiredError(cause?: unknown) {
         data: causeMessage ? { cause: causeMessage } : undefined,
     })
 }
+
+/**
+ * Returns true when the server is running without a primary database
+ * (e.g. Cloudflare Workers / edge environments) and fallback in-memory
+ * or KV-based auth storage is permitted.
+ */
+export function isFallbackAuthStorageAllowed(): boolean {
+    const uri =
+        process.env.NITRO_MONGODB_URI ||
+        process.env.MONGODB_URI ||
+        process.env.NITRO_DATABASE_URL ||
+        process.env.DATABASE_URL ||
+        ''
+    return !uri
+}
