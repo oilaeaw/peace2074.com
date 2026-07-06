@@ -1,4 +1,5 @@
 import { defineNitroConfig } from 'nitropack'
+import { resolve } from 'node:path'
 
 const DEFAULT_PORT = 3000
 const requestedPreset =
@@ -9,9 +10,16 @@ const runtimeBaseURL =
     process.env.NITRO_BASE_URL?.trim() ||
     (process.env.NODE_ENV === 'production' ? '/api' : '/')
 
+// @waelio/realdb ships CJS only — point Rollup to the correct entry
+// (same alias that vite.config.ts applies for the frontend build)
+const realdbCjs = resolve('../../node_modules/@waelio/realdb/lib/index.js')
+
 export default defineNitroConfig({
     compatibilityDate: '2024-10-01',
     srcDir: 'server',
+    alias: {
+        '@waelio/realdb': realdbCjs,
+    },
     serverAssets: [
         {
             baseName: 'release',
@@ -44,6 +52,11 @@ export default defineNitroConfig({
             },
             rollupConfig: {
                 plugins: [],
+                resolve: {
+                    alias: {
+                        '@waelio/realdb': realdbCjs,
+                    },
+                },
             },
         }
         : {}),
