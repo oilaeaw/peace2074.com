@@ -46,8 +46,7 @@ export default defineNitroConfig({
                 wrangler: {
                     // nodejs_compat_v2 gives access to node:fs, node:crypto, node:events.
                     // Required by @waelio/data (JSON file persistence).
-                    // websockets flag enables WebSocket support in Cloudflare Workers.
-                    compatibility_flags: ['nodejs_compat_v2', 'websockets'],
+                    compatibility_flags: ['nodejs_compat_v2'],
                 },
             },
             rollupConfig: {

@@ -66,6 +66,22 @@ if (appliedCount === 0) {
 writeFileSync(workerPath, patched, 'utf8')
 console.log(`[patch-cf-worker] Done – rewrote ${appliedCount} jws stream base class(es) to ${streamNs}.Transform.`)
 
+// Patch 2: Safe hasOwnProperty
+// Problem: `getDefaultExportFromNamespaceIfNotNamed` may return a null-prototype
+// namespace object. Calling `.hasOwnProperty()` on it throws:
+//   TypeError: Cs.hasOwnProperty is not a function
+// Fix: rewrite all `X.hasOwnProperty(Y)` → `Object.prototype.hasOwnProperty.call(X, Y)`
+// throughout the bundle so it works on any object regardless of prototype chain.
+let src2 = readFileSync(workerPath, 'utf8')
+const hasOwnPropertyPattern = /([A-Za-z0-9_$]+)\.hasOwnProperty\(([^)]+)\)/g
+let hasOwnCount = 0
+const patched2 = src2.replace(hasOwnPropertyPattern, (_match, obj, key) => {
+    hasOwnCount++
+    return `Object.prototype.hasOwnProperty.call(${obj},${key})`
+})
+writeFileSync(workerPath, patched2, 'utf8')
+console.log(`[patch-cf-worker] ✓ Rewrote ${hasOwnCount} hasOwnProperty call(s) to Object.prototype.hasOwnProperty.call().`)
+
 // Fix _routes.json: only route /api/* through the Worker.
 // Nitro generates include:["/*"] which causes it to intercept SPA requests
 // and 302-redirect / → /api/ (the baseURL). Restricting to /api/* lets
