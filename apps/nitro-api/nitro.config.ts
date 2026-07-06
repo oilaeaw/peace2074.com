@@ -12,9 +12,6 @@ const runtimeBaseURL =
 export default defineNitroConfig({
     compatibilityDate: '2024-10-01',
     srcDir: 'server',
-    experimental: {
-        websocket: true,
-    },
     serverAssets: [
         {
             baseName: 'release',
