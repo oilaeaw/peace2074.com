@@ -36,6 +36,7 @@ export interface ChatMessage {
     id: string;
     type: string;
     from: string;
+    author?: string;
     to?: string;
     room?: string;
     text: string;
@@ -48,6 +49,8 @@ const env = (import.meta as any)?.env || {};
 const DEFAULT_WS_URL: string =
     (env.VITE_MESSAGING_URL as string) || "wss://waelio-messagin-live.onrender.com";
 const MAX_MESSAGES = 200;
+const MAX_RECONNECT_ATTEMPTS = 6;
+const BASE_RECONNECT_DELAY_MS = 1_500;
 
 // ─── Helpers ──────────────────────────────────────────────────────────────────
 
@@ -80,6 +83,7 @@ function toMessage(env: WsEnvelope): ChatMessage {
         id: env.id || makeId("msg"),
         type: env.room || env.to ? (env.to ? "direct" : "broadcast") : "message",
         from: env.from || env.author || "anon",
+        author: env.author,
         to: env.to,
         room: env.room,
         text: env.text || "",
@@ -98,8 +102,41 @@ export const useMessagingStore = defineStore("messaging", () => {
     const messages = ref<ChatMessage[]>([]);
     const users = ref<string[]>([]);
     const me = ref<string | null>(null);
+    const displayName = ref<string | null>(null);
     const currentRoom = ref<string>("general");
     const rooms = ref<string[]>(["general", "support", "dev"]);
+
+    // ── Auto-reconnect state ───────────────────────────────────────────────
+    const reconnectAttempts = ref(0);
+    const reconnectIn = ref(0);
+    let _reconnectTimer: ReturnType<typeof setTimeout> | null = null;
+    let _countdownTimer: ReturnType<typeof setInterval> | null = null;
+
+    function _clearReconnectTimers(): void {
+        if (_reconnectTimer) { clearTimeout(_reconnectTimer); _reconnectTimer = null; }
+        if (_countdownTimer) { clearInterval(_countdownTimer); _countdownTimer = null; }
+        reconnectIn.value = 0;
+    }
+
+    function _scheduleReconnect(): void {
+        if (reconnectAttempts.value >= MAX_RECONNECT_ATTEMPTS) {
+            error.value = "Unable to reconnect. Click ↺ to retry manually.";
+            return;
+        }
+        const delay = Math.min(
+            BASE_RECONNECT_DELAY_MS * Math.pow(2, reconnectAttempts.value),
+            30_000
+        );
+        reconnectIn.value = Math.ceil(delay / 1000);
+        _countdownTimer = setInterval(() => {
+            reconnectIn.value = Math.max(0, reconnectIn.value - 1);
+        }, 1_000);
+        _reconnectTimer = setTimeout(() => {
+            _clearReconnectTimers();
+            reconnectAttempts.value++;
+            connect();
+        }, delay);
+    }
 
     // ── Internal helpers ───────────────────────────────────────────────────
 
@@ -116,7 +153,6 @@ export const useMessagingStore = defineStore("messaging", () => {
                 (m.ts === msg.ts && m.from === msg.from && m.text === msg.text)
         );
         if (dup) return;
-
         messages.value.push(msg);
         if (messages.value.length > MAX_MESSAGES) {
             messages.value.splice(0, messages.value.length - MAX_MESSAGES);
@@ -138,7 +174,6 @@ export const useMessagingStore = defineStore("messaging", () => {
                 break;
 
             case "health":
-                // heartbeat — nothing to do
                 break;
 
             case "user-list":
@@ -175,14 +210,21 @@ export const useMessagingStore = defineStore("messaging", () => {
                 break;
 
             default:
-                // server:ack and unknown types — ignore silently
                 break;
         }
     }
 
     // ── Public API ─────────────────────────────────────────────────────────
 
-    function disconnect(): void {
+    function setDisplayName(name: string): void {
+        displayName.value = name.trim() || null;
+    }
+
+    function disconnect(intentional = false): void {
+        if (intentional) {
+            _clearReconnectTimers();
+            reconnectAttempts.value = 0;
+        }
         if (socket.value) {
             socket.value.onopen = null;
             socket.value.onmessage = null;
@@ -222,8 +264,8 @@ export const useMessagingStore = defineStore("messaging", () => {
             connected.value = true;
             connecting.value = false;
             error.value = null;
-
-            // Request message history
+            reconnectAttempts.value = 0;
+            _clearReconnectTimers();
             send({ type: "find:messages" });
         };
 
@@ -233,7 +275,6 @@ export const useMessagingStore = defineStore("messaging", () => {
             connected.value = false;
             connecting.value = false;
             error.value = "Connection error";
-            console.warn("[messaging] WebSocket error");
         };
 
         ws.onclose = (_ev: CloseEvent): void => {
@@ -242,26 +283,35 @@ export const useMessagingStore = defineStore("messaging", () => {
             connecting.value = false;
             socket.value = null;
 
-            if (wasConnected) {
-                error.value = "Disconnected from chat server";
+            if (wasConnected || reconnectAttempts.value > 0) {
+                error.value = "Disconnected — reconnecting…";
+                _scheduleReconnect();
+            } else if (wasConnected === false && reconnectAttempts.value === 0) {
+                error.value = "Could not connect to chat server";
+                _scheduleReconnect();
             }
         };
+    }
+
+    function manualReconnect(): void {
+        _clearReconnectTimers();
+        reconnectAttempts.value = 0;
+        error.value = null;
+        connect();
     }
 
     function sendBroadcast(text: string, room?: string): void {
         const body = (text || "").trim();
         if (!body) return;
-
         if (!socket.value || !connected.value) {
             error.value = "Chat server is not connected";
             return;
         }
-
         error.value = null;
         send({
             type: "chat:message",
             text: body,
-            author: me.value || "anonymous",
+            author: displayName.value || me.value || "anonymous",
             room: room || currentRoom.value || undefined,
         });
     }
@@ -269,17 +319,15 @@ export const useMessagingStore = defineStore("messaging", () => {
     function sendDirect(text: string, to: string): void {
         const body = (text || "").trim();
         if (!body || !to) return;
-
         if (!socket.value || !connected.value) {
             error.value = "Chat server is not connected";
             return;
         }
-
         error.value = null;
         send({
             type: "chat:message",
             text: body,
-            author: me.value || "anonymous",
+            author: displayName.value || me.value || "anonymous",
             to,
         });
     }
@@ -327,13 +375,18 @@ export const useMessagingStore = defineStore("messaging", () => {
         error,
         users,
         me,
+        displayName,
         currentRoom,
         rooms,
+        reconnectAttempts,
+        reconnectIn,
         messages: sortedMessages,
         roomMessages,
         rawMessages: messages,
         connect,
         disconnect,
+        manualReconnect,
+        setDisplayName,
         sendBroadcast,
         sendDirect,
         requestHistory,
