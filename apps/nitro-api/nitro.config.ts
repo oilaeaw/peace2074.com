@@ -12,6 +12,9 @@ const runtimeBaseURL =
 export default defineNitroConfig({
     compatibilityDate: '2024-10-01',
     srcDir: 'server',
+    experimental: {
+        websocket: true,
+    },
     serverAssets: [
         {
             baseName: 'release',
@@ -38,7 +41,8 @@ export default defineNitroConfig({
                 wrangler: {
                     // nodejs_compat_v2 gives access to node:fs, node:crypto, node:events.
                     // Required by @waelio/data (JSON file persistence).
-                    compatibility_flags: ['nodejs_compat_v2'],
+                    // websockets flag enables WebSocket support in Cloudflare Workers.
+                    compatibility_flags: ['nodejs_compat_v2', 'websockets'],
                 },
             },
             rollupConfig: {
