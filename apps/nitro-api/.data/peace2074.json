@@ -1,0 +1,54 @@
+{
+  "users": {
+    "waelio": {
+      "id": "waelio",
+      "createdAt": "2026-07-06T08:18:40.637Z",
+      "updatedAt": "2026-07-06T08:18:40.637Z",
+      "username": "waelio",
+      "password": "0a6LRc8tGwNWtPWXose32w:uSPqJQjID-qZn_FFl5dMm1xlxu3emsnE7MEwSkSpHx138gEyK7QF6xkL-CBV4AnHTrM6bzWvRkP1-IBgeoTYhQ",
+      "email": "wael@peace2074.com",
+      "role": "admin",
+      "first_name": "",
+      "last_name": "",
+      "tasbeeh": [],
+      "bookmarks": [],
+      "banned": false,
+      "bannedAt": null,
+      "bannedReason": null,
+      "permissions": [
+        {
+          "action": "read",
+          "subject": "category"
+        },
+        {
+          "action": "read",
+          "subject": "post"
+        },
+        {
+          "action": "create",
+          "subject": "user"
+        },
+        {
+          "action": "read",
+          "subject": "user"
+        },
+        {
+          "action": "update",
+          "subject": "user"
+        },
+        {
+          "action": "read",
+          "subject": "chat"
+        },
+        {
+          "action": "manage",
+          "subject": "admin"
+        },
+        {
+          "action": "manage",
+          "subject": "chat"
+        }
+      ]
+    }
+  }
+}
