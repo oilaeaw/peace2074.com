@@ -534,7 +534,11 @@
         "roomNameLabel": "Room name",
         "createRoomAction": "Create",
         "sendDirect": "Send to user",
-        "send": "Send"
+        "send": "Send",
+        "reconnectIn": "Reconnecting in {n}s...",
+        "online": "online",
+        "emptyRoom": "No messages yet - say hello!",
+        "dmingUser": "Sending DM to {user}"
       }
     },
     "settings": {

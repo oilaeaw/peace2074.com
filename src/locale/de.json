@@ -613,7 +613,11 @@
         "roomNameLabel": "Raumname",
         "createRoomAction": "Erstellen",
         "sendDirect": "An Benutzer senden",
-        "send": "Senden"
+        "send": "Senden",
+        "reconnectIn": "Erneute Verbindung in {n}s...",
+        "online": "online",
+        "emptyRoom": "Noch keine Nachrichten!",
+        "dmingUser": "DM an {user}"
       }
     },
     "support": {

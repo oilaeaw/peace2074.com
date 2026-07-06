@@ -648,7 +648,11 @@
         "roomNameLabel": "اسم الغرفة",
         "createRoomAction": "إنشاء",
         "sendDirect": "إرسال للمستخدم",
-        "send": "إرسال"
+        "send": "إرسال",
+        "reconnectIn": "Reconnecting in {n}s...",
+        "online": "online",
+        "emptyRoom": "No messages yet - say hello!",
+        "dmingUser": "Sending DM to {user}"
       }
     },
     "support": {

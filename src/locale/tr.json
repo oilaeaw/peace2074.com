@@ -534,7 +534,11 @@
         "roomNameLabel": "Oda adı",
         "createRoomAction": "Oluştur",
         "sendDirect": "Kullanıcıya gönder",
-        "send": "Gönder"
+        "send": "Gönder",
+        "reconnectIn": "{n} saniye sonra yeniden baglaniliyor...",
+        "online": "online",
+        "emptyRoom": "Henuz mesaj yok!",
+        "dmingUser": "{user} kullanicisina DM"
       }
     },
     "settings": {

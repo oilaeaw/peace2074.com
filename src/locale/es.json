@@ -534,7 +534,11 @@
         "roomNameLabel": "Nombre de la sala",
         "createRoomAction": "Crear",
         "sendDirect": "Enviar al usuario",
-        "send": "Enviar"
+        "send": "Enviar",
+        "reconnectIn": "Reconectando en {n}s...",
+        "online": "en linea",
+        "emptyRoom": "Sin mensajes aun!",
+        "dmingUser": "DM a {user}"
       }
     },
     "settings": {

@@ -534,7 +534,11 @@
         "roomNameLabel": "Nome stanza",
         "createRoomAction": "Crea",
         "sendDirect": "Invia all'utente",
-        "send": "Invia"
+        "send": "Invia",
+        "reconnectIn": "Riconnessione in {n}s...",
+        "online": "online",
+        "emptyRoom": "Nessun messaggio ancora!",
+        "dmingUser": "DM a {user}"
       }
     },
     "settings": {

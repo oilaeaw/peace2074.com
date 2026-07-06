@@ -648,7 +648,11 @@
         "roomNameLabel": "Название комнаты",
         "createRoomAction": "Создать",
         "sendDirect": "Отправить пользователю",
-        "send": "Отправить"
+        "send": "Отправить",
+        "reconnectIn": "Reconnecting in {n}s...",
+        "online": "online",
+        "emptyRoom": "No messages yet - say hello!",
+        "dmingUser": "DM to {user}"
       }
     },
     "support": {

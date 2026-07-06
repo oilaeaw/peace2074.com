@@ -522,7 +522,11 @@
         "roomNameLabel": "שם החדר",
         "createRoomAction": "צור",
         "sendDirect": "שלח למשתמש",
-        "send": "שלח"
+        "send": "שלח",
+        "reconnectIn": "Reconnecting in {n}s...",
+        "online": "online",
+        "emptyRoom": "No messages yet - say hello!",
+        "dmingUser": "DM to {user}"
       }
     },
     "support": {

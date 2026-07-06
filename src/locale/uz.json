@@ -534,7 +534,11 @@
         "roomNameLabel": "Xona nomi",
         "createRoomAction": "Yaratish",
         "sendDirect": "Foydalanuvchiga yuborish",
-        "send": "Yuborish"
+        "send": "Yuborish",
+        "reconnectIn": "Reconnecting in {n}s...",
+        "online": "online",
+        "emptyRoom": "No messages yet!",
+        "dmingUser": "DM to {user}"
       }
     },
     "settings": {
@@ -1110,105 +1114,402 @@
     "theme": "Mavzu"
   },
   "holyNames": {
-    "1": { "transliteration": "Eng Mehribon", "meaning": "Eng Rahmli" },
-    "2": { "transliteration": "Eng Rahmli", "meaning": "Rahmat ato etuvchi" },
-    "3": { "transliteration": "Podshoh", "meaning": "Hukmron Rabb" },
-    "4": { "transliteration": "Eng Muqaddas", "meaning": "Pok Zot" },
-    "5": { "transliteration": "Tinchlik manbai", "meaning": "Benuqson Zot" },
-    "6": { "transliteration": "Imon ilhomchisi", "meaning": "Imon ato etuvchi" },
-    "7": { "transliteration": "Qoʻriqlovchi", "meaning": "Xavfsizlikni saqlovchi" },
-    "8": { "transliteration": "Gʻolib", "meaning": "Qudratli Zot" },
-    "9": { "transliteration": "Majburlovchi", "meaning": "Tiklovchi" },
-    "10": { "transliteration": "Oliy", "meaning": "Buyuk Zot" },
-    "11": { "transliteration": "Yaratuvchi", "meaning": "Hamma narsa Yaratuvchisi" },
-    "12": { "transliteration": "Rivojlantiruvchi", "meaning": "Shakl beruvchi" },
-    "13": { "transliteration": "Shakllantiruvchi", "meaning": "Goʻzallik beruvchi" },
-    "14": { "transliteration": "Magʻfirat qiluvchi", "meaning": "Hamma narsani Kechiruvchi" },
-    "15": { "transliteration": "Boʻysundiruvchi", "meaning": "Hamma narsadan Ustun" },
-    "16": { "transliteration": "Ato etuvchi", "meaning": "Oliy Ato etuvchi" },
-    "17": { "transliteration": "Rizq beruvchi", "meaning": "Tarbiyalovchi" },
-    "18": { "transliteration": "Ochuvchi", "meaning": "Oliy Yechuvchi" },
-    "19": { "transliteration": "Hamma narsani Biluvchi", "meaning": "Hamma narsadan Ogoh" },
-    "20": { "transliteration": "Tutib turuvchi", "meaning": "Cheklovchi" },
-    "21": { "transliteration": "Kengaytiruvchi", "meaning": "Boyitvuvchi" },
-    "22": { "transliteration": "Kamaytiruvchi", "meaning": "Pasaytiruvchi" },
-    "23": { "transliteration": "Yuksaltiruvchi", "meaning": "Koʻtaruvchi" },
-    "24": { "transliteration": "Sharaflovchi", "meaning": "Izzat ato etuvchi" },
-    "25": { "transliteration": "Xor qiluvchi", "meaning": "Sharafsiz qiluvchi" },
-    "26": { "transliteration": "Hamma narsani Eshituvchi", "meaning": "Barchaning Eshituvchisi" },
-    "27": { "transliteration": "Hamma narsani Koʻruvchi", "meaning": "Barchaning Koʻruvchisi" },
-    "28": { "transliteration": "Hukm qiluvchi", "meaning": "Adolatli Hakam" },
-    "29": { "transliteration": "Adolatli", "meaning": "Mutlaq Adolatli" },
-    "30": { "transliteration": "Nozik Zot", "meaning": "Eng Mehribon" },
-    "31": { "transliteration": "Ogoh", "meaning": "Hamma narsadan Ogoh" },
-    "32": { "transliteration": "Halim", "meaning": "Sabrli" },
-    "33": { "transliteration": "Buyuk", "meaning": "Oliy" },
-    "34": { "transliteration": "Magʻfirat qiluvchi", "meaning": "Hamma narsani Kechiruvchi" },
-    "35": { "transliteration": "Qadrlovchi", "meaning": "Eng Minnatdor" },
-    "36": { "transliteration": "Eng Oliy", "meaning": "Yuksak" },
-    "37": { "transliteration": "Eng Buyuk", "meaning": "Eng Ulugʻ" },
-    "38": { "transliteration": "Saqlovchi", "meaning": "Qoʻriqlovchi" },
-    "39": { "transliteration": "Taʼminlovchi", "meaning": "Oziqlantiruvchi" },
-    "40": { "transliteration": "Hisob-kitob qiluvchi", "meaning": "Yetarli" },
-    "41": { "transliteration": "Ulugʻvor", "meaning": "Yuksak Zot" },
-    "42": { "transliteration": "Saxiy", "meaning": "Eng Saxiy" },
-    "43": { "transliteration": "Kuzatuvchi", "meaning": "Doimo Kuzatuvchi" },
-    "44": { "transliteration": "Javob beruvchi", "meaning": "Duolarni Ijobat qiluvchi" },
-    "45": { "transliteration": "Hamma narsani Qamrab oluvchi", "meaning": "Cheksiz" },
-    "46": { "transliteration": "Hakim", "meaning": "Hamma narsada Hikmatli" },
-    "47": { "transliteration": "Sevuvchi", "meaning": "Eng Sevuvchi" },
-    "48": { "transliteration": "Ulugʻvor", "meaning": "Eng Ulugʻvor" },
-    "49": { "transliteration": "Tiriltiruvchi", "meaning": "Oʻliklarni Tiriltiruvchi" },
-    "50": { "transliteration": "Guvoh", "meaning": "Hamma narsaga Guvoh" },
-    "51": { "transliteration": "Haqiqat", "meaning": "Mutlaq Haqiqat" },
-    "52": { "transliteration": "Ishonchli vakil", "meaning": "Ishlarni Boshqaruvchi" },
-    "53": { "transliteration": "Kuchli", "meaning": "Hamma narsadan Kuchli" },
-    "54": { "transliteration": "Mustahkam", "meaning": "Barqaror" },
-    "55": { "transliteration": "Doʻst", "meaning": "Himoyachi Doʻst" },
-    "56": { "transliteration": "Maqtovga loyiq", "meaning": "Hamma narsada Maqtovga loyiq" },
-    "57": { "transliteration": "Hisob-kitob qiluvchi", "meaning": "Hisoblovchi" },
-    "58": { "transliteration": "Boshlovchi", "meaning": "Ibtido qiluvchi" },
-    "59": { "transliteration": "Tiklovchi", "meaning": "Qayta tiklovchi" },
-    "60": { "transliteration": "Hayot beruvchi", "meaning": "Hayot ato etuvchi" },
-    "61": { "transliteration": "Halok qiluvchi", "meaning": "Oʻlim keltiruvchi" },
-    "62": { "transliteration": "Doimo Tirik", "meaning": "Tirik" },
-    "63": { "transliteration": "Oʻzicha barqaror", "meaning": "Hamma narsani Saqlovchi" },
-    "64": { "transliteration": "Topuvchi", "meaning": "Idrok etuvchi" },
-    "65": { "transliteration": "Olijanob", "meaning": "Mashhur" },
-    "66": { "transliteration": "Yagona", "meaning": "Noyob" },
-    "67": { "transliteration": "Boʻlinmas", "meaning": "Yagona va Yakka" },
-    "68": { "transliteration": "Abadiy", "meaning": "Mutlaq" },
-    "69": { "transliteration": "Qodir", "meaning": "Hamma narsaga Qodir" },
-    "70": { "transliteration": "Qudratli", "meaning": "Belgilovchi" },
-    "71": { "transliteration": "Tezlashtiruvchi", "meaning": "Ilgari suruvchi" },
-    "72": { "transliteration": "Kechiktiruvchi", "meaning": "Orqaga suruvchi" },
-    "73": { "transliteration": "Avvalgi", "meaning": "Boshlanish" },
-    "74": { "transliteration": "Oxirgi", "meaning": "Yakun" },
-    "75": { "transliteration": "Oshkor", "meaning": "Ravshan" },
-    "76": { "transliteration": "Yashirin", "meaning": "Pinhon" },
-    "77": { "transliteration": "Boshqaruvchi", "meaning": "Homiy" },
-    "78": { "transliteration": "Eng Yuksak", "meaning": "Oliy" },
-    "79": { "transliteration": "Yaxshilik manbai", "meaning": "Solih" },
-    "80": { "transliteration": "Tavbani qabul qiluvchi", "meaning": "Doimo Kechiruvchi" },
-    "81": { "transliteration": "Intiqom oluvchi", "meaning": "Jazo beruvchi" },
-    "82": { "transliteration": "Avf qiluvchi", "meaning": "Oliy Afv qiluvchi" },
-    "83": { "transliteration": "Mehribon", "meaning": "Eng Mehribon" },
-    "84": { "transliteration": "Mulk egasi", "meaning": "Butun Hukmronlik egasi" },
-    "85": { "transliteration": "Ulugʻlik va saxovat Rabbi", "meaning": "Shon va izzat egasi" },
-    "86": { "transliteration": "Insofli", "meaning": "Adolatli Zot" },
-    "87": { "transliteration": "Toʻplovchi", "meaning": "Jamlovchi" },
-    "88": { "transliteration": "Behojat", "meaning": "Boy" },
-    "89": { "transliteration": "Boyitvuvchi", "meaning": "Boylik ato etuvchi" },
-    "90": { "transliteration": "Toʻsuvchi", "meaning": "Tutib turuvchi" },
-    "91": { "transliteration": "Zarar yetkazuvchi", "meaning": "Zarar Yaratuvchi" },
-    "92": { "transliteration": "Manfaat beruvchi", "meaning": "Yaxshilik Yaratuvchi" },
-    "93": { "transliteration": "Nur", "meaning": "Yorituvchi" },
-    "94": { "transliteration": "Yoʻlboshchi", "meaning": "Hidoyat beruvchi" },
-    "95": { "transliteration": "Tengsiz", "meaning": "Boshlovchi" },
-    "96": { "transliteration": "Mangu", "meaning": "Abadiy" },
-    "97": { "transliteration": "Vorisi", "meaning": "Oliy Voris" },
-    "98": { "transliteration": "Yoʻlboshchi", "meaning": "Solih ustoz" },
-    "99": { "transliteration": "Sabrli", "meaning": "Eng Sabrli" }
+    "1": {
+      "transliteration": "Eng Mehribon",
+      "meaning": "Eng Rahmli"
+    },
+    "2": {
+      "transliteration": "Eng Rahmli",
+      "meaning": "Rahmat ato etuvchi"
+    },
+    "3": {
+      "transliteration": "Podshoh",
+      "meaning": "Hukmron Rabb"
+    },
+    "4": {
+      "transliteration": "Eng Muqaddas",
+      "meaning": "Pok Zot"
+    },
+    "5": {
+      "transliteration": "Tinchlik manbai",
+      "meaning": "Benuqson Zot"
+    },
+    "6": {
+      "transliteration": "Imon ilhomchisi",
+      "meaning": "Imon ato etuvchi"
+    },
+    "7": {
+      "transliteration": "Qoʻriqlovchi",
+      "meaning": "Xavfsizlikni saqlovchi"
+    },
+    "8": {
+      "transliteration": "Gʻolib",
+      "meaning": "Qudratli Zot"
+    },
+    "9": {
+      "transliteration": "Majburlovchi",
+      "meaning": "Tiklovchi"
+    },
+    "10": {
+      "transliteration": "Oliy",
+      "meaning": "Buyuk Zot"
+    },
+    "11": {
+      "transliteration": "Yaratuvchi",
+      "meaning": "Hamma narsa Yaratuvchisi"
+    },
+    "12": {
+      "transliteration": "Rivojlantiruvchi",
+      "meaning": "Shakl beruvchi"
+    },
+    "13": {
+      "transliteration": "Shakllantiruvchi",
+      "meaning": "Goʻzallik beruvchi"
+    },
+    "14": {
+      "transliteration": "Magʻfirat qiluvchi",
+      "meaning": "Hamma narsani Kechiruvchi"
+    },
+    "15": {
+      "transliteration": "Boʻysundiruvchi",
+      "meaning": "Hamma narsadan Ustun"
+    },
+    "16": {
+      "transliteration": "Ato etuvchi",
+      "meaning": "Oliy Ato etuvchi"
+    },
+    "17": {
+      "transliteration": "Rizq beruvchi",
+      "meaning": "Tarbiyalovchi"
+    },
+    "18": {
+      "transliteration": "Ochuvchi",
+      "meaning": "Oliy Yechuvchi"
+    },
+    "19": {
+      "transliteration": "Hamma narsani Biluvchi",
+      "meaning": "Hamma narsadan Ogoh"
+    },
+    "20": {
+      "transliteration": "Tutib turuvchi",
+      "meaning": "Cheklovchi"
+    },
+    "21": {
+      "transliteration": "Kengaytiruvchi",
+      "meaning": "Boyitvuvchi"
+    },
+    "22": {
+      "transliteration": "Kamaytiruvchi",
+      "meaning": "Pasaytiruvchi"
+    },
+    "23": {
+      "transliteration": "Yuksaltiruvchi",
+      "meaning": "Koʻtaruvchi"
+    },
+    "24": {
+      "transliteration": "Sharaflovchi",
+      "meaning": "Izzat ato etuvchi"
+    },
+    "25": {
+      "transliteration": "Xor qiluvchi",
+      "meaning": "Sharafsiz qiluvchi"
+    },
+    "26": {
+      "transliteration": "Hamma narsani Eshituvchi",
+      "meaning": "Barchaning Eshituvchisi"
+    },
+    "27": {
+      "transliteration": "Hamma narsani Koʻruvchi",
+      "meaning": "Barchaning Koʻruvchisi"
+    },
+    "28": {
+      "transliteration": "Hukm qiluvchi",
+      "meaning": "Adolatli Hakam"
+    },
+    "29": {
+      "transliteration": "Adolatli",
+      "meaning": "Mutlaq Adolatli"
+    },
+    "30": {
+      "transliteration": "Nozik Zot",
+      "meaning": "Eng Mehribon"
+    },
+    "31": {
+      "transliteration": "Ogoh",
+      "meaning": "Hamma narsadan Ogoh"
+    },
+    "32": {
+      "transliteration": "Halim",
+      "meaning": "Sabrli"
+    },
+    "33": {
+      "transliteration": "Buyuk",
+      "meaning": "Oliy"
+    },
+    "34": {
+      "transliteration": "Magʻfirat qiluvchi",
+      "meaning": "Hamma narsani Kechiruvchi"
+    },
+    "35": {
+      "transliteration": "Qadrlovchi",
+      "meaning": "Eng Minnatdor"
+    },
+    "36": {
+      "transliteration": "Eng Oliy",
+      "meaning": "Yuksak"
+    },
+    "37": {
+      "transliteration": "Eng Buyuk",
+      "meaning": "Eng Ulugʻ"
+    },
+    "38": {
+      "transliteration": "Saqlovchi",
+      "meaning": "Qoʻriqlovchi"
+    },
+    "39": {
+      "transliteration": "Taʼminlovchi",
+      "meaning": "Oziqlantiruvchi"
+    },
+    "40": {
+      "transliteration": "Hisob-kitob qiluvchi",
+      "meaning": "Yetarli"
+    },
+    "41": {
+      "transliteration": "Ulugʻvor",
+      "meaning": "Yuksak Zot"
+    },
+    "42": {
+      "transliteration": "Saxiy",
+      "meaning": "Eng Saxiy"
+    },
+    "43": {
+      "transliteration": "Kuzatuvchi",
+      "meaning": "Doimo Kuzatuvchi"
+    },
+    "44": {
+      "transliteration": "Javob beruvchi",
+      "meaning": "Duolarni Ijobat qiluvchi"
+    },
+    "45": {
+      "transliteration": "Hamma narsani Qamrab oluvchi",
+      "meaning": "Cheksiz"
+    },
+    "46": {
+      "transliteration": "Hakim",
+      "meaning": "Hamma narsada Hikmatli"
+    },
+    "47": {
+      "transliteration": "Sevuvchi",
+      "meaning": "Eng Sevuvchi"
+    },
+    "48": {
+      "transliteration": "Ulugʻvor",
+      "meaning": "Eng Ulugʻvor"
+    },
+    "49": {
+      "transliteration": "Tiriltiruvchi",
+      "meaning": "Oʻliklarni Tiriltiruvchi"
+    },
+    "50": {
+      "transliteration": "Guvoh",
+      "meaning": "Hamma narsaga Guvoh"
+    },
+    "51": {
+      "transliteration": "Haqiqat",
+      "meaning": "Mutlaq Haqiqat"
+    },
+    "52": {
+      "transliteration": "Ishonchli vakil",
+      "meaning": "Ishlarni Boshqaruvchi"
+    },
+    "53": {
+      "transliteration": "Kuchli",
+      "meaning": "Hamma narsadan Kuchli"
+    },
+    "54": {
+      "transliteration": "Mustahkam",
+      "meaning": "Barqaror"
+    },
+    "55": {
+      "transliteration": "Doʻst",
+      "meaning": "Himoyachi Doʻst"
+    },
+    "56": {
+      "transliteration": "Maqtovga loyiq",
+      "meaning": "Hamma narsada Maqtovga loyiq"
+    },
+    "57": {
+      "transliteration": "Hisob-kitob qiluvchi",
+      "meaning": "Hisoblovchi"
+    },
+    "58": {
+      "transliteration": "Boshlovchi",
+      "meaning": "Ibtido qiluvchi"
+    },
+    "59": {
+      "transliteration": "Tiklovchi",
+      "meaning": "Qayta tiklovchi"
+    },
+    "60": {
+      "transliteration": "Hayot beruvchi",
+      "meaning": "Hayot ato etuvchi"
+    },
+    "61": {
+      "transliteration": "Halok qiluvchi",
+      "meaning": "Oʻlim keltiruvchi"
+    },
+    "62": {
+      "transliteration": "Doimo Tirik",
+      "meaning": "Tirik"
+    },
+    "63": {
+      "transliteration": "Oʻzicha barqaror",
+      "meaning": "Hamma narsani Saqlovchi"
+    },
+    "64": {
+      "transliteration": "Topuvchi",
+      "meaning": "Idrok etuvchi"
+    },
+    "65": {
+      "transliteration": "Olijanob",
+      "meaning": "Mashhur"
+    },
+    "66": {
+      "transliteration": "Yagona",
+      "meaning": "Noyob"
+    },
+    "67": {
+      "transliteration": "Boʻlinmas",
+      "meaning": "Yagona va Yakka"
+    },
+    "68": {
+      "transliteration": "Abadiy",
+      "meaning": "Mutlaq"
+    },
+    "69": {
+      "transliteration": "Qodir",
+      "meaning": "Hamma narsaga Qodir"
+    },
+    "70": {
+      "transliteration": "Qudratli",
+      "meaning": "Belgilovchi"
+    },
+    "71": {
+      "transliteration": "Tezlashtiruvchi",
+      "meaning": "Ilgari suruvchi"
+    },
+    "72": {
+      "transliteration": "Kechiktiruvchi",
+      "meaning": "Orqaga suruvchi"
+    },
+    "73": {
+      "transliteration": "Avvalgi",
+      "meaning": "Boshlanish"
+    },
+    "74": {
+      "transliteration": "Oxirgi",
+      "meaning": "Yakun"
+    },
+    "75": {
+      "transliteration": "Oshkor",
+      "meaning": "Ravshan"
+    },
+    "76": {
+      "transliteration": "Yashirin",
+      "meaning": "Pinhon"
+    },
+    "77": {
+      "transliteration": "Boshqaruvchi",
+      "meaning": "Homiy"
+    },
+    "78": {
+      "transliteration": "Eng Yuksak",
+      "meaning": "Oliy"
+    },
+    "79": {
+      "transliteration": "Yaxshilik manbai",
+      "meaning": "Solih"
+    },
+    "80": {
+      "transliteration": "Tavbani qabul qiluvchi",
+      "meaning": "Doimo Kechiruvchi"
+    },
+    "81": {
+      "transliteration": "Intiqom oluvchi",
+      "meaning": "Jazo beruvchi"
+    },
+    "82": {
+      "transliteration": "Avf qiluvchi",
+      "meaning": "Oliy Afv qiluvchi"
+    },
+    "83": {
+      "transliteration": "Mehribon",
+      "meaning": "Eng Mehribon"
+    },
+    "84": {
+      "transliteration": "Mulk egasi",
+      "meaning": "Butun Hukmronlik egasi"
+    },
+    "85": {
+      "transliteration": "Ulugʻlik va saxovat Rabbi",
+      "meaning": "Shon va izzat egasi"
+    },
+    "86": {
+      "transliteration": "Insofli",
+      "meaning": "Adolatli Zot"
+    },
+    "87": {
+      "transliteration": "Toʻplovchi",
+      "meaning": "Jamlovchi"
+    },
+    "88": {
+      "transliteration": "Behojat",
+      "meaning": "Boy"
+    },
+    "89": {
+      "transliteration": "Boyitvuvchi",
+      "meaning": "Boylik ato etuvchi"
+    },
+    "90": {
+      "transliteration": "Toʻsuvchi",
+      "meaning": "Tutib turuvchi"
+    },
+    "91": {
+      "transliteration": "Zarar yetkazuvchi",
+      "meaning": "Zarar Yaratuvchi"
+    },
+    "92": {
+      "transliteration": "Manfaat beruvchi",
+      "meaning": "Yaxshilik Yaratuvchi"
+    },
+    "93": {
+      "transliteration": "Nur",
+      "meaning": "Yorituvchi"
+    },
+    "94": {
+      "transliteration": "Yoʻlboshchi",
+      "meaning": "Hidoyat beruvchi"
+    },
+    "95": {
+      "transliteration": "Tengsiz",
+      "meaning": "Boshlovchi"
+    },
+    "96": {
+      "transliteration": "Mangu",
+      "meaning": "Abadiy"
+    },
+    "97": {
+      "transliteration": "Vorisi",
+      "meaning": "Oliy Voris"
+    },
+    "98": {
+      "transliteration": "Yoʻlboshchi",
+      "meaning": "Solih ustoz"
+    },
+    "99": {
+      "transliteration": "Sabrli",
+      "meaning": "Eng Sabrli"
+    }
   },
   "Asma' Allah Al-Husna": "Asmoul Husna",
   "consent": {
