@@ -1604,8 +1604,16 @@ async function loadAudioAndTimings(id: number) {
       }
     })
 
-    // Filter out any undefined entries
-    audioList.value = audioList.value.filter(Boolean)
+    // Compact the list: fill holes with empty string then filter,
+    // but preserve index alignment by only removing trailing empty slots.
+    // Use a dense array built from the max verse index so playback
+    // indices always match actual ayah numbers.
+    const maxVerse = verses.reduce((max: number, v: any) => Math.max(max, v?.verse_number || 0), 0)
+    const dense: string[] = []
+    for (let i = 0; i < maxVerse; i++) {
+      dense.push(audioList.value[i] || '')
+    }
+    audioList.value = dense
 
     console.debug(
       `[Quran Audio] Loaded ${audioList.value.length} verses with ${Object.keys(wordTimings.value).length} word timing sets and ${Object.keys(syncedVerseWords.value).length} synced word maps for sura ${id}`
@@ -1756,11 +1764,16 @@ async function loadAudioListFallback(id: number) {
 }
 
 function preloadNextAyah(index: number) {
-  if (index < 0 || index >= audioList.value.length) {
+  // Skip to the next index that has a real URL
+  let nextIndex = index
+  while (nextIndex < audioList.value.length && !audioList.value[nextIndex]) {
+    nextIndex++
+  }
+  if (nextIndex < 0 || nextIndex >= audioList.value.length) {
     nextAudioEl.value = null
     return
   }
-  const src = audioList.value[index]
+  const src = audioList.value[nextIndex]
   const el = new Audio(src)
   el.preload = 'auto'
   el.playbackRate = playbackRate.value
@@ -1774,6 +1787,11 @@ function playAyah(index: number) {
   }
   if (!audioList.value.length || index < 0 || index >= audioList.value.length) {
     stopAudio()
+    return
+  }
+  // Skip empty slots (ayahs with no audio URL) without stopping
+  if (!audioList.value[index]) {
+    playAyah(index + 1)
     return
   }
   try {
