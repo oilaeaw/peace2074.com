@@ -70,6 +70,24 @@
           </span>
         </q-card-section>
       </q-card>
+
+      <!-- Embedded YouTube Channel Videos -->
+      <div class="yt-video-section q-mt-lg">
+        <div class="yt-video-label q-mb-sm">
+          <q-icon name="play_circle" color="red" size="20px" class="q-mr-xs" />
+          <span class="text-subtitle2 text-weight-bold">{{ t('pages.social.youtube.latestVideos') }}</span>
+        </div>
+        <div class="yt-video-wrapper">
+          <iframe
+            class="yt-channel-iframe"
+            src="https://www.youtube.com/embed?listType=user_uploads&list=UCiuUJUpeWXxWwDSpPKoEVbQ&rel=0"
+            title="Wael Wahbeh YouTube Channel Videos"
+            allowfullscreen
+            loading="lazy"
+            referrerpolicy="strict-origin-when-cross-origin"
+          />
+        </div>
+      </div>
     </section>
 
     <!-- TikTok Videos Section -->
@@ -279,6 +297,34 @@ const tiktokSlots = [
 
 .yt-embed-notice {
   padding: 10px 20px;
+}
+
+.yt-video-section {
+  width: 100%;
+}
+
+.yt-video-label {
+  display: flex;
+  align-items: center;
+}
+
+.yt-video-wrapper {
+  position: relative;
+  width: 100%;
+  padding-bottom: 56.25%; /* 16:9 */
+  border-radius: 16px;
+  overflow: hidden;
+  background: #000;
+  box-shadow: 0 4px 24px rgba(0,0,0,0.18);
+}
+
+.yt-channel-iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  border: 0;
 }
 
 /* ── TikTok Videos ── */
