@@ -767,6 +767,15 @@
     "social": {
       "title": "Social & Share",
       "subtitle": "Follow us and share the Quran with the world",
+      "youtube": {
+        "sectionTitle": "YouTube Community",
+        "channelName": "Wael Wahbeh (Waelio)'s Community",
+        "channelHandle": "peace2074",
+        "channelDesc": "Join our YouTube community for updates, reflections, Quran insights, and more from the PEACE2074 team. Follow along and be part of the conversation.",
+        "communityBtn": "Visit Community",
+        "subscribeBtn": "Subscribe",
+        "embedNotice": "YouTube's Community tab opens directly on YouTube. All rights remain with the channel owner."
+      },
       "legalTitle": "Official public embeds",
       "legalOwnership": "These videos are shown through official TikTok embeds that link back to the original posts. All rights remain with their respective creators. PEACE2074 does not claim ownership, affiliation, or monetisation.",
       "legalPrivacy": "Opening or playing embedded content may allow TikTok to collect data under its own terms and privacy policy.",
