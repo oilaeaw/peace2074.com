@@ -3015,7 +3015,7 @@ watch(
 </script>
 
 <template>
-  <div class="q-pa-md quran-detail-page">
+  <div class="quran-detail-page">
     <q-btn
       flat
       class="q-mb-md"
@@ -3116,7 +3116,7 @@ watch(
 
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
-    <q-card v-else-if="sura" class="q-pa-md q-pb-xl sura-card">
+    <div v-else-if="sura">
       <div class="sura-heading" :class="{ 'is-reciting': showRecitationStickyHeader }">
         <div>
           <div
@@ -3822,7 +3822,7 @@ watch(
           </div>
         </Transition>
       </Teleport>
-    </q-card>
+    </div>
 
     <!-- Offline Recitation Manager Dialog -->
     <q-dialog v-model="showOfflineManager" maximized>
@@ -3852,7 +3852,12 @@ watch(
 }
 
 .sura-card {
-  background: #fdfbf6;
+  background: transparent !important;
+  box-shadow: none !important;
+  border: none !important;
+  border-radius: 0 !important;
+  padding: 0 !important;
+  margin: 0 !important;
 }
 
 .sura-heading {

@@ -717,8 +717,7 @@ body.body--dark .ramadan-message .text-subtitle2 {
   display: grid;
   grid-template-columns: repeat(2, 1fr);
   gap: 0.75rem;
-  max-width: 1400px;
-  margin: 0 auto;
+  width: 100%;
 }
 
 .sura-card-wrapper {

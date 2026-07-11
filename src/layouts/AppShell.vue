@@ -181,7 +181,7 @@
 
     <q-drawer
       v-model="leftDrawer"
-      :show-if-above="!isNativeRuntime"
+      overlay
       bordered
       class="app-drawer"
     >
