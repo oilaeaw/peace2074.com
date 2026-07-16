@@ -19,7 +19,7 @@ let animFrame: number | null = null
 let animating = false
 let lastSpawn = 0
 const THROTTLE_MS = 30
-const MAX_PARTICLES = 80
+const MAX_PARTICLES = 40
 
 const COLORS = [
   '#b9f2ff', '#e0f7fa', '#ffffff',
@@ -68,7 +68,7 @@ function drawDiamond(c: CanvasRenderingContext2D, size: number) {
 
 function spawnParticles(x: number, y: number) {
   if (particles.length >= MAX_PARTICLES) return
-  const count = 2 + Math.floor(Math.random() * 3)
+  const count = 1 + Math.floor(Math.random() * 2)
   for (let i = 0; i < count; i++) {
     const maxLife = 90 + Math.random() * 70
     particles.push({
