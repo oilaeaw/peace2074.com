@@ -90,11 +90,6 @@ function onReciterChange(id: AthanReciterId) {
   stopAthanPreview()
   setReciter(id)
 }
-const showQuranTranslation = ref(readQuranTranslationPreference())
-const darkMode = ref(readDarkModePreference())
-const fontSize = ref(readFontSizePreference())
-const highContrast = ref(readHighContrastPreference())
-const showOfflineRecitationManager = ref(false)
 
 const apiTranslators = ref<Record<string, QuranTranslator[]> | null>(null)
 
@@ -597,25 +592,6 @@ function urlBase64ToUint8Array(base64String: string): Uint8Array {
     outputArray[i] = rawData.charCodeAt(i)
   }
   return outputArray
-}
-
-function readDrawerOpenPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(DRAWER_OPEN_KEY)
-  if (stored === null) return false
-  return stored === 'true'
-}
-
-function persistDrawerPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(DRAWER_OPEN_KEY, String(val))
-}
-
-function broadcastDrawerPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('drawer-preference-changed', { detail: { open: val } })
-  )
 }
 
 function onPullRefresh(done?: () => void) {
