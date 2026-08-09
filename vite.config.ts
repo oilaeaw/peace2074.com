@@ -198,6 +198,7 @@ export default defineConfig({
         changeOrigin: true,
         secure: false,
         ws: true,
+        xfwd: true,
         rewrite: (path) => path.replace(/^\/api/, ''),
       },
     },

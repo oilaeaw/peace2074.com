@@ -49,6 +49,93 @@
           "subject": "chat"
         }
       ]
+    },
+    "113338273027295034471": {
+      "id": "113338273027295034471",
+      "createdAt": "2026-08-09T19:04:38.561Z",
+      "updatedAt": "2026-08-09T19:04:38.561Z",
+      "username": "wahbehw_7bp6p",
+      "password": "",
+      "email": "wahbehw@gmail.com",
+      "role": "user",
+      "first_name": "Wael",
+      "last_name": "Wahbeh",
+      "tasbeeh": [],
+      "bookmarks": [],
+      "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocLKY32_Bfda8GVCaO_m9kWb9PJYp8zbXELhOKs0fSPWODC8ynSOSw=s96-c",
+      "google_id": "113338273027295034471",
+      "banned": false,
+      "bannedAt": null,
+      "bannedReason": null,
+      "permissions": [
+        {
+          "action": "read",
+          "subject": "category"
+        },
+        {
+          "action": "read",
+          "subject": "post"
+        },
+        {
+          "action": "create",
+          "subject": "user"
+        },
+        {
+          "action": "read",
+          "subject": "user"
+        },
+        {
+          "action": "update",
+          "subject": "user"
+        },
+        {
+          "action": "read",
+          "subject": "chat"
+        }
+      ]
+    }
+  },
+  "profiles": {
+    "1ce34b1b-27cc-46a2-befd-518006dd7caa": {
+      "id": "1ce34b1b-27cc-46a2-befd-518006dd7caa",
+      "createdAt": "2026-08-09T19:04:38.566Z",
+      "updatedAt": "2026-08-09T19:15:35.635Z",
+      "userId": "113338273027295034471",
+      "first_name": "Wael",
+      "last_name": "Wahbeh",
+      "avatar_url": "https://lh3.googleusercontent.com/a/ACg8ocLKY32_Bfda8GVCaO_m9kWb9PJYp8zbXELhOKs0fSPWODC8ynSOSw=s96-c",
+      "bookmarks": [],
+      "settings": {
+        "quran": {
+          "playbackPosition": null
+        }
+      },
+      "tasbeeh_summary": {
+        "total": 0,
+        "sessions": 0
+      }
+    }
+  },
+  "sessions": {
+    "ac711e58-07d7-412b-bfb5-a00de98f1b31": {
+      "id": "ac711e58-07d7-412b-bfb5-a00de98f1b31",
+      "createdAt": "2026-08-09T19:04:38.571Z",
+      "updatedAt": "2026-08-09T19:04:38.571Z",
+      "userId": "113338273027295034471",
+      "provider": "google",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+      "expires_at": "2026-09-08T19:04:38.571Z"
+    },
+    "196383fb-4648-4c90-893b-57fc5aec25a1": {
+      "id": "196383fb-4648-4c90-893b-57fc5aec25a1",
+      "createdAt": "2026-08-09T19:12:07.281Z",
+      "updatedAt": "2026-08-09T19:12:07.281Z",
+      "userId": "113338273027295034471",
+      "provider": "google",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/151.0.0.0 Safari/537.36",
+      "expires_at": "2026-09-08T19:12:07.280Z"
     }
   }
 }
