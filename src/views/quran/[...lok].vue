@@ -76,6 +76,34 @@ function formatBookmarkLabel(bm: any) {
 }
 
 const thumbStyle = ref({})
+const isHeaderVisible = ref(false)
+let hideHeaderTimer: ReturnType<typeof setTimeout> | null = null
+
+function onMouseMove(e: MouseEvent) {
+  if (e.clientY < 80) {
+    if (hideHeaderTimer) { clearTimeout(hideHeaderTimer); hideHeaderTimer = null }
+    isHeaderVisible.value = true
+  } else if (isHeaderVisible.value) {
+    if (!hideHeaderTimer) {
+      hideHeaderTimer = setTimeout(() => {
+        isHeaderVisible.value = false
+        hideHeaderTimer = null
+      }, 800)
+    }
+  }
+}
+
+function onHeaderMouseEnter() {
+  if (hideHeaderTimer) { clearTimeout(hideHeaderTimer); hideHeaderTimer = null }
+  isHeaderVisible.value = true
+}
+
+function onHeaderMouseLeave() {
+  hideHeaderTimer = setTimeout(() => {
+    isHeaderVisible.value = false
+    hideHeaderTimer = null
+  }, 600)
+}
 
 function onScroll() {
   /* noop for now */
@@ -374,60 +402,70 @@ function onAyaDblClick(e: Event) {
 </script>
 
 <template>
-  <q-page padding class="mushaf-view">
+  <q-page class="mushaf-view" @mousemove="onMouseMove">
     <ThreeBackground />
-    <div class="mushaf-content">
-      <div class="sura-header">
-        <q-btn
-          flat
-          round
-          color="primary"
-          icon="arrow_back"
-          @click="router.push('/quran')"
-          aria-label="Back to Quran index"
-        />
-        <div class="sura-title">
-          <h1 class="sura-name-en">{{ sura?.e_name }}</h1>
-          <h2 class="sura-name-ar">{{ sura?.name }}</h2>
-        </div>
-        <q-btn
-          flat
-          round
-          color="primary"
-          icon="bookmark"
-          aria-label="View Bookmarks"
-        >
-          <q-menu auto-close>
-            <q-list dense style="min-width: 220px">
-              <q-item v-if="!bookmarksStore.bookmarks.length">
-                <q-item-section>{{
-                  t('no_bookmarks') || 'No bookmarks'
-                }}</q-item-section>
-              </q-item>
-              <q-item
-                v-for="(bm, idx) in bookmarksStore.bookmarks"
-                :key="typeof bm === 'string' ? bm : bm?._id || idx"
-                clickable
-                @click="
-                  navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)
-                "
-              >
-                <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
-                <q-item-section side>
-                  <q-btn
-                    dense
-                    flat
-                    round
-                    icon="delete"
-                    @click.stop.prevent="deleteBookmarkItem(bm)"
-                  />
-                </q-item-section>
-              </q-item>
-            </q-list>
-          </q-menu>
-        </q-btn>
-      </div>
 
+    <!-- Invisible hover trigger zone at the top of the viewport -->
+    <div class="sura-header-trigger" @mouseenter="onHeaderMouseEnter" />
+
+    <!-- Floating toolbar: hidden by default, revealed on hover near top -->
+    <div
+      class="sura-header"
+      :class="{ 'sura-header--visible': isHeaderVisible }"
+      @mouseenter="onHeaderMouseEnter"
+      @mouseleave="onHeaderMouseLeave"
+    >
+      <q-btn
+        flat
+        round
+        color="primary"
+        icon="arrow_back"
+        @click="router.push('/quran')"
+        aria-label="Back to Quran index"
+      />
+      <div class="sura-title">
+        <h1 class="sura-name-en">{{ sura?.e_name }}</h1>
+        <h2 class="sura-name-ar">{{ sura?.name }}</h2>
+      </div>
+      <q-btn
+        flat
+        round
+        color="primary"
+        icon="bookmark"
+        aria-label="View Bookmarks"
+      >
+        <q-menu auto-close>
+          <q-list dense style="min-width: 220px">
+            <q-item v-if="!bookmarksStore.bookmarks.length">
+              <q-item-section>{{
+                t('no_bookmarks') || 'No bookmarks'
+              }}</q-item-section>
+            </q-item>
+            <q-item
+              v-for="(bm, idx) in bookmarksStore.bookmarks"
+              :key="typeof bm === 'string' ? bm : bm?._id || idx"
+              clickable
+              @click="
+                navigateToHash(typeof bm === 'string' ? bm : bm?.bookmark)
+              "
+            >
+              <q-item-section>{{ formatBookmarkLabel(bm) }}</q-item-section>
+              <q-item-section side>
+                <q-btn
+                  dense
+                  flat
+                  round
+                  icon="delete"
+                  @click.stop.prevent="deleteBookmarkItem(bm)"
+                />
+              </q-item-section>
+            </q-item>
+          </q-list>
+        </q-menu>
+      </q-btn>
+    </div>
+
+    <div class="mushaf-content">
       <div v-if="sura?.id !== 1 && sura?.id !== 9" class="bismillah-line">
         بِسْمِ اللّٰهِ الرَّحْمـٰنِ الرَّحِيمِ
       </div>
@@ -472,25 +510,52 @@ function onAyaDblClick(e: Event) {
 .mushaf-content {
   max-width: 800px;
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0 1rem 2rem;
 }
 
+
 .sura-header {
-  position: sticky;
-  top: calc(env(safe-area-inset-top, 0px) + 0.75rem);
+  position: fixed;
+  top: 0.75rem;
+  left: 50%;
+  transform: translateX(-50%) translateY(-110%);
+  width: min(800px, calc(100% - 2rem));
   z-index: 20;
   display: flex;
   justify-content: space-between;
   align-items: center;
   gap: 1rem;
-  margin-bottom: 1.5rem;
   padding: 1rem 1.25rem;
   border: 1px solid rgba(224, 214, 194, 0.9);
   border-radius: 18px;
-  background: rgba(255, 250, 242, 0.88);
+  background: rgba(255, 250, 242, 0.92);
   box-shadow: 0 12px 28px rgba(80, 57, 35, 0.12);
   -webkit-backdrop-filter: blur(12px);
   backdrop-filter: blur(12px);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.35s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.28s ease;
+}
+
+/* Revealed state — toggled by Vue's isHeaderVisible */
+.sura-header--visible {
+  transform: translateX(-50%) translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Invisible hover trigger zone fixed at the top of the viewport */
+.sura-header-trigger {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 72px;
+  z-index: 18;
+  pointer-events: auto;
+  background: transparent;
 }
 
 .sura-title {
@@ -551,7 +616,7 @@ function onAyaDblClick(e: Event) {
 
 @media (max-width: 600px) {
   .sura-header {
-    top: calc(env(safe-area-inset-top, 0px) + 0.5rem);
+    top: 0.5rem;
     gap: 0.75rem;
     padding: 0.85rem 1rem;
   }
@@ -567,7 +632,7 @@ function onAyaDblClick(e: Event) {
 
 :global(body.body--dark) .sura-header {
   border-color: rgba(224, 224, 224, 0.14);
-  background: rgba(33, 33, 33, 0.84);
+  background: rgba(33, 33, 33, 0.92);
   box-shadow: 0 14px 32px rgba(0, 0, 0, 0.28);
 }
 

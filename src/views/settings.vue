@@ -23,6 +23,7 @@ import {
   useProfileSettings,
   type QuranHighlightMode,
 } from '@/composables/useProfileSettings'
+import { settings } from '@/utils/settingsStore'
 
 const NAV_ORDERING_KEY = 'nav-ordering-enabled'
 const DRAWER_OPEN_KEY = 'drawer-open-by-default'
@@ -33,6 +34,7 @@ const AUTOPLAY_PRAYER_KEY = 'pref-autoplay-prayer-times'
 const QURAN_TRANSLATION_KEY = 'quran-show-translation'
 const NOTIFICATIONS_KEY = 'pref-enable-notifications'
 const DARK_MODE_KEY = 'pref-dark-mode'
+const CURSOR_TRAIL_KEY = 'pref-cursor-trail-count'
 
 const { t, locale } = useI18n()
 const $q = useQuasar()
@@ -55,13 +57,19 @@ function isNativeRuntime(): boolean {
   )
 }
 
-const enableNotifications = ref(readNotificationsPreference())
-const navOrderingEnabled = ref(readNavOrderingEnabled())
-const drawerOpenByDefault = ref(readDrawerOpenPreference())
-const compactLayout = ref(readCompactPreference())
-const reduceMotion = ref(readReduceMotionPreference())
-const autoPlayAthan = ref(readAutoplayAthanPreference())
-const autoPlayPrayerTimes = ref(readAutoplayPrayerTimesPreference())
+const enableNotifications = ref(settings.get<boolean>(NOTIFICATIONS_KEY, false))
+const navOrderingEnabled = ref(settings.get<boolean>(NAV_ORDERING_KEY, true))
+const drawerOpenByDefault = ref(settings.get<boolean>(DRAWER_OPEN_KEY, false))
+const compactLayout = ref(settings.get<boolean>(COMPACT_KEY, false))
+const reduceMotion = ref(settings.get<boolean>(MOTION_KEY, false))
+const autoPlayAthan = ref(settings.get<boolean>(AUTOPLAY_KEY, false))
+const autoPlayPrayerTimes = ref(settings.get<boolean>(AUTOPLAY_PRAYER_KEY, true))
+const cursorTrailCount = ref(settings.get<number>(CURSOR_TRAIL_KEY, 40))
+const showQuranTranslation = ref(settings.get<boolean>(QURAN_TRANSLATION_KEY, true))
+const darkMode = ref(settings.get<boolean>(DARK_MODE_KEY, false))
+const fontSize = ref(readFontSizePreference())
+const highContrast = ref(readHighContrastPreference())
+const showOfflineRecitationManager = ref(false)
 
 const {
   reciters,
@@ -186,6 +194,11 @@ watch(highContrast, (val) => {
   applyHighContrast(val)
 })
 
+watch(cursorTrailCount, (val) => {
+  persistCursorTrailCount(val)
+  broadcastCursorTrailCount(val)
+})
+
 watch(enableNotifications, async (val) => {
   if (val) {
     const ok = await activateNotifications()
@@ -202,6 +215,13 @@ watch(enableNotifications, async (val) => {
 })
 
 onMounted(async () => {
+  // Migrate any legacy plain-text preferences into the encrypted store
+  settings.migrateAll([
+    NAV_ORDERING_KEY, DRAWER_OPEN_KEY, COMPACT_KEY, MOTION_KEY,
+    AUTOPLAY_KEY, AUTOPLAY_PRAYER_KEY, QURAN_TRANSLATION_KEY,
+    NOTIFICATIONS_KEY, DARK_MODE_KEY, CURSOR_TRAIL_KEY,
+  ])
+
   applyFontSize(fontSize.value)
   applyHighContrast(highContrast.value)
   await loadProfileSettings()
@@ -248,157 +268,114 @@ async function activateNotifications(): Promise<boolean> {
   return true
 }
 
+// ─── Encrypted read / persist helpers ────────────────────────────────────────
+
 function readNavOrderingEnabled(): boolean {
-  if (typeof window === 'undefined') return true
-  const stored = window.localStorage.getItem(NAV_ORDERING_KEY)
-  if (stored === null) return true
-  return stored === 'true'
+  return settings.get<boolean>(NAV_ORDERING_KEY, true)
 }
-
 function persistNavOrdering(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(NAV_ORDERING_KEY, String(val))
-}
-
-function broadcastNavOrdering(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('nav-ordering-changed', { detail: { enabled: val } })
-  )
+  settings.set(NAV_ORDERING_KEY, val)
 }
 
 function readCompactPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(COMPACT_KEY)
-  if (stored === null) return false
-  return stored === 'true'
+  return settings.get<boolean>(COMPACT_KEY, false)
 }
-
 function persistCompactPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(COMPACT_KEY, String(val))
-}
-
-function broadcastCompactPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('compact-layout-changed', { detail: { enabled: val } })
-  )
+  settings.set(COMPACT_KEY, val)
 }
 
 function readReduceMotionPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(MOTION_KEY)
-  if (stored === null) return false
-  return stored === 'true'
+  return settings.get<boolean>(MOTION_KEY, false)
 }
-
 function persistReduceMotionPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(MOTION_KEY, String(val))
-}
-
-function broadcastReduceMotionPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('reduce-motion-changed', { detail: { enabled: val } })
-  )
+  settings.set(MOTION_KEY, val)
 }
 
 function readAutoplayAthanPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(AUTOPLAY_KEY)
-  if (stored === null) return false
-  return stored === 'true'
+  return settings.get<boolean>(AUTOPLAY_KEY, false)
 }
-
 function persistAutoplayPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(AUTOPLAY_KEY, String(val))
+  settings.set(AUTOPLAY_KEY, val)
 }
 
 function readAutoplayPrayerTimesPreference(): boolean {
-  if (typeof window === 'undefined') return true // Default to true for Adhan at prayer times
-  const stored = window.localStorage.getItem(AUTOPLAY_PRAYER_KEY)
-  if (stored === null) return true // Default to true
-  return stored === 'true'
+  return settings.get<boolean>(AUTOPLAY_PRAYER_KEY, true)
 }
-
 function persistAutoplayPrayerTimesPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(AUTOPLAY_PRAYER_KEY, String(val))
-}
-
-function broadcastAutoplayPrayerTimesPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('autoplay-prayer-times-changed', {
-      detail: { enabled: val },
-    })
-  )
-}
-
-function broadcastAutoplayPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('autoplay-athan-changed', { detail: { enabled: val } })
-  )
+  settings.set(AUTOPLAY_PRAYER_KEY, val)
 }
 
 function readQuranTranslationPreference(): boolean {
-  if (typeof window === 'undefined') return true
-  const stored = window.localStorage.getItem(QURAN_TRANSLATION_KEY)
-  if (stored === null) return true
-  return stored === 'true'
+  return settings.get<boolean>(QURAN_TRANSLATION_KEY, true)
 }
-
 function persistQuranTranslationPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(QURAN_TRANSLATION_KEY, String(val))
-}
-
-function broadcastQuranTranslationPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.dispatchEvent(
-    new CustomEvent('quran-translation-visibility-changed', {
-      detail: { enabled: val },
-    })
-  )
+  settings.set(QURAN_TRANSLATION_KEY, val)
 }
 
 function readNotificationsPreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(NOTIFICATIONS_KEY)
-  if (stored === null) return false
-  return stored === 'true'
+  return settings.get<boolean>(NOTIFICATIONS_KEY, false)
 }
-
 function persistNotificationsPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(NOTIFICATIONS_KEY, String(val))
+  settings.set(NOTIFICATIONS_KEY, val)
 }
 
 function readDarkModePreference(): boolean {
-  if (typeof window === 'undefined') return false
-  const stored = window.localStorage.getItem(DARK_MODE_KEY)
-  if (stored === null) return false
-  return stored === 'true'
+  return settings.get<boolean>(DARK_MODE_KEY, false)
 }
-
 function persistDarkModePreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(DARK_MODE_KEY, String(val))
+  settings.set(DARK_MODE_KEY, val)
 }
 
 function persistFontSizePreference(val: number) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(FONT_SIZE_KEY, String(val))
+  settings.set(FONT_SIZE_KEY, val)
 }
 
 function persistHighContrastPreference(val: boolean) {
-  if (typeof window === 'undefined') return
-  window.localStorage.setItem(HIGH_CONTRAST_KEY, String(val))
+  settings.set(HIGH_CONTRAST_KEY, val)
 }
+
+function readCursorTrailCount(): number {
+  return settings.get<number>(CURSOR_TRAIL_KEY, 40)
+}
+function persistCursorTrailCount(val: number) {
+  settings.set(CURSOR_TRAIL_KEY, val)
+}
+
+function readDrawerOpenPreference(): boolean {
+  return settings.get<boolean>(DRAWER_OPEN_KEY, false)
+}
+function persistDrawerPreference(val: boolean) {
+  settings.set(DRAWER_OPEN_KEY, val)
+}
+
+// ─── Broadcast helpers — notify app-wide listeners ────────────────────────────
+
+function broadcastNavOrdering(val: boolean) {
+  window.dispatchEvent(new CustomEvent('nav-ordering-changed', { detail: { enabled: val } }))
+}
+function broadcastDrawerPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('drawer-preference-changed', { detail: { open: val } }))
+}
+function broadcastCompactPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('compact-layout-changed', { detail: { enabled: val } }))
+}
+function broadcastReduceMotionPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('reduce-motion-changed', { detail: { enabled: val } }))
+}
+function broadcastAutoplayPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('autoplay-athan-changed', { detail: { enabled: val } }))
+}
+function broadcastAutoplayPrayerTimesPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('autoplay-prayer-times-changed', { detail: { enabled: val } }))
+}
+function broadcastQuranTranslationPreference(val: boolean) {
+  window.dispatchEvent(new CustomEvent('quran-translation-visibility-changed', { detail: { enabled: val } }))
+}
+function broadcastCursorTrailCount(val: number) {
+  window.dispatchEvent(new CustomEvent('cursor-trail-count-changed', { detail: { count: val } }))
+}
+
+// ─── Broadcast helpers & notifications ──────────────────────────────────────
 
 async function ensureNotificationsPermission(): Promise<boolean> {
   if (typeof window === 'undefined' || typeof Notification === 'undefined') {
@@ -695,6 +672,7 @@ async function reloadApp() {
         DARK_MODE_KEY,
         FONT_SIZE_KEY,
         HIGH_CONTRAST_KEY,
+        CURSOR_TRAIL_KEY,
         'peace2074-audio',
         'peace2074-offline-suras-v1',
         'quran-offline-recitation-quality',
@@ -862,6 +840,29 @@ async function reloadApp() {
                   outline
                 />
               </div>
+            </div>
+            <q-separator spaced />
+            <!-- Cursor trail diamonds count -->
+            <div class="setting-row" style="align-items: flex-start; flex-direction: column; gap: 0.5rem">
+              <div style="width: 100%">
+                <div class="text-subtitle1" style="display:flex; align-items:center; gap: 0.5rem">
+                  💎 Cursor Trail Diamonds
+                  <q-badge color="primary" outline style="font-size:0.9rem; padding: 2px 8px">{{ cursorTrailCount === 0 ? 'Off' : cursorTrailCount }}</q-badge>
+                </div>
+                <div class="text-caption setting-hint">Number of floating diamonds following your cursor (0 = disabled)</div>
+              </div>
+              <q-slider
+                v-model="cursorTrailCount"
+                :min="0"
+                :max="80"
+                :step="5"
+                color="primary"
+                label
+                :label-value="cursorTrailCount === 0 ? 'Off' : cursorTrailCount"
+                style="width: 100%; padding: 0 8px"
+                :markers="20"
+                snap
+              />
             </div>
           </q-card-section>
         </q-card>

@@ -19,7 +19,16 @@ let animFrame: number | null = null
 let animating = false
 let lastSpawn = 0
 const THROTTLE_MS = 30
-const MAX_PARTICLES = 40
+
+const CURSOR_TRAIL_KEY = 'pref-cursor-trail-count'
+function readMaxParticles(): number {
+  if (typeof window === 'undefined') return 40
+  const stored = window.localStorage.getItem(CURSOR_TRAIL_KEY)
+  if (stored === null) return 40
+  const n = Number(stored)
+  return isNaN(n) ? 40 : Math.max(0, Math.min(80, n))
+}
+let MAX_PARTICLES = readMaxParticles()
 
 const COLORS = [
   '#b9f2ff', '#e0f7fa', '#ffffff',
@@ -140,6 +149,8 @@ function draw() {
 }
 
 function emit(clientX: number, clientY: number) {
+  if (MAX_PARTICLES === 0) return
+
   if (label.value) {
     label.value.style.left = `${clientX + 18}px`
     label.value.style.top = `${clientY - 14}px`
@@ -170,6 +181,15 @@ function onTouchMove(e: TouchEvent) {
 // Clear particles when locale changes so old-language words disappear
 watch(locale, () => { particles = [] })
 
+function onTrailCountChanged(e: Event) {
+  const count = (e as CustomEvent<{ count: number }>).detail?.count
+  if (typeof count === 'number') MAX_PARTICLES = Math.max(0, Math.min(80, count))
+  if (MAX_PARTICLES === 0) {
+    particles = []
+    if (label.value) label.value.style.opacity = '0'
+  }
+}
+
 onMounted(() => {
   if (!canvas.value) return
   ctx = canvas.value.getContext('2d')
@@ -177,12 +197,14 @@ onMounted(() => {
   window.addEventListener('resize', resize)
   window.addEventListener('mousemove', onMouseMove, { passive: true })
   window.addEventListener('touchmove', onTouchMove, { passive: true })
+  window.addEventListener('cursor-trail-count-changed', onTrailCountChanged)
 })
 
 onUnmounted(() => {
   window.removeEventListener('resize', resize)
   window.removeEventListener('mousemove', onMouseMove)
   window.removeEventListener('touchmove', onTouchMove)
+  window.removeEventListener('cursor-trail-count-changed', onTrailCountChanged)
   if (animFrame !== null) cancelAnimationFrame(animFrame)
 })
 </script>

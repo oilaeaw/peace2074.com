@@ -1,6 +1,6 @@
 {
   "name": "peace2074",
-  "version": "3.3.26",
+  "version": "3.3.27",
   "packageManager": "pnpm@9.15.9",
   "type": "module",
   "engines": {
@@ -150,7 +150,6 @@
     "mongoose": "^9.0.1",
     "pinia": "^3.0.3",
     "quasar": "^2.12.10",
-
     "three": "^0.182.0",
     "unstorage": "^1.17.3",
     "vue": "^3.5.22",

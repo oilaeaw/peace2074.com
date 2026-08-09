@@ -1,7 +1,7 @@
 <script setup lang="ts">
 import { useI18n } from 'vue-i18n'
 import { useRoute } from 'vue-router'
-import { computed } from 'vue'
+import { computed, ref } from 'vue'
 import { useQuasar } from 'quasar'
 
 const { t } = useI18n()
@@ -13,11 +13,48 @@ const pageTitle = computed(() => {
 })
 
 const isDarkMode = computed(() => $q.dark.isActive)
+
+const isHeaderVisible = ref(false)
+let hideTimer: ReturnType<typeof setTimeout> | null = null
+
+function onMouseMove(e: MouseEvent) {
+  if (e.clientY < 72) {
+    if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+    isHeaderVisible.value = true
+  } else if (isHeaderVisible.value) {
+    if (!hideTimer) {
+      hideTimer = setTimeout(() => {
+        isHeaderVisible.value = false
+        hideTimer = null
+      }, 800)
+    }
+  }
+}
+
+function onHeaderEnter() {
+  if (hideTimer) { clearTimeout(hideTimer); hideTimer = null }
+  isHeaderVisible.value = true
+}
+
+function onHeaderLeave() {
+  hideTimer = setTimeout(() => {
+    isHeaderVisible.value = false
+    hideTimer = null
+  }, 600)
+}
 </script>
 
 <template>
-  <div class="plain-container" :class="{ 'plain-container--dark': isDarkMode }">
-    <header class="plain-header" :class="{ 'plain-header--dark': isDarkMode }">
+  <div class="plain-container" :class="{ 'plain-container--dark': isDarkMode }" @mousemove="onMouseMove">
+    <!-- Invisible hover trigger zone -->
+    <div class="plain-header-trigger" @mouseenter="onHeaderEnter" />
+
+    <header
+      class="plain-header"
+      :class="{ 'plain-header--dark': isDarkMode, 'plain-header--visible': isHeaderVisible }"
+      @mouseenter="onHeaderEnter"
+      @mouseleave="onHeaderLeave"
+    >
       <nav class="plain-nav">
         <a
           :href="route.path.startsWith('/quran/') ? '/quran' : '/'"
@@ -55,10 +92,39 @@ const isDarkMode = computed(() => $q.dark.isActive)
 }
 
 .plain-header {
-  padding: 1rem;
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 100;
+  padding: 0.75rem 1rem;
   border-bottom: 1px solid rgba(15, 23, 42, 0.08);
-  background: rgba(255, 255, 255, 0.9);
+  background: rgba(255, 255, 255, 0.92);
   backdrop-filter: blur(12px);
+  transform: translateY(-105%);
+  opacity: 0;
+  pointer-events: none;
+  transition:
+    transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1),
+    opacity 0.25s ease;
+}
+
+.plain-header--visible {
+  transform: translateY(0);
+  opacity: 1;
+  pointer-events: auto;
+}
+
+/* Invisible hover trigger zone at the very top of the viewport */
+.plain-header-trigger {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  height: 60px;
+  z-index: 99;
+  pointer-events: auto;
+  background: transparent;
 }
 
 .plain-nav {
@@ -99,7 +165,7 @@ const isDarkMode = computed(() => $q.dark.isActive)
 
 .plain-main {
   margin: 0 auto;
-  padding: 2rem 1rem;
+  padding: 0 1rem 2rem;
   line-height: 1.8;
 }
 
@@ -110,7 +176,7 @@ const isDarkMode = computed(() => $q.dark.isActive)
 
 .plain-header--dark {
   border-bottom-color: rgba(255, 255, 255, 0.08);
-  background: rgba(3, 7, 18, 0.92);
+  background: rgba(3, 7, 18, 0.94);
 }
 
 .plain-title--dark {
@@ -169,7 +235,7 @@ const isDarkMode = computed(() => $q.dark.isActive)
   }
 
   .plain-main {
-    padding: 1rem 0.75rem;
+    padding: 0 0.75rem 1rem;
   }
 }
 </style>

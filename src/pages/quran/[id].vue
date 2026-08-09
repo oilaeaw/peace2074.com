@@ -2436,6 +2436,9 @@ const showRecitationStickyHeader = computed(
     (currentAyahIndex.value >= 0 && highlightMode.value === 'word')
 )
 
+const toolsVisible = ref(false)
+function toggleTools() { toolsVisible.value = !toolsVisible.value }
+
 const isHoverAudioPaused = computed(
   () => Boolean(audioEl.value?.paused) && currentAyahIndex.value >= 0
 )
@@ -3117,7 +3120,14 @@ watch(
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <div v-else-if="sura">
-      <div class="sura-heading" :class="{ 'is-reciting': showRecitationStickyHeader }">
+      <div
+        class="sura-heading"
+        :class="{
+          'is-reciting': showRecitationStickyHeader,
+          'is-mushaf-mode': layoutMode === 'mushaf' && !toolsVisible,
+          'is-mushaf-mode--open': layoutMode === 'mushaf' && toolsVisible,
+        }"
+      >
         <div>
           <div
             class="text-h5 sura-title-swipeable"
@@ -3582,7 +3592,12 @@ watch(
         </div>
       </div>
 
-      <div v-else-if="layoutMode === 'mushaf'" class="mushaf-layout q-mt-lg">
+      <div v-else-if="layoutMode === 'mushaf'" class="mushaf-layout">
+        <!-- Floating tools toggle button -->
+        <button class="tools-toggle-btn" @click="toggleTools" :title="toolsVisible ? 'Hide tools' : 'Show tools'">
+          <span class="tools-toggle-icon">⚙</span>
+          <span class="tools-toggle-chevron" :class="{ 'is-open': toolsVisible }">›</span>
+        </button>
         <div class="mushaf-page">
           <div class="page-border">
             <div class="mushaf-header">
@@ -3752,6 +3767,7 @@ watch(
                   :title="hoverPrimaryActionTitle"
                 />
                 <q-btn
+                  v-if="canPauseHoverAudio && hoverPrimaryActionIcon !== 'pause'"
                   round
                   dense
                   icon="pause"
@@ -3878,6 +3894,93 @@ watch(
   backdrop-filter: blur(8px);
   border-bottom: 1px solid rgba(0, 0, 0, 0.08);
   box-shadow: 0 8px 20px rgba(0, 0, 0, 0.08);
+}
+
+/* In mushaf mode: collapse the heading to zero height, expand on hover */
+.sura-heading.is-mushaf-mode {
+  overflow: hidden;
+  max-height: 0;
+  opacity: 0;
+  pointer-events: none;
+  margin-bottom: 0;
+  padding-top: 0;
+  padding-bottom: 0;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    padding 0.25s ease;
+}
+
+.sura-heading.is-mushaf-mode:hover,
+.sura-heading.is-mushaf-mode:focus-within {
+  max-height: 200px;
+  opacity: 1;
+  pointer-events: auto;
+  padding-top: 12px;
+  padding-bottom: 12px;
+}
+
+/* Toggled open via button */
+.sura-heading.is-mushaf-mode--open {
+  max-height: 300px;
+  opacity: 1;
+  pointer-events: auto;
+  overflow: hidden;
+  margin-bottom: 12px;
+  padding-top: 12px;
+  padding-bottom: 12px;
+  transition:
+    max-height 0.35s ease,
+    opacity 0.25s ease,
+    padding 0.25s ease;
+}
+
+/* Floating toggle button */
+.tools-toggle-btn {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  position: absolute;
+  top: 8px;
+  left: 12px;
+  z-index: 30;
+  background: rgba(255, 250, 242, 0.9);
+  border: 1px solid rgba(116, 84, 40, 0.2);
+  border-radius: 999px;
+  padding: 4px 10px 4px 8px;
+  font-size: 0.78rem;
+  color: #7c6142;
+  cursor: pointer;
+  backdrop-filter: blur(8px);
+  box-shadow: 0 2px 8px rgba(80, 57, 35, 0.1);
+  transition:
+    background 0.2s,
+    box-shadow 0.2s,
+    transform 0.15s;
+  line-height: 1;
+}
+
+.tools-toggle-btn:hover {
+  background: rgba(255, 243, 220, 0.98);
+  box-shadow: 0 4px 14px rgba(80, 57, 35, 0.16);
+  transform: translateY(-1px);
+}
+
+.tools-toggle-icon {
+  font-size: 0.85rem;
+  opacity: 0.8;
+}
+
+.tools-toggle-chevron {
+  font-size: 1.1rem;
+  display: inline-block;
+  transform: rotate(90deg);
+  transition: transform 0.3s ease;
+  line-height: 1;
+}
+
+.tools-toggle-chevron.is-open {
+  transform: rotate(-90deg);
 }
 
 .sura-title-swipeable {
@@ -4209,6 +4312,7 @@ watch(
 }
 
 .mushaf-layout {
+  position: relative;
   background: linear-gradient(135deg, #f7f2e7, #fefbf4);
   padding: 16px;
   border-radius: 24px;
