@@ -186,8 +186,8 @@
         </div>
       </div>
 
-      <!-- Surah Search Filter -->
-      <div class="q-mb-md">
+      <!-- Surah Search & Revelation Type Filter -->
+      <div class="row items-center q-gutter-sm q-mb-md">
         <q-input
           v-model="surahSearch"
           dense
@@ -195,12 +195,27 @@
           placeholder="Search Surah by name or number (1 to 114)..."
           clearable
           color="primary"
-          class="bg-white rounded-borders"
+          class="bg-white rounded-borders col-12 col-sm"
         >
           <template #prepend>
             <q-icon name="search" />
           </template>
         </q-input>
+
+        <q-btn-toggle
+          v-model="surahTypeFilter"
+          dense
+          unelevated
+          toggle-color="primary"
+          color="grey-3"
+          text-color="dark"
+          class="col-12 col-sm-auto"
+          :options="[
+            { label: 'All (114)', value: 'all' },
+            { label: 'Meccan (86)', value: 'meccan' },
+            { label: 'Medinan (28)', value: 'medinan' },
+          ]"
+        />
       </div>
 
       <!-- 114 Surahs Grid -->
@@ -434,15 +449,22 @@ const videos = ref<VideoItem[]>([])
 const showPlayerModal = ref(false)
 const activeVideo = ref<VideoItem | null>(null)
 const surahSearch = ref('')
+const surahTypeFilter = ref<'all' | 'meccan' | 'medinan'>('all')
 
 const allSurahs = chaptersEn as ChapterItem[]
 
 const filteredSurahs = computed(() => {
+  let list = allSurahs
+
+  if (surahTypeFilter.value !== 'all') {
+    list = list.filter((sura) => sura.type === surahTypeFilter.value)
+  }
+
   if (!surahSearch.value || !surahSearch.value.trim()) {
-    return allSurahs
+    return list
   }
   const q = surahSearch.value.trim().toLowerCase()
-  return allSurahs.filter((sura) => {
+  return list.filter((sura) => {
     return (
       String(sura.id) === q ||
       sura.transliteration.toLowerCase().includes(q) ||
