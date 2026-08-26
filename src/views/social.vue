@@ -28,8 +28,8 @@
         </div>
 
         <q-card-section class="yt-info">
-          <div class="yt-channel-name">{{ t('pages.social.youtube.channelName') }}</div>
-          <div class="yt-channel-handle text-grey-6">{{ t('pages.social.youtube.channelHandle') }}</div>
+          <div class="yt-channel-name">{{ youtubeChannel.channelName }}</div>
+          <div class="yt-channel-handle text-grey-6">{{ youtubeChannel.handle }}</div>
           <div class="yt-channel-desc q-mt-sm">
             {{ t('pages.social.youtube.channelDesc') }}
           </div>
@@ -37,24 +37,24 @@
 
         <q-card-section class="yt-actions row q-gutter-sm">
           <q-btn
-            id="yt-community-btn"
+            id="yt-subscribe-btn"
             unelevated
             color="red"
             text-color="white"
-            icon="group"
-            :label="t('pages.social.youtube.communityBtn')"
-            :href="youtubeChannel.communityUrl"
+            icon="subscriptions"
+            :label="t('pages.social.youtube.subscribeBtn')"
+            :href="youtubeChannel.subscribeUrl"
             target="_blank"
             rel="noopener noreferrer"
             class="yt-btn"
           />
           <q-btn
-            id="yt-subscribe-btn"
+            id="yt-community-btn"
             outline
             color="red"
-            icon="notifications"
-            :label="t('pages.social.youtube.subscribeBtn')"
-            :href="youtubeChannel.channelUrl"
+            icon="group"
+            :label="t('pages.social.youtube.communityBtn')"
+            :href="youtubeChannel.communityUrl"
             target="_blank"
             rel="noopener noreferrer"
             class="yt-btn"
@@ -73,15 +73,53 @@
 
       <!-- Embedded YouTube Channel Videos -->
       <div class="yt-video-section q-mt-lg">
-        <div class="yt-video-label q-mb-sm">
-          <q-icon name="play_circle" color="red" size="20px" class="q-mr-xs" />
-          <span class="text-subtitle2 text-weight-bold">{{ t('pages.social.youtube.latestVideos') }}</span>
+        <div class="yt-video-label q-mb-sm row items-center justify-between">
+          <div class="row items-center">
+            <q-icon name="play_circle" color="red" size="20px" class="q-mr-xs" />
+            <span class="text-subtitle2 text-weight-bold">{{ t('pages.social.youtube.latestVideos') }}</span>
+          </div>
+          <q-btn
+            flat
+            dense
+            no-caps
+            color="red"
+            icon-right="open_in_new"
+            label="Watch on YouTube"
+            :href="youtubeChannel.channelUrl"
+            target="_blank"
+            rel="noopener noreferrer"
+          />
         </div>
-        <div class="yt-video-wrapper">
+
+        <!-- Dynamic YouTube Video Grid if videos are fetched -->
+        <div v-if="videos.length > 0" class="yt-video-grid">
+          <q-card
+            v-for="video in videos"
+            :key="video.id"
+            flat
+            bordered
+            class="yt-video-card cursor-pointer"
+            @click="openVideoModal(video)"
+          >
+            <div class="yt-thumb-wrapper">
+              <img :src="video.thumbnail" :alt="video.title" class="yt-thumb-img" loading="lazy" />
+              <div class="yt-play-overlay">
+                <q-icon name="play_arrow" size="36px" color="white" />
+              </div>
+            </div>
+            <q-card-section class="q-pa-sm">
+              <div class="text-subtitle2 text-weight-bold video-title-clamp">{{ video.title }}</div>
+              <div class="text-caption text-grey-6 q-mt-xs">{{ formatDate(video.published) }}</div>
+            </q-card-section>
+          </q-card>
+        </div>
+
+        <!-- Channel Playlist Player Fallback -->
+        <div v-else class="yt-video-wrapper">
           <iframe
             class="yt-channel-iframe"
-            src="https://www.youtube.com/embed?listType=user_uploads&list=UCiuUJUpeWXxWwDSpPKoEVbQ&rel=0"
-            title="Wael Wahbeh YouTube Channel Videos"
+            :src="youtubeChannel.embedPlaylistUrl"
+            title="Peace2074 YouTube Channel Videos"
             allowfullscreen
             loading="lazy"
             referrerpolicy="strict-origin-when-cross-origin"
@@ -89,6 +127,43 @@
         </div>
       </div>
     </section>
+
+    <!-- Video Modal Player -->
+    <q-dialog v-model="showPlayerModal">
+      <q-card style="width: 800px; max-width: 95vw; background: #0f172a; color: white; border-radius: 16px;">
+        <q-card-section class="row items-center justify-between q-pb-none">
+          <div class="text-subtitle1 text-weight-bold text-ellipsis" style="max-width: 85%;">
+            {{ activeVideo?.title }}
+          </div>
+          <q-btn icon="close" flat round dense v-close-popup color="white" />
+        </q-card-section>
+
+        <q-card-section class="q-pa-md">
+          <div class="yt-video-wrapper" style="border-radius: 12px; overflow: hidden;">
+            <iframe
+              v-if="activeVideo"
+              class="yt-channel-iframe"
+              :src="activeVideo.embedUrl"
+              :title="activeVideo.title"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            />
+          </div>
+          <div class="row items-center justify-between q-mt-md">
+            <div class="text-caption text-grey-4">{{ formatDate(activeVideo?.published) }}</div>
+            <q-btn
+              unelevated
+              color="red"
+              icon="open_in_new"
+              label="Open on YouTube"
+              :href="activeVideo?.url"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </div>
+        </q-card-section>
+      </q-card>
+    </q-dialog>
 
     <!-- TikTok Videos Section -->
     <section class="q-mt-xl">
@@ -170,14 +245,69 @@
 </template>
 
 <script setup lang="ts">
+import { ref, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+
+interface VideoItem {
+  id: string
+  title: string
+  url: string
+  embedUrl: string
+  published: string
+  thumbnail: string
+  description: string
+}
 
 const { t } = useI18n()
 
+const CHANNEL_ID = 'UCKPAQJxnUTX-pzvLQ3M0aEQ'
+const UPLOADS_PLAYLIST_ID = `UU${CHANNEL_ID.slice(2)}`
+
 const youtubeChannel = {
-  channelUrl: 'https://www.youtube.com/channel/UCiuUJUpeWXxWwDSpPKoEVbQ',
-  communityUrl: 'https://www.youtube.com/channel/UCiuUJUpeWXxWwDSpPKoEVbQ/community',
+  channelName: 'Peace2074',
+  handle: '@Peace2074',
+  channelUrl: `https://www.youtube.com/channel/${CHANNEL_ID}`,
+  subscribeUrl: `https://www.youtube.com/channel/${CHANNEL_ID}?sub_confirmation=1`,
+  communityUrl: `https://www.youtube.com/channel/${CHANNEL_ID}/community`,
+  embedPlaylistUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
 }
+
+const videos = ref<VideoItem[]>([])
+const showPlayerModal = ref(false)
+const activeVideo = ref<VideoItem | null>(null)
+
+function openVideoModal(video: VideoItem) {
+  activeVideo.value = video
+  showPlayerModal.value = true
+}
+
+function formatDate(isoString?: string) {
+  if (!isoString) return ''
+  try {
+    const d = new Date(isoString)
+    return d.toLocaleDateString(undefined, {
+      year: 'numeric',
+      month: 'short',
+      day: 'numeric',
+    })
+  } catch {
+    return isoString
+  }
+}
+
+onMounted(async () => {
+  try {
+    const res = await fetch('/api/youtube/videos')
+    if (res.ok) {
+      const data = await res.json()
+      if (data?.ok && Array.isArray(data.videos) && data.videos.length > 0) {
+        videos.value = data.videos
+      }
+    }
+  } catch (err) {
+    console.warn('[Social] Failed to fetch YouTube videos:', err)
+  }
+})
 
 const tiktokSlots = [
   {
@@ -189,7 +319,7 @@ const tiktokSlots = [
   {
     videoId: '7604807153408331030',
     creator: '@abdullvocals',
-    embedUrl: 'https://www.tiktok.com/embed/v2/7604807153408331030',
+    embedUrl: 'https://www.tiktok.com/@abdullvocals/video/7604807153408331030',
     watchUrl: 'https://www.tiktok.com/@abdullvocals/video/7604807153408331030',
   },
   {
@@ -303,9 +433,63 @@ const tiktokSlots = [
   width: 100%;
 }
 
-.yt-video-label {
+.yt-video-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
+  gap: 16px;
+}
+
+.yt-video-card {
+  border-radius: 14px;
+  overflow: hidden;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.yt-video-card:hover {
+  transform: translateY(-4px);
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.15);
+}
+
+.yt-thumb-wrapper {
+  position: relative;
+  width: 100%;
+  aspect-ratio: 16 / 9;
+  background: #000;
+  overflow: hidden;
+}
+
+.yt-thumb-img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  transition: transform 0.3s ease;
+}
+
+.yt-video-card:hover .yt-thumb-img {
+  transform: scale(1.05);
+}
+
+.yt-play-overlay {
+  position: absolute;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.35);
   display: flex;
   align-items: center;
+  justify-content: center;
+  opacity: 0.85;
+  transition: opacity 0.2s ease, background 0.2s ease;
+}
+
+.yt-video-card:hover .yt-play-overlay {
+  opacity: 1;
+  background: rgba(220, 38, 38, 0.5);
+}
+
+.video-title-clamp {
+  display: -webkit-box;
+  -webkit-line-clamp: 2;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
 }
 
 .yt-video-wrapper {

@@ -74,7 +74,7 @@ const features = [
       <h2 class="section-heading">{{ t('pages.home.video.title', 'App Preview') }}</h2>
       <div class="video-wrap">
         <iframe
-          src="https://www.youtube.com/embed/?enablejsapi=1&rel=0&autoplay=0&playsinline=1&fs=1"
+          src="https://www.youtube.com/embed?listType=playlist&list=UUKPAQJxnUTX-pzvLQ3M0aEQ&rel=0"
           title="PEACE2074 App Preview"
           frameborder="0"
           allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
