@@ -187,6 +187,9 @@
               allowfullscreen
             />
           </div>
+          <div v-if="activeVideo?.description" class="q-mt-md text-caption text-grey-3 video-desc-scroll" style="max-height: 100px; overflow-y: auto; line-height: 1.5; white-space: pre-line;">
+            {{ activeVideo.description }}
+          </div>
           <div class="row items-center justify-between q-mt-md">
             <div class="text-caption text-grey-4">{{ formatDate(activeVideo?.published) }}</div>
             <div class="row q-gutter-sm">
