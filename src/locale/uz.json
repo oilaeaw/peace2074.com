@@ -781,7 +781,17 @@
       "loadError": "Oyatni yuklab boʻlmadi",
       "copyText": "Matnni nusxalash",
       "copied": "Vaqtinchalik xotiraga nusxalandi!",
-      "copyError": "Nusxalab boʻlmadi"
+      "copyError": "Nusxalab boʻlmadi",
+      "youtube": {
+        "sectionTitle": "YouTube Community",
+        "channelName": "Wael Wahbeh (Waelio)'s Community",
+        "channelHandle": "peace2074",
+        "channelDesc": "Join our YouTube community for updates, reflections, Quran insights, and more from the PEACE2074 team. Follow along and be part of the conversation.",
+        "communityBtn": "Visit Community",
+        "subscribeBtn": "Subscribe",
+        "embedNotice": "YouTube's Community tab opens directly on YouTube. All rights remain with the channel owner.",
+        "latestVideos": "Latest Videos from the Channel"
+      }
     }
   },
   "offline": {
