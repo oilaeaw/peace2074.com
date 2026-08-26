@@ -202,8 +202,25 @@
         </div>
       </div>
 
-      <!-- Surah Search & Revelation Type Filter -->
+      <!-- Reciter & Search Filter Bar -->
       <div class="row items-center q-gutter-sm q-mb-md">
+        <q-select
+          v-model="selectedReciterId"
+          dense
+          outlined
+          emit-value
+          map-options
+          options-dense
+          color="primary"
+          class="bg-white rounded-borders col-12 col-sm-4"
+          :options="reciterSelectOptions"
+          label="Default Reciter (القارئ)"
+        >
+          <template #prepend>
+            <q-icon name="mic" color="primary" />
+          </template>
+        </q-select>
+
         <q-input
           v-model="surahSearch"
           dense
@@ -456,7 +473,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, onMounted } from 'vue'
+import { ref, computed, watch, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import chaptersEn from '@/shared/data/chapters/en.json'
@@ -503,18 +520,50 @@ const surahTypeFilter = ref<'all' | 'meccan' | 'medinan'>('all')
 
 const allSurahs = chaptersEn as ChapterItem[]
 
+interface ReciterInfo {
+  id: string
+  name: string
+  nameAr: string
+}
+
+const reciterList: ReciterInfo[] = [
+  { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
+  { id: 'abdulbasit', name: 'Abdul Basit', nameAr: 'عبد الباسط عبد الصمد' },
+  { id: 'ghamdi', name: 'Saad Al-Ghamdi', nameAr: 'سعد الغامدي' },
+  { id: 'muaiqly', name: 'Maher Al-Muaiqly', nameAr: 'ماهر المعيقلي' },
+  { id: 'shatri', name: 'Abu Bakr Al-Shatri', nameAr: 'أبو بكر الشاطري' },
+]
+
+const activeSurah = ref<ChapterItem | null>(null)
+const selectedReciterId = ref<string>('alafasy')
+const selectedReciter = ref<ReciterInfo>(reciterList[0])
+
+const reciterSelectOptions = computed(() => {
+  return reciterList.map((r) => ({
+    label: `${r.name} (${r.nameAr})`,
+    value: r.id,
+  }))
+})
+
+watch(selectedReciterId, (newId) => {
+  const found = reciterList.find((r) => r.id === newId)
+  if (found) {
+    selectedReciter.value = found
+  }
+})
+
 const filteredSurahs = computed(() => {
   let list = allSurahs
 
   if (surahTypeFilter.value !== 'all') {
-    list = list.filter((sura) => sura.type === surahTypeFilter.value)
+    list = list.filter((sura: ChapterItem) => sura.type === surahTypeFilter.value)
   }
 
   if (!surahSearch.value || !surahSearch.value.trim()) {
     return list
   }
   const q = surahSearch.value.trim().toLowerCase()
-  return list.filter((sura) => {
+  return list.filter((sura: ChapterItem) => {
     return (
       String(sura.id) === q ||
       sura.transliteration.toLowerCase().includes(q) ||
@@ -545,25 +594,9 @@ function hasChannelVideo(sura: ChapterItem): boolean {
   return Boolean(getChannelVideo(sura))
 }
 
-interface ReciterInfo {
-  id: string
-  name: string
-  nameAr: string
-}
-
-const reciterList: ReciterInfo[] = [
-  { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
-  { id: 'abdulbasit', name: 'Abdul Basit', nameAr: 'عبد الباسط عبد الصمد' },
-  { id: 'ghamdi', name: 'Saad Al-Ghamdi', nameAr: 'سعد الغامدي' },
-  { id: 'muaiqly', name: 'Maher Al-Muaiqly', nameAr: 'ماهر المعيقلي' },
-  { id: 'shatri', name: 'Abu Bakr Al-Shatri', nameAr: 'أبو بكر الشاطري' },
-]
-
-const activeSurah = ref<ChapterItem | null>(null)
-const selectedReciter = ref<ReciterInfo>(reciterList[0])
-
 function changeReciterForSurah(reciter: ReciterInfo) {
   selectedReciter.value = reciter
+  selectedReciterId.value = reciter.id
   if (!activeSurah.value) return
 
   const sura = activeSurah.value
