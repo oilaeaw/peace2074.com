@@ -34,7 +34,7 @@
           <div class="yt-banner-gradient" />
           <div class="yt-banner-content">
             <div class="yt-avatar-wrapper">
-              <img src="/logo.svg" alt="Peace2074 Channel Avatar" class="yt-avatar-img" />
+              <img src="/yt_avatar.png" alt="Peace2074 Channel Avatar" class="yt-avatar-img" />
               <svg viewBox="0 0 24 24" class="yt-verified-check-svg" aria-label="Verified">
                 <circle cx="12" cy="12" r="10" fill="#0070F3" />
                 <path fill="#FFFFFF" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
