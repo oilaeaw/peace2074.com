@@ -252,6 +252,10 @@
                 <div class="text-subtitle2 text-weight-bold row items-center">
                   {{ sura.transliteration }}
                   <span class="text-caption text-grey-6 q-ml-xs">({{ sura.translation }})</span>
+                  <q-badge v-if="hasChannelVideo(sura)" color="red" class="q-ml-xs" style="font-size: 0.65rem; padding: 2px 6px;">
+                    <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs" />
+                    Video
+                  </q-badge>
                 </div>
                 <div class="text-caption text-grey-6">
                   {{ sura.type === 'meccan' ? 'Meccan' : 'Medinan' }} • {{ sura.total_verses }} Verses
@@ -491,6 +495,27 @@ const filteredSurahs = computed(() => {
   })
 })
 
+function getChannelVideo(sura: ChapterItem): VideoItem | null {
+  if (!videos.value || videos.value.length === 0) return null
+  const transLower = sura.transliteration.toLowerCase()
+  const suraIdStr = String(sura.id)
+  return (
+    videos.value.find((v) => {
+      const titleLower = v.title.toLowerCase()
+      return (
+        titleLower.includes(transLower) ||
+        titleLower.includes(`surah ${suraIdStr}`) ||
+        titleLower.includes(`sura ${suraIdStr}`) ||
+        titleLower.includes(`surah #${suraIdStr}`)
+      )
+    }) || null
+  )
+}
+
+function hasChannelVideo(sura: ChapterItem): boolean {
+  return Boolean(getChannelVideo(sura))
+}
+
 function openVideoModal(video: VideoItem) {
   activeVideo.value = video
   showPlayerModal.value = true
@@ -498,15 +523,7 @@ function openVideoModal(video: VideoItem) {
 
 function openSurahVideoModal(sura: ChapterItem) {
   // 1. Check if there is a matching video from channel uploads
-  const matched = videos.value.find((v) => {
-    const titleLower = v.title.toLowerCase()
-    const transLower = sura.transliteration.toLowerCase()
-    return (
-      titleLower.includes(transLower) ||
-      titleLower.includes(`surah ${sura.id}`) ||
-      titleLower.includes(`sura ${sura.id}`)
-    )
-  })
+  const matched = getChannelVideo(sura)
 
   if (matched) {
     activeVideo.value = matched
