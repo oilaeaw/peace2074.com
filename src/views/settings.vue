@@ -481,11 +481,50 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
   }
 
   try {
-    // Register service worker if not already registered
+    // Register service worker if not already registered, and ensure active worker is ready
     let registration = await navigator.serviceWorker.getRegistration()
     if (!registration) {
       registration = await navigator.serviceWorker.register('/sw.js')
-      await navigator.serviceWorker.ready
+    }
+
+    // Wait until the service worker is active and ready for push
+    const readyRegistration = await navigator.serviceWorker.ready
+    if (readyRegistration) {
+      registration = readyRegistration
+    }
+
+    // If active service worker is not yet available, wait for installation/activation
+    if (!registration.active) {
+      const activeWorker = registration.installing || registration.waiting
+      if (activeWorker) {
+        await new Promise<void>((resolve) => {
+          const stateChangeHandler = () => {
+            if (
+              activeWorker.state === 'activated' ||
+              activeWorker.state === 'redundant'
+            ) {
+              activeWorker.removeEventListener('statechange', stateChangeHandler)
+              resolve()
+            }
+          }
+          activeWorker.addEventListener('statechange', stateChangeHandler)
+        })
+      }
+    }
+
+    // Double-check latest registration to ensure active worker is present
+    if (!registration.active) {
+      const latestRegistration = await navigator.serviceWorker.getRegistration()
+      if (latestRegistration?.active) {
+        registration = latestRegistration
+      }
+    }
+
+    if (!registration.active) {
+      return {
+        ok: false,
+        error: t('pages.settings.notifications.unavailable'),
+      }
     }
 
     // Get VAPID public key from server
