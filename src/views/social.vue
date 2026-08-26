@@ -280,12 +280,10 @@
               dense
               no-caps
               color="red"
-              :href="`https://www.youtube.com/results?search_query=Surah+${encodeURIComponent(sura.transliteration)}+Peace2074`"
-              target="_blank"
-              rel="noopener noreferrer"
+              @click="openSurahVideoModal(sura)"
             >
               <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red" />
-              <span>YouTube</span>
+              <span>Watch Video</span>
             </q-btn>
           </q-card-actions>
         </q-card>
