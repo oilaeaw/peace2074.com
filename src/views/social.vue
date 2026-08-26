@@ -316,7 +316,36 @@
               allowfullscreen
             />
           </div>
-          <div v-if="activeVideo?.description" class="q-mt-md text-caption text-grey-3 video-desc-scroll" style="max-height: 100px; overflow-y: auto; line-height: 1.5; white-space: pre-line;">
+          <!-- Multi-Reciter Selector Bar for Surahs -->
+          <div v-if="activeSurah" class="q-mt-sm q-pa-xs rounded-borders" style="background: rgba(255, 255, 255, 0.05); border: 1px solid rgba(255, 255, 255, 0.1);">
+            <div class="row items-center justify-between q-px-xs q-mb-xs">
+              <div class="text-caption text-grey-4 text-weight-bold row items-center">
+                <q-icon name="mic" color="red" class="q-mr-xs" size="16px" />
+                <span>Quran Reciter:</span>
+              </div>
+              <div class="text-caption text-red text-weight-bold font-arabic">
+                {{ selectedReciter.nameAr }}
+              </div>
+            </div>
+            <div class="row items-center q-gutter-xs wrap">
+              <q-chip
+                v-for="r in reciterList"
+                :key="r.id"
+                clickable
+                dense
+                size="sm"
+                :color="selectedReciter.id === r.id ? 'red' : 'grey-9'"
+                text-color="white"
+                class="text-weight-bold"
+                @click="changeReciterForSurah(r)"
+              >
+                <q-avatar v-if="selectedReciter.id === r.id" icon="check" color="white" text-color="red" size="16px" />
+                {{ r.name }}
+              </q-chip>
+            </div>
+          </div>
+
+          <div v-if="activeVideo?.description" class="q-mt-md text-caption text-grey-3 video-desc-scroll" style="max-height: 90px; overflow-y: auto; line-height: 1.5; white-space: pre-line;">
             {{ activeVideo.description }}
           </div>
           <div class="row items-center justify-between q-mt-md">
@@ -516,28 +545,53 @@ function hasChannelVideo(sura: ChapterItem): boolean {
   return Boolean(getChannelVideo(sura))
 }
 
+interface ReciterInfo {
+  id: string
+  name: string
+  nameAr: string
+}
+
+const reciterList: ReciterInfo[] = [
+  { id: 'alafasy', name: 'Mishary Alafasy', nameAr: 'مشاري العفاسي' },
+  { id: 'abdulbasit', name: 'Abdul Basit', nameAr: 'عبد الباسط عبد الصمد' },
+  { id: 'ghamdi', name: 'Saad Al-Ghamdi', nameAr: 'سعد الغامدي' },
+  { id: 'muaiqly', name: 'Maher Al-Muaiqly', nameAr: 'ماهر المعيقلي' },
+  { id: 'shatri', name: 'Abu Bakr Al-Shatri', nameAr: 'أبو بكر الشاطري' },
+]
+
+const activeSurah = ref<ChapterItem | null>(null)
+const selectedReciter = ref<ReciterInfo>(reciterList[0])
+
+function changeReciterForSurah(reciter: ReciterInfo) {
+  selectedReciter.value = reciter
+  if (!activeSurah.value) return
+
+  const sura = activeSurah.value
+  activeVideo.value = {
+    id: `sura-${sura.id}-${reciter.id}`,
+    title: `Surah ${sura.id}. ${sura.transliteration} (${sura.name}) — Recited by ${reciter.name} (${reciter.nameAr})`,
+    url: `https://www.youtube.com/results?search_query=Surah+${encodeURIComponent(sura.transliteration)}+${encodeURIComponent(reciter.name)}+Peace2074`,
+    embedUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
+    published: new Date().toISOString(),
+    thumbnail: `https://i.ytimg.com/vi/surah-${sura.id}/hqdefault.jpg`,
+    description: `Recitation of Surah ${sura.transliteration} (${sura.name}) by Sheikh ${reciter.name} (${reciter.nameAr}). Chapter ${sura.id} of the Holy Quran (${sura.total_verses} verses, ${sura.type === 'meccan' ? 'Meccan' : 'Medinan'}). Featured on Peace2074.`,
+  }
+}
+
 function openVideoModal(video: VideoItem) {
+  activeSurah.value = null
   activeVideo.value = video
   showPlayerModal.value = true
 }
 
 function openSurahVideoModal(sura: ChapterItem) {
-  // 1. Check if there is a matching video from channel uploads
+  activeSurah.value = sura
   const matched = getChannelVideo(sura)
 
   if (matched) {
     activeVideo.value = matched
   } else {
-    // 2. Play channel uploads playlist video for this Surah
-    activeVideo.value = {
-      id: `sura-${sura.id}`,
-      title: `Surah ${sura.id}. ${sura.transliteration} (${sura.name}) — ${sura.translation}`,
-      url: `https://www.youtube.com/channel/${CHANNEL_ID}`,
-      embedUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
-      published: new Date().toISOString(),
-      thumbnail: `https://i.ytimg.com/vi/surah-${sura.id}/hqdefault.jpg`,
-      description: `Surah ${sura.transliteration} (${sura.name}), Chapter ${sura.id} of the Holy Quran (${sura.total_verses} verses, ${sura.type === 'meccan' ? 'Meccan' : 'Medinan'}). Recitation stream on Peace2074 YouTube Channel.`,
-    }
+    changeReciterForSurah(selectedReciter.value)
   }
 
   showPlayerModal.value = true
