@@ -312,10 +312,14 @@
     </section>
 
     <!-- Video Modal Player Dialog -->
-    <q-dialog v-model="showPlayerModal">
-      <q-card style="width: 840px; max-width: 95vw; background: #0f172a; color: white; border-radius: 20px;">
+    <q-dialog v-model="showPlayerModal" :maximized="isTvMode">
+      <q-card
+        :style="isTvMode
+          ? 'width: 100vw; height: 100vh; background: #000; color: white; border-radius: 0; display: flex; flex-direction: column; justify-between;'
+          : 'width: 840px; max-width: 95vw; background: #0f172a; color: white; border-radius: 20px;'"
+      >
         <q-card-section class="row items-center justify-between q-pb-none wrap q-gutter-xs">
-          <div class="text-subtitle1 text-weight-bold text-ellipsis row items-center" style="max-width: 65%;">
+          <div class="text-subtitle1 text-weight-bold text-ellipsis row items-center" style="max-width: 60%;">
             <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red text-h6" />
             {{ activeVideo?.title }}
           </div>
@@ -336,6 +340,19 @@
               label="Jump to Surah"
               @update:model-value="onSurahJump"
             />
+
+            <!-- Big TV Mode Toggle -->
+            <q-btn
+              flat
+              round
+              dense
+              color="red"
+              :icon="isTvMode ? 'fullscreen_exit' : 'tv'"
+              @click="isTvMode = !isTvMode"
+            >
+              <q-tooltip>{{ isTvMode ? 'Exit Big TV Mode' : 'Big TV Mode' }}</q-tooltip>
+            </q-btn>
+
             <q-btn icon="close" flat round dense v-close-popup color="white" />
           </div>
         </q-card-section>
@@ -391,20 +408,24 @@
                 no-caps
                 color="white"
                 icon="chevron_left"
-                label="Prev Surah"
                 :disabled="activeSurah.id <= 1"
                 @click="playPrevSurah"
-              />
+              >
+                <span class="q-mx-xs">Prev Surah</span>
+                <q-badge color="grey-8" text-color="white" style="font-size: 0.65rem;">← Key</q-badge>
+              </q-btn>
               <q-btn
                 outline
                 dense
                 no-caps
                 color="white"
-                icon-right="chevron_right"
-                label="Next Surah"
                 :disabled="activeSurah.id >= 114"
                 @click="playNextSurah"
-              />
+              >
+                <span class="q-mx-xs">Next Surah</span>
+                <q-badge color="grey-8" text-color="white" style="font-size: 0.65rem;">→ Key</q-badge>
+                <q-icon name="chevron_right" class="q-ml-xs" />
+              </q-btn>
             </div>
             <div v-else class="text-caption text-grey-4">{{ formatDate(activeVideo?.published) }}</div>
 
@@ -555,6 +576,7 @@ const youtubeChannel = {
 
 const videos = ref<VideoItem[]>([])
 const showPlayerModal = ref(false)
+const isTvMode = ref(false)
 const activeVideo = ref<VideoItem | null>(null)
 const surahSearch = ref('')
 const surahTypeFilter = ref<'all' | 'meccan' | 'medinan'>('all')
