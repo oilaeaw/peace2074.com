@@ -314,12 +314,30 @@
     <!-- Video Modal Player Dialog -->
     <q-dialog v-model="showPlayerModal">
       <q-card style="width: 840px; max-width: 95vw; background: #0f172a; color: white; border-radius: 20px;">
-        <q-card-section class="row items-center justify-between q-pb-none">
-          <div class="text-subtitle1 text-weight-bold text-ellipsis row items-center" style="max-width: 85%;">
+        <q-card-section class="row items-center justify-between q-pb-none wrap q-gutter-xs">
+          <div class="text-subtitle1 text-weight-bold text-ellipsis row items-center" style="max-width: 65%;">
             <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red text-h6" />
             {{ activeVideo?.title }}
           </div>
-          <q-btn icon="close" flat round dense v-close-popup color="white" />
+
+          <div class="row items-center q-gutter-xs">
+            <q-select
+              v-if="activeSurah"
+              v-model="modalSurahJumpId"
+              dense
+              outlined
+              dark
+              emit-value
+              map-options
+              options-dense
+              color="red"
+              style="width: 150px; font-size: 0.8rem;"
+              :options="surahJumpOptions"
+              label="Jump to Surah"
+              @update:model-value="onSurahJump"
+            />
+            <q-btn icon="close" flat round dense v-close-popup color="white" />
+          </div>
         </q-card-section>
 
         <q-card-section class="q-pa-md">
@@ -365,8 +383,31 @@
           <div v-if="activeVideo?.description" class="q-mt-md text-caption text-grey-3 video-desc-scroll" style="max-height: 90px; overflow-y: auto; line-height: 1.5; white-space: pre-line;">
             {{ activeVideo.description }}
           </div>
-          <div class="row items-center justify-between q-mt-md">
-            <div class="text-caption text-grey-4">{{ formatDate(activeVideo?.published) }}</div>
+          <div class="row items-center justify-between q-mt-md wrap q-gutter-sm">
+            <div v-if="activeSurah" class="row items-center q-gutter-xs">
+              <q-btn
+                outline
+                dense
+                no-caps
+                color="white"
+                icon="chevron_left"
+                label="Prev Surah"
+                :disabled="activeSurah.id <= 1"
+                @click="playPrevSurah"
+              />
+              <q-btn
+                outline
+                dense
+                no-caps
+                color="white"
+                icon-right="chevron_right"
+                label="Next Surah"
+                :disabled="activeSurah.id >= 114"
+                @click="playNextSurah"
+              />
+            </div>
+            <div v-else class="text-caption text-grey-4">{{ formatDate(activeVideo?.published) }}</div>
+
             <div class="row q-gutter-sm">
               <q-btn
                 unelevated
@@ -473,7 +514,7 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed, watch, onMounted } from 'vue'
+import { ref, computed, watch, onMounted, onUnmounted } from 'vue'
 import { useI18n } from 'vue-i18n'
 import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import chaptersEn from '@/shared/data/chapters/en.json'
@@ -534,9 +575,13 @@ const reciterList: ReciterInfo[] = [
   { id: 'shatri', name: 'Abu Bakr Al-Shatri', nameAr: 'أبو بكر الشاطري' },
 ]
 
+const RECITER_STORAGE_KEY = 'pref-social-reciter'
+const savedReciterId = typeof localStorage !== 'undefined' ? localStorage.getItem(RECITER_STORAGE_KEY) : null
+const initialReciterId = savedReciterId && reciterList.some(r => r.id === savedReciterId) ? savedReciterId : 'alafasy'
+
 const activeSurah = ref<ChapterItem | null>(null)
-const selectedReciterId = ref<string>('alafasy')
-const selectedReciter = ref<ReciterInfo>(reciterList[0])
+const selectedReciterId = ref<string>(initialReciterId)
+const selectedReciter = ref<ReciterInfo>(reciterList.find(r => r.id === initialReciterId) || reciterList[0])
 
 const reciterSelectOptions = computed(() => {
   return reciterList.map((r) => ({
@@ -549,8 +594,33 @@ watch(selectedReciterId, (newId) => {
   const found = reciterList.find((r) => r.id === newId)
   if (found) {
     selectedReciter.value = found
+    if (typeof localStorage !== 'undefined') {
+      localStorage.setItem(RECITER_STORAGE_KEY, newId)
+    }
   }
 })
+
+function playNextSurah() {
+  if (!activeSurah.value) return
+  const nextId = activeSurah.value.id + 1
+  if (nextId <= 114) {
+    const nextSurah = allSurahs.find((s) => s.id === nextId)
+    if (nextSurah) {
+      openSurahVideoModal(nextSurah)
+    }
+  }
+}
+
+function playPrevSurah() {
+  if (!activeSurah.value) return
+  const prevId = activeSurah.value.id - 1
+  if (prevId >= 1) {
+    const prevSurah = allSurahs.find((s) => s.id === prevId)
+    if (prevSurah) {
+      openSurahVideoModal(prevSurah)
+    }
+  }
+}
 
 const filteredSurahs = computed(() => {
   let list = allSurahs
@@ -617,8 +687,34 @@ function openVideoModal(video: VideoItem) {
   showPlayerModal.value = true
 }
 
+const modalSurahJumpId = ref<number | null>(null)
+
+const surahJumpOptions = computed(() => {
+  return allSurahs.map((s) => ({
+    label: `${s.id}. ${s.transliteration}`,
+    value: s.id,
+  }))
+})
+
+function onSurahJump(id: number) {
+  const found = allSurahs.find((s) => s.id === id)
+  if (found) {
+    openSurahVideoModal(found)
+  }
+}
+
+function handleKeydown(e: KeyboardEvent) {
+  if (!showPlayerModal.value || !activeSurah.value) return
+  if (e.key === 'ArrowRight') {
+    playNextSurah()
+  } else if (e.key === 'ArrowLeft') {
+    playPrevSurah()
+  }
+}
+
 function openSurahVideoModal(sura: ChapterItem) {
   activeSurah.value = sura
+  modalSurahJumpId.value = sura.id
   const matched = getChannelVideo(sura)
 
   if (matched) {
@@ -645,6 +741,7 @@ function formatDate(isoString?: string) {
 }
 
 onMounted(async () => {
+  window.addEventListener('keydown', handleKeydown)
   try {
     const res = await fetch('/api/youtube/videos')
     if (res.ok) {
@@ -656,6 +753,10 @@ onMounted(async () => {
   } catch (err) {
     console.warn('[Social] Failed to fetch YouTube videos:', err)
   }
+})
+
+onUnmounted(() => {
+  window.removeEventListener('keydown', handleKeydown)
 })
 
 const tiktokSlots = [
