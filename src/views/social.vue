@@ -496,6 +496,36 @@ function openVideoModal(video: VideoItem) {
   showPlayerModal.value = true
 }
 
+function openSurahVideoModal(sura: ChapterItem) {
+  // 1. Check if there is a matching video from channel uploads
+  const matched = videos.value.find((v) => {
+    const titleLower = v.title.toLowerCase()
+    const transLower = sura.transliteration.toLowerCase()
+    return (
+      titleLower.includes(transLower) ||
+      titleLower.includes(`surah ${sura.id}`) ||
+      titleLower.includes(`sura ${sura.id}`)
+    )
+  })
+
+  if (matched) {
+    activeVideo.value = matched
+  } else {
+    // 2. Play channel uploads playlist video for this Surah
+    activeVideo.value = {
+      id: `sura-${sura.id}`,
+      title: `Surah ${sura.id}. ${sura.transliteration} (${sura.name}) — ${sura.translation}`,
+      url: `https://www.youtube.com/channel/${CHANNEL_ID}`,
+      embedUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
+      published: new Date().toISOString(),
+      thumbnail: `https://i.ytimg.com/vi/surah-${sura.id}/hqdefault.jpg`,
+      description: `Surah ${sura.transliteration} (${sura.name}), Chapter ${sura.id} of the Holy Quran (${sura.total_verses} verses, ${sura.type === 'meccan' ? 'Meccan' : 'Medinan'}). Recitation stream on Peace2074 YouTube Channel.`,
+    }
+  }
+
+  showPlayerModal.value = true
+}
+
 function formatDate(isoString?: string) {
   if (!isoString) return ''
   try {
