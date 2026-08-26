@@ -849,8 +849,8 @@ const tiktokSlots = [
 
 .yt-banner {
   position: relative;
-  height: 170px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #881337 100%);
+  height: 180px;
+  background: url('/yt_banner.png') center/cover no-repeat, linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #881337 100%);
   display: flex;
   align-items: flex-end;
   padding: 20px 24px;
