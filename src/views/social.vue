@@ -19,6 +19,10 @@
             Official
           </q-badge>
         </div>
+        <div class="row items-center q-gutter-xs text-caption text-grey-6">
+          <q-icon name="tv" size="18px" color="indigo" />
+          <span>Big TV & Smart Screen Ready</span>
+        </div>
       </div>
 
       <q-card class="yt-community-card" flat bordered>
@@ -165,6 +169,97 @@
       </div>
     </section>
 
+    <!-- Complete 114 Surahs Quran Playlist Section (Ordered 1 to 114) -->
+    <section class="q-mt-xl">
+      <div class="section-label q-mb-md row items-center justify-between">
+        <div class="row items-center">
+          <q-icon name="menu_book" color="primary" size="24px" class="q-mr-xs" />
+          <span class="text-subtitle1 text-weight-bold">
+            All 114 Surahs in Order (1 to 114)
+          </span>
+          <q-badge color="primary" class="q-ml-sm text-weight-bold" style="padding: 3px 8px; border-radius: 10px;">
+            Complete Quran (114 Surahs)
+          </q-badge>
+        </div>
+        <div class="text-caption text-grey-6 font-mono">
+          Showing {{ filteredSurahs.length }} / 114
+        </div>
+      </div>
+
+      <!-- Surah Search Filter -->
+      <div class="q-mb-md">
+        <q-input
+          v-model="surahSearch"
+          dense
+          outlined
+          placeholder="Search Surah by name or number (1 to 114)..."
+          clearable
+          color="primary"
+          class="bg-white rounded-borders"
+        >
+          <template #prepend>
+            <q-icon name="search" />
+          </template>
+        </q-input>
+      </div>
+
+      <!-- 114 Surahs Grid -->
+      <div class="surah-grid">
+        <q-card
+          v-for="sura in filteredSurahs"
+          :key="sura.id"
+          flat
+          bordered
+          class="surah-card"
+        >
+          <q-card-section class="q-pa-sm row items-center justify-between no-wrap">
+            <div class="row items-center q-gutter-sm">
+              <div class="surah-badge">
+                {{ sura.id }}
+              </div>
+              <div>
+                <div class="text-subtitle2 text-weight-bold row items-center">
+                  {{ sura.transliteration }}
+                  <span class="text-caption text-grey-6 q-ml-xs">({{ sura.translation }})</span>
+                </div>
+                <div class="text-caption text-grey-6">
+                  {{ sura.type === 'meccan' ? 'Meccan' : 'Medinan' }} • {{ sura.total_verses }} Verses
+                </div>
+              </div>
+            </div>
+            <div class="text-h6 font-arabic text-primary text-weight-bolder">
+              {{ sura.name }}
+            </div>
+          </q-card-section>
+
+          <q-separator />
+
+          <q-card-actions align="between" class="q-px-sm q-py-xs">
+            <q-btn
+              flat
+              dense
+              no-caps
+              color="primary"
+              icon="play_circle"
+              label="Play & Read"
+              :to="`/quran/${sura.id}?autoplay=true`"
+            />
+            <q-btn
+              flat
+              dense
+              no-caps
+              color="red"
+              icon="open_in_new"
+              label="YouTube Search"
+              :href="`https://www.youtube.com/results?search_query=Surah+${encodeURIComponent(sura.transliteration)}+Peace2074`"
+              target="_blank"
+              rel="noopener noreferrer"
+            />
+          </q-card-actions>
+        </q-card>
+      </div>
+    </section>
+
     <!-- Video Modal Player Dialog -->
     <q-dialog v-model="showPlayerModal">
       <q-card style="width: 840px; max-width: 95vw; background: #0f172a; color: white; border-radius: 20px;">
@@ -297,8 +392,9 @@
 </template>
 
 <script setup lang="ts">
-import { ref, onMounted } from 'vue'
+import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import chaptersEn from '@/shared/data/chapters/en.json'
 
 interface VideoItem {
   id: string
@@ -308,6 +404,15 @@ interface VideoItem {
   published: string
   thumbnail: string
   description: string
+}
+
+interface ChapterItem {
+  id: number
+  name: string
+  transliteration: string
+  translation: string
+  type: string
+  total_verses: number
 }
 
 const { t } = useI18n()
@@ -328,6 +433,24 @@ const youtubeChannel = {
 const videos = ref<VideoItem[]>([])
 const showPlayerModal = ref(false)
 const activeVideo = ref<VideoItem | null>(null)
+const surahSearch = ref('')
+
+const allSurahs = chaptersEn as ChapterItem[]
+
+const filteredSurahs = computed(() => {
+  if (!surahSearch.value || !surahSearch.value.trim()) {
+    return allSurahs
+  }
+  const q = surahSearch.value.trim().toLowerCase()
+  return allSurahs.filter((sura) => {
+    return (
+      String(sura.id) === q ||
+      sura.transliteration.toLowerCase().includes(q) ||
+      sura.translation.toLowerCase().includes(q) ||
+      sura.name.includes(q)
+    )
+  })
+})
 
 function openVideoModal(video: VideoItem) {
   activeVideo.value = video
@@ -371,8 +494,8 @@ const tiktokSlots = [
   },
   {
     videoId: '7604807153408331030',
-    creator: '@abdullvocals',
-    embedUrl: 'https://www.tiktok.com/@abdullvocals/video/7604807153408331030',
+    creator: '@abdullvocals/video/7604807153408331030',
+    embedUrl: 'https://www.tiktok.com/embed/v2/7604807153408331030',
     watchUrl: 'https://www.tiktok.com/@abdullvocals/video/7604807153408331030',
   },
   {
@@ -607,6 +730,41 @@ const tiktokSlots = [
   border: 0;
 }
 
+/* ── 114 Surahs Section ── */
+.surah-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(260px, 1fr));
+  gap: 12px;
+}
+
+.surah-card {
+  border-radius: 14px;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.surah-card:hover {
+  transform: translateY(-3px);
+  box-shadow: 0 8px 24px rgba(37, 99, 235, 0.12);
+}
+
+.surah-badge {
+  width: 34px;
+  height: 34px;
+  border-radius: 10px;
+  background: rgba(37, 99, 235, 0.1);
+  color: #2563eb;
+  font-weight: 800;
+  font-size: 0.9rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.font-arabic {
+  font-family: 'Amiri', 'Noto Naskh Arabic', serif;
+}
+
 /* ── TikTok Videos ── */
 .video-grid {
   display: grid;
@@ -658,7 +816,7 @@ const tiktokSlots = [
 }
 
 @media (max-width: 640px) {
-  .video-grid {
+  .video-grid, .surah-grid {
     grid-template-columns: 1fr;
   }
 
