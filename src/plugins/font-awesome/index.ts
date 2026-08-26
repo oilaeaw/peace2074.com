@@ -29,6 +29,8 @@ import {
 import {
   faApple,
   faGoogle,
+  faYoutube,
+  faTiktok,
 } from "@fortawesome/free-brands-svg-icons";
 
 const initFaLibrary = () => {
@@ -55,7 +57,9 @@ const initFaLibrary = () => {
     faLocationDot,
     faCopy,
     faGoogle,
-    faApple
+    faApple,
+    faYoutube,
+    faTiktok
   );
 };
 

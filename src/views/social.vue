@@ -7,65 +7,74 @@
       </div>
     </section>
 
-    <!-- YouTube Branded Channel & Community Section -->
+    <!-- Official YouTube Branded Channel Property & Community Section -->
     <section class="q-mt-xl">
-      <div class="section-label q-mb-md row items-center justify-between">
+      <div class="section-label q-mb-md row items-center justify-between wrap">
         <div class="row items-center">
-          <q-icon name="smart_display" color="red" size="24px" class="q-mr-xs" />
-          <span class="text-subtitle1 text-weight-bold">
+          <svg viewBox="0 0 24 24" class="yt-header-icon-svg" aria-label="YouTube">
+            <path fill="#FF0000" d="M23.498 6.186a3.016 3.016 0 0 0-2.122-2.136C19.505 3.545 12 3.545 12 3.545s-7.505 0-9.377.505A3.017 3.017 0 0 0 .502 6.186C0 8.07 0 12 0 12s0 3.93.502 5.814a3.016 3.016 0 0 0 2.122 2.136c1.871.505 9.376.505 9.376.505s7.505 0 9.377-.505a3.015 3.015 0 0 0 2.122-2.136C24 15.93 24 12 24 12s0-3.93-.502-5.814zM9.545 15.568V8.432L15.818 12l-6.273 3.568z"/>
+          </svg>
+          <span class="text-subtitle1 text-weight-bolder q-ml-xs">
             {{ t('pages.social.youtube.sectionTitle') }}
           </span>
-          <q-badge color="red" class="q-ml-sm text-weight-bold" style="padding: 3px 8px; border-radius: 10px;">
-            Official
+          <q-badge color="red" class="q-ml-sm text-weight-bold yt-badge-pill">
+            <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs" />
+            Official Channel
           </q-badge>
         </div>
         <div class="row items-center q-gutter-xs text-caption text-grey-6">
-          <q-icon name="tv" size="18px" color="indigo" />
-          <span>Big TV & Smart Screen Ready</span>
+          <q-icon name="tv" size="18px" color="red" />
+          <span class="text-weight-medium">Big TV &amp; 4K Display Ready</span>
         </div>
       </div>
 
       <q-card class="yt-community-card" flat bordered>
-        <!-- Branded Header Banner -->
+        <!-- Branded Header Banner with Official YouTube Identity -->
         <div class="yt-banner">
           <div class="yt-banner-gradient" />
           <div class="yt-banner-content">
             <div class="yt-avatar-wrapper">
               <img src="/logo.svg" alt="Peace2074 Channel Avatar" class="yt-avatar-img" />
-              <q-icon name="verified" color="primary" class="yt-verified-badge" size="22px" />
+              <svg viewBox="0 0 24 24" class="yt-verified-check-svg" aria-label="Verified">
+                <circle cx="12" cy="12" r="10" fill="#0070F3" />
+                <path fill="#FFFFFF" d="M9 16.2L4.8 12l-1.4 1.4L9 19 21 7l-1.4-1.4L9 16.2z"/>
+              </svg>
             </div>
             <div class="yt-channel-meta text-white">
               <div class="yt-channel-title text-h5 text-weight-bolder row items-center">
                 {{ youtubeChannel.channelName }}
                 <span class="yt-official-pill q-ml-sm">PEACE2074</span>
               </div>
-              <div class="yt-channel-handle text-caption opacity-80">{{ youtubeChannel.handle }} • YouTube Channel</div>
+              <div class="yt-channel-handle text-caption opacity-90 row items-center q-mt-xs">
+                <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red" />
+                {{ youtubeChannel.handle }} • Official YouTube Channel
+              </div>
             </div>
           </div>
         </div>
 
         <q-card-section class="yt-info">
-          <div class="yt-channel-desc">
+          <div class="yt-channel-desc text-body2">
             {{ t('pages.social.youtube.channelDesc') }}
           </div>
         </q-card-section>
 
-        <!-- Subscription Action Bar -->
+        <!-- Official YouTube Action & Subscription Bar -->
         <q-card-section class="yt-actions row items-center justify-between wrap q-gutter-sm">
           <div class="row items-center q-gutter-sm">
-            <!-- YouTube One-Click Subscribe Button -->
+            <!-- Official YouTube Subscribe Button -->
             <q-btn
               id="yt-subscribe-btn"
               unelevated
               color="red"
               text-color="white"
-              icon="subscriptions"
-              :label="t('pages.social.youtube.subscribeBtn')"
               :href="youtubeChannel.subscribeUrl"
               target="_blank"
               rel="noopener noreferrer"
-              class="yt-btn yt-btn-subscribe shadow-2"
+              class="yt-btn yt-btn-subscribe shadow-3"
             >
+              <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-h6" />
+              <span>{{ t('pages.social.youtube.subscribeBtn') }}</span>
               <q-tooltip>Subscribe to Peace2074 on YouTube</q-tooltip>
             </q-btn>
 
@@ -101,8 +110,9 @@
             <q-icon name="info_outline" color="grey-6" size="18px" />
             <span>{{ t('pages.social.youtube.embedNotice') }}</span>
           </div>
-          <div class="text-caption text-grey-6 font-mono">
-            ID: {{ youtubeChannel.channelId }}
+          <div class="text-caption text-grey-6 font-mono row items-center">
+            <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red" />
+            Channel ID: {{ youtubeChannel.channelId }}
           </div>
         </q-card-section>
       </q-card>
@@ -111,7 +121,9 @@
       <div class="yt-video-section q-mt-lg">
         <div class="yt-video-label q-mb-md row items-center justify-between">
           <div class="row items-center">
-            <q-icon name="play_circle" color="red" size="22px" class="q-mr-xs" />
+            <svg viewBox="0 0 24 24" class="yt-play-icon-svg q-mr-xs" aria-label="Play">
+              <path fill="#FF0000" d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 14.5v-9l6 4.5-6 4.5z"/>
+            </svg>
             <span class="text-subtitle1 text-weight-bold">{{ t('pages.social.youtube.latestVideos') }}</span>
           </div>
           <q-btn
@@ -141,7 +153,9 @@
               <img :src="video.thumbnail" :alt="video.title" class="yt-thumb-img" loading="lazy" />
               <div class="yt-play-overlay">
                 <div class="yt-play-btn">
-                  <q-icon name="play_arrow" size="32px" color="white" />
+                  <svg viewBox="0 0 24 24" style="width: 28px; height: 28px; fill: white;">
+                    <polygon points="8,5 19,12 8,19" />
+                  </svg>
                 </div>
               </div>
             </div>
@@ -149,7 +163,9 @@
               <div class="text-subtitle2 text-weight-bold video-title-clamp">{{ video.title }}</div>
               <div class="row items-center justify-between q-mt-sm text-caption text-grey-6">
                 <span>{{ formatDate(video.published) }}</span>
-                <span class="text-primary font-weight-bold">Play Video →</span>
+                <span class="text-red font-weight-bold row items-center">
+                  Watch Video <q-icon name="arrow_forward" size="14px" class="q-ml-xs" />
+                </span>
               </div>
             </q-card-section>
           </q-card>
@@ -169,7 +185,7 @@
       </div>
     </section>
 
-    <!-- Complete 114 Surahs Quran Playlist Section (Ordered 1 to 114) -->
+    <!-- Complete 114 Surahs Quran Directory Section (Ordered 1 to 114) -->
     <section class="q-mt-xl">
       <div class="section-label q-mb-md row items-center justify-between">
         <div class="row items-center">
@@ -264,12 +280,13 @@
               dense
               no-caps
               color="red"
-              icon="open_in_new"
-              label="YouTube Search"
               :href="`https://www.youtube.com/results?search_query=Surah+${encodeURIComponent(sura.transliteration)}+Peace2074`"
               target="_blank"
               rel="noopener noreferrer"
-            />
+            >
+              <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red" />
+              <span>YouTube</span>
+            </q-btn>
           </q-card-actions>
         </q-card>
       </div>
@@ -280,7 +297,7 @@
       <q-card style="width: 840px; max-width: 95vw; background: #0f172a; color: white; border-radius: 20px;">
         <q-card-section class="row items-center justify-between q-pb-none">
           <div class="text-subtitle1 text-weight-bold text-ellipsis row items-center" style="max-width: 85%;">
-            <q-icon name="play_circle" color="red" size="24px" class="q-mr-xs" />
+            <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs text-red text-h6" />
             {{ activeVideo?.title }}
           </div>
           <q-btn icon="close" flat round dense v-close-popup color="white" />
@@ -306,12 +323,13 @@
               <q-btn
                 unelevated
                 color="red"
-                icon="subscriptions"
-                label="Subscribe"
                 :href="youtubeChannel.subscribeUrl"
                 target="_blank"
                 rel="noopener noreferrer"
-              />
+              >
+                <font-awesome-icon :icon="['fab', 'youtube']" class="q-mr-xs" />
+                <span>Subscribe</span>
+              </q-btn>
               <q-btn
                 outline
                 color="white"
@@ -329,8 +347,8 @@
 
     <!-- TikTok Videos Section -->
     <section class="q-mt-xl">
-      <div class="section-label q-mb-md">
-        <q-icon name="music_note" color="pink-6" size="22px" class="q-mr-xs" />
+      <div class="section-label q-mb-md row items-center">
+        <font-awesome-icon :icon="['fab', 'tiktok']" class="q-mr-xs text-h6 text-pink-6" />
         <span class="text-subtitle1 text-weight-bold">
           {{ t('pages.social.featuredVideos') }}
         </span>
@@ -360,7 +378,7 @@
               class="video-placeholder"
               :aria-label="`TikTok slot ${index + 1}`"
             >
-              <q-icon name="smart_display" size="44px" color="grey-5" />
+              <font-awesome-icon :icon="['fab', 'tiktok']" class="text-h2 text-grey-5" />
               <div class="slot-index">#{{ index + 1 }}</div>
             </div>
           </div>
@@ -409,6 +427,7 @@
 <script setup lang="ts">
 import { ref, computed, onMounted } from 'vue'
 import { useI18n } from 'vue-i18n'
+import { FontAwesomeIcon } from '@fortawesome/vue-fontawesome'
 import chaptersEn from '@/shared/data/chapters/en.json'
 
 interface VideoItem {
@@ -516,7 +535,7 @@ const tiktokSlots = [
   },
   {
     videoId: '7604807153408331030',
-    creator: '@abdullvocals/video/7604807153408331030',
+    creator: '@abdullvocals',
     embedUrl: 'https://www.tiktok.com/embed/v2/7604807153408331030',
     watchUrl: 'https://www.tiktok.com/@abdullvocals/video/7604807153408331030',
   },
@@ -544,23 +563,39 @@ const tiktokSlots = [
   align-items: center;
 }
 
+.yt-header-icon-svg {
+  width: 28px;
+  height: 28px;
+}
+
+.yt-play-icon-svg {
+  width: 24px;
+  height: 24px;
+}
+
+.yt-badge-pill {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 0.75rem;
+}
+
 /* ── Branded YouTube Channel Card ── */
 .yt-community-card {
   border-radius: 20px;
   overflow: hidden;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.06);
+  box-shadow: 0 12px 36px rgba(255, 0, 0, 0.08);
   transition: box-shadow 0.25s ease, transform 0.25s ease;
 }
 
 .yt-community-card:hover {
   transform: translateY(-2px);
-  box-shadow: 0 14px 36px rgba(255, 0, 0, 0.12);
+  box-shadow: 0 16px 44px rgba(255, 0, 0, 0.16);
 }
 
 .yt-banner {
   position: relative;
-  height: 160px;
-  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 50%, #881337 100%);
+  height: 170px;
+  background: linear-gradient(135deg, #0f172a 0%, #1e1b4b 40%, #881337 100%);
   display: flex;
   align-items: flex-end;
   padding: 20px 24px;
@@ -570,7 +605,7 @@ const tiktokSlots = [
 .yt-banner-gradient {
   position: absolute;
   inset: 0;
-  background: radial-gradient(circle at 90% 20%, rgba(255, 0, 0, 0.35) 0%, transparent 60%);
+  background: radial-gradient(circle at 85% 15%, rgba(255, 0, 0, 0.4) 0%, transparent 65%);
   pointer-events: none;
 }
 
@@ -579,17 +614,17 @@ const tiktokSlots = [
   z-index: 1;
   display: flex;
   align-items: center;
-  gap: 16px;
+  gap: 18px;
 }
 
 .yt-avatar-wrapper {
   position: relative;
-  width: 72px;
-  height: 72px;
+  width: 76px;
+  height: 76px;
   border-radius: 50%;
   padding: 4px;
   background: #ffffff;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.3);
+  box-shadow: 0 6px 24px rgba(0, 0, 0, 0.35);
   flex-shrink: 0;
 }
 
@@ -600,20 +635,21 @@ const tiktokSlots = [
   border-radius: 50%;
 }
 
-.yt-verified-badge {
+.yt-verified-check-svg {
   position: absolute;
   bottom: 0;
   right: -2px;
-  background: #ffffff;
-  border-radius: 50%;
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 2px 4px rgba(0,0,0,0.3));
 }
 
 .yt-official-pill {
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 0.08em;
-  background: rgba(255, 255, 255, 0.2);
-  padding: 2px 8px;
+  background: rgba(255, 255, 255, 0.22);
+  padding: 2px 9px;
   border-radius: 12px;
   backdrop-filter: blur(4px);
 }
@@ -636,16 +672,21 @@ const tiktokSlots = [
   border-radius: 24px;
   font-weight: 700;
   letter-spacing: 0.02em;
-  padding: 8px 20px;
+  padding: 8px 22px;
 }
 
 .yt-btn-subscribe {
+  background: #FF0000 !important;
   animation: ytGlow 3s infinite ease-in-out;
 }
 
+.yt-btn-subscribe:hover {
+  background: #CC0000 !important;
+}
+
 @keyframes ytGlow {
-  0%, 100% { box-shadow: 0 0 12px rgba(220, 38, 38, 0.4); }
-  50% { box-shadow: 0 0 24px rgba(220, 38, 38, 0.8); }
+  0%, 100% { box-shadow: 0 0 14px rgba(255, 0, 0, 0.45); }
+  50% { box-shadow: 0 0 28px rgba(255, 0, 0, 0.85); }
 }
 
 .yt-widget-container {
@@ -675,7 +716,7 @@ const tiktokSlots = [
 
 .yt-video-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 12px 30px rgba(255, 0, 0, 0.15);
 }
 
 .yt-thumb-wrapper {
@@ -712,17 +753,17 @@ const tiktokSlots = [
   width: 52px;
   height: 52px;
   border-radius: 50%;
-  background: rgba(220, 38, 38, 0.9);
+  background: rgba(255, 0, 0, 0.95);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 4px 16px rgba(220, 38, 38, 0.5);
+  box-shadow: 0 4px 16px rgba(255, 0, 0, 0.5);
   transition: transform 0.2s ease;
 }
 
 .yt-video-card:hover .yt-play-btn {
   transform: scale(1.15);
-  background: #dc2626;
+  background: #FF0000;
 }
 
 .video-title-clamp {
