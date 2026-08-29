@@ -2884,6 +2884,23 @@ onMounted(async () => {
   // Load list of cached suras for offline detection
   await loadCachedSurasList()
 
+  // Process URL Query Parameters state override (theme, layout, highlight mode, verse, autoplay)
+  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
+  const queryTheme = (route.query.theme || searchParams?.get('theme') || route.query.mode || searchParams?.get('mode') || '').toString().toLowerCase()
+  if (['light', 'dark'].includes(queryTheme)) {
+    Dark.set(queryTheme === 'dark')
+  }
+
+  const queryLayout = (route.query.layout || searchParams?.get('layout') || '').toString().toLowerCase()
+  if (['reader', 'mushaf', 'native'].includes(queryLayout)) {
+    layoutMode.value = queryLayout as any
+  }
+
+  const queryHighlight = (route.query.highlight || searchParams?.get('highlight') || '').toString().toLowerCase()
+  if (['word', 'ayah'].includes(queryHighlight)) {
+    void setHighlightMode(queryHighlight as any)
+  }
+
   // Initialize layout mode from route param if present
   const paramMode = route.params.mode as
     | 'reader'
@@ -2893,10 +2910,11 @@ onMounted(async () => {
   if (paramMode && ['reader', 'mushaf', 'native'].includes(paramMode)) {
     layoutMode.value = paramMode
   } else if (!route.params.mode) {
-    // Add current mode to URL if not present
+    // Add current mode to URL if not present, preserving query parameters
     router.replace({
       name: 'QuranDetail',
       params: { ...route.params, mode: layoutMode.value },
+      query: route.query,
     })
   }
 
@@ -2904,22 +2922,6 @@ onMounted(async () => {
   try {
     await bookmarksStore.init()
   } catch {}
-
-  // Process URL Query Parameters state override (theme, layout, highlight mode, verse, autoplay)
-  const queryTheme = (route.query.theme || route.query.mode || '').toString().toLowerCase()
-  if (['light', 'dark'].includes(queryTheme)) {
-    Dark.set(queryTheme === 'dark')
-  }
-
-  const queryLayout = (route.query.layout || '').toString().toLowerCase()
-  if (['reader', 'mushaf', 'native'].includes(queryLayout)) {
-    layoutMode.value = queryLayout as any
-  }
-
-  const queryHighlight = (route.query.highlight || '').toString().toLowerCase()
-  if (['word', 'ayah'].includes(queryHighlight)) {
-    void setHighlightMode(queryHighlight as any)
-  }
 
   const queryVerse = Number(route.query.verse || route.query.ayah || 0)
   if (queryVerse > 0) {
