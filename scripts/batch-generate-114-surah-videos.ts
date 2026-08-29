@@ -53,7 +53,48 @@ function saveProgress(progress: Record<number, ProgressRecord>) {
   fs.writeFileSync(PROGRESS_FILE, JSON.stringify(progress, null, 2))
 }
 
-async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<string> {
+interface VerseContent {
+  verseNumber: number
+  arabicText: string
+  translationText: string
+}
+
+async function fetchSurahVersesData(chapterId: number): Promise<VerseContent[]> {
+  try {
+    const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?language=en&fields=text_uthmani&translations=131&per_page=300`)
+    if (!res.ok) return []
+    const json = await res.json()
+    const verses = json?.verses || []
+    return verses.map((v: any) => ({
+      verseNumber: v.verse_number,
+      arabicText: v.text_uthmani || '',
+      translationText: v.translations?.[0]?.text?.replace(/<[^>]*>/g, '').trim() || '',
+    }))
+  } catch {
+    return []
+  }
+}
+
+function getAudioDuration(filePath: string): number {
+  try {
+    const out = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { encoding: 'utf8' })
+    return parseFloat(out.trim()) || 0
+  } catch {
+    return 0
+  }
+}
+
+function formatSrtTime(seconds: number): string {
+  const date = new Date(0)
+  date.setUTCMilliseconds(Math.floor(seconds * 1000))
+  const hh = String(date.getUTCHours()).padStart(2, '0')
+  const mm = String(date.getUTCMinutes()).padStart(2, '0')
+  const ss = String(date.getUTCSeconds()).padStart(2, '0')
+  const ms = String(date.getUTCMilliseconds()).padStart(3, '0')
+  return `${hh}:${mm}:${ss},${ms}`
+}
+
+async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<{ audioPath: string; srtPath: string | null }> {
   const paddedSura = pad3(chapter.id)
   const mp3Files: string[] = []
 
@@ -93,10 +134,49 @@ async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<st
     { stdio: 'ignore' }
   )
 
-  return outputAudio
+  // Generate synchronized subtitles with Arabic text and English translation
+  let srtPath: string | null = null
+  try {
+    const versesData = await fetchSurahVersesData(chapter.id)
+    if (versesData.length > 0) {
+      srtPath = path.join(tempDir, `surah_${paddedSura}.srt`)
+      let srtContent = ''
+      let currentTime = 0
+
+      for (let i = 0; i < mp3Files.length; i++) {
+        const mp3 = mp3Files[i]
+        const verseNum = i + 1
+        const verseData = versesData.find((v) => v.verseNumber === verseNum) || {
+          verseNumber: verseNum,
+          arabicText: '',
+          translationText: '',
+        }
+
+        const duration = getAudioDuration(mp3)
+        const startTime = currentTime
+        const endTime = currentTime + duration
+        currentTime = endTime
+
+        const startSrt = formatSrtTime(startTime)
+        const endSrt = formatSrtTime(endTime)
+
+        srtContent += `${i + 1}\n`
+        srtContent += `${startSrt} --> ${endSrt}\n`
+        srtContent += `Surah ${chapter.transliteration} [${chapter.id}:${verseNum}]\n`
+        if (verseData.arabicText) srtContent += `${verseData.arabicText}\n`
+        if (verseData.translationText) srtContent += `${verseData.translationText}\n`
+        srtContent += '\n'
+      }
+      fs.writeFileSync(srtPath, srtContent, 'utf8')
+    }
+  } catch (err: any) {
+    console.warn(`[Surah ${chapter.id}] Could not generate subtitles:`, err?.message || err)
+  }
+
+  return { audioPath: outputAudio, srtPath }
 }
 
-async function generateSurahVideo(chapter: Chapter, audioPath: string): Promise<string> {
+async function generateSurahVideo(chapter: Chapter, audioPath: string, srtPath: string | null): Promise<string> {
   const paddedSura = pad3(chapter.id)
   const outputVideo = path.join(OUTPUT_DIR, `surah_${paddedSura}_${chapter.transliteration.toLowerCase().replace(/[^a-z0-9]/g, '_')}.mp4`)
 
@@ -104,9 +184,15 @@ async function generateSurahVideo(chapter: Chapter, audioPath: string): Promise<
     return outputVideo
   }
 
-  console.log(`[Surah ${chapter.id}/${114}] Rendering HD video: ${chapter.transliteration} (${chapter.name})...`)
+  console.log(`[Surah ${chapter.id}/${114}] Rendering HD video with synchronized verse text: ${chapter.transliteration} (${chapter.name})...`)
 
-  const ffmpegCmd = `/usr/local/bin/ffmpeg -y -loop 1 -i "${BANNER_IMAGE}" -i "${audioPath}" -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest "${outputVideo}"`
+  let videoFilter = ''
+  if (srtPath && fs.existsSync(srtPath)) {
+    const escapedSrt = srtPath.replace(/'/g, "'\\''").replace(/:/g, '\\:')
+    videoFilter = `-vf "subtitles='${escapedSrt}':force_style='FontSize=22,PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=4,Alignment=2,MarginV=50'"`
+  }
+
+  const ffmpegCmd = `/usr/local/bin/ffmpeg -y -loop 1 -i "${BANNER_IMAGE}" -i "${audioPath}" ${videoFilter} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest "${outputVideo}"`
   execSync(ffmpegCmd, { stdio: 'ignore' })
 
   return outputVideo
@@ -322,8 +408,8 @@ async function main() {
     try {
       console.log(`\n▶ [${id}/114] Processing Surah ${chapter.transliteration} (${chapter.name}) - ${chapter.total_verses} verses...`)
       
-      const audioPath = await downloadSurahAudio(chapter, tempDir)
-      const videoPath = await generateSurahVideo(chapter, audioPath)
+      const { audioPath, srtPath } = await downloadSurahAudio(chapter, tempDir)
+      const videoPath = await generateSurahVideo(chapter, audioPath, srtPath)
       rec.videoPath = videoPath
       rec.status = 'generated'
       saveProgress(progress)

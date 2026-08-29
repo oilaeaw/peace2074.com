@@ -2,21 +2,22 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "uploaded",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
-    "youtubeVideoId": "eoXm6Bz7QQs"
+    "status": "generated",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4"
   },
   "2": {
     "surahId": 2,
     "surahName": "Al-Baqarah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_002_al_baqarah.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_002_al_baqarah.mp4",
+    "error": "Failed to download audio for verse 230 of Surah 2"
   },
   "3": {
     "surahId": 3,
     "surahName": "Ali 'Imran",
-    "status": "generated",
-    "videoPath": "output_videos/surah_003_ali__imran.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_003_ali__imran.mp4",
+    "error": "Failed to download audio for verse 193 of Surah 3"
   },
   "4": {
     "surahId": 4,
@@ -33,14 +34,16 @@
   "6": {
     "surahId": 6,
     "surahName": "Al-An'am",
-    "status": "generated",
-    "videoPath": "output_videos/surah_006_al_an_am.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_006_al_an_am.mp4",
+    "error": "Failed to download audio for verse 165 of Surah 6"
   },
   "7": {
     "surahId": 7,
     "surahName": "Al-A'raf",
-    "status": "generated",
-    "videoPath": "output_videos/surah_007_al_a_raf.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_007_al_a_raf.mp4",
+    "error": "Failed to download audio for verse 203 of Surah 7"
   },
   "8": {
     "surahId": 8,
@@ -51,8 +54,9 @@
   "9": {
     "surahId": 9,
     "surahName": "At-Tawbah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_009_at_tawbah.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_009_at_tawbah.mp4",
+    "error": "Failed to download audio for verse 127 of Surah 9"
   },
   "10": {
     "surahId": 10,
@@ -93,8 +97,9 @@
   "16": {
     "surahId": 16,
     "surahName": "An-Nahl",
-    "status": "generated",
-    "videoPath": "output_videos/surah_016_an_nahl.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_016_an_nahl.mp4",
+    "error": "Failed to download audio for verse 125 of Surah 16"
   },
   "17": {
     "surahId": 17,
