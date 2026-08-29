@@ -541,6 +541,9 @@ const autoContinueEnabled = computed({
 const { highlightMode, setHighlightMode, loadProfileSettings, saveRecitationProgress, savedPlaybackPosition } =
   useProfileSettings()
 
+// YouTube Video Recitation Player State
+const showYoutubePlayer = ref(false)
+
 // Ayah action hover/tap widget state.
 // This is a supported Quran reading interaction and should not be removed
 // without providing an equivalent verse-actions UX and updating
@@ -3191,6 +3194,31 @@ watch(
     <div v-if="loading" class="status">{{ t('pages.quran.loading') }}</div>
     <div v-else-if="error" class="status error">{{ error }}</div>
     <div v-else-if="sura">
+      <!-- YouTube HD Video Player Banner -->
+      <Transition name="slide-down">
+        <div
+          v-if="showYoutubePlayer || route.query.video === 'true' || route.query.youtube === 'true'"
+          class="youtube-banner-wrapper q-mb-md"
+        >
+          <div class="video-bar-header row items-center justify-between q-px-md q-py-xs bg-grey-10 text-white">
+            <div class="row items-center gap-sm">
+              <q-icon name="smart_display" color="red" size="24px" />
+              <span class="text-weight-bold">YouTube Official HD Video Recitation · Surah {{ currentSuraId }}</span>
+            </div>
+            <q-btn flat round dense icon="close" color="white" @click="showYoutubePlayer = false" />
+          </div>
+          <div class="video-ratio-box">
+            <iframe
+              :src="`https://www.youtube.com/embed/videoseries?list=PLEJ9VLBcEoKg&index=${currentSuraId - 1}&autoplay=1`"
+              title="YouTube Quran Recitation"
+              frameborder="0"
+              allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
+              allowfullscreen
+            ></iframe>
+          </div>
+        </div>
+      </Transition>
+
       <div
         class="sura-heading"
         :class="{
@@ -5182,5 +5210,27 @@ body.body--dark .announcement-banner {
   padding: 2px 8px;
   border-radius: 12px;
   font-size: 11px;
+}
+
+.youtube-banner-wrapper {
+  border-radius: 16px;
+  overflow: hidden;
+  border: 1px solid rgba(148, 163, 184, 0.25);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.15);
+}
+
+.video-ratio-box {
+  position: relative;
+  width: 100%;
+  padding-top: 56.25%;
+  background: #000;
+}
+
+.video-ratio-box iframe {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
 }
 </style>
