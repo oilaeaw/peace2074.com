@@ -3,7 +3,7 @@ import { useRoute, useRouter, onBeforeRouteLeave } from 'vue-router'
 import useQ2P from '@/composables/useQ2P'
 import { useI18n } from 'vue-i18n'
 import { ref, onMounted, onUnmounted, onActivated, onDeactivated, watch, computed, nextTick } from 'vue'
-import { useQuasar } from 'quasar'
+import { useQuasar, Dark } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import { useStorageRef } from '@/composables/useUStore'
 import { useProfileSettings, type RecitationPlaybackPosition } from '@/composables/useProfileSettings'
@@ -538,7 +538,7 @@ const autoContinueEnabled = computed({
 })
 
 // Highlight mode is sourced from the authenticated profile settings in MongoDB.
-const { highlightMode, loadProfileSettings, saveRecitationProgress, savedPlaybackPosition } =
+const { highlightMode, setHighlightMode, loadProfileSettings, saveRecitationProgress, savedPlaybackPosition } =
   useProfileSettings()
 
 // Ayah action hover/tap widget state.
@@ -1959,7 +1959,7 @@ function clearPlaybackPosition() {
   }
 }
 
-async function restorePlaybackPosition() {
+async function restorePlaybackPosition(opts: { autoResume?: boolean } = {}) {
   const saved = pickSavedPlaybackPosition()
   if (!saved || saved.suraId !== currentSuraId.value) {
     return false
@@ -1978,6 +1978,18 @@ async function restorePlaybackPosition() {
     typeof saved.wordIndex === 'number' ? saved.wordIndex : -1
   if (saved.readerMode === 'audio' || saved.readerMode === 'tts') {
     readerMode.value = saved.readerMode
+  }
+
+  if (opts.autoResume) {
+    stopRequested.value = false
+    await startAudioRecitation(saved.ayahIndex, { withIntro: false })
+    if (audioEl.value && saved.audioTime > 0) {
+      audioEl.value.currentTime = saved.audioTime
+      updateCurrentWord(saved.audioTime)
+    } else if (currentWordIndex.value >= 0) {
+      scrollToCurrentWord(saved.ayahIndex, currentWordIndex.value)
+    }
+    return true
   }
 
   // Show notification asking if they want to resume
@@ -2893,6 +2905,42 @@ onMounted(async () => {
     await bookmarksStore.init()
   } catch {}
 
+  // Process URL Query Parameters state override (theme, layout, highlight mode, verse, autoplay)
+  const queryTheme = (route.query.theme || route.query.mode || '').toString().toLowerCase()
+  if (['light', 'dark'].includes(queryTheme)) {
+    Dark.set(queryTheme === 'dark')
+  }
+
+  const queryLayout = (route.query.layout || '').toString().toLowerCase()
+  if (['reader', 'mushaf', 'native'].includes(queryLayout)) {
+    layoutMode.value = queryLayout as any
+  }
+
+  const queryHighlight = (route.query.highlight || '').toString().toLowerCase()
+  if (['word', 'ayah'].includes(queryHighlight)) {
+    void setHighlightMode(queryHighlight as any)
+  }
+
+  const queryVerse = Number(route.query.verse || route.query.ayah || 0)
+  if (queryVerse > 0) {
+    setTimeout(() => {
+      scrollToVerse(queryVerse)
+    }, 400)
+  }
+
+  const queryAutoplay =
+    route.query.play === '1' ||
+    route.query.play === 'true' ||
+    route.query.autoplay === 'true' ||
+    route.query.autoplay === '1'
+
+  if (queryAutoplay) {
+    setTimeout(() => {
+      const startIndex = queryVerse > 0 ? queryVerse - 1 : 0
+      void startAudioRecitation(startIndex, { withIntro: false })
+    }, 600)
+  }
+
   // Load TTS voices
   if (typeof window !== 'undefined' && window.speechSynthesis) {
     loadVoices()
@@ -2928,6 +2976,19 @@ onMounted(async () => {
         ],
       })
     }, 2000) // Show after 2 seconds to avoid overwhelming user
+  }
+onBeforeRouteLeave(() => {
+  persistRecitationBeforeLeave()
+})
+
+onDeactivated(() => {
+  persistRecitationBeforeLeave()
+})
+
+onActivated(async () => {
+  await nextTick()
+  if (audioList.value.length > 0) {
+    await restorePlaybackPosition({ autoResume: true })
   }
 })
 
