@@ -3076,6 +3076,20 @@ onDeactivated(() => {
   persistRecitationBeforeLeave()
 })
 
+// Dedicated Lifecycle Hook: Automatically starts playback as soon as EVERYTHING (Surah & Audio List) is 100% loaded
+watch(
+  [sura, audioList],
+  async ([suraData, list]) => {
+    if (suraData && list && list.length > 0 && !isPlayingAudio.value && !stopRequested.value) {
+      await nextTick()
+      const queryVerse = Number(route.query.verse || route.query.ayah || 0)
+      const startIndex = queryVerse > 0 ? queryVerse - 1 : (currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
+      void startAudioRecitation(startIndex, { withIntro: false })
+    }
+  },
+  { immediate: true }
+)
+
 onActivated(async () => {
   await nextTick()
   if (audioList.value.length > 0) {

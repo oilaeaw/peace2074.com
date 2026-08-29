@@ -306,6 +306,16 @@
       "ip": "::1",
       "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
       "expires_at": "2026-09-28T22:47:42.846Z"
+    },
+    "63769656-f6c8-41cf-8725-a1840229e20f": {
+      "id": "63769656-f6c8-41cf-8725-a1840229e20f",
+      "createdAt": "2026-08-29T22:54:03.753Z",
+      "updatedAt": "2026-08-29T22:54:03.753Z",
+      "userId": "113338273027295034471",
+      "provider": "google",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "expires_at": "2026-09-28T22:54:03.753Z"
     }
   }
 }
