@@ -544,6 +544,9 @@ const { highlightMode, setHighlightMode, loadProfileSettings, saveRecitationProg
 // YouTube Video Recitation Player State
 const showYoutubePlayer = ref(false)
 
+// Autoplay unlock state ref
+const isAutoplayBlocked = ref(false)
+
 // Shazam Quran Audio Recitation Matcher & Microphone Sync State
 const isListeningShazam = ref(false)
 
@@ -1905,16 +1908,22 @@ function playAyah(index: number) {
     if (playPromise !== undefined) {
       playPromise.catch((err) => {
         console.warn('[Audio] Autoplay blocked by browser policy:', err)
+        isAutoplayBlocked.value = true
         if (typeof window !== 'undefined') {
           const unlockAudio = () => {
-            void el.play().catch(() => {})
+            isAutoplayBlocked.value = false
+            void el.play().then(() => {
+              isPlayingAudio.value = true
+            }).catch(() => {})
             window.removeEventListener('click', unlockAudio)
             window.removeEventListener('keydown', unlockAudio)
             window.removeEventListener('touchstart', unlockAudio)
+            window.removeEventListener('pointerdown', unlockAudio)
           }
           window.addEventListener('click', unlockAudio, { once: true })
           window.addEventListener('keydown', unlockAudio, { once: true })
           window.addEventListener('touchstart', unlockAudio, { once: true })
+          window.addEventListener('pointerdown', unlockAudio, { once: true })
         }
       })
     }
