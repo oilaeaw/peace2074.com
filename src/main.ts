@@ -202,6 +202,21 @@ async function bootstrapAuthState() {
     const authStore = useAuthStore()
     await authStore.hydrateSession()
 
+    // In local development, ensure dev authentication is always active for wahbehw@gmail.com
+    if (
+      !authStore.isAuthenticated &&
+      (import.meta.env.DEV ||
+        window.location.hostname === 'localhost' ||
+        window.location.hostname === '127.0.0.1')
+    ) {
+      try {
+        await fetch('/api/auth/dev-login')
+        await authStore.hydrateSession()
+      } catch {
+        /* noop */
+      }
+    }
+
     const explicitLocale = extractLocaleFromPath(window.location.pathname)
     const currentPath = stripLocalePrefix(window.location.pathname)
     if (currentPath === '/dashboard') {
