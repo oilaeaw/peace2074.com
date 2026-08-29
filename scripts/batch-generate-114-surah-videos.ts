@@ -261,17 +261,25 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
 
     if (!fs.existsSync(localMp3) || fs.statSync(localMp3).size < 100) {
       let success = false
-      const urls = [primaryUrl, mirrorUrl]
+      const urls = [
+        `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`,
+        `https://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/${fileKey}`,
+        `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${fileKey}`,
+      ]
       for (const url of urls) {
         for (let attempt = 1; attempt <= 3; attempt++) {
           try {
-            execSync(`curl -sSL --connect-timeout 15 --retry 3 "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
-            if (fs.existsSync(localMp3) && fs.statSync(localMp3).size > 100) {
-              success = true
-              break
+            const res = await fetch(url, { signal: AbortSignal.timeout(12000) })
+            if (res.ok) {
+              const buffer = Buffer.from(await res.arrayBuffer())
+              if (buffer.length > 100) {
+                fs.writeFileSync(localMp3, buffer)
+                success = true
+                break
+              }
             }
           } catch {
-            // retry
+            await new Promise((r) => setTimeout(r, 400))
           }
         }
         if (success) break
