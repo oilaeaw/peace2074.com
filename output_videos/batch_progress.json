@@ -2,8 +2,9 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
+    "youtubeVideoId": "eoXm6Bz7QQs"
   },
   "2": {
     "surahId": 2,
@@ -68,9 +69,8 @@
   "12": {
     "surahId": 12,
     "surahName": "Yusuf",
-    "status": "failed",
-    "videoPath": "output_videos/surah_012_yusuf.mp4",
-    "error": "Failed to download audio for verse 111 of Surah 12"
+    "status": "generated",
+    "videoPath": "output_videos/surah_012_yusuf.mp4"
   },
   "13": {
     "surahId": 13,
@@ -81,16 +81,14 @@
   "14": {
     "surahId": 14,
     "surahName": "Ibrahim",
-    "status": "failed",
-    "videoPath": "output_videos/surah_014_ibrahim.mp4",
-    "error": "Failed to download audio for verse 47 of Surah 14"
+    "status": "generated",
+    "videoPath": "output_videos/surah_014_ibrahim.mp4"
   },
   "15": {
     "surahId": 15,
     "surahName": "Al-Hijr",
-    "status": "failed",
-    "videoPath": "output_videos/surah_015_al_hijr.mp4",
-    "error": "Failed to download audio for verse 98 of Surah 15"
+    "status": "generated",
+    "videoPath": "output_videos/surah_015_al_hijr.mp4"
   },
   "16": {
     "surahId": 16,
