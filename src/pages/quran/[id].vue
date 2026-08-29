@@ -3196,6 +3196,28 @@ watch(
       :label="`← ${t('pages.quran.backToList')}`"
     />
 
+    <!-- Autoplay Unlocking Banner (Appears if Chrome defers initial unprompted audio) -->
+    <Transition name="slide-down">
+      <q-banner
+        v-if="isAutoplayBlocked"
+        class="bg-primary text-white q-mb-md rounded-borders shadow-4 cursor-pointer"
+        @click="isAutoplayBlocked = false"
+      >
+        <template v-slot:avatar>
+          <q-icon name="volume_up" size="32px" class="pulse-icon" />
+        </template>
+        <div class="text-weight-bold text-subtitle1">
+          ▶ Click or Tap Anywhere to Start Audio Recitation
+        </div>
+        <div class="text-caption">
+          Browser security paused initial audio. Tap anywhere on screen to listen and follow along!
+        </div>
+        <template v-slot:action>
+          <q-btn flat label="Start Recitation" color="white" icon="play_arrow" />
+        </template>
+      </q-banner>
+    </Transition>
+
     <!-- Announcement Banner -->
     <Transition name="slide-down">
       <q-banner
