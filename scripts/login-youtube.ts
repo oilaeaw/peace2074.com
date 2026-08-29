@@ -8,7 +8,7 @@ dotenv.config()
 
 const CLIENT_ID = process.env.NITRO_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || ''
 const CLIENT_SECRET = process.env.NITRO_GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET || ''
-const PORT = process.env.AUTH_PORT ? parseInt(process.env.AUTH_PORT, 10) : 8080
+const PORT = 4000
 const REDIRECT_URI = `http://localhost:${PORT}/api/auth/google/callback`
 
 const SCOPES = [
