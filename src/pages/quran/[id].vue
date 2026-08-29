@@ -2940,25 +2940,28 @@ onMounted(async () => {
     await bookmarksStore.init()
   } catch {}
 
-  const queryVerse = Number(route.query.verse || route.query.ayah || 0)
+  const queryVerse = Number(route.query.verse || route.query.ayah || searchParams?.get('verse') || searchParams?.get('ayah') || 0)
   if (queryVerse > 0) {
     setTimeout(() => {
       scrollToVerse(queryVerse)
     }, 400)
   }
 
-  const queryAutoplay =
-    route.query.play === '1' ||
-    route.query.play === 'true' ||
-    route.query.autoplay === 'true' ||
-    route.query.autoplay === '1'
+  const queryAutoplayRaw =
+    (route.query.play ||
+     route.query.autoplay ||
+     route.query.playing ||
+     route.query.autostart ||
+     route.query.start ||
+     searchParams?.get('play') ||
+     searchParams?.get('autoplay') ||
+     searchParams?.get('playing') ||
+     searchParams?.get('autostart') ||
+     searchParams?.get('start') ||
+     '').toString().toLowerCase()
 
-  if (queryAutoplay) {
-    setTimeout(() => {
-      const startIndex = queryVerse > 0 ? queryVerse - 1 : 0
-      void startAudioRecitation(startIndex, { withIntro: false })
-    }, 600)
-  }
+  const isExplicitDisabled = ['false', '0', 'no', 'off'].includes(queryAutoplayRaw)
+  const isExplicitEnabled = ['true', '1', 'yes', 'on'].includes(queryAutoplayRaw)
 
   // Load TTS voices
   if (typeof window !== 'undefined' && window.speechSynthesis) {
@@ -2967,11 +2970,11 @@ onMounted(async () => {
     window.speechSynthesis.onvoiceschanged = loadVoices
   }
 
-  // Check for saved playback position and offer to resume, or auto-start recitation permanently
+  // Check for saved playback position and offer to resume, or auto-start recitation
   await nextTick()
-  if (audioList.value.length > 0) {
+  if (audioList.value.length > 0 && !isExplicitDisabled) {
     const restored = await restorePlaybackPosition()
-    if (!restored && !isPlayingAudio.value) {
+    if ((!restored || isExplicitEnabled) && !isPlayingAudio.value) {
       setTimeout(() => {
         const startIndex = queryVerse > 0 ? queryVerse - 1 : 0
         void startAudioRecitation(startIndex, { withIntro: false })
