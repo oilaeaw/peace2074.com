@@ -2000,7 +2000,9 @@ const activeUrlQueryParams = computed(() => {
   if (typeof window === 'undefined') return {}
   const params: Record<string, string> = { ...(route.query as Record<string, string>) }
 
-  params.theme = Dark.isActive ? 'dark' : 'light'
+  if (route.query.theme || route.query.mode) {
+    params.theme = Dark.isActive ? 'dark' : 'light'
+  }
 
   if (layoutMode.value) {
     params.layout = layoutMode.value
