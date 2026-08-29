@@ -2016,10 +2016,16 @@ const activeUrlQueryParams = computed(() => {
     params.verse = String(currentAyahIndex.value + 1)
   }
 
-  if (isPlayingAudio.value) {
+  const hasPlayQuery = Boolean(
+    route.query.play ||
+    route.query.autoplay ||
+    route.query.playing ||
+    route.query.autostart ||
+    route.query.start
+  )
+
+  if (isPlayingAudio.value || hasPlayQuery) {
     params.play = 'true'
-  } else {
-    delete params.play
   }
 
   if (locale.value) {
