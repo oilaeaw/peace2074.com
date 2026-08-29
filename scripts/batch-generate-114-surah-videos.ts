@@ -176,7 +176,39 @@ async function addVideoToPlaylist(videoId: string, playlistId: string, oauthToke
   }
 }
 
-async function uploadToYouTube(chapter: Chapter, videoPath: string, oauthToken?: string): Promise<string | null> {
+async function getOrRefreshOAuthToken(currentToken?: string): Promise<string | undefined> {
+  const refreshToken = process.env.YOUTUBE_REFRESH_TOKEN
+  const clientId = process.env.NITRO_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID
+  const clientSecret = process.env.NITRO_GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET
+
+  if (refreshToken && clientId && clientSecret) {
+    try {
+      const res = await fetch('https://oauth2.googleapis.com/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+        body: new URLSearchParams({
+          grant_type: 'refresh_token',
+          refresh_token: refreshToken,
+          client_id: clientId,
+          client_secret: clientSecret,
+        }),
+      })
+      if (res.ok) {
+        const data = await res.json()
+        if (data.access_token) {
+          process.env.YOUTUBE_OAUTH_TOKEN = data.access_token
+          return data.access_token
+        }
+      }
+    } catch (err: any) {
+      console.warn('[YouTube Token Refresh Error]', err?.message || err)
+    }
+  }
+  return currentToken || process.env.YOUTUBE_OAUTH_TOKEN
+}
+
+async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToken?: string): Promise<string | null> {
+  const oauthToken = await getOrRefreshOAuthToken(rawOauthToken)
   if (!oauthToken) {
     console.log(`[Surah ${chapter.id}/${114}] Video generated at ${videoPath} (Skipping direct YouTube upload: No YOUTUBE_OAUTH_TOKEN provided)`)
     return null

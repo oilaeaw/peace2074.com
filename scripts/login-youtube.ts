@@ -77,13 +77,23 @@ async function main() {
             // Save to .env
             const envPath = path.join(process.cwd(), '.env')
             let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : ''
+            
             if (envContent.includes('YOUTUBE_OAUTH_TOKEN=')) {
               envContent = envContent.replace(/YOUTUBE_OAUTH_TOKEN=.* /g, `YOUTUBE_OAUTH_TOKEN="${tokenData.access_token}"`)
             } else {
               envContent += `\nYOUTUBE_OAUTH_TOKEN="${tokenData.access_token}"\n`
             }
+
+            if (tokenData.refresh_token) {
+              if (envContent.includes('YOUTUBE_REFRESH_TOKEN=')) {
+                envContent = envContent.replace(/YOUTUBE_REFRESH_TOKEN=.* /g, `YOUTUBE_REFRESH_TOKEN="${tokenData.refresh_token}"`)
+              } else {
+                envContent += `YOUTUBE_REFRESH_TOKEN="${tokenData.refresh_token}"\n`
+              }
+            }
+
             fs.writeFileSync(envPath, envContent)
-            console.log('💾 Saved YOUTUBE_OAUTH_TOKEN to .env file.')
+            console.log('💾 Saved YOUTUBE_OAUTH_TOKEN and YOUTUBE_REFRESH_TOKEN to .env file.')
 
             res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
             res.end(`
