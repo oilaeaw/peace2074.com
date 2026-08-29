@@ -882,10 +882,6 @@ function hasTimingMatchedWords(verseNumber: number) {
 }
 
 function isActiveAyah(verseNumber: number) {
-  if (highlightMode.value === 'word' && hasTimingMatchedWords(verseNumber)) {
-    // Word mode: suppress the whole-ayah highlight; words are individually highlighted
-    return false
-  }
   return currentAyahIndex.value === verseNumber - 1
 }
 
@@ -4412,19 +4408,50 @@ watch(
   gap: 8px;
 }
 
-.is-current-word {
-  background: #ffc107;
-  color: #000000;
-  padding: 2px 6px;
-  border-radius: 6px;
-  transition: background 0.15s ease;
-  box-shadow: 0 2px 4px rgba(255, 193, 7, 0.4);
+/* Recitation Highlight: Whole Ayah / Sentence (Light Mode) */
+.verse-row.is-current-ayah,
+.mushaf-ayah-inline.is-current-ayah,
+.verse-paragraph.is-current-ayah {
+  background: rgba(245, 158, 11, 0.12) !important;
+  border-inline-start: 4px solid #f59e0b !important;
+  box-shadow: 0 4px 16px rgba(245, 158, 11, 0.15) !important;
+  border-radius: 12px;
+  transition: all 0.25s ease-in-out;
 }
 
+/* Recitation Highlight: Word (Light Mode) */
+.is-current-word {
+  background: #f59e0b !important;
+  color: #ffffff !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 2px 8px rgba(245, 158, 11, 0.4) !important;
+  transition: background 0.12s ease-in-out, color 0.12s ease-in-out;
+  display: inline-block;
+}
+
+/* Recitation Highlight: Whole Ayah / Sentence (Dark Mode) */
+body.body--dark .verse-row.is-current-ayah,
+body.body--dark .mushaf-ayah-inline.is-current-ayah,
+body.body--dark .verse-paragraph.is-current-ayah {
+  background: rgba(251, 191, 36, 0.16) !important;
+  border-inline-start: 4px solid #fbbf24 !important;
+  box-shadow: 0 0 24px rgba(251, 191, 36, 0.2) !important;
+  border-radius: 12px;
+  transition: all 0.25s ease-in-out;
+}
+
+/* Recitation Highlight: Word (Dark Mode) */
 body.body--dark .is-current-word {
-  background: #ffb300;
-  color: #111111;
-  box-shadow: 0 0 0 2px rgba(255, 179, 0, 0.45);
+  background: #fbbf24 !important;
+  color: #0f172a !important;
+  font-weight: 700 !important;
+  padding: 2px 8px !important;
+  border-radius: 6px !important;
+  box-shadow: 0 0 14px rgba(251, 191, 36, 0.6) !important;
+  transition: background 0.12s ease-in-out, color 0.12s ease-in-out;
+  display: inline-block;
 }
 
 body.body--dark .sura-heading.is-reciting {
