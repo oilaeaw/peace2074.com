@@ -256,20 +256,25 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     const paddedVerse = pad3(verse)
     const fileKey = `${paddedSura}${paddedVerse}.mp3`
     const localMp3 = path.join(tempDir, fileKey)
-    const url = `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`
+    const primaryUrl = `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`
+    const mirrorUrl = `https://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/${fileKey}`
 
     if (!fs.existsSync(localMp3) || fs.statSync(localMp3).size < 100) {
       let success = false
-      for (let attempt = 1; attempt <= 3; attempt++) {
-        try {
-          execSync(`curl -sSL --connect-timeout 10 --retry 3 "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
-          if (fs.existsSync(localMp3) && fs.statSync(localMp3).size > 100) {
-            success = true
-            break
+      const urls = [primaryUrl, mirrorUrl]
+      for (const url of urls) {
+        for (let attempt = 1; attempt <= 3; attempt++) {
+          try {
+            execSync(`curl -sSL --connect-timeout 15 --retry 3 "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
+            if (fs.existsSync(localMp3) && fs.statSync(localMp3).size > 100) {
+              success = true
+              break
+            }
+          } catch {
+            // retry
           }
-        } catch {
-          // retry
         }
+        if (success) break
       }
       if (!success) {
         throw new Error(`Failed to download audio for verse ${verse} of Surah ${chapter.id}`)
