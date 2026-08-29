@@ -235,18 +235,25 @@ function applyThemeMode(mode: ThemeMode) {
   Dark.set(mode === 'dark')
 }
 
-// Initialize theme mode (system/light/dark) with fallback to legacy dark toggle
+// Initialize theme mode (system/light/dark) with fallback to URL params and local storage
 if (isClient) {
   installStartupErrorFilters()
   installAnalyticsBridge()
   void syncAnalyticsConsentState()
 
-  const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'light')
-  if (storedMode && storedMode !== 'system') {
-    applyThemeMode(storedMode)
+  const urlParams = new URLSearchParams(window.location.search)
+  const queryTheme = (urlParams.get('theme') || urlParams.get('mode') || '').toLowerCase()
+
+  if (queryTheme === 'dark' || queryTheme === 'light') {
+    applyThemeMode(queryTheme)
   } else {
-    // Always default to light mode
-    Dark.set(false)
+    const storedMode = localStore.get<ThemeMode>(THEME_MODE_KEY, 'light')
+    if (storedMode && storedMode !== 'system') {
+      applyThemeMode(storedMode)
+    } else {
+      // Always default to light mode
+      Dark.set(false)
+    }
   }
   window.addEventListener('theme-mode-changed', (event: Event) => {
     const detail = (event as CustomEvent<ThemeModeChangedDetail>).detail

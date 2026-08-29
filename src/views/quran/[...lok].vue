@@ -3,6 +3,8 @@
 import { useQuasar } from 'quasar'
 import { useBookmarksStore } from '@/stores/bookmarks.pinia'
 import * as ThreeBackground from '@/components/common/ThreeBackground.vue'
+import { normalizeLocale, persistLocale } from '@/utils/locale-routing'
+import { useProfileSettings } from '@/composables/useProfileSettings'
 
 const isClient = typeof window !== 'undefined'
 const $q = useQuasar()
@@ -218,6 +220,39 @@ function goToNextSura() {
 onMounted(() => {
   // Set initial lok value from route
   lok.value = getLokFromRoute()
+
+  // Process URL Query Parameters (lang, theme, highlight, verse, play)
+  if (isClient) {
+    const searchParams = new URLSearchParams(window.location.search)
+
+    const queryLang = (route.query.lang || route.query.locale || searchParams.get('lang') || searchParams.get('locale') || '').toString()
+    const targetLocale = normalizeLocale(queryLang)
+    if (targetLocale) {
+      const { locale } = useI18n()
+      locale.value = targetLocale
+      persistLocale(targetLocale)
+      document.documentElement.setAttribute('lang', targetLocale.split('-')[0])
+      document.documentElement.setAttribute('dir', ['ar', 'he'].includes(targetLocale.split('-')[0]) ? 'rtl' : 'ltr')
+    }
+
+    const queryTheme = (route.query.theme || route.query.mode || searchParams.get('theme') || searchParams.get('mode') || '').toString().toLowerCase()
+    if (['light', 'dark'].includes(queryTheme)) {
+      $q.dark.set(queryTheme === 'dark')
+    }
+
+    const queryHighlight = (route.query.highlight || searchParams.get('highlight') || '').toString().toLowerCase()
+    if (['word', 'ayah'].includes(queryHighlight)) {
+      const { setHighlightMode } = useProfileSettings()
+      void setHighlightMode(queryHighlight as any)
+    }
+
+    const queryVerse = Number(route.query.verse || route.query.ayah || 0)
+    if (queryVerse > 0) {
+      setTimeout(() => {
+        navigateToHash(`${lok.value}_${queryVerse}`)
+      }, 400)
+    }
+  }
 
   try {
     q2p.init(lok.value)
