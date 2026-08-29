@@ -1959,7 +1959,7 @@ function clearPlaybackPosition() {
   }
 }
 
-async function restorePlaybackPosition(opts: { autoResume?: boolean } = {}) {
+async function restorePlaybackPosition() {
   const saved = pickSavedPlaybackPosition()
   if (!saved || saved.suraId !== currentSuraId.value) {
     return false
@@ -1972,7 +1972,7 @@ async function restorePlaybackPosition(opts: { autoResume?: boolean } = {}) {
     return false
   }
 
-  // Restore position
+  // Automatically restore position and continue playback instantly without any manual prompt
   currentAyahIndex.value = saved.ayahIndex
   currentWordIndex.value =
     typeof saved.wordIndex === 'number' ? saved.wordIndex : -1
@@ -1980,55 +1980,67 @@ async function restorePlaybackPosition(opts: { autoResume?: boolean } = {}) {
     readerMode.value = saved.readerMode
   }
 
-  if (opts.autoResume) {
-    stopRequested.value = false
-    await startAudioRecitation(saved.ayahIndex, { withIntro: false })
-    if (audioEl.value && saved.audioTime > 0) {
-      audioEl.value.currentTime = saved.audioTime
-      updateCurrentWord(saved.audioTime)
-    } else if (currentWordIndex.value >= 0) {
-      scrollToCurrentWord(saved.ayahIndex, currentWordIndex.value)
-    }
-    return true
+  stopRequested.value = false
+  await startAudioRecitation(saved.ayahIndex, { withIntro: false })
+  if (audioEl.value && saved.audioTime > 0) {
+    audioEl.value.currentTime = saved.audioTime
+    updateCurrentWord(saved.audioTime)
+  } else if (currentWordIndex.value >= 0) {
+    scrollToCurrentWord(saved.ayahIndex, currentWordIndex.value)
+  }
+  syncUrlQueryParams()
+  return true
+}
+
+// Reactive URL state parameter computed property
+const activeUrlQueryParams = computed(() => {
+  if (typeof window === 'undefined') return {}
+  const params: Record<string, string> = { ...(route.query as Record<string, string>) }
+
+  params.theme = Dark.isActive ? 'dark' : 'light'
+
+  if (layoutMode.value) {
+    params.layout = layoutMode.value
   }
 
-  // Show notification asking if they want to resume
-  $q.notify({
-    type: 'info',
-    message:
-      t('pages.quran.resumeFromLast') ||
-      `Resume from verse ${saved.ayahIndex + 1}?`,
-    icon: 'replay',
-    timeout: 5000,
-    actions: [
-      {
-        label: t('pages.quran.resume') || 'Resume',
-        color: 'white',
-        handler: async () => {
-          stopRequested.value = false
-          await startAudioRecitation(saved.ayahIndex, { withIntro: false })
-          // Seek to saved time if available
-          if (audioEl.value && saved.audioTime > 0) {
-            audioEl.value.currentTime = saved.audioTime
-            updateCurrentWord(saved.audioTime)
-          } else if (currentWordIndex.value >= 0) {
-            scrollToCurrentWord(saved.ayahIndex, currentWordIndex.value)
-          }
-        },
-      },
-      {
-        label: t('pages.quran.restartSura'),
-        color: 'white',
-        handler: () => {
-          clearPlaybackPosition()
-          currentAyahIndex.value = -1
-          currentWordIndex.value = -1
-        },
-      },
-    ],
-  })
+  if (highlightMode.value) {
+    params.highlight = highlightMode.value
+  }
 
-  return true
+  if (currentAyahIndex.value >= 0) {
+    params.verse = String(currentAyahIndex.value + 1)
+  }
+
+  if (isPlayingAudio.value) {
+    params.play = 'true'
+  } else {
+    delete params.play
+  }
+
+  if (locale.value) {
+    params.lang = locale.value
+  }
+
+  return params
+})
+
+// Automatically keep browser URL parameters synchronized in real time whenever active state changes
+watch(
+  activeUrlQueryParams,
+  (newParams) => {
+    if (typeof window === 'undefined') return
+    const searchStr = new URLSearchParams(newParams).toString()
+    const newUrl = `${window.location.pathname}${searchStr ? '?' + searchStr : ''}`
+    window.history.replaceState(window.history.state, '', newUrl)
+  },
+  { deep: true }
+)
+
+function syncUrlQueryParams() {
+  if (typeof window === 'undefined') return
+  const searchStr = new URLSearchParams(activeUrlQueryParams.value).toString()
+  const newUrl = `${window.location.pathname}${searchStr ? '?' + searchStr : ''}`
+  window.history.replaceState(window.history.state, '', newUrl)
 }
 
 function getRecitationScrollOffset() {
@@ -2990,7 +3002,7 @@ onDeactivated(() => {
 onActivated(async () => {
   await nextTick()
   if (audioList.value.length > 0) {
-    await restorePlaybackPosition({ autoResume: true })
+    await restorePlaybackPosition()
   }
 })
 
