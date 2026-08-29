@@ -111,7 +111,7 @@
                     {{ aya.text }}
                   </div>
                   <div class="translation-text text-body2 text-grey-8">
-                    {{ aya.translation || aya.trans || 'In the name of Allah, the Entirely Merciful, the Especially Merciful.' }}
+                    {{ aya.translation || 'In the name of Allah, the Entirely Merciful, the Especially Merciful.' }}
                   </div>
                 </div>
               </div>
@@ -173,7 +173,7 @@
                       {{ suraItem.e_name }}
                     </q-item-label>
                     <q-item-label caption>
-                      {{ suraItem.ayat_count || suraItem.ayat?.length || 0 }} Verses
+                      {{ suraItem.total_verses || suraItem.ayat?.length || 0 }} Verses
                     </q-item-label>
                   </q-item-section>
 
