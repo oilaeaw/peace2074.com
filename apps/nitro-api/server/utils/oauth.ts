@@ -242,13 +242,18 @@ export function getCanonicalOAuthStartUrl(
     event: H3Event,
     provider: 'google' | 'apple'
 ) {
-    const callbackOrigin = getOAuthCallbackOrigin(provider)
-    if (!callbackOrigin) return null
-
     const requestUrl = getRequestURL(event, {
         xForwardedHost: true,
         xForwardedProto: true,
     })
+
+    // Allow local development on localhost on any port
+    if (requestUrl.hostname === 'localhost' || requestUrl.hostname === '127.0.0.1') {
+        return null
+    }
+
+    const callbackOrigin = getOAuthCallbackOrigin(provider)
+    if (!callbackOrigin) return null
 
     if (requestUrl.origin === callbackOrigin) {
         return null
