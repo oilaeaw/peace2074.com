@@ -3073,7 +3073,7 @@ watch(locale, async () => {
 
 // Watch layoutModeStore for changes (deep watch for nested ref)
 watch(
-  layoutModeStore.value,
+  () => layoutModeStore.value.value,
   (newMode) => {
     if (route.params.mode !== newMode) {
       router.replace({
@@ -3081,8 +3081,7 @@ watch(
         params: { ...route.params, mode: newMode },
       })
     }
-  },
-  { deep: true }
+  }
 )
 
 // Watch for URL param changes (browser back/forward)
