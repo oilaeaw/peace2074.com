@@ -99,7 +99,7 @@
     "1ce34b1b-27cc-46a2-befd-518006dd7caa": {
       "id": "1ce34b1b-27cc-46a2-befd-518006dd7caa",
       "createdAt": "2026-08-09T19:04:38.566Z",
-      "updatedAt": "2026-08-29T22:50:37.485Z",
+      "updatedAt": "2026-08-29T22:59:40.076Z",
       "userId": "113338273027295034471",
       "first_name": "Wael",
       "last_name": "Wahbeh",
@@ -326,6 +326,16 @@
       "ip": "::1",
       "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
       "expires_at": "2026-09-28T22:54:14.963Z"
+    },
+    "36fa951e-6be2-4d7e-9ba7-b31eb0791fcf": {
+      "id": "36fa951e-6be2-4d7e-9ba7-b31eb0791fcf",
+      "createdAt": "2026-08-29T22:58:14.532Z",
+      "updatedAt": "2026-08-29T22:58:14.532Z",
+      "userId": "113338273027295034471",
+      "provider": "google",
+      "ip": "::1",
+      "user_agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) HeadlessChrome/147.0.7727.15 Safari/537.36",
+      "expires_at": "2026-09-28T22:58:14.531Z"
     }
   }
 }
