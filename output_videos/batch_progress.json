@@ -2,9 +2,8 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "failed",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
-    "error": "Command failed: /usr/local/bin/ffmpeg -y -loop 1 -i \"public/yt_banner.png\" -i \"/tmp/surah_001/surah_001_audio.mp3\" -vf \"subtitles='/tmp/surah_001/surah_001.srt':force_style='FontSize=22,PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=4,Alignment=2,MarginV=50'\" -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest \"output_videos/surah_001_al_fatihah.mp4\""
+    "status": "generated",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4"
   },
   "2": {
     "surahId": 2,
