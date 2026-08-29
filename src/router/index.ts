@@ -41,7 +41,30 @@ router.beforeEach(async (to, from) => {
     if (localizedPath !== to.path) {
       return {
         path: localizedPath,
-        query: to.query,
+        query: { ...from.query, ...to.query },
+        hash: to.hash,
+        replace: true,
+      }
+    }
+  }
+
+  // Preserve Quran query parameters across navigations and recover from Chrome trimming
+  if (to.path.startsWith('/quran') && typeof window !== 'undefined') {
+    let savedParams: Record<string, string> = {}
+    try {
+      const savedJson = sessionStorage.getItem('quran-url-params')
+      if (savedJson) savedParams = JSON.parse(savedJson)
+    } catch {
+      /* noop */
+    }
+
+    const hasNewParams = Object.keys(to.query).length > 0
+    if (hasNewParams) {
+      sessionStorage.setItem('quran-url-params', JSON.stringify({ ...savedParams, ...to.query }))
+    } else if (Object.keys(savedParams).length > 0) {
+      return {
+        path: to.path,
+        query: { ...savedParams, ...from.query },
         hash: to.hash,
         replace: true,
       }
