@@ -48,17 +48,26 @@ async function main() {
 
         if (code) {
           console.log('\n🔑 Received authorization code! Exchanging with Google for access token...')
-          const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
-            method: 'POST',
-            headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
-            body: new URLSearchParams({
-              code,
-              client_id: CLIENT_ID,
-              client_secret: CLIENT_SECRET,
-              redirect_uri: REDIRECT_URI,
-              grant_type: 'authorization_code',
-            }),
-          })
+          let tokenRes: Response | null = null
+          for (let attempt = 1; attempt <= 3; attempt++) {
+            try {
+              tokenRes = await fetch('https://oauth2.googleapis.com/token', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: new URLSearchParams({
+                  code,
+                  client_id: CLIENT_ID,
+                  client_secret: CLIENT_SECRET,
+                  redirect_uri: REDIRECT_URI,
+                  grant_type: 'authorization_code',
+                }),
+              })
+              if (tokenRes.ok) break
+            } catch (netErr: any) {
+              console.warn(`[Network Retry ${attempt}/3] ${netErr?.message || netErr}`)
+              await new Promise((r) => setTimeout(r, 2000))
+            }
+          }
 
           const tokenData = await tokenRes.json()
 
