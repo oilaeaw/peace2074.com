@@ -216,7 +216,8 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, oauthToken?:
     )
 
     if (!initRes.ok) {
-      console.error(`[Surah ${chapter.id}] YouTube upload init failed: ${initRes.status}`)
+      const errText = await initRes.text()
+      console.error(`[Surah ${chapter.id}] YouTube upload init failed ${initRes.status}:`, errText)
       return null
     }
 
