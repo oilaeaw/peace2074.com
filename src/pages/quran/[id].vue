@@ -1901,9 +1901,23 @@ function playAyah(index: number) {
         playAyah(index + 1)
       }
     }
-    void el.play().catch(() => {
-      playAyah(index + 1)
-    })
+    const playPromise = el.play()
+    if (playPromise !== undefined) {
+      playPromise.catch((err) => {
+        console.warn('[Audio] Autoplay blocked by browser policy:', err)
+        if (typeof window !== 'undefined') {
+          const unlockAudio = () => {
+            void el.play().catch(() => {})
+            window.removeEventListener('click', unlockAudio)
+            window.removeEventListener('keydown', unlockAudio)
+            window.removeEventListener('touchstart', unlockAudio)
+          }
+          window.addEventListener('click', unlockAudio, { once: true })
+          window.addEventListener('keydown', unlockAudio, { once: true })
+          window.addEventListener('touchstart', unlockAudio, { once: true })
+        }
+      })
+    }
   } catch {
     playAyah(index + 1)
   }
