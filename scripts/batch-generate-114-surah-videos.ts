@@ -1,6 +1,9 @@
 import fs from 'node:fs'
 import path from 'node:path'
 import { execSync } from 'node:child_process'
+import dotenv from 'dotenv'
+
+dotenv.config()
 
 interface Chapter {
   id: number
