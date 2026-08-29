@@ -78,6 +78,10 @@ peace2074-tvOS/
 # Generated public Quran translation assets
 public/data/editions/
 
+# Generated video batch files (do not upload to Git)
+output_videos/
+*.mp4
+
 # aged-limit-06d9 build output (separate CF Worker project)
 aged-limit-06d9/dist/
 aged-limit-06d9/node_modules/

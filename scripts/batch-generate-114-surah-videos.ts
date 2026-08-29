@@ -63,12 +63,21 @@ async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<st
     const localMp3 = path.join(tempDir, fileKey)
     const url = `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`
 
-    if (!fs.existsSync(localMp3)) {
-      try {
-        execSync(`curl -s "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
-      } catch (err: any) {
-        console.warn(`[Surah ${chapter.id}] Failed to download verse ${verse}, retrying...`)
-        execSync(`curl -s "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
+    if (!fs.existsSync(localMp3) || fs.statSync(localMp3).size < 100) {
+      let success = false
+      for (let attempt = 1; attempt <= 3; attempt++) {
+        try {
+          execSync(`curl -sSL --connect-timeout 10 --retry 3 "${url}" -o "${localMp3}"`, { stdio: 'ignore' })
+          if (fs.existsSync(localMp3) && fs.statSync(localMp3).size > 100) {
+            success = true
+            break
+          }
+        } catch {
+          // retry
+        }
+      }
+      if (!success) {
+        throw new Error(`Failed to download audio for verse ${verse} of Surah ${chapter.id}`)
       }
     }
     mp3Files.push(localMp3)
@@ -195,6 +204,12 @@ async function main() {
     if (rec.status === 'uploaded' && rec.youtubeVideoId) {
       console.log(`[Surah ${id}/114] Already completed & uploaded (Video ID: ${rec.youtubeVideoId}). Skipping.`)
       continue
+    }
+
+    // Reset failed status to pending on retry
+    if (rec.status === 'failed') {
+      rec.status = 'pending'
+      delete rec.error
     }
 
     const tempDir = path.join('/tmp', `surah_${pad3(id)}`)

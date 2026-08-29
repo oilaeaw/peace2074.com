@@ -4,5 +4,683 @@
     "surahName": "Al-Fatihah",
     "status": "generated",
     "videoPath": "output_videos/surah_001_al_fatihah.mp4"
+  },
+  "2": {
+    "surahId": 2,
+    "surahName": "Al-Baqarah",
+    "status": "generated",
+    "videoPath": "output_videos/surah_002_al_baqarah.mp4"
+  },
+  "3": {
+    "surahId": 3,
+    "surahName": "Ali 'Imran",
+    "status": "generated",
+    "videoPath": "output_videos/surah_003_ali__imran.mp4"
+  },
+  "4": {
+    "surahId": 4,
+    "surahName": "An-Nisa",
+    "status": "generated",
+    "videoPath": "output_videos/surah_004_an_nisa.mp4"
+  },
+  "5": {
+    "surahId": 5,
+    "surahName": "Al-Ma'idah",
+    "status": "generated",
+    "videoPath": "output_videos/surah_005_al_ma_idah.mp4"
+  },
+  "6": {
+    "surahId": 6,
+    "surahName": "Al-An'am",
+    "status": "generated",
+    "videoPath": "output_videos/surah_006_al_an_am.mp4"
+  },
+  "7": {
+    "surahId": 7,
+    "surahName": "Al-A'raf",
+    "status": "generated",
+    "videoPath": "output_videos/surah_007_al_a_raf.mp4"
+  },
+  "8": {
+    "surahId": 8,
+    "surahName": "Al-Anfal",
+    "status": "generated",
+    "videoPath": "output_videos/surah_008_al_anfal.mp4"
+  },
+  "9": {
+    "surahId": 9,
+    "surahName": "At-Tawbah",
+    "status": "generated",
+    "videoPath": "output_videos/surah_009_at_tawbah.mp4"
+  },
+  "10": {
+    "surahId": 10,
+    "surahName": "Yunus",
+    "status": "generated",
+    "videoPath": "output_videos/surah_010_yunus.mp4"
+  },
+  "11": {
+    "surahId": 11,
+    "surahName": "Hud",
+    "status": "generated",
+    "videoPath": "output_videos/surah_011_hud.mp4"
+  },
+  "12": {
+    "surahId": 12,
+    "surahName": "Yusuf",
+    "status": "generated",
+    "videoPath": "output_videos/surah_012_yusuf.mp4"
+  },
+  "13": {
+    "surahId": 13,
+    "surahName": "Ar-Ra'd",
+    "status": "generated",
+    "videoPath": "output_videos/surah_013_ar_ra_d.mp4"
+  },
+  "14": {
+    "surahId": 14,
+    "surahName": "Ibrahim",
+    "status": "generated",
+    "videoPath": "output_videos/surah_014_ibrahim.mp4"
+  },
+  "15": {
+    "surahId": 15,
+    "surahName": "Al-Hijr",
+    "status": "generated",
+    "videoPath": "output_videos/surah_015_al_hijr.mp4"
+  },
+  "16": {
+    "surahId": 16,
+    "surahName": "An-Nahl",
+    "status": "generated",
+    "videoPath": "output_videos/surah_016_an_nahl.mp4"
+  },
+  "17": {
+    "surahId": 17,
+    "surahName": "Al-Isra",
+    "status": "generated",
+    "videoPath": "output_videos/surah_017_al_isra.mp4"
+  },
+  "18": {
+    "surahId": 18,
+    "surahName": "Al-Kahf",
+    "status": "generated",
+    "videoPath": "output_videos/surah_018_al_kahf.mp4"
+  },
+  "19": {
+    "surahId": 19,
+    "surahName": "Maryam",
+    "status": "generated",
+    "videoPath": "output_videos/surah_019_maryam.mp4"
+  },
+  "20": {
+    "surahId": 20,
+    "surahName": "Taha",
+    "status": "generated",
+    "videoPath": "output_videos/surah_020_taha.mp4"
+  },
+  "21": {
+    "surahId": 21,
+    "surahName": "Al-Anbya",
+    "status": "generated",
+    "videoPath": "output_videos/surah_021_al_anbya.mp4"
+  },
+  "22": {
+    "surahId": 22,
+    "surahName": "Al-Hajj",
+    "status": "generated",
+    "videoPath": "output_videos/surah_022_al_hajj.mp4"
+  },
+  "23": {
+    "surahId": 23,
+    "surahName": "Al-Mu'minun",
+    "status": "generated",
+    "videoPath": "output_videos/surah_023_al_mu_minun.mp4"
+  },
+  "24": {
+    "surahId": 24,
+    "surahName": "An-Nur",
+    "status": "generated",
+    "videoPath": "output_videos/surah_024_an_nur.mp4"
+  },
+  "25": {
+    "surahId": 25,
+    "surahName": "Al-Furqan",
+    "status": "generated",
+    "videoPath": "output_videos/surah_025_al_furqan.mp4"
+  },
+  "26": {
+    "surahId": 26,
+    "surahName": "Ash-Shu'ara",
+    "status": "generated",
+    "videoPath": "output_videos/surah_026_ash_shu_ara.mp4"
+  },
+  "27": {
+    "surahId": 27,
+    "surahName": "An-Naml",
+    "status": "generated",
+    "videoPath": "output_videos/surah_027_an_naml.mp4"
+  },
+  "28": {
+    "surahId": 28,
+    "surahName": "Al-Qasas",
+    "status": "failed",
+    "error": "Failed to download audio for verse 20 of Surah 28"
+  },
+  "29": {
+    "surahId": 29,
+    "surahName": "Al-'Ankabut",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 29"
+  },
+  "30": {
+    "surahId": 30,
+    "surahName": "Ar-Rum",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 30"
+  },
+  "31": {
+    "surahId": 31,
+    "surahName": "Luqman",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 31"
+  },
+  "32": {
+    "surahId": 32,
+    "surahName": "As-Sajdah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 32"
+  },
+  "33": {
+    "surahId": 33,
+    "surahName": "Al-Ahzab",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 33"
+  },
+  "34": {
+    "surahId": 34,
+    "surahName": "Saba",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 34"
+  },
+  "35": {
+    "surahId": 35,
+    "surahName": "Fatir",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 35"
+  },
+  "36": {
+    "surahId": 36,
+    "surahName": "Ya-Sin",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 36"
+  },
+  "37": {
+    "surahId": 37,
+    "surahName": "As-Saffat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 37"
+  },
+  "38": {
+    "surahId": 38,
+    "surahName": "Sad",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 38"
+  },
+  "39": {
+    "surahId": 39,
+    "surahName": "Az-Zumar",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 39"
+  },
+  "40": {
+    "surahId": 40,
+    "surahName": "Ghafir",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 40"
+  },
+  "41": {
+    "surahId": 41,
+    "surahName": "Fussilat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 41"
+  },
+  "42": {
+    "surahId": 42,
+    "surahName": "Ash-Shuraa",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 42"
+  },
+  "43": {
+    "surahId": 43,
+    "surahName": "Az-Zukhruf",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 43"
+  },
+  "44": {
+    "surahId": 44,
+    "surahName": "Ad-Dukhan",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 44"
+  },
+  "45": {
+    "surahId": 45,
+    "surahName": "Al-Jathiyah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 45"
+  },
+  "46": {
+    "surahId": 46,
+    "surahName": "Al-Ahqaf",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 46"
+  },
+  "47": {
+    "surahId": 47,
+    "surahName": "Muhammad",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 47"
+  },
+  "48": {
+    "surahId": 48,
+    "surahName": "Al-Fath",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 48"
+  },
+  "49": {
+    "surahId": 49,
+    "surahName": "Al-Hujurat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 49"
+  },
+  "50": {
+    "surahId": 50,
+    "surahName": "Qaf",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 50"
+  },
+  "51": {
+    "surahId": 51,
+    "surahName": "Adh-Dhariyat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 51"
+  },
+  "52": {
+    "surahId": 52,
+    "surahName": "At-Tur",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 52"
+  },
+  "53": {
+    "surahId": 53,
+    "surahName": "An-Najm",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 53"
+  },
+  "54": {
+    "surahId": 54,
+    "surahName": "Al-Qamar",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 54"
+  },
+  "55": {
+    "surahId": 55,
+    "surahName": "Ar-Rahman",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 55"
+  },
+  "56": {
+    "surahId": 56,
+    "surahName": "Al-Waqi'ah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 56"
+  },
+  "57": {
+    "surahId": 57,
+    "surahName": "Al-Hadid",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 57"
+  },
+  "58": {
+    "surahId": 58,
+    "surahName": "Al-Mujadila",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 58"
+  },
+  "59": {
+    "surahId": 59,
+    "surahName": "Al-Hashr",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 59"
+  },
+  "60": {
+    "surahId": 60,
+    "surahName": "Al-Mumtahanah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 60"
+  },
+  "61": {
+    "surahId": 61,
+    "surahName": "As-Saf",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 61"
+  },
+  "62": {
+    "surahId": 62,
+    "surahName": "Al-Jumu'ah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 62"
+  },
+  "63": {
+    "surahId": 63,
+    "surahName": "Al-Munafiqun",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 63"
+  },
+  "64": {
+    "surahId": 64,
+    "surahName": "At-Taghabun",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 64"
+  },
+  "65": {
+    "surahId": 65,
+    "surahName": "At-Talaq",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 65"
+  },
+  "66": {
+    "surahId": 66,
+    "surahName": "At-Tahrim",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 66"
+  },
+  "67": {
+    "surahId": 67,
+    "surahName": "Al-Mulk",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 67"
+  },
+  "68": {
+    "surahId": 68,
+    "surahName": "Al-Qalam",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 68"
+  },
+  "69": {
+    "surahId": 69,
+    "surahName": "Al-Haqqah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 69"
+  },
+  "70": {
+    "surahId": 70,
+    "surahName": "Al-Ma'arij",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 70"
+  },
+  "71": {
+    "surahId": 71,
+    "surahName": "Nuh",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 71"
+  },
+  "72": {
+    "surahId": 72,
+    "surahName": "Al-Jinn",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 72"
+  },
+  "73": {
+    "surahId": 73,
+    "surahName": "Al-Muzzammil",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 73"
+  },
+  "74": {
+    "surahId": 74,
+    "surahName": "Al-Muddaththir",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 74"
+  },
+  "75": {
+    "surahId": 75,
+    "surahName": "Al-Qiyamah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 75"
+  },
+  "76": {
+    "surahId": 76,
+    "surahName": "Al-Insan",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 76"
+  },
+  "77": {
+    "surahId": 77,
+    "surahName": "Al-Mursalat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 77"
+  },
+  "78": {
+    "surahId": 78,
+    "surahName": "An-Naba",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 78"
+  },
+  "79": {
+    "surahId": 79,
+    "surahName": "An-Nazi'at",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 79"
+  },
+  "80": {
+    "surahId": 80,
+    "surahName": "'Abasa",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 80"
+  },
+  "81": {
+    "surahId": 81,
+    "surahName": "At-Takwir",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 81"
+  },
+  "82": {
+    "surahId": 82,
+    "surahName": "Al-Infitar",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 82"
+  },
+  "83": {
+    "surahId": 83,
+    "surahName": "Al-Mutaffifin",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 83"
+  },
+  "84": {
+    "surahId": 84,
+    "surahName": "Al-Inshiqaq",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 84"
+  },
+  "85": {
+    "surahId": 85,
+    "surahName": "Al-Buruj",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 85"
+  },
+  "86": {
+    "surahId": 86,
+    "surahName": "At-Tariq",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 86"
+  },
+  "87": {
+    "surahId": 87,
+    "surahName": "Al-A'la",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 87"
+  },
+  "88": {
+    "surahId": 88,
+    "surahName": "Al-Ghashiyah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 88"
+  },
+  "89": {
+    "surahId": 89,
+    "surahName": "Al-Fajr",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 89"
+  },
+  "90": {
+    "surahId": 90,
+    "surahName": "Al-Balad",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 90"
+  },
+  "91": {
+    "surahId": 91,
+    "surahName": "Ash-Shams",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 91"
+  },
+  "92": {
+    "surahId": 92,
+    "surahName": "Al-Layl",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 92"
+  },
+  "93": {
+    "surahId": 93,
+    "surahName": "Ad-Duhaa",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 93"
+  },
+  "94": {
+    "surahId": 94,
+    "surahName": "Ash-Sharh",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 94"
+  },
+  "95": {
+    "surahId": 95,
+    "surahName": "At-Tin",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 95"
+  },
+  "96": {
+    "surahId": 96,
+    "surahName": "Al-'Alaq",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 96"
+  },
+  "97": {
+    "surahId": 97,
+    "surahName": "Al-Qadr",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 97"
+  },
+  "98": {
+    "surahId": 98,
+    "surahName": "Al-Bayyinah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 98"
+  },
+  "99": {
+    "surahId": 99,
+    "surahName": "Az-Zalzalah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 99"
+  },
+  "100": {
+    "surahId": 100,
+    "surahName": "Al-'Adiyat",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 100"
+  },
+  "101": {
+    "surahId": 101,
+    "surahName": "Al-Qari'ah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 101"
+  },
+  "102": {
+    "surahId": 102,
+    "surahName": "At-Takathur",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 102"
+  },
+  "103": {
+    "surahId": 103,
+    "surahName": "Al-'Asr",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 103"
+  },
+  "104": {
+    "surahId": 104,
+    "surahName": "Al-Humazah",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 104"
+  },
+  "105": {
+    "surahId": 105,
+    "surahName": "Al-Fil",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 105"
+  },
+  "106": {
+    "surahId": 106,
+    "surahName": "Quraysh",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 106"
+  },
+  "107": {
+    "surahId": 107,
+    "surahName": "Al-Ma'un",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 107"
+  },
+  "108": {
+    "surahId": 108,
+    "surahName": "Al-Kawthar",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 108"
+  },
+  "109": {
+    "surahId": 109,
+    "surahName": "Al-Kafirun",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 109"
+  },
+  "110": {
+    "surahId": 110,
+    "surahName": "An-Nasr",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 110"
+  },
+  "111": {
+    "surahId": 111,
+    "surahName": "Al-Masad",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 111"
+  },
+  "112": {
+    "surahId": 112,
+    "surahName": "Al-Ikhlas",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 112"
+  },
+  "113": {
+    "surahId": 113,
+    "surahName": "Al-Falaq",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 113"
+  },
+  "114": {
+    "surahId": 114,
+    "surahName": "An-Nas",
+    "status": "failed",
+    "error": "Failed to download audio for verse 1 of Surah 114"
   }
 }
