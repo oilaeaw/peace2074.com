@@ -8,16 +8,14 @@
   "2": {
     "surahId": 2,
     "surahName": "Al-Baqarah",
-    "status": "failed",
-    "videoPath": "output_videos/surah_002_al_baqarah.mp4",
-    "error": "Failed to download audio for verse 230 of Surah 2"
+    "status": "generated",
+    "videoPath": "output_videos/surah_002_al_baqarah.mp4"
   },
   "3": {
     "surahId": 3,
     "surahName": "Ali 'Imran",
-    "status": "failed",
-    "videoPath": "output_videos/surah_003_ali__imran.mp4",
-    "error": "Failed to download audio for verse 193 of Surah 3"
+    "status": "generated",
+    "videoPath": "output_videos/surah_003_ali__imran.mp4"
   },
   "4": {
     "surahId": 4,
@@ -34,16 +32,14 @@
   "6": {
     "surahId": 6,
     "surahName": "Al-An'am",
-    "status": "failed",
-    "videoPath": "output_videos/surah_006_al_an_am.mp4",
-    "error": "Failed to download audio for verse 165 of Surah 6"
+    "status": "generated",
+    "videoPath": "output_videos/surah_006_al_an_am.mp4"
   },
   "7": {
     "surahId": 7,
     "surahName": "Al-A'raf",
-    "status": "failed",
-    "videoPath": "output_videos/surah_007_al_a_raf.mp4",
-    "error": "Failed to download audio for verse 203 of Surah 7"
+    "status": "generated",
+    "videoPath": "output_videos/surah_007_al_a_raf.mp4"
   },
   "8": {
     "surahId": 8,
@@ -54,9 +50,8 @@
   "9": {
     "surahId": 9,
     "surahName": "At-Tawbah",
-    "status": "failed",
-    "videoPath": "output_videos/surah_009_at_tawbah.mp4",
-    "error": "Failed to download audio for verse 127 of Surah 9"
+    "status": "generated",
+    "videoPath": "output_videos/surah_009_at_tawbah.mp4"
   },
   "10": {
     "surahId": 10,
@@ -73,8 +68,9 @@
   "12": {
     "surahId": 12,
     "surahName": "Yusuf",
-    "status": "generated",
-    "videoPath": "output_videos/surah_012_yusuf.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_012_yusuf.mp4",
+    "error": "Failed to download audio for verse 111 of Surah 12"
   },
   "13": {
     "surahId": 13,
@@ -85,21 +81,22 @@
   "14": {
     "surahId": 14,
     "surahName": "Ibrahim",
-    "status": "generated",
-    "videoPath": "output_videos/surah_014_ibrahim.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_014_ibrahim.mp4",
+    "error": "Failed to download audio for verse 47 of Surah 14"
   },
   "15": {
     "surahId": 15,
     "surahName": "Al-Hijr",
-    "status": "generated",
-    "videoPath": "output_videos/surah_015_al_hijr.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_015_al_hijr.mp4",
+    "error": "Failed to download audio for verse 98 of Surah 15"
   },
   "16": {
     "surahId": 16,
     "surahName": "An-Nahl",
-    "status": "failed",
-    "videoPath": "output_videos/surah_016_an_nahl.mp4",
-    "error": "Failed to download audio for verse 125 of Surah 16"
+    "status": "generated",
+    "videoPath": "output_videos/surah_016_an_nahl.mp4"
   },
   "17": {
     "surahId": 17,
@@ -122,20 +119,23 @@
   "20": {
     "surahId": 20,
     "surahName": "Taha",
-    "status": "generated",
-    "videoPath": "output_videos/surah_020_taha.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_020_taha.mp4",
+    "error": "Failed to download audio for verse 132 of Surah 20"
   },
   "21": {
     "surahId": 21,
     "surahName": "Al-Anbya",
-    "status": "generated",
-    "videoPath": "output_videos/surah_021_al_anbya.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_021_al_anbya.mp4",
+    "error": "Failed to download audio for verse 112 of Surah 21"
   },
   "22": {
     "surahId": 22,
     "surahName": "Al-Hajj",
-    "status": "generated",
-    "videoPath": "output_videos/surah_022_al_hajj.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_022_al_hajj.mp4",
+    "error": "Failed to download audio for verse 76 of Surah 22"
   },
   "23": {
     "surahId": 23,
