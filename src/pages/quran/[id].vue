@@ -2965,10 +2965,16 @@ onMounted(async () => {
     window.speechSynthesis.onvoiceschanged = loadVoices
   }
 
-  // Check for saved playback position and offer to resume
+  // Check for saved playback position and offer to resume, or auto-start recitation permanently
   await nextTick()
   if (audioList.value.length > 0) {
-    await restorePlaybackPosition()
+    const restored = await restorePlaybackPosition()
+    if (!restored && !isPlayingAudio.value) {
+      setTimeout(() => {
+        const startIndex = queryVerse > 0 ? queryVerse - 1 : 0
+        void startAudioRecitation(startIndex, { withIntro: false })
+      }, 400)
+    }
   }
 
   // Show feature announcement for auto-continue (only once)
