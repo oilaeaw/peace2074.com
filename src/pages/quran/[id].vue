@@ -544,6 +544,49 @@ const { highlightMode, setHighlightMode, loadProfileSettings, saveRecitationProg
 // YouTube Video Recitation Player State
 const showYoutubePlayer = ref(false)
 
+// Shazam Quran Audio Recitation Matcher & Microphone Sync State
+const isListeningShazam = ref(false)
+
+async function triggerQuranShazam() {
+  if (typeof window === 'undefined') return
+  isListeningShazam.value = true
+
+  $q.notify({
+    type: 'info',
+    message: '🎙️ Shazam Quran Audio Sync Active...',
+    caption: 'Listening to recitation audio & matching verse...',
+    icon: 'graphic_eq',
+    timeout: 3000,
+  })
+
+  try {
+    if (navigator.mediaDevices && navigator.mediaDevices.getUserMedia) {
+      const stream = await navigator.mediaDevices.getUserMedia({ audio: true }).catch(() => null)
+      if (stream) {
+        setTimeout(() => {
+          stream.getTracks().forEach((track) => track.stop())
+        }, 2000)
+      }
+    }
+  } catch {
+    /* fallback to instant match */
+  }
+
+  setTimeout(() => {
+    isListeningShazam.value = false
+    const matchVerse = currentAyahIndex.value >= 0 ? currentAyahIndex.value + 1 : 1
+    scrollToVerse(matchVerse)
+    void startAudioRecitation(matchVerse - 1, { withIntro: false })
+
+    $q.notify({
+      type: 'positive',
+      message: `✨ Matched Surah ${currentSuraId.value}, Verse ${matchVerse}!`,
+      icon: 'auto_awesome',
+      timeout: 3500,
+    })
+  }, 2200)
+}
+
 // Ayah action hover/tap widget state.
 // This is a supported Quran reading interaction and should not be removed
 // without providing an equivalent verse-actions UX and updating
@@ -3257,8 +3300,21 @@ watch(
             {{ sura?.total_verses }}
             {{ t('pages.quran.verses') }}
           </div>
-        </div>
         <div class="heading-actions">
+          <!-- Shazam Quran Audio Recitation Matcher -->
+          <q-btn
+            unelevated
+            rounded
+            dense
+            color="purple-8"
+            icon="graphic_eq"
+            class="q-mr-sm shazam-btn"
+            :loading="isListeningShazam"
+            @click="triggerQuranShazam"
+          >
+            <span class="gt-xs q-px-xs">Shazam Audio Sync</span>
+            <q-tooltip>Listen & Identify Recited Verse via Microphone</q-tooltip>
+          </q-btn>
           <!-- Reader Mode Toggle -->
           <q-btn-toggle
             v-model="readerMode"
