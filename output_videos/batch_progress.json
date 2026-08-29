@@ -68,8 +68,9 @@
   "12": {
     "surahId": 12,
     "surahName": "Yusuf",
-    "status": "generated",
-    "videoPath": "output_videos/surah_012_yusuf.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_012_yusuf.mp4",
+    "error": "Failed to download audio for verse 111 of Surah 12"
   },
   "13": {
     "surahId": 13,
@@ -80,14 +81,16 @@
   "14": {
     "surahId": 14,
     "surahName": "Ibrahim",
-    "status": "generated",
-    "videoPath": "output_videos/surah_014_ibrahim.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_014_ibrahim.mp4",
+    "error": "Failed to download audio for verse 47 of Surah 14"
   },
   "15": {
     "surahId": 15,
     "surahName": "Al-Hijr",
-    "status": "generated",
-    "videoPath": "output_videos/surah_015_al_hijr.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_015_al_hijr.mp4",
+    "error": "Failed to download audio for verse 98 of Surah 15"
   },
   "16": {
     "surahId": 16,
