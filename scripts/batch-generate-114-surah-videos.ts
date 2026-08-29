@@ -112,6 +112,70 @@ async function generateSurahVideo(chapter: Chapter, audioPath: string): Promise<
   return outputVideo
 }
 
+async function getOrCreatePlaylist(oauthToken: string): Promise<string | null> {
+  const title = 'Peace2074 — Complete Holy Quran Recitation (114 Surahs)'
+  const description = 'Complete recitation of all 114 Surahs of the Holy Quran recited by Sheikh Mishary Rashid Alafasy. Streamed and presented by Peace2074.'
+
+  try {
+    // 1. Search existing playlists
+    const listRes = await fetch('https://www.googleapis.com/youtube/v3/playlists?mine=true&part=snippet&maxResults=50', {
+      headers: { Authorization: `Bearer ${oauthToken}` },
+    })
+    if (listRes.ok) {
+      const data = await listRes.json()
+      const existing = data.items?.find((p: any) => p.snippet?.title === title)
+      if (existing) {
+        return existing.id
+      }
+    }
+
+    // 2. Create playlist if not found
+    const createRes = await fetch('https://www.googleapis.com/youtube/v3/playlists?part=snippet,status', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${oauthToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        snippet: { title, description },
+        status: { privacyStatus: 'public' },
+      }),
+    })
+    if (createRes.ok) {
+      const pData = await createRes.json()
+      console.log(`[YouTube] 📁 Created Playlist: "${title}" (ID: ${pData.id})`)
+      return pData.id
+    }
+  } catch (err: any) {
+    console.error('[YouTube] Playlist creation/fetch error:', err?.message || err)
+  }
+  return null
+}
+
+async function addVideoToPlaylist(videoId: string, playlistId: string, oauthToken: string) {
+  try {
+    await fetch('https://www.googleapis.com/youtube/v3/playlistItems?part=snippet', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${oauthToken}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        snippet: {
+          playlistId,
+          resourceId: {
+            kind: 'youtube#video',
+            videoId,
+          },
+        },
+      }),
+    })
+    console.log(`[YouTube] ➕ Added video ${videoId} to playlist ${playlistId}`)
+  } catch (err: any) {
+    console.error(`[YouTube] Error adding video ${videoId} to playlist:`, err?.message || err)
+  }
+}
+
 async function uploadToYouTube(chapter: Chapter, videoPath: string, oauthToken?: string): Promise<string | null> {
   if (!oauthToken) {
     console.log(`[Surah ${chapter.id}/${114}] Video generated at ${videoPath} (Skipping direct YouTube upload: No YOUTUBE_OAUTH_TOKEN provided)`)
@@ -172,6 +236,11 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, oauthToken?:
     if (uploadRes.ok) {
       const data = await uploadRes.json()
       console.log(`[Surah ${chapter.id}/${114}] 🎉 Uploaded to YouTube! Video ID: ${data.id}`)
+      
+      const playlistId = await getOrCreatePlaylist(oauthToken)
+      if (playlistId) {
+        await addVideoToPlaylist(data.id, playlistId, oauthToken)
+      }
       return data.id
     }
   } catch (err: any) {
