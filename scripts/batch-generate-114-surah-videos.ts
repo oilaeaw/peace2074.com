@@ -84,19 +84,173 @@ function getAudioDuration(filePath: string): number {
   }
 }
 
-function formatSrtTime(seconds: number): string {
-  const date = new Date(0)
-  date.setUTCMilliseconds(Math.floor(seconds * 1000))
-  const hh = String(date.getUTCHours()).padStart(2, '0')
-  const mm = String(date.getUTCMinutes()).padStart(2, '0')
-  const ss = String(date.getUTCSeconds()).padStart(2, '0')
-  const ms = String(date.getUTCMilliseconds()).padStart(3, '0')
-  return `${hh}:${mm}:${ss},${ms}`
+function generateVerseHtml(chapter: Chapter, verse: VerseContent): string {
+  return `<!DOCTYPE html>
+<html lang="ar">
+<head>
+  <meta charset="UTF-8">
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Amiri:ital,wght@0,400;0,700;1,400&family=DM+Sans:ital,opsz,wght@0,9..40,100..1000;1,9..40,100..1000&display=swap" rel="stylesheet">
+  <style>
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body {
+      width: 1280px;
+      height: 720px;
+      background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
+      color: #f8fafc;
+      font-family: 'DM Sans', sans-serif;
+      display: flex;
+      flex-direction: column;
+      justify-content: space-between;
+      align-items: center;
+      padding: 40px 60px;
+      overflow: hidden;
+    }
+    .header {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+      padding-bottom: 20px;
+    }
+    .brand {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      font-weight: 700;
+      font-size: 24px;
+      color: #fbbf24;
+      letter-spacing: 1px;
+    }
+    .surah-info {
+      text-align: right;
+      font-size: 20px;
+      color: #94a3b8;
+    }
+    .surah-info span {
+      color: #38bdf8;
+      font-weight: 600;
+    }
+    .content-card {
+      width: 100%;
+      max-width: 1100px;
+      background: rgba(15, 23, 42, 0.75);
+      backdrop-filter: blur(16px);
+      border: 2px solid rgba(251, 191, 36, 0.4);
+      box-shadow: 0 0 40px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.05);
+      border-radius: 24px;
+      padding: 40px;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 28px;
+      text-align: center;
+    }
+    .verse-badge {
+      display: inline-flex;
+      align-items: center;
+      gap: 8px;
+      background: rgba(251, 191, 36, 0.15);
+      border: 1px solid rgba(251, 191, 36, 0.5);
+      color: #fbbf24;
+      padding: 6px 18px;
+      border-radius: 999px;
+      font-size: 16px;
+      font-weight: 600;
+    }
+    .arabic-text {
+      font-family: 'Amiri', serif;
+      font-size: 44px;
+      line-height: 1.8;
+      color: #ffffff;
+      direction: rtl;
+      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
+    }
+    .translation-text {
+      font-size: 22px;
+      line-height: 1.6;
+      color: #cbd5e1;
+      max-width: 900px;
+      font-weight: 400;
+    }
+    .footer {
+      width: 100%;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 16px;
+      color: #64748b;
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+    }
+    .active-indicator {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      color: #4ade80;
+      font-weight: 600;
+    }
+    .pulse-dot {
+      width: 10px;
+      height: 10px;
+      background-color: #4ade80;
+      border-radius: 50%;
+      box-shadow: 0 0 10px #4ade80;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <div class="brand">
+      <span>✨ PEACE2074</span>
+    </div>
+    <div class="surah-info">
+      Surah <span>${chapter.transliteration}</span> (${chapter.name})
+    </div>
+  </div>
+
+  <div class="content-card">
+    <div class="verse-badge">
+      <span>Ayah ${verse.verseNumber} of ${chapter.total_verses}</span>
+    </div>
+    <div class="arabic-text">
+      ${verse.arabicText} ﴿${verse.verseNumber}﴾
+    </div>
+    <div class="translation-text">
+      "${verse.translationText}"
+    </div>
+  </div>
+
+  <div class="footer">
+    <div class="active-indicator">
+      <div class="pulse-dot"></div>
+      <span>Recitation Follow-Along</span>
+    </div>
+    <div>Recited by Sheikh Mishary Rashid Alafasy</div>
+  </div>
+</body>
+</html>`
 }
 
-async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<{ audioPath: string; srtPath: string | null }> {
+async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string): Promise<string> {
   const paddedSura = pad3(chapter.id)
-  const mp3Files: string[] = []
+  const outputVideo = path.join(OUTPUT_DIR, `surah_${paddedSura}_${chapter.transliteration.toLowerCase().replace(/[^a-z0-9]/g, '_')}.mp4`)
+
+  if (fs.existsSync(outputVideo) && fs.statSync(outputVideo).size > 100000) {
+    return outputVideo
+  }
+
+  console.log(`[Surah ${chapter.id}/${114}] 🎨 Generating synchronized verse cards & rendering HD video: ${chapter.transliteration} (${chapter.name})...`)
+
+  const versesData = await fetchSurahVersesData(chapter.id)
+  
+  const { chromium } = await import('@playwright/test')
+  const browser = await chromium.launch()
+  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
+
+  const segmentVideos: string[] = []
 
   for (let verse = 1; verse <= chapter.total_verses; verse++) {
     const paddedVerse = pad3(verse)
@@ -121,79 +275,40 @@ async function downloadSurahAudio(chapter: Chapter, tempDir: string): Promise<{ 
         throw new Error(`Failed to download audio for verse ${verse} of Surah ${chapter.id}`)
       }
     }
-    mp3Files.push(localMp3)
+
+    const verseData = versesData.find((v) => v.verseNumber === verse) || {
+      verseNumber: verse,
+      arabicText: '',
+      translationText: '',
+    }
+
+    const htmlContent = generateVerseHtml(chapter, verseData)
+    const cardPng = path.join(tempDir, `verse_${paddedVerse}.png`)
+
+    await page.setContent(htmlContent, { waitUntil: 'networkidle' })
+    await page.screenshot({ path: cardPng, type: 'png' })
+
+    const duration = getAudioDuration(localMp3)
+    const segmentMp4 = path.join(tempDir, `segment_${paddedVerse}.mp4`)
+
+    execSync(
+      `/usr/local/bin/ffmpeg -y -loop 1 -i "${cardPng}" -i "${localMp3}" -t ${duration} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p "${segmentMp4}"`,
+      { stdio: 'ignore' }
+    )
+
+    segmentVideos.push(segmentMp4)
   }
 
-  const concatListFile = path.join(tempDir, 'concat_list.txt')
-  const concatContent = mp3Files.map((f) => `file '${f.replace(/'/g, "'\\''")}'`).join('\n')
+  await browser.close()
+
+  const concatListFile = path.join(tempDir, 'segments_list.txt')
+  const concatContent = segmentVideos.map((f) => `file '${f.replace(/'/g, "'\\''")}'`).join('\n')
   fs.writeFileSync(concatListFile, concatContent)
 
-  const outputAudio = path.join(tempDir, `surah_${paddedSura}_audio.mp3`)
   execSync(
-    `/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${concatListFile}" -c copy "${outputAudio}"`,
+    `/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${concatListFile}" -c copy "${outputVideo}"`,
     { stdio: 'ignore' }
   )
-
-  // Generate synchronized subtitles with Arabic text and English translation
-  let srtPath: string | null = null
-  try {
-    const versesData = await fetchSurahVersesData(chapter.id)
-    if (versesData.length > 0) {
-      srtPath = path.join(tempDir, `surah_${paddedSura}.srt`)
-      let srtContent = ''
-      let currentTime = 0
-
-      for (let i = 0; i < mp3Files.length; i++) {
-        const mp3 = mp3Files[i]
-        const verseNum = i + 1
-        const verseData = versesData.find((v) => v.verseNumber === verseNum) || {
-          verseNumber: verseNum,
-          arabicText: '',
-          translationText: '',
-        }
-
-        const duration = getAudioDuration(mp3)
-        const startTime = currentTime
-        const endTime = currentTime + duration
-        currentTime = endTime
-
-        const startSrt = formatSrtTime(startTime)
-        const endSrt = formatSrtTime(endTime)
-
-        srtContent += `${i + 1}\n`
-        srtContent += `${startSrt} --> ${endSrt}\n`
-        srtContent += `Surah ${chapter.transliteration} [${chapter.id}:${verseNum}]\n`
-        if (verseData.arabicText) srtContent += `${verseData.arabicText}\n`
-        if (verseData.translationText) srtContent += `${verseData.translationText}\n`
-        srtContent += '\n'
-      }
-      fs.writeFileSync(srtPath, srtContent, 'utf8')
-    }
-  } catch (err: any) {
-    console.warn(`[Surah ${chapter.id}] Could not generate subtitles:`, err?.message || err)
-  }
-
-  return { audioPath: outputAudio, srtPath }
-}
-
-async function generateSurahVideo(chapter: Chapter, audioPath: string, srtPath: string | null): Promise<string> {
-  const paddedSura = pad3(chapter.id)
-  const outputVideo = path.join(OUTPUT_DIR, `surah_${paddedSura}_${chapter.transliteration.toLowerCase().replace(/[^a-z0-9]/g, '_')}.mp4`)
-
-  if (fs.existsSync(outputVideo) && fs.statSync(outputVideo).size > 100000) {
-    return outputVideo
-  }
-
-  console.log(`[Surah ${chapter.id}/${114}] Rendering HD video with synchronized verse text: ${chapter.transliteration} (${chapter.name})...`)
-
-  let videoFilter = ''
-  if (srtPath && fs.existsSync(srtPath)) {
-    const escapedSrt = srtPath.replace(/'/g, "'\\''").replace(/:/g, '\\:')
-    videoFilter = `-vf "subtitles='${escapedSrt}':force_style='FontSize=22,PrimaryColour=&H00FFFFFF,OutlineColour=&H80000000,BorderStyle=4,Alignment=2,MarginV=50'"`
-  }
-
-  const ffmpegCmd = `/usr/local/bin/ffmpeg -y -loop 1 -i "${BANNER_IMAGE}" -i "${audioPath}" ${videoFilter} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p -shortest "${outputVideo}"`
-  execSync(ffmpegCmd, { stdio: 'ignore' })
 
   return outputVideo
 }
@@ -408,8 +523,7 @@ async function main() {
     try {
       console.log(`\n▶ [${id}/114] Processing Surah ${chapter.transliteration} (${chapter.name}) - ${chapter.total_verses} verses...`)
       
-      const { audioPath, srtPath } = await downloadSurahAudio(chapter, tempDir)
-      const videoPath = await generateSurahVideo(chapter, audioPath, srtPath)
+      const videoPath = await buildSurahVideoWithSyncedText(chapter, tempDir)
       rec.videoPath = videoPath
       rec.status = 'generated'
       saveProgress(progress)
