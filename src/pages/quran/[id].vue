@@ -4068,7 +4068,6 @@ watch(
           </div>
         </Transition>
       </Teleport>
-    </div>
 
     <!-- Offline Recitation Manager Dialog -->
     <q-dialog v-model="showOfflineManager" maximized>
