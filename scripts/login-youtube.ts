@@ -33,20 +33,21 @@ async function main() {
   const server = http.createServer(async (req, res) => {
     try {
       const reqUrl = new URL(req.url || '/', `http://localhost:${PORT}`)
-      if (reqUrl.pathname === '/api/auth/google/callback') {
+      console.log(`[HTTP Request] Path: ${reqUrl.pathname}`)
+
+      if (reqUrl.pathname.includes('/api/auth/google/callback') || reqUrl.pathname === '/callback') {
         const code = reqUrl.searchParams.get('code')
         const error = reqUrl.searchParams.get('error')
 
         if (error) {
           res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' })
-          res.end(`<h1>Authentication Failed</h1><p>${error}</p>`)
+          res.end(`<h1>Authentication Failed</h1><p>${error}</p><p><a href="${authUrl.toString()}">Try Again</a></p>`)
           console.error(`❌ Authentication error: ${error}`)
-          server.close()
           return
         }
 
         if (code) {
-          console.log('\n🔑 Received authorization code. Exchanging for tokens...')
+          console.log('\n🔑 Received authorization code! Exchanging with Google for access token...')
           const tokenRes = await fetch('https://oauth2.googleapis.com/token', {
             method: 'POST',
             headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
@@ -80,8 +81,8 @@ async function main() {
               <html>
                 <body style="font-family: system-ui, sans-serif; text-align: center; padding: 40px; background: #0f172a; color: white;">
                   <h1 style="color: #4ade80;">✅ YouTube Authentication Successful!</h1>
-                  <p style="font-size: 1.2rem;">Peace2074 can now automatically upload your Quran videos and create your playlist.</p>
-                  <p>You can close this browser window now.</p>
+                  <p style="font-size: 1.2rem;">Peace2074 will now automatically upload your Quran videos and build your playlist.</p>
+                  <p>You can safely close this browser window now.</p>
                 </body>
               </html>
             `)
@@ -98,10 +99,12 @@ async function main() {
           } else {
             console.error('❌ Token exchange failed:', tokenData)
             res.writeHead(400, { 'Content-Type': 'text/html; charset=utf-8' })
-            res.end(`<h1>Token Exchange Failed</h1><pre>${JSON.stringify(tokenData, null, 2)}</pre>`)
-            server.close()
+            res.end(`<h1>Token Exchange Failed</h1><pre>${JSON.stringify(tokenData, null, 2)}</pre><p><a href="${authUrl.toString()}">Click here to re-authorize</a></p>`)
           }
         }
+      } else {
+        res.writeHead(200, { 'Content-Type': 'text/html; charset=utf-8' })
+        res.end(`<h1>Peace2074 Auth Listener</h1><p>Waiting for Google Auth callback...</p><p><a href="${authUrl.toString()}">Click here to Sign In with Google</a></p>`)
       }
     } catch (err: any) {
       console.error('Server error:', err)
