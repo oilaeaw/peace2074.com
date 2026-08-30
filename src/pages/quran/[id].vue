@@ -3042,15 +3042,18 @@ onMounted(async () => {
     window.speechSynthesis.onvoiceschanged = loadVoices
   }
 
-  // Check for saved playback position and offer to resume, or auto-start recitation
+  // Restore saved position (silent). Auto-start only if play param is explicitly enabled.
   await nextTick()
-  if (audioList.value.length > 0 && !isExplicitDisabled) {
-    const restored = await restorePlaybackPosition()
-    if ((!restored || isExplicitEnabled) && !isPlayingAudio.value) {
+  if (audioList.value.length > 0) {
+    if (isExplicitEnabled) {
+      // play=true (or alias) in URL → start immediately
       setTimeout(() => {
         const startIndex = queryVerse > 0 ? queryVerse - 1 : 0
         void startAudioRecitation(startIndex, { withIntro: false })
       }, 400)
+    } else if (!isExplicitDisabled) {
+      // No play param → silently restore position (no playback)
+      await restorePlaybackPosition()
     }
   }
 
@@ -3085,16 +3088,28 @@ onDeactivated(() => {
   persistRecitationBeforeLeave()
 })
 
-// Dedicated Lifecycle Hook: Automatically starts playback as soon as EVERYTHING (Surah & Audio List) is 100% loaded
+// Lifecycle Hook: starts playback ONLY when play=true (or alias) is in the URL and everything is loaded
 watch(
   [sura, audioList],
   async ([suraData, list]) => {
-    if (suraData && list && list.length > 0 && !isPlayingAudio.value && !stopRequested.value) {
-      await nextTick()
-      const queryVerse = Number(route.query.verse || route.query.ayah || 0)
-      const startIndex = queryVerse > 0 ? queryVerse - 1 : (currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
-      void startAudioRecitation(startIndex, { withIntro: false })
-    }
+    if (!suraData || !list || list.length === 0 || isPlayingAudio.value || stopRequested.value) return
+
+    const playRaw = (
+      route.query.play ||
+      route.query.autoplay ||
+      route.query.playing ||
+      route.query.autostart ||
+      route.query.start ||
+      ''
+    ).toString().toLowerCase()
+
+    const shouldPlay = ['true', '1', 'yes', 'on'].includes(playRaw)
+    if (!shouldPlay) return
+
+    await nextTick()
+    const queryVerse = Number(route.query.verse || route.query.ayah || 0)
+    const startIndex = queryVerse > 0 ? queryVerse - 1 : (currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0)
+    void startAudioRecitation(startIndex, { withIntro: false })
   },
   { immediate: true }
 )
