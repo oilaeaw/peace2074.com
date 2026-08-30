@@ -259,6 +259,8 @@ import { sendKimiChat, resolveNitroUrl } from '@/stores/services'
 import inspiringVerses from '@/app/data/verses.json'
 import dailyMessagesData from '@/app/data/daily-messages.json'
 
+import staticBlogPosts from '@/shared/data/blog/posts.json'
+
 const { t, tm, locale } = useI18n()
 const $q = useQuasar()
 const router = useRouter()
@@ -280,7 +282,7 @@ type BlogPost = {
   date: string
 }
 
-const allPosts = ref<BlogPost[]>([])
+const allPosts = ref<BlogPost[]>(staticBlogPosts as any)
 const blogLoading = ref(false)
 const HISTORY_KEY = 'peace-ai-history'
 

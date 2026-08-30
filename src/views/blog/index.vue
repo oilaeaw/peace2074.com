@@ -118,6 +118,8 @@ import {
   resolveNitroUrl,
 } from '@/stores/services'
 
+import staticBlogPosts from '@/shared/data/blog/posts.json'
+
 type BlogPostSummary = {
   slug: string
   title: string
@@ -135,8 +137,8 @@ const authStore = useAuthStore()
 const $q = useQuasar()
 
 const isAuthenticated = computed(() => authStore.isAuthenticated)
-const posts = ref<BlogPostSummary[]>([])
-const loading = ref(true)
+const posts = ref<BlogPostSummary[]>(staticBlogPosts as any)
+const loading = ref(false)
 const likeCounts = ref<Record<string, number>>({})
 const userLiked = ref<string[]>([])
 
@@ -147,13 +149,12 @@ const postsSorted = computed(() => {
 })
 
 async function loadPosts() {
-  loading.value = true
   try {
     const res = await fetch(resolveNitroUrl('/blog'), {
       credentials: 'include',
     })
     const data = await res.json()
-    if (data.ok && data.posts) {
+    if (data.ok && Array.isArray(data.posts) && data.posts.length > 0) {
       posts.value = data.posts
       trackAnalyticsEvent('blog_list_view', {
         posts_count: data.posts.length,
