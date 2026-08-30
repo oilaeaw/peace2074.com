@@ -3080,6 +3080,8 @@ onMounted(async () => {
       })
     }, 2000) // Show after 2 seconds to avoid overwhelming user
   }
+})
+
 onBeforeRouteLeave(() => {
   persistRecitationBeforeLeave()
 })
