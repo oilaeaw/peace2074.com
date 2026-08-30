@@ -417,20 +417,16 @@ const formatBlogDate = (date: string) => {
 }
 
 const loadAllBlogPosts = async () => {
-  blogLoading.value = true
   try {
     const res = await fetch(resolveNitroUrl('/blog'), {
       credentials: 'include',
     })
     const data = await res.json()
-    if (data?.ok && Array.isArray(data.posts)) {
+    if (data?.ok && Array.isArray(data.posts) && data.posts.length > 0) {
       allPosts.value = data.posts
-    } else {
-      allPosts.value = []
     }
   } catch (err) {
     console.error('[Home] Failed to load blog posts:', err)
-    allPosts.value = []
   } finally {
     blogLoading.value = false
   }
