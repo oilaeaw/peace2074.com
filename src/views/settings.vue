@@ -481,42 +481,33 @@ async function subscribeToPushNotifications(): Promise<PushSubscriptionResult> {
   }
 
   try {
-    // Register service worker if not already registered, and ensure active worker is ready
+    // Ensure service worker is registered
     let registration = await navigator.serviceWorker.getRegistration()
     if (!registration) {
-      registration = await navigator.serviceWorker.register('/sw.js')
+      registration = await navigator.serviceWorker.register('/sw.js', { scope: '/' })
     }
 
-    // Wait until the service worker is active and ready for push
-    const readyRegistration = await navigator.serviceWorker.ready
-    if (readyRegistration) {
-      registration = readyRegistration
+    // Wait for service worker ready promise (guarantees an active worker)
+    const activeRegistration = await navigator.serviceWorker.ready
+    if (activeRegistration) {
+      registration = activeRegistration
     }
 
-    // If active service worker is not yet available, wait for installation/activation
+    // If active worker is still installing/waiting, wait for it to activate
     if (!registration.active) {
-      const activeWorker = registration.installing || registration.waiting
-      if (activeWorker) {
+      const pendingWorker = registration.installing || registration.waiting
+      if (pendingWorker) {
         await new Promise<void>((resolve) => {
-          const stateChangeHandler = () => {
-            if (
-              activeWorker.state === 'activated' ||
-              activeWorker.state === 'redundant'
-            ) {
-              activeWorker.removeEventListener('statechange', stateChangeHandler)
+          const onState = () => {
+            if (pendingWorker.state === 'activated' || pendingWorker.state === 'redundant') {
+              pendingWorker.removeEventListener('statechange', onState)
               resolve()
             }
           }
-          activeWorker.addEventListener('statechange', stateChangeHandler)
+          pendingWorker.addEventListener('statechange', onState)
         })
-      }
-    }
-
-    // Double-check latest registration to ensure active worker is present
-    if (!registration.active) {
-      const latestRegistration = await navigator.serviceWorker.getRegistration()
-      if (latestRegistration?.active) {
-        registration = latestRegistration
+        const updated = await navigator.serviceWorker.getRegistration()
+        if (updated?.active) registration = updated
       }
     }
 
