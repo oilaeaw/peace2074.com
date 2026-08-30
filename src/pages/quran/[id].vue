@@ -4083,6 +4083,7 @@ watch(
           </div>
         </Transition>
       </Teleport>
+    </div><!-- end v-else-if="sura" -->
 
     <!-- Offline Recitation Manager Dialog -->
     <q-dialog v-model="showOfflineManager" maximized>
