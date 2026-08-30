@@ -8,7 +8,7 @@
  * Both packages are free and authored by waelio.com.
  */
 import { RealDB } from '@waelio/realdb'
-import { WaelioDataAdapter } from './waelio-data-adapter'
+import { NitroStorageAdapter } from './nitro-storage-adapter'
 
 let _db: RealDB | null = null
 let _openPromise: Promise<RealDB> | null = null
@@ -18,7 +18,7 @@ export async function getDb(): Promise<RealDB> {
     if (_openPromise) return _openPromise
 
     _openPromise = (async () => {
-        const adapter = new WaelioDataAdapter()
+        const adapter = new NitroStorageAdapter()
         const db = new RealDB({ name: 'peace2074', adapter })
 
         // Register all collections

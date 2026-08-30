@@ -48,9 +48,23 @@ export default defineNitroConfig({
                 nodeCompat: true,
                 wrangler: {
                     // nodejs_compat_v2 gives access to node:fs, node:crypto, node:events.
-                    // Required by @waelio/data (JSON file persistence).
                     compatibility_flags: ['nodejs_compat_v2'],
+                    // Cloudflare KV binding for persistent DB storage.
+                    // KV namespace ID is set via CF_KV_DB_ID env var at deploy time.
+                    kv_namespaces: [
+                        {
+                            binding: 'data',
+                            id: process.env.CF_KV_DB_ID || 'PLACEHOLDER_KV_ID',
+                        }
+                    ],
                 },
+            },
+            // Map useStorage('data') → Cloudflare KV binding 'data'
+            storage: {
+                data: {
+                    driver: 'cloudflare-kv-binding',
+                    binding: 'data',
+                }
             },
             rollupConfig: {
                 plugins: [],
