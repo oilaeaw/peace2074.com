@@ -40,6 +40,9 @@
         </div>
       </div>
 
+      <!-- United Nations Multilingual Flag Ring -->
+      <UnFlagsCircle />
+
       <!-- Daily Quranic Verse -->
       <q-card class="manifesto-card q-pa-lg q-mt-lg relative-position">
         <div class="absolute-top-right q-pa-sm">
@@ -251,6 +254,7 @@ import { useI18n } from 'vue-i18n'
 import { useClipboard } from '@vueuse/core'
 import { useQuasar } from 'quasar'
 import { useRouter } from 'vue-router'
+import UnFlagsCircle from '@/components/common/UnFlagsCircle.vue'
 import { sendKimiChat, resolveNitroUrl } from '@/stores/services'
 import inspiringVerses from '@/app/data/verses.json'
 import dailyMessagesData from '@/app/data/daily-messages.json'
