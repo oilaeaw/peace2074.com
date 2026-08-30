@@ -469,8 +469,9 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
   const tags = ['Quran', `Surah ${chapter.transliteration}`, `Surah ${chapter.id}`, 'Peace2074', 'Quran Recitation', 'Mishary Alafasy', 'Holy Quran', 'Islam']
 
   try {
-    const videoBuffer = fs.readFileSync(videoPath)
-    
+    const stats = fs.statSync(videoPath)
+    const fileSize = stats.size
+
     // 1. Resumable Upload Session Init
     const initRes = await fetch(
       'https://www.googleapis.com/upload/youtube/v3/videos?uploadType=resumable&part=snippet,status',
@@ -480,7 +481,7 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
           Authorization: `Bearer ${oauthToken}`,
           'Content-Type': 'application/json',
           'X-Upload-Content-Type': 'video/mp4',
-          'X-Upload-Content-Length': String(videoBuffer.length),
+          'X-Upload-Content-Length': String(fileSize),
         },
         body: JSON.stringify({
           snippet: {
@@ -506,25 +507,31 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
     const uploadUrl = initRes.headers.get('location')
     if (!uploadUrl) return null
 
-    // 2. Binary Video Data Upload
+    // 2. Binary Video Data Upload Stream
+    const videoStream = fs.createReadStream(videoPath)
     const uploadRes = await fetch(uploadUrl, {
       method: 'PUT',
       headers: {
         'Content-Type': 'video/mp4',
-        'Content-Length': String(videoBuffer.length),
+        'Content-Length': String(fileSize),
       },
-      body: videoBuffer,
+      // @ts-ignore Node fetch supports stream body with duplex
+      body: videoStream,
+      duplex: 'half',
     })
 
     if (uploadRes.ok) {
-      const data = await uploadRes.json()
+      const data = (await uploadRes.json()) as { id: string }
       console.log(`[Surah ${chapter.id}/${114}] 🎉 Uploaded to YouTube! Video ID: ${data.id}`)
-      
+
       const playlistId = await getOrCreatePlaylist(oauthToken)
       if (playlistId) {
         await addVideoToPlaylist(data.id, playlistId, oauthToken)
       }
       return data.id
+    } else {
+      const errText = await uploadRes.text()
+      console.error(`[Surah ${chapter.id}] YouTube upload stream failed ${uploadRes.status}:`, errText)
     }
   } catch (err: any) {
     console.error(`[Surah ${chapter.id}] YouTube upload error:`, err?.message || err)
