@@ -71,6 +71,11 @@ export const QURAN_TRANSLATORS: Record<string, QuranTranslator[]> = {
         { id: 140, name: 'Montada Islamic Foundation' },
         { id: 199, name: 'Noor International Center' },
     ],
+    fa: [
+        { id: 29, name: 'حسین تاجی گلمکانی' },
+        { id: 135, name: 'اسلام هاوس (IslamHouse)' },
+        { id: 804, name: 'ابوالفضل بهرام‌پور' },
+    ],
     it: [
         { id: 153, name: 'Hamza Roberto Piccardo' },
         { id: 209, name: 'Othman al-Sharif' },

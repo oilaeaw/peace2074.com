@@ -20,6 +20,10 @@ export const useMyLangsStore = defineStore('myLangsStore', {
         name: 'Español',
       },
       {
+        code: 'fa',
+        name: 'فارسی (Persian)',
+      },
+      {
         code: 'ru',
         name: 'Русский',
       },
