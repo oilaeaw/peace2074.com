@@ -3357,8 +3357,8 @@ watch(
           <div class="text-caption q-mt-xs">
             {{ t('pages.quran.sura.id') }}: {{ sura?.id }} • {{ sura?.type }} •
             {{ sura?.total_verses }}
-            {{ t('pages.quran.verses') }}
           </div>
+        </div>
         <div class="heading-actions">
           <!-- Shazam Quran Audio Recitation Matcher -->
           <q-btn
