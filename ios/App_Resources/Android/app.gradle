@@ -14,7 +14,7 @@ android {
 
     // Version Information
     versionCode 30300
-    versionName "3.3.0"
+    versionName "3.4.0"
     
     generatedDensities = []
   }
