@@ -254,6 +254,8 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 
   const segmentVideos: string[] = []
+  const verseTimestamps: { verse: number; timestamp: number; duration: number }[] = []
+  let currentCumulativeTime = 0
 
   for (let verse = 1; verse <= chapter.total_verses; verse++) {
     const paddedVerse = pad3(verse)
@@ -307,6 +309,9 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     const duration = getAudioDuration(localMp3)
     const segmentMp4 = path.join(tempDir, `segment_${paddedVerse}.mp4`)
 
+    verseTimestamps.push({ verse, timestamp: currentCumulativeTime, duration })
+    currentCumulativeTime += duration
+
     execSync(
       `/usr/local/bin/ffmpeg -y -loop 1 -i "${cardPng}" -i "${localMp3}" -t ${duration} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p "${segmentMp4}"`,
       { stdio: 'ignore' }
@@ -314,6 +319,10 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
 
     segmentVideos.push(segmentMp4)
   }
+
+  // Save verse chapter timestamps for YouTube description
+  const chaptersFile = path.join(OUTPUT_DIR, `surah_${paddedSura}_chapters.json`)
+  fs.writeFileSync(chaptersFile, JSON.stringify(verseTimestamps, null, 2))
 
   await browser.close()
 
@@ -431,8 +440,32 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
     return null
   }
 
+  function formatTimestampSec(sec: number): string {
+    const totalSec = Math.floor(sec)
+    const h = Math.floor(totalSec / 3600)
+    const m = Math.floor((totalSec % 3600) / 60)
+    const s = Math.floor(totalSec % 60)
+    const p = (n: number) => String(n).padStart(2, '0')
+    return h > 0 ? `${p(h)}:${p(m)}:${p(s)}` : `${p(m)}:${p(s)}`
+  }
+
+  const paddedSura = pad3(chapter.id)
+  const chaptersFile = path.join(OUTPUT_DIR, `surah_${paddedSura}_chapters.json`)
+  let chaptersText = ''
+
+  if (fs.existsSync(chaptersFile)) {
+    try {
+      const records: { verse: number; timestamp: number }[] = JSON.parse(fs.readFileSync(chaptersFile, 'utf8'))
+      if (Array.isArray(records) && records.length > 0) {
+        chaptersText = '\n\n📖 Verse Timestamp Chapters (Click to Jump):\n' +
+          records.map((r) => `${formatTimestampSec(r.timestamp)} - Ayah ${r.verse}`).join('\n')
+      }
+    } catch {}
+  }
+
   const title = `Surah ${chapter.id}. ${chapter.transliteration} (${chapter.name}) — Chapter ${chapter.id} of 114 | Peace2074 Quran Recitation`
-  const description = `Recitation of Surah ${chapter.transliteration} (${chapter.name} - ${chapter.translation}), Chapter ${chapter.id} of the Holy Quran (${chapter.total_verses} verses, ${chapter.type === 'meccan' ? 'Meccan' : 'Medinan'}). Recited by Sheikh Mishary Rashid Alafasy. Streamed on Peace2074.\n\nSubscribe to Peace2074: https://www.youtube.com/channel/${CHANNEL_ID}?sub_confirmation=1`
+  const webPlayerUrl = `https://peace2074.com/quran/${chapter.id}?play=true&theme=dark`
+  const description = `Recitation of Surah ${chapter.transliteration} (${chapter.name} - ${chapter.translation}), Chapter ${chapter.id} of the Holy Quran (${chapter.total_verses} verses, ${chapter.type === 'meccan' ? 'Meccan' : 'Medinan'}). Recited by Sheikh Mishary Rashid Alafasy. Streamed on Peace2074.\n\n▶ Follow along with word-by-word highlighted text on Peace2074:\n${webPlayerUrl}${chaptersText}\n\nSubscribe to Peace2074: https://www.youtube.com/channel/${CHANNEL_ID}?sub_confirmation=1`
   const tags = ['Quran', `Surah ${chapter.transliteration}`, `Surah ${chapter.id}`, 'Peace2074', 'Quran Recitation', 'Mishary Alafasy', 'Holy Quran', 'Islam']
 
   try {
