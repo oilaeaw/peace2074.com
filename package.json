@@ -59,6 +59,7 @@
     "chapters:translate": "node --experimental-strip-types scripts/generate-chapter-translations.ts",
     "login:youtube": "node --experimental-strip-types scripts/login-youtube.ts",
     "upload:youtube": "node --experimental-strip-types scripts/batch-generate-114-surah-videos.ts 1 114",
+    "branding:youtube": "node --experimental-strip-types scripts/update-youtube-channel-branding.ts",
     "test:e2e": "playwright test",
     "test:smoke:deployment": "node --experimental-strip-types scripts/smoke-deployment.ts",
     "test:e2e:ui": "playwright test --ui",
