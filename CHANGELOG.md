@@ -2,6 +2,26 @@
 
 All notable changes to this project will be documented in this file. See [standard-version](https://github.com/conventional-changelog/standard-version) for commit guidelines.
 
+## 3.4.0 (2026-08-30)
+
+### Features
+
+- add United Nations Flag Circle interactive 3D locale switcher supporting 10 languages
+- add complete Persian (`fa`) UI language translation and Persian Quran translators
+- add Persian welcome blog post and sync static blog fallback data across `/blog` and Home
+- generate chapter verse timestamps for YouTube 114 Surahs automated upload workflow
+
+### Bug Fixes
+
+- fix settings persistence for guest/offline users by preventing setting reverts on network errors
+- fix recitation highlight logic so word-by-word highlight (`word` mode) does not highlight full-sentence blocks
+- ensure Service Worker activation before subscribing to Web Push notifications
+
+### Chores
+
+- bump project version to `3.4.0` in root and Nitro API package manifests
+- update Playwright E2E testing suite to 100% pass rate (67/67 tests passing)
+
 ## 3.3.0 (2026-06-11)
 
 ### Features
