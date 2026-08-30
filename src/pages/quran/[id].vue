@@ -1377,10 +1377,34 @@ function scrollToVerse(verse?: number | null) {
   if (typeof window === 'undefined' || verse === undefined || verse === null)
     return
   const el = document.getElementById(getVerseElementId(verse))
-  if (el) {
-    el.scrollIntoView({ behavior: 'smooth', block: 'center' })
-  }
+  if (!el) return
+
+  const offset = getRecitationScrollOffset()
+  const rect = el.getBoundingClientRect()
+  const viewportBandTop = offset
+  const viewportBandBottom = window.innerHeight - Math.min(window.innerHeight * 0.2, 120)
+  const isWithinViewport =
+    rect.top >= viewportBandTop && rect.bottom <= viewportBandBottom
+
+  if (isWithinViewport) return
+
+  const targetTop =
+    window.scrollY + rect.top - offset - (window.innerHeight - offset) * 0.25
+
+  window.scrollTo({
+    top: Math.max(0, targetTop),
+    behavior: 'smooth',
+  })
 }
+
+// Automatically scroll active verse into view during audio or TTS recitation
+watch(currentAyahIndex, (newIdx) => {
+  if (newIdx >= 0) {
+    nextTick(() => {
+      scrollToVerse(newIdx + 1)
+    })
+  }
+})
 
 async function scrollToHash(
   rawHash?: string | null,
