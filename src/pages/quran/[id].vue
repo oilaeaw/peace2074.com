@@ -917,29 +917,39 @@ function splitVerseWords(text: string) {
     .filter(Boolean)
 }
 
-function getSyncedVerseWords(verseNumber: number) {
-  return syncedVerseWords.value[verseNumber - 1] || []
+function getSyncedVerseWords(verseNumber: number): string[] {
+  const synced = syncedVerseWords.value[verseNumber - 1]
+  if (synced && synced.length > 0) {
+    return synced
+  }
+  const verseText = sura.value?.ayat?.[verseNumber - 1]?.text
+  if (verseText) {
+    return splitVerseWords(verseText)
+  }
+  return []
 }
 
 function hasTimingMatchedWords(verseNumber: number) {
-  const idx = verseNumber - 1
-  const words = syncedVerseWords.value[idx] || []
-  const timings = wordTimings.value[idx] || []
-  return (
-    words.length > 0 && timings.length > 0 && words.length === timings.length
-  )
+  const words = getSyncedVerseWords(verseNumber)
+  return words.length > 0
 }
 
 function isActiveAyah(verseNumber: number) {
-  return currentAyahIndex.value === verseNumber - 1
+  if (currentAyahIndex.value !== verseNumber - 1) return false
+  // If highlight mode is set to 'word', do NOT highlight the entire sentence box
+  if (highlightMode.value === 'word') {
+    return false
+  }
+  return true
 }
 
 function isActiveWord(verseNumber: number, wordIndex: number) {
-  return (
-    hasTimingMatchedWords(verseNumber) &&
-    currentAyahIndex.value === verseNumber - 1 &&
-    currentWordIndex.value === wordIndex
-  )
+  if (highlightMode.value === 'ayah') return false
+  if (currentAyahIndex.value !== verseNumber - 1) return false
+  
+  // If exact wordIndex is tracked (or fallback to 0 when starting recitation)
+  const targetWord = currentWordIndex.value >= 0 ? currentWordIndex.value : 0
+  return wordIndex === targetWord
 }
 
 // Mark sura as read in localStorage

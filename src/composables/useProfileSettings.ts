@@ -211,12 +211,11 @@ export function useProfileSettings() {
 
     async function setHighlightMode(mode: QuranHighlightMode) {
         const nextMode = normalizeHighlightMode(mode)
-        const previousMode = highlightMode.value
         highlightMode.value = nextMode
 
-        await authStore.hydrateSession()
-
         writeLocalHighlightMode(nextMode)
+
+        await authStore.hydrateSession()
 
         const userId = String(authStore.user?.id || '') || null
         if (!userId) {
@@ -238,19 +237,17 @@ export function useProfileSettings() {
                 }),
             })
 
-            if (!response.ok) {
-                throw new Error(`Failed to save profile settings: ${response.status}`)
+            if (response.ok) {
+                const data = (await response.json().catch(() => ({}))) as ProfileSettingsResponse
+                if (data.settings?.quran?.highlightMode) {
+                    highlightMode.value = readHighlightModeFromSettings(data.settings)
+                }
             }
-
-            const data =
-                (await response.json().catch(() => ({}))) as ProfileSettingsResponse
-
-            highlightMode.value = readHighlightModeFromSettings(data.settings)
             loadedUserId.value = userId
             return highlightMode.value
         } catch (error) {
-            highlightMode.value = previousMode
-            throw error
+            console.warn('[ProfileSettings] Failed to sync highlight mode to server, using local preference:', error)
+            return highlightMode.value
         }
     }
 
