@@ -57,6 +57,8 @@
     "sync:quran:data": "node --experimental-strip-types scripts/sync-quran-public-data.ts",
     "db:test": "node --experimental-strip-types scripts/test-db-connection.ts",
     "chapters:translate": "node --experimental-strip-types scripts/generate-chapter-translations.ts",
+    "login:youtube": "node --experimental-strip-types scripts/login-youtube.ts",
+    "upload:youtube": "node --experimental-strip-types scripts/batch-generate-114-surah-videos.ts 1 114",
     "test:e2e": "playwright test",
     "test:smoke:deployment": "node --experimental-strip-types scripts/smoke-deployment.ts",
     "test:e2e:ui": "playwright test --ui",
