@@ -197,7 +197,9 @@
       "story": {
         "eyebrow": "هدف ما",
         "title": "ابزارهای دینی می‌توانند زیبا و ساده باشند.",
-        "body": "PEACE2074 قرائت قرآن، اذکار، تسبیح و تدبر را در یک فضای آرام گرد هم آورده است."
+        "body": "PEACE2074 قرائت قرآن، اذکار، تسبیح و تدبر را در یک فضای آرام گرد هم آورده است.",
+        "cardTitle": "A calmer digital rhythm",
+        "cardBody": "Instead of scattered utilities and noisy interfaces, PEACE2074 gathers reading, recitation, Tasbeeh, Holy Names, reflections, and support into a single peaceful flow."
       },
       "verse": {
         "label": "رویکرد ما",
@@ -795,6 +797,747 @@
   "offline": {
     "title": "تلاوت آفلاین",
     "subtitle": "دانلود تلاوت‌های قرآن برای شنیدن بدون اینترنت",
-    "selectQuality": "انتخاب کیفیت صوت"
-  }
+    "selectQuality": "انتخاب کیفیت صوت",
+    "regular": "Regular Quality",
+    "highQuality": "High Quality",
+    "storageUsed": "Storage Used",
+    "surasDownloaded": "Suras Downloaded",
+    "downloadOptions": "Download Options",
+    "downloadAllQuran": "Download All Quran (114 Suras)",
+    "downloadCurrentSura": "Download Current Sura",
+    "clearAllCache": "Clear All Downloaded Audio",
+    "downloading": "Downloading",
+    "sura": "Sura",
+    "verses": "verses",
+    "noSuraSelected": "No sura selected",
+    "downloadingStarted": "Download started...",
+    "downloadComplete": "Download complete!",
+    "downloadFailed": "Download failed, please try again",
+    "downloadAllComplete": "Downloaded {completed} suras. {failed} failed.",
+    "cacheCleared": "All offline audio cleared",
+    "qualityChanged": "Quality changed. Reload to use offline audio.",
+    "listenWithoutInternet": "Listen without internet",
+    "currentSuraReady": "This sura is ready offline",
+    "currentSuraReadyHint": "You can listen to this recitation without internet. Downloaded audio will be preferred automatically when available.",
+    "fullLibraryReady": "Full Quran recitation ready offline",
+    "fullLibraryReadyHint": "All recitations are downloaded. The app will prefer on-device audio when possible to reduce internet use.",
+    "internetRequired": "Internet currently required",
+    "internetRequiredHint": "Download this sura or the full Quran to listen without internet.",
+    "confirmDownloadAll": {
+      "title": "Download All Quran?",
+      "message": "This will download approximately {size} of audio data at {quality} quality. Make sure you have enough storage and a stable connection."
+    },
+    "confirmClear": {
+      "title": "Clear All Offline Audio?",
+      "message": "This will delete all downloaded recitations. You can re-download them later."
+    }
+  },
+  "consent": {
+    "message": "ما از کوکی‌ها برای بهبود تجربه شما و تحلیل استفاده از سایت استفاده می‌کنیم.",
+    "details": "با کلیک بر روی 'پذیرش'، موافقت خود را با استفاده از کوکی‌ها اعلام می‌کنید.",
+    "accept": "پذیرش",
+    "decline": "رد کردن"
+  },
+  "cursorTrail": {
+    "blessing": "خدا مادرم را رحمت کند",
+    "words": [
+      "خدا",
+      "مادرم",
+      "را",
+      "رحمت",
+      "کند",
+      "♡",
+      "خدا مادرم را رحمت کند"
+    ]
+  },
+  "general": {
+    "Home": "Home",
+    "SiteTitle": "Peace2074",
+    "SiteDomain": "https://peace2074.com",
+    "navigationLinks": "Navigation Links",
+    "CurrentVersion": "Current Version",
+    "setLocale": "Set Default Language",
+    "CheckUpdates": "Fetch Updates",
+    "Services": "Services",
+    "fetchingUpdates": "Get Updates",
+    "searching": "Searching…",
+    "languages": "Languages",
+    "download": "Download",
+    "cancel": "Cancel",
+    "delete": "Delete",
+    "edit": "Edit",
+    "share": "Share",
+    "undo": "Undo",
+    "languageNames": {
+      "en": "English",
+      "ar": "Arabic",
+      "de": "German",
+      "es": "Spanish",
+      "ru": "Russian",
+      "he": "Hebrew",
+      "it": "Italian",
+      "tr": "Turkish",
+      "uz": "Uzbek"
+    },
+    "dark": "dark",
+    "light": "light",
+    "auto": "auto",
+    "lightMode": "Change Light Mode",
+    "open": "open",
+    "close": "close",
+    "holdState": "Always open",
+    "swipeToChange": "Swipe to change",
+    "pause": "Pause",
+    "play": "Play",
+    "stop": "Stop",
+    "updateAvailable": "A new version is available!",
+    "update": "Update Now",
+    "later": "Later",
+    "greetings": {
+      "eidMubarak": "✨ Eid Mubarak ✨",
+      "englishCustomers": "For our English-speaking customers, we can show a greeting."
+    }
+  },
+  "intro": {
+    "desc": "JavaScript enthusiast, Wolf Pack brother, Ducks lover, all about reusability and improvements."
+  },
+  "notfound": "Not found",
+  "contact": {
+    "help": "We are here",
+    "offer_help": "Please let us know how we can help!",
+    "accept_terms": "View our terms and conditions.",
+    "terms_accepted": "I accept the terms and conditions.",
+    "name": {
+      "label": "Your name *",
+      "hint": "Name and surname",
+      "placeholder": "What is your name"
+    },
+    "email1": {
+      "label": "Your email *",
+      "hint": "Your email",
+      "placeholder": "In order to get back to you. "
+    },
+    "message1": {
+      "label": "Your message *",
+      "hint": "Input your message",
+      "placeholder": "Tell us how we can help"
+    },
+    "email": {
+      "label": "Your email address *",
+      "hint": "Your email",
+      "placeholder": "In order to get back to you."
+    },
+    "message": {
+      "label": "Your message *",
+      "hint": "Input your message",
+      "placeholder": "Tell us how we can help"
+    },
+    "projects": {
+      "label": "Project Name *",
+      "placeholder": "What project are you referencing?"
+    },
+    "success": "Message recorded. We will reply soon.",
+    "error": "Failed to send message. Please try again.",
+    "contactTitle": "Contact Info",
+    "reachDirectly": "Reach us directly:",
+    "socialTitle": "Social",
+    "socialX": "X / Twitter",
+    "socialGitHub": "GitHub"
+  },
+  "about": {
+    "title": "Waelio",
+    "par10": "A diverse/eclectic leader the in the digital world, with over couple of decades of professional success."
+  },
+  "demoContent": {
+    "q1": "Can I create a post?",
+    "q2": "Can I read a post?",
+    "q3": "Can I update a post?",
+    "q4": "Can I delete a post?"
+  },
+  "privacy_policy": "Privacy Policy",
+  "privacy_intro": "Your privacy is important to us. This page explains how we collect, use, and protect your information when you use our website.",
+  "information_we_collect": "Information We Collect",
+  "basic_account_info": "Basic account information (such as email address) if you register or log in.",
+  "usage_data": "Usage data and cookies to improve your experience.",
+  "how_we_use_information": "How We Use Information",
+  "provide_services": "To provide and maintain our services.",
+  "improve_experience": "To improve and personalize your experience.",
+  "communicate_updates": "To communicate with you about updates or support.",
+  "prayer_times_purpose": "To calculate accurate prayer times based on your location and notify you when it is time to pray.",
+  "cookies": "Cookies",
+  "cookies_text": "We use cookies to remember your preferences and enhance your experience. You can accept or decline cookies using the banner at the bottom of the site.",
+  "location_services": "Location Services",
+  "location_services_text": "On iPhone and iPad, the app may request access to your device's location in order to calculate accurate Islamic prayer times (Fajr, Dhuhr, Asr, Maghrib, Isha) for your area. Location data is used only on-device to compute prayer times — it is never transmitted to our servers, stored, or shared with third parties. You can deny or revoke location permission at any time in your device Settings; the app will then fall back to a default location (Jerusalem). The Apple TV app does not use location services.",
+  "push_notifications": "Push Notifications",
+  "push_notifications_text": "The app may send you push notifications to alert you when a prayer time begins, so the Adhan (call to prayer) can play on time. Notifications are sent only if you explicitly grant permission. You can disable them at any time from your device Settings or from within the app.",
+  "data_security": "Data Security",
+  "data_security_text": "We take reasonable measures to protect your data, but no system is 100% secure.",
+  "apple_tv_section": "Apple TV & Native Apps",
+  "apple_tv_text": "The PEACE2074 app is available on iPhone, iPad, and Apple TV. The Apple TV app does not use the microphone, camera, location services, or push notifications. Session authentication uses secure HTTP-only cookies — no personal data is stored locally on the device. If you use iCloud, your device handles iCloud sync independently of our servers.",
+  "contact_text": "If you have questions about our privacy policy, please contact us.",
+  "terms_and_conditions": "Terms and Conditions",
+  "terms_intro": "Please read these terms and conditions carefully before using our website.",
+  "acceptance_of_terms": "Acceptance of Terms",
+  "acceptance_of_terms_text": "By accessing or using our website, you agree to be bound by these terms. If you do not agree, please do not use our site.",
+  "use_of_site": "Use of the Site",
+  "use_of_site_1": "You must use the site in compliance with all applicable laws and regulations.",
+  "use_of_site_2": "You may not use the site for any unlawful or prohibited purpose.",
+  "terms_location": "Location & Notifications",
+  "terms_location_text": "By enabling prayer time notifications you consent to the app accessing your device location solely to calculate prayer times on-device. This data is never stored or shared. You may revoke location access or notification permission at any time in your device Settings.",
+  "intellectual_property": "Intellectual Property",
+  "intellectual_property_text": "All content on this site is the property of the site owner or its licensors and is protected by copyright laws.",
+  "limitation_of_liability": "Limitation of Liability",
+  "limitation_of_liability_text": "We are not liable for any damages arising from your use of the site.",
+  "changes_to_terms": "Changes to Terms",
+  "changes_to_terms_text": "We may update these terms at any time. Continued use of the site means you accept the new terms.",
+  "auth": {
+    "username": "Username",
+    "password": "Password",
+    "email": "Email",
+    "confirmPassword": "Confirm Password",
+    "usernameRequired": "Username is required",
+    "passwordRequired": "Password is required",
+    "enterUsername": "Enter your username",
+    "enterPassword": "Enter your password",
+    "enterEmail": "Enter your email",
+    "enterCredentials": "Please enter username and password",
+    "signIn": "Sign In",
+    "signUp": "Sign Up",
+    "login": "Login",
+    "rememberMe": "Remember me",
+    "orContinueWith": "or continue with",
+    "signInWithPasskey": "Sign in with passkey",
+    "passkeyHint": "Use Face ID, Touch ID, Windows Hello, or your password manager.",
+    "passkeyNotSupported": "Passkeys are not supported in this browser context.",
+    "passkeyUnavailable": "No passkey is registered for this account yet. Sign in with your password first.",
+    "passkeyCancelled": "Passkey sign-in was cancelled.",
+    "passkeyLoginSuccess": "Signed in with your passkey.",
+    "passkeyLoginError": "Passkey sign-in failed. Please try again.",
+    "passkeyCreated": "Passkey saved for faster sign-in next time.",
+    "passkeyCreateError": "Could not save your passkey right now.",
+    "passkeyCreatePromptTitle": "Save a passkey?",
+    "passkeyCreatePromptMessage": "Use your device biometrics or password manager to sign in faster next time.",
+    "passkeyCreatePromptConfirm": "Save passkey",
+    "signInWithGitHub": "Sign in with GitHub",
+    "signInWithCloudflare": "Sign in with Cloudflare Identity",
+    "appleSignInUnavailable": "Sign in with Apple is currently unavailable.",
+    "socialSignInExpired": "Sign-in expired or was interrupted. Please try again.",
+    "googleSignInExpired": "Google sign-in expired or was interrupted. Please try again.",
+    "appleSignInExpired": "Apple sign-in expired or was interrupted. Please try again.",
+    "welcomeBack": "Welcome back",
+    "forgotPassword": "Forgot password?",
+    "resetPassword": "Reset Password",
+    "resetInstructions": "Enter your email and we'll send you instructions to reset your password.",
+    "sendResetLink": "Send Reset Link",
+    "resetEmailSent": "Password reset instructions sent to your email",
+    "resetError": "Failed to send reset email",
+    "loginError": "Login failed. Please try again.",
+    "loginSuccess": "Welcome back!",
+    "dontHaveAccount": "Don't have an account?",
+    "alreadyHaveAccount": "Already have an account?",
+    "createAccount": "Create your account",
+    "fillAllFields": "Please fill all fields",
+    "passwordMismatch": "Passwords do not match",
+    "acceptTerms": "Please accept the terms and conditions",
+    "iAccept": "I accept the",
+    "termsAndConditions": "terms and conditions",
+    "signupSuccess": "Account created successfully! Please login.",
+    "signupError": "Signup failed. Please try again."
+  },
+  "login": "Login",
+  "signup": "Sign Up",
+  "user": "User",
+  "password": "Password",
+  "sign_in_with_google": "Sign in with Google",
+  "sign_up": "Sign Up",
+  "signup_success": "Account created! Please log in.",
+  "signup_failed": "Signup failed",
+  "create_account": "Create account",
+  "back_to_login": "Back to login",
+  "please_fill_all_fields": "Please fill all fields",
+  "passwords_do_not_match": "Passwords do not match",
+  "confirm_password": "Confirm password",
+  "cancel": "Cancel",
+  "edit": "Edit",
+  "login_success": "Logged in successfully",
+  "please_accept_terms": "Accept our terms and conditions.",
+  "email": "Email",
+  "submit": "send",
+  "reset": "Reset",
+  "Login": "Login",
+  "password_login": "Signin with Email",
+  "username": "Userame",
+  "username_required": "Password is required",
+  "hello": "Hello",
+  "logout": "Logout",
+  "already_logged_in": "Already Logged",
+  "login_method": "Login Methods",
+  "logout_success": "you have logged out successfully",
+  "back": "Back",
+  "username_taken": "Userame Taken",
+  "accept_terms_and_conditions": "Accept out terms & conditions",
+  "password_required": "Password Required",
+  "resend_verification_email": "resend verification email",
+  "password_signup": "signup",
+  "username_optional": "Username",
+  "first_name": "First name",
+  "last_name": "Last name",
+  "username_hint": "username",
+  "email_required": "Email required",
+  "The 99 Holy Names of Allah": "The 99 Holy Names of Allah",
+  "welcome_back": "Welcome back, {name}",
+  "welcome_guest": "Hello Guest",
+  "no_bookmarks": "No saved Bookmarks",
+  "tasbeeh": {
+    "title": "Digital Tasbeeh",
+    "subtitle": "Islamic Prayer Beads",
+    "tapToCount": "Tap to Count",
+    "reset": "Reset",
+    "settings": "Settings",
+    "selectPhrase": "Select Dhikr Phrase",
+    "todayStats": "Today's Statistics",
+    "total": "Total",
+    "sessions": "Sessions",
+    "completed": "Completed Sets",
+    "continue": "Continue",
+    "vibration": "Vibration Feedback",
+    "sound": "Sound Feedback",
+    "autoNext": "Auto Next Phrase",
+    "phrases": {
+      "subhanallah": "Glory be to Allah",
+      "alhamdulillah": "Praise be to Allah",
+      "allahu_akbar": "Allah is Greatest",
+      "la_ilaha_illa_allah": "There is no god but Allah",
+      "astaghfirullah": "I seek forgiveness from Allah",
+      "la_hawla": "There is no power except with Allah"
+    }
+  },
+  "account": {
+    "title": "Account"
+  },
+  "meta": {
+    "home": "Peace2074 — Islamic resources, prayer tools, and thoughtful articles to support your spiritual journey.",
+    "holynames": "Explore the 99 Holy Names of Allah with meanings and audio recitations.",
+    "tasbeeh": "Digital Tasbeeh — a simple, beautiful counter for dhikr with session tracking and settings.",
+    "miracles": "Read inspiring stories and reflections on signs and miracles.",
+    "quran": "The Holy Quran — read, navigate, and bookmark suras with beautiful Arabic typography and responsive layout.",
+    "privacy": "Learn how we protect your data and privacy while using the site.",
+    "titles": {
+      "home": "Home",
+      "quran": "Quran",
+      "holynames": "Holy Names",
+      "tasbeeh": "Tasbeeh"
+    }
+  },
+  "bookmarks": "bookmark",
+  "profile": {
+    "title": "Profile",
+    "edit": "Edit Profile",
+    "save": "Save Changes"
+  },
+  "settings": {
+    "title": "Settings",
+    "display": "Display Settings",
+    "language": "Language Preference",
+    "theme": "Theme"
+  },
+  "holyNames": {
+    "1": {
+      "transliteration": "The Most Merciful",
+      "meaning": "The Most Compassionate"
+    },
+    "2": {
+      "transliteration": "The Most Gracious",
+      "meaning": "The Bestower of Mercy"
+    },
+    "3": {
+      "transliteration": "The King",
+      "meaning": "The Sovereign Lord"
+    },
+    "4": {
+      "transliteration": "The Most Sacred",
+      "meaning": "The Pure One"
+    },
+    "5": {
+      "transliteration": "The Source of Peace",
+      "meaning": "The Flawless One"
+    },
+    "6": {
+      "transliteration": "The Inspirer of Faith",
+      "meaning": "The Infuser of Faith"
+    },
+    "7": {
+      "transliteration": "The Guardian",
+      "meaning": "The Preserver of Safety"
+    },
+    "8": {
+      "transliteration": "The Victorious",
+      "meaning": "The Mighty One"
+    },
+    "9": {
+      "transliteration": "The Compeller",
+      "meaning": "The Restorer"
+    },
+    "10": {
+      "transliteration": "The Supreme",
+      "meaning": "The Majestic One"
+    },
+    "11": {
+      "transliteration": "The Creator",
+      "meaning": "The Maker of All Things"
+    },
+    "12": {
+      "transliteration": "The Evolver",
+      "meaning": "The Fashioner"
+    },
+    "13": {
+      "transliteration": "The Fashioner",
+      "meaning": "The Shaper of Beauty"
+    },
+    "14": {
+      "transliteration": "The Forgiving",
+      "meaning": "The All-Forgiving"
+    },
+    "15": {
+      "transliteration": "The Subduer",
+      "meaning": "The All-Prevailing One"
+    },
+    "16": {
+      "transliteration": "The Bestower",
+      "meaning": "The Supreme Bestower"
+    },
+    "17": {
+      "transliteration": "The Provider",
+      "meaning": "The Sustainer"
+    },
+    "18": {
+      "transliteration": "The Opener",
+      "meaning": "The Supreme Solver"
+    },
+    "19": {
+      "transliteration": "The All-Knowing",
+      "meaning": "The Omniscient"
+    },
+    "20": {
+      "transliteration": "The Withholder",
+      "meaning": "The Restrainer"
+    },
+    "21": {
+      "transliteration": "The Extender",
+      "meaning": "The Enlarger"
+    },
+    "22": {
+      "transliteration": "The Reducer",
+      "meaning": "The Abaser"
+    },
+    "23": {
+      "transliteration": "The Exalter",
+      "meaning": "The Elevator"
+    },
+    "24": {
+      "transliteration": "The Honorer",
+      "meaning": "The Bestower of Honor"
+    },
+    "25": {
+      "transliteration": "The Humiliator",
+      "meaning": "The Dishonourer"
+    },
+    "26": {
+      "transliteration": "The All-Hearing",
+      "meaning": "The Hearer of All"
+    },
+    "27": {
+      "transliteration": "The All-Seeing",
+      "meaning": "The Seer of All"
+    },
+    "28": {
+      "transliteration": "The Judge",
+      "meaning": "The Impartial Judge"
+    },
+    "29": {
+      "transliteration": "The Just",
+      "meaning": "The Utterly Just"
+    },
+    "30": {
+      "transliteration": "The Subtle One",
+      "meaning": "The Most Gentle"
+    },
+    "31": {
+      "transliteration": "The Aware",
+      "meaning": "The All-Aware"
+    },
+    "32": {
+      "transliteration": "The Forbearing",
+      "meaning": "The Clement"
+    },
+    "33": {
+      "transliteration": "The Magnificent",
+      "meaning": "The Supreme"
+    },
+    "34": {
+      "transliteration": "The Forgiving",
+      "meaning": "The All-Forgiving"
+    },
+    "35": {
+      "transliteration": "The Appreciative",
+      "meaning": "The Most Grateful"
+    },
+    "36": {
+      "transliteration": "The Most High",
+      "meaning": "The Exalted"
+    },
+    "37": {
+      "transliteration": "The Most Great",
+      "meaning": "The Greatest"
+    },
+    "38": {
+      "transliteration": "The Preserver",
+      "meaning": "The Guardian"
+    },
+    "39": {
+      "transliteration": "The Sustainer",
+      "meaning": "The Nourisher"
+    },
+    "40": {
+      "transliteration": "The Reckoner",
+      "meaning": "The Sufficient"
+    },
+    "41": {
+      "transliteration": "The Majestic",
+      "meaning": "The Sublime One"
+    },
+    "42": {
+      "transliteration": "The Generous",
+      "meaning": "The Most Generous"
+    },
+    "43": {
+      "transliteration": "The Watchful",
+      "meaning": "The Ever-Watchful"
+    },
+    "44": {
+      "transliteration": "The Responsive",
+      "meaning": "The Answerer of Prayers"
+    },
+    "45": {
+      "transliteration": "The All-Encompassing",
+      "meaning": "The Boundless"
+    },
+    "46": {
+      "transliteration": "The Wise",
+      "meaning": "The All-Wise"
+    },
+    "47": {
+      "transliteration": "The Loving",
+      "meaning": "The Most Loving"
+    },
+    "48": {
+      "transliteration": "The Glorious",
+      "meaning": "The Most Glorious"
+    },
+    "49": {
+      "transliteration": "The Resurrector",
+      "meaning": "The Raiser of the Dead"
+    },
+    "50": {
+      "transliteration": "The Witness",
+      "meaning": "The All-Witnessing"
+    },
+    "51": {
+      "transliteration": "The Truth",
+      "meaning": "The Absolute Truth"
+    },
+    "52": {
+      "transliteration": "The Trustee",
+      "meaning": "The Disposer of Affairs"
+    },
+    "53": {
+      "transliteration": "The Strong",
+      "meaning": "The All-Strong"
+    },
+    "54": {
+      "transliteration": "The Firm",
+      "meaning": "The Steadfast"
+    },
+    "55": {
+      "transliteration": "The Friend",
+      "meaning": "The Protecting Friend"
+    },
+    "56": {
+      "transliteration": "The Praiseworthy",
+      "meaning": "The All-Praiseworthy"
+    },
+    "57": {
+      "transliteration": "The Reckoner",
+      "meaning": "The Accounter"
+    },
+    "58": {
+      "transliteration": "The Originator",
+      "meaning": "The Initiator"
+    },
+    "59": {
+      "transliteration": "The Restorer",
+      "meaning": "The Reinstater"
+    },
+    "60": {
+      "transliteration": "The Giver of Life",
+      "meaning": "The Bestower of Life"
+    },
+    "61": {
+      "transliteration": "The Destroyer",
+      "meaning": "The Bringer of Death"
+    },
+    "62": {
+      "transliteration": "The Ever-Living",
+      "meaning": "The Alive"
+    },
+    "63": {
+      "transliteration": "The Self-Subsisting",
+      "meaning": "The Sustainer of All"
+    },
+    "64": {
+      "transliteration": "The Finder",
+      "meaning": "The Perceiver"
+    },
+    "65": {
+      "transliteration": "The Noble",
+      "meaning": "The Illustrious"
+    },
+    "66": {
+      "transliteration": "The One",
+      "meaning": "The Unique"
+    },
+    "67": {
+      "transliteration": "The Indivisible",
+      "meaning": "The One and Only"
+    },
+    "68": {
+      "transliteration": "The Eternal",
+      "meaning": "The Absolute"
+    },
+    "69": {
+      "transliteration": "The Capable",
+      "meaning": "The All-Powerful"
+    },
+    "70": {
+      "transliteration": "The Omnipotent",
+      "meaning": "The Determiner"
+    },
+    "71": {
+      "transliteration": "The Expediter",
+      "meaning": "The Promoter"
+    },
+    "72": {
+      "transliteration": "The Delayer",
+      "meaning": "The Postponer"
+    },
+    "73": {
+      "transliteration": "The First",
+      "meaning": "The Beginning"
+    },
+    "74": {
+      "transliteration": "The Last",
+      "meaning": "The End"
+    },
+    "75": {
+      "transliteration": "The Manifest",
+      "meaning": "The Evident"
+    },
+    "76": {
+      "transliteration": "The Hidden",
+      "meaning": "The Concealed"
+    },
+    "77": {
+      "transliteration": "The Governor",
+      "meaning": "The Patron"
+    },
+    "78": {
+      "transliteration": "The Most Exalted",
+      "meaning": "The Supreme"
+    },
+    "79": {
+      "transliteration": "The Source of Goodness",
+      "meaning": "The Righteous"
+    },
+    "80": {
+      "transliteration": "The Acceptor of Repentance",
+      "meaning": "The Ever-Pardoning"
+    },
+    "81": {
+      "transliteration": "The Avenger",
+      "meaning": "The Retaliator"
+    },
+    "82": {
+      "transliteration": "The Pardoner",
+      "meaning": "The Supreme Pardoner"
+    },
+    "83": {
+      "transliteration": "The Compassionate",
+      "meaning": "The Most Kind"
+    },
+    "84": {
+      "transliteration": "Master of the Kingdom",
+      "meaning": "Owner of All Sovereignty"
+    },
+    "85": {
+      "transliteration": "Lord of Majesty and Generosity",
+      "meaning": "The Possessor of Glory and Honour"
+    },
+    "86": {
+      "transliteration": "The Equitable",
+      "meaning": "The Just One"
+    },
+    "87": {
+      "transliteration": "The Gatherer",
+      "meaning": "The Assembler"
+    },
+    "88": {
+      "transliteration": "The Self-Sufficient",
+      "meaning": "The Wealthy"
+    },
+    "89": {
+      "transliteration": "The Enricher",
+      "meaning": "The Bestower of Wealth"
+    },
+    "90": {
+      "transliteration": "The Preventer",
+      "meaning": "The Withholder"
+    },
+    "91": {
+      "transliteration": "The Distresser",
+      "meaning": "The Creator of Harm"
+    },
+    "92": {
+      "transliteration": "The Propitious",
+      "meaning": "The Creator of Good"
+    },
+    "93": {
+      "transliteration": "The Light",
+      "meaning": "The Illuminator"
+    },
+    "94": {
+      "transliteration": "The Guide",
+      "meaning": "The Provider of Guidance"
+    },
+    "95": {
+      "transliteration": "The Incomparable",
+      "meaning": "The Originator"
+    },
+    "96": {
+      "transliteration": "The Everlasting",
+      "meaning": "The Eternal"
+    },
+    "97": {
+      "transliteration": "The Inheritor",
+      "meaning": "The Supreme Inheritor"
+    },
+    "98": {
+      "transliteration": "The Guide",
+      "meaning": "The Righteous Teacher"
+    },
+    "99": {
+      "transliteration": "The Patient",
+      "meaning": "The Most Patient"
+    }
+  },
+  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna"
 }
