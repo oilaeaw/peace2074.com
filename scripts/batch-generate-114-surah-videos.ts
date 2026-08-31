@@ -376,30 +376,25 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
   await page.waitForTimeout(2000)
 
-  // Step 2: Inject CSS to hide all banners, nav, and chrome
-  // CSS display:none !important persists even when Vue re-renders
-  await page.addStyleTag({ content: `
-    .q-banner,
-    .announcement-banner,
-    .paused-indicator-banner,
-    .q-header,
-    nav,
-    .back-to-list,
-    .sura-heading,
-    .q-notification,
-    .q-dialog,
-    .q-dialog__backdrop,
-    .q-btn.q-mb-md[href="/quran"],
-    .q-btn.q-mb-md[to="/quran"] {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      max-height: 0 !important;
-      overflow: hidden !important;
+  // Step 2: Hide all banners using inline styles (highest CSS specificity)
+  // and run persistent interval to keep them hidden through Vue re-renders
+  await page.evaluate(() => {
+    function hideAllBanners() {
+      document.querySelectorAll('.q-banner, .announcement-banner, .paused-indicator-banner').forEach((el: any) => {
+        el.style.cssText = 'display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;'
+      })
+      // Hide back button, header, nav
+      document.querySelectorAll('.q-header, nav, .back-to-list, .q-mb-md[href="/quran"]').forEach((el: any) => {
+        el.style.cssText = 'display:none !important;'
+      })
+      // Also hide the ← Back to list button (first child)
+      const backBtn = document.querySelector('.quran-detail-page > a.q-btn')
+      if (backBtn) (backBtn as any).style.cssText = 'display:none !important;'
     }
-    body { padding-top: 0 !important; }
-    .q-page-container { padding-top: 0 !important; }
-  `})
+    // Run immediately and every 200ms to beat Vue reactivity
+    hideAllBanners()
+    setInterval(hideAllBanners, 200)
+  })
   await page.waitForTimeout(500)
 
   // Calculate expected duration from audio files
