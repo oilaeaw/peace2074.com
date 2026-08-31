@@ -342,64 +342,32 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     localStorage.setItem('cookie-consent', 'true')
   })
 
-  // Inject CSS to force-hide all banners, notifications, and UI chrome for clean recording
-  await page.addStyleTag({ content: `
-    .q-banner,
-    .autoplay-banner,
-    [class*="auto-continue"],
-    [class*="consent"],
-    .q-notification,
-    .q-notifications,
-    .q-header,
-    nav,
-    .back-to-list,
-    [class*="cookie"] {
-      display: none !important;
-      visibility: hidden !important;
-      height: 0 !important;
-      overflow: hidden !important;
-    }
-  `})
-
-  // Navigate to the live Quran reader page with dark theme and play=true
-  const url = `https://peace2074.com/quran/${chapter.id}?play=true&theme=dark`
+  // Use local Vite dev server (pnpm dev must be running)
+  const baseUrl = 'http://localhost:4000'
+  const url = `${baseUrl}/quran/${chapter.id}?play=true&theme=dark`
   console.log(`[Surah ${chapter.id}] 🌐 Opening ${url}`)
   await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
 
-  // Wait for the verse text to fully render
-  await page.waitForSelector('.verse-text-arabic, .arabic-text, [class*="verse"]', { timeout: 20000 }).catch(() => {})
-  await page.waitForTimeout(4000)
+  // Wait for verse text to fully render
+  await page.waitForSelector('[class*="verse"], .arabic-text', { timeout: 20000 }).catch(() => {})
+  await page.waitForTimeout(3000)
 
-  // Inject persistent CSS and MutationObserver to hide any banners that appear dynamically
-  await page.evaluate(() => {
-    const style = document.createElement('style')
-    style.textContent = `
-      .q-banner, .autoplay-banner, [class*="auto-continue"], [class*="consent"],
-      .q-notification, .q-notifications, .q-header, nav, .back-to-list,
-      [class*="cookie"], .q-dialog, .q-dialog__backdrop {
-        display: none !important; visibility: hidden !important;
-        height: 0 !important; overflow: hidden !important;
-      }
-    `
-    document.head.appendChild(style)
-
-    // MutationObserver to catch any new banners
-    const observer = new MutationObserver(() => {
-      document.querySelectorAll('.q-banner, .q-notification, .q-dialog, [class*="consent"], [class*="auto-continue"]').forEach((el: any) => {
-        el.style.display = 'none'
-      })
-    })
-    observer.observe(document.body, { childList: true, subtree: true })
-  })
-
-  // Click START RECITATION to bypass browser autoplay policy
+  // Step 1: Click the autoplay unlock banner to start recitation
+  // The whole q-banner has @click="isAutoplayBlocked = false"
   const startClicked = await page.evaluate(() => {
-    const allBtns = Array.from(document.querySelectorAll('button, [role="button"]'))
+    // Try clicking the banner itself (has @click handler)
+    const banner = document.querySelector('.bg-primary.text-white.q-banner, .q-banner.bg-primary')
+    if (banner) {
+      (banner as HTMLElement).click()
+      return 'autoplay-banner-click'
+    }
+    // Fallback: find Start Recitation button inside the banner
+    const allBtns = Array.from(document.querySelectorAll('.q-btn'))
     for (const btn of allBtns) {
       const text = (btn as HTMLElement).textContent?.trim() || ''
-      if (text.includes('START RECITATION') || text.includes('Start Recitation')) {
+      if (text.includes('Start Recitation') || text.includes('START RECITATION')) {
         (btn as HTMLElement).click()
-        return 'start-recitation'
+        return 'start-recitation-btn'
       }
     }
     document.body.click()
@@ -407,6 +375,32 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   })
   console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
   await page.waitForTimeout(2000)
+
+  // Step 2: Inject CSS to hide all banners, nav, and chrome
+  // CSS display:none !important persists even when Vue re-renders
+  await page.addStyleTag({ content: `
+    .q-banner,
+    .announcement-banner,
+    .paused-indicator-banner,
+    .q-header,
+    nav,
+    .back-to-list,
+    .sura-heading,
+    .q-notification,
+    .q-dialog,
+    .q-dialog__backdrop,
+    .q-btn.q-mb-md[href="/quran"],
+    .q-btn.q-mb-md[to="/quran"] {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      max-height: 0 !important;
+      overflow: hidden !important;
+    }
+    body { padding-top: 0 !important; }
+    .q-page-container { padding-top: 0 !important; }
+  `})
+  await page.waitForTimeout(500)
 
   // Calculate expected duration from audio files
   let expectedDuration = 0
