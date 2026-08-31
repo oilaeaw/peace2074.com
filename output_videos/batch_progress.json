@@ -15,8 +15,9 @@
   "3": {
     "surahId": 3,
     "surahName": "Ali 'Imran",
-    "status": "pending",
-    "videoPath": "output_videos/surah_003_ali__imran.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_003_ali__imran.mp4",
+    "error": "page.waitForTimeout: Target page, context or browser has been closed"
   },
   "4": {
     "surahId": 4,
