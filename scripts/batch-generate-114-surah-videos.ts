@@ -326,7 +326,7 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   const videoDir = path.join(tempDir, 'pw_video')
   if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true })
 
-  const browser = await chromium.launch({ headless: true })
+  const browser = await chromium.launch({ headless: false })
   const context = await browser.newContext({
     viewport: { width: 1280, height: 720 },
     recordVideo: { dir: videoDir, size: { width: 1280, height: 720 } },
