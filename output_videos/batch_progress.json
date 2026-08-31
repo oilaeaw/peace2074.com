@@ -2,8 +2,9 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
+    "error": "page.waitForTimeout: Target page, context or browser has been closed"
   },
   "2": {
     "surahId": 2,

@@ -376,8 +376,7 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
   await page.waitForTimeout(2000)
 
-  // Step 2: Hide all banners using inline styles (highest CSS specificity)
-  // and run persistent interval to keep them hidden through Vue re-renders
+  // Step 2: Hide all banners AND inject permanent brand watermark badge
   await page.evaluate(() => {
     function hideAllBanners() {
       document.querySelectorAll('.q-banner, .announcement-banner, .paused-indicator-banner').forEach((el: any) => {
@@ -387,10 +386,35 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
       document.querySelectorAll('.q-header, nav, .back-to-list, .q-mb-md[href="/quran"]').forEach((el: any) => {
         el.style.cssText = 'display:none !important;'
       })
-      // Also hide the ← Back to list button (first child)
       const backBtn = document.querySelector('.quran-detail-page > a.q-btn')
       if (backBtn) (backBtn as any).style.cssText = 'display:none !important;'
     }
+
+    // Inject permanent watermark in top-right corner
+    if (!document.getElementById('peace2074-watermark')) {
+      const mark = document.createElement('div')
+      mark.id = 'peace2074-watermark'
+      mark.innerHTML = '✨ <b>PEACE2074</b> • peace2074.com'
+      mark.style.cssText = `
+        position: fixed !important;
+        top: 20px !important;
+        right: 24px !important;
+        z-index: 999999 !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        border: 1px solid rgba(251, 191, 36, 0.4) !important;
+        color: #fef3c7 !important;
+        padding: 8px 16px !important;
+        border-radius: 20px !important;
+        font-family: system-ui, -apple-system, sans-serif !important;
+        font-size: 14px !important;
+        letter-spacing: 0.5px !important;
+        backdrop-filter: blur(8px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(251, 191, 36, 0.2) !important;
+        pointer-events: none !important;
+      `
+      document.body.appendChild(mark)
+    }
+
     // Run immediately and every 200ms to beat Vue reactivity
     hideAllBanners()
     setInterval(hideAllBanners, 200)
