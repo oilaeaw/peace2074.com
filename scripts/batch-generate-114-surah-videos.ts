@@ -56,23 +56,49 @@ function saveProgress(progress: Record<number, ProgressRecord>) {
   fs.writeFileSync(PROGRESS_FILE, JSON.stringify(progress, null, 2))
 }
 
+interface WordTiming {
+  start: number  // seconds
+  end: number    // seconds
+}
+
 interface VerseContent {
   verseNumber: number
   arabicText: string
   translationText: string
+  words: string[]          // individual Arabic words
+  wordTimings: WordTiming[] // start/end per word
 }
 
 async function fetchSurahVersesData(chapterId: number): Promise<VerseContent[]> {
   try {
-    const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?language=en&fields=text_uthmani&translations=131&per_page=300`)
+    const res = await fetch(`https://api.quran.com/api/v4/verses/by_chapter/${chapterId}?language=en&audio=7&words=true&word_fields=text_uthmani&fields=text_uthmani&translations=131&per_page=300`)
     if (!res.ok) return []
     const json = await res.json()
     const verses = json?.verses || []
-    return verses.map((v: any) => ({
-      verseNumber: v.verse_number,
-      arabicText: v.text_uthmani || '',
-      translationText: v.translations?.[0]?.text?.replace(/<[^>]*>/g, '').trim() || '',
-    }))
+    return verses.map((v: any) => {
+      const words = Array.isArray(v?.words)
+        ? v.words
+            .filter((w: any) => w?.char_type_name === 'word')
+            .map((w: any) => w?.text_uthmani || w?.text || '')
+            .filter(Boolean)
+        : []
+
+      const segments: number[][] = v?.audio?.segments || []
+      const wordTimings = segments
+        .filter((seg: number[]) => seg.length >= 4)
+        .map((seg: number[]) => ({
+          start: (seg[2] ?? 0) / 1000,
+          end: (seg[3] ?? 0) / 1000,
+        }))
+
+      return {
+        verseNumber: v.verse_number,
+        arabicText: v.text_uthmani || '',
+        translationText: v.translations?.[0]?.text?.replace(/<[^>]*>/g, '').trim() || '',
+        words,
+        wordTimings,
+      }
+    })
   } catch {
     return []
   }
@@ -87,16 +113,29 @@ function getAudioDuration(filePath: string): number {
   }
 }
 
-function generateVerseHtml(chapter: Chapter, activeVerse: VerseContent, allVerses: VerseContent[]): string {
+function generateVerseHtml(chapter: Chapter, activeVerse: VerseContent, allVerses: VerseContent[], activeWordIndex: number = -1): string {
   const verseRowsHtml = allVerses
     .map((v) => {
       const isActive = v.verseNumber === activeVerse.verseNumber
+      // Build word-by-word spans for the active verse, plain text for others
+      let arabicHtml: string
+      if (isActive && v.words.length > 0) {
+        arabicHtml = v.words
+          .map((word, wIdx) => {
+            const isCurrent = wIdx === activeWordIndex
+            return `<span class="word${isCurrent ? ' is-current-word' : ''}">${word}</span>`
+          })
+          .join(' ') + ` ﴿${v.verseNumber}﴾`
+      } else {
+        arabicHtml = `${v.arabicText} ﴿${v.verseNumber}﴾`
+      }
+
       return `
       <div id="${isActive ? 'activeAyah' : 'ayah-' + v.verseNumber}" class="verse-row ${isActive ? 'is-current-ayah' : ''}">
         <div class="verse-main">
           <div class="verse-number-badge">${v.verseNumber}</div>
           <div class="arabic-text">
-            ${v.arabicText} ﴿${v.verseNumber}﴾
+            ${arabicHtml}
           </div>
         </div>
         <div class="translation-text">
@@ -227,6 +266,19 @@ function generateVerseHtml(chapter: Chapter, activeVerse: VerseContent, allVerse
       color: #f1f5f9;
       font-weight: 500;
     }
+    .word {
+      display: inline;
+      padding: 2px 4px;
+      border-radius: 6px;
+      transition: all 0.15s ease;
+    }
+    .word.is-current-word {
+      background: rgba(251, 191, 36, 0.45) !important;
+      color: #fef3c7 !important;
+      box-shadow: 0 0 16px rgba(251, 191, 36, 0.4);
+      border-radius: 8px;
+      padding: 4px 8px;
+    }
   </style>
 </head>
 <body>
@@ -266,96 +318,171 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     return outputVideo
   }
 
-  console.log(`[Surah ${chapter.id}/${114}] 🎨 Generating synchronized verse cards & rendering HD video: ${chapter.transliteration} (${chapter.name})...`)
+  console.log(`[Surah ${chapter.id}/${114}] 🎬 Screen-recording live PEACE2074 reader for: ${chapter.transliteration} (${chapter.name})...`)
 
-  const versesData = await fetchSurahVersesData(chapter.id)
-  
   const { chromium } = await import('@playwright/test')
-  const browser = await chromium.launch()
-  const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 
-  const segmentVideos: string[] = []
-  const verseTimestamps: { verse: number; timestamp: number; duration: number }[] = []
-  let currentCumulativeTime = 0
+  // Playwright video recording dir
+  const videoDir = path.join(tempDir, 'pw_video')
+  if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true })
 
+  const browser = await chromium.launch({ headless: true })
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 720 },
+    recordVideo: { dir: videoDir, size: { width: 1280, height: 720 } },
+    colorScheme: 'dark',
+  })
+  const page = await context.newPage()
+
+  // Set localStorage for word-level highlighting before navigating
+  await page.addInitScript(() => {
+    localStorage.setItem('quran-highlight-mode', 'word')
+    localStorage.setItem('auto-continue-banner-dismissed', 'true')
+    localStorage.setItem('consent-accepted', 'true')
+    localStorage.setItem('cookie-consent', 'true')
+  })
+
+  // Inject CSS to force-hide all banners, notifications, and UI chrome for clean recording
+  await page.addStyleTag({ content: `
+    .q-banner,
+    .autoplay-banner,
+    [class*="auto-continue"],
+    [class*="consent"],
+    .q-notification,
+    .q-notifications,
+    .q-header,
+    nav,
+    .back-to-list,
+    [class*="cookie"] {
+      display: none !important;
+      visibility: hidden !important;
+      height: 0 !important;
+      overflow: hidden !important;
+    }
+  `})
+
+  // Navigate to the live Quran reader page with dark theme and play=true
+  const url = `https://peace2074.com/quran/${chapter.id}?play=true&theme=dark`
+  console.log(`[Surah ${chapter.id}] 🌐 Opening ${url}`)
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
+
+  // Wait for the verse text to fully render
+  await page.waitForSelector('.verse-text-arabic, .arabic-text, [class*="verse"]', { timeout: 20000 }).catch(() => {})
+  await page.waitForTimeout(4000)
+
+  // Inject persistent CSS and MutationObserver to hide any banners that appear dynamically
+  await page.evaluate(() => {
+    const style = document.createElement('style')
+    style.textContent = `
+      .q-banner, .autoplay-banner, [class*="auto-continue"], [class*="consent"],
+      .q-notification, .q-notifications, .q-header, nav, .back-to-list,
+      [class*="cookie"], .q-dialog, .q-dialog__backdrop {
+        display: none !important; visibility: hidden !important;
+        height: 0 !important; overflow: hidden !important;
+      }
+    `
+    document.head.appendChild(style)
+
+    // MutationObserver to catch any new banners
+    const observer = new MutationObserver(() => {
+      document.querySelectorAll('.q-banner, .q-notification, .q-dialog, [class*="consent"], [class*="auto-continue"]').forEach((el: any) => {
+        el.style.display = 'none'
+      })
+    })
+    observer.observe(document.body, { childList: true, subtree: true })
+  })
+
+  // Click START RECITATION to bypass browser autoplay policy
+  const startClicked = await page.evaluate(() => {
+    const allBtns = Array.from(document.querySelectorAll('button, [role="button"]'))
+    for (const btn of allBtns) {
+      const text = (btn as HTMLElement).textContent?.trim() || ''
+      if (text.includes('START RECITATION') || text.includes('Start Recitation')) {
+        (btn as HTMLElement).click()
+        return 'start-recitation'
+      }
+    }
+    document.body.click()
+    return 'body-click'
+  })
+  console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
+  await page.waitForTimeout(2000)
+
+  // Calculate expected duration from audio files
+  let expectedDuration = 0
   for (let verse = 1; verse <= chapter.total_verses; verse++) {
-    const paddedVerse = pad3(verse)
-    const fileKey = `${paddedSura}${paddedVerse}.mp3`
+    const fileKey = `${paddedSura}${pad3(verse)}.mp3`
     const localMp3 = path.join(tempDir, fileKey)
-    const primaryUrl = `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`
-    const mirrorUrl = `https://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/${fileKey}`
 
     if (!fs.existsSync(localMp3) || fs.statSync(localMp3).size < 100) {
-      let success = false
       const urls = [
         `https://everyayah.com/data/Alafasy_128kbps/${fileKey}`,
         `https://mirrors.quranicaudio.com/everyayah/Alafasy_128kbps/${fileKey}`,
         `https://cdn.islamic.network/quran/audio/128/ar.alafasy/${fileKey}`,
       ]
-      for (const url of urls) {
-        for (let attempt = 1; attempt <= 3; attempt++) {
-          try {
-            const res = await fetch(url, { signal: AbortSignal.timeout(12000) })
-            if (res.ok) {
-              const buffer = Buffer.from(await res.arrayBuffer())
-              if (buffer.length > 100) {
-                fs.writeFileSync(localMp3, buffer)
-                success = true
-                break
-              }
-            }
-          } catch {
-            await new Promise((r) => setTimeout(r, 400))
+      for (const u of urls) {
+        try {
+          const res = await fetch(u, { signal: AbortSignal.timeout(12000) })
+          if (res.ok) {
+            const buf = Buffer.from(await res.arrayBuffer())
+            if (buf.length > 100) { fs.writeFileSync(localMp3, buf); break }
           }
-        }
-        if (success) break
-      }
-      if (!success) {
-        throw new Error(`Failed to download audio for verse ${verse} of Surah ${chapter.id}`)
+        } catch {}
       }
     }
 
-    const verseData = versesData.find((v) => v.verseNumber === verse) || {
-      verseNumber: verse,
-      arabicText: '',
-      translationText: '',
+    if (fs.existsSync(localMp3)) {
+      expectedDuration += getAudioDuration(localMp3)
     }
-
-    const htmlContent = generateVerseHtml(chapter, verseData, versesData)
-    const cardPng = path.join(tempDir, `verse_${paddedVerse}.png`)
-
-    await page.setContent(htmlContent, { waitUntil: 'networkidle' })
-    await page.screenshot({ path: cardPng, type: 'png' })
-
-    const duration = getAudioDuration(localMp3)
-    const segmentMp4 = path.join(tempDir, `segment_${paddedVerse}.mp4`)
-
-    verseTimestamps.push({ verse, timestamp: currentCumulativeTime, duration })
-    currentCumulativeTime += duration
-
-    execSync(
-      `/usr/local/bin/ffmpeg -y -loop 1 -i "${cardPng}" -i "${localMp3}" -t ${duration} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p "${segmentMp4}"`,
-      { stdio: 'ignore' }
-    )
-
-    segmentVideos.push(segmentMp4)
   }
 
-  // Save verse chapter timestamps for YouTube description
-  const chaptersFile = path.join(OUTPUT_DIR, `surah_${paddedSura}_chapters.json`)
-  fs.writeFileSync(chaptersFile, JSON.stringify(verseTimestamps, null, 2))
+  // Add a few seconds buffer
+  const waitMs = Math.ceil((expectedDuration + 3) * 1000)
+  console.log(`[Surah ${chapter.id}] ⏱️ Recording for ${Math.ceil(expectedDuration)}s (${chapter.total_verses} verses)...`)
+  await page.waitForTimeout(waitMs)
 
+  // Close context to finalize the video recording
+  const videoFile = await page.video()?.path()
+  await context.close()
   await browser.close()
 
-  const concatListFile = path.join(tempDir, 'segments_list.txt')
-  const concatContent = segmentVideos.map((f) => `file '${f.replace(/'/g, "'\\''")}'`).join('\n')
-  fs.writeFileSync(concatListFile, concatContent)
+  if (!videoFile || !fs.existsSync(videoFile)) {
+    throw new Error(`Playwright video recording failed for Surah ${chapter.id}`)
+  }
 
+  // Now merge: Playwright's webm screen recording (video) + concatenated audio (mp3s)
+  // 1. Concatenate all verse audio files into one full-surah audio
+  const audioFiles: string[] = []
+  for (let verse = 1; verse <= chapter.total_verses; verse++) {
+    const localMp3 = path.join(tempDir, `${paddedSura}${pad3(verse)}.mp3`)
+    if (fs.existsSync(localMp3)) audioFiles.push(localMp3)
+  }
+
+  const audioListFile = path.join(tempDir, 'audio_list.txt')
+  fs.writeFileSync(audioListFile, audioFiles.map(f => `file '${f}'`).join('\n'))
+
+  const fullAudio = path.join(tempDir, 'full_audio.mp3')
+  execSync(`/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${audioListFile}" -c copy "${fullAudio}"`, { stdio: 'ignore' })
+
+  // 2. Merge screen recording video + real recitation audio → final HD MP4
   execSync(
-    `/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${concatListFile}" -c copy "${outputVideo}"`,
+    `/usr/local/bin/ffmpeg -y -i "${videoFile}" -i "${fullAudio}" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -shortest -pix_fmt yuv420p "${outputVideo}"`,
     { stdio: 'ignore' }
   )
 
+  // Save verse timestamps for YouTube description
+  const verseTimestamps: { verse: number; timestamp: number; duration: number }[] = []
+  let cumTime = 0
+  for (let verse = 1; verse <= chapter.total_verses; verse++) {
+    const localMp3 = path.join(tempDir, `${paddedSura}${pad3(verse)}.mp3`)
+    const dur = fs.existsSync(localMp3) ? getAudioDuration(localMp3) : 0
+    verseTimestamps.push({ verse, timestamp: cumTime, duration: dur })
+    cumTime += dur
+  }
+  const chaptersFile = path.join(OUTPUT_DIR, `surah_${paddedSura}_chapters.json`)
+  fs.writeFileSync(chaptersFile, JSON.stringify(verseTimestamps, null, 2))
+
+  console.log(`[Surah ${chapter.id}] ✅ Screen recording complete → ${outputVideo}`)
   return outputVideo
 }
 
