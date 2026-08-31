@@ -87,7 +87,26 @@ function getAudioDuration(filePath: string): number {
   }
 }
 
-function generateVerseHtml(chapter: Chapter, verse: VerseContent): string {
+function generateVerseHtml(chapter: Chapter, activeVerse: VerseContent, allVerses: VerseContent[]): string {
+  const verseRowsHtml = allVerses
+    .map((v) => {
+      const isActive = v.verseNumber === activeVerse.verseNumber
+      return `
+      <div id="${isActive ? 'activeAyah' : 'ayah-' + v.verseNumber}" class="verse-row ${isActive ? 'is-current-ayah' : ''}">
+        <div class="verse-main">
+          <div class="verse-number-badge">${v.verseNumber}</div>
+          <div class="arabic-text">
+            ${v.arabicText} ﴿${v.verseNumber}﴾
+          </div>
+        </div>
+        <div class="translation-text">
+          ${v.translationText}
+        </div>
+      </div>
+    `
+    })
+    .join('')
+
   return `<!DOCTYPE html>
 <html lang="ar">
 <head>
@@ -100,139 +119,141 @@ function generateVerseHtml(chapter: Chapter, verse: VerseContent): string {
     body {
       width: 1280px;
       height: 720px;
-      background: linear-gradient(135deg, #090d16 0%, #0f172a 50%, #1e1b4b 100%);
+      background-color: #0b1120;
       color: #f8fafc;
-      font-family: 'DM Sans', sans-serif;
+      font-family: 'DM Sans', system-ui, -apple-system, sans-serif;
       display: flex;
       flex-direction: column;
-      justify-content: space-between;
-      align-items: center;
-      padding: 40px 60px;
       overflow: hidden;
     }
-    .header {
+    .app-header {
       width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
+      height: 64px;
+      background: rgba(15, 23, 42, 0.95);
       border-bottom: 1px solid rgba(255, 255, 255, 0.1);
-      padding-bottom: 20px;
-    }
-    .brand {
       display: flex;
       align-items: center;
-      gap: 12px;
+      justify-content: space-between;
+      padding: 0 32px;
+      flex-shrink: 0;
+      z-index: 10;
+    }
+    .brand-logo {
+      display: flex;
+      align-items: center;
+      gap: 10px;
       font-weight: 700;
-      font-size: 24px;
-      color: #fbbf24;
-      letter-spacing: 1px;
-    }
-    .surah-info {
-      text-align: right;
       font-size: 20px;
-      color: #94a3b8;
+      color: #fbbf24;
+      letter-spacing: 0.05em;
     }
-    .surah-info span {
-      color: #38bdf8;
+    .surah-heading-title {
+      font-size: 18px;
       font-weight: 600;
+      color: #f8fafc;
     }
-    .content-card {
+    .recitation-banner {
       width: 100%;
-      max-width: 1100px;
-      background: rgba(15, 23, 42, 0.75);
-      backdrop-filter: blur(16px);
-      border: 2px solid rgba(251, 191, 36, 0.4);
-      box-shadow: 0 0 40px rgba(251, 191, 36, 0.15), inset 0 0 20px rgba(251, 191, 36, 0.05);
-      border-radius: 24px;
-      padding: 40px;
+      background: rgba(245, 158, 11, 0.14);
+      border-bottom: 1px solid rgba(245, 158, 11, 0.3);
+      padding: 10px 32px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      color: #fbbf24;
+      font-size: 14px;
+      font-weight: 600;
+      flex-shrink: 0;
+    }
+    .reader-scroll-container {
+      flex: 1;
+      overflow-y: auto;
+      padding: 32px 80px;
       display: flex;
       flex-direction: column;
-      align-items: center;
-      gap: 28px;
-      text-align: center;
+      gap: 24px;
+      scroll-behavior: smooth;
     }
-    .verse-badge {
+    .verse-row {
+      background: rgba(15, 23, 42, 0.4);
+      border: 1px solid rgba(255, 255, 255, 0.06);
+      border-radius: 16px;
+      padding: 24px 32px;
+      transition: all 0.25s ease;
+    }
+    .verse-row.is-current-ayah {
+      background: rgba(251, 191, 36, 0.16) !important;
+      border-inline-start: 4px solid #fbbf24 !important;
+      box-shadow: 0 0 24px rgba(251, 191, 36, 0.2) !important;
+      border-radius: 16px;
+    }
+    .verse-main {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      gap: 24px;
+      direction: rtl;
+    }
+    .verse-number-badge {
       display: inline-flex;
       align-items: center;
-      gap: 8px;
-      background: rgba(251, 191, 36, 0.15);
-      border: 1px solid rgba(251, 191, 36, 0.5);
+      justify-content: center;
+      min-width: 36px;
+      height: 36px;
+      background: rgba(251, 191, 36, 0.2);
       color: #fbbf24;
-      padding: 6px 18px;
-      border-radius: 999px;
+      border-radius: 50%;
+      font-weight: 700;
       font-size: 16px;
-      font-weight: 600;
+      flex-shrink: 0;
     }
     .arabic-text {
       font-family: 'Amiri', serif;
-      font-size: 44px;
+      font-size: 38px;
       line-height: 1.8;
       color: #ffffff;
+      flex: 1;
       direction: rtl;
-      text-shadow: 0 2px 10px rgba(0, 0, 0, 0.5);
     }
     .translation-text {
-      font-size: 22px;
+      margin-top: 16px;
+      font-size: 18px;
       line-height: 1.6;
-      color: #cbd5e1;
-      max-width: 900px;
-      font-weight: 400;
+      color: #94a3b8;
+      direction: ltr;
+      text-align: left;
     }
-    .footer {
-      width: 100%;
-      display: flex;
-      justify-content: space-between;
-      align-items: center;
-      font-size: 16px;
-      color: #64748b;
-      border-top: 1px solid rgba(255, 255, 255, 0.08);
-      padding-top: 16px;
-    }
-    .active-indicator {
-      display: flex;
-      align-items: center;
-      gap: 8px;
-      color: #4ade80;
-      font-weight: 600;
-    }
-    .pulse-dot {
-      width: 10px;
-      height: 10px;
-      background-color: #4ade80;
-      border-radius: 50%;
-      box-shadow: 0 0 10px #4ade80;
+    .verse-row.is-current-ayah .translation-text {
+      color: #f1f5f9;
+      font-weight: 500;
     }
   </style>
 </head>
 <body>
-  <div class="header">
-    <div class="brand">
+  <div class="app-header">
+    <div class="brand-logo">
       <span>✨ PEACE2074</span>
     </div>
-    <div class="surah-info">
-      Surah <span>${chapter.transliteration}</span> (${chapter.name})
+    <div class="surah-heading-title">
+      Surah ${chapter.transliteration} — ${chapter.name} (${chapter.type})
     </div>
   </div>
 
-  <div class="content-card">
-    <div class="verse-badge">
-      <span>Ayah ${verse.verseNumber} of ${chapter.total_verses}</span>
-    </div>
-    <div class="arabic-text">
-      ${verse.arabicText} ﴿${verse.verseNumber}﴾
-    </div>
-    <div class="translation-text">
-      "${verse.translationText}"
-    </div>
+  <div class="recitation-banner">
+    <div>▶ Reciting: Sheikh Mishary Rashid Alafasy • Verse ${activeVerse.verseNumber} of ${chapter.total_verses}</div>
+    <div>PEACE2074 Reader App</div>
   </div>
 
-  <div class="footer">
-    <div class="active-indicator">
-      <div class="pulse-dot"></div>
-      <span>Recitation Follow-Along</span>
-    </div>
-    <div>Recited by Sheikh Mishary Rashid Alafasy</div>
+  <div class="reader-scroll-container" id="readerContainer">
+    ${verseRowsHtml}
   </div>
+
+  <script>
+    const el = document.getElementById('activeAyah');
+    if (el) {
+      el.scrollIntoView({ behavior: 'auto', block: 'center' });
+    }
+  </script>
 </body>
 </html>`
 }
@@ -300,7 +321,7 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
       translationText: '',
     }
 
-    const htmlContent = generateVerseHtml(chapter, verseData)
+    const htmlContent = generateVerseHtml(chapter, verseData, versesData)
     const cardPng = path.join(tempDir, `verse_${paddedVerse}.png`)
 
     await page.setContent(htmlContent, { waitUntil: 'networkidle' })

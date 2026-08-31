@@ -2,15 +2,15 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "uploaded",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
-    "youtubeVideoId": "eoXm6Bz7QQs"
+    "status": "generated",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4"
   },
   "2": {
     "surahId": 2,
     "surahName": "Al-Baqarah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_002_al_baqarah.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_002_al_baqarah.mp4",
+    "youtubeVideoId": "xXhVL7moojo"
   },
   "3": {
     "surahId": 3,
@@ -417,8 +417,9 @@
   "70": {
     "surahId": 70,
     "surahName": "Al-Ma'arij",
-    "status": "generated",
-    "videoPath": "output_videos/surah_070_al_ma_arij.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_070_al_ma_arij.mp4",
+    "youtubeVideoId": "sVwQ3sSIh0w"
   },
   "71": {
     "surahId": 71,
