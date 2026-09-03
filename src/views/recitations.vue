@@ -16,8 +16,67 @@
       <!-- Main Player & Recitation Section -->
       <div class="player-grid">
         <!-- Main YouTube Player & Synchronized Text Card -->
+        <!-- Main Player & Recitation Section -->
         <div class="player-column">
-          <q-card flat class="video-card">
+          <!-- Mode Toggle Header -->
+          <div class="row items-center justify-between q-mb-md">
+            <q-btn-toggle
+              v-model="displayMode"
+              unelevated
+              toggle-color="primary"
+              color="white"
+              text-color="grey-9"
+              no-caps
+              :options="[
+                { label: 'Interactive Quran Text', value: 'text', icon: 'menu_book' },
+                { label: 'YouTube Video Stream', value: 'youtube', icon: 'play_circle' }
+              ]"
+            />
+            <q-btn
+              unelevated
+              color="secondary"
+              icon="auto_stories"
+              label="Full Word-by-Word Reader"
+              :to="`/quran/${activeSuraId}`"
+              no-caps
+            />
+          </div>
+
+          <!-- Native Quran Text Display Card (Default) -->
+          <q-card v-if="displayMode === 'text'" flat class="video-card q-pa-lg">
+            <div class="text-center q-pb-md border-bottom">
+              <div class="text-caption text-primary text-weight-bold uppercase tracking-wide">
+                Surah {{ activeSuraId }} of 114
+              </div>
+              <h2 class="text-h4 text-weight-bolder font-amiri q-my-xs">
+                {{ currentSuraData?.name }} — {{ currentSuraData?.e_name }}
+              </h2>
+              <div class="text-subtitle2 text-grey-7">
+                {{ currentSuraData?.total_verses || currentSuraData?.ayat?.length || 0 }} Verses · Sheikh Mishary Alafasy
+              </div>
+
+              <div class="row justify-center gap-sm q-mt-md">
+                <q-btn
+                  unelevated
+                  color="primary"
+                  icon="play_arrow"
+                  label="Listen & Read Word-by-Word"
+                  :to="`/quran/${activeSuraId}?autoplay=true&highlight=word`"
+                  no-caps
+                  size="lg"
+                  class="q-px-lg"
+                />
+              </div>
+            </div>
+
+            <!-- Bismillah Header -->
+            <div v-if="activeSuraId !== 9" class="bismillah-header text-center font-amiri text-h4 q-py-lg text-primary">
+              بِسْمِ ٱللَّهِ ٱلرَّحْمَٰنِ ٱلرَّحِيمِ
+            </div>
+          </q-card>
+
+          <!-- YouTube Embed (Optional View) -->
+          <q-card v-else flat class="video-card">
             <div class="video-aspect">
               <iframe
                 :src="activeYoutubeEmbedUrl"
@@ -228,6 +287,7 @@ const activeSuraId = ref<number>(1)
 const searchQuery = ref<string>('')
 const activeVerseIndex = ref<number>(0)
 const readerMode = ref<'card' | 'mushaf'>('card')
+const displayMode = ref<'text' | 'youtube'>('text')
 
 const YOUTUBE_CHANNEL_ID = 'UCKPAQJxnUTX-pzvLQ3M0aEQ'
 const YOUTUBE_PLAYLIST_ID = 'PLEJ9VLBcEoKg'
