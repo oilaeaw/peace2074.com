@@ -1538,5 +1538,12 @@
       "♡",
       "Onamga Alloh rahmat qilsin"
     ]
+  },
+  "unfc": {
+    "badge": "Koʻp tilli birlik · 10 til",
+    "title": "Birlashgan Millatlar Tashkiloti Bayroq Halqasi",
+    "subtitle": "Qur'oni Karim va Peace2074 ni oʻz ona tilingizda oʻqish uchun har qanday bayroqni bosing",
+    "switchTo": "{name} ({nativeName}) tiliga oʻtish",
+    "switchedLanguage": "{flag} Til {name} ({nativeName}) ga oʻzgartirildi"
   }
 }

@@ -1537,5 +1537,12 @@
       "rahmet",
       "♡"
     ]
+  },
+  "unfc": {
+    "badge": "Çok Dilli Birlik · 10 Dil",
+    "title": "Birleşmiş Milletler Bayrak Halkası",
+    "subtitle": "Kutsal Kuran'ı ve Peace2074'ü kendi anadilinizde okumak için herhangi bir bayrağa tıklayın",
+    "switchTo": "{name} ({nativeName}) diline geç",
+    "switchedLanguage": "{flag} Dil {name} ({nativeName}) olarak değiştirildi"
   }
 }

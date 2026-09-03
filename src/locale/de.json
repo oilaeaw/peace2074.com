@@ -1537,5 +1537,12 @@
       "Mama",
       "♡"
     ]
+  },
+  "unfc": {
+    "badge": "Mehrsprachige Einheit · 10 Sprachen",
+    "title": "Flagge-Kreis der Vereinten Nationen",
+    "subtitle": "Klicken Sie auf eine Flagge, um den Heiligen Koran & Peace2074 in Ihrer Muttersprache zu lesen",
+    "switchTo": "Wechseln zu {name} ({nativeName})",
+    "switchedLanguage": "{flag} Sprache gewechselt zu {name} ({nativeName})"
   }
 }

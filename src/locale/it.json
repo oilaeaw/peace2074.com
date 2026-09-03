@@ -1537,5 +1537,12 @@
       "mamma",
       "♡"
     ]
+  },
+  "unfc": {
+    "badge": "Unità Multilingue · 10 Lingue",
+    "title": "Cerchio delle Bandiere delle Nazioni Unite",
+    "subtitle": "Clicca su qualsiasi bandiera per leggere il Sacro Corano e Peace2074 nella tua lingua madre",
+    "switchTo": "Passa a {name} ({nativeName})",
+    "switchedLanguage": "{flag} Lingua cambiata in {name} ({nativeName})"
   }
 }

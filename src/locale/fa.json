@@ -1539,5 +1539,12 @@
       "meaning": "The Most Patient"
     }
   },
-  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna"
+  "Asma' Allah Al-Husna": "Asma' Allah Al-Husna",
+  "unfc": {
+    "badge": "اتحاد چندزبانه · ۱۰ زبان",
+    "title": "حلقه پرچم‌های سازمان ملل متحد",
+    "subtitle": "برای خواندن قرآن کریم و Peace2074 به زبان مادری خود روی هر پرچمی کلیک کنید",
+    "switchTo": "تغییر به {name} ({nativeName})",
+    "switchedLanguage": "{flag} زبان به {name} ({nativeName}) تغییر یافت"
+  }
 }

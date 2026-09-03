@@ -1538,5 +1538,12 @@
       "♡",
       "God bless my mom"
     ]
+  },
+  "unfc": {
+    "badge": "Multilingual Unity · 10 Languages",
+    "title": "United Nations Flag Circle",
+    "subtitle": "Click any flag to read the Holy Quran & Peace2074 in your native language",
+    "switchTo": "Switch to {name} ({nativeName})",
+    "switchedLanguage": "{flag} Switched language to {name} ({nativeName})"
   }
 }
