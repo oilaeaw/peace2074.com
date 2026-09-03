@@ -3,11 +3,11 @@
     <div class="un-flags-header text-center q-mb-md">
       <div class="un-badge">
         <q-icon name="public" size="20px" class="q-mr-xs" />
-        <span>Multilingual Unity · 10 Languages</span>
+        <span>{{ t('unfc.badge') }}</span>
       </div>
-      <h2 class="un-title">United Nations Flag Circle</h2>
+      <h2 class="un-title">{{ t('unfc.title') }}</h2>
       <p class="un-subtitle">
-        Click any flag to read the Holy Quran & Peace2074 in your native language
+        {{ t('unfc.subtitle') }}
       </p>
     </div>
 
@@ -37,7 +37,7 @@
             <span class="flag-label">{{ item.name }}</span>
           </div>
           <q-tooltip class="bg-primary text-white text-subtitle2" anchor="top middle" self="bottom middle">
-            Switch to {{ item.name }} ({{ item.nativeName }})
+            {{ t('unfc.switchTo', { name: item.name, nativeName: item.nativeName }) }}
           </q-tooltip>
         </div>
       </div>
@@ -68,7 +68,7 @@ import { useQuasar } from 'quasar'
 import { useMyLangsStore } from '@/stores/langs.pinia'
 import { persistLocale } from '@/utils/locale-routing'
 
-const { locale } = useI18n()
+const { locale, t } = useI18n()
 const $q = useQuasar()
 const langsStore = useMyLangsStore()
 const isHovered = ref(false)
@@ -117,7 +117,11 @@ function selectLanguage(code: string) {
 
   const selected = flagList.find((f) => f.code === code)
   $q.notify({
-    message: `${selected?.flag || '🌐'} Switched language to ${selected?.name} (${selected?.nativeName})`,
+    message: t('unfc.switchedLanguage', {
+      flag: selected?.flag || '🌐',
+      name: selected?.name || '',
+      nativeName: selected?.nativeName || '',
+    }),
     color: 'primary',
     icon: 'language',
     position: 'top',
