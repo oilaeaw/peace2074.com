@@ -946,10 +946,8 @@ function isActiveAyah(verseNumber: number) {
 function isActiveWord(verseNumber: number, wordIndex: number) {
   if (highlightMode.value === 'ayah') return false
   if (currentAyahIndex.value !== verseNumber - 1) return false
-  
-  // If exact wordIndex is tracked (or fallback to 0 when starting recitation)
-  const targetWord = currentWordIndex.value >= 0 ? currentWordIndex.value : 0
-  return wordIndex === targetWord
+  if (currentWordIndex.value < 0) return false
+  return wordIndex === currentWordIndex.value
 }
 
 // Mark sura as read in localStorage
@@ -2789,13 +2787,26 @@ function updateCurrentWord(time: number) {
 
   const timings = wordTimings.value[idx] || []
   if (!timings.length) return
-  const found = timings.findIndex((seg) => time >= seg.start && time <= seg.end)
+
+  // Find the latest word segment that has started
+  let found = -1
+  for (let i = 0; i < timings.length; i++) {
+    if (time >= timings[i].start) {
+      found = i
+    } else {
+      break
+    }
+  }
+
+  // Before the first word's start timestamp, default to word 0 once audio is playing
+  if (found < 0 && timings.length > 0) {
+    found = 0
+  }
+
   if (found !== currentWordIndex.value && found >= 0) {
     currentWordIndex.value = found
     // Scroll to the current word
     scrollToCurrentWord(idx, found)
-  } else if (found < 0 && currentWordIndex.value >= 0) {
-    currentWordIndex.value = found
   }
 }
 
