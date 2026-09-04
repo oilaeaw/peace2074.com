@@ -2,7 +2,9 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "pending"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
+    "youtubeVideoId": "IkyNchnSCpU"
   },
   "2": {
     "surahId": 2,
