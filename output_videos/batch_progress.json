@@ -16,55 +16,65 @@
   "3": {
     "surahId": 3,
     "surahName": "Ali 'Imran",
-    "status": "pending"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_003_ali__imran.mp4",
+    "youtubeVideoId": "4KPonjqvg3w"
   },
   "4": {
     "surahId": 4,
     "surahName": "An-Nisa",
-    "status": "generated",
-    "videoPath": "output_videos/surah_004_an_nisa.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_004_an_nisa.mp4",
+    "youtubeVideoId": "sTxuv3Dlx3w"
   },
   "5": {
     "surahId": 5,
     "surahName": "Al-Ma'idah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_005_al_ma_idah.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_005_al_ma_idah.mp4",
+    "youtubeVideoId": "_oOFKSV8HYM"
   },
   "6": {
     "surahId": 6,
     "surahName": "Al-An'am",
-    "status": "generated",
-    "videoPath": "output_videos/surah_006_al_an_am.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_006_al_an_am.mp4",
+    "youtubeVideoId": "Bg8llVN4g7Y"
   },
   "7": {
     "surahId": 7,
     "surahName": "Al-A'raf",
-    "status": "generated",
-    "videoPath": "output_videos/surah_007_al_a_raf.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_007_al_a_raf.mp4",
+    "youtubeVideoId": "zRXTQUj0pKI"
   },
   "8": {
     "surahId": 8,
     "surahName": "Al-Anfal",
-    "status": "generated",
-    "videoPath": "output_videos/surah_008_al_anfal.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_008_al_anfal.mp4",
+    "youtubeVideoId": "QqzM8x4ryL4"
   },
   "9": {
     "surahId": 9,
     "surahName": "At-Tawbah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_009_at_tawbah.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_009_at_tawbah.mp4",
+    "youtubeVideoId": "3G0M_ibsmVs"
   },
   "10": {
     "surahId": 10,
     "surahName": "Yunus",
-    "status": "generated",
-    "videoPath": "output_videos/surah_010_yunus.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_010_yunus.mp4",
+    "youtubeVideoId": "TbVg8Ym9unY"
   },
   "11": {
     "surahId": 11,
     "surahName": "Hud",
-    "status": "generated",
-    "videoPath": "output_videos/surah_011_hud.mp4"
+    "status": "uploaded",
+    "videoPath": "output_videos/surah_011_hud.mp4",
+    "youtubeVideoId": "q9QSyHkgZPs"
   },
   "12": {
     "surahId": 12,
