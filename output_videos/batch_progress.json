@@ -2,9 +2,7 @@
   "1": {
     "surahId": 1,
     "surahName": "Al-Fatihah",
-    "status": "failed",
-    "videoPath": "output_videos/surah_001_al_fatihah.mp4",
-    "error": "page.waitForTimeout: Target page, context or browser has been closed"
+    "status": "pending"
   },
   "2": {
     "surahId": 2,
@@ -16,9 +14,7 @@
   "3": {
     "surahId": 3,
     "surahName": "Ali 'Imran",
-    "status": "failed",
-    "videoPath": "output_videos/surah_003_ali__imran.mp4",
-    "error": "page.waitForTimeout: Target page, context or browser has been closed"
+    "status": "pending"
   },
   "4": {
     "surahId": 4,

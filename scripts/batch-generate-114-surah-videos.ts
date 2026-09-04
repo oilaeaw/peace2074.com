@@ -322,106 +322,7 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
 
   const { chromium } = await import('@playwright/test')
 
-  // Playwright video recording dir
-  const videoDir = path.join(tempDir, 'pw_video')
-  if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true })
-
-  const browser = await chromium.launch({ headless: false })
-  const context = await browser.newContext({
-    viewport: { width: 1280, height: 720 },
-    recordVideo: { dir: videoDir, size: { width: 1280, height: 720 } },
-    colorScheme: 'dark',
-  })
-  const page = await context.newPage()
-
-  // Set localStorage for word-level highlighting before navigating
-  await page.addInitScript(() => {
-    localStorage.setItem('quran-highlight-mode', 'word')
-    localStorage.setItem('auto-continue-banner-dismissed', 'true')
-    localStorage.setItem('consent-accepted', 'true')
-    localStorage.setItem('cookie-consent', 'true')
-  })
-
-  // Use local Vite dev server (pnpm dev must be running)
-  const baseUrl = 'http://localhost:4000'
-  const url = `${baseUrl}/quran/${chapter.id}?play=true&theme=dark`
-  console.log(`[Surah ${chapter.id}] 🌐 Opening ${url}`)
-  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
-
-  // Wait for verse text to fully render
-  await page.waitForSelector('[class*="verse"], .arabic-text', { timeout: 20000 }).catch(() => {})
-  await page.waitForTimeout(3000)
-
-  // Step 1: Click the autoplay unlock banner to start recitation
-  // The whole q-banner has @click="isAutoplayBlocked = false"
-  const startClicked = await page.evaluate(() => {
-    // Try clicking the banner itself (has @click handler)
-    const banner = document.querySelector('.bg-primary.text-white.q-banner, .q-banner.bg-primary')
-    if (banner) {
-      (banner as HTMLElement).click()
-      return 'autoplay-banner-click'
-    }
-    // Fallback: find Start Recitation button inside the banner
-    const allBtns = Array.from(document.querySelectorAll('.q-btn'))
-    for (const btn of allBtns) {
-      const text = (btn as HTMLElement).textContent?.trim() || ''
-      if (text.includes('Start Recitation') || text.includes('START RECITATION')) {
-        (btn as HTMLElement).click()
-        return 'start-recitation-btn'
-      }
-    }
-    document.body.click()
-    return 'body-click'
-  })
-  console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
-  await page.waitForTimeout(2000)
-
-  // Step 2: Hide all banners AND inject permanent brand watermark badge
-  await page.evaluate(() => {
-    function hideAllBanners() {
-      document.querySelectorAll('.q-banner, .announcement-banner, .paused-indicator-banner').forEach((el: any) => {
-        el.style.cssText = 'display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;'
-      })
-      // Hide back button, header, nav
-      document.querySelectorAll('.q-header, nav, .back-to-list, .q-mb-md[href="/quran"]').forEach((el: any) => {
-        el.style.cssText = 'display:none !important;'
-      })
-      const backBtn = document.querySelector('.quran-detail-page > a.q-btn')
-      if (backBtn) (backBtn as any).style.cssText = 'display:none !important;'
-    }
-
-    // Inject permanent watermark in top-right corner
-    if (!document.getElementById('peace2074-watermark')) {
-      const mark = document.createElement('div')
-      mark.id = 'peace2074-watermark'
-      mark.innerHTML = '✨ <b>PEACE2074</b> • peace2074.com'
-      mark.style.cssText = `
-        position: fixed !important;
-        top: 20px !important;
-        right: 24px !important;
-        z-index: 999999 !important;
-        background: rgba(15, 23, 42, 0.85) !important;
-        border: 1px solid rgba(251, 191, 36, 0.4) !important;
-        color: #fef3c7 !important;
-        padding: 8px 16px !important;
-        border-radius: 20px !important;
-        font-family: system-ui, -apple-system, sans-serif !important;
-        font-size: 14px !important;
-        letter-spacing: 0.5px !important;
-        backdrop-filter: blur(8px) !important;
-        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(251, 191, 36, 0.2) !important;
-        pointer-events: none !important;
-      `
-      document.body.appendChild(mark)
-    }
-
-    // Run immediately and every 200ms to beat Vue reactivity
-    hideAllBanners()
-    setInterval(hideAllBanners, 200)
-  })
-  await page.waitForTimeout(500)
-
-  // Calculate expected duration from audio files
+  // 1. Download audio files & calculate expected duration BEFORE opening browser
   let expectedDuration = 0
   for (let verse = 1; verse <= chapter.total_verses; verse++) {
     const fileKey = `${paddedSura}${pad3(verse)}.mp3`
@@ -449,7 +350,100 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     }
   }
 
-  // Add a few seconds buffer
+  // Playwright video recording dir
+  const videoDir = path.join(tempDir, 'pw_video')
+  if (!fs.existsSync(videoDir)) fs.mkdirSync(videoDir, { recursive: true })
+
+  const browser = await chromium.launch({ headless: true })
+  const context = await browser.newContext({
+    viewport: { width: 1280, height: 720 },
+    recordVideo: { dir: videoDir, size: { width: 1280, height: 720 } },
+    colorScheme: 'dark',
+  })
+  const page = await context.newPage()
+
+  // Set localStorage for word-level highlighting before navigating
+  await page.addInitScript(() => {
+    localStorage.setItem('quran-highlight-mode', 'word')
+    localStorage.setItem('auto-continue-banner-dismissed', 'true')
+    localStorage.setItem('consent-accepted', 'true')
+    localStorage.setItem('cookie-consent', 'true')
+  })
+
+  // Use local Vite dev server (pnpm dev must be running)
+  const baseUrl = 'http://localhost:4000'
+  const url = `${baseUrl}/quran/${chapter.id}?play=true&theme=dark`
+  console.log(`[Surah ${chapter.id}] 🌐 Opening ${url}`)
+  await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })
+
+  // Wait for verse text to fully render
+  await page.waitForSelector('[class*="verse"], .arabic-text', { timeout: 20000 }).catch(() => {})
+  await page.waitForTimeout(3000)
+
+  // Step 1: Click the autoplay unlock banner to start recitation
+  const startClicked = await page.evaluate(() => {
+    const banner = document.querySelector('.bg-primary.text-white.q-banner, .q-banner.bg-primary')
+    if (banner) {
+      (banner as HTMLElement).click()
+      return 'autoplay-banner-click'
+    }
+    const allBtns = Array.from(document.querySelectorAll('.q-btn'))
+    for (const btn of allBtns) {
+      const text = (btn as HTMLElement).textContent?.trim() || ''
+      if (text.includes('Start Recitation') || text.includes('START RECITATION')) {
+        (btn as HTMLElement).click()
+        return 'start-recitation-btn'
+      }
+    }
+    document.body.click()
+    return 'body-click'
+  })
+  console.log(`[Surah ${chapter.id}] ▶ Triggered playback via: ${startClicked}`)
+  await page.waitForTimeout(2000)
+
+  // Step 2: Hide all banners AND inject permanent brand watermark badge
+  await page.evaluate(() => {
+    function hideAllBanners() {
+      document.querySelectorAll('.q-banner, .announcement-banner, .paused-indicator-banner').forEach((el: any) => {
+        el.style.cssText = 'display:none !important; height:0 !important; overflow:hidden !important; visibility:hidden !important;'
+      })
+      document.querySelectorAll('.q-header, nav, .back-to-list, .q-mb-md[href="/quran"]').forEach((el: any) => {
+        el.style.cssText = 'display:none !important;'
+      })
+      const backBtn = document.querySelector('.quran-detail-page > a.q-btn')
+      if (backBtn) (backBtn as any).style.cssText = 'display:none !important;'
+    }
+
+    if (!document.getElementById('peace2074-watermark')) {
+      const mark = document.createElement('div')
+      mark.id = 'peace2074-watermark'
+      mark.innerHTML = '✨ <b>PEACE2074</b> • peace2074.com'
+      mark.style.cssText = `
+        position: fixed !important;
+        top: 20px !important;
+        right: 24px !important;
+        z-index: 999999 !important;
+        background: rgba(15, 23, 42, 0.85) !important;
+        border: 1px solid rgba(251, 191, 36, 0.4) !important;
+        color: #fef3c7 !important;
+        padding: 8px 16px !important;
+        border-radius: 20px !important;
+        font-family: system-ui, -apple-system, sans-serif !important;
+        font-size: 14px !important;
+        letter-spacing: 0.5px !important;
+        backdrop-filter: blur(8px) !important;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.5), 0 0 12px rgba(251, 191, 36, 0.2) !important;
+        pointer-events: none !important;
+      `
+      document.body.appendChild(mark)
+    }
+
+    hideAllBanners()
+    setInterval(hideAllBanners, 200)
+  })
+  await page.waitForTimeout(500)
+
+  // Add buffer and wait recording
   const waitMs = Math.ceil((expectedDuration + 3) * 1000)
   console.log(`[Surah ${chapter.id}] ⏱️ Recording for ${Math.ceil(expectedDuration)}s (${chapter.total_verses} verses)...`)
   await page.waitForTimeout(waitMs)

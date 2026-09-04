@@ -698,7 +698,7 @@ function changeReciterForSurah(reciter: ReciterInfo) {
     url: `https://www.youtube.com/results?search_query=Surah+${encodeURIComponent(sura.transliteration)}+${encodeURIComponent(reciter.name)}+Peace2074`,
     embedUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
     published: new Date().toISOString(),
-    thumbnail: `https://i.ytimg.com/vi/surah-${sura.id}/hqdefault.jpg`,
+    thumbnail: '/yt_banner.png',
     description: `Recitation of Surah ${sura.transliteration} (${sura.name}) by Sheikh ${reciter.name} (${reciter.nameAr}). Chapter ${sura.id} of the Holy Quran (${sura.total_verses} verses, ${sura.type === 'meccan' ? 'Meccan' : 'Medinan'}). Featured on Peace2074.`,
   }
 }
