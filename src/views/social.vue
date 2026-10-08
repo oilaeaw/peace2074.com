@@ -567,10 +567,10 @@ const UPLOADS_PLAYLIST_ID = `UU${CHANNEL_ID.slice(2)}`
 const youtubeChannel = {
   channelId: CHANNEL_ID,
   channelName: 'Peace2074',
-  handle: '@Peace2074',
-  channelUrl: `https://www.youtube.com/channel/${CHANNEL_ID}`,
-  subscribeUrl: `https://www.youtube.com/channel/${CHANNEL_ID}?sub_confirmation=1`,
-  communityUrl: `https://www.youtube.com/channel/${CHANNEL_ID}/community`,
+  handle: '@peace2074',
+  channelUrl: 'https://www.youtube.com/@peace2074',
+  subscribeUrl: 'https://www.youtube.com/@peace2074?sub_confirmation=1',
+  communityUrl: 'https://www.youtube.com/@peace2074/community',
   embedPlaylistUrl: `https://www.youtube.com/embed?listType=playlist&list=${UPLOADS_PLAYLIST_ID}&rel=0`,
 }
 

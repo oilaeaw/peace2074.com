@@ -51,7 +51,7 @@ export default defineEventHandler(async (event) => {
               id: item.id,
               title: item.snippet?.title || 'Peace2074',
               description: item.snippet?.description || '',
-              customUrl: item.snippet?.customUrl || '@Peace2074',
+              customUrl: item.snippet?.customUrl || '@peace2074',
               publishedAt: item.snippet?.publishedAt,
               thumbnails: item.snippet?.thumbnails,
               rawSubscriberCount: rawSubs,
@@ -61,8 +61,8 @@ export default defineEventHandler(async (event) => {
               rawVideoCount: rawVideos,
               videoCountFormatted: `${formatCompactNumber(rawVideos)} Videos`,
               uploadsPlaylistId: item.contentDetails?.relatedPlaylists?.uploads || `UU${channelId.slice(2)}`,
-              url: `https://www.youtube.com/channel/${channelId}`,
-              subscribeUrl: `https://www.youtube.com/channel/${channelId}?sub_confirmation=1`,
+              url: item.snippet?.customUrl ? `https://www.youtube.com/${item.snippet.customUrl}` : 'https://www.youtube.com/@peace2074',
+              subscribeUrl: 'https://www.youtube.com/@peace2074?sub_confirmation=1',
             },
           }
           memoryCache[cacheKey] = { data: result, expiresAt: now + CACHE_TTL_MS }
@@ -97,15 +97,15 @@ export default defineEventHandler(async (event) => {
       channel: {
         id: channelId,
         title: channelTitle,
-        description: 'Join our YouTube community for updates, reflections, Quran insights, and more from the PEACE2074 team.',
-        customUrl: '@Peace2074',
+        description: 'PEACE2074 is a multilingual Quran and reflection space designed to feel calm, beautiful, and deeply usable—whether you open it for one ayah, one breath, or a longer journey.',
+        customUrl: '@peace2074',
         rawSubscriberCount: null,
         subscriberCountFormatted: 'Official Channel',
         rawVideoCount: videoCount,
-        videoCountFormatted: videoCount ? `${videoCount}+ Recent Videos` : 'Active Channel',
+        videoCountFormatted: videoCount ? `${videoCount} Video` : 'Active Channel',
         uploadsPlaylistId: `UU${channelId.slice(2)}`,
-        url: `https://www.youtube.com/channel/${channelId}`,
-        subscribeUrl: `https://www.youtube.com/channel/${channelId}?sub_confirmation=1`,
+        url: 'https://www.youtube.com/@peace2074',
+        subscribeUrl: 'https://www.youtube.com/@peace2074?sub_confirmation=1',
       },
     }
 
