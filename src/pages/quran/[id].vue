@@ -934,6 +934,69 @@ function hasTimingMatchedWords(verseNumber: number) {
   return words.length > 0
 }
 
+function alignTimingsToWords(
+  timings: Array<{ start: number; end: number }>,
+  words: string[]
+): Array<{ start: number; end: number }> {
+  if (!words.length) return timings
+  if (!timings.length) return []
+  if (words.length === timings.length) {
+    return timings
+  }
+
+  const startSpan = timings[0].start
+  const endSpan = timings[timings.length - 1].end
+  const totalSpan = Math.max(0.1, endSpan - startSpan)
+
+  const totalWeight = words.reduce(
+    (sum, word) => sum + Math.max(1, word.length),
+    0
+  )
+
+  let cursor = startSpan
+  return words.map((word) => {
+    const wordWeight = Math.max(1, word.length)
+    const wordDuration = (wordWeight / totalWeight) * totalSpan
+    const start = cursor
+    const end = cursor + wordDuration
+    cursor = end
+    return { start, end }
+  })
+}
+
+function generateEstimatedWordTimings(
+  words: string[],
+  duration: number
+): Array<{ start: number; end: number }> {
+  if (!words.length || duration <= 0) return []
+  const startSpan = 0.05
+  const endSpan = Math.max(startSpan + 0.1, duration - 0.05)
+  const totalSpan = endSpan - startSpan
+  const totalWeight = words.reduce(
+    (sum, word) => sum + Math.max(1, word.length),
+    0
+  )
+
+  let cursor = startSpan
+  return words.map((word) => {
+    const wordWeight = Math.max(1, word.length)
+    const wordDuration = (wordWeight / totalWeight) * totalSpan
+    const start = cursor
+    const end = cursor + wordDuration
+    cursor = end
+    return { start, end }
+  })
+}
+
+function ensureWordTimingsForAyah(index: number, duration: number) {
+  if (wordTimings.value[index]?.length) return
+  if (duration <= 0) return
+  const words = getSyncedVerseWords(index + 1)
+  if (words.length > 0) {
+    wordTimings.value[index] = generateEstimatedWordTimings(words, duration)
+  }
+}
+
 function isActiveAyah(verseNumber: number) {
   if (currentAyahIndex.value !== verseNumber - 1) return false
   // If highlight mode is set to 'word', do NOT highlight the entire sentence box
@@ -1478,21 +1541,22 @@ async function loadSuraById(id: number) {
     // Check for query params (autoplay and mode)
     const shouldAutoplay =
       route.query.autoplay === 'true' || Boolean(route.hash)
-    const queryMode = route.query.mode as
+    const effectiveMode = (route.params.mode || route.query.mode) as
       | 'reader'
       | 'mushaf'
       | 'native'
       | undefined
 
-    // Apply mode from query param if present
-    if (queryMode && ['reader', 'mushaf', 'native'].includes(queryMode)) {
-      layoutMode.value = queryMode
-      // Update URL to use path param instead of query param
-      router.replace({
-        name: 'QuranDetail',
-        params: { ...route.params, mode: queryMode },
-        hash: route.hash,
-      })
+    // Apply mode from param or query param if present
+    if (effectiveMode && ['reader', 'mushaf', 'native'].includes(effectiveMode)) {
+      layoutMode.value = effectiveMode
+      if (route.query.mode) {
+        router.replace({
+          name: 'QuranDetail',
+          params: { ...route.params, mode: effectiveMode },
+          hash: route.hash,
+        })
+      }
     }
 
     // Render the sura text as soon as the bundled Quran data is ready.
@@ -1664,11 +1728,19 @@ async function loadAudioAndTimings(id: number) {
             .filter(Boolean)
         : []
 
+      const finalWords =
+        words.length > 0
+          ? words
+          : sura.value?.ayat?.[verseNum - 1]?.text
+            ? splitVerseWords(sura.value.ayat[verseNum - 1].text)
+            : []
+
+      if (finalWords.length > 0) {
+        syncedVerseWords.value[verseNum - 1] = finalWords
+      }
+
       if (timings.length > 0) {
-        wordTimings.value[verseNum - 1] = timings
-        if (words.length === timings.length) {
-          syncedVerseWords.value[verseNum - 1] = words
-        }
+        wordTimings.value[verseNum - 1] = alignTimingsToWords(timings, finalWords)
       }
 
       // Merge translation text into sura ayat
@@ -1809,7 +1881,13 @@ async function startAudioRecitation(
     stopRequested.value = false
     currentWordIndex.value = -1
 
-    if (withIntro) {
+    const shouldPlayIntro =
+      withIntro &&
+      Number(currentSuraId.value) !== 1 &&
+      Number(currentSuraId.value) !== 9 &&
+      startIndex === 0
+
+    if (shouldPlayIntro) {
       await playBismillahIntro()
     }
 
@@ -1888,7 +1966,12 @@ function playAyah(index: number) {
     audioEl.value = el
     currentAyahIndex.value = index
     isPlayingAudio.value = true
-    currentWordIndex.value = -1
+    currentWordIndex.value = 0
+    scrollToCurrentWord(index, 0)
+
+    el.onloadedmetadata = () => {
+      ensureWordTimingsForAyah(index, el.duration)
+    }
 
     // Preload next ayah for seamless playback
     preloadNextAyah(index + 1)
@@ -2460,14 +2543,37 @@ function speakAyah(index: number) {
 
   currentAyahIndex.value = index
   isTTSPlaying.value = true
+  currentWordIndex.value = 0
+  scrollToCurrentWord(index, 0)
+
+  const verseWords = getSyncedVerseWords(index + 1)
+  utterance.onboundary = (event: SpeechSynthesisEvent) => {
+    if (event.name === 'word' || typeof event.charIndex === 'number') {
+      const charIdx = event.charIndex
+      let cumulativeLen = 0
+      for (let w = 0; w < verseWords.length; w++) {
+        const wLen = verseWords[w].length + 1
+        if (charIdx < cumulativeLen + wLen) {
+          if (currentWordIndex.value !== w) {
+            currentWordIndex.value = w
+            scrollToCurrentWord(index, w)
+          }
+          break
+        }
+        cumulativeLen += wLen
+      }
+    }
+  }
 
   utterance.onend = () => {
+    currentWordIndex.value = -1
     if (!stopRequested.value) {
       speakAyah(index + 1)
     }
   }
 
   utterance.onerror = () => {
+    currentWordIndex.value = -1
     if (!stopRequested.value) {
       speakAyah(index + 1)
     }
@@ -2498,6 +2604,7 @@ function stopTTS() {
   }
   isTTSPlaying.value = false
   currentAyahIndex.value = -1
+  currentWordIndex.value = -1
 }
 
 function startReading(event?: MouseEvent | Event) {
@@ -2785,8 +2892,16 @@ function updateCurrentWord(time: number) {
     return
   }
 
+  // Generate on-the-fly estimated timings if missing (offline/fallback audio)
+  if (!wordTimings.value[idx]?.length && audioEl.value?.duration) {
+    ensureWordTimingsForAyah(idx, audioEl.value.duration)
+  }
+
   const timings = wordTimings.value[idx] || []
   if (!timings.length) return
+
+  const words = getSyncedVerseWords(idx + 1)
+  const maxWordIdx = Math.max(0, (words.length || timings.length) - 1)
 
   // Find the latest word segment that has started
   let found = -1
@@ -2801,6 +2916,10 @@ function updateCurrentWord(time: number) {
   // Before the first word's start timestamp, default to word 0 once audio is playing
   if (found < 0 && timings.length > 0) {
     found = 0
+  }
+
+  if (found > maxWordIdx) {
+    found = maxWordIdx
   }
 
   if (found !== currentWordIndex.value && found >= 0) {
