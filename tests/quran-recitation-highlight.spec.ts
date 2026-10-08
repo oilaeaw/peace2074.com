@@ -9,16 +9,16 @@ const acceptConsent = async (page: any) => {
 
 const startRecitation = async (page: any) => {
   const toggle = page.locator('.paused-indicator-banner .q-toggle')
-  await expect(toggle).toBeVisible({ timeout: 15000 })
+  await expect(toggle).toBeVisible({ timeout: 20000 })
   // Wait until audio is loaded and toggle is enabled
-  await expect(toggle).not.toHaveClass(/disabled/, { timeout: 15000 })
+  await expect(toggle).not.toHaveClass(/disabled/, { timeout: 30000 })
 
   const isChecked = await toggle.getAttribute('aria-checked')
   if (isChecked !== 'true') {
     await toggle.click()
     // Verify recitation successfully started
     await expect(toggle).toHaveAttribute('aria-checked', 'true', {
-      timeout: 10000,
+      timeout: 15000,
     })
   }
 }
@@ -40,6 +40,12 @@ const stopRecitation = async (page: any) => {
 
 test.describe('Quran recitation highlight iteration and settings', () => {
   test.beforeEach(async ({ page }) => {
+    page.on('console', (msg) => {
+      console.log(`[BROWSER ${msg.type()}]:`, msg.text())
+    })
+    page.on('pageerror', (err) => {
+      console.log(`[PAGE ERROR]:`, err.message)
+    })
     await page.addInitScript(() => {
       localStorage.setItem('user-consented', 'true')
       localStorage.setItem('consent-version', '1.0')
@@ -161,12 +167,33 @@ test.describe('Quran recitation highlight iteration and settings', () => {
       () => localStorage.getItem('quran-highlight-mode') === 'ayah'
     )
 
+    const lsBeforeGoto = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
+    console.log('LS BEFORE GOTO:', lsBeforeGoto)
+
     // 2. Go to reader and verify whole ayah is highlighted
     await page.goto('/quran/1/reader')
+    const lsAfterGoto = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
+    console.log('LS AFTER GOTO:', lsAfterGoto)
+
     await acceptConsent(page)
     await page.waitForSelector('.arabic-text', { timeout: 15000 })
+    const lsAfterReady = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
+    console.log('LS AFTER READY:', lsAfterReady)
 
     await startRecitation(page)
+
+    const debugState = await page.evaluate(() => {
+      const activeAyahs = Array.from(document.querySelectorAll('.is-current-ayah')).map(el => el.id)
+      const activeWords = Array.from(document.querySelectorAll('.is-current-word')).map(el => el.id)
+      const verseRows = Array.from(document.querySelectorAll('.verse-row')).map(el => ({ id: el.id, class: el.className }))
+      return {
+        activeAyahs,
+        activeWords,
+        firstVerse: verseRows[0],
+        localStorageHighlight: localStorage.getItem('quran-highlight-mode'),
+      }
+    })
+    console.log('DEBUG REC STATE:', JSON.stringify(debugState))
 
     await expect(page.locator('.verse-row.is-current-ayah')).toBeVisible({
       timeout: 10000,

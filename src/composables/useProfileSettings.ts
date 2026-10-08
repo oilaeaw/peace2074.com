@@ -57,6 +57,7 @@ function writeLocalHighlightMode(mode: QuranHighlightMode) {
     }
 
     try {
+        console.log('[DEBUG_WRITE_LS]:', mode, new Error().stack)
         window.localStorage.setItem(HIGHLIGHT_MODE_STORAGE_KEY, mode)
     } catch {
         // ignore storage failures

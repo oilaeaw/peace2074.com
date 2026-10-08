@@ -2814,7 +2814,7 @@ function handleRecitationSwitchChange(enabled: boolean) {
   }
 
   if (enabled) {
-    if (playbackStatus.value.state === 'stopped') {
+    if (playbackStatus.value.state !== 'playing') {
       startReading()
     }
     return
@@ -3163,6 +3163,7 @@ onMounted(async () => {
   }
 
   const queryHighlight = (route.query.highlight || searchParams?.get('highlight') || '').toString().toLowerCase()
+  console.log('[DEBUG_QUERY_HL]:', { queryHighlight, routeQuery: route.query, search: typeof window !== 'undefined' ? window.location.search : null })
   if (['word', 'ayah'].includes(queryHighlight)) {
     void setHighlightMode(queryHighlight as any)
   }
