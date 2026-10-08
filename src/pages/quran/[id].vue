@@ -3318,6 +3318,15 @@ watch(
 )
 
 watch(
+  () => route.params.mode,
+  (newMode) => {
+    if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
+      layoutMode.value = newMode as any
+    }
+  }
+)
+
+watch(
   () => route.hash,
   (hash) => {
     if (!hash) return
