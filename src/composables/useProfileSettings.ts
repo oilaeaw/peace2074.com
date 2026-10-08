@@ -25,13 +25,18 @@ function normalizeHighlightMode(value: unknown): QuranHighlightMode {
 }
 
 function readHighlightModeFromSettings(settings: unknown): QuranHighlightMode {
+    const local = readLocalHighlightMode()
+    if (typeof window !== 'undefined' && window.localStorage.getItem(HIGHLIGHT_MODE_STORAGE_KEY)) {
+        return local
+    }
+
     if (!settings || typeof settings !== 'object') {
-        return DEFAULT_HIGHLIGHT_MODE
+        return local
     }
 
     const quran = (settings as Record<string, any>).quran
-    if (!quran || typeof quran !== 'object') {
-        return DEFAULT_HIGHLIGHT_MODE
+    if (!quran || typeof quran !== 'object' || !quran.highlightMode) {
+        return local
     }
 
     return normalizeHighlightMode((quran as Record<string, any>).highlightMode)

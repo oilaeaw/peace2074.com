@@ -14,12 +14,15 @@ const startRecitation = async (page: any) => {
   await expect(toggle).not.toHaveClass(/disabled/, { timeout: 30000 })
 
   const isChecked = await toggle.getAttribute('aria-checked')
+  console.log('[TEST startRecitation isChecked]', isChecked)
   if (isChecked !== 'true') {
     await toggle.click()
     // Verify recitation successfully started
     await expect(toggle).toHaveAttribute('aria-checked', 'true', {
       timeout: 15000,
     })
+  } else {
+    console.log('[TEST startRecitation isChecked ALREADY TRUE]')
   }
 }
 
@@ -159,13 +162,24 @@ test.describe('Quran recitation highlight iteration and settings', () => {
     // 1. Go to preferences and select Sentence (ayah) mode
     await page.goto('/preferences')
     await acceptConsent(page)
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(1000)
 
     const sentenceBtn = page.getByRole('button', { name: /^sentence$/i })
+    const saveSentencePromise = page
+      .waitForResponse(
+        (res) =>
+          res.url().includes('/auth/settings') &&
+          res.request().method() === 'POST',
+        { timeout: 5000 }
+      )
+      .catch(() => null)
     await sentenceBtn.click()
     await expect(sentenceBtn).toHaveAttribute('aria-pressed', 'true')
     await page.waitForFunction(
       () => localStorage.getItem('quran-highlight-mode') === 'ayah'
     )
+    await saveSentencePromise
 
     // 2. Go to reader and verify whole ayah is highlighted
     await page.goto('/quran/1/reader')
@@ -185,12 +199,24 @@ test.describe('Quran recitation highlight iteration and settings', () => {
     // 3. Switch back to Word mode on preferences
     await page.goto('/preferences')
     await acceptConsent(page)
+    await page.waitForLoadState('networkidle')
+    await page.waitForTimeout(1000)
+
     const wordBtn = page.getByRole('button', { name: /^word$/i })
+    const saveWordPromise = page
+      .waitForResponse(
+        (res) =>
+          res.url().includes('/auth/settings') &&
+          res.request().method() === 'POST',
+        { timeout: 5000 }
+      )
+      .catch(() => null)
     await wordBtn.click()
     await expect(wordBtn).toHaveAttribute('aria-pressed', 'true')
     await page.waitForFunction(
       () => localStorage.getItem('quran-highlight-mode') === 'word'
     )
+    await saveWordPromise
 
     // 4. Go to reader and verify words are highlighted
     await page.goto('/quran/1/reader')

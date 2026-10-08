@@ -92,9 +92,26 @@ const passkeysSupported = computed(() => {
   )
 })
 
-const appleAvailable = computed(() => appleConfigured.value === true)
-// Show Google button unless health check explicitly returned false
-const googleAvailable = computed(() => googleConfigured.value !== false)
+const isDevOrLocal = computed(() => {
+  if (typeof window === 'undefined') return false
+  return Boolean(
+    import.meta.env.DEV ||
+      window.location.hostname === 'localhost' ||
+      window.location.hostname === '127.0.0.1'
+  )
+})
+
+const appleAvailable = computed(() => {
+  if (isDevOrLocal.value) return true
+  return appleConfigured.value === true
+})
+
+// In local dev, Google login is always available (via dev-login or real OAuth).
+// In production, show Google unless health check explicitly returned false.
+const googleAvailable = computed(() => {
+  if (isDevOrLocal.value) return true
+  return googleConfigured.value !== false
+})
 
 function getErrorMessage(err: unknown) {
   if (err && typeof err === 'object' && 'message' in err) {
@@ -531,20 +548,54 @@ async function handleNativeOAuthCallback(url: string) {
   }
 }
 
+async function handleDevLogin(provider: 'google' | 'apple') {
+  loading.value = true
+  try {
+    const res = await fetch(
+      `${NITRO_BASE}/auth/dev-login?provider=${provider}&format=json`,
+      {
+        credentials: 'include',
+        headers: { Accept: 'application/json' },
+      }
+    )
+    if (res.ok) {
+      const user = await authStore.hydrateSession(true)
+      if (user || authStore.isAuthenticated) {
+        $q.notify({
+          type: 'positive',
+          message: t('auth.loginSuccess'),
+          position: 'top',
+        })
+        await router.push(getPostLoginPath())
+        return
+      }
+    }
+  } catch (err) {
+    console.warn('Dev login request failed, falling back to full navigation:', err)
+  } finally {
+    loading.value = false
+  }
+  const postLogin = getPostLoginPath()
+  const redirectParam =
+    postLogin && postLogin !== '/'
+      ? `&redirect=${encodeURIComponent(postLogin)}`
+      : ''
+  window.location.href = `${NITRO_BASE}/auth/dev-login?provider=${provider}${redirectParam}`
+}
+
 function handleGoogleLogin() {
-  if (
-    import.meta.env.DEV ||
-    (typeof window !== 'undefined' &&
-      (window.location.hostname === 'localhost' ||
-        window.location.hostname === '127.0.0.1'))
-  ) {
-    window.location.href = `${NITRO_BASE}/auth/dev-login`
+  if (isDevOrLocal.value && googleConfigured.value !== true) {
+    void handleDevLogin('google')
     return
   }
   openSocialLogin('google')
 }
 
 function handleAppleLogin() {
+  if (isDevOrLocal.value && appleConfigured.value !== true) {
+    void handleDevLogin('apple')
+    return
+  }
   openSocialLogin('apple')
 }
 

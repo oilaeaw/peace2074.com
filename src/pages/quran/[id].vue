@@ -1886,6 +1886,10 @@ async function startAudioRecitation(
   const withIntro = opts.withIntro !== false
   const startIndex = Math.max(0, index)
 
+  if (!audioList.value.length && currentSuraId.value) {
+    await loadAudioAndTimings(Number(currentSuraId.value))
+  }
+
   if (!audioList.value.length || startIndex >= audioList.value.length) return
 
   isStartingRecitation.value = true
@@ -2071,6 +2075,10 @@ async function startSuraAudio() {
 
   stopRequested.value = false
   currentWordIndex.value = -1
+
+  if (!audioList.value.length && currentSuraId.value) {
+    await loadAudioAndTimings(Number(currentSuraId.value))
+  }
 
   if (!audioList.value.length) {
     notify({
@@ -2814,15 +2822,26 @@ function handleRecitationSwitchChange(enabled: boolean) {
   }
 
   if (enabled) {
-    if (playbackStatus.value.state !== 'playing') {
-      startReading()
+    if (isPlayingAudio.value || isTTSPlaying.value) {
+      return
+    }
+    if (readerMode.value === 'tts') {
+      if (currentAyahIndex.value >= 0) {
+        resumeTTS()
+      } else {
+        startTTS()
+      }
+    } else {
+      if (audioEl.value && audioEl.value.paused && currentAyahIndex.value >= 0) {
+        resumeAudio()
+      } else {
+        startSuraAudio()
+      }
     }
     return
   }
 
-  if (playbackStatus.value.state !== 'stopped') {
-    stopReading()
-  }
+  stopReading()
 }
 
 function pauseAudio() {

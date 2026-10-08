@@ -110,4 +110,22 @@ test.describe('authentication smoke flow', () => {
         const loggedOutMenuButton = page.getByRole('button', { name: /^login$/i })
         await expect(loggedOutMenuButton).toBeVisible()
     })
+
+    test('local social login buttons are present and dev login works', async ({ page }) => {
+        await page.goto('/login')
+        await dismissCookieBanner(page)
+
+        const googleBtn = page.locator('[data-testid="login-google"]')
+        const appleBtn = page.locator('[data-testid="login-apple"]')
+
+        await expect(googleBtn).toBeVisible()
+        await expect(appleBtn).toBeVisible()
+
+        // Clicking Google in local dev triggers dev login
+        await googleBtn.click()
+        await expect(page).toHaveURL(/\/$/, { timeout: 15000 })
+
+        const accountMenuButton = page.getByRole('button', { name: /profile/i })
+        await expect(accountMenuButton).toBeVisible()
+    })
 })
