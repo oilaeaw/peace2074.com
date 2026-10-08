@@ -17,6 +17,7 @@ declare module 'vue' {
     OfflineRecitationManager: typeof import('./../components/quran/OfflineRecitationManager.vue')['default']
     RouterLink: typeof import('vue-router')['RouterLink']
     RouterView: typeof import('vue-router')['RouterView']
+    ShazamVideoLyricsModal: typeof import('./../components/quran/ShazamVideoLyricsModal.vue')['default']
     SupportAIWidget: typeof import('./../components/common/SupportAIWidget.vue')['default']
     ThreeBackground: typeof import('./../components/common/ThreeBackground.vue')['default']
     UnFlagsCircle: typeof import('./../components/common/UnFlagsCircle.vue')['default']

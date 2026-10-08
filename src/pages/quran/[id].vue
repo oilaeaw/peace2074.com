@@ -19,6 +19,7 @@ import {
   type RecitationQuality,
 } from '@/composables/useOfflineRecitation'
 import OfflineRecitationManager from '@/components/quran/OfflineRecitationManager.vue'
+import ShazamVideoLyricsModal from '@/components/quran/ShazamVideoLyricsModal.vue'
 import {
   readTranslatorIdForLocale,
   TRANSLATOR_PREF_KEY,
@@ -562,6 +563,42 @@ const isAutoplayBlocked = ref(false)
 
 // Shazam Quran Audio Recitation Matcher & Microphone Sync State
 const isListeningShazam = ref(false)
+
+// Shazam Video & Synchronized Karaoke Lyrics Modal State
+const showShazamLyricsModal = ref(false)
+
+function toggleAudioRecitation() {
+  if (isPlayingAudio.value) {
+    pauseAudio()
+  } else {
+    if (audioEl.value && audioEl.value.paused && currentAyahIndex.value >= 0) {
+      resumeAudio()
+    } else {
+      const idx = currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0
+      void startAudioRecitation(idx, { withIntro: false })
+    }
+  }
+}
+
+function playPreviousAyah() {
+  const current = currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0
+  const prev = Math.max(0, current - 1)
+  void startAudioRecitation(prev, { withIntro: false })
+}
+
+function playNextAyah() {
+  const current = currentAyahIndex.value >= 0 ? currentAyahIndex.value : 0
+  const max = (sura.value?.total_verses || 1) - 1
+  const next = Math.min(max, current + 1)
+  void startAudioRecitation(next, { withIntro: false })
+}
+
+function handlePlaybackRateChange(rate: number) {
+  playbackRate.value = rate
+  if (audioEl.value) {
+    audioEl.value.playbackRate = rate
+  }
+}
 
 async function triggerQuranShazam() {
   if (typeof window === 'undefined') return
@@ -3214,6 +3251,16 @@ onMounted(async () => {
     }, 400)
   }
 
+  // Auto-launch Shazam Video & Karaoke Lyrics if requested via query parameter
+  if (
+    route.query.lyrics === 'true' ||
+    route.query.shazam === 'lyrics' ||
+    route.query.video === 'lyrics' ||
+    route.query.shazamLyrics === 'true'
+  ) {
+    showShazamLyricsModal.value = true
+  }
+
   const queryAutoplayRaw =
     (route.query.play ||
      route.query.autoplay ||
@@ -3577,6 +3624,20 @@ watch(
           >
             <span class="gt-xs q-px-xs">Shazam Audio Sync</span>
             <q-tooltip>Listen & Identify Recited Verse via Microphone</q-tooltip>
+          </q-btn>
+          <!-- Shazam Video & Synchronized Karaoke Lyrics Theater -->
+          <q-btn
+            unelevated
+            rounded
+            dense
+            color="deep-purple-9"
+            icon="lyrics"
+            class="q-mr-sm shazam-lyrics-btn"
+            @click="showShazamLyricsModal = true"
+          >
+            <span class="gt-xs q-px-xs">Video Lyrics</span>
+            <q-badge color="cyan-4" text-color="black" floating rounded class="text-bold">Shazam</q-badge>
+            <q-tooltip>Open Apple Music / Shazam Style Video Recitation & Glowing Karaoke Lyrics</q-tooltip>
           </q-btn>
           <!-- Reader Mode Toggle -->
           <q-btn-toggle
@@ -4286,6 +4347,25 @@ watch(
         @close="showOfflineManager = false"
       />
     </q-dialog>
+
+    <!-- Shazam Video & Synchronized Karaoke Lyrics Modal -->
+    <ShazamVideoLyricsModal
+      v-model="showShazamLyricsModal"
+      :sura="sura"
+      :current-ayah-index="currentAyahIndex"
+      :current-word-index="currentWordIndex"
+      :highlight-mode="highlightMode"
+      :is-playing="isPlayingAudio"
+      :playback-rate="playbackRate"
+      :get-synced-words="getSyncedVerseWords"
+      @toggle-play="toggleAudioRecitation"
+      @prev-ayah="playPreviousAyah"
+      @next-ayah="playNextAyah"
+      @seek-ayah="(idx) => startAudioRecitation(idx, { withIntro: false })"
+      @set-speed="handlePlaybackRateChange"
+      @set-highlight-mode="setHighlightMode"
+      @trigger-shazam="triggerQuranShazam"
+    />
   </div>
 </template>
 
