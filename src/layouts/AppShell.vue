@@ -359,6 +359,7 @@
           }}</RouterLink>
           <RouterLink to="/contact" class="footer-link">{{ t('appShell.nav.contact') }}</RouterLink>
           <RouterLink to="/credits" class="footer-link">{{ t('appShell.nav.credits') }}</RouterLink>
+          <RouterLink to="/social" class="footer-link">{{ t('appShell.nav.social') }}</RouterLink>
         </nav>
       </div>
     </q-footer>

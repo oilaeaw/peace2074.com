@@ -63,6 +63,9 @@
           <RouterLink to="/contact" class="footer-link">{{
             t('appShell.nav.contact')
           }}</RouterLink>
+          <RouterLink to="/social" class="footer-link">{{
+            t('appShell.nav.social')
+          }}</RouterLink>
         </nav>
       </div>
     </q-footer>
