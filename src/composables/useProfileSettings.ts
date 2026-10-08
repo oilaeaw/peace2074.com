@@ -19,11 +19,6 @@ type ProfileSettingsResponse = {
 
 const DEFAULT_HIGHLIGHT_MODE: QuranHighlightMode = 'word'
 const HIGHLIGHT_MODE_STORAGE_KEY = 'quran-highlight-mode'
-const highlightMode = ref<QuranHighlightMode>(DEFAULT_HIGHLIGHT_MODE)
-const savedPlaybackPosition = ref<RecitationPlaybackPosition | null>(null)
-const isLoading = ref(false)
-const loadedUserId = ref<string | null>(null)
-let loadPromise: Promise<void> | null = null
 
 function normalizeHighlightMode(value: unknown): QuranHighlightMode {
     return value === 'ayah' ? 'ayah' : 'word'
@@ -67,6 +62,12 @@ function writeLocalHighlightMode(mode: QuranHighlightMode) {
         // ignore storage failures
     }
 }
+
+const highlightMode = ref<QuranHighlightMode>(readLocalHighlightMode())
+const savedPlaybackPosition = ref<RecitationPlaybackPosition | null>(null)
+const isLoading = ref(false)
+const loadedUserId = ref<string | null>(null)
+let loadPromise: Promise<void> | null = null
 
 function normalizePlaybackPosition(
     value: unknown
