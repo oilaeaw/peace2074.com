@@ -233,10 +233,23 @@ function handleAnnouncementAction(action?: { handler?: () => void }) {
   }
 }
 const LAYOUT_STORAGE_KEY = 'quran-view-mode'
+const initialParamMode = route.params.mode as
+  | 'reader'
+  | 'mushaf'
+  | 'native'
+  | undefined
+const validParamMode =
+  initialParamMode && ['reader', 'mushaf', 'native'].includes(initialParamMode)
+    ? initialParamMode
+    : undefined
+
 const layoutModeStore = useStorageRef<'reader' | 'mushaf' | 'native'>(
   LAYOUT_STORAGE_KEY,
-  'mushaf'
+  validParamMode || 'mushaf'
 )
+if (validParamMode && layoutModeStore.value.value !== validParamMode) {
+  layoutModeStore.set(validParamMode)
+}
 const isIOSRuntime = computed(() => {
   if (typeof window === 'undefined') return false
   const nav = window.navigator
@@ -3363,18 +3376,6 @@ watch(
   }
 )
 
-// Watch for URL param changes (browser back/forward)
-watch(
-  () => route.params.mode,
-  (newMode) => {
-    if (newMode && ['reader', 'mushaf', 'native'].includes(newMode as string)) {
-      const mode = newMode as 'reader' | 'mushaf' | 'native'
-      if (layoutMode.value !== mode) {
-        layoutMode.value = mode
-      }
-    }
-  }
-)
 </script>
 
 <template>
