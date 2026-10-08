@@ -3151,19 +3151,17 @@ onMounted(async () => {
   await loadCachedSurasList()
 
   // Process URL Query Parameters state override (theme, layout, highlight mode, verse, autoplay)
-  const searchParams = typeof window !== 'undefined' ? new URLSearchParams(window.location.search) : null
-  const queryTheme = (route.query.theme || searchParams?.get('theme') || route.query.mode || searchParams?.get('mode') || '').toString().toLowerCase()
+  const queryTheme = (route.query.theme || route.query.mode || '').toString().toLowerCase()
   if (['light', 'dark'].includes(queryTheme)) {
     Dark.set(queryTheme === 'dark')
   }
 
-  const queryLayout = (route.query.layout || searchParams?.get('layout') || '').toString().toLowerCase()
+  const queryLayout = (route.query.layout || '').toString().toLowerCase()
   if (['reader', 'mushaf', 'native'].includes(queryLayout)) {
     layoutMode.value = queryLayout as any
   }
 
-  const queryHighlight = (route.query.highlight || searchParams?.get('highlight') || '').toString().toLowerCase()
-  console.log('[DEBUG_QUERY_HL]:', { queryHighlight, routeQuery: route.query, search: typeof window !== 'undefined' ? window.location.search : null })
+  const queryHighlight = (route.query.highlight || '').toString().toLowerCase()
   if (['word', 'ayah'].includes(queryHighlight)) {
     void setHighlightMode(queryHighlight as any)
   }
@@ -3190,7 +3188,7 @@ onMounted(async () => {
     await bookmarksStore.init()
   } catch {}
 
-  const queryVerse = Number(route.query.verse || route.query.ayah || searchParams?.get('verse') || searchParams?.get('ayah') || 0)
+  const queryVerse = Number(route.query.verse || route.query.ayah || 0)
   if (queryVerse > 0) {
     setTimeout(() => {
       scrollToVerse(queryVerse)
@@ -3203,11 +3201,6 @@ onMounted(async () => {
      route.query.playing ||
      route.query.autostart ||
      route.query.start ||
-     searchParams?.get('play') ||
-     searchParams?.get('autoplay') ||
-     searchParams?.get('playing') ||
-     searchParams?.get('autostart') ||
-     searchParams?.get('start') ||
      '').toString().toLowerCase()
 
   const isExplicitDisabled = ['false', '0', 'no', 'off'].includes(queryAutoplayRaw)

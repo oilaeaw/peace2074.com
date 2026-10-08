@@ -43,155 +43,168 @@ Call log:
           - /url: /quran
           - generic [ref=e11]: ← Back to list
         - alert [ref=e12]:
-          - generic [ref=e14]: auto_awesome
-          - generic [ref=e17]: A new feature is now available! Enable 'Auto-continue' to automatically progress through all 114 suras during recitation.
-          - generic [ref=e18]:
-            - button "close" [ref=e19] [cursor=pointer]:
-              - generic [ref=e21]: close
-            - button "Dismiss announcement" [ref=e22] [cursor=pointer]:
-              - img [ref=e24]: close
-        - alert [ref=e25]:
-          - generic [ref=e27]: stop
-          - generic [ref=e29]:
-            - generic [ref=e30]: Play recitation
-            - generic [ref=e31]: sura number 1 • verses 1 / 7 • Audio
-          - generic [ref=e33]:
-            - generic [ref=e34]: Play recitation
-            - switch [ref=e35] [cursor=pointer]:
-              - generic [ref=e39]: play_arrow
-        - generic [ref=e40]:
-          - generic [ref=e41]:
-            - generic [ref=e42]:
-              - generic [ref=e43]: The Opener — الفاتحة
-              - generic [ref=e44]: "sura number: 1 • meccan • 7"
-            - generic [ref=e45]:
-              - button "Shazam Audio Sync" [ref=e46] [cursor=pointer]:
-                - generic [ref=e47]:
-                  - img [ref=e48]: graphic_eq
-                  - generic [ref=e49]: Shazam Audio Sync
-              - generic [ref=e50]:
-                - button "Audio" [pressed] [ref=e51] [cursor=pointer]:
-                  - generic [ref=e52]:
-                    - img [ref=e53]: volume_up
-                    - generic [ref=e54]: Audio
-                - button "TTS" [ref=e55] [cursor=pointer]:
-                  - generic [ref=e56]:
-                    - img [ref=e57]: record_voice_over
-                    - generic [ref=e58]: TTS
-              - generic [ref=e60]:
-                - generic [ref=e61]: Play recitation
-                - switch [ref=e62] [cursor=pointer]:
-                  - generic [ref=e66]: play_arrow
-              - switch "Auto-continue to next sura" [ref=e67] [cursor=pointer]:
-                - generic [ref=e71]: Auto-continue to next sura
-              - generic [ref=e76] [cursor=pointer]:
-                - generic [ref=e77]: 1x
-                - combobox "1x" [ref=e78]
-              - generic [ref=e80]:
-                - button "Mushaf mode" [ref=e81] [cursor=pointer]:
-                  - generic [ref=e82]:
-                    - img [ref=e83]: auto_stories
-                    - generic [ref=e84]: Mushaf mode
-                - button "Reader mode" [pressed] [ref=e85] [cursor=pointer]:
-                  - generic [ref=e86]:
-                    - img [ref=e87]: menu_book
-                    - generic [ref=e88]: Reader mode
-                - button "Native mode" [ref=e89] [cursor=pointer]:
-                  - generic [ref=e90]:
-                    - img [ref=e91]: article
-                    - generic [ref=e92]: Native mode
-              - button "Quick" [ref=e93] [cursor=pointer]:
-                - generic [ref=e94]:
-                  - img [ref=e95]: flash_on
-                  - generic [ref=e96]: Quick
-              - button "Bookmarks" [ref=e97] [cursor=pointer]:
-                - generic [ref=e98]:
-                  - img [ref=e99]: bookmark
-                  - generic [ref=e100]: Bookmarks
-              - generic [ref=e101]:
-                - generic [ref=e102]: cloud_off
-                - generic [ref=e103]: Internet currently required
-              - button "Offline Recitation" [ref=e104] [cursor=pointer]:
-                - generic [ref=e105]:
-                  - img [ref=e106]: download
-                  - generic [ref=e107]: Offline Recitation
-          - generic [ref=e109]:
-            - generic [ref=e110] [cursor=pointer]:
-              - generic [ref=e111]:
-                - generic [ref=e112]:
-                  - generic [ref=e113]: "1"
-                  - button "Bookmark verse 1" [ref=e114]:
-                    - generic [ref=e115]: star_outline
-                  - button "Share verse 1:1" [ref=e116]:
-                    - generic [ref=e117]: share
-                - generic [ref=e118]: بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-              - generic [ref=e120]: In the name of Allāh,1 the Entirely Merciful, the Especially Merciful.2
-            - generic [ref=e121] [cursor=pointer]:
-              - generic [ref=e122]:
-                - generic [ref=e123]:
-                  - generic [ref=e124]: "2"
-                  - button "Bookmark verse 2" [ref=e125]:
-                    - generic [ref=e126]: star_outline
-                  - button "Share verse 1:2" [ref=e127]:
-                    - generic [ref=e128]: share
-                - generic [ref=e129]: ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ
-              - generic [ref=e131]: "[All] praise is [due] to Allāh, Lord1 of the worlds -"
-            - generic [ref=e132] [cursor=pointer]:
-              - generic [ref=e133]:
-                - generic [ref=e134]:
-                  - generic [ref=e135]: "3"
-                  - button "Bookmark verse 3" [ref=e136]:
-                    - generic [ref=e137]: star_outline
-                  - button "Share verse 1:3" [ref=e138]:
-                    - generic [ref=e139]: share
-                - generic [ref=e140]: ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
-              - generic [ref=e142]: The Entirely Merciful, the Especially Merciful,
-            - generic [ref=e143] [cursor=pointer]:
-              - generic [ref=e144]:
-                - generic [ref=e145]:
-                  - generic [ref=e146]: "4"
-                  - button "Bookmark verse 4" [ref=e147]:
-                    - generic [ref=e148]: star_outline
-                  - button "Share verse 1:4" [ref=e149]:
-                    - generic [ref=e150]: share
-                - generic [ref=e151]: مَـٰلِكِ يَوْمِ ٱلدِّينِ
-              - generic [ref=e153]: Sovereign of the Day of Recompense.1
-            - generic [ref=e154] [cursor=pointer]:
-              - generic [ref=e155]:
-                - generic [ref=e156]:
-                  - generic [ref=e157]: "5"
-                  - button "Bookmark verse 5" [ref=e158]:
-                    - generic [ref=e159]: star_outline
-                  - button "Share verse 1:5" [ref=e160]:
-                    - generic [ref=e161]: share
-                - generic [ref=e162]: إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ
-              - generic [ref=e164]: It is You we worship and You we ask for help.
-            - generic [ref=e165] [cursor=pointer]:
-              - generic [ref=e166]:
-                - generic [ref=e167]:
-                  - generic [ref=e168]: "6"
-                  - button "Bookmark verse 6" [ref=e169]:
-                    - generic [ref=e170]: star_outline
-                  - button "Share verse 1:6" [ref=e171]:
-                    - generic [ref=e172]: share
-                - generic [ref=e173]: ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ
-              - generic [ref=e175]: Guide us to the straight path -
-            - generic [ref=e176] [cursor=pointer]:
-              - generic [ref=e177]:
-                - generic [ref=e178]:
-                  - generic [ref=e179]: "7"
-                  - button "Bookmark verse 7" [ref=e180]:
-                    - generic [ref=e181]: star_outline
-                  - button "Share verse 1:7" [ref=e182]:
-                    - generic [ref=e183]: share
-                - generic [ref=e184]: صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ
-              - generic [ref=e186]: The path of those upon whom You have bestowed favor, not of those who have earned [Your] anger or of those who are astray.
+          - generic [ref=e14]: stop
+          - generic [ref=e16]:
+            - generic [ref=e17]: Play recitation
+            - generic [ref=e18]: sura number 1 • verses 1 / 7 • Audio
+          - generic [ref=e20]:
+            - generic [ref=e21]: Play recitation
+            - switch [ref=e22] [cursor=pointer]:
+              - generic [ref=e26]: play_arrow
+        - generic [ref=e27]:
+          - generic [ref=e28]:
+            - generic [ref=e29]:
+              - generic [ref=e30]: The Opener — الفاتحة
+              - generic [ref=e31]: "sura number: 1 • meccan • 7"
+            - generic [ref=e32]:
+              - button "Shazam Audio Sync" [ref=e33] [cursor=pointer]:
+                - generic [ref=e34]:
+                  - img [ref=e35]: graphic_eq
+                  - generic [ref=e36]: Shazam Audio Sync
+              - generic [ref=e37]:
+                - button "Audio" [pressed] [ref=e38] [cursor=pointer]:
+                  - generic [ref=e39]:
+                    - img [ref=e40]: volume_up
+                    - generic [ref=e41]: Audio
+                - button "TTS" [ref=e42] [cursor=pointer]:
+                  - generic [ref=e43]:
+                    - img [ref=e44]: record_voice_over
+                    - generic [ref=e45]: TTS
+              - generic [ref=e47]:
+                - generic [ref=e48]: Play recitation
+                - switch [ref=e49] [cursor=pointer]:
+                  - generic [ref=e53]: play_arrow
+              - switch "Auto-continue to next sura" [ref=e54] [cursor=pointer]:
+                - generic [ref=e58]: Auto-continue to next sura
+              - generic [ref=e63] [cursor=pointer]:
+                - generic [ref=e64]: 1x
+                - combobox "1x" [ref=e65]
+              - generic [ref=e67]:
+                - button "Mushaf mode" [ref=e68] [cursor=pointer]:
+                  - generic [ref=e69]:
+                    - img [ref=e70]: auto_stories
+                    - generic [ref=e71]: Mushaf mode
+                - button "Reader mode" [pressed] [ref=e72] [cursor=pointer]:
+                  - generic [ref=e73]:
+                    - img [ref=e74]: menu_book
+                    - generic [ref=e75]: Reader mode
+                - button "Native mode" [ref=e76] [cursor=pointer]:
+                  - generic [ref=e77]:
+                    - img [ref=e78]: article
+                    - generic [ref=e79]: Native mode
+              - button "Quick" [ref=e80] [cursor=pointer]:
+                - generic [ref=e81]:
+                  - img [ref=e82]: flash_on
+                  - generic [ref=e83]: Quick
+              - button "Bookmarks" [ref=e84] [cursor=pointer]:
+                - generic [ref=e85]:
+                  - img [ref=e86]: bookmark
+                  - generic [ref=e87]: Bookmarks
+              - generic [ref=e88]:
+                - generic [ref=e89]: cloud_off
+                - generic [ref=e90]: Internet currently required
+              - button "Offline Recitation" [ref=e91] [cursor=pointer]:
+                - generic [ref=e92]:
+                  - img [ref=e93]: download
+                  - generic [ref=e94]: Offline Recitation
+          - generic [ref=e96]:
+            - generic [ref=e97] [cursor=pointer]:
+              - generic [ref=e98]:
+                - generic [ref=e99]:
+                  - generic [ref=e100]: "1"
+                  - button "Bookmark verse 1" [ref=e101]:
+                    - generic [ref=e102]: star_outline
+                  - button "Share verse 1:1" [ref=e103]:
+                    - generic [ref=e104]: share
+                - generic [ref=e105]: بِسْمِ ٱللَّهِ ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+              - generic [ref=e107]: In the name of Allāh,1 the Entirely Merciful, the Especially Merciful.2
+            - generic [ref=e108] [cursor=pointer]:
+              - generic [ref=e109]:
+                - generic [ref=e110]:
+                  - generic [ref=e111]: "2"
+                  - button "Bookmark verse 2" [ref=e112]:
+                    - generic [ref=e113]: star_outline
+                  - button "Share verse 1:2" [ref=e114]:
+                    - generic [ref=e115]: share
+                - generic [ref=e116]: ٱلْحَمْدُ لِلَّهِ رَبِّ ٱلْعَـٰلَمِينَ
+              - generic [ref=e118]: "[All] praise is [due] to Allāh, Lord1 of the worlds -"
+            - generic [ref=e119] [cursor=pointer]:
+              - generic [ref=e120]:
+                - generic [ref=e121]:
+                  - generic [ref=e122]: "3"
+                  - button "Bookmark verse 3" [ref=e123]:
+                    - generic [ref=e124]: star_outline
+                  - button "Share verse 1:3" [ref=e125]:
+                    - generic [ref=e126]: share
+                - generic [ref=e127]: ٱلرَّحْمَـٰنِ ٱلرَّحِيمِ
+              - generic [ref=e129]: The Entirely Merciful, the Especially Merciful,
+            - generic [ref=e130] [cursor=pointer]:
+              - generic [ref=e131]:
+                - generic [ref=e132]:
+                  - generic [ref=e133]: "4"
+                  - button "Bookmark verse 4" [ref=e134]:
+                    - generic [ref=e135]: star_outline
+                  - button "Share verse 1:4" [ref=e136]:
+                    - generic [ref=e137]: share
+                - generic [ref=e138]: مَـٰلِكِ يَوْمِ ٱلدِّينِ
+              - generic [ref=e140]: Sovereign of the Day of Recompense.1
+            - generic [ref=e141] [cursor=pointer]:
+              - generic [ref=e142]:
+                - generic [ref=e143]:
+                  - generic [ref=e144]: "5"
+                  - button "Bookmark verse 5" [ref=e145]:
+                    - generic [ref=e146]: star_outline
+                  - button "Share verse 1:5" [ref=e147]:
+                    - generic [ref=e148]: share
+                - generic [ref=e149]: إِيَّاكَ نَعْبُدُ وَإِيَّاكَ نَسْتَعِينُ
+              - generic [ref=e151]: It is You we worship and You we ask for help.
+            - generic [ref=e152] [cursor=pointer]:
+              - generic [ref=e153]:
+                - generic [ref=e154]:
+                  - generic [ref=e155]: "6"
+                  - button "Bookmark verse 6" [ref=e156]:
+                    - generic [ref=e157]: star_outline
+                  - button "Share verse 1:6" [ref=e158]:
+                    - generic [ref=e159]: share
+                - generic [ref=e160]: ٱهْدِنَا ٱلصِّرَٰطَ ٱلْمُسْتَقِيمَ
+              - generic [ref=e162]: Guide us to the straight path -
+            - generic [ref=e163] [cursor=pointer]:
+              - generic [ref=e164]:
+                - generic [ref=e165]:
+                  - generic [ref=e166]: "7"
+                  - button "Bookmark verse 7" [ref=e167]:
+                    - generic [ref=e168]: star_outline
+                  - button "Share verse 1:7" [ref=e169]:
+                    - generic [ref=e170]: share
+                - generic [ref=e171]: صِرَٰطَ ٱلَّذِينَ أَنْعَمْتَ عَلَيْهِمْ غَيْرِ ٱلْمَغْضُوبِ عَلَيْهِمْ وَلَا ٱلضَّآلِّينَ
+              - generic [ref=e173]: The path of those upon whom You have bestowed favor, not of those who have earned [Your] anger or of those who are astray.
   - generic: God bless my mom
 ```
 
 # Test source
 
 ```ts
+  77  |       if (
+  78  |         currentWordId &&
+  79  |         (observedWords.length === 0 ||
+  80  |           observedWords[observedWords.length - 1] !== currentWordId)
+  81  |       ) {
+  82  |         observedWords.push(currentWordId)
+  83  |       }
+  84  |       if (observedWords.length >= 4) {
+  85  |         break
+  86  |       }
+  87  |       await page.waitForTimeout(100)
+  88  |     }
+  89  | 
+  90  |     // Must have iterated through multiple words of Ayah 1
+  91  |     expect(observedWords.length).toBeGreaterThanOrEqual(2)
+  92  |     expect(observedWords[0]).toBe('word-1-0')
+  93  |     expect(observedWords).toContain('word-1-1')
+  94  |   })
+  95  | 
+  96  |   test('sentence highlight mode highlights the whole ayah without highlighting individual words', async ({
+  97  |     page,
   98  |   }) => {
   99  |     await page.goto('/quran/1/reader?highlight=ayah')
   100 |     await acceptConsent(page)
@@ -264,69 +277,48 @@ Call log:
   167 |       () => localStorage.getItem('quran-highlight-mode') === 'ayah'
   168 |     )
   169 | 
-  170 |     const lsBeforeGoto = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
-  171 |     console.log('LS BEFORE GOTO:', lsBeforeGoto)
-  172 | 
-  173 |     // 2. Go to reader and verify whole ayah is highlighted
-  174 |     await page.goto('/quran/1/reader')
-  175 |     const lsAfterGoto = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
-  176 |     console.log('LS AFTER GOTO:', lsAfterGoto)
-  177 | 
-  178 |     await acceptConsent(page)
-  179 |     await page.waitForSelector('.arabic-text', { timeout: 15000 })
-  180 |     const lsAfterReady = await page.evaluate(() => localStorage.getItem('quran-highlight-mode'))
-  181 |     console.log('LS AFTER READY:', lsAfterReady)
-  182 | 
-  183 |     await startRecitation(page)
-  184 | 
-  185 |     const debugState = await page.evaluate(() => {
-  186 |       const activeAyahs = Array.from(document.querySelectorAll('.is-current-ayah')).map(el => el.id)
-  187 |       const activeWords = Array.from(document.querySelectorAll('.is-current-word')).map(el => el.id)
-  188 |       const verseRows = Array.from(document.querySelectorAll('.verse-row')).map(el => ({ id: el.id, class: el.className }))
-  189 |       return {
-  190 |         activeAyahs,
-  191 |         activeWords,
-  192 |         firstVerse: verseRows[0],
-  193 |         localStorageHighlight: localStorage.getItem('quran-highlight-mode'),
-  194 |       }
-  195 |     })
-  196 |     console.log('DEBUG REC STATE:', JSON.stringify(debugState))
-  197 | 
-> 198 |     await expect(page.locator('.verse-row.is-current-ayah')).toBeVisible({
+  170 |     // 2. Go to reader and verify whole ayah is highlighted
+  171 |     await page.goto('/quran/1/reader')
+  172 |     await acceptConsent(page)
+  173 |     await page.waitForSelector('.arabic-text', { timeout: 15000 })
+  174 | 
+  175 |     await startRecitation(page)
+  176 | 
+> 177 |     await expect(page.locator('.verse-row.is-current-ayah')).toBeVisible({
       |                                                              ^ Error: expect(locator).toBeVisible() failed
-  199 |       timeout: 10000,
-  200 |     })
-  201 |     expect(await page.locator('.is-current-word').count()).toBe(0)
-  202 | 
-  203 |     await stopRecitation(page)
-  204 |     await page.waitForTimeout(500)
-  205 | 
-  206 |     // 3. Switch back to Word mode on preferences
-  207 |     await page.goto('/preferences')
-  208 |     await acceptConsent(page)
-  209 |     const wordBtn = page.getByRole('button', { name: /^word$/i })
-  210 |     await wordBtn.click()
-  211 |     await expect(wordBtn).toHaveAttribute('aria-pressed', 'true')
-  212 |     await page.waitForFunction(
-  213 |       () => localStorage.getItem('quran-highlight-mode') === 'word'
-  214 |     )
-  215 | 
-  216 |     // 4. Go to reader and verify words are highlighted
-  217 |     await page.goto('/quran/1/reader')
-  218 |     await acceptConsent(page)
-  219 |     await page.waitForSelector('.arabic-text', { timeout: 15000 })
-  220 | 
-  221 |     await startRecitation(page)
-  222 | 
-  223 |     await expect(page.locator('.is-current-word').first()).toBeVisible({
-  224 |       timeout: 10000,
-  225 |     })
-  226 |     const wordId = await page
-  227 |       .locator('.is-current-word')
-  228 |       .first()
-  229 |       .getAttribute('id')
-  230 |     expect(wordId).toMatch(/^word-1-/)
-  231 |   })
-  232 | })
-  233 | 
+  178 |       timeout: 10000,
+  179 |     })
+  180 |     expect(await page.locator('.is-current-word').count()).toBe(0)
+  181 | 
+  182 |     await stopRecitation(page)
+  183 |     await page.waitForTimeout(500)
+  184 | 
+  185 |     // 3. Switch back to Word mode on preferences
+  186 |     await page.goto('/preferences')
+  187 |     await acceptConsent(page)
+  188 |     const wordBtn = page.getByRole('button', { name: /^word$/i })
+  189 |     await wordBtn.click()
+  190 |     await expect(wordBtn).toHaveAttribute('aria-pressed', 'true')
+  191 |     await page.waitForFunction(
+  192 |       () => localStorage.getItem('quran-highlight-mode') === 'word'
+  193 |     )
+  194 | 
+  195 |     // 4. Go to reader and verify words are highlighted
+  196 |     await page.goto('/quran/1/reader')
+  197 |     await acceptConsent(page)
+  198 |     await page.waitForSelector('.arabic-text', { timeout: 15000 })
+  199 | 
+  200 |     await startRecitation(page)
+  201 | 
+  202 |     await expect(page.locator('.is-current-word').first()).toBeVisible({
+  203 |       timeout: 10000,
+  204 |     })
+  205 |     const wordId = await page
+  206 |       .locator('.is-current-word')
+  207 |       .first()
+  208 |       .getAttribute('id')
+  209 |     expect(wordId).toMatch(/^word-1-/)
+  210 |   })
+  211 | })
+  212 | 
 ```
