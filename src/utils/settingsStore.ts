@@ -178,7 +178,6 @@ class SettingsStore {
     let value: unknown = raw
     try { value = JSON.parse(raw) } catch { /* keep string */ }
     this.set(plainKey, value)
-    try { localStorage.removeItem(plainKey) } catch { /* ignore */ }
   }
 
   /**
