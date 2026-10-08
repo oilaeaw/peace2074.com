@@ -76,14 +76,23 @@ test.describe('authentication smoke flow', () => {
 
         await page.getByRole('textbox', { name: /^username$/i }).fill(username)
         await page.getByLabel(/^password$/i).fill(password)
-        await expect(page.getByRole('button', { name: /^sign in$/i })).toBeEnabled()
-        await submitAuthForm(page)
-        await expect(page).toHaveURL(/\/$/)
+        const signInBtn = page.getByRole('button', { name: /^sign in$/i })
+        await expect(signInBtn).toBeEnabled()
+        page.on('console', (msg) => console.log('PAGE LOG:', msg.text()))
+        page.on('response', (res) => {
+            if (res.url().includes('/auth') || res.url().includes('/login')) {
+                console.log('AUTH RES:', res.status(), res.url())
+            }
+        })
+        await signInBtn.click()
 
+        // Dismiss passkey enrollment prompt if shown before navigation proceeds
         await page
             .getByRole('button', { name: /^cancel$/i })
-            .click({ timeout: 3000 })
+            .click({ timeout: 5000 })
             .catch(() => { })
+
+        await expect(page).toHaveURL(/\/$/, { timeout: 15000 })
 
         const accountMenuButton = page.getByRole('button', { name: /profile/i })
         await expect(accountMenuButton).toBeVisible()

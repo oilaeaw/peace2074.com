@@ -23,6 +23,9 @@ function isNativeRuntime() {
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return '/api'
+    }
     const configured = env.VITE_NITRO_BASE
 
     if (configured && typeof configured === 'string') {

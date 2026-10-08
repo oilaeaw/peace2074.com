@@ -102,7 +102,8 @@ test.describe('AI assistant flow', () => {
         expect(((payload?.message as Record<string, unknown>)?.content as string).trim().length).toBeGreaterThan(0)
     })
 
-    test('support AI panel returns an answer without fetch errors', async ({ page }) => {
+    // Support AI widget was removed from the home page in commit 65c7567b
+    test.skip('support AI panel returns an answer without fetch errors', async ({ page }) => {
         await page.goto('/')
         await page.waitForLoadState('domcontentloaded')
         await dismissCookieBanner(page)

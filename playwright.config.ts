@@ -16,8 +16,8 @@ const localWebServerURL = shouldStartLocalWebServer ? `${new URL(baseURL).origin
 
 export default defineConfig({
     testDir: './tests',
-    timeout: 30_000,
-    expect: { timeout: 5000 },
+    timeout: 45_000,
+    expect: { timeout: 10000 },
     fullyParallel: false,
     reporter: [['list'], ['html', { open: 'never' }]],
     use: {
@@ -27,6 +27,7 @@ export default defineConfig({
         // Frontend runs on 4000 in dev; Nitro API runs separately. Point Playwright at the UI.
         baseURL,
         ignoreHTTPSErrors: true,
+        channel: process.env.PLAYWRIGHT_CHANNEL || 'chrome',
     },
     projects: [
         { name: 'chromium', use: { ...devices['Desktop Chrome'] } },

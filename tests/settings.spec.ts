@@ -15,8 +15,8 @@ const KEYS = {
 
 test.describe('Settings page', () => {
     test.beforeEach(async ({ page }) => {
-        // Clear settings so each test starts from a known state
-        await page.addInitScript(() => {
+        await page.goto('/settings')
+        await page.evaluate(() => {
             const keys = [
                 'pref-compact-layout',
                 'pref-reduce-motion',
@@ -29,9 +29,11 @@ test.describe('Settings page', () => {
                 'pref-autoplay-athan',
                 'pref-autoplay-prayer-times',
             ]
-            keys.forEach((k) => window.localStorage.removeItem(k))
+            keys.forEach((k) => {
+                window.localStorage.removeItem(k)
+                window.localStorage.removeItem(`p2074-settings:${k}`)
+            })
         })
-        await page.goto('/settings')
         // Dismiss cookie consent if present
         await page
             .getByRole('button', { name: /^accept$/i })
@@ -42,7 +44,7 @@ test.describe('Settings page', () => {
     test('settings page renders all section headings', async ({ page }) => {
         await expect(page.getByRole('heading', { level: 1 })).toBeVisible()
         for (const heading of ['Display', 'Accessibility', 'Navigation', 'Notifications', 'Audio']) {
-            await expect(page.getByText(heading, { exact: true }).first()).toBeVisible()
+            await expect(page.locator('main').getByText(heading, { exact: true }).first()).toBeVisible()
         }
     })
 
@@ -95,7 +97,8 @@ test.describe('Settings page', () => {
         expect(htmlClass).toContain('font-medium')
 
         // Move slider to max (3 = Extra Large) by clicking at the right edge of the track
-        const slider = page.locator('.q-slider').first()
+        // Note: The font size slider is the second slider on the page (after cursor trail)
+        const slider = page.locator('.q-slider').nth(1)
         await expect(slider).toBeVisible()
         const box = await slider.boundingBox()
         if (!box) throw new Error('Slider not found')
@@ -163,10 +166,10 @@ test.describe('Settings page', () => {
         })
 
         const reloadBtn = page.getByRole('button', { name: /reload/i })
-        await reloadBtn.click()
-
-        // After reload, verify critical keys were preserved
-        await page.waitForURL(/\/settings/)
+        await Promise.all([
+            page.waitForEvent('load'),
+            reloadBtn.click(),
+        ])
         const fontSize = await page.evaluate(() => window.localStorage.getItem('pref-font-size'))
         const highContrast = await page.evaluate(() => window.localStorage.getItem('pref-high-contrast'))
         const darkMode = await page.evaluate(() => window.localStorage.getItem('pref-dark-mode'))

@@ -39,6 +39,7 @@ test.describe('dark mode public route smoke test', () => {
         test(`keeps large surfaces dark on ${route.path}`, async ({ page }) => {
             await page.addInitScript(() => {
                 localStorage.setItem('peace2074:pref-theme-mode', 'dark')
+                localStorage.setItem('consent-banner-v1', 'accepted')
             })
 
             await page.goto(route.path)

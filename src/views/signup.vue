@@ -24,6 +24,9 @@ const DEFAULT_MOBILE_API_BASE = 'https://peace2074.com/api'
 function computeNitroBase() {
   if (typeof window !== 'undefined') {
     const { protocol, hostname } = window.location
+    if (hostname === 'localhost' || hostname === '127.0.0.1') {
+      return '/api'
+    }
     const configured = env.VITE_NITRO_BASE
 
     // Explicit override always wins

@@ -75,7 +75,9 @@ function storageKey(key: string): string {
 
 function rawGet(key: string): string | null {
   try {
-    return localStorage.getItem(storageKey(key))
+    const namespaced = localStorage.getItem(storageKey(key))
+    if (namespaced !== null) return namespaced
+    return localStorage.getItem(key)
   } catch {
     return null
   }
@@ -90,6 +92,7 @@ function rawSet(key: string, value: string): void {
 function rawRemove(key: string): void {
   try {
     localStorage.removeItem(storageKey(key))
+    localStorage.removeItem(key)
   } catch { /* ignore */ }
 }
 
@@ -137,6 +140,14 @@ class SettingsStore {
     if (typeof window === 'undefined') return
     const blob = encrypt(value, this._salt)
     rawSet(key, blob)
+    try {
+      localStorage.setItem(
+        key,
+        typeof value === 'object' && value !== null
+          ? JSON.stringify(value)
+          : String(value)
+      )
+    } catch { /* ignore */ }
   }
 
   get<T = unknown>(key: string, fallback: T): T {

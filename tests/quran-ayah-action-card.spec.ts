@@ -29,7 +29,7 @@ test.describe('Quran ayah action card', () => {
             })
 
             await page.goto(`/quran/1/${layout.mode}`)
-            await page.waitForURL(new RegExp(`/quran/1/${layout.mode}$`))
+            await page.waitForURL(new RegExp(`/quran/1/${layout.mode}(\\?|$)`))
 
             const ayahTarget = page.getByTestId(`ayah-${layout.mode}-1`)
             await expect(page.locator(layout.readySelector)).toBeVisible({ timeout: layoutReadyTimeoutMs })

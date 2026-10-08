@@ -105,6 +105,15 @@ function decline() {
   pointer-events: auto;
 }
 
+:global(body.body--dark) .consent-card {
+  background: rgba(30, 41, 59, 0.95) !important;
+  color: #f1f5f9;
+}
+
+:global(body.body--dark) .consent-card .text-grey-7 {
+  color: #94a3b8 !important;
+}
+
 .fade-enter-active,
 .fade-leave-active {
   transition:
