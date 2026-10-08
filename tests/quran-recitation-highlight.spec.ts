@@ -157,6 +157,9 @@ test.describe('Quran recitation highlight iteration and settings', () => {
     const sentenceBtn = page.getByRole('button', { name: /^sentence$/i })
     await sentenceBtn.click()
     await expect(sentenceBtn).toHaveAttribute('aria-pressed', 'true')
+    await page.waitForFunction(
+      () => localStorage.getItem('quran-highlight-mode') === 'ayah'
+    )
 
     // 2. Go to reader and verify whole ayah is highlighted
     await page.goto('/quran/1/reader')
@@ -179,6 +182,9 @@ test.describe('Quran recitation highlight iteration and settings', () => {
     const wordBtn = page.getByRole('button', { name: /^word$/i })
     await wordBtn.click()
     await expect(wordBtn).toHaveAttribute('aria-pressed', 'true')
+    await page.waitForFunction(
+      () => localStorage.getItem('quran-highlight-mode') === 'word'
+    )
 
     // 4. Go to reader and verify words are highlighted
     await page.goto('/quran/1/reader')
