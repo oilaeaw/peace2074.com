@@ -145,23 +145,112 @@
         <!-- ── Left / Upper: Video Stage & Shazam Radar ── -->
         <section v-show="activeLayout !== 'lyrics'" class="stage-video-column">
           <div class="video-card-frame shadow-2xl">
-            <!-- YouTube Official Video Player -->
+            <!-- YouTube Official Video Player or Kinetic Visualizer Stage -->
             <div class="video-aspect-container">
-              <iframe
-                :src="videoEmbedUrl"
-                title="Official Recitation Video"
-                frameborder="0"
-                allow="
-                  accelerometer;
-                  autoplay;
-                  clipboard-write;
-                  encrypted-media;
-                  gyroscope;
-                  picture-in-picture;
-                "
-                allowfullscreen
-                class="video-iframe"
-              />
+              <!-- Case A: YouTube Video Embed (When video is available or user opted for channel video) -->
+              <template v-if="videoEmbedUrl">
+                <iframe
+                  :src="videoEmbedUrl"
+                  title="Official Recitation Video"
+                  frameborder="0"
+                  allow="
+                    accelerometer;
+                    autoplay;
+                    clipboard-write;
+                    encrypted-media;
+                    gyroscope;
+                    picture-in-picture;
+                  "
+                  allowfullscreen
+                  class="video-iframe"
+                />
+                <q-btn
+                  v-if="!hasSpecificVideo"
+                  round
+                  dense
+                  unelevated
+                  color="black"
+                  text-color="white"
+                  icon="close"
+                  class="absolute-top-right q-ma-sm z-top"
+                  @click="showChannelTrailerFallback = false"
+                >
+                  <q-tooltip>Return to Audio Visualizer</q-tooltip>
+                </q-btn>
+              </template>
+
+              <!-- Case B: Sacred Geometry Kinetic Visualizer Stage (When specific video is not on YouTube yet) -->
+              <div
+                v-else
+                class="visualizer-stage column flex-center text-center q-pa-md"
+              >
+                <div
+                  class="visualizer-orb"
+                  :class="{ 'is-pulsing': isPlaying }"
+                >
+                  <div class="orb-ring ring-1" />
+                  <div class="orb-ring ring-2" />
+                  <div class="orb-ring ring-3" />
+                  <div class="orb-core">
+                    <q-icon name="graphic_eq" size="32px" color="cyan-3" />
+                  </div>
+                </div>
+
+                <div
+                  class="text-h5 text-weight-bolder text-white q-mt-sm font-amiri"
+                >
+                  {{ sura?.name }}
+                </div>
+                <div class="text-subtitle2 text-cyan-3 text-weight-bold">
+                  {{ sura?.e_name }} · Surah {{ sura?.id }}
+                </div>
+
+                <div class="row items-center gap-xs q-mt-xs">
+                  <q-badge
+                    color="deep-purple-9"
+                    text-color="white"
+                    class="q-px-sm q-py-xs"
+                  >
+                    <q-icon
+                      name="movie"
+                      size="14px"
+                      class="q-mr-xs text-amber-4"
+                    />
+                    Video In Production
+                  </q-badge>
+                  <q-badge
+                    color="cyan-9"
+                    text-color="white"
+                    class="q-px-sm q-py-xs"
+                  >
+                    <q-icon
+                      name="headphones"
+                      size="14px"
+                      class="q-mr-xs text-cyan-3"
+                    />
+                    Live Audio Sync Active
+                  </q-badge>
+                </div>
+
+                <p
+                  class="text-caption text-grey-4 q-mt-xs q-mb-sm"
+                  style="max-width: 360px"
+                >
+                  Follow along with glowing lyrics or tap any line.
+                </p>
+
+                <q-btn
+                  dense
+                  outline
+                  rounded
+                  color="cyan-3"
+                  icon="smart_display"
+                  label="Watch Channel Video Preview"
+                  class="q-px-md text-caption"
+                  no-caps
+                  @click="showChannelTrailerFallback = true"
+                />
+              </div>
             </div>
 
             <!-- Shazam Interactive Audio Radar Banner -->
@@ -486,10 +575,37 @@ const emit = defineEmits<{
 const activeLayout = ref<'split' | 'lyrics' | 'video'>('split')
 const lyricsViewport = ref<HTMLElement | null>(null)
 
-// YouTube official playlist or surah video URL
-const videoEmbedUrl = computed(() => {
-  const suraId = props.sura?.id || 1
-  return `https://www.youtube.com/embed/videoseries?list=PLEJ9VLBcEoKg&index=${suraId - 1}&autoplay=1&enablejsapi=1&rel=0`
+// Known official uploaded YouTube video IDs for Surahs
+const SURAH_VIDEO_IDS: Record<number, string> = {
+  1: 'IkyNchnSCpU', // Surah 1: Al-Fatihah (Official Peace2074 video)
+}
+
+const currentSurahVideoId = computed(() => {
+  const id = props.sura?.id || 1
+  return SURAH_VIDEO_IDS[id] || null
+})
+
+const hasSpecificVideo = computed(() => Boolean(currentSurahVideoId.value))
+
+const showChannelTrailerFallback = ref(false)
+
+// Reset trailer fallback whenever sura changes
+watch(
+  () => props.sura?.id,
+  () => {
+    showChannelTrailerFallback.value = false
+  }
+)
+
+// YouTube official video or channel preview URL
+const videoEmbedUrl = computed<string | null>(() => {
+  if (currentSurahVideoId.value) {
+    return `https://www.youtube.com/embed/${currentSurahVideoId.value}?autoplay=1&enablejsapi=1&rel=0`
+  }
+  if (showChannelTrailerFallback.value) {
+    return 'https://www.youtube.com/embed/IkyNchnSCpU?autoplay=1&enablejsapi=1&rel=0'
+  }
+  return null
 })
 
 // Current Ayah Translation for header ticker
@@ -747,6 +863,95 @@ watch(
   left: 0;
   width: 100%;
   height: 100%;
+}
+
+.visualizer-stage {
+  position: absolute;
+  inset: 0;
+  background: radial-gradient(
+    circle at center,
+    rgba(27, 19, 56, 0.95) 0%,
+    rgba(13, 10, 28, 0.98) 60%,
+    rgba(6, 5, 11, 1) 100%
+  );
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 2;
+  overflow: hidden;
+}
+
+.visualizer-orb {
+  position: relative;
+  width: 70px;
+  height: 70px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.orb-core {
+  width: 48px;
+  height: 48px;
+  border-radius: 50%;
+  background: linear-gradient(
+    135deg,
+    rgba(121, 40, 202, 0.8) 0%,
+    rgba(0, 245, 212, 0.6) 100%
+  );
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(0, 245, 212, 0.4);
+  z-index: 2;
+}
+
+.orb-ring {
+  position: absolute;
+  inset: -6px;
+  border-radius: 50%;
+  border: 1px dashed rgba(0, 245, 212, 0.3);
+  pointer-events: none;
+}
+
+.orb-ring.ring-2 {
+  inset: -14px;
+  border: 1px solid rgba(121, 40, 202, 0.3);
+}
+
+.orb-ring.ring-3 {
+  inset: -22px;
+  border: 1px dotted rgba(255, 255, 255, 0.15);
+}
+
+.visualizer-orb.is-pulsing .orb-ring.ring-1 {
+  animation: orbSpin 12s linear infinite;
+}
+
+.visualizer-orb.is-pulsing .orb-ring.ring-2 {
+  animation: orbPulse 2.5s ease-in-out infinite;
+}
+
+@keyframes orbSpin {
+  from {
+    transform: rotate(0deg);
+  }
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes orbPulse {
+  0%,
+  100% {
+    transform: scale(1);
+    opacity: 0.4;
+  }
+  50% {
+    transform: scale(1.12);
+    opacity: 0.9;
+  }
 }
 
 .shazam-radar-strip {
