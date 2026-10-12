@@ -22,6 +22,21 @@ async function main() {
   console.log('🔒 AUTOMATED YOUTUBE ONE-CLICK AUTHENTICATION HELPER')
   console.log('================================================================')
 
+  if (
+    !CLIENT_ID ||
+    CLIENT_ID.includes('your-google-client-id') ||
+    !CLIENT_SECRET ||
+    CLIENT_SECRET.includes('your-google-client-secret')
+  ) {
+    console.error('\n❌ CANNOT AUTHENTICATE: Missing real Google OAuth Client Credentials!')
+    console.error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env are currently placeholder strings.\n')
+    console.error('👉 Step 1: Open Google Cloud Console credentials for project peace2074-474822:')
+    console.error('   https://console.cloud.google.com/apis/credentials?project=peace2074-474822\n')
+    console.error('👉 Step 2: Copy your Web Application Client ID & Client Secret.')
+    console.error('👉 Step 3: Update GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env and run this script again.\n')
+    process.exit(1)
+  }
+
   const authUrl = new URL('https://accounts.google.com/o/oauth2/v2/auth')
   authUrl.searchParams.set('client_id', CLIENT_ID)
   authUrl.searchParams.set('redirect_uri', REDIRECT_URI)
