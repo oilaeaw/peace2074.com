@@ -45,13 +45,13 @@ const SURAHS_TO_TEST = [
     console.log(`Navigating to ${url}...`);
 
     try {
-      await page.goto(url, { waitUntil: 'networkidle', timeout: 25000 });
+      await page.goto(url, { waitUntil: 'domcontentloaded', timeout: 15000 });
     } catch (e) {
-      console.log(`Networkidle partial/timeout: ${e.message}`);
+      console.log(`Navigation notice: ${e.message}`);
     }
 
     console.log('Waiting for Shazam theater dialog...');
-    await page.waitForTimeout(3500);
+    await page.waitForTimeout(4000);
 
     // 1. Check modal root
     const theaterRoot = await page.$('.shazam-theater-root');
@@ -80,13 +80,20 @@ const SURAHS_TO_TEST = [
     console.log(`[Check] Sacred Geometry Visualizer Stage found: ${!!visualizerStage}`);
     console.log(`[Check] Pulsing Visualizer Orb found: ${!!visualizerOrb}`);
 
-    // 6. Check Lyrics items
-    const lyricCards = await page.$$('.ayah-lyric-card, article.ayah-lyric-card');
-    console.log(`[Check] Ayah Lyric cards rendered: ${lyricCards.length} (Expected: ${surah.expectedVerses})`);
+    // 6. Check Lyric cards
+    const lyricCards = await page.$$('.lyric-line-card');
+    console.log(`[Check] .lyric-line-card count: ${lyricCards.length} (Expected: ${surah.expectedVerses})`);
 
     // 7. Check Bismillah banner
     const bismillahEl = await page.$('.bismillah-banner');
     console.log(`[Check] Bismillah banner present: ${!!bismillahEl}`);
+
+    // 8. Test seeking to verse 2 by clicking the 2nd lyric card
+    if (lyricCards.length >= 2) {
+      console.log('Testing click on verse 2 lyric card...');
+      await lyricCards[1].click();
+      await page.waitForTimeout(1000);
+    }
 
     // Capture main view screenshot
     const shotFilename = `surah_${surah.id}_theater.png`;
@@ -94,7 +101,7 @@ const SURAHS_TO_TEST = [
     await page.screenshot({ path: shotPath });
     console.log(`[Screenshot Saved] ${shotFilename}`);
 
-    // 8. If visualizer fallback, test 'Watch Channel Video Preview' button
+    // 9. If visualizer fallback, test 'Watch Channel Video Preview' button
     if (!surah.hasVideo && visualizerStage) {
       const previewBtn = await page.$('button:has-text("Watch Channel Video Preview"), .q-btn:has-text("Watch Channel Video Preview")');
       if (previewBtn) {

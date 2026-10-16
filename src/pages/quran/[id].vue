@@ -292,7 +292,49 @@ const QURAN_DETAIL_KEYWORDS = [
   'verse sharing',
   'Quran bookmarks',
 ]
-const QURAN_RECITER_NAME = 'Mishary Al-Afasy'
+interface QuranReciterOption {
+  id: number
+  name: string
+  nameAr: string
+  hasKaraoke: boolean
+}
+
+const QURAN_RECITERS: QuranReciterOption[] = [
+  { id: 7, name: 'Mishary Al-Afasy', nameAr: 'مشاري العفاسي', hasKaraoke: true },
+  { id: 2, name: 'AbdulBaset AbdulSamad', nameAr: 'عبد الباسط عبد الصمد', hasKaraoke: false },
+  { id: 6, name: 'Mahmoud Khalil Al-Husary', nameAr: 'محمود خليل الحصري', hasKaraoke: false },
+  { id: 9, name: 'Mohamed Siddiq al-Minshawi', nameAr: 'محمد صديق المنشاوي', hasKaraoke: false },
+  { id: 3, name: 'Abdur-Rahman as-Sudais', nameAr: 'عبد الرحمن السديس', hasKaraoke: false },
+  { id: 4, name: 'Abu Bakr al-Shatri', nameAr: 'أبو بكر الشاطري', hasKaraoke: false },
+]
+
+const QURAN_RECITER_STORAGE_KEY = 'pref-quran-reciter-id'
+const savedReciterId =
+  typeof localStorage !== 'undefined'
+    ? Number(localStorage.getItem(QURAN_RECITER_STORAGE_KEY) || 7)
+    : 7
+const selectedReciterId = ref<number>(
+  QURAN_RECITERS.some((r) => r.id === savedReciterId) ? savedReciterId : 7
+)
+const selectedReciter = computed(
+  () =>
+    QURAN_RECITERS.find((r) => r.id === selectedReciterId.value) ||
+    QURAN_RECITERS[0]
+)
+const QURAN_RECITER_NAME = computed(() => selectedReciter.value.name)
+
+async function handleChangeReciter(newReciterId: number) {
+  selectedReciterId.value = newReciterId
+  if (typeof localStorage !== 'undefined') {
+    localStorage.setItem(QURAN_RECITER_STORAGE_KEY, String(newReciterId))
+  }
+  const suraId = Number(sura.value?.id || route.params.id || 1)
+  if (audioPlayer.value) {
+    audioPlayer.value.pause()
+  }
+  isPlayingAudio.value = false
+  await loadAudioAndTimings(suraId)
+}
 
 function trackPageView(pageTitle: string) {
   if (typeof window === 'undefined') return
@@ -1382,7 +1424,7 @@ async function handleBookmarkNavigate(
         type: 'positive',
         message: t('pages.quran.notifications.playingSelectionWithReciter', {
           label: entry.label,
-          reciter: QURAN_RECITER_NAME,
+          reciter: QURAN_RECITER_NAME.value,
         }),
         icon: 'play_arrow',
         timeout: 2000,
@@ -1457,7 +1499,7 @@ async function navigateToQuickAccess(
         type: 'positive',
         message: t('pages.quran.notifications.playingSelectionWithReciter', {
           label: t(qaVerse.nameKey),
-          reciter: QURAN_RECITER_NAME,
+          reciter: QURAN_RECITER_NAME.value,
         }),
         icon: 'play_arrow',
         timeout: 2000,
@@ -1543,7 +1585,7 @@ async function scrollToHash(
         type: 'positive',
         message: t('pages.quran.notifications.playingVerseWithReciter', {
           verse: versePart,
-          reciter: QURAN_RECITER_NAME,
+          reciter: QURAN_RECITER_NAME.value,
         }),
         icon: 'play_arrow',
         timeout: 2500,
@@ -1728,8 +1770,8 @@ async function loadAudioAndTimings(id: number) {
   const translatorId = readTranslatorIdForLocale(locale.value || 'en')
 
   try {
-    // Fetch verses with audio segments for reciter 7 (Al-Afasy) + preferred translation.
-    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=7&words=true&word_fields=text_uthmani&translations=${translatorId}&per_page=300`
+    // Fetch verses with audio segments for selected reciter + preferred translation.
+    const sourceUrl = `https://api.quran.com/api/v4/verses/by_chapter/${id}?audio=${selectedReciterId.value}&words=true&word_fields=text_uthmani&translations=${translatorId}&per_page=300`
     const res = await fetch(sourceUrl)
     if (!res.ok) {
       trackApi5xx('quran_com_verses', res.status, sourceUrl)
@@ -4357,6 +4399,9 @@ watch(
       :highlight-mode="highlightMode"
       :is-playing="isPlayingAudio"
       :playback-rate="playbackRate"
+      :reciter-name="selectedReciter.name"
+      :reciter-id="selectedReciterId"
+      :reciters="QURAN_RECITERS"
       :get-synced-words="getSyncedVerseWords"
       @toggle-play="toggleAudioRecitation"
       @prev-ayah="playPreviousAyah"
@@ -4365,6 +4410,7 @@ watch(
       @set-speed="handlePlaybackRateChange"
       @set-highlight-mode="setHighlightMode"
       @trigger-shazam="triggerQuranShazam"
+      @change-reciter="handleChangeReciter"
     />
   </div>
 </template>

@@ -50,8 +50,50 @@
               </q-badge>
             </div>
             <div class="text-caption text-grey-4 row items-center no-wrap">
-              <q-icon name="mic" size="14px" class="q-mr-xs text-pink-4" />
-              <span>{{ reciterName }}</span>
+              <q-btn-dropdown
+                dense
+                flat
+                rounded
+                no-caps
+                class="reciter-selector-dropdown text-grey-3 q-px-xs"
+                content-class="reciter-dropdown-menu"
+              >
+                <template #label>
+                  <q-icon name="mic" size="14px" class="q-mr-xs text-pink-4" />
+                  <span class="text-weight-bold">{{ reciterName }}</span>
+                </template>
+                <q-list dense class="bg-grey-10 text-white shadow-2xl" style="min-width: 250px">
+                  <q-item-label header class="text-caption text-grey-4 text-weight-bold q-px-md q-pt-sm q-pb-xs">
+                    SELECT RECITER (القارئ)
+                  </q-item-label>
+                  <q-separator dark class="q-mb-xs" />
+                  <q-item
+                    v-for="r in reciters"
+                    :key="r.id"
+                    clickable
+                    v-close-popup
+                    :active="r.id === reciterId"
+                    active-class="bg-deep-purple-9 text-cyan-3 text-weight-bold"
+                    class="q-px-md q-py-xs"
+                    @click="$emit('change-reciter', r.id)"
+                  >
+                    <q-item-section>
+                      <q-item-label class="text-body2 text-white">{{ r.name }}</q-item-label>
+                      <q-item-label caption class="text-grey-4 font-amiri" dir="rtl">{{ r.nameAr }}</q-item-label>
+                    </q-item-section>
+                    <q-item-section side>
+                      <q-badge
+                        v-if="r.hasKaraoke"
+                        color="cyan-9"
+                        text-color="cyan-2"
+                        class="text-caption q-px-xs"
+                      >
+                        Word Sync
+                      </q-badge>
+                    </q-item-section>
+                  </q-item>
+                </q-list>
+              </q-btn-dropdown>
               <span class="q-mx-xs">•</span>
               <span
                 >Verse {{ currentAyahIndex + 1 }} of
@@ -540,6 +582,13 @@ interface SuraData {
   ayat: AyahItem[]
 }
 
+interface QuranReciter {
+  id: number
+  name: string
+  nameAr: string
+  hasKaraoke?: boolean
+}
+
 const props = withDefaults(
   defineProps<{
     modelValue: boolean
@@ -550,6 +599,8 @@ const props = withDefaults(
     isPlaying?: boolean
     playbackRate?: number
     reciterName?: string
+    reciterId?: number
+    reciters?: QuranReciter[]
     getSyncedWords?: (verseNumber: number) => string[]
   }>(),
   {
@@ -557,6 +608,15 @@ const props = withDefaults(
     isPlaying: false,
     playbackRate: 1,
     reciterName: 'Mishary Al-Afasy',
+    reciterId: 7,
+    reciters: () => [
+      { id: 7, name: 'Mishary Al-Afasy', nameAr: 'مشاري العفاسي', hasKaraoke: true },
+      { id: 2, name: 'AbdulBaset AbdulSamad', nameAr: 'عبد الباسط عبد الصمد', hasKaraoke: false },
+      { id: 6, name: 'Mahmoud Khalil Al-Husary', nameAr: 'محمود خليل الحصري', hasKaraoke: false },
+      { id: 9, name: 'Mohamed Siddiq al-Minshawi', nameAr: 'محمد صديق المنشاوي', hasKaraoke: false },
+      { id: 3, name: 'Abdur-Rahman as-Sudais', nameAr: 'عبد الرحمن السديس', hasKaraoke: false },
+      { id: 4, name: 'Abu Bakr al-Shatri', nameAr: 'أبو بكر الشاطري', hasKaraoke: false },
+    ],
     getSyncedWords: () => [],
   }
 )
@@ -570,6 +630,7 @@ const emit = defineEmits<{
   (e: 'set-speed', rate: number): void
   (e: 'set-highlight-mode', mode: 'word' | 'ayah'): void
   (e: 'trigger-shazam'): void
+  (e: 'change-reciter', reciterId: number): void
 }>()
 
 const activeLayout = ref<'split' | 'lyrics' | 'video'>('split')
