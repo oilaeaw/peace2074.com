@@ -793,8 +793,7 @@
   "114": {
     "surahId": 114,
     "surahName": "An-Nas",
-    "status": "failed",
-    "videoPath": "output_videos/surah_114_an_nas.mp4",
-    "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:4000/quran/114?play=true&theme=dark\nCall log:\n  - navigating to \"http://localhost:4000/quran/114?play=true&theme=dark\", waiting until \"networkidle\"\n"
+    "status": "generated",
+    "videoPath": "output_videos/surah_114_an_nas.mp4"
   }
 }
