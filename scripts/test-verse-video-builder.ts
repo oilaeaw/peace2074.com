@@ -239,7 +239,12 @@ async function testBuildSurahVideo(surahId: number) {
   console.log(`Loaded ${versesData.length} verses data for Surah ${chapter.transliteration}`)
 
   // Launch Playwright
-  const browser = await chromium.launch()
+  const launchOptions: any = { headless: true }
+  const chromePath = '/Applications/Google Chrome.app/Contents/MacOS/Google Chrome'
+  if (fs.existsSync(chromePath)) {
+    launchOptions.executablePath = chromePath
+  }
+  const browser = await chromium.launch(launchOptions)
   const page = await browser.newPage({ viewport: { width: 1280, height: 720 } })
 
   const segmentVideos: string[] = []
