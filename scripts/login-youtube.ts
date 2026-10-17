@@ -102,14 +102,14 @@ async function main() {
             let envContent = fs.existsSync(envPath) ? fs.readFileSync(envPath, 'utf8') : ''
             
             if (envContent.includes('YOUTUBE_OAUTH_TOKEN=')) {
-              envContent = envContent.replace(/YOUTUBE_OAUTH_TOKEN=.* /g, `YOUTUBE_OAUTH_TOKEN="${tokenData.access_token}"`)
+              envContent = envContent.replace(/YOUTUBE_OAUTH_TOKEN=.*/g, `YOUTUBE_OAUTH_TOKEN="${tokenData.access_token}"`)
             } else {
               envContent += `\nYOUTUBE_OAUTH_TOKEN="${tokenData.access_token}"\n`
             }
 
             if (tokenData.refresh_token) {
               if (envContent.includes('YOUTUBE_REFRESH_TOKEN=')) {
-                envContent = envContent.replace(/YOUTUBE_REFRESH_TOKEN=.* /g, `YOUTUBE_REFRESH_TOKEN="${tokenData.refresh_token}"`)
+                envContent = envContent.replace(/YOUTUBE_REFRESH_TOKEN=.*/g, `YOUTUBE_REFRESH_TOKEN="${tokenData.refresh_token}"`)
               } else {
                 envContent += `YOUTUBE_REFRESH_TOKEN="${tokenData.refresh_token}"\n`
               }
