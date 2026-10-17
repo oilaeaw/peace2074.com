@@ -191,7 +191,7 @@ function getAudioDuration(filePath: string): number {
   } catch {}
 
   try {
-    const out = execSync(`ffmpeg -i "${filePath}" 2>&1`, { encoding: 'utf8' })
+    const out = execSync(`ffmpeg -i "${filePath}" 2>&1 || true`, { encoding: 'utf8' })
     const match = out.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/)
     if (match) {
       const hours = parseFloat(match[1])
