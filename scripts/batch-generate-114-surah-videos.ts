@@ -185,7 +185,7 @@ async function fetchSurahVersesData(chapterId: number): Promise<VerseContent[]> 
 
 function getAudioDuration(filePath: string): number {
   try {
-    const out = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { encoding: 'utf8' })
+    const out = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { encoding: 'utf8', stdio: ['pipe', 'pipe', 'ignore'] })
     const dur = parseFloat(out.trim())
     if (!isNaN(dur) && dur > 0) return dur
   } catch {}
@@ -466,8 +466,14 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
     localStorage.setItem('cookie-consent', 'true')
   })
 
-  // Use local Vite dev server (pnpm dev must be running)
-  const baseUrl = 'http://localhost:4000'
+  // Prefer local Vite dev server if running, otherwise use production peace2074.com
+  let baseUrl = 'http://localhost:4000'
+  try {
+    const check = await fetch('http://localhost:4000', { signal: AbortSignal.timeout(1500) })
+    if (!check.ok) baseUrl = 'https://peace2074.com'
+  } catch {
+    baseUrl = 'https://peace2074.com'
+  }
   const url = `${baseUrl}/quran/${chapter.id}?play=true&theme=dark`
   console.log(`[Surah ${chapter.id}] 🌐 Opening ${url}`)
   await page.goto(url, { waitUntil: 'networkidle', timeout: 60000 })

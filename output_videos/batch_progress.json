@@ -795,6 +795,6 @@
     "surahName": "An-Nas",
     "status": "failed",
     "videoPath": "output_videos/surah_114_an_nas.mp4",
-    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
+    "error": "page.goto: net::ERR_CONNECTION_REFUSED at http://localhost:4000/quran/114?play=true&theme=dark\nCall log:\n  - navigating to \"http://localhost:4000/quran/114?play=true&theme=dark\", waiting until \"networkidle\"\n"
   }
 }
