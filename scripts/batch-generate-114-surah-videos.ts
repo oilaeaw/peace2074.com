@@ -186,10 +186,22 @@ async function fetchSurahVersesData(chapterId: number): Promise<VerseContent[]> 
 function getAudioDuration(filePath: string): number {
   try {
     const out = execSync(`ffprobe -v error -show_entries format=duration -of default=noprint_wrappers=1:nokey=1 "${filePath}"`, { encoding: 'utf8' })
-    return parseFloat(out.trim()) || 0
-  } catch {
-    return 0
-  }
+    const dur = parseFloat(out.trim())
+    if (!isNaN(dur) && dur > 0) return dur
+  } catch {}
+
+  try {
+    const out = execSync(`ffmpeg -i "${filePath}" 2>&1`, { encoding: 'utf8' })
+    const match = out.match(/Duration:\s*(\d+):(\d+):(\d+(?:\.\d+)?)/)
+    if (match) {
+      const hours = parseFloat(match[1])
+      const minutes = parseFloat(match[2])
+      const seconds = parseFloat(match[3])
+      return hours * 3600 + minutes * 60 + seconds
+    }
+  } catch {}
+
+  return 0
 }
 
 function generateVerseHtml(chapter: Chapter, activeVerse: VerseContent, allVerses: VerseContent[], activeWordIndex: number = -1): string {
