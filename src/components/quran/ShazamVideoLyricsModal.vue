@@ -281,17 +281,33 @@
                   Follow along with glowing lyrics or tap any line.
                 </p>
 
-                <q-btn
-                  dense
-                  outline
-                  rounded
-                  color="cyan-3"
-                  icon="smart_display"
-                  label="Watch Channel Video Preview"
-                  class="q-px-md text-caption"
-                  no-caps
-                  @click="showChannelTrailerFallback = true"
-                />
+                <div class="row items-center justify-center gap-sm q-mt-xs">
+                  <q-btn
+                    dense
+                    outline
+                    rounded
+                    color="cyan-3"
+                    icon="smart_display"
+                    label="Watch Channel Video Preview"
+                    class="q-px-md text-caption"
+                    no-caps
+                    @click="showChannelTrailerFallback = true"
+                  />
+                  <q-btn
+                    dense
+                    flat
+                    rounded
+                    color="red-4"
+                    icon="open_in_new"
+                    label="@peace2074"
+                    class="q-px-sm text-caption"
+                    no-caps
+                    href="https://www.youtube.com/@peace2074?sub_confirmation=1"
+                    target="_blank"
+                  >
+                    <q-tooltip>Visit & Subscribe to @peace2074 on YouTube</q-tooltip>
+                  </q-btn>
+                </div>
               </div>
             </div>
 
@@ -317,6 +333,22 @@
                       class="text-caption"
                       >LIVE</q-badge
                     >
+                    <a
+                      href="https://www.youtube.com/@peace2074?sub_confirmation=1"
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      class="text-decoration-none row items-center no-wrap"
+                      title="Visit official Peace2074 YouTube Channel"
+                    >
+                      <q-badge
+                        color="red-10"
+                        text-color="white"
+                        class="text-caption cursor-pointer q-px-xs q-py-xs"
+                      >
+                        <q-icon name="smart_display" size="12px" class="q-mr-xs text-red-4" />
+                        @peace2074
+                      </q-badge>
+                    </a>
                   </div>
                   <div class="text-caption text-grey-4 text-truncate-1">
                     {{
