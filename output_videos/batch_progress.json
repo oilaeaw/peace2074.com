@@ -660,8 +660,9 @@
   "95": {
     "surahId": 95,
     "surahName": "At-Tin",
-    "status": "generated",
-    "videoPath": "output_videos/surah_095_at_tin.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_095_at_tin.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "96": {
     "surahId": 96,
