@@ -471,14 +471,16 @@
   "68": {
     "surahId": 68,
     "surahName": "Al-Qalam",
-    "status": "generated",
-    "videoPath": "output_videos/surah_068_al_qalam.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_068_al_qalam.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "69": {
     "surahId": 69,
     "surahName": "Al-Haqqah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_069_al_haqqah.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_069_al_haqqah.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "70": {
     "surahId": 70,
@@ -490,8 +492,9 @@
   "71": {
     "surahId": 71,
     "surahName": "Nuh",
-    "status": "generated",
-    "videoPath": "output_videos/surah_071_nuh.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_071_nuh.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "72": {
     "surahId": 72,
