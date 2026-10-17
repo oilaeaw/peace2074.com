@@ -6,8 +6,16 @@ import dotenv from 'dotenv'
 
 dotenv.config()
 
-const CLIENT_ID = process.env.NITRO_GOOGLE_CLIENT_ID || process.env.GOOGLE_CLIENT_ID || ''
-const CLIENT_SECRET = process.env.NITRO_GOOGLE_CLIENT_SECRET || process.env.GOOGLE_CLIENT_SECRET || ''
+function cleanEnvVal(val?: string): string {
+  if (!val) return ''
+  const trimmed = val.trim()
+  if (trimmed.startsWith('${') && trimmed.endsWith('}')) return ''
+  if (trimmed.includes('your-google-client')) return ''
+  return trimmed
+}
+
+const CLIENT_ID = cleanEnvVal(process.env.GOOGLE_CLIENT_ID) || cleanEnvVal(process.env.NITRO_GOOGLE_CLIENT_ID)
+const CLIENT_SECRET = cleanEnvVal(process.env.GOOGLE_CLIENT_SECRET) || cleanEnvVal(process.env.NITRO_GOOGLE_CLIENT_SECRET)
 const PORT = 4000
 const REDIRECT_URI = `http://localhost:${PORT}/api/auth/google/callback`
 
@@ -22,18 +30,13 @@ async function main() {
   console.log('🔒 AUTOMATED YOUTUBE ONE-CLICK AUTHENTICATION HELPER')
   console.log('================================================================')
 
-  if (
-    !CLIENT_ID ||
-    CLIENT_ID.includes('your-google-client-id') ||
-    !CLIENT_SECRET ||
-    CLIENT_SECRET.includes('your-google-client-secret')
-  ) {
+  if (!CLIENT_ID || !CLIENT_SECRET) {
     console.error('\n❌ CANNOT AUTHENTICATE: Missing real Google OAuth Client Credentials!')
-    console.error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env are currently placeholder strings.\n')
+    console.error('GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env are still empty or placeholder strings.\n')
     console.error('👉 Step 1: Open Google Cloud Console credentials for project peace2074-474822:')
     console.error('   https://console.cloud.google.com/apis/credentials?project=peace2074-474822\n')
     console.error('👉 Step 2: Copy your Web Application Client ID & Client Secret.')
-    console.error('👉 Step 3: Update GOOGLE_CLIENT_ID and GOOGLE_CLIENT_SECRET in .env and run this script again.\n')
+    console.error('👉 Step 3: Paste them into .env at lines 49-50 and run this script again.\n')
     process.exit(1)
   }
 
@@ -148,6 +151,15 @@ async function main() {
     } catch (err: any) {
       console.error('Server error:', err)
     }
+  })
+
+  server.on('error', (err: any) => {
+    if (err.code === 'EADDRINUSE') {
+      console.error(`\n⚠️  Port ${PORT} is currently in use (e.g. by Vite dev server).`)
+      console.error(`👉 Run 'bash scripts/kill-dev-ports.sh' to free port ${PORT}, then run this script again.\n`)
+      process.exit(1)
+    }
+    console.error('Server error:', err)
   })
 
   server.listen(PORT, () => {
