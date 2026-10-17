@@ -84,6 +84,11 @@ async function main() {
             }
           }
 
+          if (!tokenRes) {
+            console.error('❌ Failed to reach Google OAuth token endpoint after retries.')
+            return
+          }
+
           const tokenData = await tokenRes.json()
 
           if (tokenData.access_token) {

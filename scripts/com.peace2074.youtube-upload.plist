@@ -1,0 +1,43 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.peace2074.youtube-upload</string>
+
+    <key>ProgramArguments</key>
+    <array>
+        <string>/bin/bash</string>
+        <string>/Users/waelio/Documents/Code/GitHub/salamabds/Peace2074/peace2074.com/scripts/auto-upload-youtube.sh</string>
+    </array>
+
+    <key>WorkingDirectory</key>
+    <string>/Users/waelio/Documents/Code/GitHub/salamabds/Peace2074/peace2074.com</string>
+
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/Users/waelio/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>HOME</key>
+        <string>/Users/waelio</string>
+    </dict>
+
+    <!-- Run daily at 03:30 AM local time -->
+    <key>StartCalendarInterval</key>
+    <dict>
+        <key>Hour</key>
+        <integer>3</integer>
+        <key>Minute</key>
+        <integer>30</integer>
+    </dict>
+
+    <key>StandardOutPath</key>
+    <string>/Users/waelio/peace2074-youtube-upload.log</string>
+
+    <key>StandardErrorPath</key>
+    <string>/Users/waelio/peace2074-youtube-upload.log</string>
+
+    <key>RunAtLoad</key>
+    <false/>
+</dict>
+</plist>

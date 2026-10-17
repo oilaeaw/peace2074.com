@@ -95,6 +95,19 @@ const PROGRESS_FILE = path.join(OUTPUT_DIR, 'batch_progress.json')
 const BANNER_IMAGE = path.join('public', 'yt_banner.png')
 const CHANNEL_ID = process.env.YOUTUBE_CHANNEL_ID || 'UCKPAQJxnUTX-pzvLQ3M0aEQ'
 
+function getFfmpegPath(): string {
+  const possiblePaths = [
+    '/usr/local/bin/ffmpeg',
+    path.join(process.env.HOME || '', '.local', 'bin', 'ffmpeg'),
+    '/opt/homebrew/bin/ffmpeg',
+    'ffmpeg',
+  ]
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) return p
+  }
+  return 'ffmpeg'
+}
+
 function pad3(num: number): string {
   return String(num).padStart(3, '0')
 }
@@ -534,12 +547,13 @@ async function buildSurahVideoWithSyncedText(chapter: Chapter, tempDir: string):
   const audioListFile = path.join(tempDir, 'audio_list.txt')
   fs.writeFileSync(audioListFile, audioFiles.map(f => `file '${f}'`).join('\n'))
 
+  const ffmpeg = getFfmpegPath()
   const fullAudio = path.join(tempDir, 'full_audio.mp3')
-  execSync(`/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${audioListFile}" -c copy "${fullAudio}"`, { stdio: 'ignore' })
+  execSync(`"${ffmpeg}" -y -f concat -safe 0 -i "${audioListFile}" -c copy "${fullAudio}"`, { stdio: 'ignore' })
 
   // 2. Merge screen recording video + real recitation audio → final HD MP4
   execSync(
-    `/usr/local/bin/ffmpeg -y -i "${videoFile}" -i "${fullAudio}" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -shortest -pix_fmt yuv420p "${outputVideo}"`,
+    `"${ffmpeg}" -y -i "${videoFile}" -i "${fullAudio}" -c:v libx264 -preset fast -crf 23 -c:a aac -b:a 192k -shortest -pix_fmt yuv420p "${outputVideo}"`,
     { stdio: 'ignore' }
   )
 
@@ -730,6 +744,9 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
     if (!initRes.ok) {
       const errText = await initRes.text()
       console.error(`[Surah ${chapter.id}] YouTube upload init failed ${initRes.status}:`, errText)
+      if (errText.includes('quotaExceeded') || errText.includes('dailyLimitExceeded')) {
+        throw new Error('YouTube API Daily Quota Exceeded. Halting batch until next quota window.')
+      }
       return null
     }
 
@@ -759,8 +776,14 @@ async function uploadToYouTube(chapter: Chapter, videoPath: string, rawOauthToke
     } else {
       const errText = await uploadRes.text()
       console.error(`[Surah ${chapter.id}] YouTube upload stream failed ${uploadRes.status}:`, errText)
+      if (errText.includes('quotaExceeded') || errText.includes('dailyLimitExceeded')) {
+        throw new Error('YouTube API Daily Quota Exceeded. Halting batch until next quota window.')
+      }
     }
   } catch (err: any) {
+    if (err?.message?.includes('Daily Quota Exceeded')) {
+      throw err
+    }
     console.error(`[Surah ${chapter.id}] YouTube upload error:`, err?.message || err)
   }
 
@@ -805,11 +828,16 @@ async function main() {
 
     try {
       console.log(`\n▶ [${id}/114] Processing Surah ${chapter.transliteration} (${chapter.name}) - ${chapter.total_verses} verses...`)
-      
-      const videoPath = await buildSurahVideoWithSyncedText(chapter, tempDir)
-      rec.videoPath = videoPath
-      rec.status = 'generated'
-      saveProgress(progress)
+
+      let videoPath = rec.videoPath && fs.existsSync(rec.videoPath) ? rec.videoPath : null
+      if (!videoPath) {
+        videoPath = await buildSurahVideoWithSyncedText(chapter, tempDir)
+        rec.videoPath = videoPath
+        rec.status = 'generated'
+        saveProgress(progress)
+      } else {
+        console.log(`[Surah ${id}] Using existing video file at: ${videoPath}`)
+      }
 
       const token = await getOrRefreshOAuthToken()
       if (token) {
@@ -831,6 +859,11 @@ async function main() {
       rec.error = err?.message || String(err)
       progress[id] = rec
       saveProgress(progress)
+
+      if (err?.message?.includes('Daily Quota Exceeded')) {
+        console.log(`\n⏳ Daily YouTube upload quota reached. Batch will resume automatically on the next scheduled run.`)
+        break
+      }
     }
   }
 

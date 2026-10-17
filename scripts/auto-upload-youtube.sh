@@ -2,6 +2,9 @@
 # Auto YouTube Upload Script — Peace2074
 # Runs automatically via macOS LaunchAgent. No manual input needed.
 
+# Export user PATH so node and ffmpeg are found under launchd
+export PATH="$HOME/.local/bin:/usr/local/bin:/opt/homebrew/bin:/usr/bin:/bin:/usr/sbin:/sbin:$PATH"
+
 cd /Users/waelio/Documents/Code/GitHub/salamabds/Peace2074/peace2074.com
 
 LOG_FILE="$HOME/peace2074-youtube-upload.log"
@@ -9,6 +12,7 @@ echo "============================" >> "$LOG_FILE"
 echo "Auto-upload started: $(date)" >> "$LOG_FILE"
 echo "============================" >> "$LOG_FILE"
 
+# Run batch generator (resumes automatically from batch_progress.json)
 node --experimental-strip-types scripts/batch-generate-114-surah-videos.ts 1 114 >> "$LOG_FILE" 2>&1
 
 echo "" >> "$LOG_FILE"

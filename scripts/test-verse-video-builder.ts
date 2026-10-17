@@ -18,6 +18,19 @@ interface VerseContent {
   translationText: string
 }
 
+function getFfmpegPath(): string {
+  const possiblePaths = [
+    '/usr/local/bin/ffmpeg',
+    path.join(process.env.HOME || '', '.local', 'bin', 'ffmpeg'),
+    '/opt/homebrew/bin/ffmpeg',
+    'ffmpeg',
+  ]
+  for (const p of possiblePaths) {
+    if (fs.existsSync(p)) return p
+  }
+  return 'ffmpeg'
+}
+
 function pad3(num: number): string {
   return String(num).padStart(3, '0')
 }
@@ -246,8 +259,9 @@ async function testBuildSurahVideo(surahId: number) {
     const segmentMp4 = path.join(tempDir, `segment_${paddedVerse}.mp4`)
 
     console.log(`Rendering verse segment ${verse}/${chapter.total_verses} (duration: ${duration.toFixed(2)}s)...`)
+    const ffmpeg = getFfmpegPath()
     execSync(
-      `/usr/local/bin/ffmpeg -y -loop 1 -i "${cardPng}" -i "${localMp3}" -t ${duration} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p "${segmentMp4}"`,
+      `"${ffmpeg}" -y -loop 1 -i "${cardPng}" -i "${localMp3}" -t ${duration} -c:v libx264 -tune stillimage -c:a aac -b:a 192k -pix_fmt yuv420p "${segmentMp4}"`,
       { stdio: 'ignore' }
     )
 
@@ -263,8 +277,9 @@ async function testBuildSurahVideo(surahId: number) {
 
   const finalVideo = path.join(outputDir, `surah_${pad3(surahId)}_${chapter.transliteration.toLowerCase().replace(/[^a-z0-9]/g, '_')}.mp4`)
   console.log(`Concatenating segments into final video: ${finalVideo}...`)
+  const ffmpeg = getFfmpegPath()
   execSync(
-    `/usr/local/bin/ffmpeg -y -f concat -safe 0 -i "${concatListFile}" -c copy "${finalVideo}"`,
+    `"${ffmpeg}" -y -f concat -safe 0 -i "${concatListFile}" -c copy "${finalVideo}"`,
     { stdio: 'ignore' }
   )
 
