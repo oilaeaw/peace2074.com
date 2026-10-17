@@ -583,68 +583,79 @@
   "84": {
     "surahId": 84,
     "surahName": "Al-Inshiqaq",
-    "status": "generated",
-    "videoPath": "output_videos/surah_084_al_inshiqaq.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_084_al_inshiqaq.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "85": {
     "surahId": 85,
     "surahName": "Al-Buruj",
-    "status": "generated",
-    "videoPath": "output_videos/surah_085_al_buruj.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_085_al_buruj.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "86": {
     "surahId": 86,
     "surahName": "At-Tariq",
-    "status": "generated",
-    "videoPath": "output_videos/surah_086_at_tariq.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_086_at_tariq.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "87": {
     "surahId": 87,
     "surahName": "Al-A'la",
-    "status": "generated",
-    "videoPath": "output_videos/surah_087_al_a_la.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_087_al_a_la.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "88": {
     "surahId": 88,
     "surahName": "Al-Ghashiyah",
-    "status": "generated",
-    "videoPath": "output_videos/surah_088_al_ghashiyah.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_088_al_ghashiyah.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "89": {
     "surahId": 89,
     "surahName": "Al-Fajr",
-    "status": "generated",
-    "videoPath": "output_videos/surah_089_al_fajr.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_089_al_fajr.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "90": {
     "surahId": 90,
     "surahName": "Al-Balad",
-    "status": "generated",
-    "videoPath": "output_videos/surah_090_al_balad.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_090_al_balad.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "91": {
     "surahId": 91,
     "surahName": "Ash-Shams",
-    "status": "generated",
-    "videoPath": "output_videos/surah_091_ash_shams.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_091_ash_shams.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "92": {
     "surahId": 92,
     "surahName": "Al-Layl",
-    "status": "generated",
-    "videoPath": "output_videos/surah_092_al_layl.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_092_al_layl.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "93": {
     "surahId": 93,
     "surahName": "Ad-Duhaa",
-    "status": "generated",
-    "videoPath": "output_videos/surah_093_ad_duhaa.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_093_ad_duhaa.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "94": {
     "surahId": 94,
     "surahName": "Ash-Sharh",
-    "status": "generated",
-    "videoPath": "output_videos/surah_094_ash_sharh.mp4"
+    "status": "failed",
+    "videoPath": "output_videos/surah_094_ash_sharh.mp4",
+    "error": "browserType.launch: Executable doesn't exist at /Users/waelio/Library/Caches/ms-playwright/chromium_headless_shell-1217/chrome-headless-shell-mac-x64/chrome-headless-shell\n╔════════════════════════════════════════════════════════════╗\n║ Looks like Playwright was just installed or updated.       ║\n║ Please run the following command to download new browsers: ║\n║                                                            ║\n║     npx playwright install                                 ║\n║                                                            ║\n║ <3 Playwright Team                                         ║\n╚════════════════════════════════════════════════════════════╝"
   },
   "95": {
     "surahId": 95,
